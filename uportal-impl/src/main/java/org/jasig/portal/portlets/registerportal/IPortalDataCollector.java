@@ -6,7 +6,7 @@
 
 package org.jasig.portal.portlets.registerportal;
 
-import java.util.Properties;
+import java.util.Map;
 
 /**
  * Used to get a single piece of data about the portal
@@ -26,5 +26,5 @@ public interface IPortalDataCollector {
     /**
      * @return The data, current as of this call.
      */
-    public Properties getData();
+    public Map<String, String> getData();
 }

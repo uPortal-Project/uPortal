@@ -6,8 +6,9 @@
 
 package org.jasig.portal.portlets.registerportal.data;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 
 import org.jasig.portal.portlets.registerportal.IPortalDataCollector;
@@ -36,11 +37,11 @@ public class JvmDataCollector implements IPortalDataCollector {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.registerportal.IPortalDataCollector#getData()
      */
-    public Properties getData() {
-        final Properties data = new Properties();
+    public Map<String, String> getData() {
+        final Map<String, String> data = new LinkedHashMap<String, String>();
         
         for (final String propertyToCollect : this.propertiesToCollect) {
-            data.setProperty(propertyToCollect, System.getProperty(propertyToCollect));
+            data.put(propertyToCollect, System.getProperty(propertyToCollect));
         }
         
         return data;

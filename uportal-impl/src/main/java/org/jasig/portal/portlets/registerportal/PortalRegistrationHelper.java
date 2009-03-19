@@ -9,7 +9,6 @@ package org.jasig.portal.portlets.registerportal;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -23,12 +22,20 @@ public class PortalRegistrationHelper {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private IPortalDataCollator portalDataCollator;
+    private IPortalDataSubmitter portalDataSubmitter;
     
     /**
      * @param portalDataCollator the portalDataCollator to set
      */
     public void setPortalDataCollator(IPortalDataCollator portalDataCollator) {
         this.portalDataCollator = portalDataCollator;
+    }
+    
+    /**
+     * @param portalDataSubmitter the portalDataSubmitter to set
+     */
+    public void setPortalDataSubmitter(IPortalDataSubmitter portalDataSubmitter) {
+        this.portalDataSubmitter = portalDataSubmitter;
     }
 
     /**
@@ -73,7 +80,7 @@ public class PortalRegistrationHelper {
             }
         }
         
-        final Map<String, Properties> collectedData = this.portalDataCollator.getCollectedData(dataToCollect);
+        final Map<String, Map<String, String>> collectedData = this.portalDataCollator.getCollectedData(dataToCollect);
         registrationData.setCollectedData(collectedData);
         
         return registrationData;
@@ -84,6 +91,6 @@ public class PortalRegistrationHelper {
      */
     public void submitRegistration(PortalRegistrationData portalRegistrationData) {
         this.logger.debug(portalRegistrationData);
-        //TODO figure out how to submit data?
+        this.portalDataSubmitter.submitPortalData(portalRegistrationData);
     }
 }

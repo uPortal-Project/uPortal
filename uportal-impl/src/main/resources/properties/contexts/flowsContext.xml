@@ -43,6 +43,7 @@
     <!-- Beans for the register-portal flow -->
     <bean id="portalRegistrationHelper" class="org.jasig.portal.portlets.registerportal.PortalRegistrationHelper">
         <property name="portalDataCollator" ref="portalDataCollator" />
+        <property name="portalDataSubmitter" ref="portalDataSubmitter" />
     </bean>
     
     <bean id="portalDataCollator" class="org.jasig.portal.portlets.registerportal.PortalDataCollatorImpl">
@@ -51,6 +52,10 @@
                 <bean class="org.jasig.portal.portlets.registerportal.data.JvmDataCollector" />
             </list>
         </property>
+    </bean>
+    
+    <bean id="portalDataSubmitter" class="org.jasig.portal.portlets.registerportal.CommonsHttpPortalDataSubmitter">
+        <property name="submitUrl" value="http://developer.ja-sig.org/PortalRegistration/dataCollector/v1" />
     </bean>
     
     

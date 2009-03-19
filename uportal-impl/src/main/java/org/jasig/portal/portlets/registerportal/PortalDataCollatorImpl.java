@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -43,19 +42,19 @@ public class PortalDataCollatorImpl implements IPortalDataCollator {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.registerportal.IPortalDataCollator#getCollectedData()
      */
-    public Map<String, Properties> getCollectedData() {
+    public Map<String, Map<String, String>> getCollectedData() {
         return this.getCollectedData(this.dataCollectors.keySet());
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.registerportal.IPortalDataCollator#getCollectedData(java.util.Set)
      */
-    public Map<String, Properties> getCollectedData(Set<String> keysToCollect) {
-        final Map<String, Properties> collectedData = new LinkedHashMap<String, Properties>();
+    public Map<String, Map<String, String>> getCollectedData(Set<String> keysToCollect) {
+        final Map<String, Map<String, String>> collectedData = new LinkedHashMap<String, Map<String, String>>();
         
         for (final String dataKey : keysToCollect) {
             final IPortalDataCollector portalDataCollector = this.dataCollectors.get(dataKey);
-            final Properties data = portalDataCollector.getData();
+            final Map<String, String> data = portalDataCollector.getData();
             collectedData.put(dataKey, data);
         }
         
