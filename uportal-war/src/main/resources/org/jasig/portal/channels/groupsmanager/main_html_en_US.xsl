@@ -52,13 +52,13 @@
     
     <!-- Search -->
     <xsl:if test="not($mode='edit') and not($mode='members')">
-    	<div>
-      <h3><label for="grpQuery">Search</label></h3>
+    	<div class="groupmgr-search">
+      <h2><label for="grpQuery">Search</label></h2>
       <form action="{$baseActionURL}" method="POST">
         <input type="hidden" name="grpCommand" value="Search"/>
         <input type="hidden" name="uP_root" value="me"/>
         <label for="grpType">For</label>
-        <select class="uportal-button" name="grpType" id="grpType">
+        <select name="grpType" id="grpType">
           <xsl:variable name="stype" select="$rootGroup/@entityType"/>
           <xsl:for-each select="/CGroupsManager/entityTypes/entityType">
             <xsl:if test="not($stype) or @type=$stype"> 
@@ -72,7 +72,7 @@
           </xsl:for-each>
         </select>
         <label for="grpMethod">whose name</label>
-        <select class="uportal-button" name="grpMethod" id="grpMethod">
+        <select name="grpMethod" id="grpMethod">
           <option value="1">is</option>
           <option value="2">starts with</option>
           <option value="3">ends with</option>
@@ -89,7 +89,7 @@
       </div>
     </xsl:if>
     
-    <h3>
+    <h2>
     <!--<xsl:if test="$mode='select'">-->
       <xsl:choose>
         <xsl:when test="$customMessage">
@@ -102,16 +102,16 @@
         </xsl:otherwise>
       </xsl:choose>
     <!--</xsl:if>-->
-    </h3>
+    </h2>
     <!-- Layout Table -->
-    <table cellspacing="0" cellpadding="0">
+    <table class="groupmgr-two-pane" cellspacing="0" cellpadding="0">
       <tr>
         <!-- Left Pane - Tree Navigation -->
-        <td valign="top" id="groupmgrLeftPane">
+        <td valign="top" class="groupmgr-left-pane">
           <xsl:call-template name="tree"/>
         </td>
         <!-- Right Pane - Group Details -->
-        <td valign="top" id="groupmgrRightPane">
+        <td valign="top" class="groupmgr-right-pane">
           <xsl:if test="key('groupByID',$highlightedGroupID)">
             <xsl:call-template name="rightPane">
               <xsl:with-param name="group" select="$highlightedGroup"/>
@@ -138,7 +138,7 @@
                   <td align="center" valign="top">
                   	<input type="checkbox" name="grpDeselect//{@id}|group" value="true" />
                   </td>
-                  <td width="100%" class="uportal-channel-table-row-even">
+                  <td width="100%">
                   	<xsl:value-of select="RDF/Description/title" />
                   </td>
                 </tr>
@@ -159,7 +159,7 @@
                     <td align="center" valign="top">
                       <input type="checkbox" name="grpDeselect//{@id}|entity" value="true" />
                     </td>
-                    <td width="100%" class="uportal-channel-table-row-odd">
+                    <td width="100%">
                       <xsl:value-of select="@displayName" />
                     </td>
                   </tr>
@@ -213,7 +213,7 @@
   	<xsl:param name="group"/>
     <xsl:variable name="grpKey" select="@key" />
     
-    <h3>
+    <h2>
       <xsl:choose>
         <xsl:when test="$highlightedGroupID='0'">
           <xsl:text>
@@ -226,7 +226,7 @@
           </xsl:text>
         </xsl:otherwise>
       </xsl:choose>
-    </h3>
+    </h2>
     
 		<form action="{$baseActionURL}" method="POST">
     <xsl:choose>
@@ -256,7 +256,7 @@
         
         	<!-- View Mode -->
           <xsl:when test="not($mode='edit') or not($group/@canUpdate='true')">
-            <h4><xsl:value-of select="$group/RDF/Description/title" /></h4>
+            <h3><xsl:value-of select="$group/RDF/Description/title" /></h3>
             <p><xsl:value-of select="string($group/RDF/Description/description)" /></p>
           </xsl:when>
           
@@ -316,7 +316,7 @@
   			
         <!-- Members -->
     		<xsl:variable name="siblingCount" select="count(key('members',$group/@id))"/>
-				<h5>Members</h5>
+				<h3>Members</h3>
         
         <!-- Pagination controls -->
         <xsl:if test="$page &gt; 1">
@@ -501,11 +501,11 @@
   
   <xsl:template match="group">
     <xsl:if test="@canView='true' or (@id=0) or (@searchResults='true')">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">	
+    <table class="groupmgr-tree-nav purpose-layout" border="0" cellpadding="0" cellspacing="0" width="100%">	
       <tr>
         <td width="100%" colspan="2">
         
-          <table border="0" cellpadding="0" cellspacing="0" width="100%">
+          <table class="purpose-layout" border="0" cellpadding="0" cellspacing="0" width="100%">
             <tr>
               <td>
               	<xsl:choose>
@@ -524,19 +524,19 @@
               		</xsl:otherwise>
               	</xsl:choose>                
               </td>
-              <td width="100%" class="uportal-channel-table-row-even">
+              <td width="100%">
                	<xsl:if test="$highlightedGroupID and $highlightedGroupID=@id">
             			<xsl:attribute name="class">uportal-background-highlight</xsl:attribute>
             		</xsl:if>
                 <xsl:choose>
                   <xsl:when test="($mode='members')">
-                    <span class="uportal-channel-table-row-even">
+                    <span>
                       <xsl:value-of select="RDF/Description/title" />
                     </span>
                   </xsl:when>
                   <xsl:otherwise>
                 		<a href="{$baseActionURL}?uP_root=me&amp;grpCommand=Highlight&amp;grpCommandArg={@id}">
-                    	<span class="uportal-channel-table-row-even">
+                    	<span>
                     		<xsl:value-of select="RDF/Description/title" />
                   		</span>
                     </a>
@@ -550,7 +550,7 @@
 
       <xsl:if test="(@expanded='true') and (count(key('members',@id)[name()='group']) &gt; 0)">
       	<tr>
-      		<td background="{$iconBase}/tree_bullet.png">
+      		<td class="groupmgr-tree-hierarchy-line">
             <img src="{$spacerIMG}" height="5" width="16"/>
           </td>
       		<td width="100%">

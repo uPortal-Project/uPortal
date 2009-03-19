@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2000-2009, Jasig, Inc.
  * See license distributed with this file and available online at
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
@@ -6,16 +6,18 @@
 /*
  * LAYOUT STYLES
  *
- * Define CSS classes to create a multi-columned page layout.
+ * Override and extension of the Fluid Skinning System (FSS) Layout 
+ * to establish the basic portal layout structure.
+ * Refer to [http://wiki.fluidproject.org/x/96M7] for more details.
  *
  * Only CSS that affects the layout (positioning) of major elements should be
  * listed here.  Such as:
  *   display, position, float, clear, width, height, min-width, min-height
  *   margin, border, padding, overflow
  *
- * This CSS assumes use of the Yahoo! User Interface Library (YUI) CSS Reset, 
- * CSS Base, and CSS Fonts to establish a common, cross-browser base rendering.
- * Refer to [http://developer.yahoo.com/yui/] for more details.
+ * This CSS assumes use of the Fluid Skinning System (FSS) CSS reset 
+ * to establish a common, cross-browser base rendering.
+ * Refer to [http://wiki.fluidproject.org/x/96M7] for more details.
  * 
  * This CSS should render well and consistently across A-grade browsers.
  * Refer to [http://developer.yahoo.com/yui/articles/gbs/] for more details. 
@@ -23,22 +25,52 @@
  */
 
 
-/** common **/
-table, 
-table tr, 
-table td {margin:0; padding:0;}
+/* FSS Layout Overrides */
+/*
+	Removes padding and margin compensations for padding.
+*/
+.fl-theme-uportal3 .fl-col-mixed .fl-col-fixed {width:200px;}
+.fl-theme-uportal3 .fl-col-mixed .fl-col-flex-left {margin-left:200px;}
+.fl-theme-uportal3 .fl-col-mixed .fl-col-flex-right {margin-right:200px;}
 
+.fl-theme-uportal3 .fl-col-mixed-100 .fl-col-fixed {width:100px;}
+.fl-theme-uportal3 .fl-col-mixed-100 .fl-col-flex-left {margin-left:100px;}
+.fl-theme-uportal3 .fl-col-mixed-100 .fl-col-flex-right {margin-right:100px;}
+
+.fl-theme-uportal3 .fl-col-mixed-150 .fl-col-fixed {width:150px;}
+.fl-theme-uportal3 .fl-col-mixed-150 .fl-col-flex-left {margin-left:150px;}
+.fl-theme-uportal3 .fl-col-mixed-150 .fl-col-flex-right {margin-right:150px;}
+
+.fl-theme-uportal3 .fl-col-mixed-200 .fl-col-fixed {width:200px;}
+.fl-theme-uportal3 .fl-col-mixed-200 .fl-col-flex-left {margin-left:200px;}
+.fl-theme-uportal3 .fl-col-mixed-200 .fl-col-flex-right {margin-right:200px;}
+
+.fl-theme-uportal3 .fl-col-mixed-250 .fl-col-fixed {width:250px;}
+.fl-theme-uportal3 .fl-col-mixed-250 .fl-col-flex-left {margin-left:250px;}
+.fl-theme-uportal3 .fl-col-mixed-250 .fl-col-flex-right {margin-right:250px;}
+
+.fl-theme-uportal3 .fl-col-mixed-300 .fl-col-fixed {width:300px;}
+.fl-theme-uportal3 .fl-col-mixed-300 .fl-col-flex-left {margin-left:300px;}
+.fl-theme-uportal3 .fl-col-mixed-300 .fl-col-flex-right {margin-right:300px;}
+
+
+/* common */
 .portal-pipe {padding:0 0.5em;}
 
 ul.horizontal-list-floated li {list-style:none; float:left; padding-left:1em;}
 ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;}
 
+/* Add the "purpose-layout" class to any table you are using for layout purposes. */
+table.purpose-layout,
+table.purpose-layout th,
+table.purpose-layout td {margin:0; padding:0;}
 
-/** page **/
+
+/* page */
 #portalPage {min-width:700px; clear:both;}
 
 
-/** header **/
+/* header */
 #portalPageBar h2 {margin:0; padding:0.5em 0 0 1em; position:absolute; top:0; left:0;}
 #portalPageBarLinks {padding:0.5em 1em 0.5em 0;}
 #portalPageBarLinks a {padding:0 0.5em;}
@@ -53,41 +85,56 @@ ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;
 .focused #portalPageBar img {float:left; margin:3px 0 0 10px}
 
 
-/** content **/
+/* body */
+.dashboard #portalPageBodyTitleRow {padding-top:0.5em;}
 #portalPageBodyTitleRowContents {position:relative; padding:1em;} /* Sets this container as positioned to have other elements poisitioned relative to it. */
 .breadcrumb-separator {padding:0 0.5em;}
 #portalPageBody h1 {margin:0;}
-#portalPageBodyColumns .single .portal-page-column-inner, 
-#portalPageBodyColumns .right .portal-page-column-inner {padding-right:1em;}
+/* Columns */
 .portal-page-column-inner {padding-left:1em; padding-bottom:2em; min-height:100px;}
-.portal-page-column-focused .portal-page-column-inner {padding-right:1em;}
+#portalPageBodyColumns .single .portal-page-column-inner, 
+#portalPageBodyColumns .right .portal-page-column-inner {padding-right:2em;}
+#portalPageBodyColumns .single .portal-page-column-inner, 
+#portalPageBodyColumns .left .portal-page-column-inner {padding-left:2em;}
+/* focused */
+.focused #portalPageBodyTitleRow {padding:1em 1em 0 1em;}
+#portalPageBodyBreadcrumb {margin-bottom:0.5em;}
+.focused .portal-page-column-inner {padding:0em 2em 2em 2em;}
+.focused .portlet-content {padding:0;}
 
+/* Sidebar */
+#portalSidebar {padding:0;}
+#portalSidebarInner {padding:0 1em 2em 1em;}
+#portalSidebar #portalCustomizationLinks .portal-pipe {display:none;}
 
-/** portlets **/
+/* portlets */
 .portlet-container {margin-bottom:1em;}
 .portlet-toolbar {position:relative;}
 .portlet-toolbar h2 {margin:0; padding:2px 20px 3px 20px;}
 .portlet-controls {position:absolute; top:4px; right:0;}
+.dashboard .portlet-controls .portlet-control {padding-right:1em;}
 .portlet-content {padding:1em;}
 
 
-/** footer **/
-#portalPageFooter {padding-top:5em;}
+/* footer */
+#portalPageFooter {padding-top:2em;}
+#portalPageFooterInner {padding:1em;}
 #portalProductAndVersion {margin-top:1em;}
 
 
-/** login **/
+/* login */
 #portalLogin {padding:1em;}
 #portalLogin label {display:block; margin-bottom:0.3em;}
 #portalLogin input {margin-bottom:1em;}
 
 
-/** navigation **/
+/* navigation */
 #portletNavigation ul,
 #portletNavigation li {margin:0; padding:0;}
 #portletNavigation li {margin-bottom:1px;}
 #portletNavigation a {display:block; padding:0.5em 1em 0.5em 2.1em;}
-
+/* subrow */
+#portalNavigationSubrow {padding:0.5em 0;}
 #portalNavigationSubrow ul,
 #portalNavigationSubrow li {margin:0; padding:0;}
 .sidebar-left-100 #portalNavigationSubrow ul {margin-left:120px;}
@@ -101,6 +148,13 @@ ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;
 .sidebar-right-250 #portalNavigationSubrow ul {margin-right:270px;}
 .sidebar-right-300 #portalNavigationSubrow ul {margin-right:320px;}
 #portalNavigationSubrow li {list-style-type:none; display:inline;}
+#portalNavigationSubrow a {padding:0em 1em;}
+/* Flyout subnav */
+#portalFlyoutNavigation .portal-flyout-container {width:200px; position:absolute; z-index:10;}
+#portalFlyoutNavigation .portal-flyout-container ul.portal-subnav-list {padding:0; margin:0;}
+#portalFlyoutNavigation .portal-flyout-container li {list-style:none;}
+#portalFlyoutNavigation a {display:block;}
+#portalFlyoutNavigation .portal-flyout-iframe {position:absolute; z-index:9;}
 
 /*
  | The obsolete 3.0 - 3.0.2 rendering of the navigation as an absolutely positioned element.
@@ -114,7 +168,7 @@ ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;
 #portalNavigation #portalNavigationList .portal-subnav-container a {padding:0.5em 1em 0.5em 2.1em;}*/
 
 
-/** Customization Links **/
+/* Customization Links */
 /* 
  | When rendered in the Title Row (with the Page Title).
  | Turns the list into a row and positions it to the top right corner. 
@@ -130,16 +184,35 @@ ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;
 #portalPageBodyTitleRow #portalCustomizationLinks a {padding:2px 5px 2px 20px;}
 
 
-/** quicklinks **/	
+/* quicklinks */	
 #portalQuicklinks {}
 #portalQuicklinks ul, 
 #portalQuicklinks li {margin:0; padding:0;}
 
 
-/** web search **/
+/* web search */
 #webSearchContainer form {padding:1em;}
 #webSearchContainer input, 
 #webSearchContainer select {margin-bottom:0.5em;}
+#portalPageHeader #webSearchContainer {position:absolute; top:3em; right:0;}
+#portalPageHeader #webSearchContainer h2 {display:none;}
+#portalPageHeader #webSearchContainer input,
+#portalPageHeader #webSearchContainer select {margin-left:0.3em;}
 
 #tooltip h3, #tooltip div { margin: 0; }
 #tooltip {position: absolute; z-index: 3000; opacity: 0.85; max-width: 400px; padding: 4px;}
+
+/* Fragment Administration */
+#portalFragAdminExit h2 {margin:0; padding:0.5em 1em 0em 1em;}
+#portalFragAdminExit form {margin:0em; padding:0 1em 1em 1em;}
+#portalFragAdminExit #exitFragment {margin-left:1em; padding:0.3em 1em;}
+
+/* Portlet Navigation */
+#portletNavigation h3 {margin:0.5em 0 0 0; padding:0.2em 0.5em;}
+
+/* CSyndFeed Channel - RSS */
+.news-items ul,
+.news-items li {margin:0;}
+.news-items li {list-style:none;}
+.news-items .news-item-excerpt {display:block; padding-top:0.3em;}
+.news-source p {padding:1em;}

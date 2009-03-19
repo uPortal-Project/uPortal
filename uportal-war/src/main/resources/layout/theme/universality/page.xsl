@@ -24,7 +24,14 @@
    | The main layout of the page has three subsections: header (TEMPLATE: PAGE HEADER), content (TEMPLATE: PAGE BODY), and footer (TEMPLATE: PAGE FOOTER), defined below.
   -->
   <xsl:template match="layout | layout_fragment">
-  	<xsl:variable name="COUNT_PORTLET_COLUMNS" select="count(content/column)"/>
+  	<xsl:variable name="COUNT_PORTLET_COLUMNS">
+    	<xsl:choose>
+      	<xsl:when test="$PORTAL_VIEW='focused'">1</xsl:when>
+        <xsl:otherwise>
+        	<xsl:value-of select="count(content/column)" />
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     <xsl:variable name="PAGE_COLUMN_CLASS">layout-<xsl:value-of select="$COUNT_PORTLET_COLUMNS"/>-columns</xsl:variable>
     <xsl:variable name="SIDEBAR_CLASS">
       <xsl:choose>
@@ -322,6 +329,10 @@
         
     	</div> <!-- End portalPageBodyInner -->
     </div> <!-- End portalPageBody -->
+    
+    <div id="portalDropWarning" class="drop-warning">
+    	<p>The box cannot be placed any higher in this column.</p>
+    </div>
   
   </xsl:template>
   <!-- ========================================= -->

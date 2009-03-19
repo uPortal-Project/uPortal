@@ -17,7 +17,7 @@
 .fl-theme-ivy .ui-helper-hidden { display: none; }
 .fl-theme-ivy .ui-helper-hidden-accessible { position: absolute; left: -99999999px; }
 .fl-theme-ivy .ui-helper-reset { margin: 0; padding: 0; border: 0; outline: 0; text-decoration: none; list-style: none; }
-.fl-theme-ivy .ui-helper-clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+.fl-theme-ivy .ui-helper-clearfix:after { content: "."; display: block; height: 0; /*clear: both;*/ visibility: hidden; }
 .fl-theme-ivy .ui-helper-clearfix { display: inline-block; }
 /* required comment for clearfix to work in Opera \*/
 * html .ui-helper-clearfix { height:1%; }
