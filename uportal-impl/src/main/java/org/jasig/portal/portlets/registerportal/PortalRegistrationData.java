@@ -8,18 +8,19 @@ package org.jasig.portal.portlets.registerportal;
 
 import java.io.Serializable;
 import java.util.Map;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
- * Form binding object for getting a user's preferences for submitting portal registration data
+ * Data object that is submitted to Jasig
  * 
  * @author Eric Dalquist
- * @version $Revision$
+ * @version $Revision: 45508 $
  */
-public class PortalRegistrationRequest implements Serializable {
+public class PortalRegistrationData implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String institutionName;
@@ -27,8 +28,8 @@ public class PortalRegistrationRequest implements Serializable {
     private String deployerAddress;
     private String portalName;
     private String portalUrl;
-    private boolean shareInfo = true;
-    private Map<String, String> dataToSubmit;
+    private boolean shareInfo = false;
+    private Map<String, Object> collectedData;
     
     /**
      * @return the institutionName
@@ -103,16 +104,16 @@ public class PortalRegistrationRequest implements Serializable {
         this.shareInfo = shareInfo;
     }
     /**
-     * @return the dataToSubmit
+     * @return the collectedData
      */
-    public Map<String, String> getDataToSubmit() {
-        return dataToSubmit;
+    public Map<String, Object> getCollectedData() {
+        return this.collectedData;
     }
     /**
-     * @param dataToSubmit the dataToSubmit to set
+     * @param collectedData the collectedData to set
      */
-    public void setDataToSubmit(Map<String, String> dataToSubmit) {
-        this.dataToSubmit = dataToSubmit;
+    public void setCollectedData(Map<String, Object> collectedData) {
+        this.collectedData = collectedData;
     }
     
     /**
@@ -123,12 +124,12 @@ public class PortalRegistrationRequest implements Serializable {
         if (object == this) {
             return true;
         }
-        if (!(object instanceof PortalRegistrationRequest)) {
+        if (!(object instanceof PortalRegistrationData)) {
             return false;
         }
-        PortalRegistrationRequest rhs = (PortalRegistrationRequest) object;
+        PortalRegistrationData rhs = (PortalRegistrationData) object;
         return new EqualsBuilder()
-            .append(this.dataToSubmit, rhs.dataToSubmit)
+            .append(this.collectedData, rhs.collectedData)
             .append(this.deployerAddress, rhs.deployerAddress)
             .append(this.portalName, rhs.portalName)
             .append(this.deployerName, rhs.deployerName)
@@ -143,7 +144,7 @@ public class PortalRegistrationRequest implements Serializable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(554822571, 313513477)
-        .append(this.dataToSubmit)
+        .append(this.collectedData)
         .append(this.deployerAddress)
         .append(this.portalName)
         .append(this.deployerName)
@@ -158,7 +159,7 @@ public class PortalRegistrationRequest implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-        .append("dataToSubmit", this.dataToSubmit)
+        .append("dataToSubmit", this.collectedData)
         .append("deployerAddress", this.deployerAddress)
         .append("portalName", this.portalName)
         .append("deployerName", this.deployerName)

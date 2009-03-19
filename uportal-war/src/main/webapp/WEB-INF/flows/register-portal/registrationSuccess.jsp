@@ -16,3 +16,10 @@
 	<a href="http://www.jasig.org/uportal/deployments" target="_blank" 
 	alt="uPortal deployments list">http://www.jasig.org/uportal/deployments</a>.
 </p>
+
+<portlet:actionURL var="backToStartUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="registrationForm" />
+</portlet:actionURL>
+<a href="${backToStartUrl}">Back</a><br/>
+

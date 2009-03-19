@@ -10,29 +10,35 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
             
-    <view-state id="deploymentRegistration" model="registrationRequest">
-        <on-entry>
-            <evaluate result="flowScope.registrationRequest" expression="portalRegistrationHelper.createRegistrationRequest()" />
-        </on-entry>
+    <!-- Used to set default values for inputs -->
+    <action-state id="initVariables">
+        <evaluate result="flowScope.registrationRequest" expression="portalRegistrationHelper.createRegistrationRequest()" />
 
-        <transition on="previewRegistration" to="deploymentRegistrationSuccess" />
+        <transition to="registrationForm" />
+    </action-state>
+            
+    <view-state id="registrationForm" model="registrationRequest">
+        <transition on="previewRegistration" to="previewRegistrationData" />
     </view-state>
     
     <!-- Execute the lookup query and transition to the appropriate state based on the number of results -->
-    <view-state id="deploymentRegistrationSuccess">
+    <view-state id="previewRegistrationData">
         <on-entry>
             <evaluate result="flowScope.registrationData" expression="portalRegistrationHelper.getRegistrationData(registrationRequest)" />
         </on-entry>
         
-        <transition on="editRegistration" to="deploymentRegistration" />
+        <transition on="editRegistration" to="registrationForm" />
         <transition on="submitRegistration" to="submitRegistration" /> 
     </view-state>
 
     <action-state id="submitRegistration">
-        <on-entry>
-            <evaluate expression="personLookupHelper.getQueryDisplayResults(externalContext, personQueryResults)" />
-        </on-entry>
+        <evaluate expression="portalRegistrationHelper.submitRegistration(registrationData)" />
         
-        <transition to="deploymentRegistration" />
+        <transition to="registrationSuccess" />
     </action-state>
+    
+    <view-state id="registrationSuccess">
+        <!--  -->
+        <transition on="registrationForm" to="registrationForm" />
+    </view-state>
 </flow>

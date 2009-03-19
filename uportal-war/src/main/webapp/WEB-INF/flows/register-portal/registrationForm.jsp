@@ -6,7 +6,6 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-<portlet:actionURL var="postUrl"/>
 
 <h2>Register this portal instance</h2>
 
@@ -16,6 +15,9 @@
 	portal environment.  We appreciate knowing more about our users!
 </p>
 
+<portlet:renderURL var="postUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+</portlet:renderURL>
 <form:form modelAttribute="registrationRequest" action="${postUrl}" method="post">
 	
 	<h3>Organizational Information</h3>
@@ -48,12 +50,14 @@
 		for you and submit it along with this registration.  If you prefer not
 		to submit this information, just uncheck the appropriate box.
 	</p>
-    <c:forEach var="dataEntry" items="${dataToSubmit}">
-        <p>
-        <form:checkbox path="dataEntry['${dataEntry.key}']"/> 
-        <form:label path="dataEntry['${dataEntry.key}']" cssClass="fl-label">${dataEntry.key}</form:label>
-        </p>
-    </c:forEach>
+    <ul>
+        <c:forEach var="dataEntry" items="${registrationRequest.dataToSubmit}">
+            <li>
+                <form:checkbox path="dataToSubmit['${dataEntry.key}']" value="true"/> 
+                <form:label path="dataToSubmit['${dataEntry.key}']" cssClass="fl-label">${dataEntry.key}</form:label>
+            </li>
+        </c:forEach>
+    </ul>
     <%--
 	<p>
 		<form:checkbox path="upVersion"/> 
