@@ -19,26 +19,28 @@
 <form:form modelAttribute="registrationRequest" action="${postUrl}" method="post">
 	
 	<h3>Organizational Information</h3>
-	<p>
-		<form:label path="institutionName">Institution name:</form:label> 
-		<form:input path="institutionName"/>
-	</p>
-	<p>
-		<form:label path="deployerName">Technical contact name:</form:label> 
-		<form:input path="deployerName"/>
-	</p>
-	<p>
-		<form:label path="deployerAddress">Technical contact email address:</form:label> 
-		<form:input path="deployerAddress"/>
-	</p>
-	<p>
-		<form:label path="portalName">Portal name (e.g. "MyPortal"):</form:label> 
-		<form:input path="portalName"/>
-	</p>
-	<p>
-		<form:label path="portalUrl">Portal URL:</form:label> 
-		<form:input path="portalUrl"/>
-	</p>
+    <ul class="fl-controls-right">
+		<li>
+			<form:label path="institutionName" cssClass="fl-label">Institution name:</form:label> 
+			<form:input path="institutionName"/>
+		</li>
+		<li>
+			<form:label path="deployerName" cssClass="fl-label">Technical contact name:</form:label> 
+			<form:input path="deployerName"/>
+		</li>
+		<li>
+			<form:label path="deployerAddress" cssClass="fl-label">Technical contact email address:</form:label> 
+			<form:input path="deployerAddress"/>
+		</li>
+		<li>
+			<form:label path="portalName" cssClass="fl-label">Portal name (e.g. "MyPortal"):</form:label> 
+			<form:input path="portalName"/>
+		</li>
+		<li>
+			<form:label path="portalUrl" cssClass="fl-label">Portal URL:</form:label> 
+			<form:input path="portalUrl"/>
+		</li>
+	</ul>
 	
 	<h3>System information</h3>
 	<p>
@@ -49,29 +51,29 @@
     <c:forEach var="dataEntry" items="${dataToSubmit}">
         <p>
         <form:checkbox path="dataEntry['${dataEntry.key}']"/> 
-        <form:label path="dataEntry['${dataEntry.key}']">${dataEntry.key}</form:label>
+        <form:label path="dataEntry['${dataEntry.key}']" cssClass="fl-label">${dataEntry.key}</form:label>
         </p>
     </c:forEach>
     <%--
 	<p>
 		<form:checkbox path="upVersion"/> 
-		<form:label path="upVersion">uPortal version</form:label>
+		<form:label path="upVersion" cssClass="fl-label">uPortal version</form:label>
 	</p>
 	<p>
 		<form:checkbox path="databaseInfo"/> 
-		<form:label path="databaseInfo">Database info (database and driver names and versions)</form:label>
+		<form:label path="databaseInfo" cssClass="fl-label">Database info (database and driver names and versions)</form:label>
 	</p>
 	<p>
 		<form:checkbox path="jvmInfo"/> 
-		<form:label path="jvmInfo">JVM Info (vendor, version, spec version)</form:label>
+		<form:label path="jvmInfo" cssClass="fl-label">JVM Info (vendor, version, spec version)</form:label>
 	</p>
 	<p>
 		<form:checkbox path="containerInfo"/> 
-		<form:label path="containerInfo">Container info (vendor, version, spec version)</form:label>
+		<form:label path="containerInfo" cssClass="fl-label">Container info (vendor, version, spec version)</form:label>
 	</p>
 	<p>
 		<form:checkbox path="ipAddress"> 
-		<form:label path="ipAddress">IP Address (used for geographical data)</form:label>
+		<form:label path="ipAddress" cssClass="fl-label">IP Address (used for geographical data)</form:label>
 	</p>
 	--%>
 	<h3>Sharing</h3>
@@ -84,7 +86,10 @@
 		target="_blank" alt="uPortal deployments list">http://www.jasig.org/uportal/deployments</a>.
 	</p>
 	
-	<p><form:checkbox path="shareInfo"/> It's OK to share my information</p>
+	<p>
+	   <form:checkbox path="shareInfo"/> 
+	   <form:label path="shareInfo" cssClass="fl-label"> It's OK to share my information</form:label>
+	</p>
 	
 	<p><input type="submit" class="button" name="_eventId_previewRegistration" value="Submit" /></p>
 	

@@ -6,7 +6,9 @@
 
 package org.jasig.portal.portlets.registerportal;
 
+import java.io.Serializable;
 import java.util.Map;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -16,7 +18,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortalRegistrationRequest {
+public class PortalRegistrationRequest implements Serializable {
     private String institutionName;
     private String deployerName;
     private String deployerAddress;
