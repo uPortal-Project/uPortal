@@ -9,6 +9,7 @@ package org.jasig.portal.portlets.registerportal;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -72,7 +73,7 @@ public class PortalRegistrationHelper {
             }
         }
         
-        final Map<String, Object> collectedData = this.portalDataCollator.getCollectedData(dataToCollect);
+        final Map<String, Properties> collectedData = this.portalDataCollator.getCollectedData(dataToCollect);
         registrationData.setCollectedData(collectedData);
         
         return registrationData;

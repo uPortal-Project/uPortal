@@ -8,6 +8,7 @@ package org.jasig.portal.portlets.registerportal;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -29,7 +30,7 @@ public class PortalRegistrationData implements Serializable {
     private String portalName;
     private String portalUrl;
     private boolean shareInfo = false;
-    private Map<String, Object> collectedData;
+    private Map<String, Properties> collectedData;
     
     /**
      * @return the institutionName
@@ -106,13 +107,13 @@ public class PortalRegistrationData implements Serializable {
     /**
      * @return the collectedData
      */
-    public Map<String, Object> getCollectedData() {
+    public Map<String, Properties> getCollectedData() {
         return this.collectedData;
     }
     /**
      * @param collectedData the collectedData to set
      */
-    public void setCollectedData(Map<String, Object> collectedData) {
+    public void setCollectedData(Map<String, Properties> collectedData) {
         this.collectedData = collectedData;
     }
     

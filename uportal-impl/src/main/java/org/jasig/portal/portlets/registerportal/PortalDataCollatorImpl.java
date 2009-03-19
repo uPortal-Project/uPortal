@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -19,19 +20,19 @@ import java.util.Set;
  * @version $Revision$
  */
 public class PortalDataCollatorImpl implements IPortalDataCollator {
-    private Map<String, IPortalDataCollector<?>> dataCollectors = Collections.emptyMap();
+    private Map<String, IPortalDataCollector> dataCollectors = Collections.emptyMap();
     
     /**
      * @param collectors The {@link IPortalDataCollector}s to get data from 
      */
-    public void setCollectors(Collection<IPortalDataCollector<?>> collectors) {
+    public void setCollectors(Collection<IPortalDataCollector> collectors) {
         if (collectors == null || collectors.isEmpty()) {
             this.dataCollectors = Collections.emptyMap();
         }
         else {
-            final Map<String, IPortalDataCollector<?>> dataCollectors = new LinkedHashMap<String, IPortalDataCollector<?>>();
+            final Map<String, IPortalDataCollector> dataCollectors = new LinkedHashMap<String, IPortalDataCollector>();
             
-            for (final IPortalDataCollector<?> dataCollector : collectors) {
+            for (final IPortalDataCollector dataCollector : collectors) {
                 dataCollectors.put(dataCollector.getKey(), dataCollector);
             }
             
@@ -42,19 +43,19 @@ public class PortalDataCollatorImpl implements IPortalDataCollator {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.registerportal.IPortalDataCollator#getCollectedData()
      */
-    public Map<String, Object> getCollectedData() {
+    public Map<String, Properties> getCollectedData() {
         return this.getCollectedData(this.dataCollectors.keySet());
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.registerportal.IPortalDataCollator#getCollectedData(java.util.Set)
      */
-    public Map<String, Object> getCollectedData(Set<String> keysToCollect) {
-        final Map<String, Object> collectedData = new LinkedHashMap<String, Object>();
+    public Map<String, Properties> getCollectedData(Set<String> keysToCollect) {
+        final Map<String, Properties> collectedData = new LinkedHashMap<String, Properties>();
         
         for (final String dataKey : keysToCollect) {
-            final IPortalDataCollector<?> portalDataCollector = this.dataCollectors.get(dataKey);
-            final Object data = portalDataCollector.getData();
+            final IPortalDataCollector portalDataCollector = this.dataCollectors.get(dataKey);
+            final Properties data = portalDataCollector.getData();
             collectedData.put(dataKey, data);
         }
         

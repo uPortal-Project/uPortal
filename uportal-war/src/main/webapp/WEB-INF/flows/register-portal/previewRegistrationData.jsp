@@ -12,27 +12,34 @@
 <h3>Organizational Information</h3>
 <ul class="fl-controls-right">
     <li>
-        Institution name: ${registrationData.institutionName}
+        Institution name: ${fn:escapeXml(registrationData.institutionName)}
     </li>
     <li>
-        Technical contact name: ${registrationData.deployerName}
+        Technical contact name: ${fn:escapeXml(registrationData.deployerName)}
     </li>
     <li>
-        Technical contact email address: ${registrationData.deployerAddress}
+        Technical contact email address: ${fn:escapeXml(registrationData.deployerAddress)}
     </li>
     <li>
-        Portal name (e.g. "MyPortal"): ${registrationData.portalName}
+        Portal name (e.g. "MyPortal"): ${fn:escapeXml(registrationData.portalName)}
     </li>
     <li>
-        Portal URL: ${registrationData.portalUrl}
+        Portal URL: ${fn:escapeXml(registrationData.portalUrl)}
     </li>
 </ul>
 
 <h3>System information</h3>
 <ul>
     <c:forEach var="dataEntry" items="${registrationData.collectedData}">
-        <li>
-            ${dataEntry.key}: ${dataEntry.value}
+        <li>${fn:escapeXml(dataEntry.key)}
+            <table>
+                <c:forEach var="valueEntry" items="${dataEntry.value}">
+                    <tr>
+                        <th>${fn:escapeXml(valueEntry.key)}</th>
+                        <th>${fn:escapeXml(valueEntry.value)}</th>
+                    </tr>
+                </c:forEach>
+            </table>
         </li>
     </c:forEach>
 </ul>

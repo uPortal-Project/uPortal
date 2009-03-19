@@ -7,6 +7,7 @@
 package org.jasig.portal.portlets.registerportal;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -24,10 +25,10 @@ public interface IPortalDataCollator {
     /**
      * Implementation gets all data the implementation knows how to collect
      */
-    public Map<String, Object> getCollectedData();
+    public Map<String, Properties> getCollectedData();
 
     /**
      * Implementation gets data for only the keys specified in the keysToCollect Set
      */
-    public Map<String, Object> getCollectedData(Set<String> keysToCollect);
+    public Map<String, Properties> getCollectedData(Set<String> keysToCollect);
 }

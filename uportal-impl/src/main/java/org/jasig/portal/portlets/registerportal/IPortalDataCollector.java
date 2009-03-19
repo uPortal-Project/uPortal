@@ -6,13 +6,15 @@
 
 package org.jasig.portal.portlets.registerportal;
 
+import java.util.Properties;
+
 /**
  * Used to get a single piece of data about the portal
  *
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortalDataCollector<T> {
+public interface IPortalDataCollector {
     /**
      * The key that identifies the data being retrieved. Will never be null and must
      * be immutable (subsiquent calls to the the method will always return the same key).
@@ -24,5 +26,5 @@ public interface IPortalDataCollector<T> {
     /**
      * @return The data, current as of this call.
      */
-    public T getData();
+    public Properties getData();
 }
