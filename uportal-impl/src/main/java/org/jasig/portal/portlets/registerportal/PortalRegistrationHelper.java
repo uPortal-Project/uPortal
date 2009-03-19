@@ -89,8 +89,8 @@ public class PortalRegistrationHelper {
     /**
      * @param portalRegistrationData Registration data to submit to backend service
      */
-    public void submitRegistration(PortalRegistrationData portalRegistrationData) {
+    public boolean submitRegistration(PortalRegistrationData portalRegistrationData) {
         this.logger.debug(portalRegistrationData);
-        this.portalDataSubmitter.submitPortalData(portalRegistrationData);
+        return this.portalDataSubmitter.submitPortalData(portalRegistrationData);
     }
 }

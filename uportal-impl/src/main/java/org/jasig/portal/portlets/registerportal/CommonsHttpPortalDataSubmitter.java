@@ -47,11 +47,31 @@ public class CommonsHttpPortalDataSubmitter implements IPortalDataSubmitter {
             final PostMethod post = new PostMethod(postUrl);
             
             //Add static parameters
-            post.addParameter("deployerAddress", portalRegistrationData.getDeployerAddress());
-            post.addParameter("deployerName", portalRegistrationData.getDeployerName());
-            post.addParameter("institutionName", portalRegistrationData.getInstitutionName());
-            post.addParameter("portalName", portalRegistrationData.getPortalName());
-            post.addParameter("portalUrl", portalRegistrationData.getPortalUrl());
+            final String deployerAddress = portalRegistrationData.getDeployerAddress();
+            if (deployerAddress != null) {
+                post.addParameter("deployerAddress", deployerAddress);
+            }
+            
+            final String deployerName = portalRegistrationData.getDeployerName();
+            if (deployerName != null) {
+                post.addParameter("deployerName", deployerName);
+            }
+            
+            final String institutionName = portalRegistrationData.getInstitutionName();
+            if (institutionName != null) {
+                post.addParameter("institutionName", institutionName);
+            }
+            
+            final String portalName = portalRegistrationData.getPortalName();
+            if (portalName != null) {
+                post.addParameter("portalName", portalName);
+            }
+            
+            final String portalUrl = portalRegistrationData.getPortalUrl();
+            if (portalUrl != null) {
+                post.addParameter("portalUrl", portalUrl);
+            }
+            
             post.addParameter("shareInfo", Boolean.toString(portalRegistrationData.isShareInfo()));
             
             //Add gathered data
@@ -61,7 +81,10 @@ public class CommonsHttpPortalDataSubmitter implements IPortalDataSubmitter {
                 
                 for (final Map.Entry<String, String> dataValueEntry : collectedDataEntry.getValue().entrySet()) {
                     final String valueKey = dataValueEntry.getKey();
-                    post.addParameter(dataKey + "_" + valueKey, dataValueEntry.getValue());
+                    final String value = dataValueEntry.getValue();
+                    if (value != null) {
+                        post.addParameter(dataKey + "_" + valueKey, value);
+                    }
                 }
             }
             

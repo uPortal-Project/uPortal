@@ -14,6 +14,8 @@ import java.util.Set;
 import org.jasig.portal.portlets.registerportal.IPortalDataCollector;
 
 /**
+ * Gathers JVM System Properties
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -25,6 +27,20 @@ public class JvmDataCollector implements IPortalDataCollector {
         this.propertiesToCollect.add("java.version");
         this.propertiesToCollect.add("java.vendor");
         this.propertiesToCollect.add("java.vendor.url");
+        this.propertiesToCollect.add("java.vm.specification.version");
+        this.propertiesToCollect.add("java.vm.specification.vendor");
+        this.propertiesToCollect.add("java.vm.specification.name");
+        this.propertiesToCollect.add("java.vm.version");
+        this.propertiesToCollect.add("java.vm.vendor");
+        this.propertiesToCollect.add("java.vm.name");
+        this.propertiesToCollect.add("java.specification.version");
+        this.propertiesToCollect.add("java.specification.vendor");
+        this.propertiesToCollect.add("java.specification.name");
+        this.propertiesToCollect.add("java.class.version");
+        this.propertiesToCollect.add("java.compiler");
+        this.propertiesToCollect.add("os.name");
+        this.propertiesToCollect.add("os.arch");
+        this.propertiesToCollect.add("os.version");
     }
     
     /**
