@@ -44,8 +44,9 @@
 	   <li style="list-style-type: none;">
 		   <form:checkbox path="shareInfo"/> 
 		   <form:label path="shareInfo" cssClass="fl-label">
-              It's OK to share my information (e.g. List deployment on
-              <a href="http://www.jasig.org/uportal/deployments" target="_blank" alt="uPortal deployments list">jasig.org</a>)
+              It's OK to include my deployment information on
+              <a href="http://www.jasig.org/uportal/deployments" target="_blank" alt="uPortal deployments list">jasig.org</a>.
+              Contact information will never be shared.
            </form:label>
         </li>
 	</ul>
