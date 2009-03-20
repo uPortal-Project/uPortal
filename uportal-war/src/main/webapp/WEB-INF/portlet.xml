@@ -51,6 +51,25 @@
         </portlet-info>
     </portlet>
     
+    <portlet>
+        <portlet-name>RegisterPortalPortlet</portlet-name>
+        <display-name xml:lang="en">Attribute Swapper Portlet</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/registerPortalContext.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Register Portal Portlet</title>
+        </portlet-info>
+    </portlet>
+    
     <portlet> 
         <portlet-name>ExitFragmentAdministration</portlet-name>  
         <portlet-class>org.danann.cernunnos.runtime.web.CernunnosPortlet</portlet-class>

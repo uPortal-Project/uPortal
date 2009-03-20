@@ -160,6 +160,27 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     public String getJdbcDriver() {
         return this.driverName;
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#getDatabaseProductName()
+     */
+    public String getDatabaseProductName() {
+        return this.databaseProductName;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#getDatabaseProductVersion()
+     */
+    public String getDatabaseProductVersion() {
+        return this.databaseProductVersion;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.rdbm.IDatabaseMetadata#getJdbcDriverVersion()
+     */
+    public String getJdbcDriverVersion() {
+        return this.driverVersion;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.rdbm.IDatabaseMetadata#getJdbcUrl()
@@ -335,7 +356,8 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
                 try {
                 	transactionTemplate
 							.execute(new TransactionCallbackWithoutResult() {
-								public void doInTransactionWithoutResult(
+								@Override
+                                public void doInTransactionWithoutResult(
 										TransactionStatus status) {
 									jdbcTemplate.getJdbcOperations().execute(
 											joinTestQuery);

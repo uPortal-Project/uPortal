@@ -13,6 +13,7 @@
           <value>50%</value>
         </structure-attribute>
         <channel unremovable="" immutable="" hidden="" fname="admin-feature"/>
+        <channel unremovable="" immutable="" hidden="" fname="RegisterPortal"/>
         <channel unremovable="" immutable="" hidden="" fname="AttributeSwapper"/>
         <channel unremovable="" immutable="" hidden="" fname="groupsmanager"/>
       </column>

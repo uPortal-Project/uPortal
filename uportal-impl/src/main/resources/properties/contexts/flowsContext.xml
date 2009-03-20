@@ -13,7 +13,11 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
            http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">           
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+           
+    <!-- Generic Web-Flow helper beans -->
+    <bean id="portletUrlFlowHelper" class="org.jasig.portal.portlets.flow.PortletUrlFlowHelper" />
+                      
     
     <!-- Beans for the person-lookup flow -->       
     <bean id="personLookupHelper" class="org.jasig.portal.portlets.lookup.PersonLookupHelperImpl">
@@ -38,6 +42,30 @@
     
     <!-- Beans for the identity-swapper flow -->
     <bean id="identitySwapperHelper" class="org.jasig.portal.portlets.swapper.IdentitySwapperHelperImpl" />
+    
+    
+    <!-- Beans for the register-portal flow -->
+    <bean id="portalRegistrationHelper" class="org.jasig.portal.portlets.registerportal.PortalRegistrationHelper">
+        <property name="portalDataCollator" ref="portalDataCollator" />
+        <property name="portalDataSubmitter" ref="portalDataSubmitter" />
+    </bean>
+    
+    <bean id="portalDataCollator" class="org.jasig.portal.portlets.registerportal.PortalDataCollatorImpl">
+        <property name="collectors">
+            <list>
+                <bean class="org.jasig.portal.portlets.registerportal.data.JvmDataCollector" />
+                <bean class="org.jasig.portal.portlets.registerportal.data.PortalVersionsCollector" />
+                <bean class="org.jasig.portal.portlets.registerportal.data.DatabaseInfoCollector">
+                    <property name="databaseMetadata" ref="PortalDB.metadata" />
+                </bean>
+                <bean class="org.jasig.portal.portlets.registerportal.data.ContainerInfoCollector" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="portalDataSubmitter" class="org.jasig.portal.portlets.registerportal.CommonsHttpPortalDataSubmitter">
+        <property name="submitUrl" value="http://developer.ja-sig.org/PortalRegistration/dataCollector/v1" />
+    </bean>
     
     
     <!-- Executes flows: the central entry point into the Spring Web Flow system -->
