@@ -73,14 +73,14 @@
     <xsl:template name="nav">
         <xsl:param name="position">top</xsl:param>
         <ul class="pager-nav pager-{$position}">
-            <li class="previous"><a href="#">&lt; previous</a></li>
+            <li class="previous"><a href="javascript:;">&lt; previous</a></li>
             <xsl:call-template name="navLink">
                 <xsl:with-param name="i">1</xsl:with-param>
                 <xsl:with-param name="max">
                     <xsl:value-of select="ceiling(count(rss/channel/item) div $perScreen)"/>
                 </xsl:with-param>
             </xsl:call-template>
-            <li class="next"><a href="#">next &gt;</a></li>
+            <li class="next"><a href="javascript:">next &gt;</a></li>
         </ul>
     </xsl:template>
     
@@ -89,7 +89,7 @@
         <xsl:param name="max" />
         <xsl:if test="$i &lt;= $max">
             <li value="{$i}" class="page-link">
-                <a href="#"><xsl:value-of select="$i"/></a>    
+                <a href="javascript:;"><xsl:value-of select="$i"/></a>    
             </li>
         </xsl:if>
         <xsl:if test="$i &lt;= $max">
