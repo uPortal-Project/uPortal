@@ -45,13 +45,15 @@
     <!-- If user is not authenticated insert login form. -->
     <xsl:template match="login-status">
     
-      <div id="portalLogin" class="block">
-        <div class="block-inner">
-        	<h2 class="block-title">Sign In</h2>
+      <div id="portalLogin" class="fl-widget">
+        <div class="fl-widget-inner">
+        	<div class="fl-widget-titlebar">
+        		<h2>Sign In</h2>
+          </div>
           <xsl:choose>
             <!-- CAS Login link -->
             <xsl:when test="$casLoginUrl!= ''">
-              <div id="portalCASLogin" class="block-content">
+              <div id="portalCASLogin" class="fl-widget-content">
                 <a id="portalCASLoginLink" href="{$casLoginUrl}" title="Sign In">
                   <span>Sign In <span class="via-cas">with CAS</span></span>
                 </a>
@@ -60,7 +62,7 @@
             </xsl:when>
             <!-- Username/password login form -->
             <xsl:otherwise>
-              <div id="portalLoginStandard" class="block-content">
+              <div id="portalLoginStandard" class="fl-widget-content">
                 <xsl:apply-templates/>
                 <form id="portalLoginForm" action="Login" method="post">
                   <input type="hidden" name="action" value="login"/>

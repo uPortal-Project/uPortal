@@ -90,11 +90,13 @@
    | This template renders portlet navigation when a portlet is focused.
   -->
   <xsl:template name="portlet.navigation">
-    <div id="portletNavigation" class="block">
-    	<div class="block-inner">
-      	<h2 class="block-title"><xsl:value-of select="$TOKEN[@name='PORTLET_NAVIGATION_TITLE']"/></h2>
-        <div class="block-content">
-        	<ul>
+    <div id="portletNavigation" class="fl-widget">
+    	<div class="fl-widget-inner">
+      	<div class="fl-widget-titlebar">
+      		<h2><xsl:value-of select="$TOKEN[@name='PORTLET_NAVIGATION_TITLE']"/></h2>
+        </div>
+        <div class="fl-widget-content">
+        	<ul class="fl-listmenu">
           	<li id="portletNavigationLinkHome">
             	<a href="{$HOME_ACTION_URL}" title="{$TOKEN[@name='HOME_LONG_LABEL']}">
               	<span>
@@ -106,7 +108,7 @@
           <xsl:for-each select="//navigation/tab">
             <xsl:variable name="TAB_POSITION" select="position()"/>
             <h3><xsl:value-of select="@name"/></h3>
-            <ul>
+            <ul class="fl-listmenu">
               <xsl:for-each select="tabChannel">
                 <li>
                   <a href="{$BASE_ACTION_URL}?uP_root={@ID}&amp;uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}" title="{@name}">  <!-- Navigation item link. -->

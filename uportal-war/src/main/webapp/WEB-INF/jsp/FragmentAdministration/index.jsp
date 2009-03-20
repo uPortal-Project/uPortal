@@ -10,18 +10,24 @@
 
 <portlet:defineObjects/>
 
-<div id="portalFragAdminList" class="block">
-    <div class="block-inner">
-        
-        <h2 class="block-title">Fragment Administration</h2>
-        <div class="block-content">
-          <!--<ul>
+<div id="portalFragAdminList" class="fl-widget">
+    <div class="fl-widget-inner">
+        <div class="fl-widget-titlebar">
+        	<h2 class="block-title">Fragment Administration</h2>
+        </div>
+        <div class="fl-widget-content">
+          <!-- Future version to use an unordered list and form submission via javascript.
+          <form method="POST" id="fragmentAdminForm" name="fragmentAdminForm" action="<portlet:actionURL><portlet:param name="action" value="becomeFragmentOwner"/></portlet:actionURL>">
+              <input type="hidden" id="fragmentOwner" name="impersonateUser" />
+          </form>
+          <ul class="fl-listmenu">
             <c:forEach items="${FRAGMENTS}" var="item">
-              <li><a href="Login?impersonateUser=${item.key}"><span>${item.value}</span></a></li>
+              <li><a id="${item.key}" href="#" title="Administer fragment ${item.value}"><span>${item.value}</span></a></li>
             </c:forEach>
-          </ul>-->
+          </ul>
+          -->
         
-        <!-- Renders a select dropdown.-->
+        <!-- Original form. Renders a select dropdown.-->
         <form method="POST" name="fragmentAdminForm" action="<portlet:actionURL><portlet:param name="action" value="becomeFragmentOwner"/></portlet:actionURL>">
             <select id="fragmentOwner" name="impersonateUser" title="Choose a fragment to edit">
                 <option value="NONE"> -- fragments -- </option>
@@ -36,3 +42,13 @@
     	</div>                
     </div>
 </div>
+<!-- Future version to use an unordered list and form submission via javascript.
+<script type="text/javascript">
+	$("#portalFragAdminList a")
+		.click(function(){
+			var linkID = $this.id;
+			impersonateUser.val() = linkID;
+			fragmentAdminForm.submit();
+		});
+</script>
+-->

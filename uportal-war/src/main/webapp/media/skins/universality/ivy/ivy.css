@@ -10,5 +10,11 @@
 @import url("ivy_base.min.css");
 @import url("ivy_jsr168.min.css");
 @import url("ivy_legacy.min.css");
+
+/* Default jqueryui css */
+@import url("/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css");
+
+/* uPortal jqueryui override css */
 @import url("jquery.min.css");
+
 /* @import url("my.min.css"); Add your CSS files here. */

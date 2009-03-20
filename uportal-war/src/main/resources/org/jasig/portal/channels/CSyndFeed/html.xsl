@@ -11,19 +11,18 @@
   <xsl:output indent="yes"/>
   
   <xsl:template match="error">
-    <div class="uportal-background-content">
+    <div class="portlet-msg-error">
       <xsl:value-of select="."/>
     </div>
   </xsl:template>
   
   <xsl:template match="news">
     
-    <div class="uportal-background-content">
-      <p class="uportal-channel-subtitle">
-
+    <div class="news-feed">
+    	<div class="news-source">
         <xsl:apply-templates select="image"/>
-        <!-- <a target="_blank" href="{link}"> --><xsl:value-of select="desc"/><!-- </a> -->
-      </p>
+        <p><xsl:value-of select="desc"/></p>
+      </div>
       <div class="news-items">
         <xsl:apply-templates select="items"/>
       </div>
@@ -32,25 +31,25 @@
 
   <xsl:template match="image">
     <a target="_blank" href="{link}">
-      <img src="{url}" alt="{description}" class="news-feed-img" style="float: right; border-style: none;"/>
+      <img src="{url}" alt="{description}" class="news-feed-img"/>
     </a>
   </xsl:template>
   
   <xsl:template match="items">
-    <ul style="clear:right;margin-left: 0px;">
+    <ul>
       <xsl:apply-templates select="item"/>
     </ul>
   </xsl:template>
   
   <xsl:template match="item">
-    <li class="uportal-channel-text" style="padding-bottom:1em;list-style-type:none;">
-      <a target="_blank" href="{link}" class="uportal-channel-subtitle-reversed"><xsl:value-of select="title"/></a>
-      <xsl:apply-templates select="description"/>
+    <li>
+      <a target="_blank" href="{link}" class="news-item-title"><xsl:value-of select="title"/></a>
+      <span class="news-item-excerpt"><xsl:apply-templates select="description"/></span>
     </li>
   </xsl:template>
   
   <xsl:template match="description">
-    <br/><xsl:apply-templates select="@*|node()" mode="copy"/>
+    <xsl:apply-templates select="@*|node()" mode="copy"/>
   </xsl:template>
   
   <xsl:template match="@*|node()" mode="copy">

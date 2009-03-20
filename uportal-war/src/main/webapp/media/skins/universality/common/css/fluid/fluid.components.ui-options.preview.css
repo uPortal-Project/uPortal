@@ -1,0 +1,5 @@
+.previewContent{font-size:13px;background:#e8ffea url(../images/uioptions/main_bg.png) no-repeat fixed 0 0;padding:0 10px;}
+.previewContent h1{margin:0;padding:5px 0 5px 0;}
+.previewContent p{padding:5px;}
+.previewContent img{float:right;margin:10px 0;}
+.previewContent table thead th{background-color:#fff;}

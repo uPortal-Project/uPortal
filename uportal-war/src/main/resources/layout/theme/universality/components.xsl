@@ -344,11 +344,13 @@
   -->
   <xsl:template name="administration.links">
   	<xsl:if test="upAuth:canRender($USER_ID, 'admin.navigation.links')">
-      <div id="portalAdminLinks" class="block">
-        <div class="block-inner">
-          <h2 class="block-title"><xsl:value-of select="$TOKEN[@name='ADMIN_LINKS_LABEL']"/></h2>
-          <div class="block-content">
-            <ul>
+      <div id="portalAdminLinks" class="fl-widget">
+        <div class="fl-widget-inner">
+        	<div class="fl-widget-titlebar">
+          	<h2><xsl:value-of select="$TOKEN[@name='ADMIN_LINKS_LABEL']"/></h2>
+          </div>
+          <div class="fl-widget-content">
+            <ul class="fl-listmenu">
               <xsl:if test="upAuth:canRender($USER_ID, 'admin.navigation.links')">
                 <li id="portalAdminLinksPortletAdmin">
                   <a href="{$BASE_ACTION_URL}?uP_fname=admin.navigation.links" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
@@ -376,11 +378,13 @@
   -->
   <xsl:template name="quicklinks">
   	<xsl:if test="count(/layout/navigation/descendant::tabChannel[@quicklink > 0]) > 0"> <!-- Write out markup only if one or more quicklinks exist. -->
-      <div id="portalQuicklinks" class="block">
-      	<div class="block-inner">
-        	<h2 class="block-title"><xsl:value-of select="$TOKEN[@name='QUICKLINKS_LABEL']"/></h2>
-        	<div class="block-content">
-            <ul>  <!-- Navigation list. -->
+      <div id="portalQuicklinks" class="fl-widget">
+      	<div class="fl-widget-inner">
+        	<div class="fl-widget-titlebar">
+        		<h2><xsl:value-of select="$TOKEN[@name='QUICKLINKS_LABEL']"/></h2>
+          </div>
+        	<div class="fl-widget-content">
+            <ul class="fl-listmenu">  <!-- Navigation list. -->
               <xsl:apply-templates select="/layout/navigation/descendant::tabChannel[@quicklink > 0]" mode="quicklink"> <!-- Selects from the XML only those portlets with the matching quicklink parameter. -->
                 <xsl:sort select="@quicklink" order="ascending" /> <!-- Sorts the subsequent array in ascending order by the value of the quicklink parameter. -->
               </xsl:apply-templates>
@@ -426,10 +430,12 @@
    | The list of search engines may be modified in the script file "search.js", which is located in webpages/media/skins/javascript.
   -->
   <xsl:template name="web.search">
-    <div id="webSearchContainer" class="block">
-      <div class="block-inner">
-      	<h2 class="block-title"><label for="webSearchInput"><xsl:value-of select="$TOKEN[@name='WEB_SEARCH_TITLE']"/></label></h2>
-        <div class="block-content">
+    <div id="webSearchContainer" class="fl-widget">
+      <div class="fl-widget-inner">
+      	<div class="fl-widget-titlebar">
+      		<h2><label for="webSearchInput"><xsl:value-of select="$TOKEN[@name='WEB_SEARCH_TITLE']"/></label></h2>
+        </div>
+        <div class="fl-widget-content">
 					<script language="JavaScript" type="text/javascript">
             var skinPath='<xsl:value-of select="$SKIN_PATH"/>/<xsl:value-of select="$SKIN"/>/';
           </script>
@@ -526,11 +532,13 @@
   -->
   <xsl:template name="customize.links">
       <xsl:if test="$AUTHENTICATED='true' and $USE_AJAX='true' and $AUTHENTICATED"> <!-- Currently, AJAX must be enabled for these links to function. -->
-        <div id="portalCustomizationLinks" class="block">
-        	<div class="block-inner">
-            <h2 class="block-title"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINKS_TITLE']"/></h2>
-            <div class="block-content">
-              <ul>
+        <div id="portalCustomizationLinks" class="fl-widget">
+        	<div class="fl-widget-inner">
+          	<div class="fl-widget-titlebar">
+            	<h2><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINKS_TITLE']"/></h2>
+            </div>
+            <div class="fl-widget-content">
+              <ul class="fl-listmenu">
                 <xsl:if test="count(//navigation/tab) > 0">
                   <li id="portalCustomizationLinksAddContent">
                     <a id="contentDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LONG_LABEL']}">
