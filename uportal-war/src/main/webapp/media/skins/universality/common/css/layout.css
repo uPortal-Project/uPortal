@@ -25,7 +25,9 @@
  */
 
 
-/* FSS Layout extensions and overrides */
+/* FSS Layout extensions and overrides
+ * ===================================
+ */
 
 .fl-col-flex10 {width: 10%;}
 .fl-col-flex20 {width: 20%;}
@@ -56,6 +58,10 @@
 .fl-col-mixed-300 .fl-col-flex-left {margin-left:300px;}
 .fl-col-mixed-300 .fl-col-flex-right {margin-right:300px;}
 
+
+/* uPortal layout and structure
+ * ============================
+ */
 
 /* common */
 .portal-pipe {padding:0 0.5em;}
@@ -89,12 +95,11 @@ table.purpose-layout td {margin:0; padding:0;}
 
 
 /* body */
-.dashboard #portalPageBodyTitleRow {padding-top:0.5em;}
 #portalPageBodyTitleRowContents {position:relative; padding:1em;} /* Sets this container as positioned to have other elements poisitioned relative to it. */
 .breadcrumb-separator {padding:0 0.5em;}
 #portalPageBodyTitleRow h1 {margin:0;}
 /* Columns */
-.portal-page-column-inner {padding-left:1em; padding-bottom:2em; min-height:100px;}
+.portal-page-column-inner {padding-top:2px; padding-left:1em; padding-bottom:2em; min-height:100px;}
 #portalPageBodyColumns .single .portal-page-column-inner, 
 #portalPageBodyColumns .right .portal-page-column-inner {padding-right:2em;}
 #portalPageBodyColumns .single .portal-page-column-inner, 
@@ -118,23 +123,18 @@ table.purpose-layout td {margin:0; padding:0;}
 .dashboard .portlet-controls .portlet-control {padding-right:1em;}
 .portlet-content {padding:1em;}
 
-
 /* footer */
 #portalPageFooter {padding-top:2em;}
 #portalPageFooterInner {padding:1em;}
 #portalProductAndVersion {margin-top:1em;}
 
-
 /* login */
 #portalLogin label {display:block; margin-bottom:0.3em;}
 #portalLogin input {margin-bottom:1em;}
 
-
 /* navigation */
 #portletNavigation ul,
 #portletNavigation li {margin:0; padding:0;}
-#portletNavigation li {margin-bottom:1px;}
-#portletNavigation a {display:block; padding:0.5em 1em 0.5em 2.1em;}
 /* subrow */
 #portalNavigationSubrow {padding:0.5em 0;}
 #portalNavigationSubrow ul,
@@ -169,28 +169,27 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigation .header #portalNavigationList a {padding:0.5em 2em;}
 #portalNavigation #portalNavigationList .portal-subnav-container a {padding:0.5em 1em 0.5em 2.1em;}*/
 
-
 /* Customization Links */
 /* 
  | When rendered in the Title Row (with the Page Title).
  | Turns the list into a row and positions it to the top right corner. 
 */
 #portalPageBodyTitleRow #portalCustomizationLinks {position:absolute; top:0; right:0; text-align:right; margin:0 0 0 250px;}
-#portalPageBodyTitleRow #portalCustomizationLinks h2,
-#portalPageBodyTitleRow #portalCustomizationLinks .block-content, 
-#portalPageBodyTitleRow #portalCustomizationLinks ul, 
-#portalPageBodyTitleRow #portalCustomizationLinks li {display:inline;}
+#portalPageBodyTitleRow .fl-widget {margin:0;}
+#portalPageBodyTitleRow .fl-widget .fl-widget-titlebar,
+#portalPageBodyTitleRow .fl-widget .fl-widget-titlebar h2, 
+#portalPageBodyTitleRow .fl-widget .fl-widget-content, 
+#portalPageBodyTitleRow #portalCustomizationLinks ul,
+#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu,
+#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu li,
+#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu a {display:inline; border:none;}
 #portalPageBodyTitleRow #portalCustomizationLinks h2 {margin:0; padding-right:1em;}
-#portalPageBodyTitleRow #portalCustomizationLinks ul {margin:0;}
-#portalPageBodyTitleRow #portalCustomizationLinks li {padding-right:5px;}
-#portalPageBodyTitleRow #portalCustomizationLinks a {padding:2px 5px 2px 20px;}
-
+#portalPageBodyTitleRow #portalCustomizationLinks ul.fl-listmenu {margin:0;}
 
 /* quicklinks */	
 #portalQuicklinks {}
 #portalQuicklinks ul, 
 #portalQuicklinks li {margin:0; padding:0;}
-
 
 /* web search */
 #webSearchContainer form {padding:1em;}
@@ -219,3 +218,42 @@ table.purpose-layout td {margin:0; padding:0;}
 .news-items li {list-style:none;}
 .news-items .news-item-excerpt {display:block; padding-top:0.3em;}
 .news-source p {padding:1em;}
+
+/* Groups Manager Channel */
+.groupmgr-search select,
+.groupmgr-search input,
+.groupmgr-search label {margin-right:0.5em;}
+#grpCommandArg {margin-top:1em;}
+.groupmgr-entity,
+.groupmgr-group {padding:0.3em 1em; margin-bottom:0.5em; border-bottom:1px solid #ccc;}
+.groupmgr-group .uportal-channel-table-row-even {background-color:transparent;}
+.groupmgr-entity strong {color:#666;}
+.groupmgr-entity strong,
+.groupmgr-group strong {padding-right:1em;}
+.groupmgr-entity table {margin:1em 0; border:1px solid #ccc;}
+.groupmgr-entity table th {border:1px solid #ccc; background-color:#eee; color:#666; font-size:85%; padding:0.2em 1em;}
+.groupmgr-entity table td {border:1px solid #ccc; padding:0.5em 1em;}
+.groupmgr-tree-hierarchy-line {background:transparent url(../../../icons/tree_bullet.png) top left repeat-y;}
+.groupmgr-edit-group,
+.groupmgr-close-group,
+.groupmgr-done-editing,
+.groupmgr-delete-group {padding-right:1em;}
+.groupmgr-show-info,
+.groupmgr-hide-info,
+.groupmgr-remove-member {padding-left:1em;}
+.groupmgr-edit-group img,
+.groupmgr-close-group img,
+.groupmgr-show-info img,
+.groupmgr-done-editing img,
+.groupmgr-delete-group img,
+.groupmgr-remove-member img,
+.groupmgr-hide-info img {padding-right:0.3em;}
+.groupmgr-edit-group,
+.groupmgr-close-group,
+.groupmgr-show-info,
+.groupmgr-done-editing,
+.groupmgr-delete-group,
+.groupmgr-remove-member,
+.groupmgr-hide-info {text-decoration:none;}
+.groupmgr-right-pane td label {display:block; text-align:right;}
+.groupmgr-right-pane input {margin-right:0.5em;}

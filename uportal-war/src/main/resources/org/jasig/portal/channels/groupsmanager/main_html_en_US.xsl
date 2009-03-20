@@ -416,7 +416,7 @@
               
               <xsl:if test="(($mode='edit') or ($mode='members')) and ((../@canManageMembers='true') or ($grpServantMode='true'))">
               	<a class="groupmgr-remove-member" href="javascript:grpRemoveMember('{$baseActionURL}?grpCommand=Remove&amp;grpCommandArg=parent.{parent::group/@id}|child.{@id}','{@displayName}','{parent::group/RDF/Description/title}');">
-              		<img src="{$famfamfamBase}/cross.gif" border="0" alt="Remove Member" title="Remove Member"/>Remove Member
+              		<img src="{$famfamfamBase}/cross.png" border="0" alt="Remove Member" title="Remove Member"/>Remove Member
               	</a>
               </xsl:if>
               

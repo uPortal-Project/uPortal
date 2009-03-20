@@ -31,11 +31,6 @@
 .fl-theme-uportal3 .groupmgr-two-pane {border:2px solid #336699;}
 .fl-theme-uportal3 .groupmgr-left-pane {padding:1em; background-color:#e2e8e7;}
 .fl-theme-uportal3 .groupmgr-right-pane {padding:1em 2em; background-color:#fff;}
-.fl-theme-uportal3 .groupmgr-search select,
-.fl-theme-uportal3 .groupmgr-search input,
-.fl-theme-uportal3 .groupmgr-search label {margin-right:0.5em;}
-.fl-theme-uportal3 #grpCommandArg {margin-top:1em;}
-.fl-theme-uportal3 .groupmgr-tree-hierarchy-line {background:transparent url(../../icons/tree_bullet.png) top left repeat-y;}
 
 /* CSyndFeed Channel - RSS */
 .fl-theme-uportal3 .news-source p {border-bottom:1px solid #ccc;}

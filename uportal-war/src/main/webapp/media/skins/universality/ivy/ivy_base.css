@@ -33,6 +33,11 @@
  * YUI CSS Reset, CSS Base, and CSS Fonts. 
  */
 
+	html
+	{
+		background-color: #E6EEFB;
+	}
+	
 	body
 	{
 		text-align: left;
@@ -223,27 +228,41 @@
 		font-family: Georgia,"Times New Roman",Times,serif;
 		font-weight: normal;
 	}
+	
+	h1#portalPageBodyTitle 
+	{
+		border: none;
+	}
 
 	#portalPageBodyTitleRow #portalCustomizationLinks
 	{
-		padding: 0.5em 0 0.5em 1em;
+		padding: 0.5em 1em;
 		font-size: 80%;
 		color: #293B5A;
-		border-left: 2px solid #ccccff;
-		border-bottom: 2px solid #ccccff;
+		background: #9999cc url("images/tab_selected.gif") repeat-x;
+		border-left: 1px solid #4c5d82;
+		border-bottom: 1px solid #4c5d82;
 	}
 	
-	#portalPageBodyTitleRow #portalCustomizationLinks a
+	#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu
 	{
-	    text-decoration:none;
-        color: #293B5A;
+		padding:0.2em 0.5em;
+		background-color: #fff;
+		color:#ccc;
 	}
 	
-	#portalPageBodyTitleRow #portalCustomizationLinks li 
+	#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu a
 	{
-		list-style: none;
+		text-decoration:none;
 	}
 	
+	#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu a:hover
+	{
+		color:#39f;
+	}
+
+	
+	/*
 	#portalCustomizationLinksAddContent a
 	{
 		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_add.png") no-repeat;
@@ -263,6 +282,7 @@
 	{
 		background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/tab_add.png") no-repeat;
 	}
+	*/
 	
 	#changeColumns tr td
 	{
@@ -320,19 +340,23 @@
 		padding-bottom: 5px;
 	}
 	
+	.focused .portlet-toolbar
+	{
+		display:none;
+	}
+	
 	.portlet-controls
 	{
 		background-color: transparent;
 		padding-left: 10px;
 		font-size: 16px;
 	}
-
-    .portlet-controls .portlet-control
-    {
-        margin-left: 4px;
-        height: 16px;
-        width: 16px;
-    }
+	
+	.portlet-controls .portlet-control
+	{
+			height: 16px;
+			width: 16px;
+	}
 
 	.portlet-controls .help 
 	{
@@ -347,7 +371,7 @@
 	.portlet-controls .edit 
 	{
 		background: url("images/edit.gif") no-repeat;
-		padding-right: 30px;
+		width: 30px;
 	}
 	
 	.portlet-controls .print 
@@ -746,7 +770,6 @@
 .orderable-hover{cursor:move;}
 .orderable-dragging{filter:alpha(opacity=50); opacity:.5;}
 .orderable-dragging-mouse{display:none;}
-.orderable-selected {border:1px dotted #999}
 .orderable-avatar {width:auto; filter:alpha(opacity=50); opacity:.5;}
 div .orderable-drop-marker{height:200px !important; background-color: #99FF99; border:1px dashed #00CC00; margin:1em 0em;}
 .orderable-avatar-clone {height:200px; width:400px; filter:alpha(opacity=60); opacity:.6;}
@@ -820,7 +843,7 @@ div .orderable-drop-marker{height:10px !important; background-color:#fa7019;}
 
 .fl-theme-ivy .portlet-controls {margin: 4px 5px 0px 0px; padding: 0; float: right;}
    
-.fl-theme-ivy .portlet-controls .portlet-control{display: block; float: left; margin: 0; padding: 0;}
+.fl-theme-ivy .portlet-controls .portlet-control{display: block; float: left; margin: 0; padding: 0; padding-left:2px;}
 
 /* Fluid pager component styles */
 .fl-theme-ivy .pager-top .disabled,
@@ -832,4 +855,7 @@ div .orderable-drop-marker{height:10px !important; background-color:#fa7019;}
 .fl-theme-ivy ul.pager-top li,
 .fl-theme-ivy ul.pager-bottom li {list-style-type:none; display:inline; padding:5px}
 
+/* Supress focus outline except for portlets */
 :focus{outline-width:0px;}
+.fl-theme-ivy .orderable-selected:focus,
+.fl-theme-ivy .orderable-dragging:focus {outline:2px solid #39f;}

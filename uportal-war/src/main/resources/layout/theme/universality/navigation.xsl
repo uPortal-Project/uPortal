@@ -108,7 +108,7 @@
           <xsl:for-each select="//navigation/tab">
             <xsl:variable name="TAB_POSITION" select="position()"/>
             <h3><xsl:value-of select="@name"/></h3>
-            <ul>
+            <ul class="fl-listmenu">
               <xsl:for-each select="tabChannel">
                 <li>
                   <a href="{$BASE_ACTION_URL}?uP_root={@ID}&amp;uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}" title="{@name}">  <!-- Navigation item link. -->
