@@ -54,9 +54,9 @@
                                         <choose>
                                             <when test="${crn(is-user-included.crn)}">
                                                 <append-node>
-                                                    <child>
+                                                    <principal>
                                                         <literal>${USER_NAME}</literal>
-                                                    </child>
+                                                    </principal>
                                                 </append-node>
                                             </when>
                                             <otherwise>
