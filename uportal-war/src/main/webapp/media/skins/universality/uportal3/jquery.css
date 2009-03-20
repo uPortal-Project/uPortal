@@ -4,4 +4,5 @@
 ------------------------------------ 
 */
 
-.ui-widget {font-size: 1em;}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button, 
+.ui-widget {font-size: 1em; font-family:arial,helvetica,clean,sans-serif;}
