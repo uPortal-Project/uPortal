@@ -5,3 +5,6 @@
 */
 
 .ui-widget {font-size: 1em;}
+
+/* jQuery tooltip */
+#tooltip {background-color: #fffbbf; color: #344461; border: thin solid #b1c6f2;}
