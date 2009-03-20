@@ -52,10 +52,10 @@
 	</p>
     <ul>
         <c:forEach var="dataEntry" items="${registrationRequest.dataToSubmit}">
-            <li>
+            <li style="list-style-type: none;">
                 <spring:message var="dataDisplayName" text="${dataEntry.key}" code="data.${dataEntry.key}" />
                 <form:checkbox path="dataToSubmit['${dataEntry.key}']" value="true"/> 
-                <form:label path="dataToSubmit['${dataEntry.key}']" cssClass="fl-label">${dataDisplayName}</form:label>
+                <form:label path="dataToSubmit['${dataEntry.key}']" cssClass="fl-label"> ${dataDisplayName}</form:label>
             </li>
         </c:forEach>
     </ul>
@@ -91,11 +91,13 @@
 		target="_blank" alt="uPortal deployments list">http://www.jasig.org/uportal/deployments</a>.
 	</p>
 	
-	<p>
-	   <form:checkbox path="shareInfo"/> 
-	   <form:label path="shareInfo" cssClass="fl-label"> It's OK to share my information</form:label>
-	</p>
+	<ul>
+	   <li style="list-style-type: none;">
+		   <form:checkbox path="shareInfo"/> 
+		   <form:label path="shareInfo" cssClass="fl-label"> It's OK to share my information</form:label>
+        </li>
+	</ul>
 	
-	<p><input type="submit" class="button" name="_eventId_previewRegistration" value="Submit" /></p>
+	<p><input type="submit" name="_eventId_previewRegistration" value="Submit" class="portlet-form-button" /></p>
 	
 </form:form>

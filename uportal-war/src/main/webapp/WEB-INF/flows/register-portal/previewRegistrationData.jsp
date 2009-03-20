@@ -7,42 +7,46 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<h2>The following information will be submitted to Jasig</h2>
+<h1>Registration Preview</h1>
 
-<h3>Organizational Information</h3>
-<ul class="fl-controls-right">
-    <li>
-        Institution name: ${fn:escapeXml(registrationData.institutionName)}
-    </li>
-    <li>
-        Technical contact name: ${fn:escapeXml(registrationData.deployerName)}
-    </li>
-    <li>
-        Technical contact email address: ${fn:escapeXml(registrationData.deployerAddress)}
-    </li>
-    <li>
-        Portal name (e.g. "MyPortal"): ${fn:escapeXml(registrationData.portalName)}
-    </li>
-    <li>
-        Portal URL: ${fn:escapeXml(registrationData.portalUrl)}
-    </li>
-</ul>
+<p>The following information will be submitted to Jasig:</p>
 
-<h3>System information</h3>
-<ul>
-    <c:forEach var="dataEntry" items="${registrationData.collectedData}">
-        <li>${fn:escapeXml(dataEntry.key)}
-            <table>
-                <c:forEach var="valueEntry" items="${dataEntry.value}">
-                    <tr>
-                        <th>${fn:escapeXml(valueEntry.key)}</th>
-                        <td>${fn:escapeXml(valueEntry.value)}</td>
-                    </tr>
-                </c:forEach>
-            </table>
-        </li>
-    </c:forEach>
-</ul>
+<h2>Organizational Information</h2>
+<table>
+    <tr>
+        <th>Institution name:</th> 
+        <td>${fn:escapeXml(registrationData.institutionName)}</td>
+    </tr>
+    <tr>
+        <th>Technical contact name:</th> 
+        <td>${fn:escapeXml(registrationData.deployerName)}</td>
+    </tr>
+    <tr>
+        <th>Technical contact email address:</th> 
+        <td>${fn:escapeXml(registrationData.deployerAddress)}</td>
+    </tr>
+    <tr>
+        <th>Portal name (e.g. "MyPortal"):</th> 
+        <td>${fn:escapeXml(registrationData.portalName)}</td>
+    </tr>
+    <tr>
+        <th>Portal URL:</th> 
+        <td>${fn:escapeXml(registrationData.portalUrl)}</td>
+    </tr>
+</table>
+
+<h2>System information</h2>
+<c:forEach var="dataEntry" items="${registrationData.collectedData}">
+    <h4>${fn:escapeXml(dataEntry.key)}</h4>
+    <table>
+        <c:forEach var="valueEntry" items="${dataEntry.value}">
+            <tr>
+                <th>${fn:escapeXml(valueEntry.key)}</th>
+                <td>${fn:escapeXml(valueEntry.value)}</td>
+            </tr>
+        </c:forEach>
+    </table>
+</c:forEach>
 
 <p>
     Your deployment will <c:if test="${!registrationData.shareInfo}">not </c:if>be added to the uPortal deployment list:
@@ -53,10 +57,10 @@
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="editRegistration" />
 </portlet:renderURL>
-<a href="${editRegistrationUrl}">Change Registration Data</a><br/>
+<a href="${editRegistrationUrl}" class="portlet-form-button">Edit Data</a>
 
 <portlet:actionURL var="submitRegistrationUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="submitRegistration" />
 </portlet:actionURL>
-<a href="${submitRegistrationUrl}">Submit Registration</a><br/>
+<a href="${submitRegistrationUrl}" class="portlet-form-button">Submit Registration</a>
