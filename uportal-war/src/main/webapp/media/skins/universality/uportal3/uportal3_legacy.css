@@ -39,14 +39,14 @@
 /* Forms */
 .uportal-label {}
 .uportal-input-text {}
-.uportal-button {background:#000 url(images/btn_bkd.gif) top left repeat-x; border:1px solid #000; color:#333; font-weight:bold; padding:0 0.5em;}
-.uportal-button:hover {background-position:0 -200px; cursor:pointer;}
+.uportal-button {padding:0.2em 1em; background:#336699 url(images/button_bkd_flat.png) top left repeat-x; border:1px solid #000; color:#fff; font-size:85%; font-weight:bold;}
+.uportal-button:hover {background-color:#7a9e0d; cursor:pointer;}
 
 /* Messages */
 .uportal-channel-error, 
-p.uportal-channel-error {padding:1em 1em 1em 3em; border:2px solid #cc0000; color:#f00; background:#ffeeee url(../../icons/stop.png) 1em 1em no-repeat;}
+p.uportal-channel-error {padding:1em 1em 1em 3em; border:2px solid #cc0000; color:#f00; background:#ffeeee url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/stop.png) 1em 1em no-repeat;}
 .uportal-channel-warning,
-p.uportal-channel-warning {padding:1em 1em 1em 3em; border:2px solid #FF6600; color:#000; background:#FFCC66 url(../../icons/error.png) 1em 1em no-repeat;}
+p.uportal-channel-warning {padding:1em 1em 1em 3em; border:2px solid #FF6600; color:#000; background:#FFCC66 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/error.png) 1em 1em no-repeat;}
 
 /* Tables */
 .uportal-channel-table-caption {font-size:80%; color:#999;}

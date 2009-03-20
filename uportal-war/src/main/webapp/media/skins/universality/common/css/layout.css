@@ -25,33 +25,36 @@
  */
 
 
-/* FSS Layout Overrides */
-/*
-	Removes padding and margin compensations for padding.
-*/
-.fl-theme-uportal3 .fl-col-mixed .fl-col-fixed {width:200px;}
-.fl-theme-uportal3 .fl-col-mixed .fl-col-flex-left {margin-left:200px;}
-.fl-theme-uportal3 .fl-col-mixed .fl-col-flex-right {margin-right:200px;}
+/* FSS Layout extensions and overrides */
 
-.fl-theme-uportal3 .fl-col-mixed-100 .fl-col-fixed {width:100px;}
-.fl-theme-uportal3 .fl-col-mixed-100 .fl-col-flex-left {margin-left:100px;}
-.fl-theme-uportal3 .fl-col-mixed-100 .fl-col-flex-right {margin-right:100px;}
+.fl-col-flex10 {width: 10%;}
+.fl-col-flex20 {width: 20%;}
+.fl-col-flex25 {width: 25%;}
+.fl-col-flex30 {width: 30%;}
+.fl-col-flex33,
+.fl-col-flex34 {width: 33.33%;}
+.fl-col-flex40 {width: 40%;}
+.fl-col-flex50 {width: 50%;}
+.fl-col-flex60 {width: 60%;}
+.fl-col-flex66,
+.fl-col-flex67 {width: 66.66%;}
+.fl-col-flex75 {width: 75%;}
+.fl-col-flex80 {width: 80%;}
+.fl-col-flex90 {width: 90%;}
 
-.fl-theme-uportal3 .fl-col-mixed-150 .fl-col-fixed {width:150px;}
-.fl-theme-uportal3 .fl-col-mixed-150 .fl-col-flex-left {margin-left:150px;}
-.fl-theme-uportal3 .fl-col-mixed-150 .fl-col-flex-right {margin-right:150px;}
-
-.fl-theme-uportal3 .fl-col-mixed-200 .fl-col-fixed {width:200px;}
-.fl-theme-uportal3 .fl-col-mixed-200 .fl-col-flex-left {margin-left:200px;}
-.fl-theme-uportal3 .fl-col-mixed-200 .fl-col-flex-right {margin-right:200px;}
-
-.fl-theme-uportal3 .fl-col-mixed-250 .fl-col-fixed {width:250px;}
-.fl-theme-uportal3 .fl-col-mixed-250 .fl-col-flex-left {margin-left:250px;}
-.fl-theme-uportal3 .fl-col-mixed-250 .fl-col-flex-right {margin-right:250px;}
-
-.fl-theme-uportal3 .fl-col-mixed-300 .fl-col-fixed {width:300px;}
-.fl-theme-uportal3 .fl-col-mixed-300 .fl-col-flex-left {margin-left:300px;}
-.fl-theme-uportal3 .fl-col-mixed-300 .fl-col-flex-right {margin-right:300px;}
+/* Removes padding and margin compensations for padding. */
+.fl-col-mixed .fl-col-flex-left {margin-left:200px;}
+.fl-col-mixed .fl-col-flex-right {margin-right:200px;}
+.fl-col-mixed-100 .fl-col-flex-left {margin-left:100px;}
+.fl-col-mixed-100 .fl-col-flex-right {margin-right:100px;}
+.fl-col-mixed-150 .fl-col-flex-left {margin-left:150px;}
+.fl-col-mixed-150 .fl-col-flex-right {margin-right:150px;}
+.fl-col-mixed-200 .fl-col-flex-left {margin-left:200px;}
+.fl-col-mixed-200 .fl-col-flex-right {margin-right:200px;}
+.fl-col-mixed-250 .fl-col-flex-left {margin-left:250px;}
+.fl-col-mixed-250 .fl-col-flex-right {margin-right:250px;}
+.fl-col-mixed-300 .fl-col-flex-left {margin-left:300px;}
+.fl-col-mixed-300 .fl-col-flex-right {margin-right:300px;}
 
 
 /* common */
@@ -89,7 +92,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .dashboard #portalPageBodyTitleRow {padding-top:0.5em;}
 #portalPageBodyTitleRowContents {position:relative; padding:1em;} /* Sets this container as positioned to have other elements poisitioned relative to it. */
 .breadcrumb-separator {padding:0 0.5em;}
-#portalPageBody h1 {margin:0;}
+#portalPageBodyTitleRow h1 {margin:0;}
 /* Columns */
 .portal-page-column-inner {padding-left:1em; padding-bottom:2em; min-height:100px;}
 #portalPageBodyColumns .single .portal-page-column-inner, 
@@ -123,7 +126,6 @@ table.purpose-layout td {margin:0; padding:0;}
 
 
 /* login */
-#portalLogin {padding:1em;}
 #portalLogin label {display:block; margin-bottom:0.3em;}
 #portalLogin input {margin-bottom:1em;}
 
@@ -203,8 +205,9 @@ table.purpose-layout td {margin:0; padding:0;}
 #tooltip {position: absolute; z-index: 3000; opacity: 0.85; max-width: 400px; padding: 4px;}
 
 /* Fragment Administration */
+#fragmentAdminForm {margin:0; padding:0;}
 #portalFragAdminExit h2 {margin:0; padding:0.5em 1em 0em 1em;}
-#portalFragAdminExit form {margin:0em; padding:0 1em 1em 1em;}
+#portalFragAdminExit form {margin:0; padding:0 1em 1em 1em;}
 #portalFragAdminExit #exitFragment {margin-left:1em; padding:0.3em 1em;}
 
 /* Portlet Navigation */

@@ -183,22 +183,14 @@
               	<xsl:choose>
                   <xsl:when test="$PORTAL_VIEW='focused'"> <!-- Focused View -->
                     <xsl:choose>
-                      <xsl:when test="$USE_SIDEBAR_FOCUSED='true'">
-                        fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH_FOCUSED" />
-                      </xsl:when>
-                      <xsl:otherwise>
-                        fl-col-flex
-                      </xsl:otherwise>
+                      <xsl:when test="$USE_SIDEBAR_FOCUSED='true'">fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH_FOCUSED" /></xsl:when>
+                      <xsl:otherwise>fl-col-flex</xsl:otherwise>
                     </xsl:choose>
                   </xsl:when>
                   <xsl:otherwise> <!-- Dashboard View -->
                     <xsl:choose>
-                      <xsl:when test="$USE_SIDEBAR='true'">
-                        fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH" />
-                      </xsl:when>
-                      <xsl:otherwise>
-                        fl-col-flex<xsl:value-of select="$COLUMNS" />
-                      </xsl:otherwise>
+                      <xsl:when test="$USE_SIDEBAR='true'">fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH" /></xsl:when>
+                      <xsl:otherwise>fl-col-flex<xsl:value-of select="$COLUMNS" /></xsl:otherwise>
                     </xsl:choose>
                   </xsl:otherwise>
                 </xsl:choose>
@@ -207,12 +199,8 @@
               <xsl:otherwise> <!-- Guest View -->
               
                 <xsl:choose>
-                  <xsl:when test="$USE_SIDEBAR_GUEST='true'">
-                    fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH_GUEST" />
-                  </xsl:when>
-                  <xsl:otherwise>
-                    fl-col-flex<xsl:value-of select="$COLUMNS" />
-                  </xsl:otherwise>
+                  <xsl:when test="$USE_SIDEBAR_GUEST='true'">fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH_GUEST" /></xsl:when>
+                  <xsl:otherwise>fl-col-flex<xsl:value-of select="$COLUMNS" /></xsl:otherwise>
                 </xsl:choose>
                 
               </xsl:otherwise>

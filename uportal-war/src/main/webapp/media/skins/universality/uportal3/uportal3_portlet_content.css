@@ -13,8 +13,9 @@
  */
 
 /* Tables */
-/* Normal data table styles */
-.fl-theme-uportal3 td {border-color:#999;}
+/* Normal data table styles
+.fl-theme-uportal3 td {border-color:#999;} */
+.fl-theme-uportal3 td {border:none;}
 .fl-theme-uportal3 th {border-color:#336699; background-color:#98b6c1;}
 
 /* Add the "purpose-layout" class to any table you are using for layout purposes. */
