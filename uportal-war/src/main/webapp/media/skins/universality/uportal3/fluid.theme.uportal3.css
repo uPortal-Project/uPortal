@@ -195,6 +195,11 @@
 .fl-theme-uportal3 #portalLogin a#portalLoginErrorForgot {background-color:transparent;}
 .fl-theme-uportal3 #portalLogin a#portalLoginErrorForgot:hover {background-color:#fff; color:#000;}
 
+/* Ajax Menus */
+.fl-theme-uportal3 #changeColumns tr td { text-align: center; }
+.fl-theme-uportal3 #changeColumns img { vertical-align: middle; padding:3px; }
+
+
 /* Fragment Administration */
 .fl-theme-uportal3 #portalFragAdminExit {border-bottom:1px solid #ff6600;}
 .fl-theme-uportal3 #portalFragAdminExit h2 {color:#ff6600;}

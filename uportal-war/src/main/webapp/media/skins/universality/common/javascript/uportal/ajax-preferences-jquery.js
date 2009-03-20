@@ -78,11 +78,11 @@
 		};
 		
 		var initializeContentAddingMenu = function() {
-			$("#contentAddingDialog").dialog({height:500, width:550, modal:true});
+            $("#channelAddingTabs").tabs();
+			$("#contentAddingDialog").dialog({ width:550, modal:true});
 			$("#contentDialogLink")
 				.unbind('click', initializeContentAddingMenu)
 				.click(function(){$("#contentAddingDialog").dialog('open');});
-			$("#channelAddingTabs").tabs();
 			$("#channelAddingTabs").channelbrowser({
 				onDataLoad: function() {
 			   		$("#channelLoading").css("display", "none");
@@ -106,7 +106,7 @@
 		};
 		
 		var initializeFocusedContentMenu = function() {
-			$("#focusedContentAddingDialog").dialog({width:500, modal:true});
+			$("#focusedContentAddingDialog").dialog({ width:500, modal:true});
 			$("#focusedContentDialogLink")
 				.unbind('click', initializeFocusedContentMenu)
 				.click(function(){$("#focusedContentAddingDialog").dialog('open');});
@@ -124,7 +124,7 @@
 			if ($("#changeColumns").find("input:checked").length == 0) {
 			   $("#changeColumns").find("tr:eq(1)").find("td:eq(" + (settings.columnCount-1) + ")").find("input").attr("checked", true).attr("defaultChecked","defaultChecked");
 			}
-			$("#pageLayoutDialog").dialog({height:300, width:400, modal:true });
+			$("#pageLayoutDialog").dialog({ width:400, modal:true });
 		
 			$("#layoutDialogLink")
 				.unbind('click', initializeLayoutMenu)
@@ -133,8 +133,6 @@
 				.unbind('click', initializeLayoutMenu)
 				.click(function(){$("#pageLayoutDialog").dialog('open');});
 				
-		    $("#pageLayoutDialog").parent().parent()
-		       .css("height", $("#pageLayoutDialog").parent().height() + 20);
 		    $("#pageLayoutDialog form").submit(function(){return updatePage(this);});
 		
 		};
@@ -396,7 +394,7 @@
 						var span = $(document.createElement("div")).append(
 						    $(document.createElement("span"))
 								.append(input)
-								.append(document.createTextNode($(this).children("skin-name").text()))
+								.append(document.createTextNode(" " + $(this).children("skin-name").text()))
 								.addClass("portlet-form-field-label")
 							);
 						skinMenu.append(span);
