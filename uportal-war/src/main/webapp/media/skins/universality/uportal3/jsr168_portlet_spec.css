@@ -53,6 +53,9 @@
 .portlet-form-input-field {}
 .portlet-form-button {padding:0.2em 1em; background:#336699 url(images/button_bkd_flat.png) top left repeat-x; border:1px solid #000; color:#fff; font-size:85%; font-weight:bold;}
 .portlet-form-button:hover {background-color:#7a9e0d; cursor:pointer;}
+.fl-theme-uportal3 a.portlet-form-button,
+.fl-theme-uportal3 a.portlet-form-button:hover,
+.fl-theme-uportal3 a.portlet-form-button:visited { color:#ffffff; font-weight:bold; text-decoration: none; padding:0.2em 1em; }
 .portlet-icon-label {}
 .portlet-dlg-icon-label {}
 .portlet-form-field-label {}
