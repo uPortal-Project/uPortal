@@ -48,10 +48,8 @@
                     <with-attribute key="USER_NAME" value="${MEMBER_KEY}">
                         <choose>
                             <when test="${crn(is-user-included.crn)}">
-                                <append-node>
-                                    <child>
-                                        <literal>${USER_NAME}</literal>
-                                    </child>
+                                <append-node parent="${singleNode(children)}">
+                                    <literal>${USER_NAME}</literal>
                                 </append-node>
                             </when>
                             <otherwise>
