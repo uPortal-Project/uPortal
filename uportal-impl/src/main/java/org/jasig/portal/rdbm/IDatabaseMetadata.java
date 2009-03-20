@@ -68,11 +68,26 @@ public interface IDatabaseMetadata {
      * @return SQL TimeStamp or "NULL" if date is null.
      */
     public String sqlTimeStamp(Date date);
+
+    /**
+     * @return Database Name
+     */
+    public String getDatabaseProductName();
+
+    /**
+     * @return Database Version
+     */
+    public String getDatabaseProductVersion();
     
     /**
      * @return The JDBC Driver being used
      */
     public String getJdbcDriver();
+
+    /**
+     * @return The JDBC Driver version
+     */
+    public String getJdbcDriverVersion();
     
     /**
      * @return The JDBC URL being used

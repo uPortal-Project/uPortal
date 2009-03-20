@@ -9,23 +9,25 @@ package org.jasig.portal.portlets.registerportal.data;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+
 import org.jasig.portal.portlets.registerportal.IPortalDataCollector;
-import org.jasig.portal.rdbm.IDatabaseMetadata;
+import org.springframework.web.context.ServletContextAware;
 
 /**
- * Gathers jdbc driver and database names and versions
+ * Gathers servlet container info
  * 
  * @author Eric Dalquist
- * @version $Revision$
+ * @version $Revision: 45528 $
  */
-public class DatabaseInfoCollector implements IPortalDataCollector {
-    private IDatabaseMetadata databaseMetadata;
+public class ContainerInfoCollector implements IPortalDataCollector, ServletContextAware {
+    private ServletContext servletContext;
     
-    /**
-     * @param databaseMetadata the databaseMetadata to set
+    /* (non-Javadoc)
+     * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
      */
-    public void setDatabaseMetadata(IDatabaseMetadata databaseMetadata) {
-        this.databaseMetadata = databaseMetadata;
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 
     /* (non-Javadoc)
@@ -34,10 +36,9 @@ public class DatabaseInfoCollector implements IPortalDataCollector {
     public Map<String, String> getData() {
         final Map<String, String> data = new LinkedHashMap<String, String>();
         
-        data.put("jdbcDriverName", databaseMetadata.getJdbcDriver());
-        data.put("jdbcDriverVersion", databaseMetadata.getJdbcDriverVersion());
-        data.put("databaseName", databaseMetadata.getDatabaseProductName());
-        data.put("databaseVersion", databaseMetadata.getDatabaseProductVersion());
+        data.put("serverInfo", this.servletContext.getServerInfo());
+        data.put("majorVersion", Integer.toString(this.servletContext.getMajorVersion()));
+        data.put("minorVersion", Integer.toString(this.servletContext.getMinorVersion()));
         
         return data;
     }
@@ -46,6 +47,6 @@ public class DatabaseInfoCollector implements IPortalDataCollector {
      * @see org.jasig.portal.portlets.registerportal.IPortalDataCollector#getKey()
      */
     public String getKey() {
-        return "uPortalDatabase";
+        return "ServletContainer";
     }
 }

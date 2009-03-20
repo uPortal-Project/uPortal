@@ -54,6 +54,7 @@
                 <bean class="org.jasig.portal.portlets.registerportal.data.DatabaseInfoCollector">
                     <property name="databaseMetadata" ref="PortalDB.metadata" />
                 </bean>
+                <bean class="org.jasig.portal.portlets.registerportal.data.ContainerInfoCollector" />
             </list>
         </property>
     </bean>
