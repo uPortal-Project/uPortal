@@ -64,13 +64,7 @@ public class PortalRegistrationHelper {
     public PortalRegistrationData getRegistrationData(PortalRegistrationRequest registrationRequest) {
         this.logger.debug(registrationRequest);
         
-        final PortalRegistrationData registrationData = new PortalRegistrationData();
-        registrationData.setDeployerAddress(registrationRequest.getDeployerAddress());
-        registrationData.setDeployerName(registrationRequest.getDeployerName());
-        registrationData.setInstitutionName(registrationRequest.getInstitutionName());
-        registrationData.setPortalName(registrationRequest.getPortalName());
-        registrationData.setPortalUrl(registrationRequest.getPortalUrl());
-        registrationData.setShareInfo(registrationRequest.isShareInfo());
+        final PortalRegistrationData registrationData = new PortalRegistrationData(registrationRequest);
         
         final Set<String> dataToCollect = new LinkedHashSet<String>();
         final Map<String, String> dataToSubmit = registrationRequest.getDataToSubmit();

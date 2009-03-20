@@ -7,11 +7,15 @@
 package org.jasig.portal.portlets.registerportal;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
 
 /**
  * Form binding object for getting a user's preferences for submitting portal registration data
@@ -27,8 +31,42 @@ public class PortalRegistrationRequest implements Serializable {
     private String deployerAddress;
     private String portalName;
     private String portalUrl;
+    private String demoUrl;
+    private String numberOfUsers;
+    private String audience;
+    private String authnSystem;
+    private String notes;
     private boolean shareInfo = true;
     private Map<String, String> dataToSubmit;
+    
+    
+    public PortalRegistrationRequest() {
+    }
+    
+    public PortalRegistrationRequest(PortalRegistrationRequest registrationRequest) {
+        this.institutionName = registrationRequest.institutionName;
+        this.deployerName = registrationRequest.deployerName;
+        this.deployerAddress = registrationRequest.deployerAddress;
+        this.portalName = registrationRequest.portalName;
+        this.portalUrl = registrationRequest.portalUrl;
+        this.demoUrl = registrationRequest.demoUrl;
+        this.numberOfUsers = registrationRequest.numberOfUsers;
+        this.audience = registrationRequest.audience;
+        this.authnSystem = registrationRequest.authnSystem;
+        this.notes = registrationRequest.notes;
+        this.shareInfo = registrationRequest.shareInfo;
+        if (registrationRequest.dataToSubmit != null) {
+            this.dataToSubmit = new LinkedHashMap<String, String>(registrationRequest.dataToSubmit);
+        }
+    }
+    
+    
+    public void validateOrganizationInfoForm(Errors errors) {
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionName", "", null, "Institution Name is required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deployerName", "", null, "Contact Name is required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deployerAddress", "", null, "Contact email is required");
+    }
+    
     
     /**
      * @return the institutionName
@@ -114,7 +152,67 @@ public class PortalRegistrationRequest implements Serializable {
     public void setDataToSubmit(Map<String, String> dataToSubmit) {
         this.dataToSubmit = dataToSubmit;
     }
-    
+    /**
+     * @return the demoUrl
+     */
+    public String getDemoUrl() {
+        return demoUrl;
+    }
+    /**
+     * @param demoUrl the demoUrl to set
+     */
+    public void setDemoUrl(String demoUrl) {
+        this.demoUrl = demoUrl;
+    }
+    /**
+     * @return the numberOfUsers
+     */
+    public String getNumberOfUsers() {
+        return numberOfUsers;
+    }
+    /**
+     * @param numberOfUsers the numberOfUsers to set
+     */
+    public void setNumberOfUsers(String numberOfUsers) {
+        this.numberOfUsers = numberOfUsers;
+    }
+    /**
+     * @return the audience
+     */
+    public String getAudience() {
+        return audience;
+    }
+    /**
+     * @param audience the audience to set
+     */
+    public void setAudience(String audience) {
+        this.audience = audience;
+    }
+    /**
+     * @return the authnSystem
+     */
+    public String getAuthnSystem() {
+        return authnSystem;
+    }
+    /**
+     * @param authnSystem the authnSystem to set
+     */
+    public void setAuthnSystem(String authnSystem) {
+        this.authnSystem = authnSystem;
+    }
+    /**
+     * @return the notes
+     */
+    public String getNotes() {
+        return notes;
+    }
+    /**
+     * @param notes the notes to set
+     */
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     /**
      * @see java.lang.Object#equals(Object)
      */
@@ -135,6 +233,11 @@ public class PortalRegistrationRequest implements Serializable {
             .append(this.institutionName, rhs.institutionName)
             .append(this.portalUrl, rhs.portalUrl)
             .append(this.shareInfo, rhs.shareInfo)
+            .append(this.demoUrl, rhs.demoUrl)
+            .append(this.numberOfUsers, rhs.numberOfUsers)
+            .append(this.audience, rhs.audience)
+            .append(this.authnSystem, rhs.authnSystem)
+            .append(this.notes, rhs.notes)
             .isEquals();
     }
     /**
@@ -150,6 +253,11 @@ public class PortalRegistrationRequest implements Serializable {
         .append(this.institutionName)
         .append(this.portalUrl)
         .append(this.shareInfo)
+        .append(this.demoUrl)
+        .append(this.numberOfUsers)
+        .append(this.audience)
+        .append(this.authnSystem)
+        .append(this.notes)
         .toHashCode();
     }
     /**
@@ -165,8 +273,11 @@ public class PortalRegistrationRequest implements Serializable {
         .append("institutionName", this.institutionName)
         .append("portalUrl", this.portalUrl)
         .append("shareInfo", this.shareInfo)
+        .append("demoUrl", this.demoUrl)
+        .append("numberOfUsers", this.numberOfUsers)
+        .append("audience", this.audience)
+        .append("authnSystem", this.authnSystem)
+        .append("notes", this.notes)
         .toString();
     }
-    
-    
 }

@@ -14,37 +14,50 @@
     <action-state id="initVariables">
         <evaluate result="flowScope.registrationRequest" expression="portalRegistrationHelper.createRegistrationRequest()" />
 
-        <transition to="registrationForm" />
+        <transition to="organizationInfoForm" />
     </action-state>
             
-    <view-state id="registrationForm" model="registrationRequest">
-        <transition on="previewRegistration" to="previewRegistrationData" />
+    <!-- Step 1 - organization info -->
+    <view-state id="organizationInfoForm" model="registrationRequest">
+        <transition on="next" to="systemInfoForm" />
     </view-state>
     
-    <!-- Execute the lookup query and transition to the appropriate state based on the number of results -->
+    <!-- Step 2 - system info -->        
+    <view-state id="systemInfoForm" model="registrationRequest">
+        <transition on="previous" to="organizationInfoForm" />
+        <transition on="next" to="previewRegistrationDataMaximize" />
+    </view-state>
+
+    <!-- Entry into preview that maximizes the portlet -->    
+    <action-state id="previewRegistrationDataMaximize">
+        <evaluate expression="portletUrlFlowHelper.setWindowState(externalContext, 'maximized')" />
+        <transition to="previewRegistrationData" />    
+    </action-state>
+    
+    <!-- Step 3 - info review -->
     <view-state id="previewRegistrationData">
         <on-entry>
             <evaluate result="flowScope.registrationData" expression="portalRegistrationHelper.getRegistrationData(registrationRequest)" />
         </on-entry>
         
-        <transition on="editRegistration" to="registrationForm" />
+        <transition on="editRegistration" to="organizationInfoForm" />
         <transition on="submitRegistration" to="submitRegistration" /> 
     </view-state>
 
-    <action-state id="submitRegistration">
-        <evaluate result="requestScope.submitStatus" expression="portalRegistrationHelper.submitRegistration(registrationData)" />
+    <!-- submit data from preview -->
+    <decision-state id="submitRegistration">
+        <on-entry>
+            <evaluate result="requestScope.submitStatus" expression="portalRegistrationHelper.submitRegistration(registrationData)" />
+        </on-entry>
         
-        <transition to="verifyRegistration" />
-    </action-state>
-    <decision-state id="verifyRegistration">
-        <if test="requestScope.submitStatus" then="registrationSuccess" else="registrationFailed" />    
+        <if test="requestScope.submitStatus" then="registrationSuccess" else="registrationFailed" />
     </decision-state>
     
     <view-state id="registrationSuccess">
-        <transition on="registrationForm" to="registrationForm" />
+        <transition on="registrationForm" to="organizationInfoForm" />
     </view-state>
     
     <view-state id="registrationFailed">
-        <transition on="registrationForm" to="registrationForm" />
+        <transition on="registrationForm" to="organizationInfoForm" />
     </view-state>
 </flow>
