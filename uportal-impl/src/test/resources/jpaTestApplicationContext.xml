@@ -42,6 +42,9 @@
         <property name="databasePlatform" value="${hibernate.dialect}" />
     </bean>
 
+    <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao">
+    </bean>
+
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
     </bean>
     

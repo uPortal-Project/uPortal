@@ -27,6 +27,13 @@ public class FragmentDefinitionDao implements IFragmentDefinitionDao {
     private EntityManager entityManager;
 
     /**
+     * @return the entityManager
+     */
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    /**
      * @param entityManager the entityManager to set
      */
     @PersistenceContext

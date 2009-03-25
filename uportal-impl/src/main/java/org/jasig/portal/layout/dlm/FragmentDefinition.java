@@ -76,6 +76,13 @@ public class FragmentDefinition extends Evaluator
      */
     public FragmentDefinition () {}
     
+    /*
+     * For unit testing...
+     */
+    protected FragmentDefinition(String name) {
+        this.name = name;
+    }
+    
     /**
      * This constructor is passed a dlm:fragment element from which this 
      * FragmentDefinition instance gathers its configuration information.
