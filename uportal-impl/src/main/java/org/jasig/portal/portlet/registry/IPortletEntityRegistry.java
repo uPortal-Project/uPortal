@@ -29,6 +29,17 @@ public interface IPortletEntityRegistry {
     public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId);
     
     /**
+     * Get an existing portlet entity for the String version of the entity id. If an exception occurs while parsing
+     * the String into an {@link IPortletEntityId} an {@link IllegalArgumentException} will be thrown. If no entity
+     * exists for the id null will be returned.
+     * 
+     * @param portletEntityIdString The id of the entity to retrieve
+     * @return The portlet entity for the id, null if no entity exists for the id.
+     * @throws IllegalArgumentException If portletEntityIdString is null or cannot be parsed into a {@link IPortletEntityId}.
+     */
+    public IPortletEntity getPortletEntity(String portletEntityIdString);
+    
+    /**
      * Get an existing portlet entity for the channel subscribe id and person. If no entity exists for the parameters
      * null will be returned.
      * 

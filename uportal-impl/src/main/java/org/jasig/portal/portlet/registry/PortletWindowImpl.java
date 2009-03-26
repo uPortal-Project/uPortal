@@ -159,7 +159,7 @@ class PortletWindowImpl implements IPortletWindow {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#getRequestParameers()
      */
-    public Map<String, String[]> getRequestParameers() {
+    public Map<String, String[]> getRequestParameters() {
         return this.requestParameters;
     }
 
@@ -241,7 +241,7 @@ class PortletWindowImpl implements IPortletWindow {
             .append(this.windowState, rhs.getWindowState())
             .append(this.portletMode, rhs.getPortletMode())
             .append(this.expirationCache, rhs.getExpirationCache())
-            .append(this.requestParameters, rhs.getRequestParameers())
+            .append(this.requestParameters, rhs.getRequestParameters())
             .isEquals();
     }
 

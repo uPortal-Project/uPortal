@@ -18,6 +18,7 @@
         <property name="userInfoService" ref="userInfoService" />
         <property name="portalAdministrationService" ref="portalAdministrationService" />
         <property name="portletPreferencesService" ref="portletPreferencesService" />
+        <property name="portletEnvironmentService" ref="portletEnvironmentService" />
     </bean>
 
     <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
@@ -128,9 +129,13 @@
         <property name="portalRequestUtils" ref="portalRequestUtils" />
     </bean>
     
+    <bean id="portletEnvironmentService" class="org.jasig.portal.portlet.container.services.PortletEnvironmentServiceImpl">
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+    </bean>
+    
     <!--********** Portlet Registries ********** -->
 
-    <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.PortletWindowRegistryImpl">
+    <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.TransientPortletWindowRegistryImpl">
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
     </bean>

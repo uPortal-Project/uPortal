@@ -218,13 +218,19 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      * @return The ID associated with the static data, will not be null.
      */
     protected IPortletWindowId getPortletWindowId(ChannelStaticData channelStaticData) {
-        final IPortletWindowId portletWindowId = (IPortletWindowId)channelStaticData.get(PORTLET_WINDOW_ID_PARAM);
-        
-        if (portletWindowId == null) {
-            throw new InconsistentPortletModelException("No IPortletWindowId exists in the ChannelStaticData, has initSession been called? ChannelStaticData: " + channelStaticData, portletWindowId);
+        return this.getPortletWindowId(channelStaticData, null, null);
+    }
+
+    protected IPortletWindowId getPortletWindowId(ChannelStaticData channelStaticData, ChannelRuntimeData channelRuntimeData, PortalControlStructures pcs) {
+        if (channelRuntimeData != null && pcs != null && channelRuntimeData.isTargeted()) {
+            final HttpServletRequest httpServletRequest = pcs.getHttpServletRequest();
+            final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
+            if (targetedPortletWindowId != null) {
+                return targetedPortletWindowId;
+            }
         }
         
-        return portletWindowId;
+        return (IPortletWindowId)channelStaticData.get(PORTLET_WINDOW_ID_PARAM);
     }
     
     //***** ISpringPortletChannel methods *****//
@@ -232,6 +238,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     /* (non-Javadoc)
      * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#initSession(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures)
      */
+    //TODO can this ever be called with this channel being targeted by the request?
     public void initSession(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures) {
         //Get/create the portlet entity to init
         final String channelPublishId = channelStaticData.getChannelPublishId();
@@ -247,9 +254,18 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
 
         //Get/create the portlet window to init
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
-        final String windowInstanceId = this.getWindowInstanceId(channelStaticData, portalControlStructures);
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreatePortletWindow(httpServletRequest, windowInstanceId, portletEntityId);
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
+        final IPortletWindow portletWindow;
+        if (portletWindowId != null) {
+            portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+            if (portletWindow == null) {
+                throw new IllegalArgumentException("Portlet window is null but a portlet window ID has been configured for it: " + portletWindowId);
+            }
+        }
+        else {
+            portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(httpServletRequest, portletEntityId);
+        }
         
         this.setPortletWidnowId(channelStaticData, portletWindow.getPortletWindowId());
 
@@ -286,7 +302,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     public void action(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
         //Get the portlet window
-        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
@@ -356,7 +372,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     public boolean isCacheValid(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData, Object validity) {
         //Get the portlet window
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
-        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //If this window is targeted invalidate the cache
@@ -427,7 +443,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     public void render(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData, PrintWriter printWriter) {
         //Get the portlet window
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
-        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Setup the response to capture the output
@@ -439,7 +455,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest);
         Map<String, String[]> parameters;
         if (!portletWindowId.equals(targetedPortletWindowId) || portletRequestInfo == null || (parameters = portletRequestInfo.getParameters()) == null) {
-            parameters = portletWindow.getRequestParameers();
+            parameters = portletWindow.getRequestParameters();
             
             if (parameters == null) {
                 parameters = Collections.emptyMap();
@@ -593,7 +609,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     public void prepareForRefresh(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
-        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         portletWindow.setRequestParameters(null);
@@ -604,7 +620,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     public void prepareForReset(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
-        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData);
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         portletWindow.setWindowState(WindowState.NORMAL);

@@ -113,15 +113,16 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
                     + "'. Request parameters for this IPortletWindowId will be ignored. Ignored parameters: "
                     + portletUrl);
         }
-
-        final PortletMode portletMode = portletUrl.getPortletMode();
-        if (portletMode != null) {
-            portletWindow.setPortletMode(portletMode);
-        }
-
-        final WindowState windowState = portletUrl.getWindowState();
-        if (windowState != null) {
-            portletWindow.setWindowState(windowState);
+        else {
+            final PortletMode portletMode = portletUrl.getPortletMode();
+            if (portletMode != null) {
+                portletWindow.setPortletMode(portletMode);
+            }
+    
+            final WindowState windowState = portletUrl.getWindowState();
+            if (windowState != null) {
+                portletWindow.setWindowState(windowState);
+            }
         }
 
         final Map<String, String[]> parameters = portletUrl.getParameters();

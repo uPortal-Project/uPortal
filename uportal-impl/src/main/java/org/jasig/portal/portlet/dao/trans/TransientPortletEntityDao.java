@@ -29,6 +29,11 @@ import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
+ * Handles entity management for transient portlets, portlets that aren't permanant parts of the user's layout. Portlet
+ * preferences are still persisted but are associated with a transient rendering of the portlet. Transient portlets are
+ * detected by checking the channel subscribe ID against the {@link TransientUserLayoutManagerWrapper#SUBSCRIBE_PREFIX}
+ * prefix.
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */

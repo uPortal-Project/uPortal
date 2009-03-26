@@ -54,7 +54,7 @@ public interface IPortletWindow extends PortletWindow, Serializable {
     /**
      * @return The current request parameters for the portlet
      */
-    public Map<String, String[]> getRequestParameers();
+    public Map<String, String[]> getRequestParameters();
     
     /**
      * Sets the expiration timeout for the portlet rendering cache. If null is set

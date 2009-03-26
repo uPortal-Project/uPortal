@@ -46,9 +46,9 @@ public interface IPortletWindowRegistry {
     public IPortletWindow getPortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId);
     
     /**
-     * Creates a new portlet entity for the window instance id and parent entity id. If the parent
+     * Creates a new portlet window for the window instance id and parent entity id. If the parent
      * {@link org.jasig.portal.portlet.om.IPortletEntity} for the portletEntityId can't be found or a window already
-     * exists fpr the window instance id and entity id an exception will be thrown. 
+     * exists for the window instance id and entity id an exception will be thrown. 
      * 
      * @param request The current request.
      * @param windowInstanceIdThe identifier for the instance of the window, such as an id for an inline window and an id for a detached window.
@@ -62,7 +62,7 @@ public interface IPortletWindowRegistry {
     
     /**
      * Get an existing portlet window for the window instance id and parent entity id. If no window exists for the parameters
-     * a new window will be created and returned. This is a convience for {@link #getPortletWindow(HttpServletRequest, String, IPortletEntityId)}
+     * a new window will be created and returned. This is a convenience for {@link #getPortletWindow(HttpServletRequest, String, IPortletEntityId)}
      * and {@link #createPortletWindow(HttpServletRequest, String, IPortletEntityId)}
      * 
      * @param request The current request.
@@ -72,6 +72,32 @@ public interface IPortletWindowRegistry {
      * @throws IllegalArgumentException If request, windowInstanceId or portletEntityId are null
      */
     public IPortletWindow getOrCreatePortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId);
+    
+    /**
+     * Creates a new portlet window that will have the ID returned by {@link #getDefaultPortletWindowId(IPortletEntityId)}
+     * from the specified parent entity id. If the parent {@link org.jasig.portal.portlet.om.IPortletEntity} for the portletEntityId
+     * can't be found or a window already exists for the default window id and entity id an exception will be thrown. 
+     * 
+     * @param request The current request.
+     * @param portletEntityId The parent entity id.
+     * @return A new window for the parameters
+     * @throws IllegalArgumentException If request or portletEntityId are null, if no
+     * {@link org.jasig.portal.ChannelDefinition} exists for the channelPublishId or if an entity already exists for the
+     * default window id & person.
+     */
+    public IPortletWindow createDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId);
+    
+    /**
+     * Get an existing portlet window for the default window id and parent entity id. If no window exists for the parameters
+     * a new window will be created and returned. This is a convenience for {@link #getDefaultPortletWindowId(IPortletEntityId)},
+     * {@link #getPortletWindow(HttpServletRequest, IPortletWindowId)} and {@link #createDefaultPortletWindow(HttpServletRequest, IPortletEntityId)}
+     * 
+     * @param request The current request.
+     * @param portletEntityId The parent entity id.
+     * @return An existing window if exists or a new window if not.
+     * @throws IllegalArgumentException If request, windowInstanceId or portletEntityId are null
+     */
+    public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId);
     
     /**
      * Converts a Pluto {@link PortletWindow} object to a uPortal {@link IPortletWindow}.
@@ -91,6 +117,15 @@ public interface IPortletWindowRegistry {
      * @throws IllegalArgumentException If portletWindowId is null
      */
     public IPortletWindowId getPortletWindowId(String portletWindowId);
+    
+    /**
+     * Creates the default portlet window ID given the ID of the entity the window is based on. 
+     * 
+     * @param portletEntityId The id of the entity to base the window ID on
+     * @return The default window id for the entity
+     * @throws IllegalArgumentException If portletEntityId is null
+     */
+    public IPortletWindowId getDefaultPortletWindowId(IPortletEntityId portletEntityId);
     
     /**
      * Gets the parent portlet entity for the window specified by the window id.
