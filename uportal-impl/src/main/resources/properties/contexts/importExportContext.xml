@@ -6,8 +6,41 @@
     https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+	<util:map id="importTasks" map-class="java.util.concurrent.ConcurrentHashMap">
+	    <entry key="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn">
+            <ref bean="import-entity-type_v2-6"/>
+	    </entry>
+	</util:map>
+
+    <bean id="import-entity-type_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+	    <property name="location">
+	        <value>classpath://org/jasig/portal/io/import-entity-type_v2-6.crn</value>
+	    </property>
+	    <property name="requestAttributes">
+            <util:map>
+                <entry key="entityTypesSingleton">
+		            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		                <property name="targetClass" value="org.jasig.portal.EntityTypes"/>
+		                <property name="targetMethod" value="singleton"/>
+		                <property name="arguments">
+		                    <list>
+		                        <ref bean="PortalDb"/>
+		                    </list>
+		                </property>
+		            </bean>
+		        </entry>
+		    </util:map>
+        </property>
+    </bean>
+    
+    
+
 
     <bean id="portletEntityPreferenceHandler" class="org.jasig.portal.io.support.PortletEntityPreferenceHandler">
         <property name="dataSource" ref="PortalDb" />

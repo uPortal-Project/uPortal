@@ -5,12 +5,13 @@
     https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
 -->
-<properties location="classpath://properties/db/entities/import.properties">
+<properties location="classpath://properties/import.properties">
 	<with>
 	    <attribute key="supportedTypes">${groovy(Arrays.asList(WebAttributes.REQUEST.getPreferences().getValue('allowableImportTypes', null).split(',')))}</attribute>
         <attribute key="PORTAL_CONTEXT">${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}</attribute>
 	    <subtasks>
             <with>
+                <attribute key="importTasks">${groovy(PORTAL_CONTEXT.getBean('importTasks'))}</attribute>
                 <attribute key="SqlAttributes.DATA_SOURCE">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
                 <attribute key="SqlAttributes.TRANSACTION_MANAGER">${groovy(PORTAL_CONTEXT.getBean('transactionManager'))}</attribute>
                 <subtasks>
@@ -27,25 +28,24 @@
 			                <choose>
 			                    <when test="${groovy(supportedTypes.contains(Attributes.NODE.getName()))}">
 			                        <with-attribute key="crnLocation" value="${valueOf(@script)}">
-			                            <choose>
-			                                <when test="${groovy(crnLocation.startsWith('classpath:'))}">
-			                                    <!-- 
-			                                     | We currently have no way to support the classpath: 
-			                                     | protocol in a webapp.  We need to make some 
-			                                     | evasive maneuvers.  Change the string so it 
-			                                     | starts with a single slash, then feed through 
-			                                     | ClassLoader.getResource().
-			                                     |
-			                                     | Normal form of the script attribute:
-			                                     |   classpath://org/jasig/portal/io/import-channel_v2-6.crn
-			                                     +-->
-			                                     <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource(crnLocation.substring('classpath:/'.length())).toExternalForm())}"/>
-			                                </when>
-			                                <otherwise>
-			                                    <!-- There's no issue... -->
-			                                    <crn location="${crnLocation}"/>
-			                                </otherwise>
-			                            </choose>
+	                                    <choose>
+	                                        <when test="${groovy(importTasks.containsKey(crnLocation))}">
+	                                            <crn task="${groovy(importTasks.get(crnLocation))}"/>
+	                                        </when>
+	                                        <otherwise>
+                                                <!-- 
+                                                 | We currently have no way to support the classpath: 
+                                                 | protocol in a webapp.  We need to make some 
+                                                 | evasive maneuvers.  Change the string so it 
+                                                 | starts with a single slash, then feed through 
+                                                 | ClassLoader.getResource().
+                                                 |
+                                                 | Normal form of the script attribute:
+                                                 |   classpath://org/jasig/portal/io/import-channel_v2-6.crn
+                                                 +-->
+                                                 <crn location="${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource(crnLocation.substring('classpath:/'.length())).toExternalForm())}"/>
+	                                        </otherwise>
+	                                    </choose>
 			                        </with-attribute>
 			                    </when>
 			                    <otherwise>

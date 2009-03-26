@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+    <bean id="importTasks" class="java.util.HashMap">
+        <constructor-arg>
+	        <map>
+	            <entry key="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn">
+	                <bean class="org.danann.cernunnos.runtime.PojoTask">
+	                    <property name="location">
+	                        <value>classpath://org/jasig/portal/io/import-entity-type_v2-6.crn</value>
+	                    </property>
+                        <property name="requestAttributes">
+				            <util:map>
+				                <entry key="entityTypesSingleton">
+				                    <ref bean="mockEntityTypesSingleton"/>
+				                </entry>
+				            </util:map>
+			            </property>
+	                </bean>
+	            </entry>
+	        </map>
+	    </constructor-arg>
+    </bean>
+    
+    <bean id="mockEntityTypesSingleton" class="org.jasig.portal.io.ImportTest$MockEntityTypesSingleton"/>
+
+</beans>

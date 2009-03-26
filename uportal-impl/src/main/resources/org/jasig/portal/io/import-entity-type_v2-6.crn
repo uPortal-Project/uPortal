@@ -19,5 +19,5 @@
  |
  +-->
 <groovy>
-    <script>org.jasig.portal.EntityTypes.addIfNecessary(${valueOf(name)}.class, '${valueOf(desc-name)}')</script>
+    <script>entityTypesSingleton.addEntityTypeIfNecessary(${valueOf(name)}.class, '${valueOf(desc-name)}')</script>
 </groovy>

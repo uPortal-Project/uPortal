@@ -17,6 +17,7 @@
                 </script>
             </groovy>
             <with>
+                <attribute key="importTasks">${groovy(PORTAL_CONTEXT.getBean('importTasks'))}</attribute>
                 <attribute key="${groovy(org.danann.cernunnos.sql.SqlAttributes.DATA_SOURCE)}">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
                 <attribute key="${groovy(org.danann.cernunnos.sql.SqlAttributes.TRANSACTION_MANAGER)}">${groovy(PORTAL_CONTEXT.getBean('transactionManager'))}</attribute>
                 <subtasks>
@@ -34,7 +35,16 @@
                                             <try>
                                                 <echo-ln>Import Entity Type:  ${Attributes.LOCATION}</echo-ln>
                                                 <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-                                                    <crn location="${valueOf(@script)}"/>
+	                                                <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
+	                                                    <choose>
+	                                                        <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
+                                                                <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
+	                                                        </when>
+	                                                        <otherwise>
+	                                                            <crn location="${importScriptUrl}"/>
+	                                                        </otherwise>
+	                                                    </choose>
+	                                                </with-attribute>
                                                 </with-attribute>
                                             </try>
                                             <catch>
