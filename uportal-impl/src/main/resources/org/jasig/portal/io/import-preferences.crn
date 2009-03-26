@@ -37,7 +37,7 @@
                         <attribute key="PREF_NAME">${valueOf(@name)}</attribute>
                         <attribute key="FNAME">${valueOf(@channel)}</attribute>
                         <subtasks>
-                            <if test="${jexl(FNAME != null and FNAME != 'null')}">
+                            <if test="${jexl(DLM_NODEREF != null and FNAME != null and FNAME != 'null')}">
                                 <with-attribute key="PORTLET_PREFS_MAP" value="${groovy(getPortletPefsMap(FNAME, DLM_NODEREF, USER_ID))}">
                                     <with-attribute key="PORTLET_PREF_VALUES" value="${groovy(getPrefValues(PORTLET_PREFS_MAP, PREF_NAME))}">
                                         <node-iterator xpath="value">
