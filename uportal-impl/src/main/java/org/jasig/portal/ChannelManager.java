@@ -55,6 +55,7 @@ import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
 import org.jasig.portal.utils.web.PortalWebUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.jndi.JndiTemplate;
 import org.springframework.web.context.request.RequestAttributes;
