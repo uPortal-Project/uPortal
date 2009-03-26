@@ -25,6 +25,8 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelParameter;
@@ -42,25 +44,24 @@ import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.StylesheetSet;
+import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
-import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.UserLayoutStoreFactory;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.node.UserLayoutChannelDescription;
-import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.layout.dlm.ChannelDescription;
 import org.jasig.portal.layout.dlm.Constants;
 import org.jasig.portal.layout.dlm.UserPrefsHandler;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.UserLayoutChannelDescription;
+import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
@@ -1284,9 +1285,18 @@ public class TabColumnPrefsState extends BaseState
             if (runtimeData.getParameter("submitSave")!=null) {
                 // save
                 String skinName = runtimeData.getParameter("skinName");
-                userPrefs.getThemeStylesheetUserPreferences().putParameterValue("skin",skinName);
-                // save user preferences ?
-                saveUserPreferences();
+                ThemeStylesheetUserPreferences themePrefs = userPrefs.getThemeStylesheetUserPreferences();
+                themePrefs.putParameterValue("skin",skinName);
+                
+                final IPerson person = staticData.getPerson();
+                final UserProfile profile = userPrefs.getProfile();
+                final int profileId = profile.getProfileId();
+                try {
+                    ulStore.setThemeStylesheetUserPreferences(person, profileId, themePrefs);
+                } catch (Exception e) {
+                    log.error("Error storing user skin preferences", e);
+                }
+                
                 // reset state
                 BaseState df=new DefaultState(context);
                 df.setStaticData(staticData);
