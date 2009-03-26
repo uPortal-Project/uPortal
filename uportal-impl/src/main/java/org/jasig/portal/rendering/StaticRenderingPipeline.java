@@ -11,6 +11,7 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -576,7 +577,11 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Initia
                     Version uPortalVersion = versionsManager.getVersion(IPermission.PORTAL_FRAMEWORK);
                     tst.setParameter("uP_productAndVersion", "uPortal " + uPortalVersion.dottedTriple());
 
-                    // tst.setParameter("locale", localeManager.getLocaleFromSessionParameter());
+                    //TODO only pick locale if it is supported in messages.xml?
+//                    final Locale[] locales = localeManager.getLocales();
+//                    if (locales != null && locales.length > 0) {
+//                        tst.setParameter("USER_LANG", locales[0].toString());
+//                    }
 
                     // initialize a filter to fill in channel attributes for the "theme" (second) transformation.
                     // attach it downstream of the channel rendering buffer
