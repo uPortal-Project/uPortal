@@ -1669,6 +1669,7 @@ public class RDBMDistributedLayoutStore
         return attr.getValue();
     }
 
+    @Override
     protected Element getStructure(Document doc, LayoutStructure ls) throws Exception {
         Element structure = null;
 
@@ -1678,7 +1679,7 @@ public class RDBMDistributedLayoutStore
             type = Constants.NS + type.substring(Constants.LEGACY_NS.length());
 
   if (ls.isChannel()) {
-    ChannelDefinition channelDef = crs.getChannelDefinition(ls.getChanId());
+    ChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(ls.getChanId());
     if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
         if (localeAware) {
             channelDef.setLocale(ls.getLocale()); // for i18n by Shoji
@@ -1845,6 +1846,7 @@ public class RDBMDistributedLayoutStore
         return structure;
     }
 
+    @Override
     protected int saveStructure(
             Node node,
             PreparedStatement structStmt,
@@ -1955,7 +1957,7 @@ public class RDBMDistributedLayoutStore
             NodeList parameters = node.getChildNodes();
             if (parameters != null && isChannel)
             {
-                ChannelDefinition channelDef = crs.getChannelDefinition(chanId);
+                ChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(chanId);
                 for (int i = 0; i < parameters.getLength(); i++)
                 {
                     if (parameters.item(i).getNodeName().equals("parameter"))
@@ -2005,6 +2007,7 @@ public class RDBMDistributedLayoutStore
         }
     }
 
+    @Override
     public void setStructureStylesheetUserPreferences( IPerson person,
                                                        int profileId,
                                                        StructureStylesheetUserPreferences ssup )
@@ -2145,6 +2148,7 @@ public class RDBMDistributedLayoutStore
         }
     }
 
+    @Override
     public void setThemeStylesheetUserPreferences (IPerson person,
             int profileId, ThemeStylesheetUserPreferences tsup)
     throws Exception {
