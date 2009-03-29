@@ -31,7 +31,6 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.PortalHttpServletRequest;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -55,14 +54,16 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			.getUserLayoutStoreImpl();
 
 	// default tab name
-	protected static String BLANK_TAB_NAME = "New Tab";
-
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		doGet(request, response);
-	}
+	protected final static String BLANK_TAB_NAME = "New Tab";
+	protected final static String ACTIVE_TAB_PARAM = "activeTab";
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// POST requests are not supported due to security considerations
+		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+	}
+
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 	    IUserInstanceManager userInstanceManager = null;
@@ -70,12 +71,10 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		IPerson per = null;
 		UserPreferencesManager upm = null;
 		IUserLayoutManager ulm = null;
-		IPersonManager personManager = null;
 
 		try {
             final WebApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
             userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
-            personManager = (IPersonManager) applicationContext.getBean("personManager", IPersonManager.class);
 
 			// Retrieve the user's UserInstance object
 			ui = userInstanceManager.getUserInstance(request);
@@ -120,7 +119,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 			} else if (action.equals("movePortletHere")) {
 
-				moveChannel(ulm, request, response);
+				moveChannel(per, upm, ulm, request, response);
 
 			} else if (action.equals("changeColumns")) {
 
@@ -140,7 +139,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 			} else if (action.equals("addTab")) {
 
-				addTab(ulm, request, response);
+				addTab(per, upm, ulm, request, response);
 
 			} else if (action.equals("moveTabHere")) {
 
@@ -156,7 +155,11 @@ public class UpdatePreferencesServlet extends HttpServlet {
 				// all node types, so we can just have a generic action.
 				String elementId = request.getParameter("elementID");
 				ulm.deleteNode(elementId);
-				ulm.saveUserLayout();
+				try {
+					saveUserLayoutPreservingTab(ulm, upm, per);
+				} catch (Exception e) {
+					log.warn("Error saving layout", e);
+				}
 
 				printSuccess(response, "Removed element", null);
 
@@ -177,7 +180,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 	 * @throws IOException
 	 * @throws PortalException
 	 */
-	private void moveChannel(IUserLayoutManager ulm,
+	private void moveChannel(IPerson per, UserPreferencesManager upm, IUserLayoutManager ulm,
 			HttpServletRequest request, HttpServletResponse response)
 			throws IOException, PortalException {
 
@@ -236,13 +239,17 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId);
 		}
 
-		// save the user's layout
-		ulm.saveUserLayout();
+		try {
+			// save the user's layout
+			saveUserLayoutPreservingTab(ulm, upm, per);
+		} catch (Exception e) {
+			log.warn("Error saving layout", e);
+		}
 
 		printSuccess(response, "Saved new channel location", null);
 
 	}
-
+	
 	/**
 	 * Change the number of columns on a specified tab.  In the event that the user is
 	 * decresasing the number of columns, extra columns will be stripped from the 
@@ -319,11 +326,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			try {
 				// This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
 				UserPrefsHandler.setUserPreference(folder, "width", per);
-				// This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
-				ulStore
-						.setStructureStylesheetUserPreferences(per, upm
-								.getUserPreferences().getProfile()
-								.getProfileId(), ssup);
+		        saveSSUPPreservingTab(upm, per, ssup);
 			} catch (Exception e) {
 				log.error("Error saving new column widths", e);
 			}
@@ -332,8 +335,12 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 
 		
-		// save the layout changes
-		ulm.saveUserLayout();
+		try {
+			// save the user's layout
+			saveUserLayoutPreservingTab(ulm, upm, per);
+		} catch (Exception e) {
+			log.warn("Error saving layout", e);
+		}
 
 		// construct XML representing all the IDs of the resulting columns
 		StringBuffer buf = new StringBuffer();
@@ -384,18 +391,18 @@ public class UpdatePreferencesServlet extends HttpServlet {
 				.getStructureStylesheetUserPreferences();
 
 		try {
-            String currentTab = ssup.getParameterValue("activeTab");
+            String currentTab = ssup.getParameterValue(ACTIVE_TAB_PARAM);
             UserProfile currentProfile = upm.getUserPreferences().getProfile();
             int profileID = currentProfile.getProfileId();
             int structID = currentProfile.getStructureStylesheetId();
             // get the active tab number from the store so that we can preserve it
-            String defaultTab = ulStore.getStructureStylesheetUserPreferences(per, profileID, structID).getParameterValue("activeTab");
+            String defaultTab = ulStore.getStructureStylesheetUserPreferences(per, profileID, structID).getParameterValue(ACTIVE_TAB_PARAM);
             // set the active tab to previously recorded value
             if (defaultTab.equals(currentTab)) {
-                ssup.putParameterValue("activeTab", tabPosition);
+                ssup.putParameterValue(ACTIVE_TAB_PARAM, tabPosition);
             }
             else {
-                ssup.putParameterValue("activeTab", defaultTab);
+                ssup.putParameterValue(ACTIVE_TAB_PARAM, defaultTab);
             }
             // This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
             ulStore.setStructureStylesheetUserPreferences(per, profileID, ssup);
@@ -403,10 +410,10 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			log.error(e);
 		}
 
-        // reset the active tab for viewing (not default)
-		ssup.putParameterValue("activeTab", tabPosition);
-
 		ulm.saveUserLayout();
+
+        // reset the active tab for viewing (not default)
+		ssup.putParameterValue(ACTIVE_TAB_PARAM, tabPosition);
 
 		printSuccess(response, "Saved new tab position", null);
 
@@ -506,8 +513,12 @@ public class UpdatePreferencesServlet extends HttpServlet {
         ChannelManager cm = new ChannelManager(upm, session);
 		cm.instantiateChannel(new PortalHttpServletRequest(request, userInstanceManager), response, channel.getId());
 
-		// save the user layout
-		ulm.saveUserLayout();
+		try {
+			// save the user's layout
+			saveUserLayoutPreservingTab(ulm, upm, per);
+		} catch (Exception e) {
+			log.warn("Error saving layout", e);
+		}
 
 		printSuccess(response, "Added new channel", "<newNodeId>" + nodeId
 				+ "</newNodeId>");
@@ -567,35 +578,27 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 		StructureStylesheetUserPreferences ssup = upm.getUserPreferences().getStructureStylesheetUserPreferences();
         UserProfile currentProfile = upm.getUserPreferences().getProfile();
-        int profileID = currentProfile.getProfileId();
-        int structID = currentProfile.getStructureStylesheetId();
 		columns = ulm.getChildIds(tabId);
-		while (columns.hasMoreElements()) {
-			String columnId = (String) columns.nextElement();
-			ssup.setFolderAttributeValue(columnId, "width", widthString);
-			Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
-			try {
+		String currentTab = ssup.getParameterValue( ACTIVE_TAB_PARAM );
+		try {
+			while (columns.hasMoreElements()) {
+				String columnId = (String) columns.nextElement();
+				ssup.setFolderAttributeValue(columnId, "width", widthString);
+				Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
 				// This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
 				UserPrefsHandler.setUserPreference(folder, "width", per);
                 
-				String currentTab = ssup.getParameterValue( "activeTab" );
-                // get the active tab number from the store so that we can preserve it
-                String defaultTab = ulStore.getStructureStylesheetUserPreferences(per, profileID, structID)
-                                          .getParameterValue( "activeTab" );
-                // set the active tab to previously recorded value
-                ssup.putParameterValue( "activeTab", defaultTab );
-				// This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
-				ulStore.setStructureStylesheetUserPreferences(per, profileID, ssup);
-                // set active tab in current preferences back to "current" tab
-                ssup.putParameterValue( "activeTab", currentTab );
-			} catch (Exception e) {
-				log.error("Error saving new column widths", e);
+				count++;
 			}
-			count++;
+
+	        saveSSUPPreservingTab(upm, per, ssup);
+
+		} catch (Exception e) {
+			log.error("Error saving new column widths", e);
 		}
 
 	}
-
+	
 	/**
 	 * Set the column widths of a specified tab to the user's requested widths.
 	 * 
@@ -616,6 +619,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 		StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
 				.getStructureStylesheetUserPreferences();
+		String currentTab = ssup.getParameterValue( ACTIVE_TAB_PARAM );
 
 		for (int i = 0; i < columnIds.length; i++) {
 			ssup
@@ -626,11 +630,9 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			try {
 				// This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
 				UserPrefsHandler.setUserPreference(folder, "width", per);
-				// This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
-				ulStore
-						.setStructureStylesheetUserPreferences(per, upm
-								.getUserPreferences().getProfile()
-								.getProfileId(), ssup);
+				
+		        saveSSUPPreservingTab(upm, per, ssup);
+
 			} catch (Exception e) {
 				log.error("Error saving new column widths", e);
 			}
@@ -650,7 +652,8 @@ public class UpdatePreferencesServlet extends HttpServlet {
 	 * @throws IOException
 	 * @throws PortalException
 	 */
-	private void addTab(IUserLayoutManager ulm, HttpServletRequest request,
+	private void addTab(IPerson per, UserPreferencesManager upm,
+			IUserLayoutManager ulm, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, PortalException {
 
 		// construct a brand new tab
@@ -666,7 +669,12 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 		// add the tab to the layout
 		ulm.addNode(newTab, ulm.getRootFolderId(), null);
-		ulm.saveUserLayout();
+		try {
+			// save the user's layout
+			saveUserLayoutPreservingTab(ulm, upm, per);
+		} catch (Exception e) {
+			log.warn("Error saving layout", e);
+		}
 
 		// get the id of the newly added tab
 		String nodeId = newTab.getId();
@@ -681,8 +689,12 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		newColumn.setImmutable(false);
 		ulm.addNode(newColumn, nodeId, null);
 
-		// save the changes to the layout
-		ulm.saveUserLayout();
+		try {
+			// save the user's layout
+			saveUserLayoutPreservingTab(ulm, upm, per);
+		} catch (Exception e) {
+			log.warn("Error saving layout", e);
+		}
 
 		printSuccess(response, "Added new tab", "<newNodeId>" + nodeId
 				+ "</newNodeId>");
@@ -718,7 +730,12 @@ public class UpdatePreferencesServlet extends HttpServlet {
 				tab.setName(tabName);
 			}
 			ulm.updateNode(tab);
-			ulm.saveUserLayout();
+			try {
+				// save the user's layout
+				saveUserLayoutPreservingTab(ulm, upm, per);
+			} catch (Exception e) {
+				log.warn("Error saving layout", e);
+			}
 
 		} else {
 			throw new PortalException("attempt.to.rename.immutable.tab" + tabId);
@@ -731,6 +748,66 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 
 		printSuccess(response, "Saved new tab name", null);
+
+	}
+
+	private String getDefaultTab(UserPreferencesManager upm, IPerson per) throws Exception {
+	    UserProfile currentProfile = upm.getUserPreferences().getProfile();
+	    int profileID = currentProfile.getProfileId();
+	    int structID = currentProfile.getStructureStylesheetId();
+	    String defaultTab = ulStore.getStructureStylesheetUserPreferences(per, profileID, structID)
+	                              .getParameterValue( ACTIVE_TAB_PARAM );
+	    return defaultTab;
+	}
+
+	/**
+	 * Save the user's layout while preserving the current in-storage default
+	 * tab.
+	 * 
+	 * @param ulm
+	 * @param upm
+	 * @param per
+	 * @throws Exception
+	 */
+	private void saveUserLayoutPreservingTab(IUserLayoutManager ulm, UserPreferencesManager upm, IPerson per) throws Exception {
+		StructureStylesheetUserPreferences ssup = upm.getUserPreferences().getStructureStylesheetUserPreferences();
+		String currentTab = ssup.getParameterValue( ACTIVE_TAB_PARAM );
+	    
+		// get the active tab number from the store so that we can preserve it
+	    String defaultTab = getDefaultTab(upm, per);
+	    // set the active tab to previously recorded value
+	    ssup.putParameterValue( ACTIVE_TAB_PARAM, defaultTab );
+
+	    // save the user's layout
+		ulm.saveUserLayout();
+		
+		// set the current active tab back to the previous value
+	    ssup.putParameterValue( ACTIVE_TAB_PARAM, currentTab );
+		
+	}
+	
+	/**
+	 * Save the user's structure stylesheet while preserving the current
+	 * in-storage default tab.
+	 * 
+	 * @param upm
+	 * @param per
+	 * @param ssup
+	 * @throws Exception
+	 */
+	private void saveSSUPPreservingTab(UserPreferencesManager upm, IPerson per, StructureStylesheetUserPreferences ssup) throws Exception {
+		int profileId = upm.getUserPreferences().getProfile().getProfileId();
+		String currentTab = ssup.getParameterValue( ACTIVE_TAB_PARAM );
+        // get the active tab number from the store so that we can preserve it
+        String defaultTab = getDefaultTab(upm, per);
+        // set the active tab to previously recorded value
+        ssup.putParameterValue( ACTIVE_TAB_PARAM, defaultTab );
+        
+		// This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
+		ulStore.setStructureStylesheetUserPreferences(per, profileId, ssup);
+
+	    // set active tab in current preferences back to "current" tab
+	    ssup.putParameterValue( ACTIVE_TAB_PARAM, currentTab );
 
 	}
 
