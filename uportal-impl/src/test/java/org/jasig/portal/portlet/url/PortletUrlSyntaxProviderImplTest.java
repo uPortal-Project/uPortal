@@ -180,12 +180,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         portletUrl.setRequestType(RequestType.RENDER);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-        if(useAnchors) {
-       		assertEquals("/uPortal/worker/download/worker.download.uP?pltc_target=tp.windowId1&pltc_type=RENDER&pltc_state=exclusive&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=#entityId1", urlString);
-        }
-        else {
-        	assertEquals("/uPortal/worker/download/worker.download.uP?pltc_target=tp.windowId1&pltc_type=RENDER&pltc_state=exclusive&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
-        }
+    	assertEquals("/uPortal/worker/download/worker.download.uP?pltc_target=tp.windowId1&pltc_type=RENDER&pltc_state=exclusive&pltc_mode=edit&pltp_key1=value1.1&pltp_key1=value1.2&pltp_key2=value2.1&pltp_key3=", urlString);
         EasyMock.verify(portalRequestUtils);
     }
     

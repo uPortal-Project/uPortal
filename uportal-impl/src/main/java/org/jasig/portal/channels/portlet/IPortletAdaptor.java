@@ -26,6 +26,7 @@ import org.jasig.portal.PortalException;
  */
 public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, ICharacterChannel, ICacheable, IDirectResponse {
     public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
+    public static final WindowState DETACHED = new WindowState("DETACHED");
     
     public static final PortletMode ABOUT = new PortletMode("ABOUT");
     

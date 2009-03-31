@@ -230,11 +230,20 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
         if (targetChannelId == null) {
             targetChannelId = request.getParameter("uP_channelTarget");
         }
+
+        final UPFileSpec upfs = new UPFileSpec(request);
         
         // determine target channel id
         if (targetChannelId == null) {
-            final UPFileSpec upfs = new UPFileSpec(request);
             targetChannelId = upfs.getTargetNodeId();
+        }
+        
+        // look for detached channel id
+        if (targetChannelId == null) {
+            final String methodNodeId = upfs.getMethodNodeId();
+            if (!UPFileSpec.USER_LAYOUT_ROOT_NODE.equals(methodNodeId)) {
+                targetChannelId = methodNodeId;
+            }
         }
         
         if (this.logger.isDebugEnabled()) {

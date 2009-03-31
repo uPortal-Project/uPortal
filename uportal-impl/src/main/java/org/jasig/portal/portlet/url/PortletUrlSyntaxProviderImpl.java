@@ -9,8 +9,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -61,7 +63,8 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private ITransientPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
     private boolean useAnchors = true;
-    private Set<WindowState> transientWindowStates = new HashSet<WindowState>(Arrays.asList(IPortletAdaptor.EXCLUSIVE));
+    private Set<WindowState> transientWindowStates = new HashSet<WindowState>(Arrays.asList(IPortletAdaptor.EXCLUSIVE, IPortletAdaptor.DETACHED));
+    private Set<WindowState> anchoringWindowStates = new HashSet<WindowState>(Arrays.asList(WindowState.MINIMIZED, WindowState.NORMAL));
     
     
     /**
@@ -135,6 +138,38 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     public void setPortletWindowRegistry(ITransientPortletWindowRegistry portletWindowRegistry) {
         Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
+    }
+
+    public Set<WindowState> getTransientWindowStates() {
+        return this.transientWindowStates;
+    }
+    /**
+     * {@link WindowState}s that have transient {@link IPortletWindow}s. These states must be the ONLY
+     * content rendering links on the page. Defaults to EXCLUSIVE and DETACHED.
+     */
+    public void setTransientWindowStates(Set<WindowState> transientWindowStates) {
+        if (transientWindowStates == null) {
+            this.transientWindowStates = Collections.emptySet();
+        }
+        else {
+            this.transientWindowStates = new LinkedHashSet<WindowState>(transientWindowStates);
+        }
+    }
+
+    public Set<WindowState> getAnchoringWindowStates() {
+        return this.anchoringWindowStates;
+    }
+    /**
+     * {@link WindowState}s where anchors should be added to the ends of the generated URLS, only if
+     * {@link #setUseAnchors(boolean)} is true. Defaults to MINIMIZED and NORMAL
+     */
+    public void setAnchoringWindowStates(Set<WindowState> anchoringWindowStates) {
+        if (anchoringWindowStates == null) {
+            this.anchoringWindowStates = Collections.emptySet();
+        }
+        else {
+            this.anchoringWindowStates = new LinkedHashSet<WindowState>(anchoringWindowStates);
+        }
     }
     
     
@@ -286,6 +321,16 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                 this.logger.trace("Using worker url base '" + urlBase + "'");
             }
         }
+        else if (IPortletAdaptor.DETACHED.equals(previousWindowState) && windowState != null && !previousWindowState.equals(windowState)) {
+            final UPFileSpec upFileSpec = new UPFileSpec(channelRuntimeData.getUPFile());
+            upFileSpec.setMethodNodeId(UPFileSpec.USER_LAYOUT_ROOT_NODE);
+            final String urlBase = upFileSpec.getUPFile();
+            url.append(urlBase);
+            
+            if (this.logger.isTraceEnabled()) {
+                this.logger.trace("Using root url base '" + urlBase + "'");
+            }
+        }
         else {
             final String urlBase = channelRuntimeData.getBaseActionURL();
             url.append(urlBase);
@@ -338,6 +383,9 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                 this.encodeAndAppend(url.append("&"), encoding, "minimized_channelId", channelSubscribeId);
                 this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "true");
             }
+            else if (IPortletAdaptor.DETACHED.equals(windowState)) {
+                this.encodeAndAppend(url.append("&"), encoding, "uP_detach_target", channelSubscribeId);
+            }
         }
         //Or for any transient state always add the window state
         else if (this.transientWindowStates.contains(windowState) || this.transientWindowStates.contains(previousWindowState)) {
@@ -366,8 +414,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         }
        
         //Add the anchor if anchoring is enabled
-        //TODO disable for detached window states (maximized too?)
-        if (this.useAnchors && !RequestType.ACTION.equals(requestType)) {
+        if (this.useAnchors && !RequestType.ACTION.equals(requestType) && ((windowState != null && this.anchoringWindowStates.contains(windowState)) || (windowState == null && this.anchoringWindowStates.contains(previousWindowState)))) {
         	url.append("#").append(channelSubscribeId);
         }
  

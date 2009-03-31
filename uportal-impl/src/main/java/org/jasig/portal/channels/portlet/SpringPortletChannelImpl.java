@@ -628,6 +628,10 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel, Applicat
                 }
 
                 switch (portalEvent.getEventNumber()) {
+                    case PortalEvent.DETACH_BUTTON_EVENT: {
+                        portletWindow.setWindowState(IPortletAdaptor.DETACHED);
+                    }
+                    break;
                     case PortalEvent.MINIMIZE_EVENT: {
                         portletWindow.setWindowState(WindowState.MINIMIZED);
                     }
@@ -682,7 +686,6 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel, Applicat
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
-        portletWindow.setWindowState(WindowState.NORMAL);
         portletWindow.setPortletMode(PortletMode.VIEW);
         portletWindow.setRequestParameters(null);
         portletWindow.setExpirationCache(null);
