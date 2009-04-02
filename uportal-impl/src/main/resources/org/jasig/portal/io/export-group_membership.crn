@@ -41,9 +41,6 @@
                         </choose>
                     </with-attribute>
                 </when>
-                <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.ChannelDefinition'))}">
-                    <!-- Ignore channels, their group membership information is handled by the chanpub files -->
-                </when>
                 <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.security.IPerson'))}">
                     <with-attribute key="USER_NAME" value="${MEMBER_KEY}">
                         <choose>
@@ -59,11 +56,12 @@
                         </choose>
                     </with-attribute>
                 </when>
-                <otherwise>
+                <when test="${jexl(!ENTITY_TYPE_NAME.equals('org.jasig.portal.ChannelDefinition'))}">
+                    <!-- Ignore channels, their group membership information is handled by the chanpub files -->
                     <append-node parent="${singleNode(children)}">
                         <literal>${MEMBER_KEY}</literal>
                     </append-node>
-                </otherwise>
+                </when>
             </choose>
         </subtasks>
     </sql-query>
