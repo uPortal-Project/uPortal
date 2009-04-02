@@ -39,7 +39,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Entity Type from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Entity Type from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -61,7 +61,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Structure from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Structure from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -83,7 +83,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Theme from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Theme from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -105,7 +105,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Template User from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Template User from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -127,7 +127,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import User from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import User from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -149,7 +149,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Group from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Group from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -175,7 +175,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Group_Membership from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Group_Membership from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -199,7 +199,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Memberships from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Memberships from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -221,7 +221,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Channel Type from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Channel Type from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -230,7 +230,7 @@
                         </thread-pool>
                                                         
                         <!-- channels -->
-                        <thread-pool threads="${req(THREAD_COUNT)}">
+                        <thread-pool threads="1"> <!-- single threaded for now due to lack of thread-saftey in channel publishing code -->
                             <file-iterator dir="${$1}" includes="**/*.channel">
                                 <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
                                     <concurrent>
@@ -243,7 +243,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Channel from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Channel from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -265,7 +265,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Membership from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Membership from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -287,7 +287,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Permission from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Permission from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -309,7 +309,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Permission Set from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Permission Set from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -331,7 +331,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import DLM Fragment Layout from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import DLM Fragment Layout from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -353,7 +353,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Layout from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Layout from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>
@@ -375,7 +375,7 @@
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Fragment Definition from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <log logger-name="org.jasig.portal.io.import" level="error" exception="${Attributes.EXCEPTION}">Failed to import Fragment Definition from:  ${Attributes.LOCATION} due to exception</log>
+                                                <throw/>
                                             </catch>
                                         </handle-error>
                                     </concurrent>

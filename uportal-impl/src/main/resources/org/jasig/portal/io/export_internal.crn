@@ -56,7 +56,7 @@
                                     </try>
                                     <catch>
                                         <echo-ln>ERROR Failed to export layout for user ${USER_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export layout for user ${USER_NAME} due to exception</log>
+                                        <throw/>
                                     </catch>
                                 </handle-error>
                             </concurrent>
@@ -113,7 +113,7 @@
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export channel ${CHAN_FNAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export channel ${CHAN_FNAME} due to exception</log>
+                                <throw/>
                             </catch>
                         </handle-error>
                     </concurrent>
@@ -150,7 +150,7 @@
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export channel type ${TYPE_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export channel type ${TYPE_NAME} due to exception</log>
+                                <throw/>
                             </catch>
                         </handle-error>
                     </concurrent>
@@ -200,7 +200,7 @@
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export group ${GROUP_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export channel type ${TYPE_NAME} due to exception</log>
+                                <throw/>
                             </catch>
                         </handle-error>
                     </concurrent>
@@ -253,7 +253,7 @@
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export group and membership for ${GROUP_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export group and membership for ${GROUP_NAME} due to exception</log>
+                                <throw/>
                             </catch>
                         </handle-error>
                     </concurrent>
@@ -312,7 +312,7 @@
                                     </try>
                                     <catch>
                                         <echo-ln>ERROR Failed to export user ${USER_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export user ${USER_NAME} due to exception</log>
+                                        <throw/>
                                     </catch>
                                 </handle-error>
                             </concurrent>
@@ -354,7 +354,7 @@
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export theme ${SS_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export theme ${SS_NAME} due to exception</log>
+                                <throw/>
                             </catch>
                         </handle-error>
                     </concurrent>
@@ -391,7 +391,7 @@
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export structure ${SS_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export structure ${SS_NAME} due to exception</log>
+                                <throw/>
                             </catch>
                         </handle-error>
                     </concurrent>
@@ -428,7 +428,7 @@
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export entity type ${ENTITY_TYPE_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export entity type ${ENTITY_TYPE_NAME} due to exception</log>
+                                <throw/>
                             </catch>
                         </handle-error>
                     </concurrent>
@@ -466,7 +466,7 @@
                                     </try>
                                     <catch>
                                         <echo-ln>ERROR Failed to export fragment definition ${groovy(FRAGMENT.getName())} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export fragment definition ${groovy(FRAGMENT.getName())} due to exception</log>
+                                        <throw/>
                                     </catch>
                                 </handle-error>
                             </concurrent>
