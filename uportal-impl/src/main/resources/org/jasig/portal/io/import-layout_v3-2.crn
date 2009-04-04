@@ -1,0 +1,40 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${Attributes.NODE}=XML Element that defines the entity to import
+ |
+ +-->
+<with>
+    <attribute key="USER_NAME">${valueOf(@username)}</attribute>
+    <attribute key="preferencesElement">${singleNode(preferences)}</attribute>
+    <subtasks>
+        <sql-transaction>
+            <if test="${jexl(preferencesElement ne null)}">
+                <delete-node node="${singleNode(preferences)}"/>
+            </if>
+            <groovy>
+                <script>
+                    def layoutStore = layoutStoreProvider.getLayoutStore();
+                    layoutStore.importLayout(Attributes.NODE);</script>
+                <subtasks>
+                    <!-- Now do portlet entity preferences -->
+                    <with-attribute key="Attributes.NODE" value="${preferencesElement}">
+                        <if test="${jexl(Attributes.NODE != null)}">
+                            <crn location="import-preferences.crn"/>
+                        </if>
+                    </with-attribute>
+                </subtasks>
+            </groovy>
+        </sql-transaction>
+    </subtasks>
+</with>

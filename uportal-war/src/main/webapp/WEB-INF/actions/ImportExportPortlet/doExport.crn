@@ -8,6 +8,7 @@
 <with-attribute key="PORTAL_CONTEXT" value="${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}">
     <properties location="constants.properties">
         <with>
+            <attribute key="exportTasks">${groovy(PORTAL_CONTEXT.getBean('exportTasks'))}</attribute>
             <attribute key="entityType">${groovy(WebAttributes.REQUEST.getParameter('entityType'))}</attribute>
             <attribute key="sysid">${groovy(WebAttributes.REQUEST.getParameter('sysid'))}</attribute>
             <attribute key="SqlAttributes.DATA_SOURCE">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
@@ -25,12 +26,58 @@
                     <!-- layout -->
                     <when test="${jexl(entityType.equalsIgnoreCase('layout'))}">
                         <with-attribute key="USER_NAME" value="${sysid}">
-                            <with-attribute key="Attributes.NODE" value="${crn(${groovy(org.jasig.portal.RDBMServices.class.getClassLoader().getResource('/org/jasig/portal/io/export-layout.crn').toExternalForm())})}">
-                                <crn location="setDownloadDocument.crn"/>
-                            </with-attribute>
+		                    <groovy>
+		                        <script>
+		                            import org.danann.cernunnos.Attributes;
+		                            import org.danann.cernunnos.ReturnValueImpl;
+		                            import org.danann.cernunnos.runtime.RuntimeRequestResponse;
+		                            
+		                            ReturnValueImpl rslt = new ReturnValueImpl();
+		                            RuntimeRequestResponse tr = new RuntimeRequestResponse();
+		                            tr.setAttribute(Attributes.RETURN_VALUE, rslt);
+		                            tr.setAttribute('USER_NAME', USER_NAME);
+		                            
+		                            exportTasks.get('layout').perform(tr, new RuntimeRequestResponse());
+		                            def exportedLayoutDoc = rslt.getValue();
+		                            ScriptAttributes.RESPONSE.setAttribute('Attributes.NODE', exportedLayoutDoc);
+		                        </script>
+		                        <subtasks>
+		                            <crn location="setDownloadDocument.crn"/>
+		                        </subtasks>
+		                    </groovy>
                             <groovy>
                                 <script>
                                     WebAttributes.REQUEST.getPortletSession(true).setAttribute(FILENAME_ATTRIBUTE, USER_NAME + '.layout', javax.portlet.PortletSession.APPLICATION_SCOPE);
+                                </script>
+                            </groovy>
+                        </with-attribute>
+                    </when>
+
+                    <!-- profile -->
+                    <when test="${jexl(entityType.equalsIgnoreCase('profile'))}">
+                        <with-attribute key="USER_NAME" value="${sysid}">
+                            <groovy>
+                                <script>
+                                    import org.danann.cernunnos.Attributes;
+                                    import org.danann.cernunnos.ReturnValueImpl;
+                                    import org.danann.cernunnos.runtime.RuntimeRequestResponse;
+                                    
+                                    ReturnValueImpl rslt = new ReturnValueImpl();
+                                    RuntimeRequestResponse tr = new RuntimeRequestResponse();
+                                    tr.setAttribute(Attributes.RETURN_VALUE, rslt);
+                                    tr.setAttribute('USER_NAME', USER_NAME);
+                                    
+                                    exportTasks.get('profile').perform(tr, new RuntimeRequestResponse());
+                                    def exportedProfileDoc = rslt.getValue();
+                                    ScriptAttributes.RESPONSE.setAttribute('Attributes.NODE', exportedProfileDoc);
+                                </script>
+                                <subtasks>
+                                    <crn location="setDownloadDocument.crn"/>
+                                </subtasks>
+                            </groovy>
+                            <groovy>
+                                <script>
+                                    WebAttributes.REQUEST.getPortletSession(true).setAttribute(FILENAME_ATTRIBUTE, USER_NAME + '.profile', javax.portlet.PortletSession.APPLICATION_SCOPE);
                                 </script>
                             </groovy>
                         </with-attribute>

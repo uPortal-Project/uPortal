@@ -51,6 +51,7 @@ import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -77,9 +78,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
   protected static int DEBUG = 0;
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
-  
-  private final IPerson systemUser;
-  
+    
   private final DataSource dataSource;
   private final IDatabaseMetadata databaseMetadata;
   protected final IChannelRegistryStore channelRegistryStore;
@@ -125,14 +124,22 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
             }
         }
 
-        // Load the "system" user id from the database
-        final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(this.dataSource);
-        final int systemUserId = jdbcTemplate.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME = 'system'");
-        log.info("Found user id " + systemUserId + " for the 'system' user.");
-        this.systemUser = new SystemUser(systemUserId);
     }
   
+    private final SingletonDoubleCheckedCreator<IPerson> systemPersonCreator = new SingletonDoubleCheckedCreator<IPerson>() {
+        protected IPerson createSingleton(Object... args) {
+            // be sure we only do this once...
+            // Load the "system" user id from the database
+            final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(RDBMUserLayoutStore.this.dataSource);
+            final int systemUserId = jdbcTemplate.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME = 'system'");
+            log.info("Found user id " + systemUserId + " for the 'system' user.");
+            return new SystemUser(systemUserId);
+        }
+    };
 
+    private final IPerson getSystemUser() {
+        return this.systemPersonCreator.get();
+    }
 
   /**
    * Registers a NEW structure stylesheet with the database.
@@ -817,6 +824,9 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
         try { rs.close(); } catch (Exception e) {}
         try { stmt.close(); } catch (Exception e) {}
       }
+    } catch (Exception e) {
+        String msg = "Unable to fetch StructureStylesheetDescription for stylesheetId:  " + stylesheetId;
+        throw new RuntimeException(msg, e);
     } finally {
       RDBMServices.releaseConnection(con);
     }
@@ -1551,7 +1561,11 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
               // uPortal i18n
               int name_index, value_index;
               if (localeAware) {
-                  ls = new LayoutStructure(structId, nextId, childId, chanId, rs.getString(7),rs.getString(8),rs.getString(9),localeManager.getLocales()[0].toString());
+                  ls = new LayoutStructure(
+                              structId, nextId, childId, chanId, 
+                              rs.getString(7),rs.getString(8),rs.getString(9),
+                              localeManager.getLocales()
+                              [0].toString());
                   name_index=10;
                   value_index=11;
               }  else {
@@ -2584,11 +2598,11 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
   }
 
   public void setSystemBrowserMapping (String userAgent, int profileId) throws Exception {
-    this.setUserBrowserMapping(systemUser, userAgent, profileId);
+    this.setUserBrowserMapping(this.getSystemUser(), userAgent, profileId);
   }
 
   private int getSystemBrowserMapping (String userAgent) throws Exception {
-    return  getUserBrowserMapping(systemUser, userAgent);
+    return  getUserBrowserMapping(this.getSystemUser(), userAgent);
   }
 
   public UserProfile getUserProfile (IPerson person, String userAgent) throws Exception {
@@ -2602,19 +2616,19 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
     int profileId = getSystemBrowserMapping(userAgent);
     if (profileId == 0)
       return  null;
-    UserProfile up = this.getUserProfileById(systemUser, profileId);
+    UserProfile up = this.getUserProfileById(this.getSystemUser(), profileId);
     up.setSystemProfile(true);
     return  up;
   }
 
   public UserProfile getSystemProfileById (int profileId) throws Exception {
-    UserProfile up = this.getUserProfileById(systemUser, profileId);
+    UserProfile up = this.getUserProfileById(this.getSystemUser(), profileId);
     up.setSystemProfile(true);
     return  up;
   }
 
   public Hashtable getSystemProfileList () throws Exception {
-    Hashtable pl = this.getUserProfileList(systemUser);
+    Hashtable pl = this.getUserProfileList(this.getSystemUser());
     for (Enumeration e = pl.elements(); e.hasMoreElements();) {
       UserProfile up = (UserProfile)e.nextElement();
       up.setSystemProfile(true);
@@ -2623,15 +2637,15 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
   }
 
   public void updateSystemProfile (UserProfile profile) throws Exception {
-    this.updateUserProfile(systemUser, profile);
+    this.updateUserProfile(this.getSystemUser(), profile);
   }
 
   public UserProfile addSystemProfile (UserProfile profile) throws Exception {
-    return  addUserProfile(systemUser, profile);
+    return  addUserProfile(this.getSystemUser(), profile);
   }
 
   public void deleteSystemProfile (int profileId) throws Exception {
-    this.deleteUserProfile(systemUser, profileId);
+    this.deleteUserProfile(this.getSystemUser(), profileId);
   }
 
     private static class SystemUser implements IPerson {
@@ -2788,4 +2802,5 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
 
       return layoutId;
   }
+
 }

@@ -11,6 +11,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,15 +23,24 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.danann.cernunnos.Attributes;
+import org.danann.cernunnos.ReturnValueImpl;
+import org.danann.cernunnos.Task;
+import org.danann.cernunnos.runtime.RuntimeRequestResponse;
+import org.dom4j.io.DOMReader;
+import org.dom4j.io.DOMWriter;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.RDBMUserIdentityStore;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
+import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.layout.LayoutStructure;
@@ -37,11 +48,14 @@ import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.spring.locator.ConfigurationLoaderLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.XML;
+import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -72,7 +86,7 @@ public class RDBMDistributedLayoutStore
     private ConfigurationLoader configurationLoader;
     private Map<String, FragmentNodeInfo> fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
     private LayoutDecorator decorator = null;
-    private final FragmentActivator activator;
+    private FragmentActivator activator;
     static final String TEMPLATE_USER_NAME
         = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
     static final String DECORATOR_PROPERTY = "layoutDecorator";
@@ -87,6 +101,22 @@ public class RDBMDistributedLayoutStore
     private static SmartCache tsdCache;
     // Cache for structure stylesheet descriptors
     private static SmartCache ssdCache;
+    
+    // Used in Import/Export operations
+    private final org.dom4j.DocumentFactory fac = new org.dom4j.DocumentFactory();
+    private final DOMReader reader = new DOMReader();
+    private final DOMWriter writer = new DOMWriter();
+    private Task lookupNoderefTask;
+    private Task lookupPathrefTask;
+    private final IUserIdentityStore identityStore = new RDBMUserIdentityStore();
+    
+    public void setLookupNoderefTask(Task k) {
+        this.lookupNoderefTask = k;
+    }
+
+    public void setLookupPathrefTask(Task k) {
+        this.lookupPathrefTask = k;
+    }
 
     /**
      * Method for acquiring copies of fragment layouts to assist in debugging.
@@ -165,6 +195,7 @@ public class RDBMDistributedLayoutStore
             };
         t.setName("DLM Fragment Activator");
         t.start();
+
     }
 
     /**
@@ -423,6 +454,420 @@ public class RDBMDistributedLayoutStore
             decorator.decorate( layout, person, profile );
 
         return layout;
+    }
+    
+    private boolean layoutExistsForUser(IPerson person) {
+        
+        // Assertions.
+        if (person == null) {
+            String msg = "Argument 'person' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(RDBMServices.getDataSource());
+        final int struct_count = jdbcTemplate.queryForInt("SELECT COUNT(*) FROM up_layout_struct WHERE user_id = ?", person.getID());
+        return struct_count == 0 ? false : true;
+        
+    }
+    
+    @SuppressWarnings("unchecked")
+    public org.dom4j.Element exportLayout(IPerson person, UserProfile profile) {
+        
+        if (!layoutExistsForUser(person)) {
+            return null;
+        }
+
+        org.dom4j.Document layoutDoc = null;
+        UserPreferences up = null;
+        try {
+            layoutDoc = reader.read(_safeGetUserLayout(person, profile));
+            up = this.getUserPreferences(person, profile);
+        } catch (Throwable t) {
+            String msg = "Unable to obtain layout & profile for user '" 
+                            + person.getUserName() + "', profileId " 
+                            + profile.getProfileId();
+            throw new RuntimeException(msg, t);
+        }
+        
+        /*
+         * Clean up the DOM for export.
+         */
+
+        // (1) Add structure & theme attributes...
+        StructureStylesheetUserPreferences ssup = up.getStructureStylesheetUserPreferences();
+        // The structure transform supports both 'folder' and 'channel' attributes...
+        List<String> structFolderAttrNames = Collections.list(ssup.getFolderAttributeNames());
+        for (Iterator<org.dom4j.Element> fldrs = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//folder").iterator(); fldrs.hasNext();) {
+            org.dom4j.Element fld = fldrs.next();
+            for (String attr : structFolderAttrNames) {
+                String val = ssup.getDefinedFolderAttributeValue(fld.valueOf("@ID"), attr);
+                if (val != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Adding structure folder attribute:  name=" + attr + ", value=" + val);
+                    }
+                    org.dom4j.Element sa = fac.createElement("structure-attribute");
+                    org.dom4j.Element n = sa.addElement("name");
+                    n.setText(attr);
+                    org.dom4j.Element v = sa.addElement("value");
+                    v.setText(val);
+                    fld.elements().add(0, sa);
+                }
+            }
+        }
+        List<String> structChannelAttrNames = Collections.list(ssup.getChannelAttributeNames());
+        for (Iterator<org.dom4j.Element> chnls = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel").iterator(); chnls.hasNext();) {
+            org.dom4j.Element chnl = chnls.next();
+            for (String attr : structChannelAttrNames) {
+                String val = ssup.getDefinedChannelAttributeValue(chnl.valueOf("@ID"), attr);
+                if (val != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Adding structure channel attribute:  name=" + attr + ", value=" + val);
+                    }
+                    org.dom4j.Element sa = fac.createElement("structure-attribute");
+                    org.dom4j.Element n = sa.addElement("name");
+                    n.setText(attr);
+                    org.dom4j.Element v = sa.addElement("value");
+                    v.setText(val);
+                    chnl.elements().add(0, sa);
+                }
+            }
+        }
+        // The theme transform supports only 'channel' attributes...
+        ThemeStylesheetUserPreferences tsup = up.getThemeStylesheetUserPreferences();
+        List<String> themeChannelAttrNames = Collections.list(tsup.getChannelAttributeNames());
+        for (Iterator<org.dom4j.Element> chnls = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel").iterator(); chnls.hasNext();) {
+            org.dom4j.Element chnl = chnls.next();
+            for (String attr : themeChannelAttrNames) {
+                String val = tsup.getDefinedChannelAttributeValue(chnl.valueOf("@ID"), attr);
+                if (val != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Adding theme channel attribute:  name=" + attr + ", value=" + val);
+                    }
+                    org.dom4j.Element ta = fac.createElement("theme-attribute");
+                    org.dom4j.Element n = ta.addElement("name");
+                    n.setText(attr);
+                    org.dom4j.Element v = ta.addElement("value");
+                    v.setText(val);
+                    chnl.elements().add(0, ta);
+                }
+            }
+        }
+        
+        // (2) Remove database Ids...
+        Iterator<org.dom4j.Attribute> ids = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@ID").iterator();
+        while (ids.hasNext()) {
+            org.dom4j.Attribute a = ids.next();
+            a.getParent().remove(a);
+        }
+        
+        // (3) Remove locale info...
+        Iterator<org.dom4j.Attribute> locale = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@locale").iterator();
+        while (locale.hasNext()) {
+            org.dom4j.Attribute loc = locale.next();
+            loc.getParent().remove(loc);
+        }
+
+        // (4) Scrub unnecessary channel information...
+        List<String> channelAttributeWhitelist = Arrays.asList(new String[] { 
+                        "fname", 
+                        "unremovable", 
+                        "hidden", 
+                        "immutable" 
+                    });
+        Iterator<org.dom4j.Element> channels = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel").iterator();
+        while (channels.hasNext()) {
+            org.dom4j.Element oldCh = channels.next();
+            org.dom4j.Element parent = oldCh.getParent();
+            org.dom4j.Element newCh = fac.createElement("channel");
+            for (String aName : channelAttributeWhitelist) {
+                org.dom4j.Attribute a = oldCh.attribute(aName);
+                if (a != null) {
+                    newCh.addAttribute(a.getName(), a.getValue());
+                }
+            }
+            parent.elements().add(parent.elements().indexOf(oldCh), newCh);
+            parent.remove(oldCh);
+        }
+        
+        // (5) Remove dlm:plfID...
+        Iterator<org.dom4j.Attribute> plfid = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:plfID").iterator();
+        while (plfid.hasNext()) {
+            org.dom4j.Attribute plf = plfid.next();
+            plf.getParent().remove(plf);
+        }
+        
+        // (6) Convert internal DLM noderefs to external form (pathrefs)...
+        Iterator<org.dom4j.Attribute> origins = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:origin").iterator();
+        while (origins.hasNext()) {
+            org.dom4j.Attribute org = origins.next();
+            String[] pathTokens = getDlmPathref(org.getValue());
+            org.setValue(pathTokens[0] + ":" + pathTokens[1]);
+        }
+        Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//dlm:*/@name").iterator();
+        while (names.hasNext()) {
+            org.dom4j.Attribute n = names.next();
+            String[] pathTokens = getDlmPathref(n.getValue());
+            // Name attributes for some dlm:elements are empty...
+            if (pathTokens != null) {
+                n.setValue(pathTokens[0] + ":" + pathTokens[1]);
+                // The ones that aren't empty have fnames...
+                n.getParent().addAttribute("fname", pathTokens[2]);                
+            }
+        }
+
+        return layoutDoc.getRootElement();
+
+    }
+        
+    @SuppressWarnings("unchecked")
+    public void importLayout(org.dom4j.Element e) {
+        
+        org.dom4j.Element layout = e.createCopy();
+        org.dom4j.Document doc = fac.createDocument(layout);
+        doc.normalize();
+        String ownerUsername = layout.valueOf("@username");
+        IPerson person = null;
+        UserProfile profile = null;
+        try {
+            person = new PersonImpl();
+            person.setUserName(ownerUsername);
+            int ownerId = identityStore.getPortalUID(person);
+            if (ownerId == -1) {
+                String msg = "No userId for username=" + ownerUsername;
+                throw new RuntimeException(msg);
+            }
+            person.setID(ownerId);
+            person.setSecurityContext(new BrokenSecurityContext());
+            profile = this.getUserProfileById(person, 1);
+        } catch (Throwable t) {
+            String msg = "Unrecognized user;  you must import users before their layouts.";
+            throw new RuntimeException(msg, t);
+        }
+        
+        // (6) Convert external DLM pathrefs to internal form (noderefs)...
+        for (Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout.selectNodes("//@dlm:origin").iterator(); itr.hasNext();) {
+            org.dom4j.Attribute a = itr.next();
+            String noderef = getDlmNoderef(ownerUsername, a.getValue(), null, true);
+            a.setValue(noderef);
+        }
+        for (Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layout.selectNodes("//dlm:*/@name").iterator(); names.hasNext();) {
+            org.dom4j.Attribute a = names.next();
+            org.dom4j.Attribute fname = a.getParent().attribute("fname");
+            String noderef = null;
+            if (fname != null) {
+                noderef = getDlmNoderef(ownerUsername, a.getValue(), fname.getValue(), false);
+                // Remove the fname attribute now that we're done w/ it...
+                fname.getParent().remove(fname);
+            } else {
+                noderef = getDlmNoderef(ownerUsername, a.getValue(), null, true);
+            }
+            a.setValue(noderef);
+        }
+        
+        // (5) Add dlm:plfID & (2) Add database Ids...
+        int nextId = 1;
+        for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("folder | dlm:*").iterator(); it.hasNext();) {
+            nextId = addIdAttributes(it.next(), nextId);
+        }
+
+        // (4) Restore chanID attributes on <channel> elements...
+        try {
+            for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//channel").iterator(); it.hasNext();) {
+                org.dom4j.Element c = it.next();
+                ChannelDefinition cd = this.channelRegistryStore.getChannelDefinition(c.valueOf("@fname"));
+                c.addAttribute("chanID", String.valueOf(cd.getId()));
+            }
+        } catch (Throwable t) {
+            String msg = "Error linking channels contained in layout for user:  " + ownerUsername;
+            throw new RuntimeException(msg, t);
+        }
+        
+        // (3) Restore locale info...
+        // (This step doesn't appear to be needed for imports)
+
+        // (1) Process structure & theme attributes...
+        Document layoutDom = null;
+        try {
+                        
+            UserPreferences up = this.getUserPreferences(person, profile);
+            
+            // Structure Attributes.
+            boolean saSet = false;
+            StructureStylesheetUserPreferences ssup = up.getStructureStylesheetUserPreferences();
+            // ssup must be manually cleaned out.
+            for (Enumeration<String> names = (Enumeration<String>) ssup.getFolderAttributeNames(); names.hasMoreElements();) {
+                String n = names.nextElement();
+                for (Enumeration<String> fIds = (Enumeration<String>) ssup.getFolders(); fIds.hasMoreElements();) {
+                    String f = fIds.nextElement();
+                    if (ssup.getDefinedFolderAttributeValue(f, n) != null) {
+                        ssup.removeFolder(f);
+                    }
+                }
+            }
+            for (Enumeration<String> names = (Enumeration<String>) ssup.getChannelAttributeNames(); names.hasMoreElements();) {
+                String n = names.nextElement();
+                for (Enumeration<String> chds = (Enumeration<String>) ssup.getChannels(); chds.hasMoreElements();) {
+                    String c = chds.nextElement();
+                    if (ssup.getDefinedChannelAttributeValue(c, n) != null) {
+                        ssup.removeChannel(c);
+                    }
+                }
+            }
+            for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//structure-attribute").iterator(); it.hasNext();) {
+                org.dom4j.Element sa = (org.dom4j.Element) it.next();
+                String idAttr = sa.getParent().valueOf("@ID");
+                if (sa.getParent().getName().equals("folder")) {
+                    ssup.setFolderAttributeValue(idAttr, sa.valueOf("name"), sa.valueOf("value"));
+                    saSet = true;
+                } else if (sa.getParent().getName().equals("channel")) {
+                    ssup.setChannelAttributeValue(idAttr, sa.valueOf("name"), sa.valueOf("value"));
+                    saSet = true;
+                } else {
+                    String msg = "Unrecognized parent element for user preferences attribute:  " + sa.getParent().getName();
+                    throw new RuntimeException(msg);
+                }
+                // Remove these elements or else DLM will choke...
+                sa.getParent().remove(sa);
+            }
+            
+            // Theme Attributes.
+            boolean taSet = false;
+            ThemeStylesheetUserPreferences tsup = up.getThemeStylesheetUserPreferences();
+            // tsup must be manually cleaned out.
+            for (Enumeration<String> names = (Enumeration<String>) tsup.getChannelAttributeNames(); names.hasMoreElements();) {
+                String n = names.nextElement();
+                for (Enumeration<String> chds = (Enumeration<String>) tsup.getChannels(); chds.hasMoreElements();) {
+                    String c = chds.nextElement();
+                    if (tsup.getDefinedChannelAttributeValue(c, n) != null) {
+                        tsup.removeChannel(c);
+                    }
+                }
+            }
+            for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//theme-attribute").iterator(); it.hasNext();) {
+                org.dom4j.Element ta = (org.dom4j.Element) it.next();
+                String idAttr = ta.getParent().valueOf("@ID");
+                // Theme attributes are channels only...
+                tsup.setChannelAttributeValue(idAttr, ta.valueOf("name"), ta.valueOf("value"));
+                taSet = true;
+                // Remove these elements or else DLM will choke...
+                ta.getParent().remove(ta);
+            }
+
+            // From this point forward we need the user's PLF set as DLM expects it...
+            for (Iterator<org.dom4j.Text> it = (Iterator<org.dom4j.Text>) layout.selectNodes("descendant::text()").iterator(); it.hasNext();) {
+                // How many years have we used Java & XML, and this still isn't easy?
+                org.dom4j.Text txt = it.next();
+                if (txt.getText().trim().length() == 0) {
+                    txt.getParent().remove(txt);
+                }
+            }
+            
+            layoutDom = writer.write(doc);
+            person.setAttribute(Constants.PLF, layoutDom);
+
+            if (saSet) {
+              this.setStructureStylesheetUserPreferences(person, profile.getProfileId(), ssup);
+            }
+            if (taSet) {
+                this.setThemeStylesheetUserPreferences(person, profile.getProfileId(), tsup);
+            }
+            
+        } catch (Throwable t) {
+            String msg = "Unable to import structure and theme attributes.";
+            throw new RuntimeException(msg, t);
+        }
+        
+        // Finally store the layout...
+        try {
+            this.setUserLayout(person, profile, layoutDom, true, true);
+        } catch (Throwable t) {
+            String msg = "Unable to persist layout for user:  " + ownerUsername;
+            throw new RuntimeException(msg, t);
+        }
+
+    }
+    
+    @SuppressWarnings("unchecked")
+    private final int addIdAttributes(org.dom4j.Element e, int nextId) {
+
+        char prefix;
+        if (e.getName().equals("folder")) {
+            prefix = 's';
+        } else if (e.getName().equals("channel")) {
+            prefix = 'n';
+        } else if (e.getQName().getNamespacePrefix().equals("dlm")) {
+            prefix = 'd';
+        } else {
+            throw new RuntimeException("Unrecognized element type:  " + e.getName());
+        }
+        
+        if (e.valueOf("@dlm:origin").length() != 0) {
+            // Add dlm:plfID & copy dlm:origin...
+            e.addAttribute("dlm:plfID", prefix + String.valueOf(nextId));
+            e.addAttribute("ID", e.valueOf("@dlm:origin"));
+        } else {
+            // Do the standard thing...
+            e.addAttribute("ID", prefix + String.valueOf(nextId));
+        }
+        
+        int childId = nextId + 1;
+        for (Iterator<org.dom4j.Element> itr = (Iterator<org.dom4j.Element>) e.selectNodes("folder | channel | dlm:*").iterator(); itr.hasNext();) {
+            org.dom4j.Element child = itr.next();
+            childId = addIdAttributes(child, childId);
+        }
+        
+        return childId;
+    
+    }
+
+    private final String[] getDlmPathref(String dlmNoderef) {
+        
+        // Assertions.
+        if (dlmNoderef == null) {
+            String msg = "Argument 'dlmNoderef' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        ReturnValueImpl rvi = new ReturnValueImpl();
+        RuntimeRequestResponse tr = new RuntimeRequestResponse();
+        tr.setAttribute(Attributes.RETURN_VALUE, rvi);
+        tr.setAttribute("DLM_NODEREF", dlmNoderef);
+        this.lookupNoderefTask.perform(tr, new RuntimeRequestResponse());
+        
+        String[] rslt = (String[]) rvi.getValue();
+        return rslt;
+
+    }
+
+    private final String getDlmNoderef(String layoutOwner, String pathref, String fname, boolean isStructRef) {
+        
+        // Assertions.
+        if (layoutOwner == null) {
+            String msg = "Argument 'layoutOwner' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        if (pathref == null) {
+            String msg = "Argument 'pathref' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        // NB:  Argument 'fname' may be null...
+        
+        ReturnValueImpl rvi = new ReturnValueImpl();
+        RuntimeRequestResponse tr = new RuntimeRequestResponse();
+        tr.setAttribute(Attributes.RETURN_VALUE, rvi);
+        tr.setAttribute("USER_NAME", layoutOwner);
+        tr.setAttribute("DLM_PATHREF", pathref);
+        if (fname != null) {
+            tr.setAttribute("FNAME", fname);
+        }
+        if (isStructRef) {
+            tr.setAttribute("IS_STRUCT_REF", Boolean.TRUE);
+        }
+        this.lookupPathrefTask.perform(tr, new RuntimeRequestResponse());
+        
+        String rslt = (String) rvi.getValue();
+        return rslt;
+
     }
 
     /**
@@ -2231,4 +2676,5 @@ public class RDBMDistributedLayoutStore
         }
         pstmt.executeUpdate();
     }
+        
 }

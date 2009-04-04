@@ -11,21 +11,44 @@
     <!-- layout -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
         <sql-query>
-            <sql>SELECT user_id, user_name FROM up_user WHERE user_name = ?</sql>
+            <sql>
+                SELECT user_name FROM up_user WHERE user_name = ?
+            </sql>
             <parameter value="${SYSID}"/>
             <subtasks>
-	            <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
-	                <choose>
-	                    <when test="${crn(is-fragment-owner.crn)}">
-	                        <!-- This is a DLM fragment owner layout... -->
-	                        <write-document node="${crn(export-layout.crn)}" file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
-	                    </when>
-	                    <otherwise>
-	                        <!-- This is a normal layout... -->
-	                        <write-document node="${crn(export-layout.crn)}" file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
-	                    </otherwise>
-	                </choose>
-	            </with-attribute>
+                <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
+                    <!-- This entire groovy task is essentially a long-winded with-attribute -->
+                    <groovy>
+                        <script>
+                            import org.danann.cernunnos.Attributes;
+                            import org.danann.cernunnos.ReturnValueImpl;
+                            import org.danann.cernunnos.runtime.RuntimeRequestResponse;
+                            
+                            ReturnValueImpl rslt = new ReturnValueImpl();
+                            RuntimeRequestResponse tr = new RuntimeRequestResponse();
+                            tr.setAttribute(Attributes.RETURN_VALUE, rslt);
+                            tr.setAttribute('USER_NAME', USER_NAME);
+                            
+                            PORTAL_CONTEXT.getBean('export-layout').perform(tr, new RuntimeRequestResponse());
+                            def exportedLayoutDoc = rslt.getValue();
+                            ScriptAttributes.RESPONSE.setAttribute('exportedLayoutDoc', exportedLayoutDoc);
+                        </script>
+                        <subtasks>
+                            <if test="${jexl(exportedLayoutDoc ne null)}">
+			                    <choose>
+			                        <when test="${crn(is-fragment-owner.crn)}">
+			                            <!-- This is a DLM fragment owner layout... -->
+			                            <write-document node="${exportedLayoutDoc}" file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
+			                        </when>
+			                        <otherwise>
+			                            <!-- This is a normal layout... -->
+			                            <write-document node="${exportedLayoutDoc}" file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
+			                        </otherwise>
+			                    </choose>
+			                </if>
+                        </subtasks>
+                    </groovy>
+                </with-attribute>
             </subtasks>
             <empty-result>
                 <echo-ln>No user '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
@@ -63,6 +86,83 @@
                         </when>
                         <otherwise>
                             <log logger-name="org.jasig.portal.io.export_internal" level="warn">layout, ${USER_NAME}: Not on included user list, skipping export</log>
+                        </otherwise>
+                    </choose>
+                </subtasks>
+            </sql-query>
+        </thread-pool>
+    </when>
+
+    <!-- profile -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('profile'))}">
+        <sql-query>
+            <sql>
+                SELECT upup.profile_id, upu.user_name
+                FROM up_user_profile upup, up_user upu 
+                WHERE upup.user_id = upu.user_id AND upu.user_name = ?
+            </sql>
+            <parameter value="${SYSID}"/>
+            <subtasks>
+                <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
+                    <!-- This entire groovy task is essentially a long-winded with-attribute -->
+                    <groovy>
+                        <script>
+                            import org.danann.cernunnos.Attributes;
+                            import org.danann.cernunnos.ReturnValueImpl;
+                            import org.danann.cernunnos.runtime.RuntimeRequestResponse;
+                            
+                            ReturnValueImpl rslt = new ReturnValueImpl();
+                            RuntimeRequestResponse tr = new RuntimeRequestResponse();
+                            tr.setAttribute(Attributes.RETURN_VALUE, rslt);
+                            tr.setAttribute('USER_NAME', USER_NAME);
+                            tr.setAttribute('PROFILE_ID', PROFILE_ID);
+                            
+                            PORTAL_CONTEXT.getBean('export-profile').perform(tr, new RuntimeRequestResponse());
+                            def exportedProfileDoc = rslt.getValue();
+                            ScriptAttributes.RESPONSE.setAttribute('exportedProfileDoc', exportedProfileDoc);
+                        </script>
+                        <subtasks>
+	                        <write-document node="${exportedProfileDoc}" file="${EXPORT_DIR}/profile/${SAFE_USER_NAME}-${PROFILE_ID}.profile"/>
+                        </subtasks>
+                    </groovy>
+                </with-attribute>
+            </subtasks>
+            <empty-result>
+                <echo-ln>No profiles found for the specified user '${SYSID}'</echo-ln>
+            </empty-result>
+        </sql-query>
+    </when>
+
+    <!-- all-profiles -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-profiles'))}">
+        <thread-pool threads="${THREAD_COUNT}">
+            <sql-query>
+                <sql>
+                    SELECT user_name FROM up_user
+                </sql>
+                <subtasks>
+                    <choose>
+                        <when test="${crn(is-user-included.crn)}">
+                            <concurrent>
+                                <handle-error>
+                                    <try>
+                                        <with>
+                                            <attribute key="SYSID">${USER_NAME}</attribute>
+                                            <attribute key="ENTITY_TYPE">profile</attribute>
+                                            <subtasks>
+                                                <crn location="export_internal.crn"/>
+                                            </subtasks>
+                                        </with>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export profile for user ${USER_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export profile for user ${USER_NAME} due to exception</log>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </when>
+                        <otherwise>
+                            <log logger-name="org.jasig.portal.io.export_internal" level="warn">profile, ${USER_NAME}: Not on included user list, skipping export</log>
                         </otherwise>
                     </choose>
                 </subtasks>

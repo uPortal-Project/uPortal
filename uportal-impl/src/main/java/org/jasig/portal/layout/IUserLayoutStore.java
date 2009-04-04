@@ -25,7 +25,7 @@ import org.w3c.dom.Document;
 public interface IUserLayoutStore {
 
     /**
-     * Retreive a user layout document.
+     * Retrieve a user layout document.
      *
      * @param Person an <code>IPerson</code> object specifying the user
      * @param profile a user profile 
@@ -33,6 +33,33 @@ public interface IUserLayoutStore {
      * @exception Exception if an error occurs
      */
     public Document getUserLayout (IPerson Person, UserProfile profile) throws Exception;
+
+    /**
+     * Returns an <code>Element</code> representing the user's layout and 
+     * <code>UserPreferences</code> (but not portlet preferences) formatted for 
+     * export.  This element <em>must</em> have an element name of &lt;layout&gt;.  
+     * Exported documents <em>must not</em> reference database identifiers and 
+     * <em>should</em> exclude unnecessary items like channel publishing 
+     * parameters, etc.  Layout store implementations are <em>may</em> return 
+     * <code>null</code> for users that don't have layout or preferences 
+     * customizations.
+     *
+     * @param person An <code>IPerson</code> object specifying the user
+     * @param profile A valid profile for <code>person</code> 
+     * @return A streamlined <code>Document</code> containing user layout and 
+     * <code>UserPreferences</code> data
+     * @exception Exception if an error occurs
+     */
+    public org.dom4j.Element exportLayout(IPerson person, UserProfile profile);
+
+    /**
+     * Performs the reverse of <code>exportLayout</code>.  The specified element 
+     * <em>must</em> have an element name of &lt;layout&gt; and <emshould</em> 
+     * contain both content and <code>UserPreferences</code> data. 
+     * 
+     * @param layout XML representing a user's layout and <code>UserPreferences</code>
+     */
+    public void importLayout(org.dom4j.Element layout);
 
     /**
      * Persist user layout document.

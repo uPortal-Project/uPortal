@@ -33,6 +33,7 @@
 					    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all'))}">
 					        <for-each attribute-name="ENTITY_TYPE" items="${groovy([
                                                    'all-layouts',
+                                                   'all-profiles',
                                                    'all-permission_sets',
                                                    'all-channels',
                                                    'all-channel-types',

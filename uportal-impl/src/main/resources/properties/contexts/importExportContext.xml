@@ -12,10 +12,20 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
+    <!-- 
+     | Import Tasks
+     +-->
+
 	<util:map id="importTasks" map-class="java.util.concurrent.ConcurrentHashMap">
 	    <entry key="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn">
             <ref bean="import-entity-type_v2-6"/>
 	    </entry>
+        <entry key="classpath://org/jasig/portal/io/import-layout_v3-2.crn">
+            <ref bean="import-layout_v3-2"/>
+        </entry>
+        <entry key="classpath://org/jasig/portal/io/import-profile_v3-2.crn">
+            <ref bean="import-profile_v3-2"/>
+        </entry>
 	</util:map>
 
     <bean id="import-entity-type_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
@@ -39,8 +49,144 @@
         </property>
     </bean>
     
-    
+    <bean id="import-layout_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-layout_v3-2.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+                <entry key="layoutStoreProvider">
+                    <ref bean="layoutStoreProvider"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
 
+    <bean id="import-profile_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-profile_v3-2.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <!-- 
+     | Export Tasks
+     +-->
+
+    <util:map id="exportTasks" map-class="java.util.concurrent.ConcurrentHashMap">
+        <entry key="layout">
+            <ref bean="export-layout"/>
+        </entry>
+        <entry key="profile">
+            <ref bean="export-profile"/>
+        </entry>
+    </util:map>
+    
+    <bean id="export-layout" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/export-layout.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+                <entry key="layoutStoreProvider">
+                    <ref bean="layoutStoreProvider"/>
+                </entry>
+                <entry key="portletEntityPreferenceHandler">
+                    <ref bean="portletEntityPreferenceHandler"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="export-profile" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/export-profile.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <!-- 
+     | Nested Dependencies
+     +-->
+
+    <bean id="layoutStoreProvider" class="org.jasig.portal.layout.dlm.LayoutStoreProvider">
+        <property name="lookupNoderefTask" ref="lookup-dlm-noderef"/>
+        <property name="lookupPathrefTask" ref="lookup-dlm-pathref"/>
+    </bean>
+
+    <bean id="lookup-dlm-noderef" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/lookup-dlm-noderef.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="Attributes.CACHE">
+                    <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                        <property name="cacheFactory" ref="cacheFactory" />
+                        <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
+                    </bean>
+                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="lookup-dlm-pathref" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/lookup-dlm-pathref.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="Attributes.CACHE">
+                    <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                        <property name="cacheFactory" ref="cacheFactory" />
+                        <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
+                    </bean>
+                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
 
     <bean id="portletEntityPreferenceHandler" class="org.jasig.portal.io.support.PortletEntityPreferenceHandler">
         <property name="dataSource" ref="PortalDb" />
@@ -48,4 +194,5 @@
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
     </bean>
+
 </beans>

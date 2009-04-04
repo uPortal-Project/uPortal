@@ -12,6 +12,7 @@ import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.security.IPerson;
 
 /**
  * A base class for UserLayoutStore mock objects that does nothing.
@@ -27,6 +28,13 @@ public class UserLayoutStoreMock implements IUserLayoutStore {
     public UserLayoutStoreMock() {
 	super();
     }
+    
+    public org.dom4j.Element exportLayout(IPerson person, UserProfile profile) {
+        return null;
+    }
+    
+    public void importLayout(org.dom4j.Element layout) {}
+
     /** Registers new structure stylesheet with the portal database
      *
      * @param stylesheetDescriptionURI Location of the stylesheet description XML file
