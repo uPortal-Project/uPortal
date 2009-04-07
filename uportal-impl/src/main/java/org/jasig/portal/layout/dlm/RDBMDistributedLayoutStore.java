@@ -86,7 +86,20 @@ public class RDBMDistributedLayoutStore
     private ConfigurationLoader configurationLoader;
     private Map<String, FragmentNodeInfo> fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
     private LayoutDecorator decorator = null;
-    private FragmentActivator activator;
+
+    // fragmentActivator
+    private FragmentActivator fragmentActivator;
+    private final SingletonDoubleCheckedCreator<FragmentActivator> fragmentActivatorCreator = new SingletonDoubleCheckedCreator<FragmentActivator>() {
+        protected FragmentActivator createSingleton(Object... args) {
+            // be sure we only do this once...
+
+            RDBMDistributedLayoutStore parent = (RDBMDistributedLayoutStore) args[0];
+            FragmentActivator rslt = new FragmentActivator(parent, configurationLoader.getFragments());
+            rslt.activateFragments();
+            return rslt;
+        }
+    };
+    
     static final String TEMPLATE_USER_NAME
         = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
     static final String DECORATOR_PROPERTY = "layoutDecorator";
@@ -127,8 +140,9 @@ public class RDBMDistributedLayoutStore
     public Map<String, Document> getFragmentLayoutCopies()
     throws Exception
     {
-        this.waitForActivation();
-        
+
+        FragmentActivator activator = this.getFragmentActivator();
+
         Map<String, Document> layouts = new HashMap<String, Document>();
 
         final List<FragmentDefinition> definitions = configurationLoader.getFragments();
@@ -168,34 +182,10 @@ public class RDBMDistributedLayoutStore
                         + "' specified in dlm.xml. It will not be used.", e);
         }
 
-        // activate fragments in a separate thread because many parts of the
-        // system including activation rely on UserLayoutFactory to instantiate
-        // and then hand out to callers a single instance of this class and if
-        // this constructor has not returned then the variable which holds this
-        // instance is null. Most calls coming in are targeted at other methods
-        // than those provided in this class. Most are provided by the super
-        // class and hence reentrance into an instance still being activated is
-        // ok.
-
-        activator = new FragmentActivator(this, configurationLoader.getFragments());
-        Thread t = new Thread(PortalSessionManager.getThreadGroup(), "dlm activator")
-            {
-                @Override
-                public void run()
-                {
-                    try
-                    {
-                        activator.activateFragments();
-                    }
-                    catch( Exception e )
-                    {
-                        LOG.error("Problem loading fragments.", e);
-                    }
-                }
-            };
-        t.setName("DLM Fragment Activator");
-        t.start();
-
+    }
+    
+    private FragmentActivator getFragmentActivator() {
+        return this.fragmentActivatorCreator.get(this);
     }
 
     /**
@@ -353,8 +343,9 @@ public class RDBMDistributedLayoutStore
      * specified in minutes.
      */
     public void cleanFragments() {
-        this.waitForActivation();
         
+        FragmentActivator activator = this.getFragmentActivator();
+
         //get each layout owner
         final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         if ( null != definitions ) {
@@ -446,7 +437,6 @@ public class RDBMDistributedLayoutStore
                                    UserProfile profile)
         throws Exception
     {
-        this.waitForActivation();
 
         Document layout = _getUserLayout( person, profile );
 
@@ -690,8 +680,13 @@ public class RDBMDistributedLayoutStore
         // (1) Process structure & theme attributes...
         Document layoutDom = null;
         try {
-                        
-            UserPreferences up = this.getUserPreferences(person, profile);
+
+//            UserPreferences up = this.getUserPreferences(person, profile);
+            UserPreferences up = new UserPreferences(profile);
+            up.setStructureStylesheetUserPreferences(this.getDistributedSSUP(person, 
+                        profile.getProfileId(), profile.getStructureStylesheetId()));
+            up.setThemeStylesheetUserPreferences(this.getDistributedTSUP(person, 
+                        profile.getProfileId(), profile.getThemeStylesheetId()));
             
             // Structure Attributes.
             boolean saSet = false;
@@ -781,7 +776,7 @@ public class RDBMDistributedLayoutStore
         
         // Finally store the layout...
         try {
-            this.setUserLayout(person, profile, layoutDom, true, true);
+            this.setUserLayout(person, profile, layoutDom, true, false);
         } catch (Throwable t) {
             String msg = "Unable to persist layout for user:  " + ownerUsername;
             throw new RuntimeException(msg, t);
@@ -965,9 +960,9 @@ public class RDBMDistributedLayoutStore
         return _safeGetUserLayout( person, profile );
     }
     
-    void waitForActivation() {
-        this.activator.activateFragments();
-    }
+//    void waitForActivation() {
+//        this.activator.activateFragments();
+//    }
 
     /**
      * Generates a new struct id for directive elements that dlm places in
@@ -990,6 +985,8 @@ public class RDBMDistributedLayoutStore
         // need to make a copy that we can fragmentize
         layout = XML.cloneDocument(layout);
 
+        FragmentActivator activator = this.getFragmentActivator();
+
         // Fix later to handle multiple profiles
         Element root = layout.getDocumentElement();
         final UserView userView = activator.getUserView(fragment);
@@ -1005,7 +1002,7 @@ public class RDBMDistributedLayoutStore
         try
         {
             activator.fragmentizeLayout( view, fragment );
-            this.activator.setUserView(fragment.getOwnerId(), view);
+            activator.setUserView(fragment.getOwnerId(), view);
             this.fragmentInfoCache = new HashMap<String, FragmentNodeInfo>();
         }
         catch( Exception e )
@@ -1074,6 +1071,8 @@ public class RDBMDistributedLayoutStore
     {
         int userId = person.getID();
 
+        FragmentActivator activator = this.getFragmentActivator();
+
         final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         if ( definitions != null )
         {
@@ -1106,6 +1105,8 @@ public class RDBMDistributedLayoutStore
             log.debug("About to check applicability of " + definitions.size() + " fragments");
         }
         
+        FragmentActivator activator = this.getFragmentActivator();
+
         if ( definitions != null )
         {
             for (final FragmentDefinition fragmentDefinition : definitions) {
@@ -1242,6 +1243,8 @@ public class RDBMDistributedLayoutStore
         // grab local pointers to variables subject to change at any time
         Map<String, FragmentNodeInfo> infoCache = fragmentInfoCache;
         final List<FragmentDefinition> fragments = configurationLoader.getFragments();
+
+        FragmentActivator activator = this.getFragmentActivator();
 
         FragmentNodeInfo info = infoCache.get(sId);
 
@@ -1731,7 +1734,6 @@ public class RDBMDistributedLayoutStore
     public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences( IPerson person, int profileId, int stylesheetId)
         throws Exception
     {
-        this.waitForActivation();
 
         DistributedUserPreferences ssup = getDistributedSSUP( person,
                                                               profileId,
@@ -1744,6 +1746,8 @@ public class RDBMDistributedLayoutStore
 
         if ( ownedFragment != null || isLayoutOwnerDefault )
             return ssup;
+
+        FragmentActivator activator = this.getFragmentActivator();
 
         // regular user, find which layouts apply and include their set prefs
         final List<FragmentDefinition> fragments = configurationLoader.getFragments();
@@ -1770,7 +1774,6 @@ public class RDBMDistributedLayoutStore
     public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences( IPerson person, int profileId, int stylesheetId)
         throws Exception
     {
-        this.waitForActivation();
 
         DistributedUserPreferences tsup = getDistributedTSUP( person,
                                                               profileId,
@@ -1783,6 +1786,8 @@ public class RDBMDistributedLayoutStore
 
         if ( ownedFragment != null || isLayoutOwnerDefault )
             return tsup;
+
+        FragmentActivator activator = this.getFragmentActivator();
 
         // regular user, find which layouts apply and include their set prefs
         final List<FragmentDefinition> fragments = configurationLoader.getFragments();
@@ -1936,6 +1941,8 @@ public class RDBMDistributedLayoutStore
         if ( ownedFragment == null )
             return;
 
+        FragmentActivator activator = this.getFragmentActivator();
+
         // make a copy so the original is unchanged for the user
         try
         {
@@ -1946,7 +1953,7 @@ public class RDBMDistributedLayoutStore
             UserView view = new UserView(userView.getUserId(), profile, 
                         userView.layout, ssup, userView.themeUserPrefs);
             activator.fragmentizeSSUP(view, ownedFragment);
-            this.activator.setUserView(ownedFragment.getOwnerId(), view);
+            activator.setUserView(ownedFragment.getOwnerId(), view);
         }
         catch( Exception e)
         {
@@ -2435,8 +2442,13 @@ public class RDBMDistributedLayoutStore
                 }
                 // Commit the transaction
                 RDBMServices.commit(con);
-                updateFragmentSSUP( person,
-                                    (DistributedUserPreferences) ssup );
+                if (this.fragmentActivatorCreator.isCreated()) {
+                    // We want to update cached fragment SSUPs, but not at 
+                    // the cost of triggering fragment activation;  if we 
+                    // activate fragments while fragment layouts are being 
+                    // imported we'll choke...
+                    updateFragmentSSUP( person, (DistributedUserPreferences) ssup);
+                }
             } catch (Exception e) {
                 if (LOG.isDebugEnabled())
                     LOG.debug("Problem occurred ", e);

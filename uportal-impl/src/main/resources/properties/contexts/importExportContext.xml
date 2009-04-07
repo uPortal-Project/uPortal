@@ -156,6 +156,9 @@
                         <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
                     </bean>
                 </entry>
+                <entry key="Attributes.CACHE_MODEL">
+                    <value>ALL</value>
+                </entry>
                 <entry key="SqlAttributes.DATA_SOURCE">
                     <ref bean="PortalDb"/>
                 </entry>
@@ -177,6 +180,9 @@
                         <property name="cacheFactory" ref="cacheFactory" />
                         <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
                     </bean>
+                </entry>
+                <entry key="Attributes.CACHE_MODEL">
+                    <value>ALL</value>
                 </entry>
                 <entry key="SqlAttributes.DATA_SOURCE">
                     <ref bean="PortalDb"/>

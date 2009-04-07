@@ -1709,12 +1709,22 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
             int structSsId = rs.getInt(6);
             if (rs.wasNull()) {
                 // This is probably a data issue and probably an export operation;  defer to the system user...
-                structSsId = this.getSystemProfileById(1).getStructureStylesheetId();
+                if (!person.equals(this.getSystemUser())) {
+                    structSsId = this.getSystemProfileById(1).getStructureStylesheetId();
+                } else {
+                    String msg = "The system user profile has no structure stylesheet Id.";
+                    throw new IllegalStateException(msg);
+                }
             }
             int themeSsId = rs.getInt(7);
             if (rs.wasNull()) {
                 // This is probably a data issue and probably an export operation;  defer to the system user...
-                themeSsId = this.getSystemProfileById(1).getThemeStylesheetId();
+                if (!person.equals(this.getSystemUser())) {
+                    themeSsId = this.getSystemProfileById(1).getThemeStylesheetId();
+                } else {
+                    String msg = "The system user profile has no theme stylesheet Id.";
+                    throw new IllegalStateException(msg);
+                }
             }
             UserProfile userProfile = new UserProfile(profileId, temp3,temp4, layoutId, structSsId, themeSsId);
             userProfile.setLocaleManager(new LocaleManager(person));
@@ -2169,7 +2179,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
                               log.debug(sql);
                           ResultSet rs2 = pstmt2.executeQuery();
                           try {
-                              while (rs2.next()) {
+                              if (rs2.next()) {
+                                  // There is a row for this user's template user...
                                   sql = "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID) VALUES (?,?,?,?)";
                                   PreparedStatement pstmt3 = con.prepareStatement(sql);
                                   try {
@@ -2178,6 +2189,22 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
                                       pstmt3.setInt(2, rs2.getInt("LAYOUT_ID"));
                                       pstmt3.setString(3, rs2.getString("LAYOUT_TITLE"));
                                       pstmt3.setInt(4, rs2.getInt("INIT_STRUCT_ID"));
+                                      if (log.isDebugEnabled())
+                                          log.debug(sql);
+                                      pstmt3.executeUpdate();
+                                  } finally {
+                                      pstmt3.close();
+                                  }
+                              } else {
+                                  // We can't rely on the template user, but we still need a row...
+                                  sql = "INSERT INTO UP_USER_LAYOUT (USER_ID, LAYOUT_ID, LAYOUT_TITLE, INIT_STRUCT_ID) VALUES (?,?,?,?)";
+                                  PreparedStatement pstmt3 = con.prepareStatement(sql);
+                                  try {
+                                      pstmt3.clearParameters();
+                                      pstmt3.setInt(1, userId);
+                                      pstmt3.setInt(2, layoutId);
+                                      pstmt3.setString(3, "default layout");
+                                      pstmt3.setInt(4, 1);
                                       if (log.isDebugEnabled())
                                           log.debug(sql);
                                       pstmt3.executeUpdate();
