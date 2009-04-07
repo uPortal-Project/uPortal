@@ -21,6 +21,17 @@ import org.danann.cernunnos.TaskResponse;
  */
 public class SafeFileNamePhrase implements Phrase {
 
+    // Reserved names on Windows (see http://en.wikipedia.org/wiki/Filename)
+    private static final String[] WINDOWS_INVALID_PATTERNS = new String[] {
+                            "AUX",
+                            "CLOCK\\$",
+                            "COM\\d*",
+                            "CON",
+                            "LPT\\d*",
+                            "NUL",
+                            "PRN"
+                        };
+
     public static final Reagent HUMAN_FILE_NAME = new SimpleReagent("HUMAN_FILE_NAME", "descendant-or-self::text()", ReagentType.PHRASE,
             String.class, "Human readable version of the file name to make safe");
     
@@ -57,6 +68,16 @@ public class SafeFileNamePhrase implements Phrase {
         //Replace all non-ok char with _
         name = name.replaceAll("[^a-zA-Z0-9_.-]", "_");
 
+        // Make sure the name doesn't violate a Windows reserved word...
+        for (String pattern : WINDOWS_INVALID_PATTERNS) {
+            if (name.toUpperCase().matches(pattern)) {
+                name = "uP-" + name;
+                break;
+            }
+        }
+
         return name;
+
     }
+
 }
