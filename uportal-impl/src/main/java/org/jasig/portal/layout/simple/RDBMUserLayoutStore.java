@@ -1708,11 +1708,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
             }
             int structSsId = rs.getInt(6);
             if (rs.wasNull()) {
-              structSsId = 0;
+                // This is probably a data issue and probably an export operation;  defer to the system user...
+                structSsId = this.getSystemProfileById(1).getStructureStylesheetId();
             }
             int themeSsId = rs.getInt(7);
             if (rs.wasNull()) {
-              themeSsId = 0;
+                // This is probably a data issue and probably an export operation;  defer to the system user...
+                themeSsId = this.getSystemProfileById(1).getThemeStylesheetId();
             }
             UserProfile userProfile = new UserProfile(profileId, temp3,temp4, layoutId, structSsId, themeSsId);
             userProfile.setLocaleManager(new LocaleManager(person));

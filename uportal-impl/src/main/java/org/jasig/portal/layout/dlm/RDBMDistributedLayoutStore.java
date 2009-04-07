@@ -480,7 +480,9 @@ public class RDBMDistributedLayoutStore
         org.dom4j.Document layoutDoc = null;
         UserPreferences up = null;
         try {
-            layoutDoc = reader.read(_safeGetUserLayout(person, profile));
+            Document layoutDom = _safeGetUserLayout(person, profile);
+            person.setAttribute(Constants.PLF, layoutDom);
+            layoutDoc = reader.read(layoutDom);
             up = this.getUserPreferences(person, profile);
         } catch (Throwable t) {
             String msg = "Unable to obtain layout & profile for user '" 
@@ -600,13 +602,13 @@ public class RDBMDistributedLayoutStore
         Iterator<org.dom4j.Attribute> origins = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:origin").iterator();
         while (origins.hasNext()) {
             org.dom4j.Attribute org = origins.next();
-            String[] pathTokens = getDlmPathref(org.getValue());
+            String[] pathTokens = getDlmPathref(person.getUserName(), org.getValue());
             org.setValue(pathTokens[0] + ":" + pathTokens[1]);
         }
         Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//dlm:*/@name").iterator();
         while (names.hasNext()) {
             org.dom4j.Attribute n = names.next();
-            String[] pathTokens = getDlmPathref(n.getValue());
+            String[] pathTokens = getDlmPathref(person.getUserName(), n.getValue());
             // Name attributes for some dlm:elements are empty...
             if (pathTokens != null) {
                 n.setValue(pathTokens[0] + ":" + pathTokens[1]);
@@ -820,9 +822,13 @@ public class RDBMDistributedLayoutStore
     
     }
 
-    private final String[] getDlmPathref(String dlmNoderef) {
+    private final String[] getDlmPathref(String layoutOwner, String dlmNoderef) {
         
         // Assertions.
+        if (layoutOwner == null) {
+            String msg = "Argument 'layoutOwner' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
         if (dlmNoderef == null) {
             String msg = "Argument 'dlmNoderef' cannot be null.";
             throw new IllegalArgumentException(msg);
@@ -831,6 +837,7 @@ public class RDBMDistributedLayoutStore
         ReturnValueImpl rvi = new ReturnValueImpl();
         RuntimeRequestResponse tr = new RuntimeRequestResponse();
         tr.setAttribute(Attributes.RETURN_VALUE, rvi);
+        tr.setAttribute("USER_NAME", layoutOwner);
         tr.setAttribute("DLM_NODEREF", dlmNoderef);
         this.lookupNoderefTask.perform(tr, new RuntimeRequestResponse());
         

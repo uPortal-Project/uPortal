@@ -26,7 +26,7 @@
                 
                 def person = new PersonImpl();
                 person.setUserName(USER_NAME);
-                person.setID(USER_ID);
+                person.setID(USER_ID.intValue());
                 person.setSecurityContext(new BrokenSecurityContext());
                 
                 def layoutStore = layoutStoreProvider.getLayoutStore();
