@@ -25,16 +25,17 @@
             <groovy>
                 <script>
                     def layoutStore = layoutStoreProvider.getLayoutStore();
-                    layoutStore.importLayout(Attributes.NODE);</script>
-                <subtasks>
-                    <!-- Now do portlet entity preferences -->
-                    <with-attribute key="Attributes.NODE" value="${preferencesElement}">
-                        <if test="${jexl(Attributes.NODE != null)}">
-                            <crn location="import-preferences.crn"/>
-                        </if>
-                    </with-attribute>
-                </subtasks>
+                    layoutStore.importLayout(Attributes.NODE);
+                </script>
             </groovy>
+        </sql-transaction>
+        <!-- Now do portlet entity preferences -->
+        <sql-transaction>
+	        <with-attribute key="Attributes.NODE" value="${preferencesElement}">
+	            <if test="${jexl(Attributes.NODE != null)}">
+	                <crn location="import-preferences.crn"/>
+	            </if>
+	        </with-attribute>
         </sql-transaction>
     </subtasks>
 </with>
