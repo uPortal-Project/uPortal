@@ -100,11 +100,6 @@
         <constructor-arg index="0" ref="throwableToElement" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.ProcessingPipeLocator" 
-            class="org.jasig.portal.spring.locator.ProcessingPipeLocator">
-        <constructor-arg index="0" ref="dlmProcessingPipe" />
-    </bean>
-    
     <bean id="org.jasig.portal.spring.locator.ConfigurationLoaderLocator" 
             class="org.jasig.portal.spring.locator.ConfigurationLoaderLocator">
         <constructor-arg index="0" ref="dlmConfigurationLoader" />
