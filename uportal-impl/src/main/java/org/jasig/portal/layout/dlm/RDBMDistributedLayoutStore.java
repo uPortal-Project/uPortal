@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -544,27 +546,28 @@ public class RDBMDistributedLayoutStore
                 }
             }
         }
-        
-        // (2) Remove database Ids...
-        Iterator<org.dom4j.Attribute> ids = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@ID").iterator();
-        while (ids.hasNext()) {
-            org.dom4j.Attribute a = ids.next();
-            a.getParent().remove(a);
-        }
-        
-        // (3) Remove locale info...
+                
+        // (2) Remove locale info...
         Iterator<org.dom4j.Attribute> locale = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@locale").iterator();
         while (locale.hasNext()) {
             org.dom4j.Attribute loc = locale.next();
             loc.getParent().remove(loc);
         }
 
-        // (4) Scrub unnecessary channel information...
+        // (3) Scrub unnecessary channel information...
+        for (Iterator<org.dom4j.Element> orphanedChannels = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel[@fname = '']").iterator(); orphanedChannels.hasNext();) {
+            // These elements represent UP_LAYOUT_STRUCT rows where the 
+            // CHAN_ID field was not recognized by ChannelRegistryStore;  
+            // best thing to do is remove the elements...
+            org.dom4j.Element ch = orphanedChannels.next();
+            ch.getParent().remove(ch);
+        }
         List<String> channelAttributeWhitelist = Arrays.asList(new String[] { 
                         "fname", 
                         "unremovable", 
                         "hidden", 
-                        "immutable" 
+                        "immutable",
+                        "ID"    // we'll remove this one later...
                     });
         Iterator<org.dom4j.Element> channels = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel").iterator();
         while (channels.hasNext()) {
@@ -580,31 +583,65 @@ public class RDBMDistributedLayoutStore
             parent.elements().add(parent.elements().indexOf(oldCh), newCh);
             parent.remove(oldCh);
         }
-        
+                
+        // (4) Convert internal DLM noderefs to external form (pathrefs)...
+        for (Iterator<org.dom4j.Attribute> origins = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:origin").iterator(); origins.hasNext();) {
+            org.dom4j.Attribute org = origins.next();
+            String[] pathTokens = getDlmPathref((String) person.getAttribute(IPerson.USERNAME), person.getID(), org.getValue(), layoutDoc.getRootElement());
+            if (pathTokens != null) {
+                // Change the value only if we have a valid pathref...
+                org.setValue(pathTokens[0] + ":" + pathTokens[1]);
+            } else {
+                if (log.isWarnEnabled()) {
+                    log.warn("Layout element '" + org.getUniquePath() 
+                            + "' from user '" + person.getAttribute(IPerson.USERNAME) 
+                            + "' failured to match noderef '" + org.getValue() + "'");
+                }
+            }
+        }
+        for (Iterator<org.dom4j.Attribute> it = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:target").iterator(); it.hasNext();) {
+            org.dom4j.Attribute target = it.next();
+            String[] pathTokens = getDlmPathref((String) person.getAttribute(IPerson.USERNAME), person.getID(), target.getValue(), layoutDoc.getRootElement());
+            if (pathTokens != null) {
+                // Change the value only if we have a valid pathref...
+                target.setValue(pathTokens[0] + ":" + pathTokens[1]);
+            } else {
+                if (log.isWarnEnabled()) {
+                    log.warn("Layout element '" + target.getUniquePath() 
+                            + "' from user '" + person.getAttribute(IPerson.USERNAME) 
+                            + "' failured to match noderef '" + target.getValue() + "'");
+                }
+            }
+        }
+        for (Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//dlm:*/@name").iterator(); names.hasNext();) {
+            org.dom4j.Attribute n = names.next();
+            String[] pathTokens = getDlmPathref((String) person.getAttribute(IPerson.USERNAME), person.getID(), n.getValue(), layoutDoc.getRootElement());
+            if (pathTokens != null) {
+                // Change the value only if we have a valid pathref...
+                n.setValue(pathTokens[0] + ":" + pathTokens[1]);
+                // These *may* have fnames...
+                if (pathTokens[2] != null && pathTokens[2].trim().length() != 0) {
+                    n.getParent().addAttribute("fname", pathTokens[2]);                
+                } else {
+                    if (log.isWarnEnabled()) {
+                        log.warn("Layout element '" + n.getUniquePath() 
+                                + "' from user '" + person.getAttribute(IPerson.USERNAME) 
+                                + "' failured to match noderef '" + n.getValue() + "'");
+                    }
+                }
+            }
+        }
+
         // (5) Remove dlm:plfID...
-        Iterator<org.dom4j.Attribute> plfid = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:plfID").iterator();
-        while (plfid.hasNext()) {
+        for (Iterator<org.dom4j.Attribute> plfid = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:plfID").iterator(); plfid.hasNext();) {
             org.dom4j.Attribute plf = plfid.next();
             plf.getParent().remove(plf);
         }
-        
-        // (6) Convert internal DLM noderefs to external form (pathrefs)...
-        Iterator<org.dom4j.Attribute> origins = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:origin").iterator();
-        while (origins.hasNext()) {
-            org.dom4j.Attribute org = origins.next();
-            String[] pathTokens = getDlmPathref(person.getUserName(), org.getValue());
-            org.setValue(pathTokens[0] + ":" + pathTokens[1]);
-        }
-        Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//dlm:*/@name").iterator();
-        while (names.hasNext()) {
-            org.dom4j.Attribute n = names.next();
-            String[] pathTokens = getDlmPathref(person.getUserName(), n.getValue());
-            // Name attributes for some dlm:elements are empty...
-            if (pathTokens != null) {
-                n.setValue(pathTokens[0] + ":" + pathTokens[1]);
-                // The ones that aren't empty have fnames...
-                n.getParent().addAttribute("fname", pathTokens[2]);                
-            }
+
+        // (6) Remove database Ids...
+        for (Iterator<org.dom4j.Attribute> ids = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@ID").iterator(); ids.hasNext();) {
+            org.dom4j.Attribute a = ids.next();
+            a.getParent().remove(a);
         }
 
         return layoutDoc.getRootElement();
@@ -612,11 +649,8 @@ public class RDBMDistributedLayoutStore
     }
         
     @SuppressWarnings("unchecked")
-    public void importLayout(org.dom4j.Element e) {
+    public void importLayout(org.dom4j.Element layout) {
         
-        org.dom4j.Element layout = e.createCopy();
-        org.dom4j.Document doc = fac.createDocument(layout);
-        doc.normalize();
         String ownerUsername = layout.valueOf("@username");
         IPerson person = null;
         UserProfile profile = null;
@@ -636,33 +670,49 @@ public class RDBMDistributedLayoutStore
             throw new RuntimeException(msg, t);
         }
         
-        // (6) Convert external DLM pathrefs to internal form (noderefs)...
+        // (6) Add database Ids & (5) Add dlm:plfID ...
+        int nextId = 1;
+        for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("folder | dlm:*").iterator(); it.hasNext();) {
+            nextId = addIdAttributes(it.next(), nextId);
+        }
+
+        // (4) Convert external DLM pathrefs to internal form (noderefs)...
         for (Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout.selectNodes("//@dlm:origin").iterator(); itr.hasNext();) {
             org.dom4j.Attribute a = itr.next();
-            String noderef = getDlmNoderef(ownerUsername, a.getValue(), null, true);
-            a.setValue(noderef);
+            String noderef = getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
+            if (noderef != null) {
+                // Change the value only if we have a valid pathref...
+                a.setValue(noderef);
+                // For dlm:origin only, also use the noderef as the ID attribute...
+                a.getParent().addAttribute("ID", noderef);
+            }
+         }
+        for (Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout.selectNodes("//@dlm:target").iterator(); itr.hasNext();) {
+            org.dom4j.Attribute a = itr.next();
+            String noderef = getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
+            if (noderef != null) {
+                // Change the value only if we have a valid pathref...
+                a.setValue(noderef);
+            }
         }
         for (Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layout.selectNodes("//dlm:*/@name").iterator(); names.hasNext();) {
             org.dom4j.Attribute a = names.next();
             org.dom4j.Attribute fname = a.getParent().attribute("fname");
             String noderef = null;
             if (fname != null) {
-                noderef = getDlmNoderef(ownerUsername, a.getValue(), fname.getValue(), false);
+                noderef = getDlmNoderef(ownerUsername, a.getValue(), fname.getValue(), false, layout);
                 // Remove the fname attribute now that we're done w/ it...
                 fname.getParent().remove(fname);
             } else {
-                noderef = getDlmNoderef(ownerUsername, a.getValue(), null, true);
+                noderef = getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
             }
-            a.setValue(noderef);
-        }
-        
-        // (5) Add dlm:plfID & (2) Add database Ids...
-        int nextId = 1;
-        for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("folder | dlm:*").iterator(); it.hasNext();) {
-            nextId = addIdAttributes(it.next(), nextId);
+            if (noderef != null) {
+                // Change the value only if we have a valid pathref...
+                a.setValue(noderef);
+            }
         }
 
-        // (4) Restore chanID attributes on <channel> elements...
+        // (3) Restore chanID attributes on <channel> elements...
         try {
             for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//channel").iterator(); it.hasNext();) {
                 org.dom4j.Element c = it.next();
@@ -674,7 +724,7 @@ public class RDBMDistributedLayoutStore
             throw new RuntimeException(msg, t);
         }
         
-        // (3) Restore locale info...
+        // (2) Restore locale info...
         // (This step doesn't appear to be needed for imports)
 
         // (1) Process structure & theme attributes...
@@ -759,6 +809,9 @@ public class RDBMDistributedLayoutStore
                 }
             }
             
+            org.dom4j.Element copy = layout.createCopy();
+            org.dom4j.Document doc = fac.createDocument(copy);
+            doc.normalize();
             layoutDom = writer.write(doc);
             person.setAttribute(Constants.PLF, layoutDom);
 
@@ -770,8 +823,8 @@ public class RDBMDistributedLayoutStore
             }
             
         } catch (Throwable t) {
-            String msg = "Unable to import structure and theme attributes.";
-            throw new RuntimeException(msg, t);
+            log.error("Unable to set UserPreferences for user:  " + person.getUserName());
+            throw new RuntimeException(t);
         }
         
         // Finally store the layout...
@@ -797,11 +850,14 @@ public class RDBMDistributedLayoutStore
         } else {
             throw new RuntimeException("Unrecognized element type:  " + e.getName());
         }
-        
-        if (e.valueOf("@dlm:origin").length() != 0) {
-            // Add dlm:plfID & copy dlm:origin...
+
+        String origin = e.valueOf("@dlm:origin");
+        // 'origin' may be null if the dlm:origin attribute is an 
+        // empty string (which also shouldn't happen);  'origin' 
+        // will be zero-length if dlm:origin is not defined...
+        if (origin != null && origin.length() != 0) {
+            // Add dlm:plfID ...
             e.addAttribute("dlm:plfID", prefix + String.valueOf(nextId));
-            e.addAttribute("ID", e.valueOf("@dlm:origin"));
         } else {
             // Do the standard thing...
             e.addAttribute("ID", prefix + String.valueOf(nextId));
@@ -817,31 +873,60 @@ public class RDBMDistributedLayoutStore
     
     }
 
-    private final String[] getDlmPathref(String layoutOwner, String dlmNoderef) {
+    private final String[] getDlmPathref(String layoutOwnerUsername, int layoutOwnerUserId, String dlmNoderef, org.dom4j.Element layout) {
         
         // Assertions.
-        if (layoutOwner == null) {
-            String msg = "Argument 'layoutOwner' cannot be null.";
+        if (layoutOwnerUsername == null) {
+            String msg = "Argument 'layoutOwnerUsername' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
         if (dlmNoderef == null) {
             String msg = "Argument 'dlmNoderef' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
+        if (layout == null) {
+            String msg = "Argument 'layout' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
         
-        ReturnValueImpl rvi = new ReturnValueImpl();
-        RuntimeRequestResponse tr = new RuntimeRequestResponse();
-        tr.setAttribute(Attributes.RETURN_VALUE, rvi);
-        tr.setAttribute("USER_NAME", layoutOwner);
-        tr.setAttribute("DLM_NODEREF", dlmNoderef);
-        this.lookupNoderefTask.perform(tr, new RuntimeRequestResponse());
+        String[] rslt = null;  // This will be the response if we can't make a match...
         
-        String[] rslt = (String[]) rvi.getValue();
+        // Find the userId contained in the dlmNoderef...
+        final Pattern p = Pattern.compile("\\A([a-zA-Z]\\d*)\\z");
+        final Matcher m = p.matcher(dlmNoderef);
+        if (m.find()) {
+            // We need a pathref based on the new style of layout b/c on 
+            // import this users own layout will not be in the database 
+            // when the path in computed back to an Id...
+            String structId = m.group(1);
+            org.dom4j.Node target = layout.selectSingleNode("//*[@ID = '" + structId + "']");
+            if (target != null) {
+                rslt = new String[3];
+                rslt[0] = layoutOwnerUsername;
+                rslt[1] = target.getUniquePath();
+                if (target.getName().equals("channel")) {
+                    rslt[2] = target.valueOf("@fname");
+                }
+            } else {
+                log.warn("no match found on layout for user '"+ layoutOwnerUsername 
+                            + "' for the specified dlmNoderef:  " + dlmNoderef);
+            }
+        } else {
+            ReturnValueImpl rvi = new ReturnValueImpl();
+            RuntimeRequestResponse tr = new RuntimeRequestResponse();
+            tr.setAttribute(Attributes.RETURN_VALUE, rvi);
+            tr.setAttribute("USER_NAME", layoutOwnerUsername);
+            tr.setAttribute("DLM_NODEREF", dlmNoderef);
+            this.lookupNoderefTask.perform(tr, new RuntimeRequestResponse());
+            
+            rslt = (String[]) rvi.getValue();
+        }
+        
         return rslt;
 
     }
 
-    private final String getDlmNoderef(String layoutOwner, String pathref, String fname, boolean isStructRef) {
+    private final String getDlmNoderef(String layoutOwner, String pathref, String fname, boolean isStructRef, org.dom4j.Element layoutElement) {
         
         // Assertions.
         if (layoutOwner == null) {
@@ -853,22 +938,51 @@ public class RDBMDistributedLayoutStore
             throw new IllegalArgumentException(msg);
         }
         // NB:  Argument 'fname' may be null...
-        
-        ReturnValueImpl rvi = new ReturnValueImpl();
-        RuntimeRequestResponse tr = new RuntimeRequestResponse();
-        tr.setAttribute(Attributes.RETURN_VALUE, rvi);
-        tr.setAttribute("USER_NAME", layoutOwner);
-        tr.setAttribute("DLM_PATHREF", pathref);
-        if (fname != null) {
-            tr.setAttribute("FNAME", fname);
+        if (layoutElement == null) {
+            String msg = "Argument 'layoutElement' cannot be null.";
+            throw new IllegalArgumentException(msg);
         }
-        if (isStructRef) {
-            tr.setAttribute("IS_STRUCT_REF", Boolean.TRUE);
-        }
-        this.lookupPathrefTask.perform(tr, new RuntimeRequestResponse());
         
-        String rslt = (String) rvi.getValue();
-        return rslt;
+        String rslt = pathref; // This will be the response if we can't make a match...
+        
+        if (pathref.startsWith(layoutOwner + ":")) {
+            // This an internal reference (our own layout);  we have to 
+            // use the layoutExment (instead of load-limited-layout) b/c 
+            // our layout may not be in the db...
+            String[] pathTokens = pathref.split("\\:");
+            org.dom4j.Element target = (org.dom4j.Element) layoutElement.selectSingleNode(pathTokens[1]);
+            if (target != null) {
+                rslt = target.valueOf("@ID");
+            } else {
+                if (log.isWarnEnabled()) {
+                    log.warn("Unable to resolve pathref '" + pathref 
+                            + "' for layoutOwner '" 
+                            + layoutOwner + "'");
+                }
+            }
+        } else {
+            ReturnValueImpl rvi = new ReturnValueImpl();
+            RuntimeRequestResponse tr = new RuntimeRequestResponse();
+            tr.setAttribute(Attributes.RETURN_VALUE, rvi);
+            tr.setAttribute("USER_NAME", layoutOwner);
+            tr.setAttribute("DLM_PATHREF", pathref);
+            if (fname != null) {
+                tr.setAttribute("FNAME", fname);
+            }
+            if (isStructRef) {
+                tr.setAttribute("IS_STRUCT_REF", Boolean.TRUE);
+            }
+            this.lookupPathrefTask.perform(tr, new RuntimeRequestResponse());
+            
+            String val = (String) rvi.getValue();
+            if (val != null) {
+                rslt = val;
+            }
+        }
+        
+        // Data got orphaned, nothing we can do;  we need to 
+        // be sure not to leave any that are too long...
+        return rslt.length() <= 35 ? rslt : "";
 
     }
 

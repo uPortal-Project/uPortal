@@ -31,11 +31,11 @@
         </sql-transaction>
         <!-- Now do portlet entity preferences -->
         <sql-transaction>
-	        <with-attribute key="Attributes.NODE" value="${preferencesElement}">
-	            <if test="${jexl(Attributes.NODE != null)}">
-	                <crn location="import-preferences.crn"/>
-	            </if>
-	        </with-attribute>
+            <with-attribute key="Attributes.NODE" value="${preferencesElement}">
+                <if test="${jexl(Attributes.NODE != null)}">
+                    <crn location="import-preferences.crn"/>
+                </if>
+            </with-attribute>
         </sql-transaction>
     </subtasks>
 </with>
