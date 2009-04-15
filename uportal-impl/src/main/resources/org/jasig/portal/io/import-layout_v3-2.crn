@@ -18,17 +18,15 @@
     <attribute key="USER_NAME">${valueOf(@username)}</attribute>
     <attribute key="preferencesElement">${singleNode(preferences)}</attribute>
     <subtasks>
-        <sql-transaction>
-            <if test="${jexl(preferencesElement ne null)}">
-                <delete-node node="${singleNode(preferences)}"/>
-            </if>
-            <groovy>
-                <script>
-                    def layoutStore = layoutStoreProvider.getLayoutStore();
-                    layoutStore.importLayout(Attributes.NODE);
-                </script>
-            </groovy>
-        </sql-transaction>
+        <if test="${jexl(preferencesElement ne null)}">
+            <delete-node node="${singleNode(preferences)}"/>
+        </if>
+        <groovy>
+            <script>
+                def layoutStore = layoutStoreProvider.getLayoutStore();
+                layoutStore.importLayout(Attributes.NODE);
+            </script>
+        </groovy>
         <!-- Now do portlet entity preferences -->
         <sql-transaction>
             <with-attribute key="Attributes.NODE" value="${preferencesElement}">
