@@ -675,6 +675,9 @@ public class RDBMDistributedLayoutStore
         for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("folder | dlm:*").iterator(); it.hasNext();) {
             nextId = addIdAttributes(it.next(), nextId);
         }
+        // Now update UP_USER...
+        final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(RDBMServices.getDataSource());
+        jdbcTemplate.update("UPDATE up_user SET next_struct_id = ? WHERE user_id = ?", nextId, person.getID());
 
         // (4) Convert external DLM pathrefs to internal form (noderefs)...
         for (Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout.selectNodes("//@dlm:origin").iterator(); itr.hasNext();) {
