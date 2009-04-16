@@ -35,6 +35,8 @@ public class RDBMConfigurationLoader extends LegacyConfigurationLoader {
     @Override
     public List<FragmentDefinition> getFragments() {
         final List<FragmentDefinition> allFragments = this.fragmentDao.getAllFragments();
+        // lastly sort according to precedence
+        Collections.sort(allFragments, new FragmentComparator() );
         return Collections.unmodifiableList(allFragments);
     }
 

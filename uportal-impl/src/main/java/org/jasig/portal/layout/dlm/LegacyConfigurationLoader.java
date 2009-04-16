@@ -95,6 +95,21 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
         final NodeList fragmentNodes = doc.getElementsByTagName( "dlm:fragment" );
         final List<FragmentDefinition> localFragments = this.getFragments(fragmentNodes);
         if (localFragments != null) {
+            // lastly sort according to precedence followed by index
+            Collections.sort(localFragments, new FragmentComparator() );
+            // show sort order in log file if debug is on. (Could check and
+            // only build of on but do later.)
+            if (logger.isDebugEnabled()) {
+                StringBuilder bfr = new StringBuilder();
+                for (final FragmentDefinition fragmentDefinition : localFragments) {
+                    bfr.append( fragmentDefinition.getName() );
+                    bfr.append( "[" );
+                    bfr.append( fragmentDefinition.getPrecedence() );
+                    bfr.append( "],\n" );
+                }
+                logger.debug("\n\nFragments Sorted by Precedence and then index {\n" +
+                    bfr.toString() + " }" );
+            }
             this.fragments = Collections.unmodifiableList(localFragments);
         }
     }
