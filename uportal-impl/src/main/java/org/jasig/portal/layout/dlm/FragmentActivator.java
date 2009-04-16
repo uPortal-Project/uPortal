@@ -88,24 +88,6 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             for (final FragmentDefinition fragmentDefinition : this.fragments) {
                 activateFragment(fragmentDefinition);
             }
-            
-            final List<FragmentDefinition> sortedFragments = new ArrayList<FragmentDefinition>(this.fragments);
-            // lastly sort according to precedence followed by index
-            Collections.sort(sortedFragments, new FragmentComparator() );
-            
-            // show sort order in log file if debug is on. (Could check and
-            // only build of on but do later.)
-            StringBuffer bfr = new StringBuffer();
-            for (final FragmentDefinition fragmentDefinition : sortedFragments) {
-                bfr.append( fragmentDefinition.getName() );
-                bfr.append( "[" );
-                bfr.append( fragmentDefinition.getPrecedence() );
-                bfr.append( "],\n" );
-            }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("\n\nFragments Sorted by Precedence and then index {\n" +
-                    bfr.toString() + " }" );
-            }
         }
         
         // now let other threads in to get their layouts.
