@@ -1021,7 +1021,7 @@ public class ChannelManager implements LayoutEventListener {
         }
         
         //If the channel object has changed (likely now an error channel) return immediatly 
-        if (originalChannel != ch) {
+        if (originalChannel != null && originalChannel != ch) {
             return false;
         }
         
