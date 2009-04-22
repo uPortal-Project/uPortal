@@ -26,15 +26,24 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.layout.IUserLayout;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -62,6 +71,9 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private int bufferLength = 512;
     private ITransientPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IPortletEntityRegistry portletEntityRegistry;
+    private IUserInstanceManager userInstanceManager;
     private boolean useAnchors = true;
     private Set<WindowState> transientWindowStates = new HashSet<WindowState>(Arrays.asList(IPortletAdaptor.EXCLUSIVE, IPortletAdaptor.DETACHED));
     private Set<WindowState> anchoringWindowStates = new HashSet<WindowState>(Arrays.asList(WindowState.MINIMIZED, WindowState.NORMAL));
@@ -139,6 +151,39 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
     }
+    
+    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
+        return portletDefinitionRegistry;
+    }
+    /**
+     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
+     */
+    @Required
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
+
+    public IPortletEntityRegistry getPortletEntityRegistry() {
+        return portletEntityRegistry;
+    }
+    /**
+     * @param portletEntityRegistry the portletEntityRegistry to set
+     */
+    @Required
+    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
+        this.portletEntityRegistry = portletEntityRegistry;
+    }
+
+    public IUserInstanceManager getUserInstanceManager() {
+        return userInstanceManager;
+    }
+    /**
+     * @param userInstanceManager the userInstanceManager to set
+     */
+    @Required
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        this.userInstanceManager = userInstanceManager;
+    }
 
     public Set<WindowState> getTransientWindowStates() {
         return this.transientWindowStates;
@@ -179,12 +224,47 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     public Tuple<IPortletWindowId, PortletUrl> parsePortletParameters(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
         
+        final IPortletWindowId targetedPortletWindowId;
+        
         final String targetedPortletWindowIdStr = request.getParameter(PARAM_REQUEST_TARGET);
-        if (targetedPortletWindowIdStr == null) {
-            return null;
+        if (targetedPortletWindowIdStr != null) {
+            targetedPortletWindowId = this.portletWindowRegistry.getPortletWindowId(targetedPortletWindowIdStr);
+        }
+        else {
+            //Fail over to looking for a fname
+            final String targetedFname = request.getParameter("uP_fname");
+            if (targetedFname == null) {
+                return null;
+            }
+            
+            //Get the user's layout manager
+            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+            final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+            final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+            
+            //Determine the subscribe ID
+            final String channelSubscribeId = userLayoutManager.getSubscribeId(targetedFname);
+            if (channelSubscribeId == null) {
+                this.logger.info("No channel subscribe ID found for fname '" + targetedFname + "'. skipping portlet parameter processing");
+                return null;
+            }
+            
+            //Find the channel and portlet definitions
+            final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
+            final String channelPublishId = channelNode.getChannelPublishId();
+            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(Integer.parseInt(channelPublishId));
+            if (portletDefinition == null) {
+                this.logger.info("No portlet defintion found for channel definition '" + channelPublishId + "' with fname '" + targetedFname + "'. skipping portlet parameter processing");
+                return null;
+            }
+            
+            //Determine the appropriate portlet window ID
+            final IPerson person = userInstance.getPerson();
+            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinition.getPortletDefinitionId(), channelSubscribeId, person.getID());
+            final IPortletWindow defaultPortletWindow = this.portletWindowRegistry.createDefaultPortletWindow(request, portletEntity.getPortletEntityId());
+            targetedPortletWindowId = this.portletWindowRegistry.createTransientPortletWindowId(request, defaultPortletWindow.getPortletWindowId());
         }
         
-        final IPortletWindowId targetedPortletWindowId = this.portletWindowRegistry.getPortletWindowId(targetedPortletWindowIdStr);
         final PortletUrl portletUrl = new PortletUrl();
         
         final String requestTypeStr = request.getParameter(PARAM_REQUEST_TYPE);
@@ -316,28 +396,29 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         if (IPortletAdaptor.EXCLUSIVE.equals(windowState) || (windowState == null && IPortletAdaptor.EXCLUSIVE.equals(previousWindowState))) {
             final String urlBase = channelRuntimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
             url.append(urlBase);
-
-            if (this.logger.isTraceEnabled()) {
-                this.logger.trace("Using worker url base '" + urlBase + "'");
-            }
         }
+        //In detached, need to make sure the URL is right
+        else if (IPortletAdaptor.DETACHED.equals(windowState) || (windowState == null && IPortletAdaptor.DETACHED.equals(previousWindowState))) {
+            final UPFileSpec upFileSpec = new UPFileSpec(channelRuntimeData.getUPFile());
+            upFileSpec.setMethodNodeId(channelSubscribeId);
+            final String urlBase = upFileSpec.getUPFile();
+            url.append(urlBase);
+        }
+        //Switching back from detached to a normal state
         else if (IPortletAdaptor.DETACHED.equals(previousWindowState) && windowState != null && !previousWindowState.equals(windowState)) {
             final UPFileSpec upFileSpec = new UPFileSpec(channelRuntimeData.getUPFile());
             upFileSpec.setMethodNodeId(UPFileSpec.USER_LAYOUT_ROOT_NODE);
             final String urlBase = upFileSpec.getUPFile();
             url.append(urlBase);
-            
-            if (this.logger.isTraceEnabled()) {
-                this.logger.trace("Using root url base '" + urlBase + "'");
-            }
         }
+        //No special handling, just use the base action URL
         else {
             final String urlBase = channelRuntimeData.getBaseActionURL();
             url.append(urlBase);
-            
-            if (this.logger.isTraceEnabled()) {
-                this.logger.trace("Using default url base '" + urlBase + "'");
-            }
+        }
+        
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace("Using root url base '" + url + "'");
         }
 
         //Set the request target, creating a transient window ID if needed
@@ -415,7 +496,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
        
         //Add the anchor if anchoring is enabled
         if (this.useAnchors && !RequestType.ACTION.equals(requestType) && ((windowState != null && this.anchoringWindowStates.contains(windowState)) || (windowState == null && this.anchoringWindowStates.contains(previousWindowState)))) {
-        	url.append("#").append(channelSubscribeId);
+            url.append("#").append(channelSubscribeId);
         }
  
         if (this.logger.isDebugEnabled()) {
