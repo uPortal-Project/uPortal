@@ -9,8 +9,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -24,15 +26,24 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRuntimeData;
+import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.layout.IUserLayout;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -60,6 +71,9 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private int bufferLength = 512;
     private ITransientPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IPortletEntityRegistry portletEntityRegistry;
+    private IUserInstanceManager userInstanceManager;
     private boolean useAnchors = true;
     private Set<WindowState> transientWindowStates = new HashSet<WindowState>(Arrays.asList(IPortletAdaptor.EXCLUSIVE));
     
@@ -137,6 +151,55 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         this.portletWindowRegistry = portletWindowRegistry;
     }
     
+    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
+        return portletDefinitionRegistry;
+    }
+    /**
+     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
+     */
+    @Required
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
+
+    public IPortletEntityRegistry getPortletEntityRegistry() {
+        return portletEntityRegistry;
+    }
+    /**
+     * @param portletEntityRegistry the portletEntityRegistry to set
+     */
+    @Required
+    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
+        this.portletEntityRegistry = portletEntityRegistry;
+    }
+
+    public IUserInstanceManager getUserInstanceManager() {
+        return userInstanceManager;
+    }
+    /**
+     * @param userInstanceManager the userInstanceManager to set
+     */
+    @Required
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        this.userInstanceManager = userInstanceManager;
+    }
+
+    public Set<WindowState> getTransientWindowStates() {
+        return this.transientWindowStates;
+    }
+    /**
+     * {@link WindowState}s that have transient {@link IPortletWindow}s. These states must be the ONLY
+     * content rendering links on the page. Defaults to EXCLUSIVE and DETACHED.
+     */
+    public void setTransientWindowStates(Set<WindowState> transientWindowStates) {
+        if (transientWindowStates == null) {
+            this.transientWindowStates = Collections.emptySet();
+        }
+        else {
+            this.transientWindowStates = new LinkedHashSet<WindowState>(transientWindowStates);
+        }
+    }
+    
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider#parsePortletParameters(javax.servlet.http.HttpServletRequest)
@@ -144,12 +207,47 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     public Tuple<IPortletWindowId, PortletUrl> parsePortletParameters(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
         
+        final IPortletWindowId targetedPortletWindowId;
+        
         final String targetedPortletWindowIdStr = request.getParameter(PARAM_REQUEST_TARGET);
-        if (targetedPortletWindowIdStr == null) {
-            return null;
+        if (targetedPortletWindowIdStr != null) {
+            targetedPortletWindowId = this.portletWindowRegistry.getPortletWindowId(targetedPortletWindowIdStr);
+        }
+        else {
+            //Fail over to looking for a fname
+            final String targetedFname = request.getParameter("uP_fname");
+            if (targetedFname == null) {
+                return null;
+            }
+            
+            //Get the user's layout manager
+            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+            final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+            final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+            
+            //Determine the subscribe ID
+            final String channelSubscribeId = userLayoutManager.getSubscribeId(targetedFname);
+            if (channelSubscribeId == null) {
+                this.logger.info("No channel subscribe ID found for fname '" + targetedFname + "'. skipping portlet parameter processing");
+                return null;
+            }
+            
+            //Find the channel and portlet definitions
+            final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
+            final String channelPublishId = channelNode.getChannelPublishId();
+            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(Integer.parseInt(channelPublishId));
+            if (portletDefinition == null) {
+                this.logger.info("No portlet defintion found for channel definition '" + channelPublishId + "' with fname '" + targetedFname + "'. skipping portlet parameter processing");
+                return null;
+            }
+            
+            //Determine the appropriate portlet window ID
+            final IPerson person = userInstance.getPerson();
+            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinition.getPortletDefinitionId(), channelSubscribeId, person.getID());
+            final IPortletWindow defaultPortletWindow = this.portletWindowRegistry.createDefaultPortletWindow(request, portletEntity.getPortletEntityId());
+            targetedPortletWindowId = this.portletWindowRegistry.createTransientPortletWindowId(request, defaultPortletWindow.getPortletWindowId());
         }
         
-        final IPortletWindowId targetedPortletWindowId = this.portletWindowRegistry.getPortletWindowId(targetedPortletWindowIdStr);
         final PortletUrl portletUrl = new PortletUrl();
         
         final String requestTypeStr = request.getParameter(PARAM_REQUEST_TYPE);
