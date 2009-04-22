@@ -39,14 +39,28 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
         // determine the channel, follow the same logic as the standard uPortal processing.
         // (although, in general, worker processors can make their own rules
         String channelTarget=null;
-        Hashtable targetParams = new Hashtable();
+        Map<String, Object> targetParams = new Hashtable<String, Object>();
+        
+        final ChannelManager channelManager = pcs.getChannelManager();
 
+        final String fnameTarget = req.getParameter("uP_fname");
+        if (fnameTarget != null) {
+            try {
+                channelTarget = channelManager.getSubscribeId(fnameTarget);
+            }
+            catch (PortalException pe) {
+                log.error("Unable to get subscribe ID for fname=" + fnameTarget, pe);
+            }
+        }
+        
         // check if the uP_channelTarget parameter has been passed
-        channelTarget=req.getParameter("uP_channelTarget");
-        if(channelTarget==null) {
-            // determine target channel id
-            UPFileSpec upfs=new UPFileSpec(req);
-            channelTarget=upfs.getTargetNodeId();
+        if (channelTarget == null) {
+            channelTarget=req.getParameter("uP_channelTarget");
+            if(channelTarget==null) {
+                // determine target channel id
+                UPFileSpec upfs=new UPFileSpec(req);
+                channelTarget=upfs.getTargetNodeId();
+            }
         }
 
         // gather parameters
@@ -69,7 +83,6 @@ public class DownloadDispatchWorker implements IWorkerRequestProcessor {
                 }
             }
 
-            final ChannelManager channelManager = pcs.getChannelManager();
             final IChannel ch = channelManager.getChannelInstance(pcs.getHttpServletRequest(), pcs.getHttpServletResponse(), channelTarget);
 
             if(ch!=null) {
