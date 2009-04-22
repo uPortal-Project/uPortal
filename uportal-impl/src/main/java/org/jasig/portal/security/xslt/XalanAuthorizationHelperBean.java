@@ -53,6 +53,9 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
         }
         
         final IAuthorizationPrincipal userPrincipal = this.getUserPrincipal(userName);
+        if (userPrincipal == null) {
+            return false;
+        }
         
         final int channelId;
         try {
