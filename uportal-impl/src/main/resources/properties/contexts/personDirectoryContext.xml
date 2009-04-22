@@ -13,19 +13,31 @@
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
     
+    <!-- ********** User Information Support Beans ********** -->
+    <!--
+     | Provides user name for the current portal user if the thread is handling a request
+     +-->
+    <bean id="currentUserProvider" class="org.jasig.portal.persondir.support.PersonManagerCurrentUserProvider">
+        <property name="personManager" ref="personManager" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
+    </bean>
+    
     <!--
      | Provides the default username attribute to use to the rest of the DAOs
      +-->
     <bean id="usernameAttributeProvider" class="org.jasig.services.persondir.support.SimpleUsernameAttributeProvider">
         <property name="usernameAttribute" value="username" />
     </bean>
-     
+    
+    
+    
+    <!-- ********** Overwriting attribute beans for Attribute Swapper ********** -->
     <!-- 
      | Overrides DAO acts as the root, it handles incorporating attributes from the attribute swapper utility, wraps
      | the caching DAO
      +-->
     <bean id="personAttributeDao" class="org.jasig.portal.portlets.swapper.OverwritingPersonAttributeDao">
-        <property name="delegatePersonAttributeDao" ref="cachingMergedPersonAttributeDao" />
+        <property name="delegatePersonAttributeDao" ref="requestAttributeMergingDao" />
         <property name="attributeOverridesMap" ref="sessionAttributesOverridesMap" />
     </bean>
     
@@ -36,7 +48,56 @@
     <bean id="sessionAttributesOverridesMap" class="java.util.concurrent.ConcurrentHashMap" scope="globalSession">
         <aop:scoped-proxy />
     </bean>
-
+    
+    
+    
+    <!-- ********** Beans for Attributes from the HttpServletRequest **********-->
+    <!-- 
+     | Merges attributes from the request with those from other DAOs
+     +-->
+    <bean id="requestAttributeMergingDao" class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="merger">
+            <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
+        </property>
+        <property name="personAttributeDaos">
+            <list>
+                <ref bean="requestAttributesDao"/>
+                <ref bean="cachingMergedPersonAttributeDao"/>
+            </list>
+        </property>
+    </bean>
+            
+    <!-- 
+     | Servlet filter that creates an attribute for the serverName
+     +-->
+    <bean id="requestAttributeSourceFilter" class="org.jasig.services.persondir.support.web.RequestAttributeSourceFilter">
+        <property name="additionalDescriptors" ref="requestAdditionalDescriptors" />
+        <property name="serverNameAttribute" value="serverName" />
+        <property name="processingPosition" value="BOTH" />
+    </bean>
+    
+    <!-- 
+     | Session-scoped descriptors object. One of these will exist for each user in their session. It will store the
+     | attributes from the reques set by the requestAttributeSourceFilter
+     +-->
+    <bean id="requestAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
+        <aop:scoped-proxy />
+    </bean>
+    
+    <!-- 
+     | The person attributes DAO that returns the attributes from the request. Uses a currentUserProvider since the
+     | username may not always be provided by the request object.
+     +-->
+    <bean id="requestAttributesDao" class="org.jasig.services.persondir.support.AdditionalDescriptorsPersonAttributeDao">
+        <property name="descriptors" ref="requestAdditionalDescriptors" />
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="currentUserProvider" ref="currentUserProvider" />
+    </bean>
+    
+    
+    
+    <!-- ********** Data source attribute DAOs **********-->
     <!-- 
      | Merging DAOs that define the order that the data providing DAOs are called, results are cached by the outer
      | caching DAO
