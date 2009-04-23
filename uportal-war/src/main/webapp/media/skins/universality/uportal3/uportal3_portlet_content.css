@@ -28,14 +28,14 @@
 .fl-theme-uportal3 table.gsc-search-box td {border:none; background-color:transparent;}
 
 /* Groups Manager Channel */
-.fl-theme-mum31 .groupmgr-one-pane {border:2px solid #336699; width: 1%;}
-.fl-theme-mum31 .groupmgr-two-pane {border:2px solid #336699; width: 100%; max-width: 800px;}
-.fl-theme-mum31 .groupmgr-left-pane {padding:1em; background-color:#e2e8e7; width: 1%;}
+.fl-theme-uportal3 .groupmgr-one-pane {border:2px solid #336699; width: 1%;}
+.fl-theme-uportal3 .groupmgr-two-pane {border:2px solid #336699; width: 100%; max-width: 800px;}
+.fl-theme-uportal3 .groupmgr-left-pane {padding:1em; background-color:#e2e8e7; width: 1%;}
 .fl-theme-uportal3 .groupmgr-right-pane {padding:1em 2em; background-color:#fff;}
-.fl-theme-mum31 .groupmgr-entity .groupmgr-entity-name,
-.fl-theme-mum31 .groupmgr-group .groupmgr-group-name {font-weight: bold; float: left;}
-.fl-theme-mum31 .groupmgr-entity .groupmgr-entity-controls,
-.fl-theme-mum31 .groupmgr-group .groupmgr-group-controls {text-align: right;}
+.fl-theme-uportal3 .groupmgr-entity .groupmgr-entity-name,
+.fl-theme-uportal3 .groupmgr-group .groupmgr-group-name {font-weight: bold; float: left;}
+.fl-theme-uportal3 .groupmgr-entity .groupmgr-entity-controls,
+.fl-theme-uportal3 .groupmgr-group .groupmgr-group-controls {text-align: right;}
 
 /* CSyndFeed Channel - RSS */
 .fl-theme-uportal3 .news-source p {border-bottom:1px solid #ccc;}
