@@ -6,5 +6,6 @@
   <description>A group of system administrators with superuser capabilities</description>
   <children>
     <literal>admin</literal>
+    <group>Fragment Owners</group>
   </children>
 </group>
