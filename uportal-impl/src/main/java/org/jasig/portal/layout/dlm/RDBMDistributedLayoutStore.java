@@ -22,6 +22,10 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +39,6 @@ import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.RDBMUserIdentityStore;
 import org.jasig.portal.StructureStylesheetDescription;
@@ -2090,9 +2093,18 @@ public class RDBMDistributedLayoutStore
      */
     private String getPlfId( Document PLF, String incdId )
     {
-        Element element = PLF.getElementById( incdId );
-        if ( element == null )
-            return null;
+        Element element = null;
+        try {
+            XPathFactory fac = XPathFactory.newInstance();
+            XPath xp = fac.newXPath();
+            element = (Element) xp.evaluate("//*[@ID = '" + incdId + "']", PLF, XPathConstants.NODE);
+        } catch (XPathExpressionException xpee) {
+            throw new RuntimeException(xpee);
+        }
+        if ( element == null ) {
+            log.warn("The specified folderId was not found in the user's PLF:  " + incdId);
+            return null;            
+        }
         Attr attr = element.getAttributeNode( Constants.ATT_PLF_ID );
         if ( attr == null )
             return null;
@@ -2500,8 +2512,12 @@ public class RDBMDistributedLayoutStore
 
                     if ( folderId.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // icorporated node
                         plfId = getPlfId( PLF, folderId );
-                    if ( plfId == null ) //couldn't translate, skip
+                    if ( plfId == null ) {
+                        //couldn't translate, skip
+                        log.warn("Unable to translate the specified folderId " +
+                        		    "to a folder on the PLF:  " + folderId);
                         continue;
+                    }
 
                     for (Enumeration attre = ssup.getFolderAttributeNames(); attre.hasMoreElements();) {
                         String pName = (String)attre.nextElement();
