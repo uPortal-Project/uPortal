@@ -395,11 +395,17 @@ public class CChannelManager extends BaseChannel {
                     // Ignore parameters whose name starts with "uPCM_"
                     if (name.startsWith("uPCM_"))
                         continue;
+                    
                     String value = runtimeData.getParameter(name);
-                    String override = runtimeData.getParameter("uPCM_" + name +
-                            "_sub");
-                    channelDef.addParameter(name, value, (override != null ? "yes" :
-                            "no"));
+                    String override = runtimeData.getParameter("uPCM_" + name + "_sub");
+                    
+                    if (name.startsWith("PORTLET.")) {
+                        channelDef.addDefinitionPreference(name.substring("PORTLET.".length()), override == null, value);
+                    }
+                    else {
+                        channelDef.addParameter(name, value, (override != null ? "yes" :
+                                "no"));
+                    }
                 }
                 // Channel controls
             }
