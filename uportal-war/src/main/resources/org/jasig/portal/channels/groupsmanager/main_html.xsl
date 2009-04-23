@@ -357,6 +357,9 @@
             <xsl:if test="name()='group'">
               <xsl:if test="@canView='true'">
                 <div class="groupmgr-group">
+                
+                <span class="uportal-channel-table-row-even">
+                <div class="groupmgr-group-name">
                 <xsl:if test="$mode='select'">
                   <xsl:if test="not(@id=0) and @canSelect='true'">
                     <xsl:choose>
@@ -370,8 +373,6 @@
                   </xsl:if>
                 </xsl:if>
                 
-                <span class="uportal-channel-table-row-even">
-                <div class="groupmgr-group-name">
                 <xsl:choose>
                   <xsl:when test="$mode='members'">
                     <xsl:value-of select="RDF/Description/title" />
