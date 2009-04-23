@@ -1381,17 +1381,6 @@
           </xsl:when>
         </xsl:choose>
       </tr>
-      <tr class="uportal-channel-table-header">
-                <td align="center" colspan="4">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="uportal-background-light">
-                    <tr>
-                      <td>
-                        <img alt="" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
     </xsl:when>
     <xsl:otherwise>
             <xsl:choose>
