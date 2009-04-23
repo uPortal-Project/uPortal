@@ -342,14 +342,12 @@
     <xsl:if test="$USE_FLYOUT_MENUS='true'">
       <script src="{$SCRIPT_PATH}/uportal/flyout-nav.min.js" type="text/javascript"></script>
     </xsl:if>
-    <xsl:if test="$USE_FLYOUT_MENUS or $USE_AJAX">
-      <script type="text/javascript">
-        var up = up || {};
-        up.jQuery = jQuery.noConflict(true);
-        up.fluid = fluid;
-        fluid = null;
-      </script>
-    </xsl:if>
+    <script type="text/javascript">
+      var up = up || {};
+      up.jQuery = jQuery.noConflict(true);
+      up.fluid = fluid;
+      fluid = null;
+    </script>
   </xsl:template>
   
   <!-- =============================================== -->
