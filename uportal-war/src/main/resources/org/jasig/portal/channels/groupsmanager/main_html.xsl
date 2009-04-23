@@ -481,12 +481,12 @@
     <xsl:choose>
       <xsl:when test="$properties/property">
         <table border="0" cellspacing="0" cellpadding="0">
-          <xsl:for-each select="$properties/property">
-            <xsl:sort data-type="text" order="ascending" select="@name"/>
             <tr>
-                <th>Name</th>
+              <th>Name</th>
               <th>Value</th>
             </tr>
+          <xsl:for-each select="$properties/property">
+            <xsl:sort data-type="text" order="ascending" select="@name"/>
             <tr>
               <td><xsl:value-of select="@name"/></td>
               <td><xsl:value-of select="@value"/></td>
