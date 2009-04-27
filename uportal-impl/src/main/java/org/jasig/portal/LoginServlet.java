@@ -204,35 +204,50 @@ public class LoginServlet extends HttpServlet {
       person = null;
     }
     
-    /* Grab the target functional name, if any, off the login request.
-     * Also any arguments for the target
-     * We will pass them  along after authentication.
-     */
-    String targetFname = request.getParameter("uP_fname");
+    
     
     // create the redirect URL, adding fname and args parameters if necessary
     String redirectTarget = null;
-	if (targetFname == null){
-		redirectTarget = request.getContextPath() + "/" + redirectString;
-	} else {
-		StringBuilder sb = new StringBuilder();
-		sb.append(request.getContextPath());
-		sb.append("/tag.idempotent.");
-		sb.append(redirectString);
-		sb.append("?uP_fname=");
-		sb.append(URLEncoder.encode(targetFname, "UTF-8"));
-		Enumeration<String> e = request.getParameterNames();
-		while(e.hasMoreElements()){
-			String paramName = e.nextElement();
-			if(!paramName.equals("uP_fname")){
-				sb.append('&');
-				sb.append(paramName);
-				sb.append('=');
-				sb.append(URLEncoder.encode(request.getParameter(paramName),"UTF-8"));
-			}
-		}		
-		redirectTarget = sb.toString();
-	}
+
+    final String refUrl = request.getParameter("refUrl");
+    if (refUrl != null) {
+        if (refUrl.startsWith("/")) {
+            redirectTarget = refUrl;
+        }
+        else {
+            log.warn("Refernce URL passed in does not start with a / and will be ignored: " + refUrl);
+        }
+    }
+    
+    if (redirectTarget == null) {
+        /* Grab the target functional name, if any, off the login request.
+         * Also any arguments for the target
+         * We will pass them  along after authentication.
+         */
+        String targetFname = request.getParameter("uP_fname");
+        
+    	if (targetFname == null){
+    		redirectTarget = request.getContextPath() + "/" + redirectString;
+    	} else {
+    		StringBuilder sb = new StringBuilder();
+    		sb.append(request.getContextPath());
+    		sb.append("/tag.idempotent.");
+    		sb.append(redirectString);
+    		sb.append("?uP_fname=");
+    		sb.append(URLEncoder.encode(targetFname, "UTF-8"));
+    		Enumeration<String> e = request.getParameterNames();
+    		while(e.hasMoreElements()){
+    			String paramName = e.nextElement();
+    			if(!paramName.equals("uP_fname")){
+    				sb.append('&');
+    				sb.append(paramName);
+    				sb.append('=');
+    				sb.append(URLEncoder.encode(request.getParameter(paramName),"UTF-8"));
+    			}
+    		}		
+    		redirectTarget = sb.toString();
+    	}
+    }
 
 	if (person == null || !person.getSecurityContext().isAuthenticated()) {
      if ( request.getMethod().equals("POST") )
