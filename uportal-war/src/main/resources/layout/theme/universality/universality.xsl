@@ -97,6 +97,20 @@
   <xsl:variable name="RESOURCE_PATH">/ResourceServingWebapp/rs</xsl:variable>
   <xsl:variable name="PORTAL_SHORTCUT_ICON">favicon.ico</xsl:variable>
   
+  <!-- 
+   | The unofficial "theme-switcher".
+   | The INSTITUTION variable can be used to make logical tests and configure the theme on a per skin basis.
+   | Allows the the theme to configure differently for a skin or group of skins, yet not break for other skins that might require a different configuration.
+   | The implementation is hard-coded, but it works.
+   | May require the addition of an xsl:choose statement around parameters, vairables, and template calls.
+  -->
+  <xsl:variable name="INSTITUTION">
+    <xsl:choose>
+        <xsl:when test="$SKIN='university' or $SKIN='university-div1' or $SKIN='university-div2'">university</xsl:when> <!-- Set all institution skins to a specific theme configuration  -->
+      <xsl:when test="$SKIN='ivy'">ivy</xsl:when>
+      <xsl:otherwise>uportal</xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
   
   <!-- ****** LOCALIZATION SETTINGS ****** -->
   <!-- 
@@ -141,7 +155,7 @@
     </xsl:choose>
   </xsl:param>
   <xsl:param name="COLUMNS" select="count(//content/column)"/>
-  <xsl:variable name="TOKEN" select="document($MESSAGE_DOC_URL)/theme-messages/tokens[lang($USER_LANG)]/token"/> <!-- Tells the theme how to find appropriate localized token. --> 
+  <xsl:variable name="TOKEN" select="document($MESSAGE_DOC_URL)/theme-messages/tokens[lang($USER_LANG) and (@institution=$INSTITUTION or not(@institution))]/token"/> <!-- Tells the theme how to find appropriate localized token. -->  
   
   
   <!-- ****** INSTITUTION SETTINGS ****** -->
@@ -154,21 +168,7 @@
   <xsl:variable name="LOGIN_HELP_URL">http://www.jasig.org/uportal</xsl:variable>
   <xsl:variable name="CAS_LOGIN_URL">https://login.institution.edu/cas/login?service=https://portal.domain.edu/uPortal/Login</xsl:variable>
   <xsl:variable name="CAS_NEW_USER_URL">http://www.jasig.org/cas</xsl:variable>
-  
-  <!-- 
-   | The unofficial "theme-switcher".
-   | The INSTITUTION variable can be used to make logical tests and configure the theme on a per skin basis.
-   | Allows the the theme to configure differently for a skin or group of skins, yet not break for other skins that might require a different configuration.
-   | The implementation is hard-coded, but it works.
-   | May require the addition of an xsl:choose statement around parameters, vairables, and template calls.
-  -->
-  <xsl:variable name="INSTITUTION">
-  	<xsl:choose>
-    	<xsl:when test="$SKIN='university' or $SKIN='university-div1' or $SKIN='university-div2'">university</xsl:when> <!-- Set all institution skins to a specific theme configuration  -->
-      <xsl:when test="$SKIN='ivy'">ivy</xsl:when>
-      <xsl:otherwise>uportal</xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
+
   
   
   <!-- ****** NAVIGATION SETTINGS ****** -->
