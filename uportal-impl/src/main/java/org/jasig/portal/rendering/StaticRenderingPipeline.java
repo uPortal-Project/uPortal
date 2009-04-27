@@ -592,11 +592,10 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     Version uPortalVersion = versionsManager.getVersion(IPermission.PORTAL_FRAMEWORK);
                     tst.setParameter("uP_productAndVersion", "uPortal " + uPortalVersion.dottedTriple());
 
-                    //TODO only pick locale if it is supported in messages.xml?
-//                    final Locale[] locales = localeManager.getLocales();
-//                    if (locales != null && locales.length > 0) {
-//                        tst.setParameter("USER_LANG", locales[0].toString());
-//                    }
+                    final Locale[] locales = localeManager.getLocales();
+                    if (locales != null && locales.length > 0 && locales[0] != null) {
+                        tst.setParameter("USER_LANG", locales[0].toString().replace('_', '-'));
+                    }
 
                     // initialize a filter to fill in channel attributes for the "theme" (second) transformation.
                     // attach it downstream of the channel rendering buffer
