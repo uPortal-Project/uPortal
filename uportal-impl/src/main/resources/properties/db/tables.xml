@@ -184,12 +184,27 @@
       </column>
     </columns>
     <index>
-        <name>UPPERM_IDX</name>
+        <name>UPPERM_IDX__OWNER</name>
         <column-ref>OWNER</column-ref>
+    </index>
+    <index>
+        <name>UPPERM_IDX__PRTYPE</name>
         <column-ref>PRINCIPAL_TYPE</column-ref>
+    </index>
+    <index>
+        <name>UPPERM_IDX__PRKEY</name>
         <column-ref>PRINCIPAL_KEY</column-ref>
+    </index>
+    <index>
+        <name>UPPERM_IDX__ACTIVITY</name>
         <column-ref>ACTIVITY</column-ref>
+    </index>
+    <index>
+        <name>UPPERM_IDX__TARGET</name>
         <column-ref>TARGET</column-ref>
+    </index>
+    <index>
+        <name>UPPERM_IDX__PETYPE</name>
         <column-ref>PERMISSION_TYPE</column-ref>
     </index>
   </table>
