@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <on-start>
+        <set name="flowScope.channelTypes" 
+            value="channelTypeService.getRegisteredChannelTypes()"/>
+    </on-start>
+
+    <!-- 
+     | Portlet selection view
+     |   
+     | Present a list of currently configured portlets and allow the 
+     | administrative user to either select a portlet to edit or to elect to
+     | create a new portlet
+     +-->
+    <view-state id="listChannels">
+        <!-- If we're editing an already-existing portlet, create a form and
+            populate it with the selected portlet's data -->
+        <transition on="editPortlet" to="edit-portlet">
+            <set name="flowScope.channel" 
+                value="channelTypeService.getChannelDefinitionForm(requestParameters.chanId)"/>
+        </transition>
+        <!-- If we're creating a new portlet, create a new form -->
+        <transition on="createPortlet" to="edit-portlet">
+            <set name="flowScope.channel" 
+                value="new org.jasig.portal.portlets.portletadmin.ChannelDefinitionForm()"/>
+        </transition>
+    </view-state>
+    
+    <!--
+     | Portlet editing subflow
+     | 
+     | Edit or create the selected portlet 
+     +-->
+    <subflow-state id="edit-portlet" subflow="edit-portlet">
+        <input name="channel" value="channel"/>
+        <transition on="finishPortletEdit" to="finishPortletEdit"/>
+        <transition on="cancelPortletEdit" to="finishPortletEdit"/>
+    </subflow-state>
+    
+    <!-- End state -->
+    <end-state id="finishPortletEdit" />
+    
+</flow>

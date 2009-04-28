@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <!--  View Parameters -->
+    <input name="selectTypes" type="java.util.Set" required="true"/> <!-- Set<String> of desired entity types -->
+    <input name="selectMultiple" type="boolean" required="false"/> <!-- Can multiple entries be selected? -->
+    <input name="rootEntityId" type="string" required="false"/> <!-- Search base -->
+
+    <input name="showCancelButton" type="boolean" required="false" />
+    <input name="showBackButton" type="boolean" required="false"/>
+    <input name="saveButtonText" type="string" required="false" />
+    <input name="backButtonText" type="string" required="false" />
+    <input name="cancelButtonText" type="string" required="false" />
+    <input name="pageTitleText" type="string" required="false" />
+    <input name="pageSubtitleText" type="string" required="false" />
+    
+    <!-- 
+        | Selected groups input
+        |
+        | The selected groups object should be a list of entity IDs representing
+        | the existing or default list of group and group member selections.
+        +-->
+    <input name="selectedGroups" type="java.util.List" required="true"/>
+    
+    <!-- Initialize a simple hashmap to use as a model for forms and add
+        the input selected groups to the model -->
+    <on-start>
+        <set name="flowScope.model" value="new java.util.HashMap()"/>
+        <set name="model.groups" value="selectedGroups"/>
+        <set name="flowScope.groupNames" value="groupsSelectorHelper.getGroupNames(model.groups)"/>
+        <set name="flowScope.entityTypes" value="new java.util.ArrayList()"/>
+        
+    </on-start>
+    
+    <!-- Main user form for entity selection -->
+    <view-state id="chooseGroups" model="model">
+        <transition on="back" to="back"/>
+        <transition on="save" to="finish"/>
+        <transition on="cancel" to="cancel" bind="false"/>
+    </view-state>
+
+	<end-state id="finish">
+        <output name="selectedGroups" value="model.groups"/>
+    </end-state>
+
+    <end-state id="back">
+        <output name="selectedGroups" value="model.groups"/>
+    </end-state>
+    
+    <end-state id="cancel">
+        <output name="selectedGroups" value="model.groups"/>
+    </end-state>
+</flow>
