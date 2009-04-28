@@ -157,6 +157,7 @@
         <hibernate.version>3.2.6.ga</hibernate.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
         <jdom.version>1.0</jdom.version>
+        <json-lib-ext-spring.version>1.0</json-lib-ext-spring.version>
         <jstl.version>1.1.2</jstl.version>
         <jtidy.version>4aug2000r7-dev</jtidy.version>
         <junit.version>4.4</junit.version>
@@ -350,6 +351,11 @@
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.json-lib</groupId>
+                <artifactId>json-lib-ext-spring</artifactId>
+                <version>${json-lib-ext-spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>ognl</groupId>
@@ -647,6 +653,10 @@
                     <exclusion>
                         <groupId>xjavadoc</groupId>
                         <artifactId>xjavadoc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xstream</groupId>
+                        <artifactId>xstream</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>opensymphony</groupId>
