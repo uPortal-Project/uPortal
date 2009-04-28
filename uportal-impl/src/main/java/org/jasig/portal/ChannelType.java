@@ -5,6 +5,8 @@
  */
 package org.jasig.portal;
 
+import java.io.Serializable;
+
 /**
  * A channel type references a particular java class that implements
  * the IChannel interface.  It also references a channel publishing document
@@ -12,7 +14,7 @@ package org.jasig.portal;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
-public class ChannelType {
+public class ChannelType implements Serializable {
 
   private int id;
   private String javaClass;
