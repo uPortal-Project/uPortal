@@ -183,4 +183,24 @@
         </portlet-preferences> 
     </portlet> 
 
+    <portlet>
+        <portlet-name>PortletAdministration</portlet-name>
+        <display-name xml:lang="en">Portlet Administration Portlet</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/PortletAdministration-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Portlet Administration Portlet</title>
+        </portlet-info>
+    </portlet>
+
+
 </portlet-app>
