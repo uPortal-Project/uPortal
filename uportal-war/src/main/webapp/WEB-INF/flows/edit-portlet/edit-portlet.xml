@@ -78,11 +78,10 @@
         <output name="selectedGroups" value="channel.categories"/>
         
         <transition on="back" to="setParameters"/>
-        <transition on="finish" to="chooseGroup">
+        <transition on="finish" to="chooseCategoryNextScreen">
             <set name="categoryNames" 
                 value="groupsSelectorHelper.getGroupNames(channel.categories)"/>
         </transition>
-        <transition on="cancel" to="cancelEditScreen"/>
     </subflow-state>
     
     <decision-state id="chooseCategoryNextScreen">
@@ -119,7 +118,6 @@
                 value="groupsSelectorHelper.getGroupNames(channel.groups)"/>
             <set name="completed" value="true"/>
         </transition>
-        <transition on="cancel" to="cancelEditScreen"/>
     </subflow-state>
 
     <!-- REVIEW PORTLET view -->
