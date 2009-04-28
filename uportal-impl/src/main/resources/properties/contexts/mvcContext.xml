@@ -27,7 +27,15 @@
             </list>
         </property>                                     
     </bean>
-
+    
+    <!-- 
+     | XML view resolver for JSON view
+     +-->
+    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
+        <property name="order" value="0"/>
+        <property name="location" value="classpath:properties/contexts/mvcViews.xml"/>
+    </bean>
+    
     <!-- 
      | Standard JSP view resolver
      +-->
@@ -36,6 +44,7 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/"/>
         <property name="suffix" value=".jsp"/>
+        <property name="order" value="1"/>
     </bean>
     
 </beans>

@@ -18,7 +18,7 @@
     <!-- Generic Web-Flow helper beans -->
     <bean id="portletUrlFlowHelper" class="org.jasig.portal.portlets.flow.PortletUrlFlowHelper" />
                       
-    
+
     <!-- Beans for the person-lookup flow -->       
     <bean id="personLookupHelper" class="org.jasig.portal.portlets.lookup.PersonLookupHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
@@ -27,6 +27,10 @@
     <bean id="personQueryValidator" class="org.jasig.portal.portlets.lookup.PersonQueryValidator">
         <property name="personLookupHelper" ref="personLookupHelper" />
     </bean>
+    
+
+    <!--  Beans for the group-selector flow -->
+    <bean id="groupsSelectorHelper" class="org.jasig.portal.portlets.groupselector.GroupsSelectorHelperImpl"/>
     
     
     <!-- Beans for the attribute-swapper flow -->       
@@ -42,6 +46,14 @@
     
     <!-- Beans for the identity-swapper flow -->
     <bean id="identitySwapperHelper" class="org.jasig.portal.portlets.swapper.IdentitySwapperHelperImpl" />
+    
+    <!-- Beans for the edit-portlet flow -->
+    <bean id="channelTypeService" class="org.jasig.portal.portlets.portletadmin.PortletAdministrationService"/>
+    
+    <bean id="channelValidator"
+        class="org.jasig.portal.portlets.portletadmin.ChannelDefinitionFormValidator">
+        <property name="channelTypeService" ref="channelTypeService"/>
+    </bean>
     
     
     <!-- Beans for the register-portal flow -->
