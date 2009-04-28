@@ -5,16 +5,19 @@
  */
 package org.jasig.portal.channels;
 
-import java.util.Iterator;
-import java.util.List;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -27,6 +30,7 @@ import org.jasig.portal.ICacheable;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.services.HttpClientManager;
+import org.jasig.portal.utils.DTDResolver;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.XSLT;
@@ -272,14 +276,24 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 					xmlUri.substring(0, 8).equalsIgnoreCase("https://")) {
 				final HttpClient client = HttpClientManager.getNewHTTPClient();
 				final GetMethod get = new GetMethod(xmlUri);
+				DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory
+					.newInstance();
+				docBuilderFactory.setNamespaceAware(true);
+				DocumentBuilder docBuilder = docBuilderFactory
+						.newDocumentBuilder();
+				DTDResolver dtdResolver = new DTDResolver();
+				docBuilder.setEntityResolver(dtdResolver);
 				try {
 					get.setFollowRedirects(true);
 					final int rc = client.executeMethod(get);
+					String charset = get.getResponseCharSet();
+					System.out.println(get.getResponseCharSet());
 					if (rc != HttpStatus.SC_OK) {
 						throw new PortalException("HttpStatus:"+ rc+" url: " + xmlUri);
 					}
 					final InputStream in = get.getResponseBodyAsStream();
-					feed = input.build(new InputStreamReader(in));
+					Document xmlDoc = docBuilder.parse(in);
+					feed = input.build(xmlDoc);
 				} finally {
 					get.releaseConnection();
 				}
@@ -297,6 +311,10 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 		} catch (IOException e) {
 			throw new PortalException(e);
 		} catch (BlockedUriException e) {
+			throw new PortalException(e);
+		} catch (ParserConfigurationException e) {
+			throw new PortalException(e);
+		} catch (SAXException e) {
 			throw new PortalException(e);
 		}
 		return feed;

@@ -160,13 +160,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                       <td>
                       <form:checkbox path="${overrideParamPath}" value="true"/>
                       </td>
-                        <td><a href="javascript:;" onclick="$(this).parent().parent().remove()">Delete</a></td>
+                        <td><a href="javascript:;">Delete</a></td>
                       </tr>
                     </c:if>
                   </c:forEach>
                 </tbody>
               </table> 
-              <p><a href="javascript:;" onclick="showNewParameterForm('${prefix}');">Add parameter</a></p>
+              <p><a id="${n}showParameterFormLink" href="javascript:;">Add parameter</a></p>
               <div style="display:none">
                 <div id="${fn:replace(prefix, '.', '')}newparam" class="jqueryui">
                 </div>
@@ -204,6 +204,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	up.jQuery(function() {
 			var $ = up.jQuery;
 			function showNewParameterForm(prefix) {
+				console.log('hi');
 				var id = "#" + prefix.replace('.', '') + "newparam";
 				var html = "<form>Name: <input type=\"text\" name=\"name\"/><br/>";
 				html += "Value: <input type=\"text\" name=\"value\"/><br/>";
@@ -229,5 +230,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 				});
 			$(id).dialog();
 		}
+			$(document).ready(function(){
+				$("#${fn:replace(prefix, '.', '')}-arbitraryParams a").click(function(){ $(this).parent().parent().remove() });
+				$("#showParameterFormLink").click(function(){ showNewParameterForm('${prefix}'); });
+			});
 	});
 </script>
