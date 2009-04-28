@@ -183,16 +183,19 @@
         <url-pattern>/Login</url-pattern>
     </filter-mapping>
 
-    <filter-mapping>
+    <!-- Temporarily commenting out this filter for development purposes -->
+    <!--<filter-mapping>
         <filter-name>pageCachingFilter</filter-name>
         <url-pattern>*.js</url-pattern>
         <url-pattern>*.css</url-pattern>
-    </filter-mapping>
+    </filter-mapping>-->
 
-    <filter-mapping>
+    <!--<filter-mapping>
         <filter-name>CacheExpiresFilter</filter-name>
         <url-pattern>/media/*</url-pattern>
-    </filter-mapping>
+        <url-pattern>*.js</url-pattern>
+        <url-pattern>*.css</url-pattern>
+    </filter-mapping>-->
     
     <servlet>
         <servlet-name>uPortal</servlet-name>
@@ -239,6 +242,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>ManageableChannelsListServlet</servlet-name>
+        <servlet-class>org.jasig.portal.layout.dlm.remoting.ManageableChannelsListServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
         <servlet-name>UpdatePreferencesServlet</servlet-name>
         <servlet-class>org.jasig.portal.layout.dlm.remoting.UpdatePreferencesServlet</servlet-class>
     </servlet>
@@ -247,6 +255,17 @@
     <servlet>
         <servlet-name>ViewRendererServlet</servlet-name>
         <servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
+    </servlet>
+    
+    <!-- Supports Spring controllers -->
+    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:properties/contexts/mvcServletContext.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
     </servlet>
         
     <!-- Serves static resource content from .jar files such as spring-js.jar -->
@@ -263,6 +282,11 @@
             <param-name>scriptLocation</param-name>
             <param-value>ImportExportPortlet/doDownload</param-value>
         </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>GroupListServlet</servlet-name>
+        <servlet-class>org.jasig.portal.layout.dlm.remoting.GroupListServlet</servlet-class>
     </servlet>
 
     <!-- [INSERT JSPC FRAGMENT HERE] -->
@@ -324,6 +348,11 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>ManageableChannelsListServlet</servlet-name>
+        <url-pattern>/ajax/adminChannelList</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
         <servlet-name>UpdatePreferencesServlet</servlet-name>
         <url-pattern>/ajax/preferences</url-pattern>
     </servlet-mapping>
@@ -331,6 +360,16 @@
     <servlet-mapping>
         <servlet-name>ImportExportServlet</servlet-name>
         <url-pattern>/ImportExportServlet/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>GroupListServlet</servlet-name>
+        <url-pattern>/ajax/groupList</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <url-pattern>/mvc/*</url-pattern>
     </servlet-mapping>
 
     <mime-mapping>
