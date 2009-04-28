@@ -63,6 +63,10 @@
  * ============================
  */
 
+/* forms */
+input[type="checkbox"] {margin-right:0.5em;}
+fieldset input[type="checkbox"] {margin-bottom:1em;}
+
 /* common */
 .portal-pipe {padding:0 0.5em;}
 
@@ -108,20 +112,20 @@ table.purpose-layout td {margin:0; padding:0;}
 .focused #portalPageBodyTitleRow {padding:1em 1em 0 1em;}
 #portalPageBodyBreadcrumb {margin-bottom:0.5em;}
 .focused .portal-page-column-inner {padding:0em 2em 2em 2em;}
-.focused .portlet-content {padding:0;}
+.focused .up-portlet-content {padding:0;}
 
 /* Sidebar */
 #portalSidebar {padding:0;}
 #portalSidebarInner {padding:0 1em 2em 1em;}
 #portalSidebar #portalCustomizationLinks .portal-pipe {display:none;}
 
-/* portlets */
-.portlet-container {margin-bottom:1em;}
-.portlet-toolbar {position:relative;}
-.portlet-toolbar h2 {margin:0; padding:2px 20px 3px 20px;}
-.portlet-controls {position:absolute; top:4px; right:0;}
-.dashboard .portlet-controls .portlet-control {padding-right:1em;}
-.portlet-content {padding:1em;}
+/* portlet containers */
+.up-portlet-container {margin-bottom:1em;}
+.up-portlet-toolbar {position:relative;}
+.up-portlet-toolbar h2 {margin:0; padding:2px 20px 3px 20px;}
+.up-portlet-controls {position:absolute; top:4px; right:0;}
+.dashboard .up-portlet-controls .up-portlet-control {padding-right:1em;}
+.up-portlet-content {padding:1em;}
 
 /* footer */
 #portalPageFooter {padding-top:2em;}
@@ -211,6 +215,11 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* Portlet Navigation */
 #portletNavigation h3 {margin:0.5em 0 0 0; padding:0.2em 0.5em;}
+
+
+/* uPortal specific channels and portlets
+ * ======================================
+ */
 
 /* CSyndFeed Channel - RSS */
 .news-items ul,

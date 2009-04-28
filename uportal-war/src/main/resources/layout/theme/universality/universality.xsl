@@ -338,6 +338,7 @@
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/ajax-preferences-jquery.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-channel-browser.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-group-browser.min.js"></script>
     </xsl:if>
     <xsl:if test="$USE_FLYOUT_MENUS='true'">
       <script src="{$SCRIPT_PATH}/uportal/flyout-nav.min.js" type="text/javascript"></script>
@@ -890,8 +891,8 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="portlet.top.block">
-    <div class="portlet-top">
-      <div class="portlet-top-inner">
+    <div class="up-portlet-top">
+      <div class="up-portlet-top-inner">
       </div>
     </div>
   </xsl:template>
@@ -906,8 +907,8 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="portlet.bottom.block">
-    <div class="portlet-bottom">
-      <div class="portlet-bottom-inner">
+    <div class="up-portlet-bottom">
+      <div class="up-portlet-bottom-inner">
       </div>
     </div>
   </xsl:template>

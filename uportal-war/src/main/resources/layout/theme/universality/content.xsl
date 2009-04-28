@@ -28,7 +28,7 @@
   <xsl:template match="channel">
     <!-- This variable appears to be obsolete.
     <xsl:variable name="portletClassName">
-      portlet-container <xsl:value-of select="@fname"/> 
+      up-portlet-container <xsl:value-of select="@fname"/> 
     </xsl:variable>-->
     
     <xsl:variable name="PORTLET_LOCKED"> <!-- Test to determine if the portlet is locked in the layout. -->
@@ -63,15 +63,15 @@
     <xsl:if test="not(./parameter[@name='removeFromLayout']/@value='true') and not(./parameter[@name='PORTLET.removeFromLayout']/@value='true')">
     
     <!-- ****** PORTLET CONTAINER ****** -->
-    <div id="portlet_{@ID}" class="portlet-container {@fname} {$PORTLET_LOCKED} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
+    <div id="portlet_{@ID}" class="up-portlet-container {@fname} {$PORTLET_LOCKED} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
           
         <!-- PORTLET CHROME CHOICE -->
         <xsl:choose>
           <!-- ***** REMOVE CHROME ***** -->
           <xsl:when test="parameter[@name = 'showChrome']/@value = 'false'">
               <!-- ****** START: PORTLET CONTENT ****** -->
-              <div id="portletContent_{@ID}" class="portlet-content"> <!-- Portlet content container. -->
-                <div class="portlet-content-inner">  <!-- Inner div for additional presentation/formatting options. -->
+              <div id="portletContent_{@ID}" class="up-portlet-content"> <!-- Portlet content container. -->
+                <div class="up-portlet-content-inner">  <!-- Inner div for additional presentation/formatting options. -->
                   <xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
                 </div>
               </div>
@@ -79,13 +79,13 @@
         
           <!-- ***** RENDER CHROME ***** -->
           <xsl:otherwise>
-            <div class="portlet-container-inner">
+            <div class="up-portlet-container-inner">
             <!-- ****** PORTLET TOP BLOCK ****** -->
             <xsl:call-template name="portlet.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
             <!-- ****** PORTLET TOP BLOCK ****** -->
             
             <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
-            <div id="toolbar_{@ID}" class="portlet-toolbar"> <!-- Portlet toolbar. -->
+            <div id="toolbar_{@ID}" class="up-portlet-toolbar"> <!-- Portlet toolbar. -->
               <h2> <!-- Portlet title. -->
                 <a name="{@ID}" id="{@ID}" href="{$BASE_ACTION_URL}?uP_root={@ID}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
                   UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
@@ -97,8 +97,8 @@
             </div>
             
             <!-- ****** PORTLET CONTENT ****** -->
-            <div id="portletContent_{@ID}" class="portlet-content fl-fix"> <!-- Portlet content container. -->
-              <div class="portlet-content-inner">  <!-- Inner div for additional presentation/formatting options. -->
+            <div id="portletContent_{@ID}" class="up-portlet-content fl-fix"> <!-- Portlet content container. -->
+              <div class="up-portlet-content-inner">  <!-- Inner div for additional presentation/formatting options. -->
                 <xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
               </div>
             </div>
@@ -132,12 +132,12 @@
   </xsl:template>
   
   <xsl:template match="channel" mode="focused">
-    <div id="portlet_{@ID}" class="portlet-container">  <!-- Portlet container. -->
-      <div id="toolbar_{@ID}" class="portlet-toolbar">  <!-- Render the portlet toolbar. -->
+    <div id="portlet_{@ID}" class="up-portlet-container">  <!-- Portlet container. -->
+      <div id="toolbar_{@ID}" class="up-portlet-toolbar">  <!-- Render the portlet toolbar. -->
       	<xsl:call-template name="controls"/> <!-- Call the portlet controls into the toolbar. -->
       </div>
-      <div id="portletContent_{@ID}" class="portlet-content fl-fix">
-      	<div class="portlet-content-inner">
+      <div id="portletContent_{@ID}" class="up-portlet-content fl-fix">
+      	<div class="up-portlet-content-inner">
       		<xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
     		</div>
     	</div>
@@ -148,39 +148,39 @@
   <!-- ========== TEMPLATE: PORTLET CONTROLS ========== -->
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
-    <div class="portlet-controls">
+    <div class="up-portlet-controls">
       <xsl:if test="not(@hasHelp='false')"> <!-- Help. -->
-      	<a href="{$BASE_ACTION_URL}?uP_help_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_HELP_LONG_LABEL']}" class="portlet-control help">
+      	<a href="{$BASE_ACTION_URL}?uP_help_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_HELP_LONG_LABEL']}" class="up-portlet-control help">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_HELP_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(@hasAbout='false')"> <!-- About. -->
-      	<a href="{$BASE_ACTION_URL}?uP_about_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_ABOUT_LONG_LABEL']}" class="portlet-control about">
+      	<a href="{$BASE_ACTION_URL}?uP_about_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_ABOUT_LONG_LABEL']}" class="up-portlet-control about">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_ABOUT_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(@editable='false')"> <!-- Edit. -->
-      	<a href="{$BASE_ACTION_URL}?uP_edit_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_EDIT_LONG_LABEL']}" class="portlet-control edit">
+      	<a href="{$BASE_ACTION_URL}?uP_edit_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_EDIT_LONG_LABEL']}" class="up-portlet-control edit">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_EDIT_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="@printable='true'"> <!-- Print. -->
-      	<a href="{$BASE_ACTION_URL}?uP_print_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_PRINT_LONG_LABEL']}" class="portlet-control print">
+      	<a href="{$BASE_ACTION_URL}?uP_print_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_PRINT_LONG_LABEL']}" class="up-portlet-control print">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_PRINT_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(//focused)"> <!-- Focus. -->
-      	<a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{$TOKEN[@name='PORTLET_MAXIMIZE_LONG_LABEL']}" class="portlet-control focus">
+      	<a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{$TOKEN[@name='PORTLET_MAXIMIZE_LONG_LABEL']}" class="up-portlet-control focus">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_MAXIMIZE_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
-      	<a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$BASE_ACTION_URL}?uP_remove_target={@ID}" class="portlet-control remove">
+      	<a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$BASE_ACTION_URL}?uP_remove_target={@ID}" class="up-portlet-control remove">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_REMOVE_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
-        <a id="focusedContentDialogLink" href="javascript:;" title="{$TOKEN[@name='PORTLET_ADD_LONG_LABEL']}" class="portlet-control add">
+        <a id="focusedContentDialogLink" href="javascript:;" title="{$TOKEN[@name='PORTLET_ADD_LONG_LABEL']}" class="up-portlet-control add">
           <span><xsl:value-of select="$TOKEN[@name='PORTLET_ADD_LABEL']"/></span>
         </a>
       </xsl:if>

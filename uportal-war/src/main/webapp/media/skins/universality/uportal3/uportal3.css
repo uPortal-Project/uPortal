@@ -30,9 +30,6 @@
 /* Support for legacy uPortal css classes. */
 @import url("uportal3_legacy.min.css");
 
-/* Support for the JSR-168 portlet specification css classes. */
-@import url("jsr168_portlet_spec.min.css");
-
 /* Default jqueryui css */
 @import url("/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css");
 
@@ -43,7 +40,7 @@
 @import url("fluid.theme.uportal3.min.css");
 
 /* Visual style for portlet content. An extension of the uportal3 skin. */
-@import url("uportal3_portlet_content.min.css");
+@import url("uportal3_portlet.min.css");
 
 /* Overrides specific to IE6. */
 @import url("uportal3_ie6override.min.css");

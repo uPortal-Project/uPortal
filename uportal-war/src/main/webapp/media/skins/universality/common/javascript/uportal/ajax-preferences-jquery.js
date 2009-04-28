@@ -45,7 +45,7 @@
 		    var options = {
 		         selectors: {
 			        columns: ".portal-page-column-inner",
-			        modules: ".portlet-container",
+			        modules: ".up-portlet-container",
 			        lockedModules: ".locked",
 			        dropWarning: $("#portalDropWarning"),
 			        grabHandle: "[id*=toolbar_]"
@@ -71,7 +71,47 @@
 			initTabEditLinks();
 		
 		};
+		
+		var chooseCategory = function(categoryId) {
+			var select = $("#channelSelectMenu").html("");
+			var channels = settings.channelBrowser.getChannelsForCategory(categoryId);
+			$(channels).each(function(i, val) {
+				select.get(0).options[i] = new Option(this.name, this.id);
+			});
+
+			select
+				.change(function(){ chooseChannel(this.value); })
+				.children("option:first").attr("selected", true);
+			chooseChannel(select.val());
 			
+		};
+
+		var chooseChannel = function(chanId) {
+			var channel = settings.channelBrowser.getChannel(chanId);
+			$("#channelTitle").text(channel.name);
+			$("#channelDescription").text(channel.description);
+			$("#addChannelId").attr("value", channel.id);
+			$("#previewChannelLink").unbind("click").click(function(){ 
+				window.location = settings.portalUrl + "?uP_fname=" + channel.fname;
+			});
+		};
+
+		var searchChannels = function(searchTerm) {
+			var results = $("#addChannelSearchResults").html("");
+			var channels = settings.channelBrowser.searchChannels(searchTerm);
+			$(channels).each(function(i){
+				results.append(
+					$(document.createElement('li')).append(
+						$(document.createElement('a'))
+							.attr("id", this.id).attr("href", "javascript:;")
+							.click(function(){ chooseChannel(this.id); })
+							.text(this.name)
+					)
+				 );
+			});
+			
+		};
+
 		// Initialization tasks for focus mode
 		var initfocusedportal = function() {
 			$("#focusedContentDialogLink").click(initializeFocusedContentMenu);
@@ -83,23 +123,21 @@
 			$("#contentDialogLink")
 				.unbind('click', initializeContentAddingMenu)
 				.click(function(){$("#contentAddingDialog").dialog('open');});
-			$("#channelAddingTabs").channelbrowser({
-				onDataLoad: function() {
+			settings.channelBrowser = $.channelbrowser({
+				onDataLoad: function(categories) {
+					var categorySelect = $("#categorySelectMenu");
+					$(categories).each(function(i, val) {
+						categorySelect.get(0).options[i] = new Option(this.name, this.id);
+					});
+					categorySelect.change(function(){chooseCategory(this.value)})
+						.children("option:first").attr("selected", true);
+					$("#addChannelSearchTerm").keyup(function(){
+						searchChannels($(this).val());
+					});
+					chooseCategory(categorySelect.val());
 			   		$("#channelLoading").css("display", "none");
 			   		$("#categorySelectMenu").css("background-image", "none");
 			   		$("#channelSelectMenu").css("background-image", "none");
-				},
-				categorySelect: "#categorySelectMenu", 
-				channelSelect: "#channelSelectMenu",
-				channelSearchInput: "#addChannelSearchTerm",
-				channelSearchResults: "#addChannelSearchResults",
-				onChannelSelect: function(channel) {
-					$("#channelTitle").text(channel.name);
-					$("#channelDescription").text(channel.description);
-					$("#addChannelId").attr("value", channel.id);
-					$("#previewChannelLink").unbind("click").click(function(){ 
-						window.location = settings.portalUrl + "?uP_fname=" + channel.fname;
-					});
 				}
 			});
 			$("#addChannelLink").click(function(){addPortlet()});

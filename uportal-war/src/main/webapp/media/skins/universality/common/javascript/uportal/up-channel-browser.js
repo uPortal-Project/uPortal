@@ -9,102 +9,114 @@
 	channelXmlUrl: source of XML data
 	onDataLoad: function to execute when XML data has been successfully
 		loaded and processed
-	onChannelSelect: function to execute on channel selection
-		returns a channel object with properties id, name, fname, description,
-			and a "userInputs" array containing any user-configurable parameters
 
 */
 (function($){
-  $.fn.channelbrowser = function(callerSettings) {
+  $.channelbrowser = function(callerSettings) {
     var settings = $.extend({
       channelXmlUrl: "ajax/channelList",
-      categorySelect: null,
-	  channelSelect: null,
-	  channelSearchInput: null,
-	  channelSearchResults: null,
-      onDataLoad: null,
-	  onChannelSelect: null
+      onDataLoad: null
     }, callerSettings||{});
 
-	settings.categorySelect = $(settings.categorySelect);
-	settings.channelSelect = $(settings.channelSelect);
-	settings.channelSearchInput = $(settings.channelSearchInput);
-	settings.channelSearchResults = $(settings.channelSearchResults);
-
-	var chooseCategory = function(categoryId) {
+	var that = this;
 	
-		settings.channelSelect.html("");
-		
-		var matching = new Array();
-		$("category[ID=" + categoryId + "]", settings.channelXml)
-			.find("channel")
-			.each(function(){matching.push($(this))});
-		matching.sort(sortChannelResults);
-
-		var j = 0;
-		$(matching).each(function(i, val){
-			if (i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) {
-				settings.channelSelect.get(0).options[j] = new Option($(this).attr("name"), $(this).attr("ID"));
-				j++;
-			}
-		});
-		settings.channelSelect
-			.change(function(){ chooseChannel(this.value);})
-			.children("option:first").attr("selected", true);
-		chooseChannel(settings.channelSelect.val());
-		
+	/**
+	 * Construct a Category from a ChannelRegistry XML element
+	 */
+	var Category = function(el) {
+		return { id: el.attr("ID"), name: el.attr("name"), description: el.attr("description") };
 	};
-
-	var chooseChannel = function(channelId) {
-		if (channelId.indexOf("_") > -1)
-			channelId = channelId.split("_")[1];
-		var channelEl = $("channel[ID=" + channelId + "]", settings.channelXml);
-		if (channelEl.length > 0)
-			channelEl = $(channelEl.get(0)); 
+	
+	/**
+	 * Construct a Channel from a ChannelRegistry XML element
+	 */
+	var Channel = function(el) {
 		var channel = { 
-			id: channelId, 
-			fname: channelEl.attr("fname"),
-			name: channelEl.attr("name"), 
-			description: channelEl.attr("description"),
+			id: el.attr("ID"), 
+			fname: el.attr("fname"),
+			name: el.attr("name"), 
+			description: el.attr("description"),
+			typeId: el.attr("typeID"),
 			userInputs: new Array()
 		};
-		
-	    var parameters = channelEl.children("parameter[override=yes]");
+				
+	    var parameters = el.children("parameter[override=yes]");
 	    for (var i = 0; i < parameters.length; i++) {
 			channel.userInputs.push({ name: $(parameters[i]).attr("name"), value: $(parameters[i]).attr("value") });
 	    }
-		
-		settings.onChannelSelect(channel);
+	    return channel;
+	}
+
+	that.getCategory = function(categoryId) {
+		return Category($("category[ID=" + categoryId + "]:first", settings.channelXml));
+	};
+	
+	that.getChannel = function(channelId) {
+		return Channel($("channel[ID=" + channelId + "]:first", settings.channelXml));
 	};
 
-	var search = function(searchTerm) {
-		settings.channelSearchResults.html("");
-		if (searchTerm == null || searchTerm == '') return;
+	that.getCategories = function() {
+		var matching = new Array();
+		$("category:has(channel)", settings.channelXml).each(
+			function(){
+				if (!isHidden($(this)))
+					matching.push(Category($(this)));
+			}
+		);
+		matching.sort(sortCategoryResults);
+		return matching;
+	};
+	
+	that.getChannelsForCategory = function(categoryId) {
+		
+		// find a list of channels in the requested category
+		var matching = new Array();
+		var channels;
+		if (categoryId != null && categoryId != "") {
+			channels = $("category[ID=" + categoryId + "]", settings.channelXml).find("channel");
+		} else {
+			channels = $("channel", settings.channelXml);
+		}
+		channels.each(function(){matching.push(Channel($(this)))});
+		// sort the channel results
+		matching.sort(sortChannelResults);
 
+		// eliminate duplicate channels from the category
+		var matching2 = new Array();
+		var i = 0;
+		$(matching).each(function(i, val){
+			if (i == 0 || this.id != matching[i-1].id) {
+				matching2.push(this);
+				i++;
+			}
+		});
+		return matching2;
+		
+	};
+	
+	that.searchChannels = function(searchTerm, categoryId) {
+
+		if (searchTerm == null || searchTerm == '') return new Array();
 		var matching = new Array();
 
 		var regex = new RegExp(escapeSpecialChars(searchTerm), "i");
-        $("channel", settings.channelXml).filter(function(){
-             return regex.test($(this).attr('name'))
-                 || regex.test($(this).attr('description'));
-        }).each(function(){matching.push($(this))});
-	
+        $(that.getChannelsForCategory(categoryId)).filter(function(){
+             return regex.test(this.name)
+                 || regex.test(this.description);
+        }).each(function(){matching.push(this)});
 		matching.sort(sortChannelResults);
-		$(matching).each(function(i){
-			if ((i == 0 || $(this).attr("ID") != $(matching[i-1]).attr("ID")) && !isHidden($(this))) {
-				settings.channelSearchResults.append(
-					$(document.createElement('li')).append(
-						$(document.createElement('a'))
-							.attr("id", $(this).attr("ID")).attr("href", "javascript:;")
-							.click(function(){chooseChannel(this.id);})
-							.text($(this).attr("name"))
-					)
-				 );
-			 }
-		});
 		
+		var matching2 = new Array();
+		var i = 0;
+		$(matching).each(function(i){
+			if ((i == 0 || this.id != matching[i-1].id) && !isHidden($(this))) {
+				matching2.push(this);
+				i++;
+			}
+		});
+		return matching2;
 	};
-
+	
     var escapeSpecialChars = function(str){
         var specials = new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"); // .*+?|()[]{}\
         return str.replace(specials, "\\$&");
@@ -112,8 +124,8 @@
 
 	// sort a list of returned channels by name
 	var sortCategoryResults = function(a, b) {
-		var aname = a.attr("name").toLowerCase();
-		var bname = b.attr("name").toLowerCase();
+		var aname = a.name.toLowerCase();
+		var bname = b.name.toLowerCase();
 		if (aname == 'new') return -1;
 		if (bname == 'new') return 1;
 		if (aname == 'popular') return -1;
@@ -125,10 +137,12 @@
 	
 	// sort a list of returned channels by name
 	var sortChannelResults = function(a, b) {
-		var aname = a.attr("name").toLowerCase();
-		var bname = b.attr("name").toLowerCase();
+		var aname = a.name.toLowerCase();
+		var bname = b.name.toLowerCase();
 		if(aname > bname) return 1;
 		if(aname < bname) return -1;
+		if (a.fname.toLowerCase() > b.fname.toLowerCase()) return 1;
+		if (a.fname.toLowerCase() < b.fname.toLowerCase()) return -1;
 		return 0;
 	};
 
@@ -141,35 +155,13 @@
 		  return false;
 	};
 
+	
 	$.get(settings.channelXmlUrl, {}, function(xml) {
 		settings.channelXml = xml;
-		// initialize channel browsing
-		if (settings.categorySelect.length > 0 && settings.channelSelect.length > 0) {
-			var matching = new Array();
-			$("category:has(channel)", settings.channelXml).each(
-				function(){
-					if (!isHidden($(this)))
-						matching.push($(this));
-				}
-			);
-			matching.sort(sortCategoryResults);
-			$(matching).each(function(i, val) {
-				settings.categorySelect.get(0).options[i] = new Option($(this).attr("name"), $(this).attr("ID"));
-			});
-			settings.categorySelect.change(function(){chooseCategory(this.value)})
-				.children("option:first").attr("selected", true);
-			chooseCategory(settings.categorySelect.val());
-			settings.onDataLoad(xml);
-		}
-		// initialize channel search
-		if (settings.channelSearchInput.length > 0 && settings.channelSearchResults.length > 0) {
-			settings.channelSearchInput.keyup(function(){
-				search($(this).val());
-			});
-		}
+		settings.onDataLoad(that.getCategories());
 	});
 	
-	return this;
+	return that;
   };
 
 })(jQuery);
