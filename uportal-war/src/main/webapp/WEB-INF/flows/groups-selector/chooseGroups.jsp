@@ -116,6 +116,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <!-- start: browse content: selections -->
             <div class="fl-container portlet-browse-body">
               <p><span class="current-group-name">Everyone</span> includes:</p>
+              <p id="${n}browsingResultNoMembers" style="display:none">No members</p>
               <c:forEach items="${selectTypes}" var="type">
                 <c:choose>
                   <c:when test="${type == 'group'}">
@@ -151,6 +152,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 </div> <!-- end: portlet -->
 
 <div id="${n}searchDialog" title="Search">
+    <p id="${n}searchResultNoMembers" style="display:none">No results</p>
     <ul id="${n}searchResults"></ul>
 </div>
 
@@ -251,6 +253,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 							$(document.createElement("li")).addClass(this.entityType).append(link)
 					);
 				});
+				$(entityTypes).each(function(){
+					var results = $("." + this + "-member");
+					if (results.find("li").size() == 0) results.prev().css("display", "none");
+					else results.prev().css("display", "block");
+				});
+				if ($(".portlet-browse-body li").size() == 0) {
+                    $("#${n}browsingResultNoMembers").css("display", "block");
+				} else {
+                    $("#${n}browsingResultNoMembers").css("display", "none");
+				}
 				if ($.inArray(key, selected) < 0) {
                     setBreadcrumbSelectionState(false);
 				} else {
@@ -267,6 +279,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         .click(function(){ selectGroup($(this).attr("key")); $(this).addClass("selected"); });
                     list.append($(document.createElement("li")).addClass(this.entityType).append(link));
 				});
+                if ($("#${n}searchResults li").size() == 0) {
+                    $("#${n}searchResultNoMembers").css("display", "block");
+                } else {
+                    $("#${n}searchResultNoMembers").css("display", "none");
+                }
 				if (searchInitialized) {
 	                $("#${n}searchDialog").dialog('open');
 				} else { 
