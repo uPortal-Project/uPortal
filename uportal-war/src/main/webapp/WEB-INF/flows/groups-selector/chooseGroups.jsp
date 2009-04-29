@@ -100,16 +100,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <div class="fl-tab-content">
             
             <!-- start: browse content header -->
-            <div id="${n}groupBrowsingBreadcrumbs" class="portlet-browse-breadcrumb"></div>
-            <div id="${n}groupBrowsingHeader" class="fl-container fl-col-flex2 portlet-browse-header">
-              <div class="fl-col">
-                  <h5 id="${n}currentGroupName"></h5>
-              </div>
-              <div class="fl-col fl-link-align-right">
-              	<a id="${n}selectGroupLink" href="javascript:;"><span>Select</span></a>
+            <div id="${n}groupBrowsingHeader" class="portlet-browse-header">
+            	<div id="${n}groupBrowsingBreadcrumbs" class="portlet-browse-breadcrumb"></div>
+              <div class="fl-container fl-col-flex2">
+                <div class="fl-col">
+                    <h5 id="${n}currentGroupName"></h5>
+                </div>
+                <div class="fl-col fl-text-align-right">
+                  <a class="portlet-browse-select" id="${n}selectGroupLink" href="javascript:;"><span>Select</span></a>
+                </div>
               </div>
             </div>
-            <hr />
             <!-- end: browse content header -->
             
             <!-- start: browse content: selections -->
@@ -119,17 +120,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <c:choose>
                   <c:when test="${type == 'group'}">
                     <h7>Groups</h7>
-                    <ul class="group-member-column">
+                    <ul class="group-member">
                     </ul>
                   </c:when>
                   <c:when test="${type == 'person'}">
                     <h7>People</h7>
-                    <ul class="person-member-column">
+                    <ul class="person-member">
                     </ul>
                   </c:when>
                   <c:when test="${type == 'category'}">
                     <h7>Categories</h7>
-                    <ul class="category-member-column">
+                    <ul class="category-member">
                     </ul>
                   </c:when>
                 </c:choose>

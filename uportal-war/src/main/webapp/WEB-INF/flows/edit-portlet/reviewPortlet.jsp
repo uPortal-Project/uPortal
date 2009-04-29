@@ -185,7 +185,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="portlet-section-body">
 
-        <ul>
+        <ul class="category-member">
           <c:forEach items="${ channel.categories }" var="category">
             <li><a href="${ chooseCategoryUrl }">${ categoryNames[category] }</a></li>
           </c:forEach>
@@ -202,7 +202,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="portlet-section-body">
       
-        <ul>
+        <ul class="group-member">
         <c:forEach items="${ channel.groups }" var="group">
           <li><a href="${ chooseGroupUrl }">${ groupNames[group] }</a></li>
         </c:forEach>

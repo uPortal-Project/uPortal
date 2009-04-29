@@ -63,7 +63,7 @@
 | Refer to: http://www.w3.org/TR/wai-aria/#region
 */
 .portlet-section-header {padding-bottom:0.2em; border-bottom:0.1em solid #ddd;}
-.portlet-section-body {padding:0 1em;}
+.portlet-section-body {padding:1em;}
 .portlet-section-alternate {background-color:#eee;}
 .portlet-section-selected {background:#efefef;}
 .portlet-section-subheader {font-weight:bold;}
@@ -157,13 +157,13 @@
 | Other portlet-section elements are defined above in PLT.C.4 Sections.
 | Refer to notes there.
 */
-.portlet .portlet-section {}
-.portlet h3.portlet-section-header {margin-bottom:0;}
+.portlet .portlet-section {margin-bottom:1em;}
+.portlet h3.portlet-section-header {margin:0; padding-top:1em;}
 .portlet .portlet-section-note {}
-.portlet .portlet-section-options {margin-bottom:1.5em; padding:0.3em 0em; background-color:#fff; border-bottom:1px solid #fff; font-size:85%; text-align:right;}
+.portlet .portlet-section-options {padding:0.3em 0em; background-color:#fff; font-size:85%; text-align:right;}
 .portlet .portlet-section-options .view-filter {text-align:left;}
 .portlet .portlet-section-options > a {padding:0.1em 0.5em;}
-.portlet .portlet-section-options a {text-decoration:none; color:#666;}
+.portlet .portlet-section-options a {text-decoration:none; color:#666; border-bottom:1px solid #ddd;}
 .portlet .portlet-section-options a:hover {text-decoration:none; background-color:#dfefff; color:#000;}
 
 /* Headings */
@@ -214,24 +214,54 @@ th {padding:0.1em 1em; border-color:#336699; background-color:#e2e8e7; color:#66
 
 /* Selection Basket */
 .portlet .portlet-selection {padding-right:2em;}
-.portlet .portlet-selection-basket {margin-left:20px; border:1px solid #4070A1;}
+.portlet .portlet-selection-basket {margin-left:20px; border:1px solid #4070A1; min-height:15em;}
 .portlet .portlet-selection-basket ul {margin:1em}
 .portlet .portlet-selection-basket li {list-style:none;}
-.portlet .portlet-selection-basket a {padding-left:20px; background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 0 0 no-repeat; color:#009900;}
+.portlet .portlet-selection-basket a {display:block; padding:0.3em 20px; background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 0 50% no-repeat; color:#009900;}
+.portlet .portlet-selection-basket a:hover {background-color:#FFFFCC; color:#336699; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png)}
 .portlet .portlet-selection .portlet-button-group {margin-left:20px;}
 
 /* Search */
 .portlet .portlet-search form {margin-left:20px;}
 
 /* Browser */
-.portlet .portlet-browse .fl-tab-content {margin-left:20px; border:1px solid #ccc;}
-.portlet .portlet-browse h5 {font-size:200%; font-weight:normal;}
+.portlet .portlet-browse .fl-tab-content {margin-left:20px; padding:0; border:1px solid #ccc;}
+.portlet .portlet-browse h5 {padding-top:0.1em; font-size:200%; font-weight:normal;}
+.portlet .portlet-browse .selected {background-color:#D1F0E0}
+.portlet .portlet-browse .selected h5 {padding-left:30px; background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 10px 50% no-repeat; color:#009900;}
+.portlet .portlet-browse-header {padding:0.5em 1em; border-bottom:2px solid #ccc;}
+.portlet .portlet-browse-header .fl-text-align-right {padding-top:0.7em;}
+.portlet a.portlet-browse-select {padding:0.2em 1em 0.2em 2em;  background:#fff url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/add.png) 0.3em 50% no-repeat; border:1px solid #336699; color:#336699; text-decoration:none;}
+.portlet a.portlet-browse-select:hover {background-color:#7a9e0d; color:#fff;}
+.portlet .selected a.portlet-browse-select {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png); border-color:#333; color:#333;}
+.portlet .selected a.portlet-browse-select:hover {background-color:#ffeeee; border-color:#cc0000;}
+.portlet .portlet-browse-breadcrumb span {padding:0.5em 0; color:#999;}
+.portlet .portlet-browse-breadcrumb a {font-weight:normal; color:#666; text-decoration:none;}
+.portlet .portlet-browse-breadcrumb a:hover {color:#000; text-decoration:underline;}
+.portlet .portlet-browse-body {padding:0.5em 1em 1em 1em;}
 .portlet .portlet-browse h7 {font-weight:bold;}
+
+/* Members */
+.portlet ul.group-member,
+.portlet ul.person-member,
+.portlet ul.category-member {margin:0;}
+.portlet .group-member li,
+.portlet .person-member li,
+.portlet .category-member li {list-style:none;}
+.portlet .group-member a,
+.portlet .person-member a,
+.portlet .category-member a {display:block; padding:0.2em 0 0.2em 20px; background-position:0 50%; background-repeat:no-repeat;}
+.portlet .group-member a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png)}
+.portlet .person-member a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/vcard.png)}
+.portlet .category-member a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tag_orange.png)}
+.portlet .group-member a:hover,
+.portlet .person-member a:hover,
+.portlet .category-member a:hover {background-color:#FFFFCC; color:#336699;}
 
 /* Buttons */
 .portlet .portlet-button {margin:0 5px; padding:0.3em 2em; border-width:1px; border-style:solid; background:#336699 url(images/button_bkd_flat.png) top left repeat-x; border-color:#000; color:#fff; font-weight:bold;}
 .portlet a.portlet-button {display:block; float:left; color:#fff; text-decoration:none;}
-.portlet .portlet-button-group {padding:1em 0;}
+.portlet .portlet-button-group {padding:1em 0; border-top:0.2em solid #ccc;}
 .portlet .portlet-button-group .portlet-button {background-color:#F0F0F0; border-color:#000; color:#000;}
 .portlet .portlet-button-group .portlet-button-primary {background-color:#336699; color:#fff;}
 .portlet .portlet-button-group a.portlet-button {color:#000;}
