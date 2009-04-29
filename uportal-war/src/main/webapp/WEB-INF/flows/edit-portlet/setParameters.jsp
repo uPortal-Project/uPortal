@@ -205,6 +205,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <script type="text/javascript">
 	up.jQuery(function() {
 			var $ = up.jQuery;
+			var initializedDialogs = [];
 			function showNewParameterForm(prefix) {
 				var id = "#" + prefix.replace('.', '') + "newparam";
 				var html = "<form>Name: <input type=\"text\" name=\"name\"/><br/>";
@@ -229,13 +230,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 					$(id).dialog("close");
 					return false;
 				});
-			    $(id).dialog();
+				if ($.inArray(prefix, initializedDialogs) < 0) {
+                    initializedDialogs.push(prefix);
+                    $(id).dialog();
+				} else {
+                    $(id).dialog('open');
+				}
 			  }
 			  $(document).ready(function(){
 				  $("div[id*=arbitraryParams]").each(function(){
 					  var prefix = this.id.split("-")[0];
 					  $(this).find("table a").click(function(){ $(this).parent().parent().remove(); return false; });
-					  console.log($(this).find(".add-parameter-link"));
 					  $(this).find(".add-parameter-link").click(function(){ return showNewParameterForm(prefix); });
 			      });
 			  });
