@@ -240,14 +240,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 						updateBreadcrumbs(entity);
 				
 				$(".current-group-name").text(entity.name);
-				$(".category-member-column").html("");
-				$(".group-member-column").html("");
-						$(".person-member-column").html("");
+				$(".category-member").html("");
+				$(".group-member").html("");
+						$(".person-member").html("");
 				$(entity.children).each(function(i){
 								var link = $(document.createElement("a")).attr("href", "javascript:;")
 									.html("<span>" + this.name + "</span>").attr("key", this.id)
 									.click(function(){ browseGroup($(this).attr("key")); });
-						$("." + this.entityType + "-member-column").append(
+						$("." + this.entityType + "-member").append(
 							$(document.createElement("li")).addClass(this.entityType).append(link)
 					);
 				});
