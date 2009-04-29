@@ -141,7 +141,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <!-- Other Parameters Loop -->
           <c:forEach items="${ step.arbitraryParameters }" var="arbitraryParam">
             <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
-              <table id="${fn:replace(prefix, '.', '')}-arbitraryParams" summary="This table lists a portlet's parameter settings.">
+              <div id="${fn:replace(prefix, '.', '')}-arbitraryParams" >
+              <table summary="This table lists a portlet's parameter settings.">
                 <thead>
                   <tr>
                     <th>Parameters</th>
@@ -160,16 +161,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                       <td>
                       <form:checkbox path="${overrideParamPath}" value="true"/>
                       </td>
-                        <td><a href="javascript:;" onclick="$(this).parent().parent().remove()">Delete</a></td>
+                        <td><a href="javascript:;">Delete</a></td>
                       </tr>
                     </c:if>
                   </c:forEach>
                 </tbody>
               </table> 
-              <p><a href="javascript:;" onclick="showNewParameterForm('${prefix}');">Add parameter</a></p>
+              <p><a class="add-parameter-link" href="javascript:;">Add parameter</a></p>
               <div style="display:none">
-                <div id="${fn:replace(prefix, '.', '')}newparam" class="jqueryui">
+                <div id="${fn:replace(prefix, '.', '')}newparam" class="jqueryui" title="Add a parameter">
                 </div>
+              </div>
               </div>
             </c:forEach>
           </c:forEach> <!-- End Other Parameters Loop -->
@@ -213,21 +215,29 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 				.find("form").submit(function() {
 					var name = this.name.value;
 					var value = this.value.value;
-					var override = this.override.value;
+					var override = this.override.checked;
 					var tr = document.createElement("tr");
-					var html2 = "<td>" + name + "</td><td><input name=\"parameters['" + prefix + name + "'].value\" value=\"" + value + "\" type=\"text\"/></td>";
+					var html2 = "<td>" + name + "</td><td><input name=\"parameters['" + prefix + "." + name + "'].value\" value=\"" + value + "\" type=\"text\"/></td>";
 					if (override) {
-						html2 += "<td><input name=\"parameterOverrides['" + prefix + name + "'].value\" value=\"true\" type=\"checkbox\" checked/></td>";
+						html2 += "<td><input name=\"parameterOverrides['" + prefix + "." + name + "'].value\" value=\"true\" type=\"checkbox\" checked/></td>";
 					} else {
-						html2 += "<td><input name=\"parameterOverrides['" + prefix + name + "'].value\" value=\"true\" type=\"checkbox\"/></td>";
+						html2 += "<td><input name=\"parameterOverrides['" + prefix + "." + name + "'].value\" value=\"true\" type=\"checkbox\"/></td>";
 					}
 					html2 += "<td><a href=\"javascript:;\" onclick=\"$(this).parent().parent().remove()\">Delete</td>";
 					$(tr).html(html2);
-					$("#" + prefix.replace('.', '') + "-arbitraryParams > tbody").append(tr);
+					$("#" + prefix.replace('.', '') + "-arbitraryParams tbody").append(tr);
 					$(id).dialog("close");
 					return false;
 				});
-			$(id).dialog();
-		}
+			    $(id).dialog();
+			  }
+			  $(document).ready(function(){
+				  $("div[id*=arbitraryParams]").each(function(){
+					  var prefix = this.id.split("-")[0];
+					  $(this).find("table a").click(function(){ $(this).parent().parent().remove(); return false; });
+					  console.log($(this).find(".add-parameter-link"));
+					  $(this).find(".add-parameter-link").click(function(){ return showNewParameterForm(prefix); });
+			      });
+			  });
 	});
 </script>
