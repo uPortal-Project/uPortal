@@ -24,8 +24,8 @@ import org.w3c.dom.Element;
 public class ChannelDefinitionForm implements Serializable {
 
 	private int id = 0;
-	private String fName;
-	private String name;
+	private String fname = "";
+	private String name = "";
 	private String description = "";
 	private String title = "";
 	private String javaClass = "";
@@ -60,7 +60,7 @@ public class ChannelDefinitionForm implements Serializable {
 	 */
 	public ChannelDefinitionForm(ChannelDefinition def) {
 		this.setId(def.getId());
-		this.setFName(def.getFName());
+		this.setFname(def.getFName());
 		this.setName(def.getName());
 		this.setDescription(def.getDescription());
 		this.setTitle(def.getTitle());
@@ -95,7 +95,7 @@ public class ChannelDefinitionForm implements Serializable {
 	    channelE.setAttribute("timeout", String.valueOf(this.timeout));
         channelE.setAttribute("name", this.name);
         channelE.setAttribute("title", this.title);
-	    channelE.setAttribute("fname", this.fName);
+	    channelE.setAttribute("fname", this.fname);
 	    channelE.setAttribute("description", this.description);
 	    channelE.setAttribute("class", this.javaClass);
 	    channelE.setAttribute("typeID", String.valueOf(this.typeId));
@@ -196,12 +196,12 @@ public class ChannelDefinitionForm implements Serializable {
 		this.id = id;
 	}
 
-	public String getFName() {
-		return fName;
+	public String getFname() {
+		return fname;
 	}
 
-	public void setFName(String name) {
-		fName = name;
+	public void setFname(String name) {
+		fname = name;
 	}
 
 	public String getName() {

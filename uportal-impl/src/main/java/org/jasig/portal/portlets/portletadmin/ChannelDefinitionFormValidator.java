@@ -13,7 +13,7 @@ public class ChannelDefinitionFormValidator {
 	private PortletAdministrationService portletAdministrationService;
 	
 	public void validateBasicInfo(ChannelDefinitionForm def, MessageContext context) {
-		if (StringUtils.isEmpty(def.getFName())) {
+		if (StringUtils.isEmpty(def.getFname())) {
 			context.addMessage(new MessageBuilder().error().source("fName")
 					.code("errors.channelDefinition.fName.empty")
 					.defaultText("Please enter an fname").build());
