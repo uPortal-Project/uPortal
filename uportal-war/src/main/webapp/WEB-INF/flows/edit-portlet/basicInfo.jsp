@@ -69,7 +69,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
            </tr>      
             <tr>
             	<td class="fl-text-align-right">Channel Functional Name:</td>
-            	<td><form:input path="fName"/></td>
+            	<td><form:input path="fname"/></td>
             </tr>     
             <tr>
             	<td class="fl-text-align-right">Channel Description:</td>

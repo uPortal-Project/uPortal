@@ -45,7 +45,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       	<div class="portlet-selection">
         
           <h4 class="portlet-heading-selections">Your Selections</h4>
-          <form action="${ queryUrl }" method="post">
+          <form action="${ submitUrl }" method="post">
           <div id="${n}selectionBasket" class="portlet-selection-basket">
             <ul>
               <c:forEach items="${model.groups}" var="group">

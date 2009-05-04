@@ -45,7 +45,6 @@
     <view-state id="basicInfo" model="channel">
         <transition on="back" to="chooseType"/>
         <transition on="next" to="setParameters"/>
-        <transition on="cancel" to="cancelPortletEdit" bind="false"/>
     </view-state>
     
     <!-- CHANNEL PARAMETERS view -->

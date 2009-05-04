@@ -198,8 +198,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         bodyRenderer: {
                           type: "fluid.pager.selfRender",
                           options: {
-                              root: "#${n}categoriesTable1",
-                              renderOptions: {debugMode: true}
+                              root: "#${n}categoriesTable1"
                             }
                         },
                         pagerBar: {type: "fluid.pager.pagerBar", options: {

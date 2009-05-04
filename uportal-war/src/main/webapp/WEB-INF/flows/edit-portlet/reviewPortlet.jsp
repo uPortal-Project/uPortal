@@ -84,7 +84,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </tr>
             <tr>
               <td class="fl-text-align-right">Channel Functional Name:</td>
-              <td><a href="${ basicInfoUrl }" title="${ channel.FName }" class="pa-edit">${ channel.FName }</a></td>
+              <td><a href="${ basicInfoUrl }" title="${ channel.fname }" class="pa-edit">${ channel.fname }</a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right">Channel Description:</td>
