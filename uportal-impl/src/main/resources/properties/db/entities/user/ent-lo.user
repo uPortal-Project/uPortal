@@ -1,4 +1,9 @@
 
-<user script="classpath://org/jasig/portal/io/import-user_v3-0.crn" username="ent-lo">
+<user script="classpath://org/jasig/portal/io/import-user_v3-2.crn" username="ent-lo">
   <default-user>defaultTemplateUser</default-user>
+  <person-directory>
+    <encrptd-pswd>(MD5)FwlZ/YNTQ/hbNPEIUl8yTGfYwwnp65/g</encrptd-pswd>
+    <first-name>Entertainment</first-name>
+    <last-name>Layout Owner</last-name>
+  </person-directory>
 </user>

@@ -1,4 +1,9 @@
 
-<user script="classpath://org/jasig/portal/io/import-user_v3-0.crn" username="fragmentTemplate">
+<user script="classpath://org/jasig/portal/io/import-user_v3-2.crn" username="fragmentTemplate">
   <default-user>defaultTemplateUser</default-user>
+  <person-directory>
+    <encrptd-pswd>(MD5)TcJ+RAxMebVLfq2+xF1YY4Mv5dRGo7Rg</encrptd-pswd>
+    <first-name>Fragment</first-name>
+    <last-name>Template</last-name>
+  </person-directory>
 </user>

@@ -28,6 +28,11 @@
     <sql-statement sql="DELETE FROM up_user_profile WHERE user_id = ?">
         <parameter value="${USER_ID}"/>
     </sql-statement>
+    
+    <!-- Purge the user's dir info... -->
+    <sql-statement sql="DELETE FROM up_person_dir WHERE user_name = ?">
+        <parameter value="${USER_NAME}"/>
+    </sql-statement>
 
     <!-- Purge the user... -->
     <sql-statement sql="DELETE FROM up_user WHERE user_id = ?">

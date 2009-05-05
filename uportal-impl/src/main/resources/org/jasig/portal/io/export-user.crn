@@ -21,7 +21,7 @@
 <with>
     <attribute key="Attributes.NODE">${newDoc(user)}</attribute>
     <subtasks>
-        <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-user_v3-0.crn)}"/>
+        <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-user_v3-2.crn)}"/>
         <append-node node="${attributeNode(username=${USER_NAME})}"/>
         <sql-query>
             <sql>SELECT user_id, user_dflt_usr_id FROM up_user WHERE user_name = ?</sql>
@@ -37,6 +37,42 @@
                             </append-node>
                         </if>
                     </with-attribute>
+                </with-attribute>
+            </subtasks>
+        </sql-query>
+        <sql-query>
+            <sql>SELECT * FROM up_person_dir WHERE user_name = ?</sql>
+            <parameter value="${USER_NAME}"/>
+            <subtasks>
+                <append-node>
+                    <person-directory/>
+                </append-node>
+                <with-attribute key="Attributes.NODE" value="${singleNode(person-directory)}">
+                    <if test="${jexl(ENCRPTD_PSWD != null)}">
+                        <append-node>
+                            <encrptd-pswd>${ENCRPTD_PSWD}</encrptd-pswd>
+                        </append-node>
+                    </if>
+                    <if test="${jexl(LST_PSWD_CGH_DT != null)}">
+                        <append-node>
+                            <lst-pswd-cgh-dt>${LST_PSWD_CGH_DT}</lst-pswd-cgh-dt>
+                        </append-node>
+                    </if>
+                    <if test="${jexl(FIRST_NAME != null)}">
+                        <append-node>
+                            <first-name>${FIRST_NAME}</first-name>
+                        </append-node>
+                    </if>
+                    <if test="${jexl(LAST_NAME != null)}">
+                        <append-node>
+                            <last-name>${LAST_NAME}</last-name>
+                        </append-node>
+                    </if>
+                    <if test="${jexl(EMAIL != null)}">
+                        <append-node>
+                            <email>${EMAIL}</email>
+                        </append-node>
+                    </if>
                 </with-attribute>
             </subtasks>
         </sql-query>

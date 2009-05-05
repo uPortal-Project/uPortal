@@ -1,4 +1,10 @@
 
-<user script="classpath://org/jasig/portal/io/import-user_v3-0.crn" username="welcome-lo">
+<user script="classpath://org/jasig/portal/io/import-user_v3-2.crn" username="welcome-lo">
   <default-user>defaultTemplateUser</default-user>
+  <person-directory>
+    <encrptd-pswd>(MD5)d3ST813VSpkgg4g7mlVsK2T2pue7b9J6</encrptd-pswd>
+    <first-name>Welcome</first-name>
+    <last-name>Layout Owner</last-name>
+    <email>password.that.of.news-lo@ja-sig.org</email>
+  </person-directory>
 </user>
