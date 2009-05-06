@@ -51,7 +51,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 	<!-- Portlet Title -->
   <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading">${ channel.title }</h2>
+  	<h2 role="heading"><c:out value="${ channel.title }"/></h2>
   </div> <!-- end: portlet-title -->
   
 	<!-- Portlet Body -->
@@ -76,36 +76,36 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <tbody>
             <tr>
               <td class="fl-text-align-right">Channel Title:</td>
-              <td><a href="${ basicInfoUrl }" title="${ channel.title }" class="pa-edit">${ channel.title }</a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.title }"/>" class="pa-edit"><c:out value="${ channel.title }"/></a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right">Channel Name:</td>
-              <td><a href="${ basicInfoUrl }" title="${ channel.name }" class="pa-edit">${ channel.name }</a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.name }"/>" class="pa-edit"><c:out value="${ channel.name }"/></a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right">Channel Functional Name:</td>
-              <td><a href="${ basicInfoUrl }" title="${ channel.fname }" class="pa-edit">${ channel.fname }</a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.fname }"/>" class="pa-edit"><c:out value="${ channel.fname }"/></a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right">Channel Description:</td>
-              <td><a href="${ basicInfoUrl }" title="${ channel.description }" class="pa-edit">${ channel.description }</a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.description }"/>" class="pa-edit"><c:out value="${ channel.description }"/></a></td>
             </tr> 
             <tr>
               <td class="fl-text-align-right">Channel Timeout:</td>
-              <td><a href="${ basicInfoUrl }" title="${ channel.timeout }" class="pa-edit">${ channel.timeout }</a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.timeout }"/>" class="pa-edit"><c:out value="${ channel.timeout }"/></a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right">Channel Secure:</td>
-              <td><a href="${ basicInfoUrl }" title="${ channel.secure }" class="pa-edit">${ channel.secure }</a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.secure }"/>" class="pa-edit"><c:out value="${ channel.secure }"/></a></td>
             </tr> 
             <tr>
               <td class="fl-text-align-right">Channel Type:</td>
               <td>
                 <c:forEach items="${ channelTypes }" var="type">
                   <c:if test="${ type.id == channel.typeId }">
-                    <a href="${ chooseTypeUrl }" title="${ channel.typeId }" class="pa-edit">${ type.name }</a>
+                    <a href="${ chooseTypeUrl }" title="${ channel.typeId }" class="pa-edit"><c:out value="${ type.name }"/></a>
                     <c:if test="${ type.id == -1 }">
-                      <a href="${ chooseTypeUrl }" title="${ channel.typeId }" class="pa-edit">(${ channel.javaClass })</a>
+                      <a href="${ chooseTypeUrl }" title="${ channel.typeId }" class="pa-edit">(<c:out value="${ channel.javaClass }"/>)</a>
                     </c:if>
                   </c:if>
                 </c:forEach>
@@ -151,8 +151,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <c:forEach items="${ step.parameters }" var="parameter">
                 <c:if test="${ parameter.modify != 'subscribeOnly' && parameter.type.display != 'hidden' && channel.parameters[parameter.name].value != null && channel.parameters[parameter.name].value != '' }">
                   <tr>
-                    <td class="fl-text-align-right">${ parameter.label }:</td>
-                    <td><a href="${ setParametersUrl }" class="pa-edit">${ channel.parameters[parameter.name].value }</a></td>
+                    <td class="fl-text-align-right"><c:out value="${ parameter.label }"/>:</td>
+                    <td><a href="${ setParametersUrl }" class="pa-edit"><c:out value="${ channel.parameters[parameter.name].value }"/></a></td>
                     <td>${ channel.parameterOverrides[parameter.name].value ? 'X' : '' }</td>
                   </tr>
                 </c:if>
@@ -162,8 +162,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   <c:forEach items="${ channel.parameters }" var="channelParam">
                     <c:if test="${ fn:startsWith(channelParam.key, prefix) }">
                       <tr>
-                        <td class="fl-text-align-right">${ channelParam.key }:</td>
-                        <td><a href="${ setParametersUrl }" class="pa-edit">${ channelParam.value }</a></td>
+                        <td class="fl-text-align-right"><c:out value="${ channelParam.key }"/>:</td>
+                        <td><a href="${ setParametersUrl }" class="pa-edit"><c:out value="${ channelParam.value }"/></a></td>
                         <td>${ channel.parameterOverrides[parameter.name].value ? 'X' : '' }</td>
                       </tr>
                     </c:if>
@@ -187,7 +187,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
         <ul class="category-member">
           <c:forEach items="${ channel.categories }" var="category">
-            <li><a href="${ chooseCategoryUrl }">${ categoryNames[category] }</a></li>
+            <li><a href="${ chooseCategoryUrl }"><c:out value="${ categoryNames[category] }"/></a></li>
           </c:forEach>
         </ul>
         
@@ -204,7 +204,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       
         <ul class="group-member">
         <c:forEach items="${ channel.groups }" var="group">
-          <li><a href="${ chooseGroupUrl }">${ groupNames[group] }</a></li>
+          <li><a href="${ chooseGroupUrl }"><c:out value="${ groupNames[group] }"/></a></li>
         </c:forEach>
         </ul>
         

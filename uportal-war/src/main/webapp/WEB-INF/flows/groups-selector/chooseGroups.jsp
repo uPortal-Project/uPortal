@@ -22,8 +22,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 	<!-- Portlet Title -->
   <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading">${ pageTitleText }</h2>
-    <h3>${ pageSubtitleText }</h3>
+  	<h2 role="heading"><c:out value="${ pageTitleText }"/></h2>
+    <h3><c:out value="${ pageSubtitleText }"/></h3>
   </div> <!-- end: portlet-title -->
   
 	<!-- Portlet Body -->
@@ -50,8 +50,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <ul>
               <c:forEach items="${model.groups}" var="group">
                 <li>
-                  <a key="${group}" href="javascript:;">${groupNames[group]}</a>
-                  <input type="hidden" name="groups" value="${group}"/>
+                  <a key="${group}" href="javascript:;"><c:out value="${groupNames[group]}"/></a>
+                  <input type="hidden" name="groups" value="<c:out value="${group}"/>"/>
                 </li>
               </c:forEach>
             </ul>
@@ -162,8 +162,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 			var groupBrowser = $.groupbrowser({});
 			var entities = new Array();
 			var searchInitialized = false;
-			var entityTypes = [<c:forEach items="${selectTypes}" var="type" varStatus="status">'${type}'${status.last ? '' : ','}</c:forEach>];
-			var selected = [ <c:forEach items="${model.groups}" var="group" varStatus="status">'${group}'${ status.last ? '' : ',' }</c:forEach> ];
+			var entityTypes = [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>];
+			var selected = [ <c:forEach items="${model.groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach> ];
 
 			var updateBreadcrumbs = function(entity) {
                 var currentTitle = $("#${n}currentGroupName");
@@ -207,9 +207,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 								)
 						);
                         selected.push(key);
-                if ($("#${n}currentGroupName").attr("key") == key) {
-                    setBreadcrumbSelectionState(true);
-                }
+	                if ($("#${n}currentGroupName").attr("key") == key) {
+	                    setBreadcrumbSelectionState(true);
+	                }
 				}
 			};
 			
