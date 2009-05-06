@@ -178,6 +178,8 @@
         <token name="AJAX_SELECT_SKIN_TITLE">Choose a skin for your portal view:</token>
         <token name="AJAX_SELECT_SKIN_SUBMIT_BUTTON">Choose</token>
         <token name="AJAX_PORTAL_DROP_WARNING_MESSAGE">This portlet cannot be moved here. The portlet underneath is locked.</token>
+        <token name="AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE">Are you sure you want to remove this tab?</token>
+        <token name="AJAX_REMOVE_PORTLET_CONFIRMATION_MESSAGE">Are you sure you want to remove this portlet?</token>
         
         <!-- Column Width Adjustments -->
         <token name="WIDTH_INCREMENT_TITLE">Expand this column by 5%</token>

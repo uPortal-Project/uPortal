@@ -20,7 +20,8 @@
 		    portalUrl: null,
 		    mediaPath: null,
 		    currentSkin: null,
-		    isFocusMode: false
+		    isFocusMode: false,
+		    messages: {}
 	    }, callerSettings||{});
 
 
@@ -270,7 +271,7 @@
 			);
 		};
 		var deletePortlet = function(id) {
-			if (!confirm("Are you sure you want to remove this portlet?")) return false;
+			if (!confirm(settings.messages.confirmRemovePortlet)) return false;
 			$('#portlet_'+id).remove();
 			$.post(settings.preferencesUrl, {action: 'removeElement', elementID: id}, null);
 		};
@@ -284,7 +285,7 @@
 			});
 		};
 		var deleteTab = function() {
-			if (!confirm("Are you sure you want to remove this tab and all its content?")) return false;
+			if (!confirm(settings.messages.confirmRemoveTab)) return false;
 			$.post(settings.preferencesUrl, {action: 'removeElement', elementID: settings.tabId}, function(xml) { 
 				window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; 
 			});

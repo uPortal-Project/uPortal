@@ -183,7 +183,11 @@
             {
               portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
               mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',
-              currentSkin: '<xsl:value-of select="$SKIN"/>'
+              currentSkin: '<xsl:value-of select="$SKIN"/>',
+              messages: { 
+                  confirmRemoveTab: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE']"/>', 
+                  confirmRemovePortlet: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_PORTLET_CONFIRMATION_MESSAGE']"/>' 
+              }
             }
           );
        });
