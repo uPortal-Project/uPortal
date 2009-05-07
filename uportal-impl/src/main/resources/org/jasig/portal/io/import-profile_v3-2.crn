@@ -16,65 +16,83 @@
  +-->
 <with>
     <attribute key="USER_NAME">${valueOf(@username)}</attribute>
+    <attribute key="USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${valueOf(@username)}')}</attribute>
+    <attribute key="STRUCTURE_STYLESHEET_ID">${crn(lookup-ss_struct_id.crn)}</attribute>
+    <attribute key="THEME_STYLESHEET_ID">${crn(lookup-ss_theme_id.crn)}</attribute>
     <subtasks>
         <sql-transaction>
-            <with>
-                <attribute key="USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${USER_NAME}')}</attribute>
-                <attribute key="STRUCTURE_STYLESHEET_ID">${crn(lookup-ss_struct_id.crn)}</attribute>
-                <attribute key="THEME_STYLESHEET_ID">${crn(lookup-ss_theme_id.crn)}</attribute>
-                <subtasks>
-		            <sql-statement sql="DELETE FROM up_user_profile WHERE user_id = ?">
-		                <parameter value="${USER_ID}"/>
-		            </sql-statement>
-		            <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id, profile_name, description, layout_id, structure_ss_id, theme_ss_id) VALUES(?, ?, ?, ?, ?, ?, ?)">
-		                <parameter value="${USER_ID}"/>
-		                <parameter value="1"/>
-		                <parameter value="${valueOf(name)}"/>
-		                <parameter value="${valueOf(description)}"/>
-		                <parameter value="1"/>
-		                <parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
-		                <parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
-		            </sql-statement>
-		            <!-- User (Profile) Parameters:  structure... -->
-		            <node-iterator xpath="structure/parameter">
-		                <sql-upsert>
-		                    <update-statement>
-		                        UPDATE up_ss_user_parm 
-		                        SET param_val = ? 
-		                        WHERE user_id = ? AND profile_id = ? AND ss_id = ? AND ss_type = 1 AND param_name = ?
-		                    </update-statement>
-		                    <insert-statement>
-		                        INSERT INTO up_ss_user_parm(param_val, user_id, profile_id, ss_id, ss_type, param_name) 
-		                        values(?, ?, ?, ?, 1, ?)
-		                    </insert-statement>
-		                    <parameter value="${valueOf(value)}"/>
-		                    <parameter value="${USER_ID}"/>
-		                    <parameter value="${PROFILE_ID}"/>
-		                    <parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
-		                    <parameter value="${valueOf(name)}"/>
-		                </sql-upsert>
-		            </node-iterator>
-		            <!-- User (Profile) Parameters:  theme... -->
-		            <node-iterator xpath="theme/parameter">
-		                <sql-upsert sql="">
-		                    <update-statement>
-		                        UPDATE up_ss_user_parm 
-		                        SET param_val = ? 
-		                        WHERE user_id = ? AND profile_id = ? AND ss_id = ? AND ss_type = 2 AND param_name = ?
-		                    </update-statement>
-		                    <insert-statement>
-		                        INSERT INTO up_ss_user_parm(param_val, user_id, profile_id, ss_id, ss_type, param_name) 
-		                        values(?, ?, ?, ?, 2, ?)
-		                    </insert-statement>
-		                    <parameter value="${valueOf(value)}"/>
-		                    <parameter value="${USER_ID}"/>
-		                    <parameter value="${PROFILE_ID}"/>
-		                    <parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
-		                    <parameter value="${valueOf(name)}"/>
-		                </sql-upsert>
-		            </node-iterator>
-                </subtasks>
-            </with>
+            <with-attribute key="HIGHEST_PROFILE_ID" value="${sql(SELECT MAX(profile_id) FROM up_user_profile WHERE user_id = ${USER_ID})}">
+                <with-attribute key="PROFILE_ID" value="${groovy(HIGHEST_PROFILE_ID ? HIGHEST_PROFILE_ID + 1 : 1)}">
+
+                    <!-- 
+                     | Perform an 'upsert' operation on the PROFILE_NAME column
+                     +-->
+                    <sql-upsert>
+                        <update-statement>
+                            UPDATE up_user_profile 
+                            SET description = ?, structure_ss_id = ?, theme_ss_id = ?
+                            WHERE user_id = ? AND profile_name = ?
+                        </update-statement>
+                        <insert-statement>
+                            INSERT INTO up_user_profile(user_id, profile_id, profile_name, description, layout_id, structure_ss_id, theme_ss_id) 
+                            VALUES(?, ?, ?, ?, ?, ?, ?)
+                        </insert-statement>
+                        <update-parameter value="${valueOf(description)}"/>
+                        <update-parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
+                        <update-parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
+                        <update-parameter value="${USER_ID}"/>
+                        <update-parameter value="${valueOf(name)}"/>
+                        <insert-parameter value="${USER_ID}"/>
+                        <insert-parameter value="${PROFILE_ID}"/>
+                        <insert-parameter value="${valueOf(name)}"/>
+                        <insert-parameter value="${valueOf(description)}"/>
+                        <insert-parameter value="1"/>
+                        <insert-parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
+                        <insert-parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
+                    </sql-upsert>
+
+                    <!-- User (Profile) Parameters:  structure... -->
+                    <node-iterator xpath="structure/parameter">
+                        <sql-upsert>
+                            <update-statement>
+                                UPDATE up_ss_user_parm 
+                                SET param_val = ? 
+                                WHERE user_id = ? AND profile_id = ? AND ss_id = ? AND ss_type = 1 AND param_name = ?
+                            </update-statement>
+                            <insert-statement>
+                                INSERT INTO up_ss_user_parm(param_val, user_id, profile_id, ss_id, ss_type, param_name) 
+                                values(?, ?, ?, ?, 1, ?)
+                            </insert-statement>
+                            <parameter value="${valueOf(value)}"/>
+                            <parameter value="${USER_ID}"/>
+                            <parameter value="${PROFILE_ID}"/>
+                            <parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
+                            <parameter value="${valueOf(name)}"/>
+                        </sql-upsert>
+                    </node-iterator>
+
+                    <!-- User (Profile) Parameters:  theme... -->
+                    <node-iterator xpath="theme/parameter">
+                        <sql-upsert>
+                            <update-statement>
+                                UPDATE up_ss_user_parm 
+                                SET param_val = ? 
+                                WHERE user_id = ? AND profile_id = ? AND ss_id = ? AND ss_type = 2 AND param_name = ?
+                            </update-statement>
+                            <insert-statement>
+                                INSERT INTO up_ss_user_parm(param_val, user_id, profile_id, ss_id, ss_type, param_name) 
+                                values(?, ?, ?, ?, 2, ?)
+                            </insert-statement>
+                            <parameter value="${valueOf(value)}"/>
+                            <parameter value="${USER_ID}"/>
+                            <parameter value="${PROFILE_ID}"/>
+                            <parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
+                            <parameter value="${valueOf(name)}"/>
+                        </sql-upsert>
+                    </node-iterator>
+
+                </with-attribute>
+            </with-attribute>
 		</sql-transaction>
     </subtasks>
 </with>

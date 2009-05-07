@@ -65,26 +65,7 @@
                         <insert-parameter value="${groovy(DEFAULT_USER_INFO == null ? null : DEFAULT_USER_INFO[1])}"/>
                         <insert-parameter value="${USER_NAME}"/>
                     </sql-upsert>
-            
-                    <!-- default user profile -->
-                    <sql-query>
-                        <sql>
-                            SELECT COUNT(UPUP.USER_ID) AS USER_PROFILE_COUNT, UPU.USER_ID
-                            FROM UP_USER UPU
-                                LEFT JOIN UP_USER_PROFILE UPUP ON UPU.USER_ID = UPUP.USER_ID 
-                            WHERE UPU.USER_NAME = ?
-                            GROUP BY UPU.USER_ID
-                        </sql>
-                        <parameter value="${USER_NAME}" />
-                        <subtasks>
-                            <if test="${jexl(USER_PROFILE_COUNT == 0)}">
-                                <sql-statement sql="INSERT INTO up_user_profile(user_id, profile_id) VALUES(?, 1)">
-                                    <parameter value="${USER_ID}"/>
-                                </sql-statement>
-                            </if>
-                        </subtasks>
-                    </sql-query>
-                    
+
                     <!-- UP_PERSON_DIR info, if it exists -->
                     <with>
                         <attribute key="ENCRPTD_PSWD">${groovy(Attributes.NODE.selectSingleNode('person-directory/encrptd-pswd')?.valueOf('.'))}</attribute>

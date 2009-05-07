@@ -95,6 +95,10 @@
 
     <!-- profile -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('profile'))}">
+        <!-- 
+         | Profiles are an odd case in that a single 
+         | ${SYSID} can generate multiple documents...
+         +-->
         <sql-query>
             <sql>
                 SELECT upup.profile_id, upu.user_name
