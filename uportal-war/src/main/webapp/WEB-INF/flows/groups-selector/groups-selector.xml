@@ -17,12 +17,25 @@
 
     <input name="showCancelButton" type="boolean" required="false" />
     <input name="showBackButton" type="boolean" required="false"/>
+    <input name="saveButtonCode" type="string" required="false" />
     <input name="saveButtonText" type="string" required="false" />
-    <input name="backButtonText" type="string" required="false" />
-    <input name="cancelButtonText" type="string" required="false" />
-    <input name="pageTitleText" type="string" required="false" />
-    <input name="pageSubtitleText" type="string" required="false" />
     
+    <!-- The below inputs are for customized text strings.  For example,
+         "pageTitleText" could be "Category Selection" if you're selecting
+         categories and "Groups Selection" if you're selecting groups.
+         Use the "Code" value if you're supplying a Spring message bundle,
+         otherwise use the "Text" value if you're specifying the actual
+         string. -->
+    <input name="backButtonCode" type="string" required="false" />
+    <input name="backButtonText" type="string" required="false" />
+    <input name="cancelButtonCode" type="string" required="false" />
+    <input name="cancelButtonText" type="string" required="false" />
+    <input name="pageTitleCode" type="string" required="false" />
+    <input name="pageTitleText" type="string" required="false" />
+    <input name="pageSubtitleCode" type="string" required="false" />
+    <input name="pageSubtitleText" type="string" required="false" />
+    <input name="pageSubtitleChannelName" type="string" required="false" />
+
     <!-- 
         | Selected groups input
         |

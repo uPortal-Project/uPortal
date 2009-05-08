@@ -66,11 +66,12 @@
 
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="!completed"/>
-        <input name="saveButtonText" value="completed ? 'Review' : 'Next'" />
-        <input name="backButtonText" value="'Back'" />
-        <input name="cancelButtonText" value="'Cancel'" />
-        <input name="pageTitleText" value="'Select Categories'"/>
-        <input name="pageSubtitleText" value="'Which categories ' + (channel.name != '' ? channel.name : 'this portlet') + ' belongs to'" />
+        <input name="saveButtonCode" value="completed ? 'edit-portlet.reviewButton' : 'edit-portlet.nextButton'" />
+        <input name="backButtonCode" value="'edit-portlet.backButton'" />
+        <input name="cancelButtonCode" value="'edit-portlet.cancelButton'" />
+        <input name="pageTitleCode" value="'edit-portlet.selectCategories'"/>
+        <input name="pageSubtitleCode" value="'edit-portlet.categorySubtitle'" />
+        <input name="pageSubtitleChannelName" value="channel.name != '' ? channel.name : 'this portlet'" />
         
         <!-- Group input/output mapping -->
         <input name="selectedGroups" value="channel.categories"/>
@@ -101,12 +102,13 @@
         
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="!completed"/>
-        <input name="saveButtonText" value="completed ? 'Review' : 'Next'" />
-        <input name="backButtonText" value="'Back'" />
-        <input name="cancelButtonText" value="'Cancel'" />
-        <input name="pageTitleText" value="'Select People and Groups'"/>
-        <input name="pageSubtitleText" value="'Who can add ' + (channel.name != '' ? channel.name : 'this portlet') + ' to their layout'" />
-        
+        <input name="saveButtonCode" value="completed ? 'edit-portlet.reviewButton' : 'edit-portlet.nextButton'" />
+        <input name="backButtonCode" value="'edit-portlet.backButton'" />
+        <input name="cancelButtonCode" value="'edit-portlet.cancelButton'" />
+        <input name="pageTitleCode" value="'edit-portlet.selectPag'"/>
+        <input name="pageSubtitleCode" value="'edit-portlet.pagSubtitle'" />
+        <input name="pageSubtitleChannelName" value="channel.name != '' ? channel.name : 'this portlet'" />
+
         <!-- Group input/output mapping -->
         <input name="selectedGroups" value="channel.groups"/>
         <output name="selectedGroups" value="channel.groups"/>

@@ -25,10 +25,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   	<h2 role="heading">
 		  <c:choose>
         <c:when test="${ completed }">
-          Edit Portlet
+          <spring:message code="edit-portlet.editPortletHeading"/>
         </c:when>
         <c:otherwise>
-          Register New Portlet
+          <spring:message code="edit-portlet.newPortletHeading"/>
         </c:otherwise>
       </c:choose>
     </h2>
@@ -48,15 +48,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 		
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">Select Type</h3>
+      <h3 class="portlet-section-header" role="heading"><spring:message code="chooseType.selectTypeHeading"/></h3>
       <div class="portlet-section-body">
       
-        <table summary="This table lists the type of portlets available">
+        <table summary="<spring:message code="chooseType.portletTypesTableSummary"/>">
           <thead>
             <tr>
-              <th>Option</th>
-              <th>Type</th>
-              <th>Description</th>
+              <th><spring:message code="chooseType.optionHeading"/></th>
+              <th><spring:message code="chooseType.typeHeading"/></th>
+              <th><spring:message code="chooseType.descriptionHeading"/></th>
             </tr>
           </thead>
           <tfoot></tfoot>
@@ -80,13 +80,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="portlet-button-group">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="portlet-button portlet-button-primary" type="submit" value="Review" name="_eventId_review"/>
+          <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="portlet-button portlet-button-primary" type="submit" value="Next" name="_eventId_next"/>
+          <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="portlet-button" type="submit" value="Cancel" name="_eventId_cancel"/>
+      <input class="portlet-button" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
     </div> <!-- end: Portlet Buttons --> 
     
     </form:form>  <!-- End Form -->

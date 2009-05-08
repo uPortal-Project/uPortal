@@ -25,10 +25,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   	<h2 role="heading">
       <c:choose>
         <c:when test="${ completed }">
-          Edit Portlet
+          <spring:message code="edit-portlet.editPortletHeading"/>
         </c:when>
         <c:otherwise>
-          Register New Portlet
+          <spring:message code="edit-portlet.newPortletHeading"/>
         </c:otherwise>
       </c:choose>
     </h2>
@@ -48,44 +48,44 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 		
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">Summary Information</h3>
+      <h3 class="portlet-section-header" role="heading"><spring:message code="basicInfo.summaryHeading"/></h3>
       <div class="portlet-section-body">
 
-        <table summary="This table lists a portlet's general settings.">
+        <table summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
           <thead>
             <tr>
-            	<th>Option</th>
-              <th>Setting</th>
+            	<th><spring:message code="basicInfo.optionHeading"/></th>
+              <th><spring:message code="basicInfo.settingHeading"/></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-            	<td class="fl-text-align-right">Channel Title:</td>
+            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelTitle"/></td>
             	<td><form:input path="title"/></td>
             </tr>  
             <tr>
-            	<td class="fl-text-align-right">Channel Name:</td>
+            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelName"/></td>
             	<td><form:input path="name"/></td>
            </tr>      
             <tr>
-            	<td class="fl-text-align-right">Channel Functional Name:</td>
+            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelFName"/></td>
             	<td><form:input path="fname"/></td>
             </tr>     
             <tr>
-            	<td class="fl-text-align-right">Channel Description:</td>
+            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelDescription"/></td>
             	<td><form:input path="description"/></td>
             </tr> 
             <tr>
-            	<td class="fl-text-align-right">Channel Timeout:</td>
+            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelTimeout"/></td>
             	<td><form:input path="timeout"/>ms</td>
             </tr>  
             <tr>
-            	<td class="fl-text-align-right">Channel Secure:</td>
+            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelSecure"/></td>
             	<td><form:checkbox path="secure"/></td>
             </tr> 
             <c:if test="${ channel.typeId < 0 }">
               <tr>
-              	<td class="fl-text-align-right">Channel class:</td>
+              	<td class="fl-text-align-right"><spring:message code="basicInfo.channelClass"/></td>
               	<td><form:input path="javaClass"/></td>
               </tr>
           	</c:if>
@@ -97,11 +97,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">Controls</h3>
+      <h3 class="portlet-section-header" role="heading"><spring:message code="basicInfo.controlsHeading"/></h3>
       <div class="portlet-section-body">
       
       	<fieldset>
-        	<legend>Portlet Controls</legend>
+        	<legend><spring:message code="basicInfo.controlsLegend"/></legend>
           <c:forEach items="${ cpd.controls.controls }" var="control">
             <c:if test="${ control.override }">
               <c:choose>
@@ -128,14 +128,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="portlet-button-group">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="portlet-button portlet-button-primary" type="submit" value="Review" name="_eventId_review"/>
+          <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="portlet-button secondary" type="submit" value="Back" name="_eventId_back"/>
-          <input class="portlet-button portlet-button-primary" type="submit" value="Next" name="_eventId_next"/>
+          <input class="portlet-button secondary" type="submit" value="<spring:message code="edit-portlet.backButton"/>" name="_eventId_back"/>
+          <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="portlet-button secondary" type="submit" value="Cancel" name="_eventId_cancel"/>
+      <input class="portlet-button secondary" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
     </div>
     
     </form:form> <!-- End Form -->

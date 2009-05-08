@@ -24,6 +24,9 @@
                 <value>/WEB-INF/flows/identity-swapper/identity-swapper</value>
                 <value>/WEB-INF/flows/attribute-swapper/attribute-swapper</value>
                 <value>/WEB-INF/flows/register-portal/register-portal</value>
+                <value>/WEB-INF/flows/groups-selector/groups-selector</value>
+                <value>/WEB-INF/flows/edit-portlet/edit-portlet</value>
+                <value>/WEB-INF/flows/portlet-manager/portlet-manager</value>
             </list>
         </property>                                     
     </bean>

@@ -22,8 +22,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 	<!-- Portlet Title -->
   <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading"><c:out value="${ pageTitleText }"/></h2>
-    <h3><c:out value="${ pageSubtitleText }"/></h3>
+  	<h2 role="heading"><spring:message code="${ pageTitleCode }" text="${ pageTitleText }"/></h2>
+    <h3><spring:message code="${ pageSubtitleCode }" arguments="${ pageSubtitleChannelName }" text="${ pageSubtitleText }"/></h3>
   </div> <!-- end: portlet-title -->
   
 	<!-- Portlet Body -->
@@ -44,7 +44,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       	<!-- start: selections -->
       	<div class="portlet-selection">
         
-          <h4 class="portlet-heading-selections">Your Selections</h4>
+          <h4 class="portlet-heading-selections"><spring:message code="chooseGroups.selectionsHeading"/></h4>
           <form action="${ submitUrl }" method="post">
           <div id="${n}selectionBasket" class="portlet-selection-basket">
             <ul>
@@ -60,11 +60,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <!-- Portlet Buttons --> 
           <div class="portlet-button-group">
             <c:if test="${ showBackButton }">
-              <input class="portlet-button" type="submit" value="${ backButtonText }" name="_eventId_back"/>
+              <input class="portlet-button" type="submit" value="<spring:message code="${ backButtonCode }" text="${ backButtonText }"/>" name="_eventId_back"/>
             </c:if>
-              <input class="portlet-button portlet-button-primary" type="submit" value="${ saveButtonText }" name="_eventId_save"/>
+              <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
             <c:if test="${ showCancelButton }">
-              <input class="portlet-button" type="submit" value="${ cancelButtonText }" name="_eventId_cancel"/>
+              <input class="portlet-button" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
             </c:if>
           </div> <!-- end: Portlet Buttons --> 
           
@@ -79,21 +79,21 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         
         <!-- start: search -->
         <div class="portlet-search">
-          <h4 class="portlet-heading-search">Search</h4>
+          <h4 class="portlet-heading-search"><spring:message code="chooseGroups.searchHeading"/></h4>
           <form id="${n}searchForm">
-            <input type="text" name="searchterm" value="Enter a name" />
-            <input type="submit" value="Go" />
+            <input type="text" name="searchterm" value="<spring:message code="chooseGroups.searchBoxDefault"/>"/>
+            <input type="submit" value="<spring:message code="chooseGroups.searchSubmit"/>" />
           </form>
         </div><!-- end: search -->
 
         <!-- start: browse -->
         <div class="portlet-browse">
-          <h4 class="portlet-heading-browse">Browse</h4>
+          <h4 class="portlet-heading-browse"><spring:message code="chooseGroups.browseHeading"/></h4>
           <!-- Not yet implemented
           <ul class="fl-tabs fl-tabs-left">
-            <li class="fl-activeTab"><a href="#" title="Groups"><span>Groups</span></a></li>
-            <li><a href="#" title="Favorites"><span>Favorites</span></a></li>
-            <li><a href="#" title="Recently Selected"><span>Recently Selected</span></a></li>
+            <li class="fl-activeTab"><a href="#" title="<spring:message code="chooseGroups.groupsHeading"/>"><span><spring:message code="chooseGroups.groupsHeading"/></span></a></li>
+            <li><a href="#" title="<spring:message code="chooseGroups.favoritesHeading"/>"><span><spring:message code="chooseGroups.favoritesHeading"/></span></a></li>
+            <li><a href="#" title="<spring:message code="chooseGroups.recentlySelectedHeading"/>"><span><spring:message code="chooseGroups.recentlySelectedHeading"/></span></a></li>
           </ul>-->
           
           <!-- start: browse content -->
@@ -107,7 +107,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <h5 id="${n}currentGroupName"></h5>
                 </div>
                 <div class="fl-col fl-text-align-right">
-                  <a class="portlet-browse-select" id="${n}selectGroupLink" href="javascript:;"><span>Select</span></a>
+                  <a class="portlet-browse-select" id="${n}selectGroupLink" href="javascript:;"><span><spring:message code="chooseGroups.selectButton"/></span></a>
                 </div>
               </div>
             </div>
@@ -115,22 +115,22 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             
             <!-- start: browse content: selections -->
             <div class="fl-container portlet-browse-body">
-              <p><span class="current-group-name">Everyone</span> includes:</p>
-              <p id="${n}browsingResultNoMembers" style="display:none">No members</p>
+              <p><span class="current-group-name">Everyone</span> <spring:message code="chooseGroups.includes"/>:</p>
+              <p id="${n}browsingResultNoMembers" style="display:none"><spring:message code="chooseGroups.noMembers"/></p>
               <c:forEach items="${selectTypes}" var="type">
                 <c:choose>
                   <c:when test="${type == 'group'}">
-                    <h7>Groups</h7>
+                    <h7><spring:message code="chooseGroups.groupsHeading"/></h7>
                     <ul class="group-member">
                     </ul>
                   </c:when>
                   <c:when test="${type == 'person'}">
-                    <h7>People</h7>
+                    <h7><spring:message code="chooseGroups.peopleHeading"/></h7>
                     <ul class="person-member">
                     </ul>
                   </c:when>
                   <c:when test="${type == 'category'}">
-                    <h7>Categories</h7>
+                    <h7><spring:message code="chooseGroups.categoriesHeading"/></h7>
                     <ul class="category-member">
                     </ul>
                   </c:when>
@@ -151,8 +151,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
 </div> <!-- end: portlet -->
 
-<div id="${n}searchDialog" title="Search">
-    <p id="${n}searchResultNoMembers" style="display:none">No results</p>
+<div id="${n}searchDialog" title="<spring:message code="chooseGroups.searchResultsTitle"/>">
+    <p id="${n}searchResultNoMembers" style="display:none"><spring:message code="chooseGroups.noResults"/></p>
     <ul id="${n}searchResults"></ul>
 </div>
 
@@ -215,11 +215,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 			
 			var setBreadcrumbSelectionState = function(selected) {
                 if (!selected) {
-                    $("#${n}selectGroupLink span").text("Select").unbind("click")
+                    $("#${n}selectGroupLink span").text("<spring:message code="chooseGroups.selectButton"/>").unbind("click")
                         .click(function(){ selectGroup($("#${n}currentGroupName").attr("key")); });
                     $("#${n}groupBrowsingHeader").removeClass("selected");
                 } else {
-                    $("#${n}selectGroupLink span").text("De-select").unbind("click")
+                    $("#${n}selectGroupLink span").text("<spring:message code="chooseGroups.deselectButton"/>").unbind("click")
                         .click(function(){ removeGroup($("#${n}currentGroupName").attr("key")); });
                     $("#${n}groupBrowsingHeader").addClass("selected");
                 }

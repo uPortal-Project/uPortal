@@ -40,19 +40,19 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   <!-- Portlet Title -->
   <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading">Portlet Registry</h2>
+  	<h2 role="heading"><spring:message code="listChannels.title"/></h2>
   </div> <!-- end: portlet-title -->
   
   <!-- Portlet Toolbar -->
   <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
     <div class="fl-col">
     	<ul>
-    		<li><a href="${ newPortletUrl }" title="Register New Portlet"><span>Register New Portlet</span></a></li>
+    		<li><a href="${ newPortletUrl }" title="<spring:message code="listChannels.newPortletButton"/>"><span><spring:message code="listChannels.newPortletButton"/></span></a></li>
       </ul>
     </div>
     <div class="fl-col fl-text-align-right">
   		<input id="${n}channelSearch"/>
-      <input type="submit" value="Search"/>
+      <input type="submit" value="<spring:message code="listChannels.searchSubmitButton"/>"/>
     </div>
   </div> <!-- end: portlet-toolbar -->
         
@@ -67,19 +67,21 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
     <!-- Portlet Section -->
     <div id="${n}channelAddingTabs" class="portlet-section" role="region"> 
-      <h3 class="portlet-section-header" role="heading">Registered Portlet List</h3>
+      <h3 class="portlet-section-header" role="heading">
+        <spring:message code="listChannels.portletListHeading"/>
+      </h3>
       
       <!-- Portlet Section Options -->
       <div class="fl-col-flex2 portlet-section-options">
         <div class="fl-col view-filter">
-          <label for="${n}categorySelectMenu">Show</label>
+          <label for="${n}categorySelectMenu"><spring:message code="listChannels.categoryFilterLabel"/></label>
           <select id="${n}categorySelectMenu">
-            <option value="">All</option>
+            <option value=""><spring:message code="listChannels.categoryFilterAllCategories"/></option>
           </select>
         </div>
         <div class="fl-col view-pager">
           <ul id="pager-top" class="pager-top">
-            <li class="previous"><a href="#">&lt; previous</a></li>
+            <li class="previous"><a href="#">&lt; <spring:message code="listChannels.pagerPrevious"/></a></li>
             <li>
               <ul class="pager-links" style="margin:0; display:inline">
                 <li class="page-link"><a href="javascript:;">1</a></li>
@@ -87,14 +89,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <li class="page-link"><a href="javascript:;">3</a></li>
               </ul>
             </li>
-            <li class="next"><a href="#">next &gt;</a></li>
+            <li class="next"><a href="#"><spring:message code="listChannels.pagerNext"/> &gt;</a></li>
             <li>
-              Show <span> <select class="pager-page-size">
+              <spring:message code="listChannels.pagerPerPagePrefix"/> <span> <select class="pager-page-size">
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="20">20</option>
               <option value="50">50</option>
-              </select></span> per page
+              </select></span> <spring:message code="listChannels.pagerPerPageSuffix"/>
             </li>
           </ul>
         </div>
@@ -105,10 +107,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <table id="${n}categoriesTable1" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
           <thead>
             <tr rsf:id="header:">
-              <th id="${n}portletName"><a rsf:id="name" title="Click to sort" href="#">Name</a></th>
-              <th id="${n}portletType"><a rsf:id="type" title="Click to sort" href="#">Type</a></th>
-              <th id="${n}portletEditLink" rsf:id="editLink">Edit</th>
-              <th id="${n}portletDeleteLink" rsf:id="deleteLink">Delete</th>
+              <th id="${n}portletName"><a rsf:id="name" title="Click to sort" href="#"><spring:message code="listChannels.portletTableNameHeading"/></a></th>
+              <th id="${n}portletType"><a rsf:id="type" title="Click to sort" href="#"><spring:message code="listChannels.portletTableTypeHeading"/></a></th>
+              <th id="${n}portletEditLink" rsf:id="editLink"><spring:message code="listChannels.portletTableEditHeading"/></th>
+              <th id="${n}portletDeleteLink" rsf:id="deleteLink"><spring:message code="listChannels.portletTableDeleteHeading"/></th>
             </tr>
           </thead>
           <tbody id="${n}categoriesBody">
@@ -185,13 +187,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             { key: "editLink", valuebinding: "*.id",
                                 components: {
                                     target: editUrl.replace("PORTLETID", '${"${*.id}"}'),
-                                    linktext: "edit"
+                                    linktext: "<spring:message code="listChannels.editLink"/>"
                                     }
                                 },
                             { key: "deleteLink", valuebinding: "*.id",
                                 components: {
                                     target: editUrl.replace("PORTLETID", '${"${*.id}"}'),
-                                    linktext: "delete"
+                                    linktext: "<spring:message code="listChannels.deleteLink"/>"
                                     }
                                 }
                         ],

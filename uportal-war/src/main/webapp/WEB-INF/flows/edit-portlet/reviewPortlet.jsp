@@ -59,47 +59,47 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   	<!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">Configuration</h3>
+      <h3 class="portlet-section-header" role="heading"><spring:message code="reviewPortlet.heading"/></h3>
       <div class="portlet-section-options">
-        <a href="${ basicInfoUrl }"><span>Edit Configuration</span></a>
+        <a href="${ basicInfoUrl }"><span><spring:message code="reviewPortlet.editButton"/></span></a>
       </div>
       <div class="portlet-section-body">
       
-        <table summary="This table is a list of the portlet's configurations.">
+        <table summary="<spring:message code="reviewPortlet.configurationTableSummary"/>">
           <thead>
             <tr>
-              <th>Configuration</th>
-              <th>Value</th>
+              <th><spring:message code="reviewPortlet.configurationHeading"/></th>
+              <th><spring:message code="reviewPortlet.valueHeading"/></th>
             <tr>
           </thead>
           <tfoot></tfoot>
           <tbody>
             <tr>
-              <td class="fl-text-align-right">Channel Title:</td>
+              <td class="fl-text-align-right"><spring:message code="basicInfo.channelTitle"/></td>
               <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.title }"/>" class="pa-edit"><c:out value="${ channel.title }"/></a></td>
             </tr>
             <tr>
-              <td class="fl-text-align-right">Channel Name:</td>
+              <td class="fl-text-align-right"><spring:message code="basicInfo.channelName"/></td>
               <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.name }"/>" class="pa-edit"><c:out value="${ channel.name }"/></a></td>
             </tr>
             <tr>
-              <td class="fl-text-align-right">Channel Functional Name:</td>
+              <td class="fl-text-align-right"><spring:message code="basicInfo.channelFName"/></td>
               <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.fname }"/>" class="pa-edit"><c:out value="${ channel.fname }"/></a></td>
             </tr>
             <tr>
-              <td class="fl-text-align-right">Channel Description:</td>
+              <td class="fl-text-align-right"><spring:message code="basicInfo.channelDescription"/></td>
               <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.description }"/>" class="pa-edit"><c:out value="${ channel.description }"/></a></td>
             </tr> 
             <tr>
-              <td class="fl-text-align-right">Channel Timeout:</td>
+              <td class="fl-text-align-right"><spring:message code="basicInfo.channelTimeout"/></td>
               <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.timeout }"/>" class="pa-edit"><c:out value="${ channel.timeout }"/></a></td>
             </tr>
             <tr>
-              <td class="fl-text-align-right">Channel Secure:</td>
+              <td class="fl-text-align-right"><spring:message code="basicInfo.channelSecure"/></td>
               <td><a href="${ basicInfoUrl }" title="<c:out value="${ channel.secure }"/>" class="pa-edit"><c:out value="${ channel.secure }"/></a></td>
             </tr> 
             <tr>
-              <td class="fl-text-align-right">Channel Type:</td>
+              <td class="fl-text-align-right"><spring:message code="reviewPortlet.channelType"/></td>
               <td>
                 <c:forEach items="${ channelTypes }" var="type">
                   <c:if test="${ type.id == channel.typeId }">
@@ -112,15 +112,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               </td>
             </tr>
             <tr>
-              <td class="fl-text-align-right">Edit:</td>
+              <td class="fl-text-align-right"><spring:message code="basicInfo.editableHeading"/></td>
               <td><a href="${ setControlsUrl }" title="${ channel.editable }" class="pa-edit">${ channel.editable }</a></td>
             </tr> 
             <tr>
-              <td class="fl-text-align-right">Help:</td>
+              <td class="fl-text-align-right"><spring:message code="basicInfo.hasHelpHeading"/></td>
               <td><a href="${ setControlsUrl }" title="${ channel.hasHelp }" class="pa-edit">${ channel.hasHelp }</a></td>
             </tr>  
             <tr>
-              <td class="fl-text-align-right">About:</td>
+              <td class="fl-text-align-right"><spring:message code="basicInfo.hasAboutHeading"/></td>
               <td><a href="${ setControlsUrl }" title="${ channel.hasAbout }" class="pa-edit">${ channel.hasAbout }</a></td>
             </tr>
           </tbody>
@@ -131,18 +131,18 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">Parameters</h3>
+      <h3 class="portlet-section-header" role="heading"><spring:message code="setParameters.parametersHeading"/></h3>
       <div class="portlet-section-options">
-        <a href="${ setParametersUrl }"><span>Edit Parameters</span></a>
+        <a href="${ setParametersUrl }"><span><spring:message code="reviewPortlet.editParametersButton"/></span></a>
       </div>
       <div class="portlet-section-body">
       
-        <table summary="This table is a list of the portlet's configurations.">
+        <table summary="<spring:message code="reviewPortlet.configurationTableSummary"/>">
           <thead>
             <tr>
-              <th>Configuration</th>
-              <th>Value</th>
-              <th>User editable</th>
+              <th><spring:message code="reviewPortlet.configurationHeading"/></th>
+              <th><spring:message code="setParameters.valueHeading"/></th>
+              <th><spring:message code="setParameters.userEditableHeading"/></th>
             <tr>
           </thead>
           <tfoot></tfoot>
@@ -179,9 +179,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   	
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">Categories</h3>
+      <h3 class="portlet-section-header" role="heading"><spring:message code="reviewPortlet.categoriesHeading"/></h3>
       <div class="portlet-section-options">
-        <a href="${ chooseCategoryUrl }"><span>Edit Categories</span></a>
+        <a href="${ chooseCategoryUrl }"><span><spring:message code="reviewPortlet.editCategoriesButton"/></span></a>
       </div>
       <div class="portlet-section-body">
 
@@ -196,9 +196,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">Groups</h3>
+      <h3 class="portlet-section-header" role="heading"><spring:message code="reviewPortlet.groupsHeading"/></h3>
       <div class="portlet-section-options">
-        <a href="${ chooseGroupUrl }"><span>Edit Groups</span></a>
+        <a href="${ chooseGroupUrl }"><span><spring:message code="reviewPortlet.editGroupsButton"/></span></a>
       </div>
       <div class="portlet-section-body">
       
@@ -213,8 +213,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
 		<!-- Portlet Buttons -->
     <div class="portlet-button-group">
-    	<a class="portlet-button portlet-button-primary" href="${ saveUrl }">Save</a>
-    	<a class="portlet-button" href="${ cancelUrl }">Cancel</a>
+    	<a class="portlet-button portlet-button-primary" href="${ saveUrl }"><spring:message code="edit-portlet.saveButton"/></a>
+    	<a class="portlet-button" href="${ cancelUrl }"><spring:message code="edit-portlet.cancelButton"/></a>
     </div>
     
   </div> <!-- end: portlet-body -->

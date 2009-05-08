@@ -30,10 +30,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   	<h2 role="heading">
       <c:choose>
         <c:when test="${ completed }">
-          Edit Portlet
+          <spring:message code="edit-portlet.editPortletHeading"/>
         </c:when>
         <c:otherwise>
-          Register New Portlet
+          <spring:message code="edit-portlet.newPortletHeading"/>
         </c:otherwise>
       </c:choose>
     </h2>
@@ -62,12 +62,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           
           <!-- Portlet Paramaters -->
           <c:if test="${ fn:length(step.parameters) > 0 }">
-            <table summary="This table lists a portlet's parameter settings.">
+            <table summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
               <thead>
                 <tr>
-                  <th>Parameters</th>
-                  <th>Value</th>
-                  <th>User Editable</th>
+                  <th><spring:message code="setParameters.parametersHeading"/></th>
+                  <th><spring:message code="setParameters.valueHeading"/></th>
+                  <th><spring:message code="setParameters.userEditableHeading"/></th>
                 </tr>
               </thead>
               <tbody>
@@ -161,15 +161,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                       <td>
                       <form:checkbox path="${overrideParamPath}" value="true"/>
                       </td>
-                        <td><a href="javascript:;">Delete</a></td>
+                        <td><a href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
                       </tr>
                     </c:if>
                   </c:forEach>
                 </tbody>
               </table> 
-              <p><a class="add-parameter-link" href="javascript:;">Add parameter</a></p>
+              <p><a class="add-parameter-link" href="javascript:;"><spring:message code="setParameters.addButton"/></a></p>
               <div style="display:none">
-                <div id="${fn:replace(prefix, '.', '')}newparam" class="jqueryui" title="Add a parameter">
+                <div id="${fn:replace(prefix, '.', '')}newparam" class="jqueryui" title="<spring:message code="setParameters.addButton"/>">
                 </div>
               </div>
               </div>
@@ -186,14 +186,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="portlet-button-group">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="portlet-button portlet-button-primary" type="submit" value="Review" name="_eventId_review"/>
+          <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="portlet-button" type="submit" value="Back" class="secondary" name="_eventId_back"/>
-          <input class="portlet-button portlet-button-primary" type="submit" value="Next" name="_eventId_next"/>
+          <input class="portlet-button" type="submit" value="<spring:message code="edit-portlet.backButton"/>" class="secondary" name="_eventId_back"/>
+          <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="portlet-button" type="submit" value="Cancel" name="_eventId_cancel"/>
+      <input class="portlet-button" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
     </div>
     
     </form:form> <!-- End Form -->
@@ -208,10 +208,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 			var initializedDialogs = [];
 			function showNewParameterForm(prefix) {
 				var id = "#" + prefix.replace('.', '') + "newparam";
-				var html = "<form>Name: <input type=\"text\" name=\"name\"/><br/>";
-				html += "Value: <input type=\"text\" name=\"value\"/><br/>";
-				html += "User editable: <input type=\"checkbox\" name=\"override\" value=\"true\"/><br/>";
-				html += "<input type=\"submit\" value=\"Add\"/><form>";
+				var html = "<form><spring:message code="setParameters.newParamForm.name"/> <input type=\"text\" name=\"name\"/><br/>";
+				html += "<spring:message code="setParameters.newParamForm.value"/> <input type=\"text\" name=\"value\"/><br/>";
+				html += "<spring:message code="setParameters.newParamForm.userEditable"/> <input type=\"checkbox\" name=\"override\" value=\"true\"/><br/>";
+				html += "<input type=\"submit\" value=\"<spring:message code="setParameters.newParamForm.submitButton"/>\"/><form>";
 				$(id).html(html)
 				.find("form").submit(function() {
 					var name = this.name.value;
