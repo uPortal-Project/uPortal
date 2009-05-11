@@ -102,6 +102,20 @@ public class PortletAdministrationService {
 	}
 	
 	/**
+	 * Delete the portlet with the given channel ID.
+	 * 
+	 * @param channelID the channel ID
+	 * @param person the person removing the channel
+	 * @throws java.lang.Exception
+	 */
+	public void removePortletRegistration(String channelID,
+			IPerson person) throws Exception {
+		
+		log.info(person + " removing channel " + channelID);
+		ChannelRegistryManager.removeChannel(channelID, person);
+	}
+	
+	/**
 	 * Return a list of all currently registered channel types.
 	 * 
 	 * @return

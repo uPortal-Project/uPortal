@@ -27,6 +27,13 @@
             <set name="flowScope.channel" 
                 value="new org.jasig.portal.portlets.portletadmin.ChannelDefinitionForm()"/>
         </transition>
+        <!-- If we're deleting a portlet, confirm the user wants to delete it -->
+        <transition on="removePortlet" to="confirmRemove">
+            <set name="flowScope.channel"
+                value="channelTypeService.getChannelDefinitionForm(requestParameters.chanId)"/>
+            <set name="flowScope.channelId"
+                value="requestParameters.chanId"/>
+        </transition>
     </view-state>
     
     <!--
@@ -39,6 +46,21 @@
         <transition on="finishPortletEdit" to="finishPortletEdit"/>
         <transition on="cancelPortletEdit" to="finishPortletEdit"/>
     </subflow-state>
+    
+    <!-- 
+     | Portlet deletion
+     +-->
+    <view-state id="confirmRemove">
+        <transition on="remove" to="listChannels">
+            <!-- Remove the portlet -->
+            <set name="flashScope.servletRequest" 
+                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+            <set name="flashScope.person"
+                value="personManager.getPerson(servletRequest)"/>
+            <evaluate expression="channelTypeService.removePortletRegistration(flowScope.channelId,flashScope.person)"/>
+        </transition>
+        <transition on="cancel" to="listChannels"/>
+    </view-state>
     
     <!-- End state -->
     <end-state id="finishPortletEdit" />

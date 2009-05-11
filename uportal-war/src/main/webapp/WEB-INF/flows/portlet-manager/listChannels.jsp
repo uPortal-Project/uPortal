@@ -136,6 +136,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         var $ = up.jQuery;
         var channelBrowser;
         var editUrl = "${ editPortletUrl }";
+        var removeUrl = "${ removePortletUrl }";
         var pager;
 
         var channelTypes = { };
@@ -192,7 +193,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                 },
                             { key: "deleteLink", valuebinding: "*.id",
                                 components: {
-                                    target: editUrl.replace("PORTLETID", '${"${*.id}"}'),
+                                    target: removeUrl.replace("PORTLETID", '${"${*.id}"}'),
                                     linktext: "<spring:message code="listChannels.deleteLink"/>"
                                     }
                                 }
