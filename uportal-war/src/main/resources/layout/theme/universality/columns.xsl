@@ -46,7 +46,7 @@
         <xsl:variable name="COLUMN_WIDTH">
         	<xsl:choose>
             <xsl:when test="@width = '100%'"></xsl:when>
-            <xsl:otherwise><xsl:value-of select="substring-before(@width,'%')" /></xsl:otherwise>
+            <xsl:otherwise><xsl:value-of select="floor(substring-before(@width,'%'))" /></xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
         <div id="column_{@ID}" class="portal-page-column {$POSITION} fl-col-flex{$COLUMN_WIDTH}"> <!-- Unique column_ID needed for drag and drop. -->
