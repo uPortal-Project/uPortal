@@ -8,6 +8,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pluto.OptionalContainerServices;
+import org.apache.pluto.PortletContainerException;
+import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.apache.pluto.descriptors.portlet.SupportsDD;
+import org.apache.pluto.internal.impl.PortletContextImpl;
+import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelType;
@@ -15,12 +21,14 @@ import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.locator.OptionalContainerServicesLocator;
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -185,4 +193,40 @@ public class PortletAdministrationService {
 		return def;
 	}
 	
+	public List<PortletContextImpl> getPortletApplications() {
+		final OptionalContainerServices optionalContainerServices = OptionalContainerServicesLocator.getOptionalContainerServices();
+		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
+		List<PortletContextImpl> contexts = new ArrayList<PortletContextImpl>();
+		for (Iterator iter = portletRegistryService.getRegisteredPortletApplications(); iter.hasNext();) {
+			PortletContextImpl context = (PortletContextImpl) iter.next();
+			contexts.add(context);
+		}
+		return contexts;
+	}
+	
+	public void prepopulatePortlet(String application, String portlet, ChannelDefinitionForm form) {
+		final OptionalContainerServices optionalContainerServices = OptionalContainerServicesLocator.getOptionalContainerServices();
+		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
+		try {
+			PortletDD portletDD = portletRegistryService.getPortletDescriptor(application, portlet);
+			form.setTitle(portletDD.getPortletName());
+			form.setName(portletDD.getPortletName());
+			form.setPortlet(true);
+			form.getParameters().put("portletApplicationId", new Attribute(application));
+			form.getParameters().put("portletName", new Attribute(portletDD.getPortletName()));
+			for (Object obj : portletDD.getSupports()) {
+				SupportsDD supports = (SupportsDD) obj;
+				for (Object mode : supports.getPortletModes()) {
+					if ("edit".equals(mode)) {
+						form.setEditable(true);
+					} else if ("help".equals(mode)) {
+						form.setHasHelp(true);
+					}
+				}
+			}
+		} catch (PortletContainerException e) {
+			e.printStackTrace();
+		}
+	}
+		
 }
