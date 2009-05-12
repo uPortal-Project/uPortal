@@ -29,18 +29,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
-  	
+
+    <form:form modelAttribute="channel" action="${submitUrl}" method="POST">
+
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="channel">
         <div class="portlet-msg-error" role="alert">
-            <c:forEach var="error" items="${errors.allErrors}">
-                <spring:message code="${error.code}" text="${error.defaultMessage}"/><br />
-            </c:forEach>
+            <form:errors path="*" element="div"/>
         </div> <!-- end: portlet-msg -->
     </spring:hasBindErrors>
-    
-    <form:form modelAttribute="channel" action="${submitUrl}" method="POST">
-		
+
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <h3 class="portlet-section-header" role="heading"><spring:message code="confirmRemove.heading" arguments="${ channel.name }"/></h3>

@@ -57,13 +57,13 @@
     
     <!-- BASIC INFO view (title, fname, etc.) -->
     <view-state id="basicInfo" model="channel">
-        <transition on="back" to="chooseType"/>
+        <transition on="back" to="chooseType" validate="false"/>
         <transition on="next" to="setParameters"/>
     </view-state>
     
     <!-- CHANNEL PARAMETERS view -->
     <view-state id="setParameters" model="channel">
-        <transition on="back" to="basicInfo"/>
+        <transition on="back" to="basicInfo" validate="false"/>
         <transition on="next" to="chooseCategory"/>
     </view-state>
     

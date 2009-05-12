@@ -25,7 +25,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <!-- Portlet -->
 <div class="fl-widget portlet" role="section">
 
-	<!-- Portlet Title -->
+  <!-- Portlet Title -->
   <div class="fl-widget-titlebar portlet-title" role="sectionhead">
   	<h2 role="heading">
       <c:choose>
@@ -41,16 +41,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
-  	
+
+    <form:form modelAttribute="channel" action="${queryUrl}" method="POST">
+
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="channel">
-	  	<div class="portlet-msg-error" role="alert">
-	    	<form:errors path="*" element="div" />
-	    </div> <!-- end: portlet-msg -->
+        <div class="portlet-msg-error" role="alert">
+            <form:errors path="*" element="div"/>
+        </div> <!-- end: portlet-msg -->
     </spring:hasBindErrors>
-    
-    <form:form modelAttribute="channel" action="${queryUrl}" method="POST">
-    
+
     <!-- Step Loop -->
     <c:forEach items="${ cpd.params.steps }" var="step">
     

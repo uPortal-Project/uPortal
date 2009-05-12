@@ -36,15 +36,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
 	<!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
-    
-    <!-- Portlet Messages -->
-    <spring:hasBindErrors name="channel">
-	  	<div class="portlet-msg-error" role="alert">
-	    	<form:errors path="*" element="div" />
-	    </div> <!-- end: portlet-msg -->
-    </spring:hasBindErrors>
      
     <form:form modelAttribute="channel" action="${queryUrl}" method="POST">
+	
+    <!-- Portlet Messages -->
+    <spring:hasBindErrors name="channel">
+        <div class="portlet-msg-error" role="alert">
+            <form:errors path="*" element="div"/>
+        </div> <!-- end: portlet-msg -->
+    </spring:hasBindErrors>
 		
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">

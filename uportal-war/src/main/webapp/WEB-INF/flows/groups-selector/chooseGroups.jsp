@@ -28,13 +28,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
 	<!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
- 		
+ 
     <!-- Portlet Messages -->
-    <spring:hasBindErrors name="model">
-	    <div class="portlet-msg-error" role="alert">
-	      <form:errors path="*" element="div" />
-	    </div>
-    </spring:hasBindErrors> <!-- end: portlet-msg -->
+    <spring:hasBindErrors name="channel">
+        <div class="portlet-msg-error" role="alert">
+            <c:forEach var="error" items="${errors.allErrors}">
+                <spring:message code="${error.code}" text="${error.defaultMessage}"/><br />
+            </c:forEach>
+        </div> <!-- end: portlet-msg -->
+    </spring:hasBindErrors>
     
     <!-- start: 2 panel -->
     <div class="fl-col-flex2">

@@ -11,6 +11,14 @@ import org.springframework.binding.message.MessageContext;
 public class ChannelDefinitionFormValidator {
 	
 	private PortletAdministrationService portletAdministrationService;
+
+	public void validateChooseType(ChannelDefinitionForm def, MessageContext context) {
+		if(def.getTypeId() == 0) {
+			context.addMessage(new MessageBuilder().error().source("typeId")
+					.code("errors.channelDefinition.type.empty")
+					.defaultText("Please choose a channel type").build());
+		}
+	}
 	
 	public void validateBasicInfo(ChannelDefinitionForm def, MessageContext context) {
 		if (StringUtils.isEmpty(def.getFname())) {
@@ -21,12 +29,8 @@ public class ChannelDefinitionFormValidator {
 		if (StringUtils.isEmpty(def.getTitle())) {
 			context.addMessage(new MessageBuilder().error().source("title")
 					.code("errors.channelDefinition.title.empty")
-					.defaultText("Please enter an title").build());
+					.defaultText("Please enter a title").build());
 		}
-	}
-	
-	public void validateChooseType(ChannelDefinitionForm def, MessageContext context) {
-		// currently no applicable validation logic
 	}
 	
 	public void validateSetParameters(ChannelDefinitionForm def, MessageContext context) {
