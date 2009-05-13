@@ -27,7 +27,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-title -->
   
 	<!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <div id="${n}chooseGroupsBody" class="fl-widget-content portlet-body" role="main">
  
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="channel">
@@ -102,14 +102,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <div class="fl-tab-content">
             
             <!-- start: browse content header -->
-            <div id="${n}groupBrowsingHeader" class="portlet-browse-header">
-            	<div id="${n}groupBrowsingBreadcrumbs" class="portlet-browse-breadcrumb"></div>
+            <div id="${n}entityBrowsingHeader" class="portlet-browse-header">
+            	<div id="${n}entityBrowsingBreadcrumbs" class="portlet-browse-breadcrumb"></div>
               <div class="fl-container fl-col-flex2">
                 <div class="fl-col">
-                    <h5 id="${n}currentGroupName"></h5>
+                    <h5 id="${n}currentEntityName"></h5>
                 </div>
                 <div class="fl-col fl-text-align-right">
-                  <a class="portlet-browse-select" id="${n}selectGroupLink" href="javascript:;"><span><spring:message code="chooseGroups.selectButton"/></span></a>
+                  <a class="portlet-browse-select" id="${n}selectEntityLink" href="javascript:;"><span><spring:message code="chooseGroups.selectButton"/></span></a>
                 </div>
               </div>
             </div>
@@ -117,23 +117,23 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             
             <!-- start: browse content: selections -->
             <div class="fl-container portlet-browse-body">
-              <p><span class="current-group-name">Everyone</span> <spring:message code="chooseGroups.includes"/>:</p>
+              <p><span class="current-entity-name">Everyone</span> <spring:message code="chooseGroups.includes"/>:</p>
               <p id="${n}browsingResultNoMembers" style="display:none"><spring:message code="chooseGroups.noMembers"/></p>
               <c:forEach items="${selectTypes}" var="type">
                 <c:choose>
                   <c:when test="${type == 'group'}">
                     <h7><spring:message code="chooseGroups.groupsHeading"/></h7>
-                    <ul class="group-member">
+                    <ul class="group-member-list">
                     </ul>
                   </c:when>
                   <c:when test="${type == 'person'}">
                     <h7><spring:message code="chooseGroups.peopleHeading"/></h7>
-                    <ul class="person-member">
+                    <ul class="person-member-list">
                     </ul>
                   </c:when>
                   <c:when test="${type == 'category'}">
                     <h7><spring:message code="chooseGroups.categoriesHeading"/></h7>
-                    <ul class="category-member">
+                    <ul class="category-member-list">
                     </ul>
                   </c:when>
                 </c:choose>
@@ -148,159 +148,43 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div> <!-- end: left panel -->
     
     </div> <!-- end: 2 panel -->
-    
+
+	<div id="${n}searchDialog" title="<spring:message code="chooseGroups.searchResultsTitle"/>">
+	    <p id="${n}searchResultNoMembers" style="display:none"><spring:message code="chooseGroups.noResults"/></p>
+	    <ul id="${n}searchResults"></ul>
+	</div>
+
   </div> <!-- end: portlet-body -->
   
 </div> <!-- end: portlet -->
 
-<div id="${n}searchDialog" title="<spring:message code="chooseGroups.searchResultsTitle"/>">
-    <p id="${n}searchResultNoMembers" style="display:none"><spring:message code="chooseGroups.noResults"/></p>
-    <ul id="${n}searchResults"></ul>
-</div>
+<script src="media/org/jasig/portal/flows/group-selection/groups-selector.min.js" language="JavaScript" type="text/javascript"></script>
 
 <script type="text/javascript">
 	up.jQuery(function() {
-			var $ = up.jQuery;
-			var groupBrowser = $.groupbrowser({});
-			var entities = new Array();
-			var searchInitialized = false;
-			var entityTypes = [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>];
-			var selected = [ <c:forEach items="${model.groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach> ];
+		var $ = up.jQuery;
 
-			var updateBreadcrumbs = function(entity) {
-                var currentTitle = $("#${n}currentGroupName");
-						var breadcrumbs = $("#${n}groupBrowsingBreadcrumbs");
-						if (breadcrumbs.find("span a[key=" + entity.id + "]").size() > 0) {
-								// if this entity already exists in the breadcrumb trail
-								var removeBreadcrumb = false;
-								$(breadcrumbs.find("span")).each(function(){
-										if (removeBreadcrumb) { $(this).remove(); }
-										else if ($(this).find("a[key=" + entity.id + "]").size() > 0) { 
-												removeBreadcrumb = true;
-												$(this).remove();
-										}
-								});
-						} else {
-								// otherwise, append this entity to the end of the breadcrumbs
-								if (currentTitle.text() != '') {
-									var breadcrumb = $(document.createElement("span"));
-									breadcrumb.append(
-											$(document.createElement("a")).html(currentTitle.text())
-													.attr("href", "javascript:;").attr("key", currentTitle.attr("key"))
-													.click(function(){browseGroup($(this).attr("key"));})
-									).append(document.createTextNode(" > "));
-									$("#${n}groupBrowsingBreadcrumbs").append(breadcrumb);
-								}
-						}
-                        currentTitle.text(entity.name).attr("key", entity.id);
-			};
-
-			var selectGroup = function(key) {
-				if ($.inArray(key, selected) < 0) {
-						var entity = groupBrowser.getEntity(entityTypes, key);
-						$("#${n}selectionBasket ul").append(
-								$(document.createElement("li")).append(
-									$(document.createElement("a")).html(entity.name)
-											.attr("href", "javascript:;").attr("key", entity.id)
-											.click(function(){ removeGroup($(this).attr("key")); })
-								).append(
-										$(document.createElement("input")).attr("type", "hidden")
-												.attr("name", "groups").val(entity.id)
-								)
-						);
-                        selected.push(key);
-	                if ($("#${n}currentGroupName").attr("key") == key) {
-	                    setBreadcrumbSelectionState(true);
-	                }
-				}
-			};
-			
-			var setBreadcrumbSelectionState = function(selected) {
-                if (!selected) {
-                    $("#${n}selectGroupLink span").text("<spring:message code="chooseGroups.selectButton"/>").unbind("click")
-                        .click(function(){ selectGroup($("#${n}currentGroupName").attr("key")); });
-                    $("#${n}groupBrowsingHeader").removeClass("selected");
-                } else {
-                    $("#${n}selectGroupLink span").text("<spring:message code="chooseGroups.deselectButton"/>").unbind("click")
-                        .click(function(){ removeGroup($("#${n}currentGroupName").attr("key")); });
-                    $("#${n}groupBrowsingHeader").addClass("selected");
-                }
-			};
-
-			var removeGroup = function(key) {
-				var newselections = new Array();
-				$("#${n}selectionBasket a").each(function(){
-					if ($(this).attr("key") != key) newselections.push($(this).attr("key"));
-					else $(this).parent().remove();  
-			    });
-			    selected = newselections;
-			    if ($("#${n}currentGroupName").attr("key") == key) {
-			        setBreadcrumbSelectionState(false);
-			    }
-			};
-
-			var browseGroup = function(key) {
-						var entity = groupBrowser.getEntity(entityTypes, key);
-						updateBreadcrumbs(entity);
-				
-				$(".current-group-name").text(entity.name);
-				$(".category-member").html("");
-				$(".group-member").html("");
-						$(".person-member").html("");
-				$(entity.children).each(function(i){
-								var link = $(document.createElement("a")).attr("href", "javascript:;")
-									.html("<span>" + this.name + "</span>").attr("key", this.id)
-									.click(function(){ browseGroup($(this).attr("key")); });
-						$("." + this.entityType + "-member").append(
-							$(document.createElement("li")).addClass(this.entityType).append(link)
-					);
-				});
-				$(entityTypes).each(function(){
-					var results = $("." + this + "-member");
-					if (results.find("li").size() == 0) results.prev().css("display", "none");
-					else results.prev().css("display", "block");
-				});
-				if ($(".portlet-browse-body li").size() == 0) {
-                    $("#${n}browsingResultNoMembers").css("display", "block");
-				} else {
-                    $("#${n}browsingResultNoMembers").css("display", "none");
-				}
-				if ($.inArray(key, selected) < 0) {
-                    setBreadcrumbSelectionState(false);
-				} else {
-                    setBreadcrumbSelectionState(true);
-				}
-			};
-
-			var search = function(searchTerm) {
-				var entities = groupBrowser.searchEntities(entityTypes, searchTerm);
-				var list = $("#${n}searchResults").html("");
-				$(entities).each(function(){
-                    var link = $(document.createElement("a")).attr("href", "javascript:;")
-                        .html("<span>" + this.name + "</span>").attr("key", this.id)
-                        .click(function(){ selectGroup($(this).attr("key")); $(this).addClass("selected"); });
-                    list.append($(document.createElement("li")).addClass(this.entityType).append(link));
-				});
-                if ($("#${n}searchResults li").size() == 0) {
-                    $("#${n}searchResultNoMembers").css("display", "block");
-                } else {
-                    $("#${n}searchResultNoMembers").css("display", "none");
-                }
-				if (searchInitialized) {
-	                $("#${n}searchDialog").dialog('open');
-				} else { 
-	                $("#${n}searchDialog").dialog({ width:550, modal:true });
-	                searchInitialized = true;
-				}
-				return false;
-			};
-
-			$(document).ready(function(){
-				browseGroup('${rootEntityId}');
-				$("#${n}selectionBasket a").click(function(){ removeGroup($(this).attr("key")); });
-				$("#${n}searchForm").submit(function(){ return search(this.searchterm.value) });
-                $("#${n}searchForm input[name=searchterm]").focus(function(){ $(this).val(""); $(this).unbind("focus"); });
+		$(document).ready(function(){
+			uportal.entityselection("#${n}chooseGroupsBody", {
+		        entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
+		        selected: [<c:forEach items="${model.groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
+		        initialFocusedEntity: '${rootEntityId}',
+		        selectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="chooseGroups.selectButton"/></spring:escapeBody>',
+		        deselectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="chooseGroups.deselectButton"/></spring:escapeBody>',
+		        selectors: {
+		            selectionBasket: "#${n}selectionBasket ul",
+		            breadcrumbs: "#${n}entityBrowsingBreadcrumbs",
+		            currentEntityName: "#${n}currentEntityName",
+		            selectEntityLink: "#${n}selectEntityLink",
+		            entityBrowsingHeader: "#${n}entityBrowsingHeader",
+		            browsingResultNoMembers: "#${n}browsingResultNoMembers",
+		            searchForm: "#${n}searchForm",
+		            searchDialog: "#${n}searchDialog",
+		            searchResults: "#${n}searchResults",
+		            searchResultsNoMembers: "#${n}searchResultsNoMembers"
+		        }
 			});
+		});
 			
 	});
 </script>
