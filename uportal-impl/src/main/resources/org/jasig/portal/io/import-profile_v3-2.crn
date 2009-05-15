@@ -46,7 +46,7 @@
                         <insert-parameter value="${PROFILE_ID}"/>
                         <insert-parameter value="${valueOf(name)}"/>
                         <insert-parameter value="${valueOf(description)}"/>
-                        <insert-parameter value="1"/>
+                        <insert-parameter value="${groovy(1.intValue())}"/>
                         <insert-parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
                         <insert-parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
                     </sql-upsert>
