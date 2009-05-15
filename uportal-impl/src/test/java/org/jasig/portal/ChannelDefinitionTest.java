@@ -8,10 +8,12 @@ package org.jasig.portal;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import junit.framework.TestCase;
+
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import junit.framework.TestCase;
 
 /**
  * Testcase for ChannelDefinition class.
@@ -24,7 +26,7 @@ public class ChannelDefinitionTest extends TestCase {
      * does not identify CGenericXSLT as a portlet.
      */
     public void testIsPortlet() {
-        ChannelDefinition cd = new ChannelDefinition(72);
+        IChannelDefinition cd = new ChannelDefinitionImpl(72);
         
         cd.setJavaClass("org.jasig.portal.channels.CGenericXSLT");
         assertFalse(cd.isPortlet());
@@ -41,7 +43,7 @@ public class ChannelDefinitionTest extends TestCase {
      * @throws ParserConfigurationException
      */
     public void testGetDocument() throws ParserConfigurationException {
-        ChannelDefinition cd = new ChannelDefinition(73);
+        IChannelDefinition cd = new ChannelDefinitionImpl(73);
         
         cd.setDescription("A test channel description.");
         cd.setEditable(false);

@@ -5,16 +5,17 @@
  */
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.ChannelDefinition;
+import junit.framework.TestCase;
+
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
-
-import junit.framework.TestCase;
 
 /**
  * This testcase tests each IStatsRecorder method as implemented in ConditionalStatsRecorder
@@ -36,7 +37,7 @@ public class ConditionalStatsRecorderTest extends TestCase {
 	private IUserLayoutFolderDescription dummyFolderDescription = new UserLayoutFolderDescription();
 	
 	// a channel definition with a bogus ID.
-	private ChannelDefinition dummyChannelDefinition = new ChannelDefinition(1);
+	private IChannelDefinition dummyChannelDefinition = new ChannelDefinitionImpl(1);
 	
 	
 	protected void setUp() {
