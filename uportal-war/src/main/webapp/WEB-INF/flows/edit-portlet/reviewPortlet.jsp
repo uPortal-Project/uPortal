@@ -9,10 +9,6 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="chooseType"/>
 </portlet:actionURL>
-<portlet:actionURL var="setControlsUrl">
-  <portlet:param name="execution" value="${flowExecutionKey}" />
-  <portlet:param name="_eventId" value="controls"/>
-</portlet:actionURL>
 <portlet:actionURL var="setParametersUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="setParameters"/>
@@ -113,15 +109,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </tr>
             <tr>
               <td class="fl-text-align-right"><spring:message code="basicInfo.editableHeading"/></td>
-              <td><a href="${ setControlsUrl }" title="${ channel.editable }" class="pa-edit">${ channel.editable }</a></td>
+              <td><a href="${ basicInfoUrl }" title="${ channel.editable }" class="pa-edit">${ channel.editable }</a></td>
             </tr> 
             <tr>
               <td class="fl-text-align-right"><spring:message code="basicInfo.hasHelpHeading"/></td>
-              <td><a href="${ setControlsUrl }" title="${ channel.hasHelp }" class="pa-edit">${ channel.hasHelp }</a></td>
+              <td><a href="${ basicInfoUrl }" title="${ channel.hasHelp }" class="pa-edit">${ channel.hasHelp }</a></td>
             </tr>  
             <tr>
               <td class="fl-text-align-right"><spring:message code="basicInfo.hasAboutHeading"/></td>
-              <td><a href="${ setControlsUrl }" title="${ channel.hasAbout }" class="pa-edit">${ channel.hasAbout }</a></td>
+              <td><a href="${ basicInfoUrl }" title="${ channel.hasAbout }" class="pa-edit">${ channel.hasAbout }</a></td>
             </tr>
           </tbody>
         </table>

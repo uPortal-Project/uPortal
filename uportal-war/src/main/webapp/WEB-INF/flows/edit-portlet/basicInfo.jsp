@@ -101,10 +101,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <div class="portlet-section-body">
       
       	<fieldset>
-        	<legend><spring:message code="basicInfo.controlsLegend"/></legend>
+          <legend><spring:message code="basicInfo.controlsLegend"/></legend>
           <c:forEach items="${ cpd.controls.controls }" var="control">
-            <c:if test="${ control.override }">
-              <c:choose>
+	          <c:choose>
                 <c:when test="${ control.type == 'help' }">
                   <c:set var="controlPath" value="hasHelp"/>
                 </c:when>
@@ -115,9 +114,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   <c:set var="controlPath" value="hasAbout"/>
                 </c:when>
               </c:choose>
-              <form:input path="${controlPath}"/>
-            </c:if>
-            <input type="checkbox" name="${ control.type }" value="${ control.type }"/><label for="${ control.type }">${ control.type }</label><br/>
+              <form:checkbox path="${controlPath}" disabled="${ control.override != 'yes'}"/>
+              <label for="${ control.type }">${ control.type }</label><br/>
           </c:forEach>
         </fieldset>
         

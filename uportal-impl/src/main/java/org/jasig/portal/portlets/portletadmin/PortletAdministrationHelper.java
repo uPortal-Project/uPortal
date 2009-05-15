@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.OptionalContainerServices;
@@ -21,6 +23,7 @@ import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelPublishingService;
 import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.dao.jpa.ChannelTypeImpl;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -130,6 +133,31 @@ public class PortletAdministrationHelper {
 	    channelDef.setTitle(form.getTitle());
 	    channelDef.setTypeId(form.getTypeId());
 	    
+	    // add channel parameters
+		for (String key : form.getParameters().keySet()) {
+			String value = form.getParameters().get(key).getValue();
+			if (!StringUtils.isBlank(value)) {
+				boolean override = false;
+				if (form.getParameterOverrides().containsKey(key)) {
+					override = form.getParameterOverrides().get(key).getValue();
+				}
+				channelDef.addParameter(key, value, override);
+			}
+		}
+		
+		for (String key : form.getPortletPreferences().keySet()) {
+			String[] values = new String[form.getPortletPreferences().get(key).size()];
+			for (ListIterator<Attribute> iter = form.getPortletPreferences().get(key).listIterator(); iter.hasNext();) {
+				String value = iter.next().getValue();
+				values[iter.previousIndex()] = value;
+			}
+			boolean readOnly = true;
+			if (form.getPortletPreferencesOverrides().containsKey(key)) {
+				readOnly = !form.getPortletPreferencesOverrides().get(key).getValue();
+			}
+			// TODO: add portlet preferences
+		}
+	    
 	    channelPublishingService.saveChannelDefinition(channelDef, publisher, categoryIDs, groupMembers);
 
 	}
@@ -201,6 +229,27 @@ public class PortletAdministrationHelper {
 		return contexts;
 	}
 	
+	public PortletDD getPortletDescriptor(ChannelDefinitionForm form) {
+		if (!form.isPortlet() || !form.getParameters().containsKey("portletApplicationId") || !form.getParameters().containsKey("portletName")) {
+			return null;
+		}
+		
+		final String application = form.getParameters().get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID).getValue();
+		final String portlet = form.getParameters().get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME).getValue();
+		if (StringUtils.isBlank(application) || StringUtils.isBlank(portlet)) {
+			return null;
+		}
+		
+		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
+		try {
+			PortletDD portletDD = portletRegistryService.getPortletDescriptor(application, portlet);
+			return portletDD;
+		} catch (PortletContainerException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public void prepopulatePortlet(String application, String portlet, ChannelDefinitionForm form) {
 		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
 		try {
@@ -208,8 +257,8 @@ public class PortletAdministrationHelper {
 			form.setTitle(portletDD.getPortletName());
 			form.setName(portletDD.getPortletName());
 			form.setPortlet(true);
-			form.getParameters().put("portletApplicationId", new Attribute(application));
-			form.getParameters().put("portletName", new Attribute(portletDD.getPortletName()));
+			form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID, new Attribute(application));
+			form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME, new Attribute(portletDD.getPortletName()));
 			for (Object obj : portletDD.getSupports()) {
 				SupportsDD supports = (SupportsDD) obj;
 				for (Object mode : supports.getPortletModes()) {

@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.collections.map.LazyMap;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.AttributeFactory;
 import org.jasig.portal.portlets.BooleanAttribute;
@@ -46,7 +47,15 @@ public class ChannelDefinitionForm implements Serializable {
 	@SuppressWarnings("unchecked")
 	private Map<String, BooleanAttribute> parameterOverrides = LazyMap.decorate(
 			new HashMap<String, BooleanAttribute>(), new BooleanAttributeFactory());
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, List<Attribute>> portletPreferences = LazyMap.decorate(
+			new HashMap<String, List<Attribute>>(), new AttributeFactory());
 
+	@SuppressWarnings("unchecked")
+	private Map<String, BooleanAttribute> portletParameterOverrides = LazyMap.decorate(
+			new HashMap<String, BooleanAttribute>(), new BooleanAttributeFactory());
+	
 	/**
 	 * Default constructor
 	 */
@@ -78,6 +87,17 @@ public class ChannelDefinitionForm implements Serializable {
 					new Attribute(param.getValue()));
 			this.parameterOverrides.put(param.getName(), 
 					new BooleanAttribute(param.getOverride()));
+		}
+		
+		if (def.isPortlet()) {
+			for (IPortletPreference pref : def.getPortletPreferences()) {
+				List<Attribute> attributes = new ArrayList<Attribute>();
+				for (String value : pref.getValues()) {
+					attributes.add(new Attribute(value));
+				}
+				this.portletPreferences.put(pref.getName(), attributes);
+				this.portletParameterOverrides.put(pref.getName(), new BooleanAttribute(!pref.isReadOnly()));
+			}
 		}
 	}
 	
@@ -306,6 +326,23 @@ public class ChannelDefinitionForm implements Serializable {
 
 	public void setParameterOverrides(Map<String, BooleanAttribute> parameterOverrides) {
 		this.parameterOverrides = parameterOverrides;
+	}
+
+	public Map<String, List<Attribute>> getPortletPreferences() {
+		return this.portletPreferences;
+	}
+
+	public void setPortletPreferences(Map<String, List<Attribute>> portletParameters) {
+		this.portletPreferences = portletParameters;
+	}
+
+	public Map<String, BooleanAttribute> getPortletPreferencesOverrides() {
+		return this.portletParameterOverrides;
+	}
+
+	public void setPortletPreferencesOverrides(
+			Map<String, BooleanAttribute> portletParameterOverrides) {
+		this.portletParameterOverrides = portletParameterOverrides;
 	}
 
 	public List<String> getGroups() {

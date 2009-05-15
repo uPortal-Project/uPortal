@@ -137,10 +137,36 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               </tbody>
             </table>        
           </c:if> <!-- End Portlet Paramaters -->
-      		
+                    
           <!-- Other Parameters Loop -->
           <c:forEach items="${ step.arbitraryParameters }" var="arbitraryParam">
             <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
+            
+              <c:if test="${ channel.portlet and prefix == 'PORTLET.' }">
+                <h4>Portlet.xml Preferences</h4>
+	            <div>
+	                <table summary="This table lists a portlet's preferences.">
+	                  <thead>
+	                    <tr>
+	                      <th>Parameters</th>
+	                      <th>Values</th>
+	                      <th>User editable</th>
+	                    </tr>
+	                  </thead>
+	                  <tbody>
+	                    <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
+	                      <tr>
+	                        <td>${ pref.name }</td>
+	                        <td></td>
+	                        <td>${ !pref.readOnly }</td>
+	                      </tr>
+	                    </c:forEach>
+	                  </tbody>
+	                </table>
+	            </div>
+                <h4>Portlet Definition Preferences</h4>
+	          </c:if>
+            
               <div id="${fn:replace(prefix, '.', '')}-arbitraryParams" >
               <table summary="This table lists a portlet's parameter settings.">
                 <thead>

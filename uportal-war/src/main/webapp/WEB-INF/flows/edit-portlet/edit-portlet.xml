@@ -63,6 +63,9 @@
     
     <!-- CHANNEL PARAMETERS view -->
     <view-state id="setParameters" model="channel">
+        <on-render>
+            <set name="flashScope.portlet" value="portletAdministrationHelper.getPortletDescriptor(channel)"/>
+        </on-render>
         <transition on="back" to="basicInfo" validate="false"/>
         <transition on="next" to="chooseCategory"/>
     </view-state>
