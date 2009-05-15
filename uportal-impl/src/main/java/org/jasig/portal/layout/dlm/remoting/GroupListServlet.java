@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -39,7 +39,7 @@ public class GroupListServlet extends HttpServlet {
 		if ("person".equals(classParam)) {
 			clazz = IPerson.class;
 		} else {
-			clazz = ChannelDefinition.class;
+			clazz = IChannelDefinition.class;
 		}
 		
 		String groupKey = request.getParameter("groupKey");

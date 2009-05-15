@@ -22,6 +22,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -35,8 +36,6 @@ import org.danann.cernunnos.Task;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DOMWriter;
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
@@ -47,6 +46,9 @@ import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
@@ -722,7 +724,7 @@ public class RDBMDistributedLayoutStore
         try {
             for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//channel").iterator(); it.hasNext();) {
                 org.dom4j.Element c = it.next();
-                ChannelDefinition cd = this.channelRegistryStore.getChannelDefinition(c.valueOf("@fname"));
+                IChannelDefinition cd = this.channelRegistryStore.getChannelDefinition(c.valueOf("@fname"));
                 c.addAttribute("chanID", String.valueOf(cd.getId()));
             }
         } catch (Throwable t) {
@@ -2121,7 +2123,7 @@ public class RDBMDistributedLayoutStore
             type = Constants.NS + type.substring(Constants.LEGACY_NS.length());
 
   if (ls.isChannel()) {
-    ChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(ls.getChanId());
+    IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(ls.getChanId());
     if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
         if (localeAware) {
             channelDef.setLocale(ls.getLocale()); // for i18n by Shoji
@@ -2129,7 +2131,7 @@ public class RDBMDistributedLayoutStore
       structure = channelDef.getDocument(doc, channelPrefix + ls.getStructId());
     } else {
         // Create an error channel if channel is missing or not approved
-        ChannelDefinition cd = new ChannelDefinition(ls.getChanId());
+        IChannelDefinition cd = new ChannelDefinitionImpl(ls.getChanId());
         cd.setTitle("Missing channel");
         cd.setName("Missing channel");
         cd.setTimeout(20000);
@@ -2399,7 +2401,7 @@ public class RDBMDistributedLayoutStore
             NodeList parameters = node.getChildNodes();
             if (parameters != null && isChannel)
             {
-                ChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(chanId);
+                IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(chanId);
                 for (int i = 0; i < parameters.getLength(); i++)
                 {
                     if (parameters.item(i).getNodeName().equals("parameter"))
@@ -2418,7 +2420,7 @@ public class RDBMDistributedLayoutStore
                         } else
                         {
                             // override only for adhoc or if diff from chan def
-                            ChannelParameter cp = channelDef.getParameter(parmName);
+                            IChannelParameter cp = channelDef.getParameter(parmName);
                             if (cp == null || !cp.getValue().equals(parmValue))
                             {
                                 parmStmt.clearParameters();

@@ -6,18 +6,10 @@
 package org.jasig.portal.tools.chanpub;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.InputStream;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionGroup;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.channel.IChannelDefinition;
 
 /**
  * @author Eric Dalquist
@@ -34,7 +26,7 @@ public interface IChannelPublisher {
      * @return org.jasig.portal.ChannelDefinition the published channel definition
      * @throws Exception
      */
-    public ChannelDefinition publishChannel(File filename) throws Exception;
+    public IChannelDefinition publishChannel(File filename) throws Exception;
 
     /**
      * Publishes the channel represented by the XML accessed via the passed in
@@ -44,7 +36,7 @@ public interface IChannelPublisher {
      * @return org.jasig.portal.ChannelDefinition the published channel definition
      * @throws Exception
      */
-    public ChannelDefinition publishChannel(InputStream is) throws Exception;
+    public IChannelDefinition publishChannel(InputStream is) throws Exception;
 
     public void setOverride(boolean b);
 

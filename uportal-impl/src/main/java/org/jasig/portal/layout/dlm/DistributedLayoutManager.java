@@ -30,8 +30,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserIdentityStore;
@@ -39,6 +37,8 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -1039,8 +1039,8 @@ IFolderLocalNameResolver
                          * so fragment doesn't override. See if the value
                          * specified matches that of the channel definition
                          */
-                        ChannelParameter cp = 
-                            (ChannelParameter) pubParms.get(name);
+                        IChannelParameter cp = 
+                            (IChannelParameter) pubParms.get(name);
                         
                         if (cp != null && cp.getValue().equals(newVal))
                             /*
@@ -1082,8 +1082,8 @@ IFolderLocalNameResolver
                      * see if the value specified matches that of the channel
                      * definition.
                      */
-                    ChannelParameter cp = 
-                        (ChannelParameter) pubParms.get(name);
+                    IChannelParameter cp = 
+                        (IChannelParameter) pubParms.get(name);
                     
                     if (cp != null && cp.getValue().equals(newVal))
                         pendingActions.add(new LPARemoveParameter
@@ -1135,7 +1135,7 @@ IFolderLocalNameResolver
             IChannelRegistryStore crs = ChannelRegistryStoreFactory
                 .getChannelRegistryStoreImpl();
             int pubId = Integer.parseInt(channelPublishId);
-            ChannelDefinition def = crs.getChannelDefinition(pubId);
+            IChannelDefinition def = crs.getChannelDefinition(pubId);
             return def.getParametersAsUnmodifiableMap();
         } catch (Exception e)
         {

@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
@@ -186,7 +186,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
         final String databaseChannelSubscribeId = portletEntity.getChannelSubscribeId();
         if (databaseChannelSubscribeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
             final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
-            final ChannelDefinition channelDefinition = this.portletDefinitionRegistry.getChannelDefinition(portletDefinitionId);
+            final IChannelDefinition channelDefinition = this.portletDefinitionRegistry.getChannelDefinition(portletDefinitionId);
             final String fname = channelDefinition.getFName();
             
             final IUserLayoutManager userLayoutManager = this.getUserLayoutManager();

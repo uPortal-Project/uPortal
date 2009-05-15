@@ -32,7 +32,7 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
   private Class chanDef;
 
   public RDBMChannelDefSearcher() {
-      chanDef = org.jasig.portal.ChannelDefinition.class;
+      chanDef = org.jasig.portal.channel.IChannelDefinition.class;
   }
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
     //System.out.println("searching for channel");

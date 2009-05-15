@@ -5,11 +5,11 @@
  */
 package  org.jasig.portal.services.entityproperties;
 
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.EntityIdentifier;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.channel.IChannelDefinition;
 
 
 /**
@@ -66,7 +66,7 @@ public class ChannelRegistryPropertyFinder
             try {
                 //Element c = ChannelRegistryManager.getChannel("chan"+entityID.getKey());
                 //r = c.getAttribute(name);
-                ChannelDefinition cd = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(Integer.parseInt(entityID.getKey()));
+                IChannelDefinition cd = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(Integer.parseInt(entityID.getKey()));
                 if (name.equals("Name")){
                   r = cd.getName(); 
                 }

@@ -5,7 +5,7 @@
 
     <on-start>
         <set name="flowScope.channelTypes" 
-            value="channelTypeService.getRegisteredChannelTypes()"/>
+            value="portletAdministrationHelper.getRegisteredChannelTypes()"/>
     </on-start>
 
     <!-- 
@@ -20,7 +20,7 @@
             populate it with the selected portlet's data -->
         <transition on="editPortlet" to="edit-portlet">
             <set name="flowScope.channel" 
-                value="channelTypeService.getChannelDefinitionForm(requestParameters.chanId)"/>
+                value="portletAdministrationHelper.getChannelDefinitionForm(requestParameters.chanId.replace('chan', ''))"/>
         </transition>
         <!-- If we're creating a new portlet, create a new form -->
         <transition on="createPortlet" to="edit-portlet">
@@ -30,9 +30,9 @@
         <!-- If we're deleting a portlet, confirm the user wants to delete it -->
         <transition on="removePortlet" to="confirmRemove">
             <set name="flowScope.channel"
-                value="channelTypeService.getChannelDefinitionForm(requestParameters.chanId)"/>
+                value="portletAdministrationHelper.getChannelDefinitionForm(requestParameters.chanId.replace('chan', ''))"/>
             <set name="flowScope.channelId"
-                value="requestParameters.chanId"/>
+                value="requestParameters.chanId.replace('chan', '')"/>
         </transition>
     </view-state>
     
@@ -57,7 +57,7 @@
                 value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person"
                 value="personManager.getPerson(servletRequest)"/>
-            <evaluate expression="channelTypeService.removePortletRegistration(flowScope.channelId,flashScope.person)"/>
+            <evaluate expression="portletAdministrationHelper.removePortletRegistration(flowScope.channelId,flashScope.person)"/>
         </transition>
         <transition on="cancel" to="listChannels"/>
     </view-state>

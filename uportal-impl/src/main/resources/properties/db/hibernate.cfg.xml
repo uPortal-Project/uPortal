@@ -29,12 +29,16 @@
         <mapping class="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluator" />
         <mapping class="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory" />
         <mapping class="org.jasig.portal.layout.dlm.providers.Paren" />
+        <mapping class="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl" />
+        <mapping class="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" />
         
         <class-cache class="org.jasig.portal.layout.dlm.Evaluator" usage="nonstrict-read-write"/>
+        <class-cache class="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl" usage="nonstrict-read-write"/>
+        <class-cache class="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" usage="nonstrict-read-write"/>

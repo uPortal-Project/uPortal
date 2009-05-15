@@ -14,12 +14,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.ChannelCategory;
-import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
@@ -37,8 +39,6 @@ import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.cache.CacheFactory;
 import org.jasig.portal.utils.cache.CacheFactoryLocator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -764,7 +764,7 @@ throws AuthorizationException
                         ChannelCategory category = crs.getChannelCategory(permissionTarget);
                         if (category != null) {
                             // determine if the target channel is a deepMemberOf the returned categories
-                            for (ChannelDefinition channel : crs.getAllChildChannels(category)) {
+                            for (IChannelDefinition channel : crs.getAllChildChannels(category)) {
                                 if (target.equals(IPermission.CHANNEL_PREFIX + channel.getId())) {
                                     al.add(perms[i]);
                                     bFound = true;

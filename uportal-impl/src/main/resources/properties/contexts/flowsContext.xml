@@ -48,11 +48,15 @@
     <bean id="identitySwapperHelper" class="org.jasig.portal.portlets.swapper.IdentitySwapperHelperImpl" />
     
     <!-- Beans for the edit-portlet flow -->
-    <bean id="channelTypeService" class="org.jasig.portal.portlets.portletadmin.PortletAdministrationService"/>
+    <bean id="portletAdministrationHelper" class="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper">
+        <property name="channelRegistryStore" ref="channelRegistryStore"/>
+        <property name="channelPublishingService" ref="channelPublishingService"/>
+        <property name="optionalContainerServices" ref="optionalContainerServices"/>
+    </bean>
     
     <bean id="channelValidator"
         class="org.jasig.portal.portlets.portletadmin.ChannelDefinitionFormValidator">
-        <property name="channelTypeService" ref="channelTypeService"/>
+        <property name="portletAdministrationHelper" ref="portletAdministrationHelper"/>
     </bean>
     
     

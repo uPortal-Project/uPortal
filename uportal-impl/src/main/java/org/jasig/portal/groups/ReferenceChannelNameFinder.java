@@ -8,11 +8,11 @@ package  org.jasig.portal.groups;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.IChannelRegistryStore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.channel.IChannelDefinition;
 
 /**
  * Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>.
@@ -48,7 +48,7 @@ public class ReferenceChannelNameFinder
      */
     public String getName (String key) throws Exception {
         IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-        ChannelDefinition cd = crs.getChannelDefinition(Integer.parseInt(key));
+        IChannelDefinition cd = crs.getChannelDefinition(Integer.parseInt(key));
         return  cd.getName();
     }
 

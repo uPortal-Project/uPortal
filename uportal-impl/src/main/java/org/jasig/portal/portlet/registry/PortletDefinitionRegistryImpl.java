@@ -15,9 +15,9 @@ import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletAppDD;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.apache.pluto.spi.optional.PortletRegistryService;
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -175,18 +175,18 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
      */
     public Tuple<String, String> getPortletDescriptorKeys(IPortletDefinition portletDefinition) {
         final int channelDefinitionId = portletDefinition.getChannelDefinitionId();
-        final ChannelDefinition channelDefinition = this.getChannelDefinition(channelDefinitionId);
+        final IChannelDefinition channelDefinition = this.getChannelDefinition(channelDefinitionId);
         if (channelDefinition == null) {
             throw new DataRetrievalFailureException("No ChannelDefinition exists for the specified channelDefinitionId=" + channelDefinitionId);
         }
         
         final String portletApplicationId;
-        final ChannelParameter isFrameworkPortletParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
+        final IChannelParameter isFrameworkPortletParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
         if (isFrameworkPortletParam != null && Boolean.valueOf(isFrameworkPortletParam.getValue())) {
             portletApplicationId = this.servletContext.getContextPath();
         }
         else {
-            final ChannelParameter portletApplicaitonIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+            final IChannelParameter portletApplicaitonIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
             if (portletApplicaitonIdParam == null) {
                 throw new DataRetrievalFailureException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "'. ChannelDefinition=" + channelDefinition);
             }
@@ -194,7 +194,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
             portletApplicationId = portletApplicaitonIdParam.getValue();
         }
         
-        final ChannelParameter portletNameParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
+        final IChannelParameter portletNameParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
         if (portletNameParam == null) {
             throw new DataRetrievalFailureException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "'. ChannelDefinition=" + channelDefinition);
         }
@@ -216,7 +216,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getChannelDefinition(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
-    public ChannelDefinition getChannelDefinition(IPortletDefinitionId portletDefinitionId) {
+    public IChannelDefinition getChannelDefinition(IPortletDefinitionId portletDefinitionId) {
         final IPortletDefinition portletDefinition = this.getPortletDefinition(portletDefinitionId);
         final int channelDefinitionId = portletDefinition.getChannelDefinitionId();
         return this.getChannelDefinition(channelDefinitionId);
@@ -225,9 +225,9 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /**
      * Get the ChannelDefinition for the specified channelPublishId
      */
-    protected ChannelDefinition getChannelDefinition(int channelDefinitionId) {
+    protected IChannelDefinition getChannelDefinition(int channelDefinitionId) {
         //Lookup the ChannelDefinition
-        final ChannelDefinition channelDefinition;
+        final IChannelDefinition channelDefinition;
         try {
             channelDefinition = this.channelRegistryStore.getChannelDefinition(channelDefinitionId);
         }

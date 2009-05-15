@@ -6,7 +6,10 @@
 package org.jasig.portal;
 
 import java.util.Date;
+import java.util.List;
 
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.security.IPerson;
 
 /**
@@ -22,7 +25,7 @@ public interface IChannelRegistryStore {
    * @return the new channel type
    * @throws java.lang.Exception
    */
-  public ChannelType newChannelType() throws Exception;
+  public IChannelType newChannelType();
 
   /**
    * Get the channel type associated with a particular identifier.
@@ -30,21 +33,21 @@ public interface IChannelRegistryStore {
    * @return channelType the channel type
    * @throws java.lang.Exception
    */
-  public ChannelType getChannelType(int channelTypeId) throws Exception;
+  public IChannelType getChannelType(int channelTypeId);
 
   /**
    * Returns an array of ChannelTypes.
    * @return the list of publishable channel types
    * @throws java.lang.Exception
    */
-  public ChannelType[] getChannelTypes() throws Exception;
+  public List<IChannelType> getChannelTypes();
 
   /**
    * Persists a channel type.
    * @param chanType a channel type
    * @throws java.lang.Exception
    */
-  public void saveChannelType(ChannelType chanType) throws Exception;
+  public IChannelType saveChannelType(IChannelType chanType);
 
   /**
    * Deletes a channel type.  The deletion will only succeed if no existing
@@ -52,14 +55,14 @@ public interface IChannelRegistryStore {
    * @param chanType a channel type
    * @throws java.lang.Exception
    */
-  public void deleteChannelType(ChannelType chanType) throws Exception;
+  public void deleteChannelType(IChannelType chanType);
 
   /**
    * Create a new ChannelDefinition object.
    * @return the new channel definition
    * @throws java.lang.Exception
    */
-  public ChannelDefinition newChannelDefinition() throws Exception;
+  public IChannelDefinition newChannelDefinition();
 
   /**
    * Create a new ChannelDefinition object.
@@ -67,7 +70,7 @@ public interface IChannelRegistryStore {
    * @return the new channel definition
    * @throws java.lang.Exception
    */
-  public ChannelDefinition newChannelDefinition(int id) throws Exception;
+  public IChannelDefinition newChannelDefinition(int id);
 
   /**
    * Get a channel definition.
@@ -75,7 +78,7 @@ public interface IChannelRegistryStore {
    * @return a definition of the channel or <code>null</code> if no matching channel definition can be found
    * @throws java.lang.Exception
    */
-  public ChannelDefinition getChannelDefinition(int channelPublishId) throws Exception;
+  public IChannelDefinition getChannelDefinition(int channelPublishId);
 
   /**
    * Get a channel definition.  If there is more than one channel definition
@@ -84,28 +87,28 @@ public interface IChannelRegistryStore {
    * @return a definition of the channel or <code>null</code> if no matching channel definition can be found
    * @throws java.lang.Exception
    */
-  public ChannelDefinition getChannelDefinition(String channelFunctionalName) throws Exception;
+  public IChannelDefinition getChannelDefinition(String channelFunctionalName);
 
   /**
    * Get all channel definitions including ones that haven't been approved.
    * @return channelDefs, the channel definitions
    * @throws java.lang.Exception
    */
-  public ChannelDefinition[] getChannelDefinitions() throws Exception;
+  public List<IChannelDefinition> getChannelDefinitions();
 
   /**
    * Persists a channel definition.
    * @param channelDef the channel definition
    * @throws java.lang.Exception
    */
-  public void saveChannelDefinition(ChannelDefinition channelDef) throws Exception;
+  public void saveChannelDefinition(IChannelDefinition channelDef);
 
   /**
    * Permanently deletes a channel definition from the store.
    * @param channelDef the channel definition
    * @throws java.lang.Exception
    */
-  public void deleteChannelDefinition(ChannelDefinition channelDef) throws Exception;
+  public void deleteChannelDefinition(IChannelDefinition channelDef);
 
   /**
    * Sets a channel definition as "approved".  This effectively makes a
@@ -116,7 +119,7 @@ public interface IChannelRegistryStore {
    * @param approveDate the date when the channel definition should be approved (can be future dated)
    * @throws java.lang.Exception
    */
-  public void approveChannelDefinition(ChannelDefinition channelDef, IPerson approver, Date approveDate) throws Exception;
+  public void approveChannelDefinition(IChannelDefinition channelDef, IPerson approver, Date approveDate);
 
 
   /**
@@ -126,14 +129,14 @@ public interface IChannelRegistryStore {
    * @param channelDef the channel definition
    * @throws java.lang.Exception
    */
-  public void disapproveChannelDefinition(ChannelDefinition channelDef) throws Exception;
+  public void disapproveChannelDefinition(IChannelDefinition channelDef);
 
   /**
    * Creates a new channel category.
    * @return the new channel category
    * @throws java.lang.Exception
    */
-  public ChannelCategory newChannelCategory() throws Exception;
+  public ChannelCategory newChannelCategory();
 
   /**
    * Creates a new channel category with the specified values.
@@ -146,7 +149,7 @@ public interface IChannelRegistryStore {
   public ChannelCategory newChannelCategory( String name,
                                              String description,
                                              String creatorId )
-      throws Exception;
+     ;
 
   /**
    * Gets an existing channel category.
@@ -154,70 +157,70 @@ public interface IChannelRegistryStore {
    * @return the channel category
    * @throws java.lang.Exception
    */
-  public ChannelCategory getChannelCategory(String channelCategoryId) throws Exception;
+  public ChannelCategory getChannelCategory(String channelCategoryId);
 
   /**
    * Gets top level channel category
    * @return the new channel category
    * @throws java.lang.Exception
    */
-  public ChannelCategory getTopLevelChannelCategory() throws Exception;
+  public ChannelCategory getTopLevelChannelCategory();
 
   /**
    * Recursively gets all child channel categories for a parent category.
    * @return channelCategories the children categories
    * @throws java.lang.Exception
    */
-  public ChannelCategory[] getAllChildCategories(ChannelCategory parent) throws Exception;
+  public ChannelCategory[] getAllChildCategories(ChannelCategory parent);
 
   /**
    * Recursively gets all child channel definitions for a parent category.
    * @return channelDefinitions the children channel definitions
    * @throws java.lang.Exception
    */
-  public ChannelDefinition[] getAllChildChannels(ChannelCategory parent) throws Exception;
+  public IChannelDefinition[] getAllChildChannels(ChannelCategory parent);
 
   /**
    * Gets all child channel categories for a parent category.
    * @return channelCategories the children categories
    * @throws java.lang.Exception
    */
-  public ChannelCategory[] getChildCategories(ChannelCategory parent) throws Exception;
+  public ChannelCategory[] getChildCategories(ChannelCategory parent);
 
   /**
    * Gets all child channel definitions for a parent category.
    * @return channelDefinitions the children channel definitions
    * @throws java.lang.Exception
    */
-  public ChannelDefinition[] getChildChannels(ChannelCategory parent) throws Exception;
+  public IChannelDefinition[] getChildChannels(ChannelCategory parent);
 
   /**
    * Gets the immediate parent categories of this category.
    * @return parents, the parent categories.
    * @throws java.lang.Exception
    */
-  public ChannelCategory[] getParentCategories(ChannelCategory child) throws Exception;
+  public ChannelCategory[] getParentCategories(ChannelCategory child);
 
   /**
    * Gets the immediate parent categories of this channel definition.
    * @return the parent categories.
    * @throws java.lang.Exception
    */
-  public ChannelCategory[] getParentCategories(ChannelDefinition child) throws Exception;
+  public ChannelCategory[] getParentCategories(IChannelDefinition child);
 
   /**
    * Persists a channel category.
    * @param category the channel category to persist
    * @throws java.lang.Exception
    */
-  public void saveChannelCategory(ChannelCategory category) throws Exception;
+  public void saveChannelCategory(ChannelCategory category);
 
   /**
    * Deletes a channel category.
    * @param category the channel category to delete
    * @throws java.lang.Exception
    */
-  public void deleteChannelCategory(ChannelCategory category) throws Exception;
+  public void deleteChannelCategory(ChannelCategory category);
 
   /**
    * Makes one category a child of another.
@@ -225,7 +228,7 @@ public interface IChannelRegistryStore {
    * @param destination the destination category
    * @throws java.lang.Exception
    */
-  public void addCategoryToCategory(ChannelCategory source, ChannelCategory destination) throws Exception;
+  public void addCategoryToCategory(ChannelCategory source, ChannelCategory destination);
 
   /**
    * Makes one category a child of another.
@@ -233,7 +236,7 @@ public interface IChannelRegistryStore {
    * @param parent the category to remove from
    * @throws java.lang.Exception
    */
-  public void removeCategoryFromCategory(ChannelCategory child, ChannelCategory parent) throws Exception;
+  public void removeCategoryFromCategory(ChannelCategory child, ChannelCategory parent);
 
   /**
    * Associates a channel definition with a category.
@@ -241,7 +244,7 @@ public interface IChannelRegistryStore {
    * @param category the channel category to which to associate the channel definition
    * @throws java.lang.Exception
    */
-  public void addChannelToCategory(ChannelDefinition channelDef, ChannelCategory category) throws Exception;
+  public void addChannelToCategory(IChannelDefinition channelDef, ChannelCategory category);
 
   /**
    * Disassociates a channel definition from a category.
@@ -249,7 +252,7 @@ public interface IChannelRegistryStore {
    * @param category the channel category from which to disassociate the channel definition
    * @throws java.lang.Exception
    */
-  public void removeChannelFromCategory(ChannelDefinition channelDef, ChannelCategory category) throws Exception;
+  public void removeChannelFromCategory(IChannelDefinition channelDef, ChannelCategory category);
 
 }
 

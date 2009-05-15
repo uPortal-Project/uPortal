@@ -14,11 +14,11 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -386,9 +386,9 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
             IChannelRegistryStore crs = ChannelRegistryStoreFactory
                 .getChannelRegistryStoreImpl();
             int pubId = Integer.parseInt(getChannelPublishId());
-            ChannelDefinition def = crs
+            IChannelDefinition def = crs
                     .getChannelDefinition(pubId);
-            ChannelParameter parm = def.getParameter(parameterName);
+            IChannelParameter parm = def.getParameter(parameterName);
 
             if (parm == null) // ad-hoc parm so delete
             {

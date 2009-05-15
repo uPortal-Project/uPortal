@@ -18,17 +18,6 @@
  |   - Settings defined in classpath://properties/db/entities/import.properties
  |
  +-->
-<with-attribute key="ENTITY_TYPE" value="${valueOf(entity-type)}">
-    <choose>
-        <when test="${groovy(ENTITY_TYPE.equals('org.jasig.portal.ChannelDefinition'))}">
-            <delete-node node="${singleNode(entity-type)}"/>
-            <append-node sibling="${singleNode(name)}">
-                <entity-type>org.jasig.portal.channel.IChannelDefinition</entity-type>
-            </append-node>
-            <crn location="import-group_membership_v3-2.crn"/>
-        </when>
-        <otherwise>
-            <crn location="import-group_membership_v3-2.crn"/>
-        </otherwise>
-    </choose>
-</with-attribute>
+<groovy>
+    <script>entityTypesSingleton.addEntityTypeIfNecessary(${valueOf(name)}.class, '${valueOf(desc-name)}')</script>
+</groovy>

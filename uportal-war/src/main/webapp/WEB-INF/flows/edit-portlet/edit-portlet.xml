@@ -17,7 +17,7 @@
      -->
     <on-start>
         <set name="flowScope.channelTypes" 
-            value="channelTypeService.getRegisteredChannelTypes()"/>
+            value="portletAdministrationHelper.getRegisteredChannelTypes()"/>
         <set name="flowScope.completed" value="channel.id > 0"/>
         <set name="flowScope.groupNames" 
             value="groupsSelectorHelper.getGroupNames(channel.groups)"/>
@@ -36,7 +36,7 @@
         <transition on="next" to="afterChooseType">
             <!-- Set default parameters based on channel type -->
             <set name="flowScope.cpd" 
-                value="channelTypeService.getChannelType(channel.typeId)"/>
+                value="portletAdministrationHelper.getChannelType(channel.typeId)"/>
             <evaluate expression="channel.setChannelPublishingDefinition(cpd)"/>
         </transition>
     </view-state>
@@ -48,10 +48,10 @@
     
     <view-state id="choosePortlet">
         <on-render>
-            <set name="flashScope.contexts" value="channelTypeService.getPortletApplications()"/>
+            <set name="flashScope.contexts" value="portletAdministrationHelper.getPortletApplications()"/>
         </on-render>
         <transition on="next" to="basicInfo" validate="false" bind="false">
-            <evaluate expression="channelTypeService.prepopulatePortlet(requestParameters.application, requestParameters.portlet, channel)"/>
+            <evaluate expression="portletAdministrationHelper.prepopulatePortlet(requestParameters.application, requestParameters.portlet, channel)"/>
         </transition>
     </view-state>
     
@@ -139,7 +139,7 @@
     <view-state id="reviewPortlet">
         <on-entry>
             <set name="flowScope.cpd" 
-                value="channelTypeService.getChannelType(channel.typeId)"/>
+                value="portletAdministrationHelper.getChannelType(channel.typeId)"/>
         </on-entry>
         
         <!-- edit transitions -->
@@ -157,7 +157,7 @@
                 value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person" 
                 value="personManager.getPerson(servletRequest)"/>
-            <evaluate expression="channelTypeService.savePortletRegistration(channel, person)"></evaluate>
+            <evaluate expression="portletAdministrationHelper.savePortletRegistration(channel, person)"></evaluate>
         </transition>
         
         <!-- cancel our portlet edit and exit the sub-flow -->

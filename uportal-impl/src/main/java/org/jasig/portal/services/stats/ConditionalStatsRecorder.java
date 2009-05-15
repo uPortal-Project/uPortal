@@ -7,8 +7,8 @@ package org.jasig.portal.services.stats;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
@@ -137,7 +137,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordChannelDefinitionPublished(IPerson person, ChannelDefinition channelDef) {
+    public void recordChannelDefinitionPublished(IPerson person, IChannelDefinition channelDef) {
         if (this.flags.isRecordChannelDefinitionPublished()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -147,7 +147,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordChannelDefinitionModified(IPerson person, ChannelDefinition channelDef) {
+    public void recordChannelDefinitionModified(IPerson person, IChannelDefinition channelDef) {
         if (this.flags.isRecordChannelDefinitionModified()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -157,7 +157,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordChannelDefinitionRemoved(IPerson person, ChannelDefinition channelDef) {
+    public void recordChannelDefinitionRemoved(IPerson person, IChannelDefinition channelDef) {
         if (this.flags.isRecordChannelDefinitionRemoved()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");

@@ -5,16 +5,6 @@
  */
 package org.jasig.portal.io;
 
-import org.dom4j.Element;
-
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupConstants;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.GroupService;
-
 import org.danann.cernunnos.EntityConfig;
 import org.danann.cernunnos.Formula;
 import org.danann.cernunnos.Phrase;
@@ -24,6 +14,14 @@ import org.danann.cernunnos.SimpleFormula;
 import org.danann.cernunnos.SimpleReagent;
 import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
+import org.dom4j.Element;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.GroupService;
 
 public class GetMemberKeyPhrase implements Phrase {
 
@@ -64,12 +62,12 @@ public class GetMemberKeyPhrase implements Phrase {
 
             // Next see if it's a <channel> element...
             if (e.getName().equals("channel")) {
-                ChannelDefinition def = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(e.getText());
+                IChannelDefinition def = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(e.getText());
                 return String.valueOf(def.getId());
             }
 
             // Must be a group...
-            Class[] leafTypes = new Class[] {IPerson.class, ChannelDefinition.class};
+            Class[] leafTypes = new Class[] {IPerson.class, IChannelDefinition.class};
             for (int i=0; i < leafTypes.length && rslt == null; i++) {
                 EntityIdentifier[] eis = GroupService.searchForGroups(e.getText(), IGroupConstants.IS, leafTypes[i]);
                 if (eis.length == 1) {

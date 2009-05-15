@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.tools.chanpub.ChannelPublisher;
 import org.jasig.portal.tools.chanpub.IChannelPublisher;
 import org.xml.sax.Attributes;
@@ -100,7 +100,7 @@ public class DefaultChanPubInnerHandler
                 final IChannelPublisher publisher =
                     ChannelPublisher.getChannelArchiveInstance();
 
-                ChannelDefinition chanDef = null;
+                IChannelDefinition chanDef = null;
 
                 chanDef = publisher.publishChannel(is);
 

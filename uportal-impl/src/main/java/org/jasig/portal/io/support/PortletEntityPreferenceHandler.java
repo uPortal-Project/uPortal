@@ -5,7 +5,6 @@
  */
 package org.jasig.portal.io.support;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -16,8 +15,8 @@ import java.util.Map.Entry;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -29,7 +28,6 @@ import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 
 /**
  * Import/Export helper bean for dealing with portlet entity preferences
@@ -138,14 +136,9 @@ public class PortletEntityPreferenceHandler {
     
     protected IPortletEntity getPortletEntity(String fName, String channelSubscribeId, int userId) {
         //Load the channel definition
-        final ChannelDefinition channelDefinition;
+        final IChannelDefinition channelDefinition;
         try {
             channelDefinition = this.channelRegistryStore.getChannelDefinition(fName);
-        }
-        catch (SQLException sqle) {
-            //Try to provide a more meaningful exception
-            final SQLErrorCodeSQLExceptionTranslator translator = new SQLErrorCodeSQLExceptionTranslator(this.dataSource);
-            throw translator.translate("Failed to retrieve ChannelDefinition for fName='" + fName + "'", "UNKNOWN", sqle);
         }
         catch (Exception e) {
             throw new DataRetrievalFailureException("Failed to retrieve ChannelDefinition for fName='" + fName + "'", e);

@@ -9,9 +9,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="channelRegistryStore" class="org.jasig.portal.RDBMChannelRegistryStore">
-        <property name="databaseMetadata" ref="PortalDB.metadata" />
-        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
-        <property name="entityCachingService" ref="entityCachingService" />
+    <bean id="channelRegistryStore" class="org.jasig.portal.channel.JpaChannelRegistryStore">
+        <property name="channelDao" ref="channelDefinitionDao"/>
+        <property name="channelTypeDao" ref="channelTypeDao"/>
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry"/>
     </bean>
+    
+    <bean id="channelPublishingService" class="org.jasig.portal.channel.ChannelPublishingServiceImpl">
+        <property name="channelRegistryStore" ref="channelRegistryStore"/>
+    </bean>
+    
 </beans>

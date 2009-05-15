@@ -5,14 +5,14 @@
  */
 package org.jasig.portal.events.support;
 
-import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.security.IPerson;
 
 public final class ModifiedChannelDefinitionPortalEvent extends ChannelPortalEvent {
     private static final long serialVersionUID = 1L;
 
-	public ModifiedChannelDefinitionPortalEvent(final Object source, final IPerson person, final ChannelDefinition channelDefinition) {
+	public ModifiedChannelDefinitionPortalEvent(final Object source, final IPerson person, final IChannelDefinition channelDefinition) {
 		super(source, person, channelDefinition, EventType.getEventType("CHANNEL_DEFINITION_MODIFIED"));
     }
 

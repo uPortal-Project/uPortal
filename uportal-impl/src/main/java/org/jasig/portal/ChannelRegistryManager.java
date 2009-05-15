@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -18,6 +19,9 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.ModifiedChannelDefinitionPortalEvent;
 import org.jasig.portal.events.support.PublishedChannelDefinitionPortalEvent;
@@ -245,7 +249,7 @@ public class ChannelRegistryManager {
         IEntity channelDefMember = (IEntity)member;
         int channelPublishId = CommonUtils.parseInt(channelDefMember.getKey());
         if ( channelPublishId > 0 ) {
-         ChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
+         IChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
          if (channelDef != null) {
           // Make sure channel is approved
           Date approvalDate = channelDef.getApprovalDate();
@@ -296,7 +300,7 @@ public class ChannelRegistryManager {
    * @param channelDef a channel definition
    * @return the XML representing this channel definition
    */
-  public static Element getChannelXML(String subscribeId, ChannelDefinition channelDef) {
+  public static Element getChannelXML(String subscribeId, IChannelDefinition channelDef) {
     Document doc = DocumentFactory.getNewDocument();
     Element channelE = doc.createElement("channel");
     channelE.setAttribute("ID", subscribeId);
@@ -324,9 +328,8 @@ public class ChannelRegistryManager {
     channelE.setAttribute("isPortlet", channelDef.isPortlet() ? "true" : "false");
     
     // Add any parameters
-    ChannelParameter[] parameters = channelDef.getParameters();
-    for (int i = 0; i < parameters.length; i++) {
-      ChannelParameter cp = parameters[i];
+    Set<IChannelParameter> parameters = channelDef.getParameters();
+    for (IChannelParameter cp : parameters) {
       Element parameterE = doc.createElement("parameter");
       parameterE.setAttribute("name", cp.getName());
       parameterE.setAttribute("value", cp.getValue());
@@ -350,7 +353,7 @@ public class ChannelRegistryManager {
    * @param channelE an XML element representing a channel definition
    * @param channelDef the channel definition to update
    */
-  public static void setChannelXML(Element channelE, ChannelDefinition channelDef) {
+  public static void setChannelXML(Element channelE, IChannelDefinition channelDef) {
     channelDef.setFName(channelE.getAttribute("fname"));
     channelDef.setName(channelE.getAttribute("name"));
     channelDef.setDescription(channelE.getAttribute("description"));
@@ -486,13 +489,13 @@ public class ChannelRegistryManager {
     Document doc = DocumentFactory.getNewDocument();
     Element channelTypesE = doc.createElement("channelTypes");
 
-    ChannelType[] channelTypes = crs.getChannelTypes();
-    for (int i = 0; i < channelTypes.length; i++) {
-      int channelTypeId = channelTypes[i].getId();
-      String javaClass = channelTypes[i].getJavaClass();
-      String name = channelTypes[i].getName();
-      String descr = channelTypes[i].getDescription();
-      String cpdUri = channelTypes[i].getCpdUri();
+    List<IChannelType> channelTypes = crs.getChannelTypes();
+    for (IChannelType channelType : channelTypes) {
+      int channelTypeId = channelType.getId();
+      String javaClass = channelType.getJavaClass();
+      String name = channelType.getName();
+      String descr = channelType.getDescription();
+      String cpdUri = channelType.getCpdUri();
 
       // <channelType>
       Element channelTypeE = doc.createElement("channelType");
@@ -559,7 +562,7 @@ public class ChannelRegistryManager {
     // Reset the channel registry cache
     channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);
 
-    ChannelDefinition channelDef = null;
+    IChannelDefinition channelDef = null;
 
     // Use current channel ID if modifying previously published channel, otherwise get a new ID
     boolean newChannel = true;
@@ -590,7 +593,7 @@ public class ChannelRegistryManager {
 
     // Delete existing category memberships for this channel   
     String chanKey = String.valueOf(channelDef.getId());
-    IEntity channelDefEntity = GroupService.getEntity(chanKey, ChannelDefinition.class);
+    IEntity channelDefEntity = GroupService.getEntity(chanKey, IChannelDefinition.class);
     Iterator iter = channelDefEntity.getAllContainingGroups();
     while (iter.hasNext()) {
         IEntityGroup group = (IEntityGroup) iter.next();
@@ -650,7 +653,7 @@ public class ChannelRegistryManager {
     // Remove the channel
     String sChannelPublishId = channelID.startsWith("chan") ? channelID.substring(4) : channelID;
     int channelPublishId = Integer.parseInt(sChannelPublishId);
-    ChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
+    IChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
     crs.disapproveChannelDefinition(channelDef);
 
     // Record that a channel has been deleted
@@ -745,6 +748,10 @@ public class ChannelRegistryManager {
 
     // Clone the original CPD document so that it doesn't get modified
     return (Document)cpd.cloneNode(true);
+  }
+  
+  public static void expireCache() {
+    channelRegistryCache.remove(CHANNEL_REGISTRY_CACHE_KEY);	  
   }
 }
 

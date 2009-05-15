@@ -7,8 +7,8 @@ package org.jasig.portal.security.xslt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.security.IPerson;
@@ -49,7 +49,7 @@ public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelp
             return false;
         }
         
-        final ChannelDefinition channelDefinition;
+        final IChannelDefinition channelDefinition;
         try {
             channelDefinition = this.channelRegistryStore.getChannelDefinition(fname);
         }
@@ -67,7 +67,7 @@ public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelp
         }
         
         final Integer channelId = channelDefinition.getId();
-        final IEntity entity = GroupService.getEntity(channelId.toString(), ChannelDefinition.class);
+        final IEntity entity = GroupService.getEntity(channelId.toString(), IChannelDefinition.class);
         if (entity == null) {
             if (this.logger.isDebugEnabled()) {
                 this.logger.debug("No channel found for id '" + channelId + "'");

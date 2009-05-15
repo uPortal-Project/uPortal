@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.xml.transform.Templates;
@@ -27,9 +28,7 @@ import javax.xml.transform.sax.TransformerHandler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelManager;
-import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.ChannelRuntimeData;
@@ -47,6 +46,9 @@ import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.channel.dao.jpa.ChannelParameterImpl;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
@@ -673,15 +675,15 @@ public class TabColumnPrefsState extends BaseState
             throws PortalException
     {
         List overridableParams = null;
-        ChannelParameter parms[] = getChannelDefParams(channelPublishId);
+        Set<IChannelParameter> parms = getChannelDefParams(channelPublishId);
 
-        if (parms != null && parms.length > 0)
+        if (parms != null && parms.size() > 0)
         {
             overridableParams = new ArrayList();
-            for (int p = 0; p < parms.length; p++)
+            for (IChannelParameter parm : parms)
             {
-                if (parms[p].getOverride())
-                    overridableParams.add(parms[p]);
+                if (parm.getOverride())
+                    overridableParams.add(parm);
             }
         }
         return overridableParams;
@@ -711,17 +713,17 @@ public class TabColumnPrefsState extends BaseState
 
         List overridableParams = null;
         Map descParms = new HashMap(channelDesc.getParameterMap());
-        ChannelParameter parms[] = getChannelDefParams(channelDesc
+        Set<IChannelParameter> parms = getChannelDefParams(channelDesc
                 .getChannelPublishId());
 
-        if (parms != null && parms.length > 0)
+        if (parms != null && parms.size() > 0)
         {
             overridableParams = new ArrayList();
-            for (int p = 0; p < parms.length; p++)
+            for (IChannelParameter parm : parms)
             {
-                if (parms[p].getOverride())
-                    overridableParams.add(parms[p]);
-                descParms.remove(parms[p].getName());
+                if (parm.getOverride())
+                    overridableParams.add(parm);
+                descParms.remove(parm.getName());
             }
         }
         if (descParms.size() > 0)
@@ -736,7 +738,7 @@ public class TabColumnPrefsState extends BaseState
                 Map.Entry e = (Entry) i.next();
                 String name = (String) e.getKey();
                 String value = (String) e.getValue();
-                ChannelParameter parm = new ChannelParameter(name, value, true);
+                IChannelParameter parm = new ChannelParameterImpl(name, value, true);
                 overridableParams.add(parm);
             }
         }
@@ -750,14 +752,14 @@ public class TabColumnPrefsState extends BaseState
      * @return
      * @throws PortalException
      */
-    private ChannelParameter[] getChannelDefParams(String id) 
+    private Set<IChannelParameter> getChannelDefParams(String id) 
     throws PortalException
     {
         IChannelRegistryStore crs = ChannelRegistryStoreFactory
                 .getChannelRegistryStoreImpl();
         id = id.startsWith("chan") ? id.substring(4) : id;
         int pubId = Integer.parseInt(id);
-        ChannelDefinition def = null;
+        IChannelDefinition def = null;
         try
         {
             def = crs.getChannelDefinition(pubId);
@@ -1539,7 +1541,7 @@ public class TabColumnPrefsState extends BaseState
       // Process params
       Iterator iter = overridableChanParams.iterator();
       while (iter.hasNext()) {
-          ChannelParameter parm = (ChannelParameter)iter.next();
+          IChannelParameter parm = (IChannelParameter)iter.next();
           String paramValue = runtimeData.getParameter(parm.getName());
           cd.setParameterValue(parm.getName(), paramValue);
       }
@@ -1552,7 +1554,7 @@ public class TabColumnPrefsState extends BaseState
         // pushing the submitted value for that param into the description
         Iterator iter = overridableChanParams.iterator();
         while (iter.hasNext()) {
-          ChannelParameter parm = (ChannelParameter)iter.next();
+          IChannelParameter parm = (IChannelParameter)iter.next();
           String paramValue = runtimeData.getParameter(parm.getName());
           channelDesc.setParameterValue(parm.getName(), paramValue);
         }

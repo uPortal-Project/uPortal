@@ -158,7 +158,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
 </div> <!-- end: portlet -->
 
-<script src="media/org/jasig/portal/flows/group-selection/groups-selector.min.js" language="JavaScript" type="text/javascript"></script>
+<script src="media/org/jasig/portal/flows/groups-selector/groups-selector.min.js" language="JavaScript" type="text/javascript"></script>
 
 <script type="text/javascript">
 	up.jQuery(function() {

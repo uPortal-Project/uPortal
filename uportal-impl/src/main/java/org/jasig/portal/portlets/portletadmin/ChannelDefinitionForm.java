@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LazyMap;
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelParameter;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.AttributeFactory;
 import org.jasig.portal.portlets.BooleanAttribute;
@@ -58,7 +58,7 @@ public class ChannelDefinitionForm implements Serializable {
 	 * 
 	 * @param def
 	 */
-	public ChannelDefinitionForm(ChannelDefinition def) {
+	public ChannelDefinitionForm(IChannelDefinition def) {
 		this.setId(def.getId());
 		this.setFname(def.getFName());
 		this.setName(def.getName());
@@ -73,7 +73,7 @@ public class ChannelDefinitionForm implements Serializable {
 		this.setHasAbout(def.hasAbout());
 		this.setSecure(def.isSecure());
 		
-		for (ChannelParameter param : def.getParameters()) {
+		for (IChannelParameter param : def.getParameters()) {
 			this.parameters.put(param.getName(),
 					new Attribute(param.getValue()));
 			this.parameterOverrides.put(param.getName(), 

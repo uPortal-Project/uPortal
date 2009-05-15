@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.Transformer;
@@ -16,13 +17,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelParameter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserPreferences;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
@@ -320,10 +321,10 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
      * @param subId  the subscribe id for the ChannelDefinition.
      * @return a <code>ChannelDefinition</code>
      **/
-    protected ChannelDefinition getChannelDefinition( String subId )
+    protected IChannelDefinition getChannelDefinition( String subId )
         throws PortalException
     {
-        ChannelDefinition chanDef = (ChannelDefinition)
+        IChannelDefinition chanDef = (IChannelDefinition)
             mChanMap.get(subId);
 
         if ( null == chanDef ){
@@ -377,7 +378,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         // assign a new transient channel id
         if ( subId == null ) {
             try {
-                ChannelDefinition chanDef = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(fname);
+                IChannelDefinition chanDef = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(fname);
                 if(chanDef!=null) {
                     // assign a new id
                     subId = getNextSubscribeId();
@@ -434,7 +435,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         try
         {
             // check cache first
-            ChannelDefinition chanDef = (ChannelDefinition)mChanMap.get(nodeId);
+            IChannelDefinition chanDef = (IChannelDefinition)mChanMap.get(nodeId);
 
             if ( null == chanDef ) {
                 chanDef = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(fname);
@@ -457,10 +458,9 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
             ulnd.setHasHelp(chanDef.hasHelp());
             ulnd.setHasAbout(chanDef.hasAbout());
 
-            ChannelParameter[] parms = chanDef.getParameters();
-            for ( int i=0; i<parms.length; i++ )
+            Set<IChannelParameter> parms = chanDef.getParameters();
+            for ( IChannelParameter parm : parms )
             {
-                ChannelParameter parm = (ChannelParameter)parms[i];
                 ulnd.setParameterValue(parm.getName(),parm.getValue());
                 ulnd.setParameterOverride(parm.getName(),parm.getOverride());
             }
@@ -553,7 +553,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
                         if ( null != subscribeId && !subscribeId.equals("") && mSubIdMap.containsKey(subscribeId))
                         {
-                            ChannelDefinition chanDef = getChannelDefinition(subscribeId);
+                            IChannelDefinition chanDef = getChannelDefinition(subscribeId);
                             AttributesImpl channelAttrs = new AttributesImpl();
                             channelAttrs.addAttribute("","ID","ID","ID",subscribeId);
                             channelAttrs.addAttribute("","typeID","typeID","CDATA",
@@ -580,11 +580,10 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                             startElement("",CHANNEL,CHANNEL,channelAttrs);
 
                             // now add channel parameters
-                            ChannelParameter[] chanParms = chanDef.getParameters();
-                            for( int i=0; i<chanParms.length; i++ )
+                            Set<IChannelParameter> chanParms = chanDef.getParameters();
+                            for( IChannelParameter parm : chanParms )
                             {
                                 AttributesImpl parmAttrs = new AttributesImpl();
-                                ChannelParameter parm = (ChannelParameter)chanParms[i];
                                 parmAttrs.addAttribute("","name","name","CDATA",parm.getName());
                                 parmAttrs.addAttribute("","value","value","CDATA",parm.getValue());
 

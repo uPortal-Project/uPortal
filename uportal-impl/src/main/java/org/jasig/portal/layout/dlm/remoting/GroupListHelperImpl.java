@@ -6,9 +6,8 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.groups.IGroupMember;
@@ -30,7 +29,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		Class clazz;
 
 		if(JsonEntityBean.ENTITY_CATEGORY.equals(entityType)) {
-			clazz = ChannelDefinition.class;
+			clazz = IChannelDefinition.class;
 		} else if(JsonEntityBean.ENTITY_PERSON.equals(entityType)) {
 			clazz = IPerson.class;
 		} else if(JsonEntityBean.ENTITY_GROUP.equals(entityType)) {
@@ -147,7 +146,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 					jsonBean.addChild(new JsonEntityBean(
 							(IEntityGroup) member,
 							JsonEntityBean.ENTITY_GROUP));
-				} else if(member.getEntityType().equals(ChannelDefinition.class)) {
+				} else if(member.getEntityType().equals(IChannelDefinition.class)) {
 					jsonBean.addChild(new JsonEntityBean(
 							(IEntityGroup) member,
 							JsonEntityBean.ENTITY_CATEGORY));
@@ -183,7 +182,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 			} else {
 				return JsonEntityBean.ENTITY_PERSON;
 			}
-		} else if(entity.getEntityType().equals(ChannelDefinition.class)) {
+		} else if(entity.getEntityType().equals(IChannelDefinition.class)) {
 			return JsonEntityBean.ENTITY_CATEGORY;
 		} else {
 			/* Don't know what it is. */

@@ -10,7 +10,7 @@ import org.springframework.binding.message.MessageContext;
 
 public class ChannelDefinitionFormValidator {
 	
-	private PortletAdministrationService portletAdministrationService;
+	private PortletAdministrationHelper portletAdministrationHelper;
 
 	public void validateChooseType(ChannelDefinitionForm def, MessageContext context) {
 		if(def.getTypeId() == 0) {
@@ -34,7 +34,7 @@ public class ChannelDefinitionFormValidator {
 	}
 	
 	public void validateSetParameters(ChannelDefinitionForm def, MessageContext context) {
-		ChannelPublishingDefinition cpd = portletAdministrationService.getChannelType(def.getTypeId());
+		ChannelPublishingDefinition cpd = portletAdministrationHelper.getChannelType(def.getTypeId());
 		for (CPDStep step : cpd.getParams().getSteps()) {
 			if (step.getParameters() != null) {
 				for (CPDParameter param : step.getParameters()) {
@@ -122,8 +122,8 @@ public class ChannelDefinitionFormValidator {
 		validateChooseGroup(def, context);
 	}
 
-	public void setChannelTypeService(PortletAdministrationService channelTypeService) {
-		this.portletAdministrationService = channelTypeService;
+	public void setPortletAdministrationHelper(PortletAdministrationHelper portletAdministrationHelper) {
+		this.portletAdministrationHelper = portletAdministrationHelper;
 	}
 
 }

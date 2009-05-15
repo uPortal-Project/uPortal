@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,15 +35,16 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelCategory;
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelParameter;
 import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.ChannelType;
 import org.jasig.portal.Constants;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.channel.IChannelType;
+import org.jasig.portal.channel.dao.jpa.ChannelParameterImpl;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
@@ -210,7 +213,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
      * @return org.jasig.portal.ChannelDefinition the published channel definition
      * @throws Exception
      */
-    public ChannelDefinition publishChannel(File filename) throws Exception
+    public IChannelDefinition publishChannel(File filename) throws Exception
     {
         ChannelInfo ci = getChannelInfo(filename);
         return publishChannel(ci);
@@ -224,7 +227,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
      * @return org.jasig.portal.ChannelDefinition the published channel definition
      * @throws Exception
      */
-    public ChannelDefinition publishChannel(InputStream is) throws Exception
+    public IChannelDefinition publishChannel(InputStream is) throws Exception
     {
         ChannelInfo ci = getChannelInfo(is);
         return publishChannel(ci);
@@ -238,7 +241,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
      * @return
      * @throws Exception
      */
-    private ChannelDefinition publishChannel(ChannelInfo ci) throws Exception
+    private IChannelDefinition publishChannel(ChannelInfo ci) throws Exception
     {
 
         if (ci == null)
@@ -247,10 +250,11 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
         try {
             if (ci.chanDef.getTypeId() != -1)
             {
-                ChannelType type = crs.getChannelType(ci.chanDef.getTypeId());
+                IChannelType type = crs.getChannelType(ci.chanDef.getTypeId());
                 ci.chanDef.setJavaClass(type.getJavaClass());
             }
             crs.saveChannelDefinition(ci.chanDef);
+            ci.chanDef = crs.getChannelDefinition(ci.chanDef.getFName());
 
             // Permission for everyone to subscribe to channel
             AuthorizationService authService = AuthorizationService.instance();
@@ -553,7 +557,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 // need to look up corresponding category id
                 // ie: Applications = local.50
                 //     Entertainment = local.51
-                IEntityGroup cat = getGroup(catString, ChannelDefinition.class);
+                IEntityGroup cat = getGroup(catString, IChannelDefinition.class);
 
                 if (cat != null)
                     ci.categories[j] = crs.getChannelCategory(cat.getKey());
@@ -573,7 +577,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
      */
     private void getParameters(ChannelInfo ci, Element pele)
     {
-        final List<ChannelParameter> parameters = new LinkedList<ChannelParameter>();
+        final Set<IChannelParameter> parameters = new HashSet<IChannelParameter>();
         
         NodeList anodes = pele.getElementsByTagName("parameter");
         if (anodes.getLength() > 0)
@@ -605,14 +609,14 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 {
                     povrd = XML.getElementText((Element) ovrdnodes.item(0)).trim();
                 }
-                ChannelParameter chanParam =
-                    new ChannelParameter(pname, pvalue, RDBMServices.dbFlag(povrd));
+                IChannelParameter chanParam =
+                    new ChannelParameterImpl(pname, pvalue, RDBMServices.dbFlag(povrd));
                 chanParam.setDescription(pdescr);
                 parameters.add(chanParam);
             }
         }
         
-        ci.chanDef.replaceParameters(parameters.toArray(new ChannelParameter[parameters.size()]));
+        ci.chanDef.replaceParameters(parameters);
     }
 
 
@@ -810,16 +814,17 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             chanTypesNamesToIds = new HashMap<String, Integer>();
             chanTypesNamesToIds.put("Custom", new Integer(-1));
 
-            ChannelType[] types = crs.getChannelTypes();
-            for (int i = 0; i < types.length; i++)
-                chanTypesNamesToIds.put( types[i].getName(),
-                new Integer(types[i].getId()));
+            List<IChannelType> types = crs.getChannelTypes();
+            for (IChannelType type : types) {
+                chanTypesNamesToIds.put( type.getName(),
+                new Integer(type.getId()));
+            }
         }
     }
 
     private static class ChannelInfo
     {
-        ChannelDefinition chanDef;
+        IChannelDefinition chanDef;
         IEntityGroup[] groups;
         ChannelCategory[] categories;
         boolean fNameAccessibleOnly = false;

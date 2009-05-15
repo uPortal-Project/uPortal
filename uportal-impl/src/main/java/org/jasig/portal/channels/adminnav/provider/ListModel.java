@@ -15,7 +15,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.ChannelCacheKey;
-import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
@@ -23,6 +22,7 @@ import org.jasig.portal.Constants;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UPFileSpec;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.channels.adminnav.ILabelResolver;
 import org.jasig.portal.channels.adminnav.INavigationModel;
@@ -179,7 +179,7 @@ public class ListModel extends BaseChannel implements INavigationModel
             // now get pub ID of target channel
             IChannelRegistryStore crs =
                 ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-            ChannelDefinition chanDef = crs.getChannelDefinition(fname);
+            IChannelDefinition chanDef = crs.getChannelDefinition(fname);
             int pubId = chanDef.getId();
             
             // next build the URL for the link

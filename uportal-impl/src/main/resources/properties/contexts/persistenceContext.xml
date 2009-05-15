@@ -39,6 +39,12 @@
         <property name="portletDefinitionDao" ref="portletDefinitionDao" />
     </bean>
     
+    <bean id="channelDefinitionDao" class="org.jasig.portal.channel.dao.jpa.JpaChannelDefinitionDao">
+    </bean>
+    
+    <bean id="channelTypeDao" class="org.jasig.portal.channel.dao.jpa.JpaChannelTypeDao">
+    </bean>
+    
     <bean id="counterStore" class="org.jasig.portal.utils.PooledCounterStore">
         <property name="dataSource" ref="PortalDb" />
         <property name="transactionManager" ref="transactionManager" />
@@ -48,10 +54,10 @@
     
     <aop:config>
         <aop:pointcut id="jpaDaoExecution" 
-            expression="execution(* org.jasig.portal.portlet.dao.jpa.Jpa*Dao.*(..))"/>
+            expression="execution(* org.jasig.portal.*.dao.jpa.Jpa*Dao.*(..))"/>
                 
         <aop:pointcut id="daoExecution" 
-            expression="execution(* org.jasig.portal.portlet.dao.*.*(..))"/>
+            expression="execution(* org.jasig.portal.*.dao.*.*(..))"/>
             
         <aop:advisor advice-ref="jpaInterceptor" pointcut-ref="jpaDaoExecution"/>
             

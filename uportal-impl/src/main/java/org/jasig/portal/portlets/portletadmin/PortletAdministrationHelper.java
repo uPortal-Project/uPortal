@@ -14,10 +14,13 @@ import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.apache.pluto.descriptors.portlet.SupportsDD;
 import org.apache.pluto.internal.impl.PortletContextImpl;
 import org.apache.pluto.spi.optional.PortletRegistryService;
-import org.jasig.portal.ChannelDefinition;
-import org.jasig.portal.ChannelRegistryManager;
-import org.jasig.portal.ChannelType;
+import org.jasig.portal.ChannelCategory;
+import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelPublishingService;
+import org.jasig.portal.channel.IChannelType;
+import org.jasig.portal.channel.dao.jpa.ChannelTypeImpl;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -28,47 +31,54 @@ import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.spring.locator.OptionalContainerServicesLocator;
 import org.jasig.portal.utils.ResourceLoader;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import com.thoughtworks.xstream.XStream;
 
-public class PortletAdministrationService {
+public class PortletAdministrationHelper {
 
-	private Log log = LogFactory.getLog(PortletAdministrationService.class);
+	private Log log = LogFactory.getLog(PortletAdministrationHelper.class);
+	private IChannelRegistryStore channelRegistryStore;
 	
-	public ChannelDefinitionForm getChannelDefinitionForm(String chanId) {
+	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
+		this.channelRegistryStore = channelRegistryStore;
+	}
+
+	private OptionalContainerServices optionalContainerServices;
+
+	public void setOptionalContainerServices(
+			OptionalContainerServices optionalContainerServices) {
+		this.optionalContainerServices = optionalContainerServices;
+	}
+	
+	private IChannelPublishingService channelPublishingService;	
+
+	public void setChannelPublishingService(
+			IChannelPublishingService channelPublishingService) {
+		this.channelPublishingService = channelPublishingService;
+	}
+
+	public ChannelDefinitionForm getChannelDefinitionForm(int chanId) {
 		
-		ChannelDefinition def = new ChannelDefinition(0);
-		Element el = ChannelRegistryManager.getChannel(chanId);
-		ChannelRegistryManager.setChannelXML(el, def);
+		IChannelDefinition def = channelRegistryStore.getChannelDefinition(chanId);
+		if (def == null) {
+			def = channelRegistryStore.newChannelDefinition();
+		}
 		
 		// create the new form
 		ChannelDefinitionForm form = new ChannelDefinitionForm(def);
-		form.setId(Integer.parseInt(chanId.replace("chan", "")));
+		form.setId(def.getId());
 		
 		// if this is not a new channel, set the category and permissions
         if (form.getId() > 0) {
-			try {
-				IGroupMember entity = GroupService.getEntity(
-						String.valueOf(form.getId()), Class
-								.forName(GroupService.CHANNEL_CATEGORIES));
-				Iterator groupIter = entity.getContainingGroups();
-				while (groupIter.hasNext()) {
-					IEntityGroup parent = (IEntityGroup) groupIter.next();
-					form.addCategory(parent.getKey());
-				}
-			} catch (GroupsException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
+        	ChannelCategory[] categories = channelRegistryStore.getParentCategories(def);
+        	for (ChannelCategory cat : categories) {
+        		form.addCategory(cat.getId());
+        	}
 
 			try {
-                IPermissionManager pm = AuthorizationService.instance().newPermissionManager("UP_FRAMEWORK");
-                IAuthorizationPrincipal[] prins = pm.getAuthorizedPrincipals("SUBSCRIBE",
+                IPermissionManager pm = AuthorizationService.instance().newPermissionManager(IChannelPublishingService.FRAMEWORK_OWNER);
+                IAuthorizationPrincipal[] prins = pm.getAuthorizedPrincipals(IChannelPublishingService.SUBSCRIBER_ACTIVITY,
                         "CHAN_ID." + String.valueOf(form.getId()));
                 for (int mp = 0; mp < prins.length; mp++) {
                     form.addGroup(AuthorizationService.instance().getGroupMember(prins[mp]).getKey());
@@ -93,20 +103,35 @@ public class PortletAdministrationService {
 	 */
 	public void savePortletRegistration(ChannelDefinitionForm form,
 			IPerson publisher) throws Exception {
-
+		
 		// create the group array from the form's group list
-		IGroupMember[] groups = new IGroupMember[form.getGroups().size()];
-		for (int i = 0; i < groups.length; i++) {
-			groups[i] = GroupService.getGroupMember(form.getGroups().get(i),
+		IGroupMember[] groupMembers = new IGroupMember[form.getGroups().size()];
+		for (int i = 0; i < groupMembers.length; i++) {
+			groupMembers[i] = GroupService.getGroupMember(form.getGroups().get(i),
 					IEntityGroup.class);
 		}
 
 		// create the category array from the form's category list
-		String[] categories = form.getCategories().toArray(new String[] {});
+		String[] categoryIDs = form.getCategories().toArray(new String[form.getCategories().size()]);
 
-		// attempt to save the channel
-		ChannelRegistryManager.publishChannel(form.toXml(), categories,
-				groups, publisher);
+	    IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(form.getId());
+	    if (channelDef == null) {
+	    	channelDef = channelRegistryStore.newChannelDefinition();
+	    }
+	    channelDef.setDescription(form.getDescription());
+	    channelDef.setEditable(form.isEditable());
+	    channelDef.setFName(form.getFname());
+	    channelDef.setHasAbout(form.isHasAbout());
+	    channelDef.setHasHelp(form.isHasHelp());
+	    channelDef.setIsSecure(form.isSecure());
+	    channelDef.setJavaClass(form.getJavaClass());
+	    channelDef.setName(form.getName());
+	    channelDef.setTimeout(form.getTimeout());
+	    channelDef.setTitle(form.getTitle());
+	    channelDef.setTypeId(form.getTypeId());
+	    
+	    channelPublishingService.saveChannelDefinition(channelDef, publisher, categoryIDs, groupMembers);
+
 	}
 	
 	/**
@@ -114,13 +139,10 @@ public class PortletAdministrationService {
 	 * 
 	 * @param channelID the channel ID
 	 * @param person the person removing the channel
-	 * @throws java.lang.Exception
 	 */
-	public void removePortletRegistration(String channelID,
-			IPerson person) throws Exception {
-		
-		log.info(person + " removing channel " + channelID);
-		ChannelRegistryManager.removeChannel(channelID, person);
+	public void removePortletRegistration(int channelId, IPerson person) {
+		IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(channelId);
+		channelPublishingService.removeChannelDefinition(channelDef, person);
 	}
 	
 	/**
@@ -128,30 +150,13 @@ public class PortletAdministrationService {
 	 * 
 	 * @return
 	 */
-	public List<ChannelType> getRegisteredChannelTypes() {
-		List<ChannelType> chanTypes = new ArrayList<ChannelType>();
+	public List<IChannelType> getRegisteredChannelTypes() {
+		List<IChannelType> chanTypes = channelRegistryStore.getChannelTypes();
 		
 		// add the custom channel type
-		ChannelType custom = new ChannelType(-1);
+		ChannelTypeImpl custom = new ChannelTypeImpl(-1);
 		custom.setName("Custom");
 		chanTypes.add(custom);
-		
-		// get channel types from the ChannelRegistryManager
-		Element el = ChannelRegistryManager.getChannelTypes().getDocumentElement();
-		NodeList types = el.getElementsByTagName("channelType");
-		
-		// for each registered channel type, get it's details from the XML and
-		// add it to our list
-		for (int i = 0; i < types.getLength(); i++) {
-			Element type = (Element) types.item(i);
-			int typeId = Integer.valueOf(type.getAttribute("ID"));
-			ChannelType chanType = new ChannelType(typeId);
-			chanType.setName(type.getElementsByTagName("name").item(0).getTextContent());
-			chanType.setDescription(type.getElementsByTagName("description").item(0).getTextContent());
-			chanType.setJavaClass(type.getElementsByTagName("class").item(0).getTextContent());
-			chanType.setCpdUri(type.getElementsByTagName("cpd-uri").item(0).getTextContent());
-			chanTypes.add(chanType);
-		}
 		
 		// return the list of channel types
 		return chanTypes;
@@ -164,28 +169,20 @@ public class PortletAdministrationService {
 	 * @return
 	 */
 	public ChannelPublishingDefinition getChannelType(int channelTypeId) {
-		String cpd = null;
-		Element el = ChannelRegistryManager.getChannelTypes().getDocumentElement();
-		NodeList types = el.getElementsByTagName("channelType");
-		List<ChannelType> chanTypes = new ArrayList<ChannelType>();
-		if (channelTypeId < 0) {
-			cpd = "org/jasig/portal/portlets/portletadmin/CustomChannel.cpd";
+		String cpdUri;
+		if (channelTypeId >= 0) {
+			IChannelType type = channelRegistryStore.getChannelType(channelTypeId);
+			cpdUri = type.getCpdUri();
 		} else {
-			for (int i = 0; i < types.getLength(); i++) {
-				Element type = (Element) types.item(i);
-				int typeId = Integer.valueOf(type.getAttribute("ID"));
-				if (typeId == channelTypeId) {
-					cpd = type.getElementsByTagName("cpd-uri").item(0).getTextContent();
-				}
-			}
+			cpdUri = "org/jasig/portal/portlets/portletadmin/CustomChannel.cpd";
 		}
 		InputStream inputStream = null;
 		try {
-			inputStream = ResourceLoader.getResourceAsStream(PortletAdministrationService.class, cpd);
+			inputStream = ResourceLoader.getResourceAsStream(PortletAdministrationHelper.class, cpdUri);
 		} catch (ResourceMissingException e) {
-			e.printStackTrace();
+			log.error("Failed to locate CPD for channel type " + channelTypeId, e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Failed to load CPD for channel type " + channelTypeId, e);
 		}
 		XStream stream = new XStream();
 		stream.processAnnotations(ChannelPublishingDefinition.class);
@@ -193,8 +190,8 @@ public class PortletAdministrationService {
 		return def;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<PortletContextImpl> getPortletApplications() {
-		final OptionalContainerServices optionalContainerServices = OptionalContainerServicesLocator.getOptionalContainerServices();
 		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
 		List<PortletContextImpl> contexts = new ArrayList<PortletContextImpl>();
 		for (Iterator iter = portletRegistryService.getRegisteredPortletApplications(); iter.hasNext();) {
@@ -205,7 +202,6 @@ public class PortletAdministrationService {
 	}
 	
 	public void prepopulatePortlet(String application, String portlet, ChannelDefinitionForm form) {
-		final OptionalContainerServices optionalContainerServices = OptionalContainerServicesLocator.getOptionalContainerServices();
 		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
 		try {
 			PortletDD portletDD = portletRegistryService.getPortletDescriptor(application, portlet);

@@ -5,10 +5,11 @@
  */
 package org.jasig.portal.tools;
 
+import java.util.List;
+
 import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.ChannelType;
 import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.RDBMServices;
+import org.jasig.portal.channel.IChannelType;
 
 /**
  * <p>A tool for registering a new channel type with uPortal.
@@ -92,13 +93,13 @@ public class RegisterChannelType
       
       boolean isNew = false;
       chanRegStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-      ChannelType[] types = chanRegStore.getChannelTypes();
-      ChannelType chanType = null;
+      List<IChannelType> types = chanRegStore.getChannelTypes();
+      IChannelType chanType = null;
         
-      for(int i=0; i<types.length && chanType == null; i++)
+      for(IChannelType type : types)
       {
-          if (types[i].getCpdUri().equals(uri))
-              chanType = types[i];
+          if (type.getCpdUri().equals(uri))
+              chanType = type;
       }
       if (chanType == null) // new one being defined
       {

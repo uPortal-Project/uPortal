@@ -8,8 +8,8 @@ package org.jasig.portal.security.xslt;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelDefinition;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
@@ -59,7 +59,7 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
         
         final int channelId;
         try {
-            final ChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(channelFName);
+            final IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(channelFName);
             if (channelDefinition == null) {
                 if (this.logger.isInfoEnabled()) {
                     this.logger.info("No ChannelDefinition for fname='" + channelFName + "', returning false.");

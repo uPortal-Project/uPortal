@@ -5,7 +5,7 @@
  */
 package org.jasig.portal.events.support;
 
-import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.security.IPerson;
@@ -16,14 +16,14 @@ import org.jasig.portal.security.IPerson;
  * @since 2.6
  */
 public abstract class ChannelPortalEvent extends PortalEvent {
-	private final ChannelDefinition channelDefinition;
+	private final IChannelDefinition channelDefinition;
 	
-	public ChannelPortalEvent(final Object source, final IPerson person, final ChannelDefinition channelDefinition, final EventType eventType) {
+	public ChannelPortalEvent(final Object source, final IPerson person, final IChannelDefinition channelDefinition, final EventType eventType) {
 		super(source, person, eventType);
 		this.channelDefinition = channelDefinition;
 	}
 
-    public final ChannelDefinition getChannelDefinition() {
+    public final IChannelDefinition getChannelDefinition() {
 		return this.channelDefinition;
 	}
     

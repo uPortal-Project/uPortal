@@ -8,7 +8,7 @@ package org.jasig.portal.portlet.registry;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletAppDD;
 import org.apache.pluto.descriptors.portlet.PortletDD;
-import org.jasig.portal.ChannelDefinition;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.utils.Tuple;
@@ -112,5 +112,5 @@ public interface IPortletDefinitionRegistry {
      * @return The channel definition the specified portlet represents
      * @throws IllegalArgumentException if portletDefinitionId is null
      */
-    public ChannelDefinition getChannelDefinition(IPortletDefinitionId portletDefinitionId);
+    public IChannelDefinition getChannelDefinition(IPortletDefinitionId portletDefinitionId);
 }
