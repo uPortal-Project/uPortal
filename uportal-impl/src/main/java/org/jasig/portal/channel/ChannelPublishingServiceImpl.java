@@ -1,5 +1,6 @@
 package org.jasig.portal.channel;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
@@ -58,6 +59,12 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 	 */
 	public IChannelDefinition saveChannelDefinition(IChannelDefinition channelDef, IPerson publisher, String[] categoryIDs, IGroupMember[] groupMembers) {
 		boolean newChannel = (channelDef.getId() == 0);
+		
+	    Date now = new Date();
+	    channelDef.setPublisherId(publisher.getID());
+	    channelDef.setPublishDate(now);
+	    channelDef.setApproverId(publisher.getID());
+	    channelDef.setApprovalDate(now);
 	    channelRegistryStore.saveChannelDefinition(channelDef);
 	    channelDef = channelRegistryStore.getChannelDefinition(channelDef.getFName());
 
