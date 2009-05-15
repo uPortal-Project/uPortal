@@ -113,6 +113,14 @@ public class PortletAdministrationHelper {
 			groupMembers[i] = GroupService.getGroupMember(form.getGroups().get(i),
 					IEntityGroup.class);
 		}
+		
+		ChannelCategory[] categories = new ChannelCategory[form.getCategories().size()];
+		for (ListIterator<String> iter = form.getCategories().listIterator(); iter.hasNext();) {
+			String id = iter.next();
+			String iCatID = id.startsWith("cat") ? id.substring(3) : id;
+			categories[iter.previousIndex()] = channelRegistryStore
+					.getChannelCategory(iCatID);
+		}
 
 		// create the category array from the form's category list
 		String[] categoryIDs = form.getCategories().toArray(new String[form.getCategories().size()]);
@@ -158,7 +166,7 @@ public class PortletAdministrationHelper {
 			// TODO: add portlet preferences
 		}
 	    
-	    channelPublishingService.saveChannelDefinition(channelDef, publisher, categoryIDs, groupMembers);
+	    channelPublishingService.saveChannelDefinition(channelDef, publisher, categories, groupMembers);
 
 	}
 	

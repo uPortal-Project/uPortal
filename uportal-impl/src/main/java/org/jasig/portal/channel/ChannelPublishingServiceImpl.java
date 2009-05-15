@@ -57,7 +57,7 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.IChannelPublishingService#saveChannelDefinition(org.jasig.portal.channel.IChannelDefinition, org.jasig.portal.security.IPerson, java.lang.String[], org.jasig.portal.groups.IGroupMember[])
 	 */
-	public IChannelDefinition saveChannelDefinition(IChannelDefinition channelDef, IPerson publisher, String[] categoryIDs, IGroupMember[] groupMembers) {
+	public IChannelDefinition saveChannelDefinition(IChannelDefinition channelDef, IPerson publisher, ChannelCategory[] categories, IGroupMember[] groupMembers) {
 		boolean newChannel = (channelDef.getId() == 0);
 		
 	    Date now = new Date();
@@ -80,10 +80,7 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 	    }
 
 	    // For each category ID, add channel to category
-	    for (int i = 0; i < categoryIDs.length; i++) {
-	      categoryIDs[i] = categoryIDs[i].startsWith("cat") ? categoryIDs[i].substring(3) : categoryIDs[i];
-	      String iCatID = categoryIDs[i];
-	      ChannelCategory category = channelRegistryStore.getChannelCategory(iCatID);
+	    for (ChannelCategory category : categories) {
 	      channelRegistryStore.addChannelToCategory(channelDef, category);
 	    }
 

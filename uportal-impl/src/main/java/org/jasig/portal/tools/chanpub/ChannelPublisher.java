@@ -43,20 +43,20 @@ import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.channel.IChannelPublishingService;
 import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.dao.jpa.ChannelParameterImpl;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.locator.ChannelPublishingServiceLocator;
 import org.jasig.portal.spring.locator.JpaInterceptorLocator;
 import org.jasig.portal.utils.XML;
 import org.springframework.aop.framework.ProxyFactoryBean;
@@ -253,58 +253,30 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 IChannelType type = crs.getChannelType(ci.chanDef.getTypeId());
                 ci.chanDef.setJavaClass(type.getJavaClass());
             }
-            crs.saveChannelDefinition(ci.chanDef);
-            ci.chanDef = crs.getChannelDefinition(ci.chanDef.getFName());
 
-            // Permission for everyone to subscribe to channel
-            AuthorizationService authService = AuthorizationService.instance();
-            String target = "CHAN_ID." + ci.chanDef.getId();
-            IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
+            // retrieve the channel publishing service
+            IChannelPublishingService channelPublishingService = 
+            	ChannelPublishingServiceLocator.getIChannelPublishingService();
 
-            // Remove old permissions
-            IPermission[] oldPermissions = upm.getPermissions(SUBSCRIBER_ACTIVITY, target);
-            upm.removePermissions(oldPermissions);
-
-          // Add new permissions for this channel based on both groups and users
-          if (ci.groups != null) {
-            IPermission[] newGroupPermissions = new IPermission[ci.groups.length];
-            for (int j = 0; j < ci.groups.length; j++) {
-                IAuthorizationPrincipal authPrincipal = authService.newPrincipal(ci.groups[j]);
-                newGroupPermissions[j] = upm.newPermission(authPrincipal);
-                newGroupPermissions[j].setType(GRANT_PERMISSION_TYPE);
-                newGroupPermissions[j].setActivity(SUBSCRIBER_ACTIVITY);
-                newGroupPermissions[j].setTarget(target);
-            }
-            upm.addPermissions(newGroupPermissions);
-	  }
-          if (ci.users != null) {
-              IPermission[] newUserPermissions = new IPermission[ci.users.length];
-              for (int j=0; j < ci.users.length; j++) {
-                    IAuthorizationPrincipal authPrincipal = authService.newPrincipal(ci.users[j]);
-                    newUserPermissions[j] = upm.newPermission(authPrincipal);
-                    newUserPermissions[j].setType(GRANT_PERMISSION_TYPE);
-                    newUserPermissions[j].setActivity(SUBSCRIBER_ACTIVITY);
-                    newUserPermissions[j].setTarget(target);
-              }
-              upm.addPermissions(newUserPermissions);
-          }
-
-            // Categories
-            // First, remove channel from its categories
-            ChannelCategory[] categories = crs.getParentCategories(ci.chanDef);
-            for (int i = 0; i < categories.length; i++) {
-                crs.removeChannelFromCategory(ci.chanDef, categories[i]);
-            }
-            // Now add channel to assigned categories
-            if (ci.categories != null)
-            {
-                for (int k = 0; k < ci.categories.length; k++) {
-                    crs.addChannelToCategory(ci.chanDef, ci.categories[k]);
-                }
+            // build a combined group member array
+            IGroupMember[] groupMembers;
+            if ((ci.groups == null || ci.groups.length == 0) && (ci.users == null || ci.users.length == 0)) {
+            	groupMembers = new IGroupMember[0];
+            } else if (ci.groups == null || ci.groups.length == 0) {
+            	groupMembers = ci.users;
+            } else if (ci.users == null || ci.users.length == 0) {
+            	groupMembers = ci.groups;
+            	System.out.println("using groups");
+            } else {
+                groupMembers = new IGroupMember[ci.groups.length + ci.users.length];
+                System.arraycopy(groupMembers, 0, ci.groups, 0, ci.groups.length);
+                System.arraycopy(groupMembers, 0, ci.users, ci.groups.length, ci.users.length);
             }
 
-            // Need to approve channel
-            crs.approveChannelDefinition(ci.chanDef, systemUser, new Date());
+            // save the channel
+            if (ci.categories == null) { ci.categories = new ChannelCategory[0]; }
+            ci.chanDef = channelPublishingService
+            	.saveChannelDefinition(ci.chanDef, systemUser, ci.categories, groupMembers);
 
         } catch (Exception e) {
             log.error("publishChannel() :: Exception while attempting to publish channel to database. Channel name = " + ci.chanDef.getName());

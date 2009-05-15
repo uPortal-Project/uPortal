@@ -1,5 +1,6 @@
 package org.jasig.portal.channel;
 
+import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
 
@@ -9,7 +10,7 @@ public interface IChannelPublishingService {
 	public static final String SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
 	public static final String GRANT_PERMISSION_TYPE = "GRANT";
 
-	public IChannelDefinition saveChannelDefinition(IChannelDefinition definition, IPerson publisher, String[] categoryIDs, IGroupMember[] groupMembers);
+	public IChannelDefinition saveChannelDefinition(IChannelDefinition definition, IPerson publisher, ChannelCategory[] categories, IGroupMember[] groupMembers);
 	
 	public void removeChannelDefinition(IChannelDefinition channelDefinition, IPerson person);
 	

@@ -124,4 +124,9 @@
             class="org.jasig.portal.spring.locator.CacheFactoryLocator">
         <constructor-arg index="0" ref="cacheFactory" />
     </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.ChannelPublishingServiceLocator" 
+        class="org.jasig.portal.spring.locator.ChannelPublishingServiceLocator">
+        <constructor-arg index="0" ref="channelPublishingService" />
+    </bean>    
 </beans>
