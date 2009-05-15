@@ -53,24 +53,16 @@
                             <portletPreferences/>
                         </append-node>
                         <choose>
-                            <when test="${jexl(CHAN_TYPE_ID == -1)}">
-                                <!-- Custom Channel -->
-                                <append-node sibling="${singleNode(desc)}">
-                                    <type>Custom</type>
-                                </append-node>
-                            </when>
-                            <otherwise>
-                                <!-- Standard Channel Type -->
-                                <sql-query>
-                                    <sql>SELECT type_name FROM up_chan_type WHERE type_id = ?</sql>
-                                    <parameter value="${CHAN_TYPE_ID}"/>
-                                    <subtasks>
-                                        <append-node sibling="${singleNode(desc)}">
-                                            <type>${TYPE_NAME}</type>
-                                        </append-node>
-                                    </subtasks>
-                                </sql-query>
-                            </otherwise>
+                            <!-- Standard Channel Type -->
+                            <sql-query>
+                                <sql>SELECT type_name FROM up_chan_type WHERE type_id = ?</sql>
+                                <parameter value="${CHAN_TYPE_ID}"/>
+                                <subtasks>
+                                    <append-node sibling="${singleNode(desc)}">
+                                        <type>${TYPE_NAME}</type>
+                                    </append-node>
+                                </subtasks>
+                            </sql-query>
                         </choose>
                     </subtasks>
                 </sql-query>

@@ -248,11 +248,6 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             return null;
 
         try {
-            if (ci.chanDef.getTypeId() != -1)
-            {
-                IChannelType type = crs.getChannelType(ci.chanDef.getTypeId());
-                ci.chanDef.setJavaClass(type.getJavaClass());
-            }
 
             // retrieve the channel publishing service
             IChannelPublishingService channelPublishingService = 
@@ -784,7 +779,6 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
     {
         if (chanTypesNamesToIds == null) {
             chanTypesNamesToIds = new HashMap<String, Integer>();
-            chanTypesNamesToIds.put("Custom", new Integer(-1));
 
             List<IChannelType> types = crs.getChannelTypes();
             for (IChannelType type : types) {

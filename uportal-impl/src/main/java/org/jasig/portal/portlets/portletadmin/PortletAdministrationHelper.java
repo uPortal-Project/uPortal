@@ -188,12 +188,7 @@ public class PortletAdministrationHelper {
 	 */
 	public List<IChannelType> getRegisteredChannelTypes() {
 		List<IChannelType> chanTypes = channelRegistryStore.getChannelTypes();
-		
-		// add the custom channel type
-		ChannelTypeImpl custom = new ChannelTypeImpl(-1);
-		custom.setName("Custom");
-		chanTypes.add(custom);
-		
+
 		// return the list of channel types
 		return chanTypes;
 	}
