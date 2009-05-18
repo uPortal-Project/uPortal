@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -22,12 +24,16 @@ import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelPublishingService;
 import org.jasig.portal.channel.IChannelType;
-import org.jasig.portal.channel.dao.jpa.ChannelTypeImpl;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
+import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlets.Attribute;
+import org.jasig.portal.portlets.StringListAttribute;
+import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
+import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermissionManager;
@@ -38,11 +44,22 @@ import org.jasig.portal.utils.ResourceLoader;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * Helper methods for the portlet administration workflow.
+ * 
+ * @author Jen Bourey, jbourey@unicon.net
+ * @revision $Revision$
+ */
 public class PortletAdministrationHelper {
 
 	private Log log = LogFactory.getLog(PortletAdministrationHelper.class);
 	private IChannelRegistryStore channelRegistryStore;
 	
+	/**
+	 * Set the channel registry store
+	 * 
+	 * @param channelRegistryStore
+	 */
 	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
 		this.channelRegistryStore = channelRegistryStore;
 	}
@@ -61,10 +78,21 @@ public class PortletAdministrationHelper {
 		this.channelPublishingService = channelPublishingService;
 	}
 
+	/**
+	 * Construct a new ChannelDefinitionForm for the given IChannelDefinition id.
+	 * If a ChannelDefinition matching this ID already exists, the form will
+	 * be pre-populated with the ChannelDefinition's current configuration.  If
+	 * the ChannelDefinition does not yet exist, a new default form will be
+	 * created.
+	 * 
+	 * @param chanId
+	 * @return
+	 */
 	public ChannelDefinitionForm getChannelDefinitionForm(int chanId) {
 		
 		IChannelDefinition def = channelRegistryStore.getChannelDefinition(chanId);
 		if (def == null) {
+			// if no IChannelDefinition is found, create a new one
 			def = channelRegistryStore.newChannelDefinition();
 		}
 		
@@ -142,6 +170,7 @@ public class PortletAdministrationHelper {
 	    channelDef.setTypeId(form.getTypeId());
 	    
 	    // add channel parameters
+		List<IPortletPreference> portletPreferences = new ArrayList<IPortletPreference>();
 		for (String key : form.getParameters().keySet()) {
 			String value = form.getParameters().get(key).getValue();
 			if (!StringUtils.isBlank(value)) {
@@ -149,22 +178,24 @@ public class PortletAdministrationHelper {
 				if (form.getParameterOverrides().containsKey(key)) {
 					override = form.getParameterOverrides().get(key).getValue();
 				}
-				channelDef.addParameter(key, value, override);
+				if (key.startsWith("PORTLET.")) {
+					portletPreferences.add(new PortletPreferenceImpl(key, !override, new String[]{value}));
+				} else {
+					channelDef.addParameter(key, value, override);
+				}
 			}
 		}
 		
 		for (String key : form.getPortletPreferences().keySet()) {
-			String[] values = new String[form.getPortletPreferences().get(key).size()];
-			for (ListIterator<Attribute> iter = form.getPortletPreferences().get(key).listIterator(); iter.hasNext();) {
-				String value = iter.next().getValue();
-				values[iter.previousIndex()] = value;
-			}
+			List<String> prefValues = form.getPortletPreferences().get(key).getValue();
+			String[] values = prefValues.toArray(new String[prefValues.size()]);
 			boolean readOnly = true;
 			if (form.getPortletPreferencesOverrides().containsKey(key)) {
 				readOnly = !form.getPortletPreferencesOverrides().get(key).getValue();
 			}
-			// TODO: add portlet preferences
+			portletPreferences.add(new PortletPreferenceImpl(key, readOnly, values));
 		}
+		channelDef.replacePortletPreference(portletPreferences);
 	    
 	    channelPublishingService.saveChannelDefinition(channelDef, publisher, categories, groupMembers);
 
@@ -179,18 +210,6 @@ public class PortletAdministrationHelper {
 	public void removePortletRegistration(int channelId, IPerson person) {
 		IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(channelId);
 		channelPublishingService.removeChannelDefinition(channelDef, person);
-	}
-	
-	/**
-	 * Return a list of all currently registered channel types.
-	 * 
-	 * @return
-	 */
-	public List<IChannelType> getRegisteredChannelTypes() {
-		List<IChannelType> chanTypes = channelRegistryStore.getChannelTypes();
-
-		// return the list of channel types
-		return chanTypes;
 	}
 	
 	/**
@@ -221,6 +240,34 @@ public class PortletAdministrationHelper {
 		return def;
 	}
 	
+	/**
+	 * Get a list of the key names of the currently-set arbitrary portlet
+	 * preferences.
+	 * 
+	 * @param form
+	 * @param cpd
+	 * @return
+	 */
+	public Set<String> getArbitraryPortletPreferenceNames(ChannelDefinitionForm form) {
+		// set default values for all channel parameters
+		ChannelPublishingDefinition cpd = getChannelType(form.getTypeId());
+		Map<String, StringListAttribute> currentPrefs = form.getPortletPreferences();
+		for (CPDStep step : cpd.getParams().getSteps()) {
+			if (step.getPreferences() != null) {
+				for (CPDPreference pref : step.getPreferences()) {
+					currentPrefs.remove(pref.getName());
+				}
+			}
+		}
+		return currentPrefs.keySet();
+	}
+	
+	/**
+	 * Retreive the list of portlet application contexts currently available in
+	 * this portlet container.
+	 * 
+	 * @return list of portlet context
+	 */
 	@SuppressWarnings("unchecked")
 	public List<PortletContextImpl> getPortletApplications() {
 		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
@@ -232,6 +279,15 @@ public class PortletAdministrationHelper {
 		return contexts;
 	}
 	
+	/**
+	 * Get a portlet descriptor matching the current channel definition form.
+	 * If the current form does not represent a portlet, the application or 
+	 * portlet name fields are blank, or the portlet description cannot be 
+	 * retrieved, the method will return <code>null</code>.
+	 * 
+	 * @param form
+	 * @return
+	 */
 	public PortletDD getPortletDescriptor(ChannelDefinitionForm form) {
 		if (!form.isPortlet() || !form.getParameters().containsKey("portletApplicationId") || !form.getParameters().containsKey("portletName")) {
 			return null;
@@ -253,6 +309,14 @@ public class PortletAdministrationHelper {
 		}
 	}
 	
+	/**
+	 * Pre-populate a ChannelDefinitionForm with portlet-specific information
+	 * using the supplied portlet descriptor.
+	 * 
+	 * @param application
+	 * @param portlet
+	 * @param form
+	 */
 	public void prepopulatePortlet(String application, String portlet, ChannelDefinitionForm form) {
 		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
 		try {

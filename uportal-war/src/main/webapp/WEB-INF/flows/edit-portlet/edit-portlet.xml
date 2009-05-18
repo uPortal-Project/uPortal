@@ -17,7 +17,7 @@
      -->
     <on-start>
         <set name="flowScope.channelTypes" 
-            value="portletAdministrationHelper.getRegisteredChannelTypes()"/>
+            value="channelRegistryStore.getChannelTypes()"/>
         <set name="flowScope.completed" value="channel.id > 0"/>
         <set name="flowScope.groupNames" 
             value="groupsSelectorHelper.getGroupNames(channel.groups)"/>
@@ -42,7 +42,7 @@
     </view-state>
     
     <decision-state id="afterChooseType">
-        <if test="channel.javaClass == 'org.jasig.portal.channels.portlet.CSpringPortletAdaptor' and (channel.getParameters().get('portletApplicationId') != null or channel.getParameters().get('portletApplicationId') == '')" 
+        <if test="channel.javaClass == 'org.jasig.portal.channels.portlet.CSpringPortletAdaptor' and (channel.getParameters().get('portletApplicationId') == null or channel.getParameters().get('portletApplicationId') == '')" 
             then="choosePortlet" else="basicInfo"/>
     </decision-state>
     
@@ -65,6 +65,7 @@
     <view-state id="setParameters" model="channel">
         <on-render>
             <set name="flashScope.portlet" value="portletAdministrationHelper.getPortletDescriptor(channel)"/>
+            <set name="flashScope.arbitraryPreferences" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(channel)"/>
         </on-render>
         <transition on="back" to="basicInfo" validate="false"/>
         <transition on="next" to="chooseCategory"/>

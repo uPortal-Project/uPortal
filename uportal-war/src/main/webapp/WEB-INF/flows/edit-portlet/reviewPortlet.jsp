@@ -166,6 +166,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   </c:forEach>
                 </c:forEach>
               </c:forEach>
+            </c:forEach>
+            <c:forEach items="${ cpd.params.steps }" var="step">
+              <c:forEach items="${ step.preferences }" var="parameter">
+                <c:if test="${ parameter.modify != 'subscribeOnly' && parameter.type.display != 'hidden' && channel.portletPreferences[parameter.name].value != null && channel.portletPreferences[parameter.name].value != '' }">
+                  <tr>
+                    <td class="fl-text-align-right"><c:out value="${ parameter.label }"/>:</td>
+                    <td><a href="${ setParametersUrl }" class="pa-edit"><c:out value="${ channel.portletPreferences[parameter.name].value }"/></a></td>
+                    <td>${ channel.portletPreferencesOverrides[parameter.name].value ? 'X' : '' }</td>
+                  </tr>
+                </c:if>
+              </c:forEach>
             </c:forEach> 
           </tbody>
         </table>

@@ -9,10 +9,11 @@
 <!ELEMENT description (#PCDATA)*>
 <!ELEMENT class (#PCDATA)*>
 <!ELEMENT params (step)+>
-<!ELEMENT step (ID,name,description,(parameter)*, arbitrary-parameters*)>
+<!ELEMENT step (ID,name,description,(parameter)*,arbitrary-parameters*,(preference)*, arbitrary-preferences?)>
 <!ELEMENT ID (#PCDATA)*>
 <!ELEMENT name (#PCDATA)*>
 <!ELEMENT parameter (name,label,type,example?,description?,units?,(defaultValue)?)>
+<!ELEMENT preference (name,label,preferenceType,example?,description?,units?,(defaultValue)*)>
 
 <!--
 
@@ -55,15 +56,25 @@
 <!ELEMENT type ((length)?,(maxlength)?,(restriction)?)>
 <!ATTLIST type
 	base  (string|integer|float|boolean) #REQUIRED
-	input  (multi-choice|single-choice|text) #REQUIRED
+	input  (single-choice|text) #REQUIRED
 	display  (drop-down|radio|select-list|checkbox|text|textarea|hidden) #IMPLIED>
 
 
 <!ELEMENT length (#PCDATA)*>
 <!ELEMENT maxlength (#PCDATA)*>
 
-<!ELEMENT restriction ((value)*,(min)?,(max)?,(defaultValue)?)>
+<!ELEMENT restriction ((value)?,(min)?,(max)?,(defaultValue)?)>
 <!ATTLIST restriction type  (enumeration|range) #REQUIRED>
+
+
+<!ELEMENT preferenceType ((length)?,(maxlength)?,(preferenceRestriction)?)>
+<!ATTLIST preferenceType
+    base  (string|integer|float|boolean) #REQUIRED
+    input  (multi-choice|single-choice|multi-text|single-text) #REQUIRED
+    display  (drop-down|radio|select-list|checkbox|text|textarea|hidden) #IMPLIED>
+
+<!ELEMENT preferenceRestriction ((value)*,(min)?,(max)?,(defaultValue)*)>
+<!ATTLIST preferenceRestriction type  (enumeration|range) #REQUIRED>
 
 
 

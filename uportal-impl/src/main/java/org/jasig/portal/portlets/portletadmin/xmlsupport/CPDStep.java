@@ -22,14 +22,22 @@ public class CPDStep implements Serializable {
 	@XStreamImplicit(itemFieldName="arbitrary-parameters")
 	private List<CPDArbitraryParameter> arbitraryParameters;
 	
+	@XStreamImplicit(itemFieldName="preference")
+   	private List<CPDPreference> preferences;
+	
+	@XStreamImplicit(itemFieldName="arbitrary-preferences")
+	private List<String> arbitraryPreferences;
+	
 	public CPDStep() { }
 	
-	public CPDStep(String id, String name, String description, List<CPDParameter> parameters, List<CPDArbitraryParameter> arbitraryParameters) {
+	public CPDStep(String id, String name, String description, List<CPDParameter> parameters, List<CPDArbitraryParameter> arbitraryParameters, List<CPDPreference> preferences, List<String> arbitraryPreferences) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.parameters = parameters;
 		this.arbitraryParameters = arbitraryParameters;
+		this.preferences = preferences;
+		this.arbitraryPreferences = arbitraryPreferences;
 	}
 
 	public String getId() {
@@ -63,6 +71,14 @@ public class CPDStep implements Serializable {
 	public void setParameters(List<CPDParameter> parameters) {
 		this.parameters = parameters;
 	}
+	
+	public List<CPDPreference> getPreferences() {
+		return this.preferences;
+	}
+
+	public void setPreferences(List<CPDPreference> preferences) {
+		this.preferences = preferences;
+	}
 
 	public List<CPDArbitraryParameter> getArbitraryParameters() {
 		return arbitraryParameters;
@@ -73,5 +89,12 @@ public class CPDStep implements Serializable {
 		this.arbitraryParameters = arbitraryParameters;
 	}
 
+	public List<String> getArbitraryPreferences() {
+		return this.arbitraryPreferences;
+	}
+
+	public void setArbitraryPreferences(List<String> arbitraryPreferences) {
+		this.arbitraryPreferences = arbitraryPreferences;
+	}
 	
 }

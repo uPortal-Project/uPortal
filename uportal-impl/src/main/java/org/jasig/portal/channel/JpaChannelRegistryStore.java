@@ -116,6 +116,7 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
      */
     public void saveChannelDefinition(IChannelDefinition channelDef) {
     	channelDef = channelDao.saveChannelDefinition(channelDef);
+    	channelDef = getChannelDefinition(channelDef.getId());
     	
     	// if this channel is a portlet, save the associated portlet parameters
         if (channelDef.isPortlet()) {

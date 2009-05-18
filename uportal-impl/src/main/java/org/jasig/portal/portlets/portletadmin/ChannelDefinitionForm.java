@@ -14,8 +14,11 @@ import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.AttributeFactory;
 import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.BooleanAttributeFactory;
+import org.jasig.portal.portlets.StringListAttribute;
+import org.jasig.portal.portlets.StringListAttributeFactory;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDControl;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
+import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
 import org.jasig.portal.utils.DocumentFactory;
@@ -49,8 +52,8 @@ public class ChannelDefinitionForm implements Serializable {
 			new HashMap<String, BooleanAttribute>(), new BooleanAttributeFactory());
 	
 	@SuppressWarnings("unchecked")
-	private Map<String, List<Attribute>> portletPreferences = LazyMap.decorate(
-			new HashMap<String, List<Attribute>>(), new AttributeFactory());
+	private Map<String, StringListAttribute> portletPreferences = LazyMap.decorate(
+			new HashMap<String, StringListAttribute>(), new StringListAttributeFactory());
 
 	@SuppressWarnings("unchecked")
 	private Map<String, BooleanAttribute> portletParameterOverrides = LazyMap.decorate(
@@ -95,7 +98,7 @@ public class ChannelDefinitionForm implements Serializable {
 				for (String value : pref.getValues()) {
 					attributes.add(new Attribute(value));
 				}
-				this.portletPreferences.put(pref.getName(), attributes);
+				this.portletPreferences.put(pref.getName(), new StringListAttribute(pref.getValues()));
 				this.portletParameterOverrides.put(pref.getName(), new BooleanAttribute(!pref.isReadOnly()));
 			}
 		}
@@ -199,6 +202,45 @@ public class ChannelDefinitionForm implements Serializable {
 									new BooleanAttribute(true));
 						} else {
 							this.parameterOverrides.put(param.getName(), 
+									new BooleanAttribute(false));
+						}
+					}
+				}
+			}
+			if (step.getPreferences() != null) {
+				for (CPDPreference pref : step.getPreferences()) {
+					// if this parameter doesn't currently have a value, check
+					// for a default in the CPD
+					if (!this.portletPreferences.containsKey(pref.getName())
+							|| this.portletPreferences.get(pref.getName()).getValue().size() == 0
+							|| (this.portletPreferences.get(pref.getName()).getValue().size() == 1 && this.portletPreferences.get(pref.getName()).getValue().get(0).trim().equals(""))) {
+						
+						if (!this.portletPreferences.containsKey(pref.getName())) {
+							this.portletPreferences.put(pref.getName(), new StringListAttribute());
+						}
+						
+						// use the default value if one exists
+						if (pref.getDefaultValues().size() > 0) {
+							for (String value : pref.getDefaultValues()) {
+								this.portletPreferences.get(pref.getName()).getValue().add(value);
+							}
+						}
+							
+						// otherwise look for a default in the type restriction	
+						else if (pref.getType() != null
+								&& pref.getType().getRestriction() != null
+								&& pref.getType().getRestriction().getDefaultValues().size() > 0) {
+							for (String value : pref.getType().getRestriction().getDefaultValues()) {
+								this.portletPreferences.get(pref.getName()).getValue().add(value);
+							}
+						}
+						
+						// set parameter override value
+						if (pref.getModify().equals("subscribe")) {
+							this.parameterOverrides.put(pref.getName(), 
+									new BooleanAttribute(true));
+						} else {
+							this.parameterOverrides.put(pref.getName(), 
 									new BooleanAttribute(false));
 						}
 					}
@@ -328,11 +370,11 @@ public class ChannelDefinitionForm implements Serializable {
 		this.parameterOverrides = parameterOverrides;
 	}
 
-	public Map<String, List<Attribute>> getPortletPreferences() {
+	public Map<String, StringListAttribute> getPortletPreferences() {
 		return this.portletPreferences;
 	}
 
-	public void setPortletPreferences(Map<String, List<Attribute>> portletParameters) {
+	public void setPortletPreferences(Map<String, StringListAttribute> portletParameters) {
 		this.portletPreferences = portletParameters;
 	}
 

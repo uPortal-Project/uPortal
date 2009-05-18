@@ -5,7 +5,7 @@
 
     <on-start>
         <set name="flowScope.channelTypes" 
-            value="portletAdministrationHelper.getRegisteredChannelTypes()"/>
+            value="channelRegistryStore.getChannelTypes()"/>
     </on-start>
 
     <!-- 
