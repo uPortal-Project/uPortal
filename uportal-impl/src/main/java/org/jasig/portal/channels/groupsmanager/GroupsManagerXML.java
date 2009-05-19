@@ -255,18 +255,27 @@ public class GroupsManagerXML
          }
          apRoot.setAttribute("name", name);
       }
-      try {
-         // owner, activity, target
-         IPermission[] perms = ap.getAllPermissions(OWNER, null, null);
-         for (int yy = 0; yy < perms.length; yy++) {
-            Element prm = getPermissionXml(xmlDoc, perms[yy].getPrincipal(), perms[yy].getActivity(),
-                  perms[yy].getType(), perms[yy].getTarget());
-            apRoot.appendChild(prm);
-         }
-      } catch (org.jasig.portal.AuthorizationException ae) {
-         Utility.logMessage("ERROR", "GroupsManagerXML::getAuthorzationXml: authorization exception "
-               + ae.getMessage(), ae);
-      }
+      if (ap == null) {
+			Utility
+					.logMessage(
+							"WARN",
+							"GroupsManagerXML::getAuthorizationXml: Authorizationprincipal was null; proceeding with empty permissions");
+		} else {
+			try {
+				// owner, activity, target
+				IPermission[] perms = ap.getAllPermissions(OWNER, null, null);
+				for (int yy = 0; yy < perms.length; yy++) {
+					Element prm = getPermissionXml(xmlDoc, perms[yy]
+							.getPrincipal(), perms[yy].getActivity(), perms[yy]
+							.getType(), perms[yy].getTarget());
+					apRoot.appendChild(prm);
+				}
+			} catch (org.jasig.portal.AuthorizationException ae) {
+				Utility.logMessage("ERROR",
+						"GroupsManagerXML::getAuthorzationXml: authorization exception "
+								+ ae.getMessage(), ae);
+			}
+		}
       return  apRoot;
    }
 
@@ -642,14 +651,13 @@ public class GroupsManagerXML
     * Group elements that hold search results are non-persistent and should be treated differently.
     * For example, they do not have a "key" attribute so code that attempts to retreive
     * a GroupMember should not be attempted.
-    * @param anElem Element
+    * @param anElem Element (not null)
     * @return boolean
     */
    public static boolean isPersistentGroup(Element anElem){
       boolean rval = true;
       if (anElem == null){
-         /* @todo this should be an error */
-         Utility.logMessage("INFO", "GroupsManagerXML::isPersistentGroup(): anElem is null");
+         throw new IllegalArgumentException("anElem may not be null");
       }
       // Elements referencing non-groups (i.e. IEntities), search results, and the
       // document's root element are consider to hold information about non-persistent groups

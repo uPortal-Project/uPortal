@@ -986,7 +986,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
 
 
       CWebProxyURLFilter filter2 = CWebProxyURLFilter.newCWebProxyURLFilter(mimeType, state.runtimeData, out);
-      if (state.xmlUri.indexOf("://") != -1) {
+      if (state.xmlUri != null && state.xmlUri.indexOf("://") != -1) {
 	      AbsoluteURLFilter filter1 = AbsoluteURLFilter.newAbsoluteURLFilter(mimeType, state.xmlUri, filter2);
 	      xslt.setTarget(filter1);
       } else {
