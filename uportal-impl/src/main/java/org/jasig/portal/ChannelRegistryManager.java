@@ -147,6 +147,8 @@ public class ChannelRegistryManager {
       if (channelRegistry != null) {
         channelRegistryCache.put(CHANNEL_REGISTRY_CACHE_KEY, channelRegistry);
         log.info( "Caching channel registry.");
+      } else {
+    	  throw new PortalException("unable to get registry (null)");
       }
     }
 
@@ -680,6 +682,8 @@ public class ChannelRegistryManager {
         channelTypesCache.put(CHANNEL_TYPES_CACHE_KEY, channelTypes);
         if (log.isInfoEnabled())
             log.info( "Caching channel types.");
+      } else {
+    	  throw new PortalException("unable to get channelTypes (null)");
       }
     }
 
@@ -743,6 +747,8 @@ public class ChannelRegistryManager {
         cpdCache.put(CPD_CACHE_KEY + chanTypeID, cpd);
         if (log.isInfoEnabled())
             log.info( "Caching CPD for channel type " + chanTypeID);
+      }else {
+    	  throw new PortalException("unable to get Channel Publishing Document (null)");
       }
     }
 
