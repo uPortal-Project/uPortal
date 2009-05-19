@@ -74,7 +74,7 @@ public class CPersonAttributes extends BaseChannel implements IMimeResponse {
         for (int i = 0; i < values.length; i++) {
            if (log.isTraceEnabled())
                log.trace("type of value["+i+"] is " + values[i].getClass().getName());
-           String value = values[i].toString();
+           String value = String.valueOf(values[i]);
            Element valueE = doc.createElement("value");
            valueE.appendChild(doc.createTextNode(value));
            attributeE.appendChild(valueE);
