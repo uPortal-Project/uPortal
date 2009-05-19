@@ -34,8 +34,8 @@ public class ThreadPool extends ThreadGroup {
 	if(rl==null) {
 	    // use default resource limits
 	    limits=new ResourceLimits();
-	    rl.maxSize=10;
-	    rl.optimalSize=3;
+	    limits.maxSize=10;
+	    limits.optimalSize=3;
 	} else {
 	    limits=rl;
 	}

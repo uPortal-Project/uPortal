@@ -18,7 +18,6 @@ public final class CachingXHTMLSerializer
 {
 
     CharacterCachingWriter cacher;
-    String encoding;
 
     /**
      * Constructs a new serializer. The serializer cannot be used without
@@ -38,8 +37,7 @@ public final class CachingXHTMLSerializer
      */
     public CachingXHTMLSerializer( OutputFormat format )
     {
-        super(format != null ? format : new OutputFormat( Method.XHTML, null, false ) );
-        this.encoding=format.getEncoding();
+        super(format);
     }
 
 
@@ -53,13 +51,11 @@ public final class CachingXHTMLSerializer
      */
     public CachingXHTMLSerializer( Writer writer, OutputFormat format )
     {
-        super(format != null ? format : new OutputFormat( Method.XHTML, null, false ) );
-        CachingWriter cw=new CachingWriter(writer);
-        this.cacher=cw;
-        setOutputCharStream(cw);
-        this.encoding=format.getEncoding();
+       this(format);
+       setOutputCharStream(writer);
     }
 
+    @Override
     public void setOutputCharStream( Writer writer ) {
         CachingWriter cw=new CachingWriter(writer);
         this.cacher=cw;
@@ -76,23 +72,15 @@ public final class CachingXHTMLSerializer
      */
     public CachingXHTMLSerializer( OutputStream output, OutputFormat format )
     {
-        super(format != null ? format : new OutputFormat( Method.XHTML, null, false ) );
-        CachingOutputStream cos=new CachingOutputStream(output);
-        this.cacher=cos;
-        setOutputByteStream( cos );
-        this.encoding=format.getEncoding();
+        this(format);
+        setOutputByteStream( output );
     }
 
+    @Override
     public void setOutputByteStream( OutputStream output ) {
         CachingOutputStream cos=new CachingOutputStream(output);
         this.cacher=cos;
         super.setOutputByteStream(cos);
-    }
-
-    public void setOutputFormat( OutputFormat format )
-    {
-        super.setOutputFormat( format != null ? format : new OutputFormat( Method.XHTML, null, false ) );
-        this.encoding=format.getEncoding();
     }
 
     // caching methods
@@ -129,7 +117,7 @@ public final class CachingXHTMLSerializer
 
     public String getCache() throws UnsupportedEncodingException, IOException {
         _printer.flush();
-        return cacher.getCache(this.encoding);
+        return cacher.getCache(_format.getEncoding());
     }
     
     /**

@@ -321,7 +321,7 @@ extends BaseMarkupSerializer {
                     // If the attribute xml:space exists, determine whether
                     // to preserve spaces in this and child nodes based on
                     // its value.
-                    if (name.equals( "xml:space" )) {
+                    if ("xml:space".equals(name)) {
                         if (value.equals( "preserve" ))
                             preserveSpace = true;
                         else
