@@ -115,13 +115,17 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
      * @see org.jasig.portal.IChannelRegistryStore#saveChannelDefinition(org.jasig.portal.channel.IChannelDefinition)
      */
     public void saveChannelDefinition(IChannelDefinition channelDef) {
-    	channelDef = channelDao.saveChannelDefinition(channelDef);
-    	channelDef = getChannelDefinition(channelDef.getId());
+    	int channelId = channelDef.getId();
+    	channelDao.saveChannelDefinition(channelDef);
+    	if (channelId < 0) {
+    		IChannelDefinition newChannel = getChannelDefinition(channelDef.getId());
+    		channelId = newChannel.getId();
+    	}
     	
     	// if this channel is a portlet, save the associated portlet parameters
         if (channelDef.isPortlet()) {
             //Get or Create the portlet definition
-            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getOrCreatePortletDefinition(channelDef.getId());
+            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getOrCreatePortletDefinition(channelId);
             
             //Update the preferences of the portlet definition
             final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
