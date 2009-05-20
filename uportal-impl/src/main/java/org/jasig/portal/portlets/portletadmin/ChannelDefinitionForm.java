@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
 
 public class ChannelDefinitionForm implements Serializable {
 
-	private int id = 0;
+	private int id = -1;
 	private String fname = "";
 	private String name = "";
 	private String description = "";
@@ -86,10 +86,17 @@ public class ChannelDefinitionForm implements Serializable {
 		this.setSecure(def.isSecure());
 		
 		for (IChannelParameter param : def.getParameters()) {
-			this.parameters.put(param.getName(),
-					new Attribute(param.getValue()));
-			this.parameterOverrides.put(param.getName(), 
-					new BooleanAttribute(param.getOverride()));
+			if (def.isPortlet() && param.getName().startsWith("PORTLET.")) {
+				this.portletPreferences.put(param.getName(),
+						new StringListAttribute(new String[]{ param.getValue() }));
+				this.portletParameterOverrides.put(param.getName(), 
+						new BooleanAttribute(param.getOverride()));
+			} else {
+				this.parameters.put(param.getName(),
+						new Attribute(param.getValue()));
+				this.parameterOverrides.put(param.getName(), 
+						new BooleanAttribute(param.getOverride()));
+			}
 		}
 		
 		if (def.isPortlet()) {

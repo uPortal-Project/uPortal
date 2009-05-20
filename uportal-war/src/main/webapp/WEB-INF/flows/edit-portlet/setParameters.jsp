@@ -1,3 +1,4 @@
+<%@ taglib prefix="editPortlet" tagdir="/WEB-INF/tags/edit-portlet" %>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
@@ -73,8 +74,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <tbody>
                 <c:forEach items="${ step.parameters }" var="parameter">
                   <c:if test="${ parameter.modify != 'subscribeOnly' }">
-                    <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>
-                    <c:set var="overrideParamPath" value="parameterOverrides['${ parameter.name }'].value"/>
+                    <c:choose>
+                      <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
+                         <c:set var="paramName" value="${ fn:replace(parameter.name, 'PORTLET.', '') }"/>
+                         <c:set var="paramPath" value="portletPreferences['${ paramName }'].value"/>
+                         <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ paramName }'].value"/>
+                      </c:when>
+                      <c:otherwise>
+	                    <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>
+	                    <c:set var="overrideParamPath" value="parameterOverrides['${ parameter.name }'].value"/>
+                      </c:otherwise>
+                    </c:choose>
                     <c:choose>
                       <c:when test="${ parameter.type.display == 'hidden' }">
                         <form:hidden path="${paramPath}"/>
@@ -84,51 +94,22 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                           <td><span class="uportal-label">${ parameter.label }:</span></td>
                           <td>
                             <c:choose>
-                              <c:when test="${ parameter.type.input == 'text' }">
-                                <c:choose>
-                                  <c:when test="${ parameter.type.display == 'textarea' }">
-                                    <form:textarea path="${paramPath}"/>
-                                  </c:when>
-                                  <c:otherwise>
-                                    <form:input path="${paramPath}" size="${ parameter.type.length != '' ? parameter.type.length : defaultLength }" maxlength="${ parameter.type.maxlength != '' ? parameter.type.maxlength : defaultMaxLength }"/>
-                                  </c:otherwise>
-                                </c:choose>
+                              <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
+                                <editPortlet:parameterInput parameterType="${ parameter.type }" 
+                                  parameterPath="${ paramPath }" parameterName="${ paramName }" 
+                                  parameterValues="${ channel.portletPreferences[paramName].value }"/>
                               </c:when>
-                              <c:when test="${ parameter.type.input == 'single-choice' }">
-                                <c:choose>
-                                  <c:when test="${ parameter.type.display == 'radio' }">
-                                    <form:radiobuttons path="${paramPath}" items="${ parameter.type.restriction.values }"/>
-                                  </c:when>
-                                  <c:otherwise>
-                                    <form:select path="${paramPath}">
-                                      <c:forEach items="${ parameter.type.restriction.values }" var="value">
-                                        <form:option value="${ value.value }" label="${ value.value }" />
-                                      </c:forEach>
-                                    </form:select>
-                                  </c:otherwise>
-                                </c:choose>
-                              </c:when>
-                              <c:when test="${ parameter.type.input == 'multi-choice' }">
-                                <c:choose>
-                                  <c:when test="${ paramter.type.display == 'checkbox' }">
-                                    <form:checkboxes path="${paramPath}" items="${ parameter.type.restriction.values }"/>
-                                  </c:when>
-                                  <c:otherwise>
-                                    <form:select path="${paramPath}" multiple="true">
-                                      <c:forEach items="${ parameter.type.restriction.values }" var="value">
-                                        <form:option value="${ value.value }" label="${ value.value }" />
-                                      </c:forEach>
-                                    </form:select>
-                                  </c:otherwise>
-                                </c:choose>
-                              </c:when>
+                              <c:otherwise>
+	                            <editPortlet:parameterInput parameterType="${ parameter.type }" 
+	                              parameterPath="${ paramPath }"/>
+                              </c:otherwise>
                             </c:choose>
                           </td>
-                        <td>
-                        <c:if test="${ parameter.modify != 'publish-only' }">
-                        <form:checkbox path="${overrideParamPath}" value="true"/>
-                        </c:if>
-                        </td>
+                          <td>
+                            <c:if test="${ parameter.modify != 'publish-only' }">
+                              <form:checkbox path="${overrideParamPath}" value="true"/>
+                            </c:if>
+                          </td>
                         </tr>
                       </c:otherwise>
                     </c:choose>
@@ -139,7 +120,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </c:if> <!-- End Portlet Preferences -->
 
           <c:if test="${ channel.portlet }">
-          <c:if test="${ fn:length(step.preferences) > 0 }">
+             <c:if test="${ fn:length(step.preferences) > 0 }">
                 <h4>Portlet.xml Preferences</h4>
                 <div>
                     <table summary="This table lists a portlet's preferences.">
@@ -154,88 +135,54 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
                           <tr>
                             <td>${ pref.name }</td>
-                            <td></td>
+                            <td>${ pref.values }</td>
                             <td>${ !pref.readOnly }</td>
                           </tr>
                         </c:forEach>
                       </tbody>
                     </table>
                 </div>
-            <table summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
-              <thead>
-                <tr>
-                  <th><spring:message code="setParameters.parametersHeading"/></th>
-                  <th><spring:message code="setParameters.valueHeading"/></th>
-                  <th><spring:message code="setParameters.userEditableHeading"/></th>
-                </tr>
-              </thead>
-              <tbody>
-                <c:forEach items="${ step.preferences }" var="parameter">
-                  <c:if test="${ parameter.modify != 'subscribeOnly' }">
-                    <c:set var="paramPath" value="portletPreferences['${ parameter.name }'].value"/>
-                    <c:set var="overrideParamPath" value="portletPreferenceOverrides['${ parameter.name }'].value"/>
-                    <c:choose>
-                      <c:when test="${ parameter.type.display == 'hidden' }">
-                        <form:hidden path="${paramPath}"/>
-                      </c:when>
-                      <c:otherwise>
-                        <tr>
-                          <td><span class="uportal-label">${ parameter.label }:</span></td>
-                          <td>
-                            <c:choose>
-                              <c:when test="${ parameter.type.input == 'text' }">
-                                <c:choose>
-                                  <c:when test="${ parameter.type.display == 'textarea' }">
-                                    <form:textarea path="${paramPath}"/>
-                                  </c:when>
-                                  <c:otherwise>
-                                    <form:input path="${paramPath}" size="${ parameter.type.length != '' ? parameter.type.length : defaultLength }" maxlength="${ parameter.type.maxlength != '' ? parameter.type.maxlength : defaultMaxLength }"/>
-                                  </c:otherwise>
-                                </c:choose>
-                              </c:when>
-                              <c:when test="${ parameter.type.input == 'single-choice' }">
-                                <c:choose>
-                                  <c:when test="${ parameter.type.display == 'radio' }">
-                                    <form:radiobuttons path="${paramPath}" items="${ parameter.type.restriction.values }"/>
-                                  </c:when>
-                                  <c:otherwise>
-                                    <form:select path="${paramPath}">
-                                      <c:forEach items="${ parameter.type.restriction.values }" var="value">
-                                        <form:option value="${ value.value }" label="${ value.value }" />
-                                      </c:forEach>
-                                    </form:select>
-                                  </c:otherwise>
-                                </c:choose>
-                              </c:when>
-                              <c:when test="${ parameter.type.input == 'multi-choice' }">
-                                <c:choose>
-                                  <c:when test="${ paramter.type.display == 'checkbox' }">
-                                    <form:checkboxes path="${paramPath}" items="${ parameter.type.restriction.values }"/>
-                                  </c:when>
-                                  <c:otherwise>
-                                    <form:select path="${paramPath}" multiple="true">
-                                      <c:forEach items="${ parameter.type.restriction.values }" var="value">
-                                        <form:option value="${ value.value }" label="${ value.value }" />
-                                      </c:forEach>
-                                    </form:select>
-                                  </c:otherwise>
-                                </c:choose>
-                              </c:when>
-                            </c:choose>
-                          </td>
-                        <td>
-                        <c:if test="${ parameter.modify != 'publish-only' }">
-                        <form:checkbox path="${overrideParamPath}" value="true"/>
-                        </c:if>
-                        </td>
-                        </tr>
-                      </c:otherwise>
-                    </c:choose>
-                  </c:if>
-                </c:forEach>
-              </tbody>
-            </table>        
-          </c:if>
+                
+               <div class="preference-options-section">
+	            <table summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
+	              <thead>
+	                <tr>
+	                  <th><spring:message code="setParameters.parametersHeading"/></th>
+	                  <th><spring:message code="setParameters.valueHeading"/></th>
+	                  <th><spring:message code="setParameters.userEditableHeading"/></th>
+	                </tr>
+	              </thead>
+	              <tbody>
+	                <c:forEach items="${ step.preferences }" var="parameter">
+	                  <c:if test="${ parameter.modify != 'subscribeOnly' }">
+	                    <c:set var="paramPath" value="portletPreferences['${ parameter.name }'].value"/>
+	                    <c:set var="overrideParamPath" value="portletPreferenceOverrides['${ parameter.name }'].value"/>
+	                    <c:choose>
+	                      <c:when test="${ parameter.type.display == 'hidden' }">
+	                        <form:hidden path="${paramPath}"/>
+	                      </c:when>
+	                      <c:otherwise>
+	                        <tr>
+	                          <td><span class="uportal-label">${ parameter.label }:</span></td>
+	                          <td>
+                                  <editPortlet:parameterInput parameterType="${ parameter.type }" 
+                                    parameterPath="${ paramPath }" parameterName="${ parameter.name }" 
+                                    parameterValues="${ channel.portletPreferences[parameter.name].value }"/>
+	                          </td>
+	                          <td>
+		                        <c:if test="${ parameter.modify != 'publish-only' }">
+		                          <form:checkbox path="${overrideParamPath}" value="true"/>
+		                        </c:if>
+		                      </td>
+	                        </tr>
+	                      </c:otherwise>
+	                    </c:choose>
+	                  </c:if>
+	                </c:forEach>
+	              </tbody>
+	            </table>
+	            </div>   
+	          </c:if>
           </c:if> <!-- End Portlet Preferences -->
                     
                     
@@ -243,7 +190,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <c:forEach items="${ step.arbitraryParameters }" var="arbitraryParam">
             <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
             
-              <div id="${fn:replace(prefix, '.', '')}-arbitraryParams" >
+             <div class="parameter-options-section" prefix="${ prefix }">
               <table summary="This table lists a portlet's parameter settings.">
                 <thead>
                   <tr>
@@ -264,7 +211,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                       <td>
                       <form:checkbox path="${overrideParamPath}" value="true"/>
                       </td>
-                        <td><a href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
+                        <td><a class="delete-parameter-link" href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
                       </tr>
                     </c:if>
                   </c:forEach>
@@ -272,7 +219,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               </table> 
               <p><a class="add-parameter-link" href="javascript:;"><spring:message code="setParameters.addButton"/></a></p>
               <div style="display:none">
-                <div id="${fn:replace(prefix, '.', '')}newparam" class="jqueryui" title="<spring:message code="setParameters.addButton"/>">
+                <div class="parameter-adding-dialog jqueryui" title="<spring:message code="setParameters.addButton"/>">
                 </div>
               </div>
               </div>
@@ -281,8 +228,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       
           <!-- Other Preferences Loop -->
           <c:forEach items="${ step.arbitraryPreferences }" var="arbitraryParam">
-            
-              <div id="${n}portletPrefs" >
+            <div class="preference-options-section">
               <table summary="This table lists a portlet's parameter settings.">
                 <thead>
                   <tr>
@@ -293,20 +239,33 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   </tr>
                 </thead>
                 <tbody>
-                  <c:forEach items="${ artibraryPreferences }" var="name">
+                  <c:forEach items="${ arb }" var="name">
                     <c:set var="paramPath" value="portletPreferences['${ name }'].value"/>
                     <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ name }'].value"/>
                       <tr>
                         <td>${ name }</td>
-                        <td><form:input path="${ paramPath }"/></td>
-                      <td>
-                      <form:checkbox path="${overrideParamPath}" value="true"/>
-                      </td>
-                        <td><a href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
+                        <td>
+                            <c:forEach items="${ channel.portletPreferences[name].value }" var="val">
+                             <div>
+                                 <input name="portletPreferences['${name}'].value" value="${ val }" />
+                                 <a class="delete-parameter-value-link" href="javascript:;">Remove</a>
+                                </div>
+                            </c:forEach>
+                            <a class="add-parameter-value-link" href="javascript:;" paramName="${name}">Add value</a>
+                        </td>
+                        <td>
+                            <form:checkbox path="${overrideParamPath}" value="true"/>
+                        </td>
+                        <td><a class="delete-parameter-link" href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
                       </tr>
                   </c:forEach>
                 </tbody>
               </table> 
+              <p><a class="add-parameter-link" href="javascript:;"><spring:message code="setParameters.addButton"/></a></p>
+              <div style="display:none">
+                <div class="parameter-adding-dialog jqueryui" title="<spring:message code="setParameters.addButton"/>">
+                </div>
+              </div>
               </div>
           </c:forEach> <!-- End Other Preferences Loop -->
       
@@ -335,48 +294,37 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-body -->
   
 </div> <!-- end: portlet -->
+
+<script src="media/org/jasig/portal/flows/edit-portlet/edit-parameters.min.js" language="JavaScript" type="text/javascript"></script>
     
 <script type="text/javascript">
 	up.jQuery(function() {
 			var $ = up.jQuery;
-			var initializedDialogs = [];
-			function showNewParameterForm(prefix) {
-				var id = "#" + prefix.replace('.', '') + "newparam";
-				var html = "<form><spring:message code="setParameters.newParamForm.name"/> <input type=\"text\" name=\"name\"/><br/>";
-				html += "<spring:message code="setParameters.newParamForm.value"/> <input type=\"text\" name=\"value\"/><br/>";
-				html += "<spring:message code="setParameters.newParamForm.userEditable"/> <input type=\"checkbox\" name=\"override\" value=\"true\"/><br/>";
-				html += "<input type=\"submit\" value=\"<spring:message code="setParameters.newParamForm.submitButton"/>\"/><form>";
-				$(id).html(html)
-				.find("form").submit(function() {
-					var name = this.name.value;
-					var value = this.value.value;
-					var override = this.override.checked;
-					var tr = document.createElement("tr");
-					var html2 = "<td>" + name + "</td><td><input name=\"parameters['" + prefix + "." + name + "'].value\" value=\"" + value + "\" type=\"text\"/></td>";
-					if (override) {
-						html2 += "<td><input name=\"parameterOverrides['" + prefix + "." + name + "'].value\" value=\"true\" type=\"checkbox\" checked/></td>";
-					} else {
-						html2 += "<td><input name=\"parameterOverrides['" + prefix + "." + name + "'].value\" value=\"true\" type=\"checkbox\"/></td>";
-					}
-					html2 += "<td><a href=\"javascript:;\" onclick=\"$(this).parent().parent().remove()\">Delete</td>";
-					$(tr).html(html2);
-					$("#" + prefix.replace('.', '') + "-arbitraryParams tbody").append(tr);
-					$(id).dialog("close");
-					return false;
-				});
-				if ($.inArray(prefix, initializedDialogs) < 0) {
-                    initializedDialogs.push(prefix);
-                    $(id).dialog();
-				} else {
-                    $(id).dialog('open');
-				}
-			  }
 			  $(document).ready(function(){
-				  $("div[id*=arbitraryParams]").each(function(){
-					  var prefix = this.id.split("-")[0];
-					  $(this).find("table a").click(function(){ $(this).parent().parent().remove(); return false; });
-					  $(this).find(".add-parameter-link").click(function(){ return showNewParameterForm(prefix); });
+				  $("div.parameter-options-section").each(function(){
+					  var dialog = $(this).find(".parameter-adding-dialog");
+					  uportal.portletParametersEditor(this, {
+					        preferenceNamePrefix: $(this).attr("prefix"),
+					        preferenceBindName: 'parameters',
+					        preferenceOverrideBindName: 'parameterOverrides',
+					        dialog: dialog,
+					        selectors: {
+					        }
+					      }
+					  );
 			      });
+                  $("div.preference-options-section").each(function(){
+                      var dialog = $(this).find(".parameter-adding-dialog");
+                      uportal.portletParametersEditor(this, {
+                            preferenceBindName: 'portletPreferences',
+                            preferenceOverrideBindName: 'portletPreferencesOverrides',
+                            dialog: dialog,
+                            multivalued: true,
+                            selectors: {
+                            }
+                          }
+                      );
+                  });
 			  });
 	});
 </script>

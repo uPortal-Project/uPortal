@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-public class CPDParameterType implements Serializable {
+public class CPDParameterType implements ICPDOptionType, Serializable {
 
 	@XStreamAsAttribute
 	private String base;

@@ -1,6 +1,10 @@
 package org.jasig.portal.portlets.portletadmin;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameterTypeRestriction;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
@@ -11,7 +15,29 @@ import org.springframework.binding.message.MessageContext;
 public class ChannelDefinitionFormValidator {
 	
 	private PortletAdministrationHelper portletAdministrationHelper;
+	
+	public void setPortletAdministrationHelper(PortletAdministrationHelper portletAdministrationHelper) {
+		this.portletAdministrationHelper = portletAdministrationHelper;
+	}
 
+	private IChannelRegistryStore channelStore;
+	
+	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
+		this.channelStore = channelRegistryStore;
+	}
+	
+	// Regex Pattern to be used to validate channel fnames
+	private final Pattern fnamePattern;
+
+	
+	/**
+	 * Default constructor
+	 */
+	public ChannelDefinitionFormValidator() {
+		fnamePattern = Pattern.compile("[a-zA-Z0-9_-]+");
+	}
+	
+	
 	public void validateChooseType(ChannelDefinitionForm def, MessageContext context) {
 		if(def.getTypeId() == 0) {
 			context.addMessage(new MessageBuilder().error().source("typeId")
@@ -26,6 +52,20 @@ public class ChannelDefinitionFormValidator {
 					.code("errors.channelDefinition.fName.empty")
 					.defaultText("Please enter an fname").build());
 		}
+		Matcher matcher = fnamePattern.matcher(def.getFname());
+		if (!matcher.matches()) {
+			context.addMessage(new MessageBuilder().error().source("fName")
+					.code("errors.channelDefinition.fName.invalid")
+					.defaultText("Fnames may only contain letters, numbers, dashes, and underscores").build());
+		}
+		
+		// if this is a new channel and the fname is already taken
+		if (def.getId() == -1 && channelStore.getChannelDefinition(def.getFname()) != null) {
+			context.addMessage(new MessageBuilder().error().source("fName")
+					.code("errors.channelDefinition.fName.duplicate")
+					.defaultText("This fname is already in use").build());
+		}
+		
 		if (StringUtils.isEmpty(def.getTitle())) {
 			context.addMessage(new MessageBuilder().error().source("title")
 					.code("errors.channelDefinition.title.empty")
@@ -120,10 +160,6 @@ public class ChannelDefinitionFormValidator {
 		validateSetParameters(def, context);
 		validateChooseCategory(def, context);
 		validateChooseGroup(def, context);
-	}
-
-	public void setPortletAdministrationHelper(PortletAdministrationHelper portletAdministrationHelper) {
-		this.portletAdministrationHelper = portletAdministrationHelper;
 	}
 
 }

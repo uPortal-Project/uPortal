@@ -3,11 +3,14 @@ package org.jasig.portal.portlets.portletadmin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Set;
+
+import javax.portlet.PortletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -31,7 +34,7 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlets.Attribute;
-import org.jasig.portal.portlets.StringListAttribute;
+import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
@@ -251,15 +254,54 @@ public class PortletAdministrationHelper {
 	public Set<String> getArbitraryPortletPreferenceNames(ChannelDefinitionForm form) {
 		// set default values for all channel parameters
 		ChannelPublishingDefinition cpd = getChannelType(form.getTypeId());
-		Map<String, StringListAttribute> currentPrefs = form.getPortletPreferences();
+		Set<String> currentPrefs = new HashSet<String>();
+		currentPrefs.addAll(form.getPortletPreferences().keySet());
 		for (CPDStep step : cpd.getParams().getSteps()) {
 			if (step.getPreferences() != null) {
 				for (CPDPreference pref : step.getPreferences()) {
 					currentPrefs.remove(pref.getName());
 				}
 			}
+			if (step.getParameters() != null) {
+				for (CPDParameter param : step.getParameters()) {
+					if (param.getName().startsWith("PORTLET.")) {
+						currentPrefs.remove(param.getName().replace("PORTLET.", ""));
+					}
+				}
+			}
 		}
-		return currentPrefs.keySet();
+		return currentPrefs;
+	}
+	
+	public void cleanOptions(ChannelDefinitionForm form, PortletRequest request) {
+		Set<String> preferenceNames = new HashSet<String>();
+		Set<String> parameterNames = new HashSet<String>();
+		for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+			String name = (String) e.nextElement();
+			if (name.startsWith("portletPreferences[")) {
+				preferenceNames.add(name.split("\'")[1]);
+			} else if (name.startsWith("parameters[")) {
+				parameterNames.add(name.split("\'")[1]);
+			}
+		}
+		
+		Set<String> keys = new HashSet<String>();
+		keys.addAll(form.getPortletPreferences().keySet());
+		for (String key : keys) {
+			if (!preferenceNames.contains(key)) {
+				form.getPortletPreferences().remove(key);
+				form.getPortletPreferencesOverrides().remove(key);
+			}
+		}
+		
+		keys = new HashSet<String>();
+		keys.addAll(form.getParameters().keySet());
+		for (String key : keys) {
+			if (!parameterNames.contains(key)) {
+				form.getParameters().remove(key);
+				form.getParameterOverrides().remove(key);
+			}
+		}
 	}
 	
 	/**

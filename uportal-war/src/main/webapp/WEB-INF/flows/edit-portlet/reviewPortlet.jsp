@@ -145,11 +145,32 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <tbody>
             <c:forEach items="${ cpd.params.steps }" var="step">
               <c:forEach items="${ step.parameters }" var="parameter">
-                <c:if test="${ parameter.modify != 'subscribeOnly' && parameter.type.display != 'hidden' && channel.parameters[parameter.name].value != null && channel.parameters[parameter.name].value != '' }">
+                <c:if test="${ (parameter.modify != 'subscribeOnly' && parameter.type.display != 'hidden') && ((channel.parameters[parameter.name].value != null && channel.parameters[parameter.name].value != '') || (fn:startsWith(parameter.name, 'PORTLET.') && channel.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value != null && channel.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value != '')) }">
                   <tr>
                     <td class="fl-text-align-right"><c:out value="${ parameter.label }"/>:</td>
-                    <td><a href="${ setParametersUrl }" class="pa-edit"><c:out value="${ channel.parameters[parameter.name].value }"/></a></td>
-                    <td>${ channel.parameterOverrides[parameter.name].value ? 'X' : '' }</td>
+                    <td>
+                        <a href="${ setParametersUrl }" class="pa-edit">
+                            <c:choose>
+	                            <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
+	                               <c:set var="values" value="${channel.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value}"/>
+	                               <c:out value="${ fn:length(values) > 0 ? values[0] : '' }"/>
+	                            </c:when>
+	                            <c:otherwise>
+    	                            <c:out value="${ channel.parameters[parameter.name].value }"/>
+	                            </c:otherwise>
+                            </c:choose>
+                        </a>
+                    </td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
+                                ${ channel.portletPreferencesOverrides[fn:replace(parameter.name, 'PORTLET.', '')].value ? 'X' : '' }
+                            </c:when>
+                            <c:otherwise>
+                                ${ channel.parameterOverrides[parameter.name].value ? 'X' : '' }
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
                   </tr>
                 </c:if>
               </c:forEach>
@@ -166,18 +187,22 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   </c:forEach>
                 </c:forEach>
               </c:forEach>
-            </c:forEach>
-            <c:forEach items="${ cpd.params.steps }" var="step">
               <c:forEach items="${ step.preferences }" var="parameter">
-                <c:if test="${ parameter.modify != 'subscribeOnly' && parameter.type.display != 'hidden' && channel.portletPreferences[parameter.name].value != null && channel.portletPreferences[parameter.name].value != '' }">
+                <c:if test="${ parameter.modify != 'subscribeOnly' && parameter.type.display != 'hidden' && channel.portletPreferences[parameter.name].value != null && fn:length(channel.portletPreferences[parameter.name].value) > 0 }">
                   <tr>
                     <td class="fl-text-align-right"><c:out value="${ parameter.label }"/>:</td>
-                    <td><a href="${ setParametersUrl }" class="pa-edit"><c:out value="${ channel.portletPreferences[parameter.name].value }"/></a></td>
+                    <td>
+                        <a href="${ setParametersUrl }" class="pa-edit">
+                            <c:forEach items="${ channel.portletPreferences[parameter.name].value }" var="val" varStatus="status">
+                                <c:out value="${ val }"/>${ !status.last ? '<br/>' : '' }
+                            </c:forEach>
+                        </a>
+                    </td>
                     <td>${ channel.portletPreferencesOverrides[parameter.name].value ? 'X' : '' }</td>
                   </tr>
                 </c:if>
               </c:forEach>
-            </c:forEach> 
+            </c:forEach>
           </tbody>
         </table>
         

@@ -65,10 +65,17 @@
     <view-state id="setParameters" model="channel">
         <on-render>
             <set name="flashScope.portlet" value="portletAdministrationHelper.getPortletDescriptor(channel)"/>
-            <set name="flashScope.arbitraryPreferences" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(channel)"/>
+            <set name="flashScope.arb" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(channel)"/>
         </on-render>
-        <transition on="back" to="basicInfo" validate="false"/>
-        <transition on="next" to="chooseCategory"/>
+        <transition on="back" to="basicInfo" validate="false">
+            <evaluate expression="portletAdministrationHelper.cleanOptions(channel, externalContext.getNativeRequest())"/>
+        </transition>
+        <transition on="next" to="chooseCategory">
+            <evaluate expression="portletAdministrationHelper.cleanOptions(channel, externalContext.getNativeRequest())"/>
+        </transition>
+        <transition on="review" to="reviewPortlet">
+            <evaluate expression="portletAdministrationHelper.cleanOptions(channel, externalContext.getNativeRequest())"/>
+        </transition>
     </view-state>
     
     <!-- CATEGORIES view -->

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CPDParameterTypeRestriction implements Serializable {
+public class CPDParameterTypeRestriction implements ICPDOptionTypeRestriction, Serializable {
 
 	private String type;
 	

@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-public class CPDPreferenceType implements Serializable {
+public class CPDPreferenceType implements ICPDOptionType, Serializable {
 
 	@XStreamAsAttribute
 	private String base;

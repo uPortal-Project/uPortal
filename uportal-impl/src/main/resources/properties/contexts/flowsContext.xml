@@ -57,6 +57,7 @@
     <bean id="channelValidator"
         class="org.jasig.portal.portlets.portletadmin.ChannelDefinitionFormValidator">
         <property name="portletAdministrationHelper" ref="portletAdministrationHelper"/>
+        <property name="channelRegistryStore" ref="channelRegistryStore"/>
     </bean>
     
     

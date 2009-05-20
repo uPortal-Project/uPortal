@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-public class CPDPreferenceTypeRestriction implements Serializable {
+public class CPDPreferenceTypeRestriction implements ICPDOptionTypeRestriction, Serializable {
 
 	private String type;
 	
