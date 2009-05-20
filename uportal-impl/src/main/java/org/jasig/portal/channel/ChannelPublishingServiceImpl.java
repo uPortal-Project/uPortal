@@ -147,6 +147,13 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 	 */
 	public void removeChannelDefinition(IChannelDefinition channelDefinition, IPerson person) {
 		IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(channelDefinition.getId());
+		
+		// TODO
+		// The following is a temporary fix to allow "deleted" channels to be re-created
+		// with the same fname.  We are appending the existing fname with the current time
+		// so that subsequent channel creations won't result in a duplicate fname error.
+		channelDef.setFName(channelDef.getFName() + "_" + (new Date()).getTime());
+		
 	    channelRegistryStore.disapproveChannelDefinition(channelDef);
 
 	    // Record that a channel has been deleted
