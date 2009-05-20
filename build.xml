@@ -40,8 +40,6 @@
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
     <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
     <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
-    <property name="uportal-ear-deployer.dir" value="${basedir}/uportal-ear-deployer" />
-    <property name="uportal-ant-tasks.dir" value="${basedir}/uportal-ant-tasks" />
     
     <import file="${bootstrap.dir}/build_includes.xml" />
 
@@ -289,26 +287,30 @@
     </target>
 
     <target name="deploy-ear" depends="checkForTomcat" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
-        <uportal-ant-tasks-macro>
+        <uportal-ear-macro>
+            <echo message="   extractWars=${extractWars}" />
+            <echo message="removeExisting=${removeExisting}" />
+            <echo message="   cleanShared=${cleanShared}" />
+                
+            <if>
+                <equals arg1="${cleanShared}" arg2="true" />
+                <then>
+                    <antcall target="clean-shared" />
+                </then>
+            </if>
+                
+            <artifact:dependencies pathid="uportal-ant" verbose="false">
+                <pom file="${bootstrap-pom.dir}/uportal-ant-tasks-pom.xml" />
+            </artifact:dependencies>
+            
             <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
-                <classpath refid="uportal-ant-tasks-full.classpath" />
+                <classpath>
+                    <path refid="uportal-ant" />
+                </classpath>
             </typedef>
 
-            <uportal-ear-macro>
-                <echo message="   extractWars=${extractWars}" />
-                <echo message="removeExisting=${removeExisting}" />
-                <echo message="   cleanShared=${cleanShared}" />
-                    
-                <if>
-                    <equals arg1="${cleanShared}" arg2="true" />
-                    <then>
-                        <antcall target="clean-shared" />
-                    </then>
-                </if>
-
-                <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" webAppsDir="${server.webapps}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
-            </uportal-ear-macro>
-        </uportal-ant-tasks-macro>
+            <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" webAppsDir="${server.webapps}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
+        </uportal-ear-macro>
     </target>
 
     <target name="deploy-war" depends="checkForTomcat" description="Deploy the uPortal web application to the servlet container">
@@ -944,77 +946,6 @@
                     </maven-artifact-macro>
                 </uportal-portlets-overlay-macro>
             </uportal-war-macro>
-        </sequential>
-    </macrodef>
-
-    <!--
-     | Provides a wrapper for tasks that need a classpath that includes the uPortal ear deployer
-     | and all of its dependencies. The task also ensures the uportal-impl JAR exists and
-     | is up to date.
-     |
-     | The following are available in the ear-deployer-sub-tasks element:
-     | pom object   - uportal-ear-deployer.pom              - The Maven POM object for the uportal-ear-deployer pom
-     | property     - uportal-ear-deployer.artifact         - The full path to the uportal-ear-deployer JAR
-     | path         - uportal-ear-deployer.classpath        - The uportal-ear-deployer classpath not including the uportal-ear-deployer JAR
-     | path         - uportal-ear-deployer-full.classpath   - The uportal-impl classpath including the uportal-impl JAR
-     +-->
-    <macrodef name="uportal-ear-deployer-macro">
-        <element name="ear-deployer-sub-tasks" optional="false" implicit="true" />
-
-        <sequential>
-            <uportal-parent-macro>
-                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
-                
-                <maven-artifact-macro project-name="uportal-ear-deployer" project-path="${uportal-ear-deployer.dir}" checkfilesid="uportal-parent.pom.fsid">
-                    <!--
-                     | Include the uportal-ear-deployer JAR in the final classpath
-                     +-->
-                    <path id="uportal-ear-deployer-full.classpath">
-                        <path refid="uportal-ear-deployer.classpath" />
-                        <pathelement location="${uportal-ear-deployer.artifact}" />
-                    </path>
-    
-                    <!--
-                     | Execute the ear-deployer-sub-tasks
-                     +-->
-                    <ear-deployer-sub-tasks />
-                </maven-artifact-macro>
-            </uportal-parent-macro>
-        </sequential>
-    </macrodef>
-
-    <!--
-     | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
-     | dependencies. The task also ensures the uportal-war WAR exists and is up to date.
-     |
-     | The following are available in the ant-tasks-sub-tasks element:
-     | properties from the uportal-ear-deployer-macro macrodef
-     | pom object   - uportal-ant-tasks.pom                 - The Maven POM object for the uportal-ant-tasks pom
-     | property     - uportal-ant-tasks.artifact            - The full path to the uportal-ant-tasks JAR
-     | path         - uportal-ant-tasks.classpath           - The uportal-ant-tasks classpath not including the uportal-ant-tasks WAR
-     | path         - uportal-ant-tasks-full.classpath      - The uportal-ant-tasks classpath including the uportal-ant-tasks JAR
-     +-->
-    <macrodef name="uportal-ant-tasks-macro">
-        <element name="ant-tasks-sub-tasks" optional="false" implicit="true" />
-
-        <sequential>
-            <uportal-ear-deployer-macro>
-                <fileset id="uportal-ear-deployer-artifacts" file="${uportal-ear-deployer.artifact}" />
-                <maven-artifact-macro project-name="uportal-ant-tasks" project-path="${uportal-ant-tasks.dir}" checkfilesid="uportal-ear-deployer-artifacts">
-                    <!--
-                     | Include the uportal-ear-deployer JAR in the final classpath
-                     +-->
-                    <path id="uportal-ant-tasks-full.classpath">
-                        <path refid="uportal-ant-tasks.classpath" />
-                        <pathelement location="${uportal-ant-tasks.artifact}" />
-                    </path>
-
-                    <!--
-                     | Execute the ant-tasks-sub-tasks
-                     +-->
-                    <ant-tasks-sub-tasks />
-                </maven-artifact-macro>
-            </uportal-ear-deployer-macro>
         </sequential>
     </macrodef>
     

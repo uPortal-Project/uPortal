@@ -191,8 +191,6 @@
         <module>uportal-impl</module>
         <module>uportal-war</module>
         <module>uportal-ear</module>
-        <module>uportal-ear-deployer</module>
-        <module>uportal-ant-tasks</module>
         <module>uportal-portlets-overlay</module>
     </modules>
 
