@@ -22,7 +22,9 @@
             <list>
                 <ref bean="cacheMaintenanceTrigger" />
                 <ref bean="dlmFragmentCleanerTrigger" />
+                <!-- UNCOMMENT FOR PORTAL STATS
                 <ref bean="statsQueueFlushingTrigger" />
+                 -->
             </list>
         </property>
     </bean>
@@ -57,7 +59,7 @@
     </bean>
     
     <!-- Flush the stats queue to the database every second -->
-    <!-- Be sure to un-comment the reference in the 'timerFactory' above as well -->
+    <!-- UNCOMMENT FOR PORTAL STATS
     <bean id="statsQueueFlushingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -65,8 +67,8 @@
                 <property name="targetObject" ref="queueingEventHandler" />
             </bean>
         </property>
-        <!-- Run every second -->
         <property name="startDelay" value="1000" />
         <property name="repeatInterval" value="1000" />
     </bean>
+    -->
 </beans>
