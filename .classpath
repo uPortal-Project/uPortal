@@ -15,7 +15,7 @@
 	<classpathentry excluding="**" kind="src" output="uportal-ear-deployer/target/test-classes" path="uportal-ear-deployer/src/test/resources"/>
 	<classpathentry kind="src" output="uportal-ant-tasks/target/classes" path="uportal-ant-tasks/src/main/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-ant-tasks/target/classes" path="uportal-ant-tasks/src/main/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-1.5.0-sun-1.5.0.18"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
