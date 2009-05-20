@@ -261,7 +261,6 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             	groupMembers = ci.users;
             } else if (ci.users == null || ci.users.length == 0) {
             	groupMembers = ci.groups;
-            	System.out.println("using groups");
             } else {
                 groupMembers = new IGroupMember[ci.groups.length + ci.users.length];
                 System.arraycopy(groupMembers, 0, ci.groups, 0, ci.groups.length);

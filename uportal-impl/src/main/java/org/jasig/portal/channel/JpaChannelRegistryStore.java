@@ -118,7 +118,7 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
     	int channelId = channelDef.getId();
     	channelDao.saveChannelDefinition(channelDef);
     	if (channelId < 0) {
-    		IChannelDefinition newChannel = getChannelDefinition(channelDef.getId());
+    		IChannelDefinition newChannel = getChannelDefinition(channelDef.getFName());
     		channelId = newChannel.getId();
     	}
     	
