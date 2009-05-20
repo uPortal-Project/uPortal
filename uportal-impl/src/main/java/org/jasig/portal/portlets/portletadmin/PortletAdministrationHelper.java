@@ -365,7 +365,6 @@ public class PortletAdministrationHelper {
 			PortletDD portletDD = portletRegistryService.getPortletDescriptor(application, portlet);
 			form.setTitle(portletDD.getPortletName());
 			form.setName(portletDD.getPortletName());
-			form.setPortlet(true);
 			form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID, new Attribute(application));
 			form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME, new Attribute(portletDD.getPortletName()));
 			for (Object obj : portletDD.getSupports()) {

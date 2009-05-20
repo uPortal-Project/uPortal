@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.AttributeFactory;
@@ -33,7 +35,6 @@ public class ChannelDefinitionForm implements Serializable {
 	private String description = "";
 	private String title = "";
 	private String javaClass = "";
-	private boolean isPortlet = false;
 	private int timeout = 500;
 	private int typeId;
 	private boolean editable;
@@ -77,7 +78,6 @@ public class ChannelDefinitionForm implements Serializable {
 		this.setDescription(def.getDescription());
 		this.setTitle(def.getTitle());
 		this.setJavaClass(def.getJavaClass());
-		this.setPortlet(def.isPortlet());
 		this.setTimeout(def.getTimeout());
 		this.setTypeId(def.getTypeId());
 		this.setEditable(def.isEditable());
@@ -133,7 +133,6 @@ public class ChannelDefinitionForm implements Serializable {
 	    channelE.setAttribute("hasHelp", this.hasHelp ? "true" : "false");
 	    channelE.setAttribute("hasAbout", this.hasAbout ? "true" : "false");
 	    channelE.setAttribute("secure", this.isSecure() ? "true" : "false");
-	    channelE.setAttribute("isPortlet", this.isPortlet ? "true" : "false");
 	    
 	    // Add any parameters
 		for (String key : this.parameters.keySet()) {
@@ -227,7 +226,7 @@ public class ChannelDefinitionForm implements Serializable {
 						}
 						
 						// use the default value if one exists
-						if (pref.getDefaultValues().size() > 0) {
+						if (pref.getDefaultValues() != null && pref.getDefaultValues().size() > 0) {
 							for (String value : pref.getDefaultValues()) {
 								this.portletPreferences.get(pref.getName()).getValue().add(value);
 							}
@@ -236,6 +235,7 @@ public class ChannelDefinitionForm implements Serializable {
 						// otherwise look for a default in the type restriction	
 						else if (pref.getType() != null
 								&& pref.getType().getRestriction() != null
+								&& pref.getType().getRestriction().getDefaultValues() != null
 								&& pref.getType().getRestriction().getDefaultValues().size() > 0) {
 							for (String value : pref.getType().getRestriction().getDefaultValues()) {
 								this.portletPreferences.get(pref.getName()).getValue().add(value);
@@ -306,11 +306,14 @@ public class ChannelDefinitionForm implements Serializable {
 	}
 
 	public boolean isPortlet() {
-		return isPortlet;
-	}
-
-	public void setPortlet(boolean isPortlet) {
-		this.isPortlet = isPortlet;
+		if (!StringUtils.isBlank(this.javaClass)) {
+			try {
+				final Class<?> channelClazz = Class.forName(this.javaClass);
+				return IPortletAdaptor.class.isAssignableFrom(channelClazz);
+			} catch (ClassNotFoundException e) {
+			}
+		}
+		return false;
 	}
 
 	public int getTimeout() {
