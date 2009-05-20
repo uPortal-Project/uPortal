@@ -156,10 +156,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	                <c:forEach items="${ step.preferences }" var="parameter">
 	                  <c:if test="${ parameter.modify != 'subscribeOnly' }">
 	                    <c:set var="paramPath" value="portletPreferences['${ parameter.name }'].value"/>
-	                    <c:set var="overrideParamPath" value="portletPreferenceOverrides['${ parameter.name }'].value"/>
+	                    <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ parameter.name }'].value"/>
 	                    <c:choose>
 	                      <c:when test="${ parameter.type.display == 'hidden' }">
-	                        <form:hidden path="${paramPath}"/>
+	                        <c:set var="values" value="${ channel.portletPreferences[parameter.name].value }"/>
+	                        <input type="hidden" name="${ paramPath }" value="${ fn:length(values) > 0 ? values[0] : '' }"/>
 	                      </c:when>
 	                      <c:otherwise>
 	                        <tr>
