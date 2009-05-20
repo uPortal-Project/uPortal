@@ -58,8 +58,8 @@ Author: Andrew Petro, apetro@unicon.net
       <name>Simple Configuration</name>
       <description>Address of the Web appliaction to be proxied and options for which resources should be proxied and which sould be accessed directly by the browser.</description>
 
-      <parameter modify="publish">
-        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sBaseUrl</name>
+      <preference modify="publish">
+        <name>edu.wisc.my.webproxy.webproxy.general.config.sBaseUrl</name>
         <label>Base URL (required)</label>
         <type base="string" input="text" display="text">
           <!-- length and maxlength for text field -->
@@ -68,10 +68,10 @@ Author: Andrew Petro, apetro@unicon.net
         </type>
         <example>http://www.google.com</example>
         <description>The Base URL is the starting point of the proxied application and will be the first page proxied for the end user after authentication. This value must contain the protocol of the URL. (e.g., http://www.foo.bar/, http://foo.bar/example.html)</description>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish">
-        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sPortletUrl</name>
+      <preference modify="publish">
+        <name>edu.wisc.my.webproxy.webproxy.general.config.sPortletUrl</name>
         <label>Portlet URL List (optional)</label>
         <type base="string" input="text" display="hidden">
           <!-- length and maxlength for text field -->
@@ -81,10 +81,10 @@ Author: Andrew Petro, apetro@unicon.net
         <example>http\:\/\/www\.google\.com.</example>
         <description>Must contain the URLs of the web application you would like or would not like to be proxied, depending on the URL List Type (see below). The portlet URL list uses regular expressions for matching. (e.g., .foo.)</description>
         <defaultValue></defaultValue>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish">
-        <name>PORTLET.edu.wisc.my.webproxy.webproxy.general.config.sListType</name>
+      <preference modify="publish">
+        <name>edu.wisc.my.webproxy.webproxy.general.config.sListType</name>
         <label>Portlet URL List Type (optional)</label>
         <type base="string" input="text" display="hidden">
           <length>10</length>
@@ -93,7 +93,7 @@ Author: Andrew Petro, apetro@unicon.net
         <!-- example>http\:\/\/www\.google\.com.</example-->
         <description>This value is set to Include by default. This value will designate how the portlet will read the Portlet Url list. If this value is set to Include,the portlet will rewrite and proxy all matching URL expressions in the list. If set to Exclude, the portlet will proxy all the sites that do not match the URL expressions listed.</description>
         <defaultValue>Include</defaultValue>
-      </parameter>
+      </preference>
 
       <parameter modify="publish-only">
         <name>portletApplicationId</name>
@@ -123,8 +123,8 @@ Author: Andrew Petro, apetro@unicon.net
         <defaultValue>WebProxyPortlet</defaultValue>
       </parameter>
 
-      <parameter modify="publish">
-        <name>PORTLET.edu.wisc.my.webproxy.webproxy.httpclient.httpTimeout</name>
+      <preference modify="publish">
+        <name>edu.wisc.my.webproxy.webproxy.httpclient.httpTimeout</name>
         <label>HTTP request timeout in seconds (required)</label>
         <type base="integer" input="text" display="hidden">
           <!-- length and maxlength for text field -->
@@ -133,10 +133,10 @@ Author: Andrew Petro, apetro@unicon.net
         </type>
         <description>The number of seconds you would like Web Proxy to wait before determining the remote server is non-responsive.</description>
         <defaultValue>60</defaultValue>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish">
-        <name>PORTLET.edu.wisc.my.webproxy.webproxy.clipping.sClippingDisable</name>
+      <preference modify="publish">
+        <name>edu.wisc.my.webproxy.webproxy.clipping.sClippingDisable</name>
         <label>Disable clipping (optional)</label>
         <type base="boolean" input="text" display="hidden">
           <length>10</length>
@@ -144,10 +144,10 @@ Author: Andrew Petro, apetro@unicon.net
         </type>
         <description>Set to false if you would like to configure the Web Proxy portlet for HTML clipping. HTML clipping can be used to only display content within certain absolute alement paths (e.g., /html/body/), comments(e.g., &lt;!--clipping--&gt;), and clement (e.g., &lt;script&gt;). Please keep in mind that once clipping is enabled the end user will only see the content that has been clipped, all other content will be dropped.</description>
         <defaultValue>false</defaultValue>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish">
-        <name>PORTLET.edu.wisc.my.webproxy.webproxy.clipping.sElement</name>
+      <preference modify="publish">
+        <name>edu.wisc.my.webproxy.webproxy.clipping.sElement</name>
         <label>HTML element (optional)  [example: body]</label>
         <type base="string" input="text" display="hidden">
           <!-- length and maxlength for text field -->
@@ -156,7 +156,7 @@ Author: Andrew Petro, apetro@unicon.net
         </type>
         <description>HTML element for clipping.</description>
         <defaultValue>body</defaultValue>
-      </parameter>
+      </preference>
 
     </step>
 

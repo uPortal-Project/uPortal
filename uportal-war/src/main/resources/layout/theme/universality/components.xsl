@@ -133,9 +133,9 @@
    | This template renders the admin menu into the portal page bar.
   -->
   <xsl:template name="portal.page.bar.link.admin">
-  	<xsl:if test="upAuth:canRender($USER_ID, 'admin.navigation.links')">
+  	<xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin')">
     	<span id="portalPageBarAdmin">
-        <a href="{$BASE_ACTION_URL}?uP_fname=admin.navigation.links" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
+        <a href="{$BASE_ACTION_URL}?uP_fname=portlet-admin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
           <span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
         </a>
         <xsl:call-template name="portal.pipe" />
@@ -343,7 +343,7 @@
    | This template renders the administration links navigation component, a prominent, short list of links to administrative functions.
   -->
   <xsl:template name="administration.links">
-  	<xsl:if test="upAuth:canRender($USER_ID, 'admin.navigation.links')">
+  	<xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin')">
       <div id="portalAdminLinks" class="fl-widget">
         <div class="fl-widget-inner">
         	<div class="fl-widget-titlebar">
@@ -351,9 +351,9 @@
           </div>
           <div class="fl-widget-content">
             <ul class="fl-listmenu">
-              <xsl:if test="upAuth:canRender($USER_ID, 'admin.navigation.links')">
+              <xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin')">
                 <li id="portalAdminLinksPortletAdmin">
-                  <a href="{$BASE_ACTION_URL}?uP_fname=admin.navigation.links" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
+                  <a href="{$BASE_ACTION_URL}?uP_fname=portlet-admin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
                     <span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
                   </a>
                 </li>

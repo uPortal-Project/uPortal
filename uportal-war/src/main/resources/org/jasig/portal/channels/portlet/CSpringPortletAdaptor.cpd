@@ -117,9 +117,7 @@ Version $Revision: 1.1 $
         be zero or more preferences.
       </description>
 
-      <arbitrary-parameters>
-        <paramName-prefix>PORTLET.</paramName-prefix>
-      </arbitrary-parameters>
+      <arbitrary-preferences/>
 
     </step>
 
