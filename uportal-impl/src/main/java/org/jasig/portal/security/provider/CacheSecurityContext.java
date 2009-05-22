@@ -7,7 +7,9 @@ package org.jasig.portal.security.provider;
 
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.IStringEncryptionService;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.spring.locator.PasswordEncryptionServiceLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -72,10 +74,17 @@ class CacheSecurityContext extends ChainingSecurityContext
           this.myPrincipal.FullName = first_name + " " + last_name;
           if (log.isInfoEnabled())
               log.info( "User " + this.myPrincipal.UID + " is authenticated");
-          // Save our credentials so that the parent's authenticate()
+
+          // Encrypt our credentials using the spring-configured password
+          // encryption service
+          IStringEncryptionService encryptionService = PasswordEncryptionServiceLocator.getPasswordEncryptionService();
+          String encryptedPassword = encryptionService.encrypt(new String(this.myOpaqueCredentials.credentialstring));
+          byte[] encryptedPasswordBytes = encryptedPassword.getBytes();
+          
+          // Save our encrypted credentials so the parent's authenticate()
           // method doesn't blow them away.
-          this.cachedcredentials = new byte[this.myOpaqueCredentials.credentialstring.length];
-          System.arraycopy(this.myOpaqueCredentials.credentialstring, 0, this.cachedcredentials, 0, this.myOpaqueCredentials.credentialstring.length);
+          this.cachedcredentials = new byte[encryptedPasswordBytes.length];
+          System.arraycopy(encryptedPasswordBytes, 0, this.cachedcredentials, 0, encryptedPasswordBytes.length);
           this.isauth = true;
         }
         else

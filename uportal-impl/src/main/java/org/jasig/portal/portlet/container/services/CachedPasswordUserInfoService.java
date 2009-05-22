@@ -32,6 +32,7 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.IStringEncryptionService;
 import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
@@ -45,6 +46,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
+    private IStringEncryptionService stringEncryptionService;
     protected final Log log = LogFactory.getLog(getClass());
     
     
@@ -124,11 +126,28 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-    
+
+	public void setStringEncryptionService(
+			IStringEncryptionService stringEncryptionService) {
+		this.stringEncryptionService = stringEncryptionService;
+	}
+	
+	private boolean decryptPassword = true;
+	
+	/**
+	 * Set whether the password should be decrypted before adding it to the 
+	 * user info map.
+	 * 
+	 * @param decryptPassword
+	 */
+	public void setDecryptPassword(boolean decryptPassword) {
+		this.decryptPassword = decryptPassword;
+	}
+
 	/**
 	 * @return name of the key to save the password under
 	 */
-	public String getassowrdKey() {
+	public String getPasswordKey() {
 		return passwordKey;
 	}
 	/**
@@ -172,6 +191,9 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 
 			// if it is, attempt to request a proxy ticket
 			String password = getPassword(context);
+			if (this.decryptPassword && password != null) {
+				password = stringEncryptionService.decrypt(password);
+			}
 			if (password != null)
 				userInfo.put(this.passwordKey, password);
 

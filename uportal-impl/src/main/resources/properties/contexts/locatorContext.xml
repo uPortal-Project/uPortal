@@ -129,4 +129,9 @@
         class="org.jasig.portal.spring.locator.ChannelPublishingServiceLocator">
         <constructor-arg index="0" ref="channelPublishingService" />
     </bean>    
+
+    <bean id="org.jasig.portal.spring.locator.PasswordEncryptionServiceLocator" 
+        class="org.jasig.portal.spring.locator.PasswordEncryptionServiceLocator">
+        <constructor-arg index="0" ref="stringEncryptionService" />
+    </bean>
 </beans>
