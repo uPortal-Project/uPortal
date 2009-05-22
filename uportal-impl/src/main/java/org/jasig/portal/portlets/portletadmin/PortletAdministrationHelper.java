@@ -2,12 +2,14 @@ package org.jasig.portal.portlets.portletadmin;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.portlet.PortletRequest;
@@ -44,6 +46,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.ResourceLoader;
+import org.w3c.dom.Document;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -79,6 +82,17 @@ public class PortletAdministrationHelper {
 	public void setChannelPublishingService(
 			IChannelPublishingService channelPublishingService) {
 		this.channelPublishingService = channelPublishingService;
+	}
+	
+    private Map<Serializable, ChannelPublishingDefinition> cpdCache;
+
+    /**
+     * Cache to use for parsed CPDs.
+     * 
+     * @param cpdCache
+     */
+	public void setCpdCache(Map<Serializable, ChannelPublishingDefinition> cpdCache) {
+		this.cpdCache = cpdCache;
 	}
 
 	/**
@@ -222,6 +236,13 @@ public class PortletAdministrationHelper {
 	 * @return
 	 */
 	public ChannelPublishingDefinition getChannelType(int channelTypeId) {
+		
+		// attempt to retrieve the CPD from the cache
+		if (this.cpdCache.containsKey(channelTypeId)) {
+			return this.cpdCache.get(channelTypeId);
+		}
+		
+		// if the CPD is not already in the cache, determine the CPD URI
 		String cpdUri;
 		if (channelTypeId >= 0) {
 			IChannelType type = channelRegistryStore.getChannelType(channelTypeId);
@@ -229,6 +250,8 @@ public class PortletAdministrationHelper {
 		} else {
 			cpdUri = "org/jasig/portal/portlets/portletadmin/CustomChannel.cpd";
 		}
+		
+		// read in the CPD
 		InputStream inputStream = null;
 		try {
 			inputStream = ResourceLoader.getResourceAsStream(PortletAdministrationHelper.class, cpdUri);
@@ -237,9 +260,14 @@ public class PortletAdministrationHelper {
 		} catch (IOException e) {
 			log.error("Failed to load CPD for channel type " + channelTypeId, e);
 		}
+		
+		// parse the CPD
 		XStream stream = new XStream();
 		stream.processAnnotations(ChannelPublishingDefinition.class);
 		ChannelPublishingDefinition def = (ChannelPublishingDefinition) stream.fromXML(inputStream);
+		
+		// add the CPD to the cache and return it
+		this.cpdCache.put(channelTypeId, def);
 		return def;
 	}
 	

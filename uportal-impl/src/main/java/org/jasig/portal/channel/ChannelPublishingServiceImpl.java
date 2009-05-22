@@ -60,11 +60,14 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 	public IChannelDefinition saveChannelDefinition(IChannelDefinition channelDef, IPerson publisher, ChannelCategory[] categories, IGroupMember[] groupMembers) {
 		boolean newChannel = (channelDef.getId() == 0);
 		
+		// set the approval and publish dates for the channel
 	    Date now = new Date();
 	    channelDef.setPublisherId(publisher.getID());
 	    channelDef.setPublishDate(now);
 	    channelDef.setApproverId(publisher.getID());
 	    channelDef.setApprovalDate(now);
+	    
+	    // save the channel
 	    channelRegistryStore.saveChannelDefinition(channelDef);
 	    channelDef = channelRegistryStore.getChannelDefinition(channelDef.getFName());
 
@@ -104,9 +107,10 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 	    }
 	    upm.addPermissions(permissions);
 
-	    if (log.isInfoEnabled())
+	    if (log.isInfoEnabled()) {
 	        log.info( "Channel " + channelDef.getId() + " has been " + 
 	                (newChannel ? "published" : "modified") + ".");
+	    }
 
 	    // Record that a channel has been published or modified
 	    if (newChannel) {
