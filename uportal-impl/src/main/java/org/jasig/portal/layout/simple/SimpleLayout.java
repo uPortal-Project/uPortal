@@ -10,6 +10,8 @@ import java.util.Vector;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
@@ -177,6 +179,18 @@ public class SimpleLayout implements IUserLayout {
             }
         }
         return nodeId;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.IUserLayout#findNodeId(javax.xml.xpath.XPathExpression)
+     */
+    public String findNodeId(XPathExpression xpathExpression) throws PortalException {
+        try {
+            return xpathExpression.evaluate(this.layout);
+        }
+        catch (XPathExpressionException e) {
+            throw new PortalException("Exception while executing XPathExpression: " + xpathExpression, e);
+        }
     }
 
     public Enumeration getNodeIds() throws PortalException {

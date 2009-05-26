@@ -6,6 +6,9 @@
 package org.jasig.portal.layout;
 
 import java.util.Enumeration;
+
+import javax.xml.xpath.XPathExpression;
+
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.w3c.dom.Document;
@@ -150,6 +153,14 @@ public interface IUserLayout {
      * @exception PortalException if an error occurs
      */
     public String getNodeId(String fname) throws PortalException;
+    
+    /**
+     * Returns a node id as resolved by the supplied {@link XPathExpression}
+     * 
+     * @param xpathExpression The expression to execute against the layout DOM
+     * @return The ID of the resolved node, null if there is no match
+     */
+    public String findNodeId(XPathExpression xpathExpression);
 
      /**
      * Returns a list of node Ids in the layout.
