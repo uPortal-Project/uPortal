@@ -19,70 +19,108 @@
   <!-- ========== TEMPLATE: NAVIGATION ========== -->
   <!-- ========================================== -->
   <!--
-   | This template renders the main navigation.
+   | This template renders the main navigation construct.
    | This template can be rendered into the header or the sidebar, determined by the parameters set in universality.xsl.
   -->
   <xsl:template match="navigation">
   	<xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the navigation. -->
     
-    <div id="portalNavigation">  <!-- Div for presentation/formatting options. -->
-    	<div id="portalNavigationInner" class="{$CONTEXT}">  <!-- Inner div for additional presentation/formatting options. -->
-      
-        <a name="mainNavigation" title="Reference anchor: main nagivation"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
-        
-        <ul id="portalNavigationList">
-        	<xsl:attribute name="class"> <!-- If rendered in the header, write in the class to format as a floated list to create tabs. -->
-          	<xsl:choose>
-            	<xsl:when test="$CONTEXT='header'">fl-tabs</xsl:when>
-              <xsl:otherwise></xsl:otherwise>
-            </xsl:choose>
-          </xsl:attribute>
-          <xsl:for-each select="tab">
-            <xsl:variable name="NAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
-              <xsl:choose>
-                <xsl:when test="position()=1 and position()=last()">single</xsl:when>
-                <xsl:when test="position()=1">first</xsl:when>
-                <xsl:when test="position()=last()">last</xsl:when>
-                <xsl:otherwise></xsl:otherwise>
-              </xsl:choose>
-            </xsl:variable>
-            <xsl:variable name="NAV_ACTIVE"> <!-- Determine which navigation option is the active (current selection) and add a css hook. -->
-              <xsl:choose>
-                <xsl:when test="@activeTab='true'">active fl-activeTab</xsl:when>
-                <xsl:otherwise></xsl:otherwise>
-              </xsl:choose>
-            </xsl:variable>
-            <xsl:variable name="NAV_MOVABLE"> <!-- Determine whether the navigation tab is movable and add a css hook. -->
-              <xsl:choose>
-                <xsl:when test="not(@dlm:moveAllowed='false')">movable-tab</xsl:when>
-                <xsl:otherwise></xsl:otherwise>
-              </xsl:choose>
-            </xsl:variable>
-            <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
-              <a id="tabLink_{@ID}" href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
-                <span class="portal-navigation-label"><xsl:value-of select="@name"/></span>
-              </a>
-              <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
+    <xsl:choose>
+    	<xsl:when test="$CONTEXT = 'header'">  <!-- When the context is 'header' render the main navigation as tabs. -->
+      	
+        <div id="portalNavigation">
+        	<div id="portalNavigationInner" class="{$CONTEXT}">
+          	<a name="mainNavigation" title="Reference anchor: main nagivation"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
+            <ul id="portalNavigationList" class="fl-tabs">
+              <xsl:apply-templates select="tab">
+                <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
+              </xsl:apply-templates>
+            </ul>
+          	<xsl:if test="$USE_SUBNAVIGATION_ROW='true'">
+              <div id="portalNavigationSubrow" class="fl-tab-content">
                 <xsl:call-template name="subnavigation">
                   <xsl:with-param name="CONTEXT" select="'subnav'"/>
-                  <xsl:with-param name="TAB_POSITION" select="position()"/>
+                  <xsl:with-param name="TAB_POSITION" select="count(tab[@activeTab='true']/preceding-sibling::tab) + 1"/>
                 </xsl:call-template>
-              </xsl:if>
-            </li>
-          </xsl:for-each>
-        </ul>
-    	</div>  
-    </div>
-    <xsl:if test="$CONTEXT='header' and $USE_SUBNAVIGATION_ROW='true'">
-      <div id="portalNavigationSubrow" class="fl-tab-content">
-        <xsl:call-template name="subnavigation">
-          <xsl:with-param name="CONTEXT" select="'subnav'"/>
-          <xsl:with-param name="TAB_POSITION" select="count(tab[@activeTab='true']/preceding-sibling::tab) + 1"/>
-        </xsl:call-template>
-      </div>
-    </xsl:if>
+              </div>
+            </xsl:if>
+          </div>
+        </div>
+      
+      </xsl:when>
+      <xsl:otherwise>  <!-- Otherwise, render the main navigation as a widget (generally assumes the context is the sidebar). -->
+      
+      	<div id="portalNavigation" class="fl-widget">
+        	<div id="portalNavigationInner" class="fl-widget-inner {$CONTEXT}">
+          	<div class="fl-widget-titlebar">
+            	<h2>
+              	<a name="mainNavigation" title="Reference anchor: main nagivation">  <!-- Skip navigation target. -->
+                	<xsl:value-of select="$TOKEN[@name='MAIN_NAVIGATION_LABEL']"/>
+                </a>
+              </h2>
+          	</div>
+            <div class="fl-widget-content">
+            	<ul id="portalNavigationList" class="fl-listmenu">
+              	<xsl:apply-templates select="tab">
+                	<xsl:with-param name="CONTEXT" select="$CONTEXT"/>
+                </xsl:apply-templates>
+              </ul>
+            </div>
+          </div>
+        </div>
+      
+      </xsl:otherwise>
+    </xsl:choose>
+              
   </xsl:template>
   <!-- ========================================== -->
+  
+  
+  <!-- ========== TEMPLATE: NAVIGATION TABS ========== -->
+  <!-- ========================================== -->
+  <!--
+   | This template renders the contents of the main navigation.
+  -->
+  <xsl:template match="tab">
+  	<xsl:param name="CONTEXT"/>  <!-- Catches the context parameter. -->
+  
+    <xsl:variable name="NAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
+      <xsl:choose>
+        <xsl:when test="position()=1 and position()=last()">single</xsl:when>
+        <xsl:when test="position()=1">first</xsl:when>
+        <xsl:when test="position()=last()">last</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="NAV_ACTIVE"> <!-- Determine which navigation option is the active (current selection) and add a css hook. -->
+      <xsl:choose>
+        <xsl:when test="@activeTab='true' and $CONTEXT='header'">active fl-activeTab</xsl:when>
+        <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">active fl-activemenu</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="NAV_MOVABLE"> <!-- Determine whether the navigation tab is movable and add a css hook. -->
+      <xsl:choose>
+        <xsl:when test="not(@dlm:moveAllowed='false')">movable-tab</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    
+    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+      <a id="tabLink_{@ID}" href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
+        <span class="portal-navigation-label"><xsl:value-of select="@name"/></span>
+      </a>
+      <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
+        <xsl:call-template name="subnavigation">
+          <xsl:with-param name="CONTEXT" select="'subnav'"/>
+          <xsl:with-param name="TAB_POSITION" select="position()"/>
+        </xsl:call-template>
+      </xsl:if>
+    </li>
+  
+  </xsl:template>
+  <!-- ========================================== -->
+  
     
   <!-- ========== TEMPLATE: PORTLET NAVIGATION ========== -->
   <!-- ================================================== -->
