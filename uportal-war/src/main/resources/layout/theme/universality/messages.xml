@@ -36,7 +36,7 @@
         <!-- Logo -->
         <token name="LOGO">uPortal by JA-SIG</token>
         <token name="LOGO_TITLE">Go to Home</token>
-				<!-- Main Navigation -->
+		    <!-- Main Navigation -->
         <token name="MAIN_NAVIGATION_LABEL">Navigation</token>
         <!-- Welcome Message -->
         <token name="WELCOME_PRE">Welcome </token>
