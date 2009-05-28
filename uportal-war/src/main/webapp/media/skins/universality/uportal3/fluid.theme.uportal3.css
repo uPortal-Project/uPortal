@@ -124,7 +124,7 @@
 .fl-theme-uportal3 #portalNavigation .fl-tabs li.fl-activeTab a,
 .fl-theme-uportal3 #portalNavigation .fl-tabs li.fl-activeTab a:hover {background:#2e5579 url(images/nav_tab_bkd.gif) top left repeat-x; border-left:1px solid #1e3851; border-right:1px solid #1e3851; color:#fff;}
 .fl-theme-uportal3 #portalNavigation .fl-tab-content {background-color:#fff; color:#000;}
-.fl-theme-uportal3 #portalNavigationSubrow {text-align:center; background:#336699 url(images/nav_subrow_bkd.gif) top right repeat-x;}
+.fl-theme-uportal3 #portalNavigationSubrow.fl-tab-content {text-align:center; background:#336699 url(images/nav_subrow_bkd.gif) top right repeat-x;}
 .fl-theme-uportal3 #portalNavigationSubrow a {text-decoration:none; color:#acc9e6;}
 .fl-theme-uportal3 #portalNavigationSubrow a:hover {color:#eee;}
 
@@ -165,6 +165,10 @@
 .fl-theme-uportal3 .focused #portalPageBodyTitleRow h1 {font-size:300%;}
 .fl-theme-uportal3 #portalPageBodyBreadcrumb {font-size:90%; color:#ddd;}
 .fl-theme-uportal3 #portalPageBodyBreadcrumb a {color:#999; font-weight:normal;}
+
+/* Columns */
+.fl-theme-uportal3 #portalPageBodyColumns.fl-col-flex,
+.fl-theme-uportal3 .layout-1-columns .portal-page-column.fl-col-flex {padding:0;} /* Removes default padding from FSS  */
 
 /* Sidebar */
 .fl-theme-uportal3 #portalSidebar {background:#336699 url(images/portlet_corner_bottomleft.png) bottom left no-repeat;}
@@ -230,7 +234,7 @@
 .fl-theme-uportal3 .sidebar-right-200 #portalFragAdminExit,
 .fl-theme-uportal3 .sidebar-right-250 #portalFragAdminExit,
 .fl-theme-uportal3 .sidebar-right-300 #portalFragAdminExit {background:#ffffcc url(images/page_corner_topright.png) top right no-repeat;}
-.fl-theme-uportal3 .sidebar #portalPageBodyTitleRow {background:none;}
+/*.fl-theme-uportal3 .sidebar #portalPageBodyTitleRow {background:none;}*/
 
 /* Portlets */
 .fl-theme-uportal3 .dashboard .portlet-top {background:#e5e5e5 url(images/portlet_corner_topleft.png) top left no-repeat;}
