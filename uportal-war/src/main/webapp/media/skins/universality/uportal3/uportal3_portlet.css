@@ -44,11 +44,11 @@
 .portlet-msg-info, 
 .portlet-msg-error, 
 .portlet-msg-alert, 
-.portlet-msg-success {padding:1em 1em 1em 3em; border:2px solid #ccc; color:#666; background:#ddd url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/status.png) 1em 1em no-repeat;}
+.portlet-msg-success {padding:1em 1em 1em 3em; border:2px solid #FFFF00; color:#666; background:#FFFFCC url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/bell.png) 1em 1em no-repeat;}
 .portlet-msg-status {}
-.portlet-msg-info {color:#FE0000; background:#99ccff url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/information.png) 1em 1em no-repeat; border-color:#3399ff;}
-.portlet-msg-error {color:#f00; background:#ffeeee url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/stop.png) 1em 1em no-repeat; border-color:#cc0000;}
-.portlet-msg-alert {color:#000; background:#FFCC66 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/error.png) 1em 1em no-repeat; border-color:#FF6600;}
+.portlet-msg-info {color:#000; background:#99ccff url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/information.png) 1em 1em no-repeat; border-color:#3399ff;}
+.portlet-msg-error {color:#000; background:#FFCC66 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/error.png) 1em 1em no-repeat; border-color:#FF6600;}
+.portlet-msg-alert {color:#f00; background:#ffeeee url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/exclamation.png) 1em 1em no-repeat; border-color:#cc0000;}
 .portlet-msg-success {color:#000; background:#D1F0E0 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 1em 1em no-repeat; border-color:#009900;}
 
 
@@ -142,6 +142,11 @@
 
 /*== Portlet Messages ==*/
 /* Mostly defined in PLT.C.3 Messages, above. Refer to notes there. */
+.portlet-msg-status h2,
+.portlet-msg-info h2, 
+.portlet-msg-error h2, 
+.portlet-msg-alert h2, 
+.portlet-msg-success h2 {margin:0;}
 .portlet-msg-status h3,
 .portlet-msg-info h3, 
 .portlet-msg-error h3, 
@@ -226,9 +231,9 @@ th {padding:0.1em 1em; border-color:#336699; background-color:#e2e8e7; color:#66
 
 /* Browser */
 .portlet .portlet-browse .fl-tab-content {margin-left:20px; padding:0; border:1px solid #ccc;}
-.portlet .portlet-browse h5 {padding-top:0.1em; font-size:200%; font-weight:normal;}
+.portlet .portlet-browse h5 {padding-top:0.1em; padding-left:30px; font-size:200%; font-weight:normal;}
 .portlet .portlet-browse .selected {background-color:#D1F0E0}
-.portlet .portlet-browse .selected h5 {padding-left:30px; background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 10px 50% no-repeat; color:#009900;}
+.portlet .portlet-browse .selected h5 {background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 10px 50% no-repeat; color:#009900;}
 .portlet .portlet-browse-header {padding:0.5em 1em; border-bottom:2px solid #ccc;}
 .portlet .portlet-browse-header .fl-text-align-right {padding-top:0.7em;}
 .portlet a.portlet-browse-select {padding:0.2em 1em 0.2em 2em;  background:#fff url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/add.png) 0.3em 50% no-repeat; border:1px solid #336699; color:#336699; text-decoration:none;}
@@ -239,7 +244,7 @@ th {padding:0.1em 1em; border-color:#336699; background-color:#e2e8e7; color:#66
 .portlet .portlet-browse-breadcrumb a {font-weight:normal; color:#666; text-decoration:none;}
 .portlet .portlet-browse-breadcrumb a:hover {color:#000; text-decoration:underline;}
 .portlet .portlet-browse-body {padding:0.5em 1em 1em 1em;}
-.portlet .portlet-browse h7 {font-weight:bold;}
+.portlet .portlet-browse h7 {font-weight:bold; margin:1em 0 0.3em 0;}
 
 /* Members */
 .portlet ul.group-member,
