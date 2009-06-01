@@ -329,27 +329,26 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
         Element chanDefE = doc.getDocumentElement();
         final String id = getId(chanDefE);
         if (id != null) {
-            ci.chanDef = crs.newChannelDefinition(Integer.parseInt(id));
-        } else {
-            String fname = getFname(chanDefE);
+            log.warn("The channel XML file specified an id element which is no longer supported.");
+        }
+        String fname = getFname(chanDefE);
 
-            // Use existing channel definition if it exists,
-            // otherwise make a new one with a new ID
-            ci.chanDef = crs.getChannelDefinition(fname);
+        // Use existing channel definition if it exists,
+        // otherwise make a new one with a new ID
+        ci.chanDef = crs.getChannelDefinition(fname);
 
-            if (ci.chanDef != null && !mOverrideExisting)
-            {
-                log.error(
-                        "chanDef with fname "
-                        + fname
-                        + " already exists "
-                        + "and override is false. Terminating publication.");
-                return null;
-            }
+        if (ci.chanDef != null && !mOverrideExisting)
+        {
+            log.error(
+                    "chanDef with fname "
+                    + fname
+                    + " already exists "
+                    + "and override is false. Terminating publication.");
+            return null;
+        }
 
-            if (ci.chanDef == null) {
-                ci.chanDef = crs.newChannelDefinition();
-            }
+        if (ci.chanDef == null) {
+            ci.chanDef = crs.newChannelDefinition();
         }
 
         for (Node param = chanDefE.getFirstChild(); param != null; param = param.getNextSibling()) {

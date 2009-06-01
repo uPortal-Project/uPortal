@@ -13,11 +13,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -36,6 +38,7 @@ import org.danann.cernunnos.Task;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DOMWriter;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
@@ -48,11 +51,12 @@ import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
-import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
+import org.jasig.portal.channel.XmlGeneratingBaseChannelDefinition;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
+import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
@@ -2131,15 +2135,11 @@ public class RDBMDistributedLayoutStore
       structure = channelDef.getDocument(doc, channelPrefix + ls.getStructId());
     } else {
         // Create an error channel if channel is missing or not approved
-        IChannelDefinition cd = new ChannelDefinitionImpl(ls.getChanId());
-        cd.setTitle("Missing channel");
-        cd.setName("Missing channel");
-        cd.setTimeout(20000);
         String missingChannel = "Unknown";
         if (channelDef != null) {
             missingChannel = channelDef.getName();
         }
-        structure = cd.getDocument(doc, channelPrefix + ls.getStructId(),
+        structure = MissingChannelDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId(),
                 "The '" + missingChannel + "' channel is no longer available. " +
                 "Please remove it from your layout.",
                 ErrorCode.CHANNEL_MISSING_EXCEPTION.getCode());
@@ -2830,5 +2830,144 @@ public class RDBMDistributedLayoutStore
         }
         pstmt.executeUpdate();
     }
+
+    private static final class MissingChannelDefinition extends XmlGeneratingBaseChannelDefinition {
+        public static final IChannelDefinition INSTANCE = new MissingChannelDefinition();
         
+        public String getName() {
+            return "Missing channel";
+        }
+        public String getName(String locale) {
+            return "Missing channel";
+        }
+        public int getTimeout() {
+            return 20000;
+        }
+        public String getTitle() {
+            return "Missing channel";
+        }
+        public String getTitle(String locale) {
+            return "Missing channel";
+        }
+        public String getFName() {
+            return "DLMStaticMissingChannel";
+        }
+        
+        public void addLocalizedDescription(String locale, String chanDesc) {
+        }
+        public void addLocalizedName(String locale, String chanName) {
+        }
+        public void addLocalizedTitle(String locale, String chanTitle) {
+        }
+        public void addParameter(IChannelParameter parameter) {
+        }
+        public void addParameter(String name, String value, boolean override) {
+        }
+        public void addParameter(String name, String value, String override) {
+        }
+        public void clearParameters() {
+        }
+        public Date getApprovalDate() {
+            return null;
+        }
+        public int getApproverId() {
+            return 0;
+        }
+        public String getDescription() {
+            return null;
+        }
+        public String getDescription(String locale) {
+            return null;
+        }
+        public EntityIdentifier getEntityIdentifier() {
+            return null;
+        }
+        public int getId() {
+            return -1;
+        }
+        public String getJavaClass() {
+            return null;
+        }
+        public String getLocale() {
+            return null;
+        }
+        public IChannelParameter getParameter(String key) {
+            return null;
+        }
+        public Set<IChannelParameter> getParameters() {
+            return null;
+        }
+        public Map<String, IChannelParameter> getParametersAsUnmodifiableMap() {
+            return null;
+        }
+        public IPortletPreference[] getPortletPreferences() {
+            return null;
+        }
+        public Date getPublishDate() {
+            return null;
+        }
+        public int getPublisherId() {
+            return 0;
+        }
+        public int getTypeId() {
+            return 0;
+        }
+        public boolean hasAbout() {
+            return false;
+        }
+        public boolean hasHelp() {
+            return false;
+        }
+        public boolean isEditable() {
+            return false;
+        }
+        public boolean isPortlet() {
+            return false;
+        }
+        public boolean isSecure() {
+            return false;
+        }
+        public void removeParameter(IChannelParameter parameter) {
+        }
+        public void removeParameter(String name) {
+        }
+        public void replaceParameters(Set<IChannelParameter> parameters) {
+        }
+        public void replacePortletPreference(List<IPortletPreference> portletPreferences) {
+        }
+        public void setApprovalDate(Date approvalDate) {
+        }
+        public void setApproverId(int approvalId) {
+        }
+        public void setDescription(String descr) {
+        }
+        public void setEditable(boolean editable) {
+        }
+        public void setFName(String fname) {
+        }
+        public void setHasAbout(boolean hasAbout) {
+        }
+        public void setHasHelp(boolean hasHelp) {
+        }
+        public void setIsSecure(boolean isSecure) {
+        }
+        public void setJavaClass(String javaClass) {
+        }
+        public void setLocale(String locale) {
+        }
+        public void setName(String name) {
+        }
+        public void setParameters(Set<IChannelParameter> parameters) {
+        }
+        public void setPublishDate(Date publishDate) {
+        }
+        public void setPublisherId(int publisherId) {
+        }
+        public void setTimeout(int timeout) {
+        }
+        public void setTitle(String title) {
+        }
+        public void setTypeId(int typeId) {
+        }
+    }
 }

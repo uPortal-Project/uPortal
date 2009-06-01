@@ -3,7 +3,7 @@
  * See license distributed with this file and available online at
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
-package org.jasig.portal;
+package org.jasig.portal.channel.dao.jpa;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,7 +26,7 @@ public class ChannelDefinitionTest extends TestCase {
      * does not identify CGenericXSLT as a portlet.
      */
     public void testIsPortlet() {
-        IChannelDefinition cd = new ChannelDefinitionImpl(72);
+        IChannelDefinition cd = new ChannelDefinitionImpl();
         
         cd.setJavaClass("org.jasig.portal.channels.CGenericXSLT");
         assertFalse(cd.isPortlet());
@@ -43,7 +43,7 @@ public class ChannelDefinitionTest extends TestCase {
      * @throws ParserConfigurationException
      */
     public void testGetDocument() throws ParserConfigurationException {
-        IChannelDefinition cd = new ChannelDefinitionImpl(73);
+        IChannelDefinition cd = new ChannelDefinitionImpl();
         
         cd.setDescription("A test channel description.");
         cd.setEditable(false);

@@ -13,7 +13,6 @@ import java.util.Set;
 import org.easymock.EasyMock;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelInstanciatedInLayoutPortalEvent;
@@ -122,7 +121,11 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         
-        final IChannelDefinition channelDefinition = new ChannelDefinitionImpl(1);
+        final IChannelDefinition channelDefinition = EasyMock.createMock(IChannelDefinition.class);
+        EasyMock.expect(channelDefinition.getId()).andReturn(1).anyTimes();
+        EasyMock.expect(channelDefinition.getName()).andReturn("TestChannelDef").anyTimes();
+        EasyMock.replay(channelDefinition);
+        
         
         
         portalEvent = new PublishedChannelDefinitionPortalEvent(this, person, channelDefinition);

@@ -69,15 +69,7 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
     
 	
     // Public ChannelDefinition methods
-
-    /*
-     * (non-Javadoc)
-     * @see org.jasig.portal.IChannelRegistryStore#newChannelDefinition(int)
-     */
-    public IChannelDefinition newChannelDefinition(final int id) {
-        return new ChannelDefinitionImpl(id);
-    }
-
+	
     /*
      * (non-Javadoc)
      * @see org.jasig.portal.IChannelRegistryStore#newChannelDefinition()

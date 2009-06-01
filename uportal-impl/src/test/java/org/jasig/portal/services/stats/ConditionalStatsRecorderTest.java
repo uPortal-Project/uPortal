@@ -7,9 +7,9 @@ package org.jasig.portal.services.stats;
 
 import junit.framework.TestCase;
 
+import org.easymock.EasyMock;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
@@ -37,10 +37,15 @@ public class ConditionalStatsRecorderTest extends TestCase {
 	private IUserLayoutFolderDescription dummyFolderDescription = new UserLayoutFolderDescription();
 	
 	// a channel definition with a bogus ID.
-	private IChannelDefinition dummyChannelDefinition = new ChannelDefinitionImpl(1);
+	private IChannelDefinition dummyChannelDefinition;
 	
 	
 	protected void setUp() {
+	    dummyChannelDefinition = EasyMock.createMock(IChannelDefinition.class);
+        EasyMock.expect(dummyChannelDefinition.getId()).andReturn(1).anyTimes();
+        EasyMock.expect(dummyChannelDefinition.getName()).andReturn("TestChannelDef").anyTimes();
+        EasyMock.replay(dummyChannelDefinition);
+	    
 		this.conditionalRecorder = new ConditionalStatsRecorder();
 		MockStatsRecorder mockTarget = new MockStatsRecorder();
 		conditionalRecorder.setTargetStatsRecorder(mockTarget);

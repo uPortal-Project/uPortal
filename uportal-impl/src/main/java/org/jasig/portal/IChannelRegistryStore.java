@@ -65,14 +65,6 @@ public interface IChannelRegistryStore {
   public IChannelDefinition newChannelDefinition();
 
   /**
-   * Create a new ChannelDefinition object.
-   * @param id channel id
-   * @return the new channel definition
-   * @throws java.lang.Exception
-   */
-  public IChannelDefinition newChannelDefinition(int id);
-
-  /**
    * Get a channel definition.
    * @param channelPublishId a channel publish ID
    * @return a definition of the channel or <code>null</code> if no matching channel definition can be found
