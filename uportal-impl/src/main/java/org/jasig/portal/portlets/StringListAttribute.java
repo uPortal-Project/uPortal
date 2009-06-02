@@ -17,7 +17,9 @@ public class StringListAttribute implements Serializable {
     }
 
     public StringListAttribute(String[] value) {
-        this.value = Arrays.<String>asList(value);
+    	List<String> values = new ArrayList<String>();
+        values.addAll(Arrays.<String>asList(value));
+        this.value = values;
     }
 
     /**
@@ -35,7 +37,9 @@ public class StringListAttribute implements Serializable {
     }
 
     public void setValue(String[] value) {
-        this.value = Arrays.<String>asList(value);
+    	List<String> values = new ArrayList<String>();
+        values.addAll(Arrays.<String>asList(value));
+        this.value = values;
     }
 
     /* (non-Javadoc)

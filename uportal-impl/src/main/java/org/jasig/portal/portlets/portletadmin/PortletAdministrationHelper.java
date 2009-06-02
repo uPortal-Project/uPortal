@@ -205,12 +205,14 @@ public class PortletAdministrationHelper {
 		
 		for (String key : form.getPortletPreferences().keySet()) {
 			List<String> prefValues = form.getPortletPreferences().get(key).getValue();
-			String[] values = prefValues.toArray(new String[prefValues.size()]);
-			boolean readOnly = true;
-			if (form.getPortletPreferencesOverrides().containsKey(key)) {
-				readOnly = !form.getPortletPreferencesOverrides().get(key).getValue();
+			if (prefValues != null && prefValues.size() > 0) {
+				String[] values = prefValues.toArray(new String[prefValues.size()]);
+				boolean readOnly = true;
+				if (form.getPortletPreferencesOverrides().containsKey(key)) {
+					readOnly = !form.getPortletPreferencesOverrides().get(key).getValue();
+				}
+				portletPreferences.add(new PortletPreferenceImpl(key, readOnly, values));
 			}
-			portletPreferences.add(new PortletPreferenceImpl(key, readOnly, values));
 		}
 		channelDef.replacePortletPreference(portletPreferences);
 	    
@@ -319,6 +321,21 @@ public class PortletAdministrationHelper {
 			if (!preferenceNames.contains(key)) {
 				form.getPortletPreferences().remove(key);
 				form.getPortletPreferencesOverrides().remove(key);
+			} else if (form.getPortletPreferences().get(key) == null) {
+				form.getPortletPreferences().remove(key);
+				form.getPortletPreferencesOverrides().remove(key);
+			} else {
+				List<String> values = form.getPortletPreferences().get(key).getValue();
+				for (ListIterator<String> iter = values.listIterator(); iter.hasNext();) {
+					String value = iter.next();
+					if (StringUtils.isEmpty(value)) {
+						iter.remove();
+					}
+				}
+				if (values.size() == 0) {
+					form.getPortletPreferences().remove(key);
+					form.getPortletPreferencesOverrides().remove(key);
+				}
 			}
 		}
 		
@@ -326,6 +343,9 @@ public class PortletAdministrationHelper {
 		keys.addAll(form.getParameters().keySet());
 		for (String key : keys) {
 			if (!parameterNames.contains(key)) {
+				form.getParameters().remove(key);
+				form.getParameterOverrides().remove(key);
+			} else if (form.getParameters().get(key) == null || StringUtils.isBlank(form.getParameters().get(key).getValue())) {
 				form.getParameters().remove(key);
 				form.getParameterOverrides().remove(key);
 			}

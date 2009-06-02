@@ -10,7 +10,7 @@
   <c:when test="${ parameterType.input == 'multi-text' }">
     <c:forEach items="${ parameterValues }" var="val">
       <div>
-         <input name="${ paramPath }" value="${ val }" 
+         <input name="${ parameterPath }" value="${ val }" 
             size="${ parameterType.length != '' ? parameterType.length : defaultLength }"
             maxlength="${ parameterType.maxlength != '' ? parameterType.maxlength : defaultMaxLength }"/>
          <a class="delete-parameter-value-link" href="javascript:;">Remove</a>
