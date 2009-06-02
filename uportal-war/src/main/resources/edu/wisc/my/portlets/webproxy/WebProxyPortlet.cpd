@@ -85,13 +85,25 @@ Author: Andrew Petro, apetro@unicon.net
       <preference modify="publish">
         <name>edu.wisc.my.webproxy.webproxy.general.config.sPortletUrl</name>
         <label>Portlet URL List (optional)</label>
-        <type base="string" input="text" display="text">
+        <type base="string" input="multi-text" display="text">
           <!-- length and maxlength for text field -->
           <length>80</length>
           <maxlength>1024</maxlength>
         </type>
         <example>http\:\/\/www\.google\.com.</example>
         <description>Must contain the URLs of the web application you would like or would not like to be proxied, depending on the URL List Type (see below). The portlet URL list uses regular expressions for matching. (e.g., .foo.)</description>
+      </preference>
+
+      <preference modify="publish">
+        <name>edu.wisc.my.webproxy.webproxy.general.config.sPortletState</name>
+        <label>Portlet State List (optional)</label>
+        <type base="string" input="multi-text" display="text">
+          <!-- length and maxlength for text field -->
+          <length>40</length>
+          <maxlength>1024</maxlength>
+        </type>
+        <example>NORMAL</example>
+        <description>Must contain the . (e.g., .foo.)</description>
       </preference>
 
       <preference modify="publish">
