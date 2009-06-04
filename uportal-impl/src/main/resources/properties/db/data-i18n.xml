@@ -13,17 +13,6 @@
    +-->
   <!-- 
   <table>
-    <name>UP_CHAN_TYPE_MDATA</name>
-    <rows>
-      <row>
-        <column><name>TYPE_ID</name><value>0</value></column>
-        <column><name>LOCALE</name><value>en_US</value></column>
-        <column><name>TYPE_NAME</name><value>RSS</value></column>
-        <column><name>TYPE_DESCR</name><value>Renders content provided in the popular RSS (Rich Site Summary) format</value></column>
-      </row>
-    </rows>
-  </table>
-  <table>
     <name>UP_CHANNEL_MDATA</name>
     <rows>
       <row>
@@ -59,17 +48,6 @@
     </rows>
   </table>
 
-  <table>
-    <name>UP_CHAN_TYPE_MDATA</name>
-    <rows>
-      <row>
-        <column><name>TYPE_ID</name><value>0</value></column>
-        <column><name>LOCALE</name><value>ja_JP</value></column>
-        <column><name>TYPE_NAME</name><value>RSS</value></column>
-        <column><name>TYPE_DESCR</name><value>RSS(Rich Site Summary)フォーマットで提供されるコンテンツを表示．</value></column>
-      </row>
-    </rows>
-  </table>
   <table>
     <name>UP_CHANNEL_MDATA</name>
     <rows>
