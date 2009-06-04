@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AbstractChannelRegistryStore;
 import org.jasig.portal.channel.dao.IChannelDefinitionDao;
 import org.jasig.portal.channel.dao.IChannelTypeDao;
-import org.jasig.portal.channel.dao.jpa.ChannelTypeImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
@@ -148,8 +147,21 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
      * (non-Javadoc)
      * @see org.jasig.portal.IChannelRegistryStore#newChannelType()
      */
-    public IChannelType newChannelType() {
-    	return new ChannelTypeImpl();
+    public IChannelType newChannelType(String name, String clazz, String cpdUri) {
+    	return this.channelTypeDao.createChannelType(name, clazz, cpdUri);
+    }
+    
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getOrCreateChannelType(java.lang.String, java.lang.String, java.lang.String)
+     */
+    public IChannelType getOrCreateChannelType(String name, String clazz, String cpdUri) {
+        final IChannelType channelType = this.getChannelType(name);
+        if (channelType != null) {
+            return channelType;
+        }
+        
+        return this.newChannelType(name, clazz, cpdUri);
     }
 
     /*
@@ -158,6 +170,14 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
      */
     public IChannelType getChannelType(int channelTypeId) {
     	return channelTypeDao.getChannelType(channelTypeId);
+    }
+    
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getChannelType(java.lang.String)
+     */
+    public IChannelType getChannelType(String name) {
+        return channelTypeDao.getChannelType(name);
     }
 
     /*
@@ -173,7 +193,7 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
      * @see org.jasig.portal.IChannelRegistryStore#saveChannelType(org.jasig.portal.channel.IChannelType)
      */
     public IChannelType saveChannelType(IChannelType chanType) {
-        return channelTypeDao.saveChannelType(chanType);
+        return channelTypeDao.updateChannelType(chanType);
     }
     
     /*

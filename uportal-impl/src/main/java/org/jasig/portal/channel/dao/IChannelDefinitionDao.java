@@ -7,13 +7,11 @@ import org.jasig.portal.channel.IChannelDefinition;
 /**
  * Provides APIs for creating, storing and retrieving {@link IChannelDefinition} objects.
  * 
- * @author Eric Dalquist
  * @version $Revision$
  */
 public interface IChannelDefinitionDao {
     /**
-     * Creates, initializes and persists a new {@link IChannelDefinition} based on the specified channelPublishId and 
-     * portletApplicationId and portletName.
+     * Creates, initializes and persists a new {@link IChannelDefinition} based on the specified parameters
      * 
      * @param channelTypeId The type the channel is based on
      * @param fname A unique, human-readable key for the channel. Must match the regular expression {@link org.jasig.portal.dao.usertype.FunctionalNameType#VALID_FNAME_PATTERN}

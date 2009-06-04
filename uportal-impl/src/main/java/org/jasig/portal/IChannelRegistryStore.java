@@ -25,7 +25,17 @@ public interface IChannelRegistryStore {
    * @return the new channel type
    * @throws java.lang.Exception
    */
-  public IChannelType newChannelType();
+  public IChannelType newChannelType(String name, String clazz, String cpdUri);
+  
+   /**
+    * Convience for {@link #getChannelType(String)} and {@link #newChannelType(String, String, String)}.
+    * If the get returns null the type will be created and returned. If the get returns an {@link IChannelType}
+    * the clazz and cpdUri parameters are ignored
+    * 
+    * @see #getChannelType(String)
+    * @see #newChannelType(String, String, String)
+    */
+    public IChannelType getOrCreateChannelType(String name, String clazz, String cpdUri);
 
   /**
    * Get the channel type associated with a particular identifier.
@@ -34,6 +44,14 @@ public interface IChannelRegistryStore {
    * @throws java.lang.Exception
    */
   public IChannelType getChannelType(int channelTypeId);
+
+  /**
+   * Get the channel type associated with a particular identifier.
+   * @param name the channel type name
+   * @return channelType the channel type
+   * @throws java.lang.Exception
+   */
+  public IChannelType getChannelType(String name);
 
   /**
    * Returns an array of ChannelTypes.

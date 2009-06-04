@@ -145,7 +145,6 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
     /**
      * Used to initialize fields after persistence actions.
      */
-    @SuppressWarnings("unused")
     @PostLoad
     @PostPersist
     @PostUpdate
@@ -492,11 +491,8 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
         }
         IChannelDefinition rhs = (IChannelDefinition) object;
         return new EqualsBuilder()
-            .append(this.typeId, rhs.getTypeId())
             .append(this.fname, rhs.getFName())
-            .append(this.clazz, rhs.getClass())
             .append(this.name, rhs.getName())
-            .append(this.title, rhs.getTitle())
             .isEquals();
     }
 
@@ -506,11 +502,8 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
     @Override
     public int hashCode() {
         return new HashCodeBuilder(464270933, -1074792143)
-            .append(this.typeId)
             .append(this.fname)
-            .append(this.clazz)
             .append(this.name)
-            .append(this.title)
             .toHashCode();
     }
 

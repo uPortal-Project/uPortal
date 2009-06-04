@@ -94,6 +94,22 @@ public class MockChannelRegistryStore implements IChannelRegistryStore {
         throw new UnsupportedOperationException("Not Implemented");
 
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getChannelType(java.lang.String)
+     */
+    public IChannelType getChannelType(String name) {
+
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getOrCreateChannelType(java.lang.String, java.lang.String, java.lang.String)
+     */
+    public IChannelType getOrCreateChannelType(String name, String clazz, String cpdUri) {
+
+        throw new UnsupportedOperationException("Not Implemented");
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.IChannelRegistryStore#deleteChannelType(org.jasig.portal.ChannelType)
@@ -220,9 +236,9 @@ public class MockChannelRegistryStore implements IChannelRegistryStore {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.IChannelRegistryStore#newChannelType()
+     * @see org.jasig.portal.IChannelRegistryStore#newChannelType(java.lang.String, java.lang.String, java.lang.String)
      */
-    public IChannelType newChannelType() {
+    public IChannelType newChannelType(String name, String clazz, String cpdUri) {
         throw new UnsupportedOperationException("Not Implemented");
         
     }

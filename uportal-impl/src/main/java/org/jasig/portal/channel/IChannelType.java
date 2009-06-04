@@ -61,13 +61,6 @@ public interface IChannelType {
 	public void setJavaClass(String javaClass);
 
 	/**
-	 * Set the name of this channel type
-	 * 
-	 * @param name
-	 */
-	public void setName(String name);
-
-	/**
 	 * Set the description for this channel type
 	 * 
 	 * @param description

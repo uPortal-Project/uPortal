@@ -104,13 +104,10 @@ public class RegisterChannelType
       if (chanType == null) // new one being defined
       {
           isNew = true;
-          chanType = chanRegStore.newChannelType();
+          chanType = chanRegStore.newChannelType(name, clazz, uri);
       }
             
-      chanType.setJavaClass(clazz);
-      chanType.setName(name);
       chanType.setDescription(description);
-      chanType.setCpdUri(uri);
       chanRegStore.saveChannelType(chanType);
       return "The \"" + name + "\" channel type has been "
       + (isNew ? "added" : "updated") + " successfully.";

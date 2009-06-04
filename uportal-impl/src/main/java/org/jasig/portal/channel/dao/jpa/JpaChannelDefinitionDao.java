@@ -49,6 +49,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
     /* (non-Javadoc)
      * @see org.jasig.portal.channel.dao.IChannelDefinitionDao#createChannelDefinition(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
+    @Transactional
     public IChannelDefinition createChannelDefinition(int channelTypeId, String fname, String clazz, String name, String title) {
         Validate.notEmpty(fname, "fname can not be null");
         Validate.notEmpty(clazz, "clazz can not be null");
@@ -88,6 +89,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
     @SuppressWarnings("unchecked")
 	public List<IChannelDefinition> getChannelDefinitions() {
         final Query query = this.entityManager.createQuery(FIND_ALL_CHANNEL_DEFS);
+        query.setHint("org.hibernate.cacheable", true);
         final List<IChannelDefinition> channelDefinitions = query.getResultList();
 		return channelDefinitions;
 	}

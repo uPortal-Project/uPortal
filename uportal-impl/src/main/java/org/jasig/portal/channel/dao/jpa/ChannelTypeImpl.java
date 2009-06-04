@@ -13,7 +13,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.jasig.portal.channel.IChannelType;
 
@@ -30,18 +35,20 @@ import org.jasig.portal.channel.IChannelType;
 		@Parameter(name = "sequence", value = "UP_CHANNEL_TYPE_DEF_SEQ"),
 		@Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
 		@Parameter(name = "column", value = "NEXT_UP_CHANNEL_TYPE_DEF_HI") })
-public class ChannelTypeImpl implements Serializable, IChannelType {
+class ChannelTypeImpl implements Serializable, IChannelType {
+    private static final long serialVersionUID = 1L;
 
-	@Id
+    @Id
 	@GeneratedValue(generator = "UP_CHANNEL_TYPE_DEF_GEN")
 	@Column(name = "TYPE_ID")
-	private Long internalId;
+	private final int internalId;
+
+    @Column(name = "TYPE_NAME", length = 70, unique = true, nullable = false)
+    @Index(name = "IDX_CHAN_TYPE__NAME")
+    private final String name;
 
 	@Column(name = "TYPE", length = 128, nullable = false)
 	private String javaClass;
-
-	@Column(name = "TYPE_NAME", length = 70, unique = true, nullable = false)
-	private String name;
 
 	@Column(name = "TYPE_DESCR", length = 2000)
 	private String descr;
@@ -50,34 +57,33 @@ public class ChannelTypeImpl implements Serializable, IChannelType {
 	private String cpdUri;
 	
 	/**
-	 * Default constructor
+	 * Default constructor used by hibernate
 	 */
-	public ChannelTypeImpl() { }
-
-	/**
-	 * Constructs a channel type.
-	 * 
-	 * @param id
-	 *            the channel type ID
-	 */
-	public ChannelTypeImpl(int id) {
-		if (id != 0) {
-			this.internalId = new Long(id);
-		}
+	@SuppressWarnings("unused")
+    private ChannelTypeImpl() {
+	    this.internalId = -1;
+        this.name = null;
 	}
+	
 
-	// Getter methods
+    public ChannelTypeImpl(String name, String javaClass, String cpdUri) {
+        this.internalId = -1;
+        this.javaClass = javaClass;
+        this.name = name;
+        this.cpdUri = cpdUri;
+    }
+
+
+
+
+    // Getter methods
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.IChannelType#getId()
 	 */
 	public int getId() {
-		if (internalId == null) {
-			return 0;
-		} else {
-			return internalId.intValue();
-		}
+		return this.internalId;
 	}
 
 	/*
@@ -113,22 +119,6 @@ public class ChannelTypeImpl implements Serializable, IChannelType {
 	}
 
 	// Setter methods
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.jasig.portal.IChannelType#setJavaClass(java.lang.String)
-	 */
-	public void setJavaClass(String javaClass) {
-		this.javaClass = javaClass;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portal.IChannelType#setName(java.lang.String)
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -138,12 +128,68 @@ public class ChannelTypeImpl implements Serializable, IChannelType {
 		this.descr = descr;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portal.IChannelType#setCpdUri(java.lang.String)
-	 */
-	public void setCpdUri(String cpdUri) {
-		this.cpdUri = cpdUri;
-	}
+    /* (non-Javadoc)
+     * @see org.jasig.portal.channel.IChannelType#setCpdUri(java.lang.String)
+     */
+    public void setCpdUri(String cpdUri) {
+        this.cpdUri = cpdUri;
+    }
 
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.channel.IChannelType#setJavaClass(java.lang.String)
+     */
+    public void setJavaClass(String javaClass) {
+        this.javaClass = javaClass;
+    }
+
+
+    /**
+     * @see java.lang.Object#equals(Object)
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof IChannelType)) {
+            return false;
+        }
+        IChannelType rhs = (IChannelType) object;
+        return new EqualsBuilder()
+            .append(this.name, rhs.getName())
+            .append(this.javaClass, rhs.getJavaClass())
+            .append(this.cpdUri, rhs.getCpdUri())
+            .isEquals();
+    }
+
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(-1497407419, 1799845985)
+            .append(this.cpdUri)
+            .append(this.name)
+            .append(this.javaClass)
+            .toHashCode();
+    }
+
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            .append("internalId", this.internalId)
+            .append("name", this.name)
+            .append("javaClass", this.javaClass)
+            .append("cpdUri", this.cpdUri)
+            .append("descr", this.descr)
+            .toString();
+    }
+	
+	
 }

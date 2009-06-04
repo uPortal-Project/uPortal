@@ -18,39 +18,31 @@
  |   - Settings defined in classpath://properties/db/entities/import.properties
  |
  +-->
-<with-attribute key="CHANNEL_TYPE" value="${valueOf(type)}">
-    <groovy>
-        <!-- 
-         | We want to be sure that the specified Java class (i.e. ${valueOf(type)}) is 
-         | present in the classpath.  This implementation will yield a simple stack 
-         | trace if the test fails. 
-         +-->
-        <script>Class.forName(CHANNEL_TYPE);</script>
-        <subtasks>
-            <sql-transaction>
-                <sql-upsert>
-                    <update-statement>
-                        UPDATE up_chan_type 
-                        SET type = ?, type_descr = ?, type_def_uri = ? 
-                        WHERE type_name = ?
-                    </update-statement>
-                    <insert-statement>
-                        INSERT INTO up_chan_type(type, type_descr, type_def_uri, type_name, type_id) 
-                        VALUES(?, ?, ?, ?, ?)
-                    </insert-statement>
+<with>
+    <attribute key="channelRegistryStore">${groovy(PORTAL_CONTEXT.getBean('channelRegistryStore'))}</attribute>
+    <attribute key="CHANNEL_NAME">${valueOf(name)}</attribute>
+    <attribute key="CHANNEL_TYPE">${valueOf(type)}</attribute>
+    <attribute key="CHANNEL_URI">${valueOf(uri)}</attribute>
+    <attribute key="CHANNEL_DESC">${valueOf(desc)}</attribute>
+    <subtasks>
+        <sql-transaction>
+            <groovy>
+                <!-- 
+                 | We want to be sure that the specified Java class (i.e. ${valueOf(type)}) is 
+                 | present in the classpath.  This implementation will yield a simple stack 
+                 | trace if the test fails. 
+                 +-->
+                <script>
+                    Class.forName(CHANNEL_TYPE);
                     
-                    <update-parameter value="${valueOf(type)}"/>
-                    <update-parameter value="${valueOf(desc)}"/>
-                    <update-parameter value="${valueOf(uri)}"/>
-                    <update-parameter value="${valueOf(name)}"/>
+                    chanType = channelRegistryStore.getOrCreateChannelType(CHANNEL_NAME, CHANNEL_TYPE, CHANNEL_URI);
+                    chanType.setJavaClass(CHANNEL_TYPE);
+                    chanType.setCpdUri(CHANNEL_URI);
+                    chanType.setDescription(CHANNEL_DESC);
                     
-                    <insert-parameter value="${valueOf(type)}"/>
-                    <insert-parameter value="${valueOf(desc)}"/>
-                    <insert-parameter value="${valueOf(uri)}"/>
-                    <insert-parameter value="${valueOf(name)}"/>
-                    <insert-parameter value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_CHAN_TYPE)}"/>
-                </sql-upsert>
-            </sql-transaction>
-        </subtasks>
-    </groovy>
-</with-attribute>
+                    channelRegistryStore.saveChannelType(chanType);
+                </script>
+            </groovy>
+        </sql-transaction>
+    </subtasks>
+</with>

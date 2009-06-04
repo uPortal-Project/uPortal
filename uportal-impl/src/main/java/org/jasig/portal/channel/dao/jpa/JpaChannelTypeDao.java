@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.dao.IChannelTypeDao;
 import org.springframework.dao.support.DataAccessUtils;
@@ -40,8 +41,33 @@ public class JpaChannelTypeDao implements IChannelTypeDao {
      */
     @Transactional
 	public void deleteChannelType(IChannelType type) {
-    	this.entityManager.remove(type);
+        Validate.notNull(type, "definition can not be null");
+        
+        final IChannelType persistentChanneltype;
+        if (this.entityManager.contains(type)) {
+            persistentChanneltype = type;
+        }
+        else {
+            persistentChanneltype = this.entityManager.merge(type);
+        }
+    	this.entityManager.remove(persistentChanneltype);
 	}
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.channel.dao.IChannelTypeDao#createChannelType(java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Transactional
+    public IChannelType createChannelType(String name, String clazz, String cpdUri) {
+        Validate.notEmpty(name, "name can not be null");
+        Validate.notEmpty(clazz, "clazz can not be null");
+        Validate.notEmpty(cpdUri, "cpdUri can not be null");
+        
+        final ChannelTypeImpl channelType = new ChannelTypeImpl(name, clazz, cpdUri);
+        
+        this.entityManager.persist(channelType);
+        
+        return channelType;
+    }
 
     /*
      * (non-Javadoc)
@@ -55,9 +81,11 @@ public class JpaChannelTypeDao implements IChannelTypeDao {
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.dao.IChannelTypeDao#getChannelType(java.lang.String)
 	 */
+    @SuppressWarnings("unchecked")
 	public IChannelType getChannelType(String name) {
         final Query query = this.entityManager.createQuery("from ChannelTypeImpl type where type.name = :name");
         query.setParameter("name", name);
+        query.setHint("org.hibernate.cacheable", true);
         query.setMaxResults(1);
         
         final List<IChannelType> channelTypes = query.getResultList();
@@ -69,8 +97,10 @@ public class JpaChannelTypeDao implements IChannelTypeDao {
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.dao.IChannelTypeDao#getChannelTypes()
 	 */
+    @SuppressWarnings("unchecked")
 	public List<IChannelType> getChannelTypes() {
         final Query query = this.entityManager.createQuery("from ChannelTypeImpl channel");
+        query.setHint("org.hibernate.cacheable", true);
         final List<IChannelType> channelTypes = query.getResultList();
 		return channelTypes;
 	}
@@ -80,8 +110,12 @@ public class JpaChannelTypeDao implements IChannelTypeDao {
 	 * @see org.jasig.portal.channel.dao.IChannelTypeDao#saveChannelType(org.jasig.portal.channel.IChannelType)
 	 */
 	@Transactional
-	public IChannelType saveChannelType(IChannelType type) {
-		return this.entityManager.merge(type);
+	public IChannelType updateChannelType(IChannelType type) {
+        Validate.notNull(type, "type can not be null");
+        
+        this.entityManager.persist(type);
+        
+        return type;
 	}
 
 }
