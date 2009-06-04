@@ -370,7 +370,14 @@ public class ChannelRegistryManager {
     String secure = channelE.getAttribute("secure");
     channelDef.setIsSecure(secure != null && secure.equals("true") ? true : false);
     
-    channelDef.setTypeId(Integer.parseInt(channelE.getAttribute("typeID")));
+    final int typeId = Integer.parseInt(channelE.getAttribute("typeID"));
+    final IChannelType channelType = crs.getChannelType(typeId);
+    if (channelType == null) {
+        throw new IllegalArgumentException("No IChannelType exists for ID " + typeId);
+    }
+    
+    channelDef.setType(channelType);
+    
     String chanEditable = channelE.getAttribute("editable");
     String chanHasHelp = channelE.getAttribute("hasHelp");
     String chanHasAbout = channelE.getAttribute("hasAbout");

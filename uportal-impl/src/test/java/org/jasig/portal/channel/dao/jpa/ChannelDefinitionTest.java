@@ -10,7 +10,9 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.TestCase;
 
+import org.easymock.EasyMock;
 import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channels.CGenericXSLT;
 import org.jasig.portal.channels.portlet.CSpringPortletAdaptor;
 import org.w3c.dom.Document;
@@ -27,10 +29,14 @@ public class ChannelDefinitionTest extends TestCase {
      * does not identify CGenericXSLT as a portlet.
      */
     public void testIsPortlet() {
-        IChannelDefinition cd1 = new ChannelDefinitionImpl(1, "fname", CGenericXSLT.class.getName(), "Name", "title");
+        IChannelType channelType = EasyMock.createMock(IChannelType.class);
+        EasyMock.expect(channelType.getId()).andReturn(1).anyTimes();
+        EasyMock.replay(channelType);
+        
+        IChannelDefinition cd1 = new ChannelDefinitionImpl(channelType, "fname", CGenericXSLT.class.getName(), "Name", "title");
         assertFalse(cd1.isPortlet());
         
-        IChannelDefinition cd2 = new ChannelDefinitionImpl(1, "fname", CSpringPortletAdaptor.class.getName(), "Name", "title");
+        IChannelDefinition cd2 = new ChannelDefinitionImpl(channelType, "fname", CSpringPortletAdaptor.class.getName(), "Name", "title");
         assertTrue(cd2.isPortlet());
         
     }
@@ -42,7 +48,11 @@ public class ChannelDefinitionTest extends TestCase {
      * @throws ParserConfigurationException
      */
     public void testGetDocument() throws ParserConfigurationException {
-        IChannelDefinition cd = new ChannelDefinitionImpl(12, "test_fname", CGenericXSLT.class.getName(), "testName", "testTitle");
+        IChannelType channelType = EasyMock.createMock(IChannelType.class);
+        EasyMock.expect(channelType.getId()).andReturn(12).anyTimes();
+        EasyMock.replay(channelType);
+        
+        IChannelDefinition cd = new ChannelDefinitionImpl(channelType, "test_fname", CGenericXSLT.class.getName(), "testName", "testTitle");
         
         cd.setDescription("A test channel description.");
         cd.setEditable(false);

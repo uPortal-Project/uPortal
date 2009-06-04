@@ -28,7 +28,13 @@ public interface IChannelDefinition extends IBasicEntity {
 
 	public int getTimeout();
 
+	/**
+	 * @deprecated use {@link #getType()}
+	 */
+	@Deprecated
 	public int getTypeId();
+	
+	public IChannelType getType();
 
 	public int getPublisherId();
 
@@ -84,7 +90,7 @@ public interface IChannelDefinition extends IBasicEntity {
 
 	public void setTimeout(int timeout);
 
-	public void setTypeId(int typeId);
+	public void setType(IChannelType channelType);
 
 	public void setPublisherId(int publisherId);
 

@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
@@ -38,6 +41,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.XmlGeneratingBaseChannelDefinition;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.om.IPortletPreference;
@@ -78,10 +82,9 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
     @Column(name = "CHAN_CLASS", length = 100, nullable = false)
     private String clazz;
 
-    // TODO: integrate with channel type persistence code
-    @Column(name = "CHAN_TYPE_ID", nullable = false)
-    private int typeId;
-
+    @ManyToOne(targetEntity = ChannelTypeImpl.class, optional = false)
+    @JoinColumn(name = "CHAN_TYPE_ID", nullable = false)
+    private IChannelType channelType;
     
 	@Column(name = "CHAN_DESC", length = 255)
 	private String description;
@@ -122,9 +125,9 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 	@Column(name = "CHAN_SECURE", nullable = false)
 	private boolean secure = false;
 
-	@org.hibernate.annotations.CollectionOfElements(fetch = FetchType.EAGER)
+	@org.hibernate.annotations.CollectionOfElements(fetch = FetchType.EAGER, targetElement = ChannelParameterImpl.class)
 	@JoinTable(name = "UP_CHANNEL_PARAM", joinColumns = @JoinColumn(name = "CHAN_ID"))
-	private Set<ChannelParameterImpl> parameters = new HashSet<ChannelParameterImpl>();
+	private Set<IChannelParameter> parameters = new HashSet<IChannelParameter>();
 
 	@org.hibernate.annotations.CollectionOfElements(fetch = FetchType.EAGER)
 	@JoinTable(name = "UP_CHANNEL_MDATA", joinColumns = @JoinColumn(name = "CHAN_ID"))
@@ -169,16 +172,22 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 	@SuppressWarnings("unused")
     private ChannelDefinitionImpl() {
         this.internalId = -1;
-        this.typeId = -1;
+        this.channelType = null;
         this.name = null;
         this.fname = null;
         this.title = null;
         this.clazz = null;
 	}
 	
-    ChannelDefinitionImpl(int channelTypeId, String fname, String clazz, String name, String title) {
+    ChannelDefinitionImpl(IChannelType channelType, String fname, String clazz, String name, String title) {
+        Validate.notNull(channelType);
+        Validate.notNull(name);
+        Validate.notNull(fname);
+        Validate.notNull(title);
+        Validate.notNull(clazz);
+        
         this.internalId = -1;
-        this.typeId = channelTypeId;
+        this.channelType = channelType;
         this.name = name;
         this.fname = fname;
         this.title = title;
@@ -209,8 +218,9 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
         this.title = title;
     }
 
-    public void setTypeId(int typeId) {
-        this.typeId = typeId;
+    public void setType(IChannelType channelType) {
+        Validate.notNull(channelType);
+        this.channelType = channelType;
     }
 
     public void addParameter(IChannelParameter parameter) {
@@ -226,17 +236,18 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 		addParameter(new ChannelParameterImpl(name, value, override));
 	}
 
-	public void addParameter(ChannelParameterImpl parameter) {
-		for (Iterator<ChannelParameterImpl> iter = this.parameters.iterator(); iter
-				.hasNext();) {
-			ChannelParameterImpl param = iter.next();
-			if (param.getName().equals(parameter.getName())) {
-				param = parameter;
-				return;
-			}
-		}
-
-		this.parameters.add(parameter);
+	public void addParameter(ChannelParameterImpl newParameter) {
+	    final String newName = newParameter.getName();
+        
+	    for (final Iterator<IChannelParameter> paramIter = this.parameters.iterator(); paramIter.hasNext();) {
+	        final IChannelParameter param = paramIter.next();
+	        if (newName.equals(param.getName())) {
+	            paramIter.remove();
+	            break;
+	        }
+	    }
+	    
+	    this.parameters.add(newParameter);
 	}
 
 	public void clearParameters() {
@@ -259,9 +270,8 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 		ChannelLocalizationData localeData = localizations.get(locale);
 		if (localeData != null && localeData.getDescription() != null) {
 			return localeData.getDescription();
-		} else {
-			return description;
 		}
+		return description;
 	}
 
 	public EntityIdentifier getEntityIdentifier() {
@@ -293,34 +303,32 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 		ChannelLocalizationData localeData = localizations.get(locale);
 		if (localeData != null && localeData.getName() != null) {
 			return localeData.getName();
-		} else {
-			return name;
 		}
+		return name;
 	}
 
 	public IChannelParameter getParameter(String key) {
-		for (IChannelParameter param : this.parameters) {
-			if (param.getName().equals(key)) {
-				return param;
-			}
-		}
-		return null;
+	    for (final IChannelParameter param : this.parameters) {
+	        if (param.getName().equals(key)) {
+	            return param;
+	        }
+	    }
+	    
+	    return null;
 	}
 
 	public Set<IChannelParameter> getParameters() {
-		Set<IChannelParameter> params = new HashSet<IChannelParameter>();
-		for (IChannelParameter param : this.parameters) {
-			params.add(param);
-		}
-		return params;
+	    return new LinkedHashSet<IChannelParameter>(this.parameters);
 	}
 
 	public Map<String, IChannelParameter> getParametersAsUnmodifiableMap() {
-		Map<String, IChannelParameter> map = new HashMap<String, IChannelParameter>();
-		for (IChannelParameter param : this.parameters) {
-			map.put(param.getName(), param);
-		}
-		return Collections.unmodifiableMap(map);
+	    final Map<String, IChannelParameter> parameterMap = new LinkedHashMap<String, IChannelParameter>();
+	    
+	    for (final IChannelParameter param : this.parameters) {
+	        parameterMap.put(param.getName(), param);
+	    }
+	    
+		return Collections.unmodifiableMap(parameterMap);
 	}
 
 	public IPortletPreference[] getPortletPreferences() {
@@ -348,16 +356,21 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 		ChannelLocalizationData localeData = localizations.get(locale);
 		if (localeData != null && localeData.getTitle() != null) {
 			return localeData.getTitle();
-		} else {
-			return title;
 		}
+		
+		return title;
 	}
 
+	@Deprecated
 	public int getTypeId() {
-		return typeId;
+		return this.channelType.getId();
 	}
+	
+    public IChannelType getType() {
+        return this.channelType;
+    }
 
-	public boolean hasAbout() {
+    public boolean hasAbout() {
 		return hasAbout;
 	}
 
@@ -419,8 +432,7 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 		}
 	}
 
-	public void replacePortletPreference(
-			List<IPortletPreference> portletPreferences) {
+	public void replacePortletPreference(List<IPortletPreference> portletPreferences) {
 		this.portletPreferences.clear();
 		for (IPortletPreference pref : portletPreferences) {
 			this.portletPreferences.put(pref.getName(), pref);
@@ -531,7 +543,7 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
             .append("parameters", this.parameters)
             .append("portletPreferences", this.portletPreferences)
             .append("clazz", this.clazz)
-            .append("typeId", this.typeId)
+            .append("type", this.channelType)
             .append("isPortlet", this.isPortlet)
             .append("fname", this.fname)
             .append("timeout", this.timeout)

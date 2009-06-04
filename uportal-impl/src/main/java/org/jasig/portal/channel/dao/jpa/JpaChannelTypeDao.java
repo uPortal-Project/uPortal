@@ -74,7 +74,7 @@ public class JpaChannelTypeDao implements IChannelTypeDao {
      * @see org.jasig.portal.channel.dao.IChannelTypeDao#getChannelType(int)
      */
 	public IChannelType getChannelType(int id) {
-		return this.entityManager.find(ChannelTypeImpl.class, new Long(id));
+		return this.entityManager.find(ChannelTypeImpl.class, id);
 	}
 
 	/*

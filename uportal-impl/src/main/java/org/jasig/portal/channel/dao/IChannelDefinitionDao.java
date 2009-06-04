@@ -3,6 +3,7 @@ package org.jasig.portal.channel.dao;
 import java.util.List;
 
 import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelType;
 
 /**
  * Provides APIs for creating, storing and retrieving {@link IChannelDefinition} objects.
@@ -13,7 +14,7 @@ public interface IChannelDefinitionDao {
     /**
      * Creates, initializes and persists a new {@link IChannelDefinition} based on the specified parameters
      * 
-     * @param channelTypeId The type the channel is based on
+     * @param channelType The type the channel is based on
      * @param fname A unique, human-readable key for the channel. Must match the regular expression {@link org.jasig.portal.dao.usertype.FunctionalNameType#VALID_FNAME_PATTERN}
      * @param clazz A fully qualified Java class name that implements the {@link org.jasig.portal.IChannel} interface. This is the class the portal will execute when rendering the channel.
      * @param name The display name for the channel, this is shown in administrative UIs
@@ -23,7 +24,7 @@ public interface IChannelDefinitionDao {
      * @throws org.springframework.dao.DataIntegrityViolationException If a IChannelDefinition already exists for the provide arguments
      * @throws IllegalArgumentException If any of the parameters are null
      */
-    public IChannelDefinition createChannelDefinition(int channelTypeId, String fname, String clazz, String name, String title);
+    public IChannelDefinition createChannelDefinition(IChannelType channelType, String fname, String clazz, String name, String title);
 
     /**
      * Persists changes to a {@link IChannelDefinition}.

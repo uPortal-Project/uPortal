@@ -72,7 +72,12 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
      * @see org.jasig.portal.IChannelRegistryStore#newChannelDefinition(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     public IChannelDefinition newChannelDefinition(int channelTypeId, String fname, String clazz, String name, String title) {
-        return this.channelDao.createChannelDefinition(channelTypeId, fname, clazz, name, title);
+        final IChannelType channelType = this.getChannelType(channelTypeId);
+        if (channelType == null) {
+            throw new IllegalArgumentException("No IChannelType exists for id " + channelTypeId);
+        }
+        
+        return this.channelDao.createChannelDefinition(channelType, fname, clazz, name, title);
     }
 
     /*

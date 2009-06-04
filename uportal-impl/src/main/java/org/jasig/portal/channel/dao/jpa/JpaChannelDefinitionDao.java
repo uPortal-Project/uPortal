@@ -8,6 +8,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.dao.IChannelDefinitionDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
@@ -47,16 +48,17 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
 
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.channel.dao.IChannelDefinitionDao#createChannelDefinition(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.jasig.portal.channel.dao.IChannelDefinitionDao#createChannelDefinition(org.jasig.portal.channel.IChannelType, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
     @Transactional
-    public IChannelDefinition createChannelDefinition(int channelTypeId, String fname, String clazz, String name, String title) {
+    public IChannelDefinition createChannelDefinition(IChannelType channelType, String fname, String clazz, String name, String title) {
+        Validate.notNull(channelType, "channelType can not be null");
         Validate.notEmpty(fname, "fname can not be null");
         Validate.notEmpty(clazz, "clazz can not be null");
         Validate.notEmpty(name, "name can not be null");
         Validate.notEmpty(title, "title can not be null");
         
-        final ChannelDefinitionImpl channelDefinition = new ChannelDefinitionImpl(channelTypeId, fname, clazz, name, title);
+        final ChannelDefinitionImpl channelDefinition = new ChannelDefinitionImpl(channelType, fname, clazz, name, title);
         
         this.entityManager.persist(channelDefinition);
         

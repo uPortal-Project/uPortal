@@ -51,6 +51,7 @@ import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.XmlGeneratingBaseChannelDefinition;
 import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.layout.LayoutStructure;
@@ -2863,6 +2864,7 @@ public class RDBMDistributedLayoutStore
         }
         public void addParameter(String name, String value, boolean override) {
         }
+        @Deprecated
         public void addParameter(String name, String value, String override) {
         }
         public void clearParameters() {
@@ -2909,6 +2911,7 @@ public class RDBMDistributedLayoutStore
         public int getPublisherId() {
             return 0;
         }
+        @Deprecated
         public int getTypeId() {
             return 0;
         }
@@ -2967,7 +2970,10 @@ public class RDBMDistributedLayoutStore
         }
         public void setTitle(String title) {
         }
-        public void setTypeId(int typeId) {
+        public IChannelType getType() {
+            return null;
+        }
+        public void setType(IChannelType channelType) {
         }
     }
 }

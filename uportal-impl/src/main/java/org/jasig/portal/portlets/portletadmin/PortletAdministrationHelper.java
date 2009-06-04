@@ -189,7 +189,12 @@ public class PortletAdministrationHelper {
 	    channelDef.setName(form.getName());
 	    channelDef.setTimeout(form.getTimeout());
 	    channelDef.setTitle(form.getTitle());
-	    channelDef.setTypeId(form.getTypeId());
+	    
+	    final IChannelType channelType = channelRegistryStore.getChannelType(form.getTypeId());
+	    if (channelType == null) {
+	        throw new IllegalArgumentException("No IChannelType exists for ID " + form.getTypeId());
+	    }
+	    channelDef.setType(channelType);
 	    
 	    // add channel parameters
 		List<IPortletPreference> portletPreferences = new ArrayList<IPortletPreference>();

@@ -391,8 +391,14 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 ci.chanDef.setFName(value);
             else if (tagname.equals("desc"))
                 ci.chanDef.setDescription(value);
-            else if (tagname.equals("type"))
-                ci.chanDef.setTypeId(getType(value));
+            else if (tagname.equals("type")) {
+                final int typeId = getType(value);
+                final IChannelType channelType = crs.getChannelType(typeId);
+                if (channelType == null) {
+                    throw new IllegalArgumentException("No IChannelType exists for ID " + typeId);
+                }
+                ci.chanDef.setType(channelType);
+            }
             else if (tagname.equals("class"))
                 ci.chanDef.setJavaClass(value);
             else if (tagname.equals("timeout"))

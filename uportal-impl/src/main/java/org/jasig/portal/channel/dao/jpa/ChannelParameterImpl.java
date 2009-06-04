@@ -6,6 +6,10 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.jasig.portal.channel.IChannelParameter;
 
 /**
@@ -129,4 +133,44 @@ public class ChannelParameterImpl implements IChannelParameter, Serializable {
 	public void setDescription(String descr) {
 		this.descr = descr;
 	}
+
+    /**
+     * @see java.lang.Object#equals(Object)
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof IChannelParameter)) {
+            return false;
+        }
+        IChannelParameter rhs = (IChannelParameter) object;
+        return new EqualsBuilder()
+            .append(this.name, rhs.getName())
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(1915068383, -1044838521)
+            .append(this.name)
+            .toHashCode();
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            .append("name", this.name)
+            .append("value", this.value)
+            .append("override", this.override)
+            .append("descr", this.descr)
+            .toString();
+    }
 }
