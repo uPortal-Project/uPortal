@@ -33,8 +33,8 @@ public class CURLSelector extends BaseChannel {
     private static final Log log = LogFactory.getLog(CURLSelector.class);
     private static final String sslLocation = "urlselector.ssl";
 
-    private static final String viewerFname="/portal/iccdemo/viewer";
-    private static final String historyFname="/portal/iccdemo/history";
+    private static final String viewerFname="/portal_iccdemo_viewer";
+    private static final String historyFname="/portal_iccdemo_history";
 
     private boolean usingRenderingGroups=false;
 

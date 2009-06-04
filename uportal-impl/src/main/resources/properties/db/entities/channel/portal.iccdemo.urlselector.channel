@@ -2,7 +2,7 @@
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>CURLSelector</title>
   <name>ICC URL selector channel</name>
-  <fname>portal/iccdemo/urlselector</fname>
+  <fname>portal_iccdemo_urlselector</fname>
   <desc>Interchannel communications demo URL selector channel</desc>
   <type>Custom</type>
   <class>org.jasig.portal.channels.iccdemo.CURLSelector</class>

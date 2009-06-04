@@ -2,7 +2,7 @@
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Login</title>
   <name>Login</name>
-  <fname>portal/login/general</fname>
+  <fname>portal_login_general</fname>
   <desc>uPortal Login Channel</desc>
   <type>Custom</type>
   <class>org.jasig.portal.channels.CLogin</class>

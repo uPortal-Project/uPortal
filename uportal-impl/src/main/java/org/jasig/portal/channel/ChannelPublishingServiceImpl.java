@@ -58,7 +58,7 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 	 * @see org.jasig.portal.channel.IChannelPublishingService#saveChannelDefinition(org.jasig.portal.channel.IChannelDefinition, org.jasig.portal.security.IPerson, java.lang.String[], org.jasig.portal.groups.IGroupMember[])
 	 */
 	public IChannelDefinition saveChannelDefinition(IChannelDefinition channelDef, IPerson publisher, ChannelCategory[] categories, IGroupMember[] groupMembers) {
-		boolean newChannel = (channelDef.getId() == 0);
+		boolean newChannel = (channelDef.getId() < 0);
 		
 		// set the approval and publish dates for the channel
 	    Date now = new Date();

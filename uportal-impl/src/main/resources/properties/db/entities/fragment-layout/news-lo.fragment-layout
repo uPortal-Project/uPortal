@@ -3,7 +3,7 @@
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
       <channel unremovable="" immutable="" hidden="" fname="header"/>
-      <channel unremovable="" immutable="" hidden="" fname="portal/login/general"/>
+      <channel unremovable="" immutable="" hidden="" fname="portal_login_general"/>
       <channel unremovable="" immutable="" hidden="" fname="session-locales-selector"/>
       <channel unremovable="" immutable="" hidden="" fname="fragment-admin-exit"/>
     </header>
@@ -24,7 +24,7 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="salon.com"/>
+        <channel unremovable="" immutable="" hidden="" fname="salon"/>
         <channel unremovable="" immutable="" hidden="" fname="sports-illustrated"/>
       </column>
     </tab>

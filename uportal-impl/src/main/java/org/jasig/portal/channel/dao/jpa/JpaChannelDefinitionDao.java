@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.dao.IChannelDefinitionDao;
 import org.springframework.dao.support.DataAccessUtils;
@@ -22,6 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
 
+    /**
+     * 
+     */
+    private static final String FIND_ALL_CHANNEL_DEFS = "from ChannelDefinitionImpl channel";
+
     private static final String FIND_CHANNEL_DEF_BY_FNAME = 
         "from ChannelDefinitionImpl channel where channel.fname = :fname";
 
@@ -37,6 +43,24 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
 
     
     // Public API methods
+    
+
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.channel.dao.IChannelDefinitionDao#createChannelDefinition(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     */
+    public IChannelDefinition createChannelDefinition(int channelTypeId, String fname, String clazz, String name, String title) {
+        Validate.notEmpty(fname, "fname can not be null");
+        Validate.notEmpty(clazz, "clazz can not be null");
+        Validate.notEmpty(name, "name can not be null");
+        Validate.notEmpty(title, "title can not be null");
+        
+        final ChannelDefinitionImpl channelDefinition = new ChannelDefinitionImpl(channelTypeId, fname, clazz, name, title);
+        
+        this.entityManager.persist(channelDefinition);
+        
+        return channelDefinition;
+    }
         
     /*
      * (non-Javadoc)
@@ -44,7 +68,17 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
      */
     @Transactional
 	public void deleteChannelDefinition(IChannelDefinition definition) {
-    	entityManager.remove(definition);
+        Validate.notNull(definition, "definition can not be null");
+        
+        final IChannelDefinition persistentChannelDefinition;
+        if (this.entityManager.contains(definition)) {
+            persistentChannelDefinition = definition;
+        }
+        else {
+            persistentChannelDefinition = this.entityManager.merge(definition);
+        }
+        
+        this.entityManager.remove(persistentChannelDefinition);
 	}
 
     /*
@@ -53,7 +87,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
      */
     @SuppressWarnings("unchecked")
 	public List<IChannelDefinition> getChannelDefinitions() {
-        final Query query = this.entityManager.createQuery("from ChannelDefinitionImpl channel");
+        final Query query = this.entityManager.createQuery(FIND_ALL_CHANNEL_DEFS);
         final List<IChannelDefinition> channelDefinitions = query.getResultList();
 		return channelDefinitions;
 	}
@@ -63,7 +97,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
      * @see org.jasig.portal.channel.dao.IChannelDefinitionDao#getChannelDefinition(int)
      */
 	public IChannelDefinition getChannelDefinition(int id) {
-		return entityManager.find(ChannelDefinitionImpl.class, new Long(id));
+		return entityManager.find(ChannelDefinitionImpl.class, id);
 	}
 	
 	/*
@@ -74,6 +108,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
 	public IChannelDefinition getChannelDefinition(String fname) {
         final Query query = this.entityManager.createQuery(FIND_CHANNEL_DEF_BY_FNAME);
         query.setParameter("fname", fname);
+        query.setHint("org.hibernate.cacheable", true);
         query.setMaxResults(1);
         
         final List<IChannelDefinition> channelDefinitions = query.getResultList();
@@ -86,8 +121,12 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
      * @see org.jasig.portal.channel.dao.IChannelDefinitionDao#saveChannelDefinition(org.jasig.portal.channel.IChannelDefinition)
      */
     @Transactional
-	public IChannelDefinition saveChannelDefinition(IChannelDefinition definition) {
-    	return this.entityManager.merge(definition);
+	public IChannelDefinition updateChannelDefinition(IChannelDefinition definition) {
+        Validate.notNull(definition, "definition can not be null");
+        
+        this.entityManager.persist(definition);
+        
+        return definition;
 	}
 
 }

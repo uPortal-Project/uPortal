@@ -17,12 +17,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.channel.IChannelDefinition;
@@ -44,66 +55,72 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 		@Parameter(name = "sequence", value = "UP_CHANNEL_DEF_SEQ"),
 		@Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
 		@Parameter(name = "column", value = "NEXT_UP_CHANNEL_DEF_HI") })
-public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implements IChannelDefinition, IBasicEntity,
+class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implements IChannelDefinition, IBasicEntity,
 		Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
 	@GeneratedValue(generator = "UP_CHANNEL_DEF_GEN")
 	@Column(name = "CHAN_ID")
-	private Long internalId;
+	private final int internalId;
+
+    @Column(name = "CHAN_NAME", length = 128, nullable = false, unique = true)
+    private String name;
 
 	@Column(name = "CHAN_FNAME", length = 255, nullable = false, unique = true)
+	@Type(type = "fname")
+	@Index(name = "IDX_CHAN_DEF__FNAME")
 	private String fname;
 
-	@Column(name = "CHAN_NAME", length = 128)
-	private String name;
+    @Column(name = "CHAN_TITLE", length = 128, nullable = false)
+    private String title;
 
+    @Column(name = "CHAN_CLASS", length = 100, nullable = false)
+    private String clazz;
+
+    // TODO: integrate with channel type persistence code
+    @Column(name = "CHAN_TYPE_ID", nullable = false)
+    private int typeId;
+
+    
 	@Column(name = "CHAN_DESC", length = 255)
 	private String description;
 
-	@Column(name = "CHAN_TITLE", length = 128, nullable = false)
-	private String title;
-
-	@Column(name = "CHAN_CLASS", length = 100, nullable = false)
-	private String clazz;
-
 	@Column(name = "CHAN_TIMEOUT", nullable = false)
-	private int timeout;
+	private int timeout = 20000; //Default to a reasonable value
 
-	// TODO: integrate with channel type persistence code
-	@Column(name = "CHAN_TYPE_ID", nullable = false)
-	private int typeId;
-
+	//TODO link to User object once it is JPA managed
 	@Column(name = "CHAN_PUBL_ID")
-	private int publisherId;
+	private int publisherId = -1;
 
+	//TODO link to User object once it is JPA managed
 	@Column(name = "CHAN_APVL_ID")
-	private int approverId;
+	private int approverId = -1;
 
+	//TODO link to User object once it is JPA managed
 	@Column(name = "CHAN_EXP_ID")
-	private int expirerId;
+	private int expirerId = -1;
 
 	@Column(name = "CHAN_PUBL_DT")
-	private Date publishDate;
+	private Date publishDate = null;
 
 	@Column(name = "CHAN_APVL_DT")
-	private Date approvalDate;
+	private Date approvalDate = null;
 
 	@Column(name = "CHAN_EXP_DT")
-	private Date expirationDate;
+	private Date expirationDate = null;
 
 	@Column(name = "CHAN_EDITABLE", nullable = false)
-	private boolean editable;
+	private boolean editable = false;
 
 	@Column(name = "CHAN_HAS_HELP", nullable = false)
-	private boolean hasHelp;
+	private boolean hasHelp = false;
 
 	@Column(name = "CHAN_HAS_ABOUT", nullable = false)
-	private boolean hasAbout;
+	private boolean hasAbout = false;
 
 	@Column(name = "CHAN_SECURE", nullable = false)
-	private boolean secure;
+	private boolean secure = false;
 
 	@org.hibernate.annotations.CollectionOfElements(fetch = FetchType.EAGER)
 	@JoinTable(name = "UP_CHANNEL_PARAM", joinColumns = @JoinColumn(name = "CHAN_ID"))
@@ -120,14 +137,84 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 
 	@Transient
 	private String locale; // this probably shouldn't be a channel property?
+	
+	@Transient
+	private boolean isPortlet = false;
+	
+	
+    /**
+     * Used to initialize fields after persistence actions.
+     */
+    @SuppressWarnings("unused")
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    @PostRemove
+    private void initClass() {
+        if (!StringUtils.isBlank(this.clazz)) {
+            try {
+                final Class<?> channelClazz = Class.forName(this.clazz);
+                this.isPortlet = IPortletAdaptor.class.isAssignableFrom(channelClazz);
+                return;
+            }
+            catch (ClassNotFoundException e) {
+            }
+        }
+        
+        this.isPortlet = false;
+    }
 
-	/**
-	 * Default constructor
+	/*
+	 * Internal, for hibernate
 	 */
-	public ChannelDefinitionImpl() {
+	@SuppressWarnings("unused")
+    private ChannelDefinitionImpl() {
+        this.internalId = -1;
+        this.typeId = -1;
+        this.name = null;
+        this.fname = null;
+        this.title = null;
+        this.clazz = null;
 	}
+	
+    ChannelDefinitionImpl(int channelTypeId, String fname, String clazz, String name, String title) {
+        this.internalId = -1;
+        this.typeId = channelTypeId;
+        this.name = name;
+        this.fname = fname;
+        this.title = title;
+        this.clazz = clazz;
+        
+        this.initClass();
+    }
+    
+    
+    public void setFName(String fname) {
+        Validate.notNull(fname);
+        this.fname = fname;
+    }
 
-	public void addParameter(IChannelParameter parameter) {
+    public void setJavaClass(String javaClass) {
+        Validate.notNull(javaClass);
+        this.clazz = javaClass;
+        initClass();
+    }
+
+    public void setName(String name) {
+        Validate.notNull(name);
+        this.name = name;
+    }
+
+    public void setTitle(String title) {
+        Validate.notNull(title);
+        this.title = title;
+    }
+
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
+    }
+
+    public void addParameter(IChannelParameter parameter) {
 		addParameter(parameter);
 	}
 
@@ -188,11 +275,7 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 	}
 
 	public int getId() {
-		if (internalId == null) {
-			return -1;
-		} else {
-			return internalId.intValue();
-		}
+	    return this.internalId;
 	}
 
 	public String getJavaClass() {
@@ -288,14 +371,7 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 	}
 
 	public boolean isPortlet() {
-		if (!StringUtils.isBlank(this.clazz)) {
-			try {
-				final Class<?> channelClazz = Class.forName(this.clazz);
-				return IPortletAdaptor.class.isAssignableFrom(channelClazz);
-			} catch (ClassNotFoundException e) {
-			}
-		}
-		return false;
+		return isPortlet;
 	}
 
 	public boolean isSecure() {
@@ -368,10 +444,6 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 		this.editable = editable;
 	}
 
-	public void setFName(String fname) {
-		this.fname = fname;
-	}
-
 	public void setHasAbout(boolean hasAbout) {
 		this.hasAbout = hasAbout;
 	}
@@ -384,16 +456,8 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 		this.secure = isSecure;
 	}
 
-	public void setJavaClass(String javaClass) {
-		this.clazz = javaClass;
-	}
-
 	public void setLocale(String locale) {
 		this.locale = locale;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public void setParameters(Set<IChannelParameter> parameters) {
@@ -413,12 +477,74 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
+    
+	
+    /**
+     * @see java.lang.Object#equals(Object)
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof IChannelDefinition)) {
+            return false;
+        }
+        IChannelDefinition rhs = (IChannelDefinition) object;
+        return new EqualsBuilder()
+            .append(this.typeId, rhs.getTypeId())
+            .append(this.fname, rhs.getFName())
+            .append(this.clazz, rhs.getClass())
+            .append(this.name, rhs.getName())
+            .append(this.title, rhs.getTitle())
+            .isEquals();
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(464270933, -1074792143)
+            .append(this.typeId)
+            .append(this.fname)
+            .append(this.clazz)
+            .append(this.name)
+            .append(this.title)
+            .toHashCode();
+    }
 
-	public void setTypeId(int typeId) {
-		this.typeId = typeId;
-	}
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            .append("id", this.internalId)
+            .append("publisherId", this.publisherId)
+            .append("expirationDate", this.expirationDate)
+            .append("approverId", this.approverId)
+            .append("expirerId", this.expirerId)
+            .append("locale", this.locale)
+            .append("secure", this.secure)
+            .append("hasHelp", this.hasHelp)
+            .append("localizations", this.localizations)
+            .append("hasAbout", this.hasAbout)
+            .append("editable", this.editable)
+            .append("title", this.title)
+            .append("description", this.description)
+            .append("name", this.name)
+            .append("approvalDate", this.approvalDate)
+            .append("parameters", this.parameters)
+            .append("portletPreferences", this.portletPreferences)
+            .append("clazz", this.clazz)
+            .append("typeId", this.typeId)
+            .append("isPortlet", this.isPortlet)
+            .append("fname", this.fname)
+            .append("timeout", this.timeout)
+            .append("publishDate", this.publishDate)
+            .toString();
+    }
+
+    
 }

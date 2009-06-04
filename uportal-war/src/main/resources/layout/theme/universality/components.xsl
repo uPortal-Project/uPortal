@@ -153,7 +153,7 @@
   <xsl:template name="portal.page.bar.link.customize">
     <xsl:if test="$AUTHENTICATED='true'">
     	<span id="portalPageBarCustom">
-        <a href="{$BASE_ACTION_URL}?uP_fname=portal/userpreferences/dlm" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
+        <a href="{$BASE_ACTION_URL}?uP_fname=portal_userpreferences_dlm" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
           <span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
         </a>
         <xsl:call-template name="portal.pipe" />
@@ -359,7 +359,7 @@
                 </li>
               </xsl:if>
               <li id="portalAdminLinksCustomize">
-                <a href="{$BASE_ACTION_URL}?uP_fname=portal/userpreferences/dlm" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
+                <a href="{$BASE_ACTION_URL}?uP_fname=portal_userpreferences_dlm" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
                   <span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
                 </a>
               </li>

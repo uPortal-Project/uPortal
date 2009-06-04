@@ -3,7 +3,7 @@
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
       <channel unremovable="" immutable="" hidden="" fname="header"/>
-      <channel unremovable="" immutable="" hidden="" fname="portal/login/general"/>
+      <channel unremovable="" immutable="" hidden="" fname="portal_login_general"/>
       <channel unremovable="" immutable="" hidden="" fname="fragment-admin"/>
     </header>
     <tab unremovable="N" immutable="N" hidden="N" name="Main Student Tab">

@@ -2,7 +2,7 @@
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Channel Manager</title>
   <name>Channel Manager</name>
-  <fname>portal/channelmanager/general</fname>
+  <fname>portal_channelmanager_general</fname>
   <desc>Channel administration</desc>
   <type>Custom</type>
   <class>org.jasig.portal.channels.CChannelManager</class>

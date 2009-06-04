@@ -62,7 +62,7 @@ public interface IChannelRegistryStore {
    * @return the new channel definition
    * @throws java.lang.Exception
    */
-  public IChannelDefinition newChannelDefinition();
+  public IChannelDefinition newChannelDefinition(int channelTypeId, String fname, String clazz, String name, String title);
 
   /**
    * Get a channel definition.

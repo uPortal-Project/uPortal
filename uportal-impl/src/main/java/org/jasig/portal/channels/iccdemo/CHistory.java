@@ -35,8 +35,8 @@ public class CHistory extends BaseChannel {
 
     private static final String sslLocation = "urlhistory.ssl";
 
-    private static final String viewerFname="/portal/iccdemo/viewer";
-    private static final String urlselectorFname="/portal/iccdemo/urlselector";
+    private static final String viewerFname="/portal_iccdemo_viewer";
+    private static final String urlselectorFname="/portal_iccdemo_urlselector";
 
     // variable determines if URLs to CView will be passed directly through internal
     // jndi objects, or through portal URL attributes (using uP_channelTarget) to 

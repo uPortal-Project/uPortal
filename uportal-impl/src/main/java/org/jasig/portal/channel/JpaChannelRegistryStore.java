@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AbstractChannelRegistryStore;
 import org.jasig.portal.channel.dao.IChannelDefinitionDao;
 import org.jasig.portal.channel.dao.IChannelTypeDao;
-import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
 import org.jasig.portal.channel.dao.jpa.ChannelTypeImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
@@ -70,12 +69,11 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
 	
     // Public ChannelDefinition methods
 	
-    /*
-     * (non-Javadoc)
-     * @see org.jasig.portal.IChannelRegistryStore#newChannelDefinition()
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#newChannelDefinition(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public IChannelDefinition newChannelDefinition() {
-        return new ChannelDefinitionImpl();
+    public IChannelDefinition newChannelDefinition(int channelTypeId, String fname, String clazz, String name, String title) {
+        return this.channelDao.createChannelDefinition(channelTypeId, fname, clazz, name, title);
     }
 
     /*
@@ -108,7 +106,7 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
      */
     public void saveChannelDefinition(IChannelDefinition channelDef) {
     	int channelId = channelDef.getId();
-    	channelDao.saveChannelDefinition(channelDef);
+    	channelDao.updateChannelDefinition(channelDef);
     	if (channelId < 0) {
     		IChannelDefinition newChannel = getChannelDefinition(channelDef.getFName());
     		channelId = newChannel.getId();

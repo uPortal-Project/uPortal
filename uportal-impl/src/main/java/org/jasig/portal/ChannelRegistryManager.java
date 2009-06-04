@@ -578,7 +578,13 @@ public class ChannelRegistryManager {
           log.debug("Attempting to modify channel " + ID + "...");
     }
     else {
-      channelDef = crs.newChannelDefinition();
+        final String fname = channel.getAttribute("fname");
+        final String name = channel.getAttribute("name");
+        final String title = channel.getAttribute("title");
+        final String clazz = channel.getAttribute("class");
+        final int typeId = Integer.parseInt(channel.getAttribute("typeID"));
+        
+      channelDef = crs.newChannelDefinition(typeId, fname, clazz, name, title);
       ID = channelDef.getId();
       if (log.isDebugEnabled())
           log.debug("Attempting to publish new channel " + ID + "...");

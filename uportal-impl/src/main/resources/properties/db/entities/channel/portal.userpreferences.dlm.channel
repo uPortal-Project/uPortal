@@ -1,8 +1,8 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>User Preferences</title>
-  <name>User Preferences</name>
-  <fname>portal/userpreferences/dlm</fname>
+  <name>DLM User Preferences</name>
+  <fname>portal_userpreferences_dlm</fname>
   <desc>DLM User Preferences channel</desc>
   <type>Custom</type>
   <class>org.jasig.portal.channels.DLMUserPreferences.CUserPreferences</class>

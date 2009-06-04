@@ -348,7 +348,29 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
         }
 
         if (ci.chanDef == null) {
-            ci.chanDef = crs.newChannelDefinition();
+            String clazz = null;
+            String name = null;
+            String title = null;
+            int typeId = -1;
+            
+            for (Node param = chanDefE.getFirstChild(); param != null; param = param.getNextSibling()) {
+                if (!(param instanceof Element))
+                    continue; // whitespace (typically \n) between tags
+                Element pele = (Element) param;
+                String tagname = pele.getTagName();
+
+                // each tagname corresponds to an object data field
+                if (tagname.equals("title"))
+                    title = XML.getElementText(pele).trim();
+                else if (tagname.equals("name"))
+                    name = XML.getElementText(pele).trim();
+                else if (tagname.equals("type"))
+                    typeId = getType(XML.getElementText(pele).trim());
+                else if (tagname.equals("class"))
+                    clazz = XML.getElementText(pele).trim();
+            }
+            
+            ci.chanDef = crs.newChannelDefinition(typeId, fname, clazz, name, title);
         }
 
         for (Node param = chanDefE.getFirstChild(); param != null; param = param.getNextSibling()) {
@@ -370,7 +392,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             else if (tagname.equals("desc"))
                 ci.chanDef.setDescription(value);
             else if (tagname.equals("type"))
-                getType(ci, value);
+                ci.chanDef.setTypeId(getType(value));
             else if (tagname.equals("class"))
                 ci.chanDef.setJavaClass(value);
             else if (tagname.equals("timeout"))
@@ -381,8 +403,8 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 ci.chanDef.setHasHelp((value != null && value.equals("Y")) ? true : false);
             else if (tagname.equals("hasabout"))
                 ci.chanDef.setHasAbout((value != null && value.equals("Y")) ? true : false);
-                else if (tagname.equals("secure"))
-                  ci.chanDef.setIsSecure((value != null && value.equals("Y")) ? true : false);
+            else if (tagname.equals("secure"))
+                ci.chanDef.setIsSecure((value != null && value.equals("Y")) ? true : false);
             else if (mOnCommandLine && tagname.equals("categories"))
                 getCategories(ci, pele);
             else if (mOnCommandLine && tagname.equals("groups"))
@@ -393,10 +415,11 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 getParameters(ci, pele);
             else if (tagname.equals("portletPreferences"))
                 getPreferences(ci, pele);
-
-            ci.chanDef.setPublisherId(0); // system user
-            ci.chanDef.setPublishDate(new Date());
         }
+
+        ci.chanDef.setPublisherId(0); // system user
+        ci.chanDef.setPublishDate(new Date());
+        
         if (ci.groups == null && ! mOnCommandLine)
             ci.groups = getAdminGroup();
         if (ci.categories == null && ! mOnCommandLine)
@@ -465,13 +488,13 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
      * @param value
      * @throws Exception
      */
-    private void getType(ChannelInfo ci, String value)
+    private int getType(String value)
         throws Exception
     {
         Integer typeId = chanTypesNamesToIds.get(value);
         if (typeId != null)
         {
-            ci.chanDef.setTypeId(typeId.intValue());
+            return typeId;
         }
         else
         {

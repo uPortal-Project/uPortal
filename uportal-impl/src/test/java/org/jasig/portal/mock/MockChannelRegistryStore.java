@@ -212,17 +212,9 @@ public class MockChannelRegistryStore implements IChannelRegistryStore {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.IChannelRegistryStore#newChannelDefinition()
+     * @see org.jasig.portal.IChannelRegistryStore#newChannelDefinition(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public IChannelDefinition newChannelDefinition() {
-        throw new UnsupportedOperationException("Not Implemented");
-        
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.IChannelRegistryStore#newChannelDefinition(int)
-     */
-    public IChannelDefinition newChannelDefinition(int id) {
+    public IChannelDefinition newChannelDefinition(int channelTypeId, String fname, String clazz, String name, String title) {
         throw new UnsupportedOperationException("Not Implemented");
         
     }

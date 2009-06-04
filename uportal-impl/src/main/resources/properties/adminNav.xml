@@ -81,16 +81,16 @@
 <links>
 
     <link labelId="MODIFY_PUBLISHED_CHANNEL"
-        channelFunctionalName="portal/channelmanager/general">
+        channelFunctionalName="portal_channelmanager_general">
         <parameter name="uPCM_action" value="selectModifyChannel" />
-        <parameter name="uPAN_caller" value="admin.navigation.links" />
+        <parameter name="uPAN_caller" value="admin_navigation_links" />
     </link>
 
     <link labelId="PUBLISH_NEW_CHANNEL"
-        channelFunctionalName="portal/channelmanager/general">
+        channelFunctionalName="portal_channelmanager_general">
         <parameter name="uPCM_action" value="selectChannelType" />
         <parameter name="uPCM_reset" value="true" />
-        <parameter name="uPAN_caller" value="admin.navigation.links" />
+        <parameter name="uPAN_caller" value="admin_navigation_links" />
     </link>
 
 </links>

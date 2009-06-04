@@ -38,7 +38,7 @@ import org.xml.sax.ContentHandler;
  * 
  * A channel can provide links to this channel by calling their
  * ChannelRuntimeData.getFnameActionURL() passing the functional name of this
- * channel "admin.navigation.links".
+ * channel "admin_navigation_links".
  * 
  * @author Keith Stacks, kstacks@sungardsct.com
  * @author Mark Boyd, mboyd@sungardsct.com

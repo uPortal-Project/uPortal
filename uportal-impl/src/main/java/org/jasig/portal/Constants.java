@@ -50,7 +50,7 @@ public class Constants
      * value of this field can be passed to that method to obtain a URL that 
      * will bring that channel into focus.
      */
-    public static final String NAVIGATION_CHAN_FNAME = "admin.navigation.links";
+    public static final String NAVIGATION_CHAN_FNAME = "admin_navigation_links";
     
     /**
      * The prefix of DTDs owned by uPortal version 2.0. This is used to allow

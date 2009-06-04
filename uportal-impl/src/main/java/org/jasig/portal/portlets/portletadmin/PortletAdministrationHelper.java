@@ -46,7 +46,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.ResourceLoader;
-import org.w3c.dom.Document;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -108,17 +107,19 @@ public class PortletAdministrationHelper {
 	public ChannelDefinitionForm getChannelDefinitionForm(int chanId) {
 		
 		IChannelDefinition def = channelRegistryStore.getChannelDefinition(chanId);
-		if (def == null) {
-			// if no IChannelDefinition is found, create a new one
-			def = channelRegistryStore.newChannelDefinition();
-		}
 		
 		// create the new form
-		ChannelDefinitionForm form = new ChannelDefinitionForm(def);
-		form.setId(def.getId());
+		final ChannelDefinitionForm form;
+		if (def != null) {
+		    form = new ChannelDefinitionForm(def);
+		    form.setId(def.getId());
+		}
+		else {
+		    form = new ChannelDefinitionForm();
+		}
 		
 		// if this is not a new channel, set the category and permissions
-        if (form.getId() > 0) {
+        if (def != null) {
         	ChannelCategory[] categories = channelRegistryStore.getParentCategories(def);
         	for (ChannelCategory cat : categories) {
         		form.addCategory(cat.getId());
@@ -159,6 +160,7 @@ public class PortletAdministrationHelper {
 					IEntityGroup.class);
 		}
 		
+        // create the category array from the form's category list
 		ChannelCategory[] categories = new ChannelCategory[form.getCategories().size()];
 		for (ListIterator<String> iter = form.getCategories().listIterator(); iter.hasNext();) {
 			String id = iter.next();
@@ -167,12 +169,15 @@ public class PortletAdministrationHelper {
 					.getChannelCategory(iCatID);
 		}
 
-		// create the category array from the form's category list
-		String[] categoryIDs = form.getCategories().toArray(new String[form.getCategories().size()]);
-
 	    IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(form.getId());
 	    if (channelDef == null) {
-	    	channelDef = channelRegistryStore.newChannelDefinition();
+	        final String fname = form.getFname();
+	        final String clazz = form.getJavaClass();
+	        final String name = form.getName();
+	        final String title = form.getTitle();
+	        final int typeId = form.getTypeId();
+	        
+	    	channelDef = channelRegistryStore.newChannelDefinition(typeId, fname, clazz, name, title);
 	    }
 	    channelDef.setDescription(form.getDescription());
 	    channelDef.setEditable(form.isEditable());
@@ -306,8 +311,8 @@ public class PortletAdministrationHelper {
 	public void cleanOptions(ChannelDefinitionForm form, PortletRequest request) {
 		Set<String> preferenceNames = new HashSet<String>();
 		Set<String> parameterNames = new HashSet<String>();
-		for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-			String name = (String) e.nextElement();
+		for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
+			String name = e.nextElement();
 			if (name.startsWith("portletPreferences[")) {
 				preferenceNames.add(name.split("\'")[1]);
 			} else if (name.startsWith("parameters[")) {

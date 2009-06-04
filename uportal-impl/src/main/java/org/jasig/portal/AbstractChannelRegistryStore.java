@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -196,7 +195,7 @@ public abstract class AbstractChannelRegistryStore implements IChannelRegistrySt
                 channelDefs.add(getChannelDefinition(channelPublishId));
             }
         }
-        return (IChannelDefinition[])channelDefs.toArray(new ChannelDefinitionImpl[0]);
+        return (IChannelDefinition[])channelDefs.toArray(new IChannelDefinition[channelDefs.size()]);
     }
 
     /**

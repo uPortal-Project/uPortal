@@ -31,7 +31,7 @@ import org.xml.sax.ContentHandler;
 public class CViewer extends BaseChannel {
     private static final Log log = LogFactory.getLog(CViewer.class);
     private static final String sslLocation = "CInlineFrame/CInlineFrame.ssl";
-    private static final String historyFname="/portal/iccdemo/history";
+    private static final String historyFname="/portal_iccdemo_history";
 
     private String currentURL = "";
 

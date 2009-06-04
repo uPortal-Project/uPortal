@@ -11,7 +11,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
 
 import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
+import org.jasig.portal.channels.CGenericXSLT;
+import org.jasig.portal.channels.portlet.CSpringPortletAdaptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,13 +27,11 @@ public class ChannelDefinitionTest extends TestCase {
      * does not identify CGenericXSLT as a portlet.
      */
     public void testIsPortlet() {
-        IChannelDefinition cd = new ChannelDefinitionImpl();
+        IChannelDefinition cd1 = new ChannelDefinitionImpl(1, "fname", CGenericXSLT.class.getName(), "Name", "title");
+        assertFalse(cd1.isPortlet());
         
-        cd.setJavaClass("org.jasig.portal.channels.CGenericXSLT");
-        assertFalse(cd.isPortlet());
-        
-        cd.setJavaClass("org.jasig.portal.channels.portlet.CSpringPortletAdaptor");
-        assertTrue(cd.isPortlet());
+        IChannelDefinition cd2 = new ChannelDefinitionImpl(1, "fname", CSpringPortletAdaptor.class.getName(), "Name", "title");
+        assertTrue(cd2.isPortlet());
         
     }
     
@@ -43,19 +42,14 @@ public class ChannelDefinitionTest extends TestCase {
      * @throws ParserConfigurationException
      */
     public void testGetDocument() throws ParserConfigurationException {
-        IChannelDefinition cd = new ChannelDefinitionImpl();
+        IChannelDefinition cd = new ChannelDefinitionImpl(12, "test_fname", CGenericXSLT.class.getName(), "testName", "testTitle");
         
         cd.setDescription("A test channel description.");
         cd.setEditable(false);
-        cd.setFName("test_fname");
         cd.setHasAbout(true);
         cd.setHasHelp(false);
         cd.setIsSecure(false);
-        cd.setJavaClass("org.jasig.portal.channels.CGenericXSLT");
-        cd.setName("testName");
         cd.setTimeout(500);
-        cd.setTitle("testTitle");
-        cd.setTypeId(12);
         
         Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         

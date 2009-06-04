@@ -2,7 +2,7 @@
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Salon.com</title>
   <name>Salon.com</name>
-  <fname>salon.com</fname>
+  <fname>salon</fname>
   <desc>Salon.com channel</desc>
   <type>RSS</type>
   <class>org.jasig.portal.channels.CSyndFeed</class>

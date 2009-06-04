@@ -18,11 +18,8 @@
  |   - Settings defined in classpath://properties/db/entities/import.properties
  |
  +-->
-<with-attribute key="FNAME" value="${valueOf(fname)}">
-    <delete-node node="${singleNode(fname)}"/>
-    <append-node sibling="${singleNode(name)}">
-        <fname>${crn(fix-fname.crn)}</fname>
-    </append-node>
-
-    <crn location="import-channel_v3-2.crn"/>
-</with-attribute>
+<groovy>
+    <script>
+        org.jasig.portal.tools.chanpub.UrlChannelPublisher.publishChannel(Attributes.NODE);
+    </script>
+</groovy>

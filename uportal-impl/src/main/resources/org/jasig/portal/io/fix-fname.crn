@@ -1,0 +1,24 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<!-- 
+ | Parameters:
+ |      FNAME - The fname to check and convert if needed
+ |
+ | Returns a valid version of the fname 
+ +-->
+<with-attribute key="FNAME_MATCHER" value="${groovy(org.jasig.portal.dao.usertype.FunctionalNameType.INVALID_CHARS_PATTERN.matcher(FNAME))}">
+    <choose>
+        <when test="${groovy(FNAME_MATCHER.find())}">
+            <echo-ln>Fixing FNAME=${FNAME}</echo-ln>
+            <return value="${groovy(FNAME_MATCHER.replaceAll('_'))}" />
+        </when>
+        <otherwise>
+            <return value="${FNAME}" />
+        </otherwise>
+    </choose>
+</with-attribute>

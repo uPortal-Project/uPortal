@@ -117,9 +117,9 @@ public class CHeader extends BaseChannel implements ICacheable {
                             "org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation",
                             "default");
       if (layoutMgmFac.equals(DistributedLayoutManager.class.getName()))
-          preferencesChanidEl.appendChild(doc.createTextNode("portal/userpreferences/dlm"));
+          preferencesChanidEl.appendChild(doc.createTextNode("portal_userpreferences_dlm"));
       else
-      preferencesChanidEl.appendChild(doc.createTextNode("portal/userpreferences/general"));
+      preferencesChanidEl.appendChild(doc.createTextNode("portal_userpreferences_general"));
       headerEl.appendChild(preferencesChanidEl);
     }
     doc.appendChild(headerEl);

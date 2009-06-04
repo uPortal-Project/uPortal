@@ -43,12 +43,6 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
  */
 @Entity
 @Table(name = "UP_PORTLET_DEF")
-@org.hibernate.annotations.Table(
-        appliesTo = "UP_PORTLET_DEF", 
-        indexes = {
-            @Index(name = "IDX_PORT_DEF__CHAN_DEF", columnNames = "CHANNEL_DEF_ID")
-        }
-    )
 @GenericGenerator(
         name = "UP_PORTLET_DEF_GEN", 
         strategy = "native", 
@@ -66,6 +60,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     private final long internalPortletDefinitionId;
 
     @Column(name = "CHANNEL_DEF_ID", nullable = false, updatable = false, unique = true)
+    @Index(name = "IDX_PORT_DEF__CHAN_DEF")
     private final int channelDefinitionId;
 
     //Hidden reference to the parent portlet definition, used by hibernate for referential integrety

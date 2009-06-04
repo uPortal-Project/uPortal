@@ -2,7 +2,7 @@
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>CHistory</title>
   <name>ICC History channel</name>
-  <fname>portal/iccdemo/history</fname>
+  <fname>portal_iccdemo_history</fname>
   <desc>Interchannel communications demo History channel</desc>
   <type>Custom</type>
   <class>org.jasig.portal.channels.iccdemo.CHistory</class>
