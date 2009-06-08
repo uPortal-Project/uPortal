@@ -5,6 +5,8 @@
  */
 package  org.jasig.portal.channels;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.pluto.OptionalContainerServices;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletDD;
@@ -39,6 +42,8 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.serialize.OutputFormat;
+import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
@@ -46,6 +51,7 @@ import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.spring.locator.OptionalContainerServicesLocator;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.jasig.portal.utils.XSLT;
 import org.springframework.web.context.WebApplicationContext;
 import org.w3c.dom.Document;
@@ -1399,7 +1405,7 @@ public class CChannelManager extends BaseChannel {
                 preferenceElement.setAttribute("read-only", Boolean.toString(preference.isReadOnly()));
                 
                 final List<String> values = preference.getValues();
-                if (values != null && values.size() > 0) {
+                if (values != null && values.size() > 0 && !(values.size() == 1 && StringUtils.isBlank(values.get(0)))) {
                     final Element valuesElement = emptyDoc.createElement("values");
                     
                     for (final String value : values) {
