@@ -1654,16 +1654,32 @@
 
 
           <input type="text" name="{name}" maxlength="{$maxlength}" size="{$length}" class="uportal-input-text">
-          <xsl:choose>
-          <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
-          <xsl:variable name="name"><xsl:value-of select="name"/></xsl:variable>
-          <xsl:attribute name="value"><xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
-          </xsl:attribute>
-          </xsl:when>
-          <xsl:otherwise>
-          <xsl:attribute name="value"><xsl:value-of select="defaultValue"/></xsl:attribute>
-          </xsl:otherwise>
-          </xsl:choose>
+            <xsl:choose>
+              <xsl:when test="starts-with(name, 'PORTLET.')">
+                <xsl:variable name="portletPrefName" select="substring-after(name, 'PORTLET.')"/>
+                <xsl:choose>
+                  <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/definitionPreferences/preference/@name = $portletPrefName">
+                    <xsl:attribute name="value"><xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/definitionPreferences/preference[@name = $portletPrefName]/values"/>
+                    </xsl:attribute>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:attribute name="value"><xsl:value-of select="defaultValue"/></xsl:attribute>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:choose>
+                  <xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/parameter/@name = name">
+                    <xsl:variable name="name"><xsl:value-of select="name"/></xsl:variable>
+                    <xsl:attribute name="value"><xsl:value-of select="/manageChannels/channelDef/params/step[$stepID]/channel/parameter[@name = $name]/@value"/>
+                    </xsl:attribute>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:attribute name="value"><xsl:value-of select="defaultValue"/></xsl:attribute>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:otherwise>
+            </xsl:choose>
           </input>
           <xsl:apply-templates select="units"/>
 
