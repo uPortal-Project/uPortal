@@ -671,7 +671,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   deleteStmt.close();
 
                   query =
-                      "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION " +
+                      "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, " +
+                      "STRUCTURE_SS_ID, THEME_SS_ID " +
                       "FROM UP_USER_PROFILE " +
                       "WHERE USER_ID=?";
                   queryStmt = con.prepareStatement(query);
@@ -682,18 +683,22 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
                   insert =
                       "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
-                      "VALUES(?, ?, ?, ?, NULL, NULL, NULL)";
+                      "VALUES(?, ?, ?, ?, NULL, ?, ?)";
                   insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
 
                       int profileId = rs.getInt("PROFILE_ID");
                       String profileName = rs.getString("PROFILE_NAME");
                       String description = rs.getString("DESCRIPTION");
+                      int structure = rs.getInt("STRUCTURE_SS_ID");
+                      int theme = rs.getInt("THEME_SS_ID");
 
                       insertStmt.setInt(1, userId);
                       insertStmt.setInt(2, profileId);
                       insertStmt.setString(3, profileName);
                       insertStmt.setString(4, description);
+                      insertStmt.setInt(5, structure);
+                      insertStmt.setInt(6, theme);
 
                       if (log.isDebugEnabled())
                           log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", PROFILE_ID=" + profileId + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
@@ -857,7 +862,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
                   // Add to UP_USER_PROFILE
                   query =
-                      "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION " +
+                      "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, " +
+                      "STRUCTURE_SS_ID, THEME_SS_ID " +
                       "FROM UP_USER_PROFILE " +
                       "WHERE USER_ID=?";
                   queryStmt = con.prepareStatement(query);
@@ -868,18 +874,22 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
                   insert =
                       "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
-                      "VALUES(?, ?, ?, ?, NULL, NULL, NULL)";
+                      "VALUES(?, ?, ?, ?, NULL, ?, ?)";
                   insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
 
                       int profileId = rs.getInt("PROFILE_ID");
                       String profileName = rs.getString("PROFILE_NAME");
                       String description = rs.getString("DESCRIPTION");
+                      int structure = rs.getInt("STRUCTURE_SS_ID");
+                      int theme = rs.getInt("THEME_SS_ID");
 
                       insertStmt.setInt(1, newUID);
                       insertStmt.setInt(2, profileId);
                       insertStmt.setString(3, profileName);
                       insertStmt.setString(4, description);
+                      insertStmt.setInt(5, structure);
+                      insertStmt.setInt(6, theme);
 
                       if (log.isDebugEnabled())
                           log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", PROFILE_ID=" + profileId + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
