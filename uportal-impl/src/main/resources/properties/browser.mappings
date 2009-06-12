@@ -13,6 +13,9 @@
 # Suggestions: to optimize the matching process, describe most
 # popular browsers first
 
+#iPhone mobile browser
+.*iPhone.*=2
+
 # Internet Explorer 6.x
 Mozilla/4.0 \(compatible; MSIE 6.*=1
 
