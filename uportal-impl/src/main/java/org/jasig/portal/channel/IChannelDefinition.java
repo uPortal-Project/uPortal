@@ -43,6 +43,10 @@ public interface IChannelDefinition extends IBasicEntity {
 	public Date getPublishDate();
 
 	public Date getApprovalDate();
+	
+	public int getExpirerId();
+	
+	public Date getExpirationDate();
 
 	public boolean isEditable();
 
@@ -99,6 +103,10 @@ public interface IChannelDefinition extends IBasicEntity {
 	public void setPublishDate(Date publishDate);
 
 	public void setApprovalDate(Date approvalDate);
+
+	public void setExpirerId(int expirerId);
+	
+	public void setExpirationDate(Date expirationDate);
 
 	public void setEditable(boolean editable);
 

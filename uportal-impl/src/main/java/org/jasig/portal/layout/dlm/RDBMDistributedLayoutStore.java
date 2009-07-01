@@ -2884,6 +2884,12 @@ public class RDBMDistributedLayoutStore
         public EntityIdentifier getEntityIdentifier() {
             return null;
         }
+        public Date getExpirationDate() {
+            return null;
+        }
+        public int getExpirerId() {
+            return 0;
+        }
         public int getId() {
             return -1;
         }
@@ -2945,6 +2951,10 @@ public class RDBMDistributedLayoutStore
         public void setDescription(String descr) {
         }
         public void setEditable(boolean editable) {
+        }
+        public void setExpirationDate(Date expirationDate) {
+        }
+        public void setExpirerId(int expirerId) {
         }
         public void setFName(String fname) {
         }

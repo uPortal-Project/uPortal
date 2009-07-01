@@ -66,6 +66,8 @@
         <property name="channelRegistryStore" ref="channelRegistryStore"/>
     </bean>
     
+    <bean id="portalConversionService"
+        class="org.jasig.portal.utils.web.flow.PortalConversionService"/>
     
     <!-- Beans for the register-portal flow -->
     <bean id="portalRegistrationHelper" class="org.jasig.portal.portlets.registerportal.PortalRegistrationHelper">
@@ -99,7 +101,11 @@
     </webflow:flow-executor>
     
     <!-- The registry of executable flow definitions -->
-    <webflow:flow-registry id="flowRegistry">
+    <webflow:flow-registry id="flowRegistry" flow-builder-services="flowBuilderServices">
         <webflow:flow-location-pattern value="WEB-INF/flows/**/*.xml" />
-    </webflow:flow-registry>    
+    </webflow:flow-registry>
+    
+    <!-- The flow-builder-service to set our custom conversion service -->
+    <webflow:flow-builder-services id="flowBuilderServices"
+        conversion-service="portalConversionService"/>
 </beans>

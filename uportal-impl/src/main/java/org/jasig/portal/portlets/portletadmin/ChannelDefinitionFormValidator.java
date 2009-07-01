@@ -142,6 +142,15 @@ public class ChannelDefinitionFormValidator {
 		}
 	}
 	
+	public void validateLifecycle(ChannelDefinitionForm def, MessageContext context) {
+		
+		if (def.getLifecycleState() == null) {
+			context.addMessage(new MessageBuilder().error().source("lifecycle")
+					.code("lifecycle.error.selectLifecycle")
+					.defaultText("Please select a lifecycle stage").build());
+		}
+	}
+	
 	public void checkSave(ChannelDefinitionForm def, MessageContext context) {
 		validateBasicInfo(def, context);
 		validateChooseType(def, context);

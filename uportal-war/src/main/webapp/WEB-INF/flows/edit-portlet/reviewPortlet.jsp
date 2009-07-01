@@ -21,6 +21,10 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="chooseCategory"/>
 </portlet:actionURL>
+<portlet:actionURL var="lifecycleUrl">
+  <portlet:param name="execution" value="${flowExecutionKey}" />
+  <portlet:param name="_eventId" value="lifecycle"/>
+</portlet:actionURL>
 <portlet:actionURL var="cancelUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="cancel"/>
@@ -239,6 +243,46 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <li><a href="${ chooseGroupUrl }"><c:out value="${ groupNames[group] }"/></a></li>
         </c:forEach>
         </ul>
+        
+      </div>
+    </div> <!-- end: portlet-section -->
+    
+    <!-- Portlet Section -->
+    <div class="portlet-section" role="region">
+      <h3 class="portlet-section-header" role="heading"><spring:message code="lifecycle.heading"/></h3>
+      <div class="portlet-section-options">
+        <a href="${ lifecycleUrl }"><span><spring:message code="reviewPortlet.editLifecycleButton"/></span></a>
+      </div>
+      <div class="portlet-section-body">
+      
+        <table summary="<spring:message code="reviewPortlet.lifecycleSummary"/>">
+          <thead>
+            <tr>
+              <th><spring:message code="reviewPortlet.optionHeading"/></th>
+              <th><spring:message code="reviewPortlet.valueHeading"/></th>
+            <tr>
+          </thead>
+          <tfoot></tfoot>
+          <tbody>
+            <tr>
+              <td class="fl-text-align-right"><spring:message code="lifecycle.stateHeading"/></td>
+              
+              <%-- The following is temporary and will be replaced when backend
+                   work for portlet lifecycle management is done. --%>
+              <td><a href="${ lifecycleUrl }" title="<spring:message code="lifecycle.name.${ channel.lifecycleState }"/>" class="pa-edit"><spring:message code="lifecycle.name.${ channel.lifecycleState }"/></a></td>
+            </tr>
+            <tr>
+              <td class="fl-text-align-right"><spring:message code="lifecycle.publishDate"/></td>
+              <fmt:formatDate type="both" value="${channel.publishDate}" var="publishDate"/>
+              <td><a href="${ lifecycleUrl }" title="${ publishDate }" class="pa-edit">${ publishDate }</a></td>
+            </tr>
+            <tr>
+              <td class="fl-text-align-right"><spring:message code="lifecycle.expirationDate"/></td>
+              <fmt:formatDate type="both" value="${channel.expirationDate}" var="expirationDate"/>
+              <td><a href="${ lifecycleUrl }" title="${ expirationDate }" class="pa-edit">${ expirationDate }</a></td>
+            </tr>
+          </tbody>
+        </table>
         
       </div>
     </div> <!-- end: portlet-section -->

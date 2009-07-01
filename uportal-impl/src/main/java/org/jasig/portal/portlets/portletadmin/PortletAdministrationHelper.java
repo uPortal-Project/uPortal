@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelPublishingService;
 import org.jasig.portal.channel.IChannelType;
@@ -438,6 +440,10 @@ public class PortletAdministrationHelper {
 		} catch (PortletContainerException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public ChannelLifecycleState[] getLifecycleStates() {
+		return ChannelLifecycleState.values();
 	}
 		
 }

@@ -2,12 +2,14 @@ package org.jasig.portal.portlets.portletadmin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
@@ -23,9 +25,6 @@ import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
-import org.jasig.portal.utils.DocumentFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class ChannelDefinitionForm implements Serializable {
 
@@ -37,6 +36,9 @@ public class ChannelDefinitionForm implements Serializable {
 	private String javaClass = "";
 	private int timeout = 500;
 	private int typeId;
+	private ChannelLifecycleState lifecycleState = ChannelLifecycleState.CREATED;
+	private Date publishDate;
+	private Date expirationDate;
 	private boolean editable;
 	private boolean hasHelp;
 	private boolean hasAbout;
@@ -85,6 +87,20 @@ public class ChannelDefinitionForm implements Serializable {
 		this.setHasAbout(def.hasAbout());
 		this.setSecure(def.isSecure());
 		
+		this.setExpirationDate(def.getExpirationDate());
+		this.setPublishDate(def.getPublishDate());
+		
+		Date now = new Date();
+		if (def.getExpirationDate() != null && def.getExpirationDate().before(now)) {
+			this.setLifecycleState(ChannelLifecycleState.EXPIRED);
+		} else if (def.getPublishDate() != null && def.getPublishDate().before(now)) {
+			this.setLifecycleState(ChannelLifecycleState.PUBLISHED);
+		} else if (def.getApprovalDate() != null && def.getApprovalDate().before(now)) {
+			this.setLifecycleState(ChannelLifecycleState.APPROVED);
+		} else {
+			this.setLifecycleState(ChannelLifecycleState.CREATED);
+		}
+		
 		for (IChannelParameter param : def.getParameters()) {
 			if (def.isPortlet() && param.getName().startsWith("PORTLET.")) {
 				this.portletPreferences.put(param.getName(),
@@ -109,49 +125,6 @@ public class ChannelDefinitionForm implements Serializable {
 				this.portletParameterOverrides.put(pref.getName(), new BooleanAttribute(!pref.isReadOnly()));
 			}
 		}
-	}
-	
-	/**
-	 * Generate a DOM element of the type ChannelRegistryManager expects. 
-	 * 
-	 * @return
-	 */
-	public Element toXml() {
-	    Document doc = DocumentFactory.getNewDocument();
-	    Element channelE = doc.createElement("channel");
-	    if (this.id > 0) {
-		    channelE.setAttribute("ID", String.valueOf(this.id));
-	    }
-	    channelE.setAttribute("timeout", String.valueOf(this.timeout));
-        channelE.setAttribute("name", this.name);
-        channelE.setAttribute("title", this.title);
-	    channelE.setAttribute("fname", this.fname);
-	    channelE.setAttribute("description", this.description);
-	    channelE.setAttribute("class", this.javaClass);
-	    channelE.setAttribute("typeID", String.valueOf(this.typeId));
-	    channelE.setAttribute("editable", this.editable ? "true" : "false");
-	    channelE.setAttribute("hasHelp", this.hasHelp ? "true" : "false");
-	    channelE.setAttribute("hasAbout", this.hasAbout ? "true" : "false");
-	    channelE.setAttribute("secure", this.isSecure() ? "true" : "false");
-	    
-	    // Add any parameters
-		for (String key : this.parameters.keySet()) {
-			String value = this.parameters.get(key).getValue();
-			if (value != null && value.trim().length() > 0) {
-				Element parameterE = doc.createElement("parameter");
-				parameterE.setAttribute("name", key);
-				parameterE.setAttribute("value", this.parameters.get(key)
-						.getValue());
-				if (this.parameterOverrides.containsKey(key)
-						&& this.parameterOverrides.get(key).getValue()) {
-					parameterE.setAttribute("override", "yes");
-				}
-				channelE.appendChild(parameterE);
-			}
-		}
-
-	    return channelE;
-
 	}
 	
 	/**
@@ -330,6 +303,39 @@ public class ChannelDefinitionForm implements Serializable {
 
 	public void setTypeId(int typeId) {
 		this.typeId = typeId;
+	}
+
+	public void setLifecycleState(ChannelLifecycleState lifecycleState) {
+		this.lifecycleState = lifecycleState;
+	}
+
+	public void setLifecycleState(String lifecycleState) {
+		for (ChannelLifecycleState state : ChannelLifecycleState.values()) {
+			if (state.toString().equals(lifecycleState)) {
+				this.lifecycleState = state;
+				break;
+			}
+		}
+	}
+
+	public ChannelLifecycleState getLifecycleState() {
+		return lifecycleState;
+	}
+
+	public Date getPublishDate() {
+		return publishDate;
+	}
+
+	public void setPublishDate(Date publishDate) {
+		this.publishDate = publishDate;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 
 	public boolean isEditable() {

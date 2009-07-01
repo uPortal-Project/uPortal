@@ -273,6 +273,14 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 		}
 		return description;
 	}
+	
+	public Date getExpirationDate() {
+		return this.expirationDate;
+	}
+
+	public int getExpirerId() {
+		return this.expirerId;
+	}
 
 	public EntityIdentifier getEntityIdentifier() {
 		return new EntityIdentifier(String.valueOf(this.getId()),
@@ -455,6 +463,14 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 		this.editable = editable;
 	}
 
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
+	public void setExpirerId(int expirerId) {
+		this.expirerId = expirerId;
+	}
+	
 	public void setHasAbout(boolean hasAbout) {
 		this.hasAbout = hasAbout;
 	}
@@ -551,5 +567,4 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
             .toString();
     }
 
-    
 }
