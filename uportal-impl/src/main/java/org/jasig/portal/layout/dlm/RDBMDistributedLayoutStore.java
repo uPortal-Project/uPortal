@@ -57,6 +57,7 @@ import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
@@ -2935,6 +2936,9 @@ public class RDBMDistributedLayoutStore
         }
         public boolean isSecure() {
             return false;
+        }
+        public IPortletDefinition getPortletDefinition() {
+            return null;
         }
         public void removeParameter(IChannelParameter parameter) {
         }

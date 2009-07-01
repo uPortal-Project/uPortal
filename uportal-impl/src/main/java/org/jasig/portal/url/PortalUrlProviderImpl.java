@@ -406,7 +406,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         
         //Add channel information: /fname.chanid
-        final IChannelDefinition channelDefinition = this.portletDefinitionRegistry.getChannelDefinition(portletEntity.getPortletDefinitionId());
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletEntity.getPortletDefinitionId());
+        final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
         final String fname = channelDefinition.getFName();
         final String validFname = VALID_FNAME_CHARS.matcher(fname).replaceAll("_");
         url.append("/").append(validFname).append(".").append(portletEntity.getChannelSubscribeId());

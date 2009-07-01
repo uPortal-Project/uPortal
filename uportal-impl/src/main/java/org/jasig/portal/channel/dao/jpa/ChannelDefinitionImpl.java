@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
@@ -33,6 +35,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -44,6 +47,8 @@ import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.XmlGeneratingBaseChannelDefinition;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 
 /**
@@ -59,7 +64,7 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 		@Parameter(name = "sequence", value = "UP_CHANNEL_DEF_SEQ"),
 		@Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
 		@Parameter(name = "column", value = "NEXT_UP_CHANNEL_DEF_HI") })
-class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implements IChannelDefinition, IBasicEntity,
+public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implements IChannelDefinition, IBasicEntity,
 		Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -134,9 +139,9 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 	@org.hibernate.annotations.MapKey(columns = @Column(name = "LOCALE", length = 64))
 	private Map<String, ChannelLocalizationData> localizations = new HashMap<String, ChannelLocalizationData>();
 
-	// TODO: integrate with portlet persistence code
-	@Transient
-	private Map<String, IPortletPreference> portletPreferences = new HashMap<String, IPortletPreference>();
+	@OneToOne(targetEntity = PortletDefinitionImpl.class, mappedBy = "channelDefinition", fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+	@Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
+    private final IPortletDefinition portletDefinition;
 
 	@Transient
 	private String locale; // this probably shouldn't be a channel property?
@@ -173,6 +178,7 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
     private ChannelDefinitionImpl() {
         this.internalId = -1;
         this.channelType = null;
+        this.portletDefinition = null;
         this.name = null;
         this.fname = null;
         this.title = null;
@@ -188,6 +194,7 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
         
         this.internalId = -1;
         this.channelType = channelType;
+        this.portletDefinition = new PortletDefinitionImpl(this);
         this.name = name;
         this.fname = fname;
         this.title = title;
@@ -221,6 +228,10 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
     public void setType(IChannelType channelType) {
         Validate.notNull(channelType);
         this.channelType = channelType;
+    }
+    
+    public IPortletDefinition getPortletDefinition() {
+        return this.portletDefinition;
     }
 
     public void addParameter(IChannelParameter parameter) {
@@ -339,11 +350,6 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 		return Collections.unmodifiableMap(parameterMap);
 	}
 
-	public IPortletPreference[] getPortletPreferences() {
-		return this.portletPreferences.values().toArray(
-				new IPortletPreference[this.portletPreferences.size()]);
-	}
-
 	public Date getPublishDate() {
 		return publishDate;
 	}
@@ -440,12 +446,16 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
 		}
 	}
 
+	@Deprecated
 	public void replacePortletPreference(List<IPortletPreference> portletPreferences) {
-		this.portletPreferences.clear();
-		for (IPortletPreference pref : portletPreferences) {
-			this.portletPreferences.put(pref.getName(), pref);
-		}
+	    this.portletDefinition.getPortletPreferences().setPortletPreferences(portletPreferences);
 	}
+
+	@Deprecated
+    public IPortletPreference[] getPortletPreferences() {
+        final List<IPortletPreference> portletPreferences = this.portletDefinition.getPortletPreferences().getPortletPreferences();
+        return portletPreferences.toArray(new IPortletPreference[portletPreferences.size()]);
+    }
 
 	public void setApprovalDate(Date approvalDate) {
 		this.approvalDate = approvalDate;
@@ -557,7 +567,6 @@ class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition implement
             .append("name", this.name)
             .append("approvalDate", this.approvalDate)
             .append("parameters", this.parameters)
-            .append("portletPreferences", this.portletPreferences)
             .append("clazz", this.clazz)
             .append("type", this.channelType)
             .append("isPortlet", this.isPortlet)

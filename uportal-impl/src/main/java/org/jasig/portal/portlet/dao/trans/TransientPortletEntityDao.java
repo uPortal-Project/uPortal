@@ -186,7 +186,8 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
         final String databaseChannelSubscribeId = portletEntity.getChannelSubscribeId();
         if (databaseChannelSubscribeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
             final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
-            final IChannelDefinition channelDefinition = this.portletDefinitionRegistry.getChannelDefinition(portletDefinitionId);
+            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+            final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
             final String fname = channelDefinition.getFName();
             
             final IUserLayoutManager userLayoutManager = this.getUserLayoutManager();

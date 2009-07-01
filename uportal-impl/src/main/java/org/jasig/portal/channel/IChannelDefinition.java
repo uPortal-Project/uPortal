@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -129,9 +130,19 @@ public interface IChannelDefinition extends IBasicEntity {
 	public void addLocalizedName(String locale, String chanName);
 
 	public void addLocalizedDescription(String locale, String chanDesc);
+	
+	public IPortletDefinition getPortletDefinition();
 
+	/**
+	 * @deprecated Use {@link #getPortletDefinition()} and operate on the portlet preferences directly
+	 */
+	@Deprecated
 	public IPortletPreference[] getPortletPreferences();
 
+    /**
+     * @deprecated Use {@link #getPortletDefinition()} and operate on the portlet preferences directly
+     */
+	@Deprecated
 	public void replacePortletPreference(
 			List<IPortletPreference> portletPreferences);
 

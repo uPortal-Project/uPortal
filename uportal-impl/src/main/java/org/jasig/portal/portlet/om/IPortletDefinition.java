@@ -5,6 +5,8 @@
  */
 package org.jasig.portal.portlet.om;
 
+import org.jasig.portal.channel.IChannelDefinition;
+
 
 /**
  * A portlet definition is equivalant to a published ChannelDefinition. 
@@ -19,9 +21,9 @@ public interface IPortletDefinition {
     public IPortletDefinitionId getPortletDefinitionId();
     
     /**
-     * @return The ID of the {@link org.jasig.portal.ChannelDefinition} this portlet definition is based on.
+     * @return The {@link IChannelDefinition} this portlet definition is based on.
      */
-    public int getChannelDefinitionId();
+    public IChannelDefinition getChannelDefinition();
     
     /**
      * @return The preferences for this portlet definition, will not be null.

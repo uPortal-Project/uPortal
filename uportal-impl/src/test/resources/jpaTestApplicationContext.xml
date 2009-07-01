@@ -44,6 +44,12 @@
 
     <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao">
     </bean>
+    
+    <bean id="channelTypeDao" class="org.jasig.portal.channel.dao.jpa.JpaChannelTypeDao">
+    </bean>
+
+    <bean id="channelDefinitionDao" class="org.jasig.portal.channel.dao.jpa.JpaChannelDefinitionDao">
+    </bean>
 
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
     </bean>

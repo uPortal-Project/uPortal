@@ -30,8 +30,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -52,16 +53,18 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
             @Parameter(name = "column", value = "NEXT_UP_PORTLET_DEF_HI")
         }
     )
-class PortletDefinitionImpl implements IPortletDefinition {
+public class PortletDefinitionImpl implements IPortletDefinition {
     //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
     @Id
     @GeneratedValue(generator = "UP_PORTLET_DEF_GEN")
     @Column(name = "PORTLET_DEF_ID")
     private final long internalPortletDefinitionId;
 
-    @Column(name = "CHANNEL_DEF_ID", nullable = false, updatable = false, unique = true)
-    @Index(name = "IDX_PORT_DEF__CHAN_DEF")
-    private final int channelDefinitionId;
+    
+    @OneToOne(targetEntity = ChannelDefinitionImpl.class)
+    @JoinColumn(name = "CHANNEL_DEF_ID", nullable = false, updatable = false, unique = true)
+    private final IChannelDefinition channelDefinition;
+    
 
     //Hidden reference to the parent portlet definition, used by hibernate for referential integrety
     @SuppressWarnings("unused")
@@ -97,13 +100,13 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @SuppressWarnings("unused")
     private PortletDefinitionImpl() {
         this.internalPortletDefinitionId = -1;
-        this.channelDefinitionId = -1;
+        this.channelDefinition = null;
         this.portletPreferences = null;
     }
     
-    public PortletDefinitionImpl(int channelDefinitionId) {
+    public PortletDefinitionImpl(ChannelDefinitionImpl channelDefinition) {
         this.internalPortletDefinitionId = -1;
-        this.channelDefinitionId = channelDefinitionId;
+        this.channelDefinition = channelDefinition;
         this.portletPreferences = new PortletPreferencesImpl();
     }
     
@@ -116,10 +119,10 @@ class PortletDefinitionImpl implements IPortletDefinition {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletDefinition#getChannelDefinitionId()
+     * @see org.jasig.portal.portlet.om.IPortletDefinition#getChannelDefinition()
      */
-    public int getChannelDefinitionId() {
-        return this.channelDefinitionId;
+    public IChannelDefinition getChannelDefinition() {
+        return this.channelDefinition;
     }
 
     /* (non-Javadoc)
@@ -150,7 +153,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
         }
         IPortletDefinition rhs = (IPortletDefinition) object;
         return new EqualsBuilder()
-            .append(this.channelDefinitionId, rhs.getChannelDefinitionId())
+            .append(this.channelDefinition.getId(), rhs.getChannelDefinition().getId())
             .isEquals();
     }
 
@@ -160,7 +163,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(464270933, -1074792143)
-            .append(this.channelDefinitionId)
+            .append(this.channelDefinition.getId())
             .toHashCode();
     }
 
@@ -171,7 +174,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             .append("portletDefinitionId", this.portletDefinitionId)
-            .append("channelDefinitionId", this.channelDefinitionId)
+            .append("channelDefinitionId", this.channelDefinition.getId())
             .toString();
     }
 }

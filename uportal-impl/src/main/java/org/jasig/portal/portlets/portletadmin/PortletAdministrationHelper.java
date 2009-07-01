@@ -36,7 +36,9 @@ import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
+import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
@@ -199,7 +201,7 @@ public class PortletAdministrationHelper {
 	    channelDef.setType(channelType);
 	    
 	    // add channel parameters
-		List<IPortletPreference> portletPreferences = new ArrayList<IPortletPreference>();
+		List<IPortletPreference> preferenceList = new ArrayList<IPortletPreference>();
 		for (String key : form.getParameters().keySet()) {
 			String value = form.getParameters().get(key).getValue();
 			if (!StringUtils.isBlank(value)) {
@@ -208,7 +210,7 @@ public class PortletAdministrationHelper {
 					override = form.getParameterOverrides().get(key).getValue();
 				}
 				if (key.startsWith("PORTLET.")) {
-					portletPreferences.add(new PortletPreferenceImpl(key, !override, new String[]{value}));
+					preferenceList.add(new PortletPreferenceImpl(key, !override, new String[]{value}));
 				} else {
 					channelDef.addParameter(key, value, override);
 				}
@@ -223,10 +225,12 @@ public class PortletAdministrationHelper {
 				if (form.getPortletPreferencesOverrides().containsKey(key)) {
 					readOnly = !form.getPortletPreferencesOverrides().get(key).getValue();
 				}
-				portletPreferences.add(new PortletPreferenceImpl(key, readOnly, values));
+				preferenceList.add(new PortletPreferenceImpl(key, readOnly, values));
 			}
 		}
-		channelDef.replacePortletPreference(portletPreferences);
+		final IPortletDefinition portletDefinition = channelDef.getPortletDefinition();
+		final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
+		portletPreferences.setPortletPreferences(preferenceList);
 	    
 	    channelPublishingService.saveChannelDefinition(channelDef, publisher, categories, groupMembers);
 

@@ -23,7 +23,6 @@ import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
 import org.jasig.portal.PortalControlStructures;
-import org.jasig.portal.mock.portlet.om.MockPortletDefinition;
 import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
@@ -87,8 +86,11 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         final IPortletDefinitionId portDef1 = new MockPortletDefinitionId("portDef1");
         
+        final IPortletDefinition portletDefinition = EasyMock.createMock(IPortletDefinition.class);
+        EasyMock.expect(portletDefinition.getPortletDefinitionId()).andReturn(portDef1);
+        
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
-        EasyMock.expect(portletDefinitionRegistry.getPortletDefinition(1)).andReturn(new MockPortletDefinition(portDef1, 1, "portApp1", "port1"));
+        EasyMock.expect(portletDefinitionRegistry.getPortletDefinition(1)).andReturn(portletDefinition);
         
         
         final IPortletEntityId portletEntityId = new MockPortletEntityId("ent1");
@@ -125,11 +127,11 @@ public class SpringPortletChannelImplTest extends TestCase {
         this.springPortletChannel.setPortletWindowRegistry(portletWindowRegistry);
         this.springPortletChannel.setPortletContainer(portletContainer);
         
-        EasyMock.replay(portletDefinitionRegistry, portletContainer, portletWindow, portletWindowRegistry, portletEntity, portletEntityRegistry, person);
+        EasyMock.replay(portletDefinition, portletDefinitionRegistry, portletContainer, portletWindow, portletWindowRegistry, portletEntity, portletEntityRegistry, person);
         
         this.springPortletChannel.initSession(channelStaticData, portalControlStructures);
         
-        EasyMock.verify(portletDefinitionRegistry, portletContainer, portletWindow, portletWindowRegistry, portletEntity, portletEntityRegistry, person);
+        EasyMock.verify(portletDefinition, portletDefinitionRegistry, portletContainer, portletWindow, portletWindowRegistry, portletEntity, portletEntityRegistry, person);
     }
     
     public static <T> T instanceOfMatcher(final T arg) {

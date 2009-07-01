@@ -13,7 +13,9 @@ import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
+import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.AttributeFactory;
 import org.jasig.portal.portlets.BooleanAttribute;
@@ -116,7 +118,9 @@ public class ChannelDefinitionForm implements Serializable {
 		}
 		
 		if (def.isPortlet()) {
-			for (IPortletPreference pref : def.getPortletPreferences()) {
+			final IPortletDefinition portletDef = def.getPortletDefinition();
+            final IPortletPreferences prefs = portletDef.getPortletPreferences();
+            for (IPortletPreference pref : prefs.getPortletPreferences()) {
 				List<Attribute> attributes = new ArrayList<Attribute>();
 				for (String value : pref.getValues()) {
 					attributes.add(new Attribute(value));

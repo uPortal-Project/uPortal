@@ -5,7 +5,6 @@
  */
 package org.jasig.portal.channel;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -13,9 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AbstractChannelRegistryStore;
 import org.jasig.portal.channel.dao.IChannelDefinitionDao;
 import org.jasig.portal.channel.dao.IChannelTypeDao;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 
 /**
@@ -85,11 +81,7 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
      * @see org.jasig.portal.IChannelRegistryStore#getChannelDefinition(int)
      */
     public IChannelDefinition getChannelDefinition(int channelId) {
-    	IChannelDefinition def = channelDao.getChannelDefinition(channelId);
-    	if (def != null) {
-    		def = completeChannelDefinition(def);
-    	}
-    	return def;
+    	return channelDao.getChannelDefinition(channelId);
     }
 
     /*
@@ -97,11 +89,7 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
      * @see org.jasig.portal.IChannelRegistryStore#getChannelDefinition(java.lang.String)
      */
     public IChannelDefinition getChannelDefinition(String fname) {
-    	IChannelDefinition def = channelDao.getChannelDefinition(fname);
-    	if (def != null) {
-    		def = completeChannelDefinition(def);
-    	}
-    	return def;
+    	return channelDao.getChannelDefinition(fname);
     }
     
     /*
@@ -115,17 +103,6 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
     		IChannelDefinition newChannel = getChannelDefinition(channelDef.getFName());
     		channelId = newChannel.getId();
     	}
-    	
-    	// if this channel is a portlet, save the associated portlet parameters
-        if (channelDef.isPortlet()) {
-            //Get or Create the portlet definition
-            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getOrCreatePortletDefinition(channelId);
-            
-            //Update the preferences of the portlet definition
-            final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
-            portletPreferences.setPortletPreferences(Arrays.asList(channelDef.getPortletPreferences()));
-            this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
-        }
     }
 
     /*
@@ -207,31 +184,6 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
      */
     public void deleteChannelType(IChannelType chanType) {
     	channelTypeDao.deleteChannelType(chanType);
-    }
-
-    
-    // Internal methods
-
-    /**
-     * Temporary internal method for adding the portlet definition to a channel.
-     * Eventually this association will be managed via Hibernate.
-     * 
-     * @param def  ChannelDefinition
-     * @return     completed ChannelDefinition with attached portlet preferences
-     */
-    protected IChannelDefinition completeChannelDefinition(IChannelDefinition def) {
-        if (def.isPortlet()) {
-            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(def.getId());
-            if (portletDefinition != null) {
-                final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
-                final List<IPortletPreference> portletPreferencesList = portletPreferences.getPortletPreferences();
-                def.replacePortletPreference(portletPreferencesList);
-            }
-            else {
-                log.warn("ChannelDefinition.isPortlet() reports true but no IPortletDefinition exists for channel publish id '" + def.getId() + "'. This channel may not function correctly.");
-            }
-        }
-        return def;
     }
 
 }

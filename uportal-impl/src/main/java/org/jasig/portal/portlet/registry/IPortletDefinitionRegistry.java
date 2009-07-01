@@ -8,7 +8,6 @@ package org.jasig.portal.portlet.registry;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletAppDD;
 import org.apache.pluto.descriptors.portlet.PortletDD;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.utils.Tuple;
@@ -36,7 +35,9 @@ public interface IPortletDefinitionRegistry {
      * @param channelPublishId The id of the {@link org.jasig.portal.ChannelDefinition} this portlet definition represents.
      * @return The portlet definition for the channelPublishId, null if no definition exists for the id.
      * @throws IllegalArgumentException If channelPublishId is null.
+     * @deprecated Use {@link org.jasig.portal.IChannelRegistryStore#getChannelDefinition(int)} instead
      */
+    @Deprecated
     public IPortletDefinition getPortletDefinition(int channelPublishId);
     
     /**
@@ -52,7 +53,9 @@ public interface IPortletDefinitionRegistry {
      *         be found for the publish ID or the channel definition does not have the required channel parameters
      *         {@link org.jasig.portal.channels.portlet.IPortletAdaptor#CHANNEL_PARAM__PORTLET_APPLICATION_ID} and
      *         {@link org.jasig.portal.channels.portlet.IPortletAdaptor#CHANNEL_PARAM__PORTLET_NAME}.
+     * @deprecated Use {@link IChannelDefinition#getPortletDefinition()} instead
      */
+    @Deprecated
     public IPortletDefinition createPortletDefinition(int channelPublishId);
     
     /**
@@ -95,22 +98,4 @@ public interface IPortletDefinitionRegistry {
      * will be {@link Tuple#first} and the portletName will be {@link Tuple#second}
      */
     public Tuple<String, String> getPortletDescriptorKeys(IPortletDefinition portletDefinition);
-    
-    /**
-     * Removes the {@link IPortletDefinition} specified by the channelPublishId from the persistent store. If no
-     * {@link IPortletDefinition} exists for the channelPublishId no action is taken.
-     * 
-     * @param channelPublishId The id of the ChannelDefinition to delete the IPortletDefinition for.
-     */
-    public void deletePortletDefinition(int channelPublishId);
-
-    /**
-     * Gets the {@link ChannelDefinition} that the {@link IPortletDefinition} specified by the 
-     * {@link IPortletDefinitionId} represents
-     * 
-     * @param portletDefinitionId The definition ID to get the channel definition for.
-     * @return The channel definition the specified portlet represents
-     * @throws IllegalArgumentException if portletDefinitionId is null
-     */
-    public IChannelDefinition getChannelDefinition(IPortletDefinitionId portletDefinitionId);
 }

@@ -5,17 +5,13 @@
  */
 package org.jasig.portal.portlet.dao.jpa;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$
  */
 @Repository
-public class JpaPortletDefinitionDao  implements IPortletDefinitionDao {
-    private static final String FIND_PORTLET_DEF_BY_CHAN_DEF = 
-        "from PortletDefinitionImpl portDef " +
-        "where portDef.channelDefinitionId = :channelDefinitionId";
-
+public class JpaPortletDefinitionDao implements IPortletDefinitionDao {
     private EntityManager entityManager;
     
     /**
@@ -48,57 +40,11 @@ public class JpaPortletDefinitionDao  implements IPortletDefinitionDao {
     }
     
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.dao.IPortletDefinitionDao#createPortletDefinition(int)
-     */
-    @Transactional
-    public IPortletDefinition createPortletDefinition(int channelDefinitionId) {
-        PortletDefinitionImpl portletDefinition = new PortletDefinitionImpl(channelDefinitionId);
-        
-        this.entityManager.persist(portletDefinition);
-        
-        return portletDefinition;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.dao.portlet.IPortletDefinitionDao#deletePortletDefinition(org.jasig.portal.om.portlet.IPortletDefinition)
-     */
-    @Transactional
-    public void deletePortletDefinition(IPortletDefinition portletDefinition) {
-        Validate.notNull(portletDefinition, "portletDefinition can not be null");
-        
-        final IPortletDefinition persistentPortletDefinition;
-        if (this.entityManager.contains(portletDefinition)) {
-            persistentPortletDefinition = portletDefinition;
-        }
-        else {
-            persistentPortletDefinition = this.entityManager.merge(portletDefinition);
-        }
-        
-        this.entityManager.remove(persistentPortletDefinition);
-    }
-
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId) {
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
         
         final long internalPortletDefinitionId = Long.parseLong(portletDefinitionId.getStringId());
         final PortletDefinitionImpl portletDefinition = this.entityManager.find(PortletDefinitionImpl.class, internalPortletDefinitionId);
-        
-        return portletDefinition;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.dao.portlet.IPortletDefinitionDao#getPortletDefinition(int)
-     */
-    @SuppressWarnings("unchecked")
-    public IPortletDefinition getPortletDefinition(int channelDefinitionId) {
-        final Query query = this.entityManager.createQuery(FIND_PORTLET_DEF_BY_CHAN_DEF);
-        query.setParameter("channelDefinitionId", channelDefinitionId);
-        query.setHint("org.hibernate.cacheable", true);
-        query.setMaxResults(1);
-        
-        final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
-        final PortletDefinitionImpl portletDefinition = (PortletDefinitionImpl)DataAccessUtils.uniqueResult(portletDefinitions);
         
         return portletDefinition;
     }

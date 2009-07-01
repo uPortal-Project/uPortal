@@ -51,7 +51,9 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
+import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
@@ -668,8 +670,10 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 preferences.add(portletPreference);
             }
         }
-        
-        ci.chanDef.replacePortletPreference(preferences);
+
+        final IPortletDefinition portletDefinition = ci.chanDef.getPortletDefinition();
+        final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
+        portletPreferences.setPortletPreferences(preferences);
     }
 
     /**
