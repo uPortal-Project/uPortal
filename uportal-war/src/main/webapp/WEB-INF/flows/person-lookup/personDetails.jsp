@@ -7,13 +7,35 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<div><spring:message code="personDetails.detailsTitle" arguments="${person.name}" /></div>
+<div>
+    <portlet:actionURL var="selectUserUrl">
+        <portlet:param name="execution" value="${flowExecutionKey}" />
+        <portlet:param name="_eventId" value="selectAndGo" />
+    </portlet:actionURL>
+    <a href="${selectUserUrl}"><spring:message code="${personDetails_selectAndGoButtonTextKey}" /></a> -
+    
+    <c:if test="${fn:length(personQueryResults) > 1}">
+        <portlet:renderURL var="backToResultsUrl">
+            <portlet:param name="execution" value="${flowExecutionKey}" />
+            <portlet:param name="_eventId" value="searchResults" />
+        </portlet:renderURL>
+        <a href="${backToResultsUrl}"><spring:message code="personDetails.backToResultsLink" /></a> -
+    </c:if>
+    
+    <portlet:renderURL var="newSearchUrl">
+        <portlet:param name="execution" value="${flowExecutionKey}" />
+        <portlet:param name="_eventId" value="newSearch" />
+    </portlet:renderURL>
+    <a href="${newSearchUrl}"><spring:message code="personDetails.newSearchLink" /></a>
+</div>
+
+<div style="padding-bottom: 0.5em;"><spring:message code="personDetails.detailsTitle" arguments="${person.name}" /></div>
 
 <table border="1">
     <thead>
         <tr>
-            <th>Attribute</th>
-            <th>Value(s)</th>
+            <th><spring:message code="personDetails.attributeHeader"/></th>
+            <th><spring:message code="personDetails.valuesHeader"/></th>
         </tr>
     </thead>
     <tbody>
@@ -41,25 +63,24 @@
     </tbody>
 </table>
 
-<portlet:actionURL var="selectUserUrl">
-    <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="selectAndGo" />
-</portlet:actionURL>
-<spring:message var="selectAndGoButtonText" code="${personDetails_selectAndGoButtonTextKey}" />
-<a href="${selectUserUrl}">${selectAndGoButtonText}</a><br/>
-
-<c:if test="${fn:length(personQueryResults) > 1}">
-    <portlet:renderURL var="backToResultsUrl">
+<div>
+    <portlet:actionURL var="selectUserUrl">
         <portlet:param name="execution" value="${flowExecutionKey}" />
-        <portlet:param name="_eventId" value="searchResults" />
+        <portlet:param name="_eventId" value="selectAndGo" />
+    </portlet:actionURL>
+    <a href="${selectUserUrl}"><spring:message code="${personDetails_selectAndGoButtonTextKey}" /></a> -
+    
+    <c:if test="${fn:length(personQueryResults) > 1}">
+        <portlet:renderURL var="backToResultsUrl">
+            <portlet:param name="execution" value="${flowExecutionKey}" />
+            <portlet:param name="_eventId" value="searchResults" />
+        </portlet:renderURL>
+        <a href="${backToResultsUrl}"><spring:message code="personDetails.backToResultsLink" /></a> -
+    </c:if>
+    
+    <portlet:renderURL var="newSearchUrl">
+        <portlet:param name="execution" value="${flowExecutionKey}" />
+        <portlet:param name="_eventId" value="newSearch" />
     </portlet:renderURL>
-    <spring:message var="backToResultsLinkText" code="personDetails.backToResultsLink" />
-    <a href="${backToResultsUrl}">${backToResultsLinkText}</a><br/>
-</c:if>
-
-<portlet:renderURL var="newSearchUrl">
-    <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="newSearch" />
-</portlet:renderURL>
-<spring:message var="backToResultsLinkText" code="personDetails.newSearchLink" />
-<a href="${newSearchUrl}">${backToResultsLinkText}</a>
+    <a href="${newSearchUrl}"><spring:message code="personDetails.newSearchLink" /></a>
+</div>

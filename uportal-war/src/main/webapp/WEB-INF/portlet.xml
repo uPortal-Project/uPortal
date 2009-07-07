@@ -30,6 +30,36 @@
         <portlet-info>
             <title>Identity Swapper Portlet</title>
         </portlet-info>
+        
+        <portlet-preferences>
+            <preference>
+                <name>person-lookup.personSearchResults.resultsMessage</name>
+                <value>{0} ({1})</value>
+            </preference>
+            <preference>
+                <name>person-lookup.personSearchResults.resultsAttributes</name>
+                <value>displayName</value>
+                <value>username</value>
+            </preference>
+            <preference>
+                <name>person-lookup.personSearchResults.moreInfoAttributes</name>
+                <value>displayName</value>
+                <value>username</value>
+                <value>mail</value>
+            </preference>
+            <preference>
+                <name>person-lookup.personDetails.detailsAttributes.exclude</name>
+                <value>uid</value>
+                <value>user.login.id</value>
+                <value>userid</value>
+            </preference>
+            <preference>
+                <name>person-lookup.personLookup.queryAttributes.exclude</name>
+                <value>uid</value>
+                <value>user.login.id</value>
+                <value>userid</value>
+            </preference>
+        </portlet-preferences>
     </portlet>
     
     <portlet>
@@ -49,6 +79,43 @@
         <portlet-info>
             <title>Attribute Swapper Portlet</title>
         </portlet-info>
+        
+        <portlet-preferences>
+            <preference>
+                <name>person-lookup.personSearchResults.resultsMessage</name>
+                <value>{0} ({1})</value>
+            </preference>
+            <preference>
+                <name>person-lookup.personSearchResults.resultsAttributes</name>
+                <value>displayName</value>
+                <value>username</value>
+            </preference>
+            <preference>
+                <name>person-lookup.personSearchResults.moreInfoAttributes</name>
+                <value>displayName</value>
+                <value>username</value>
+                <value>mail</value>
+            </preference>
+            <preference>
+                <name>person-lookup.personDetails.detailsAttributes.exclude</name>
+                <value>uid</value>
+                <value>user.login.id</value>
+                <value>userid</value>
+            </preference>
+            <preference>
+                <name>person-lookup.personLookup.queryAttributes.exclude</name>
+                <value>uid</value>
+                <value>user.login.id</value>
+                <value>userid</value>
+            </preference>
+            <preference>
+                <name>attribute-swapper.attributesForm.swappableAttributes.exclude</name>
+                <value>uid</value>
+                <value>user.login.id</value>
+                <value>userid</value>
+                <value>username</value>
+            </preference>
+        </portlet-preferences>
     </portlet>
     
     <portlet>

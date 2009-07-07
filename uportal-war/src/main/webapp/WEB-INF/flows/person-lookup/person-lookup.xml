@@ -36,7 +36,7 @@
     
     <!-- Execute the lookup query and transition to the appropriate state based on the number of results -->
     <action-state id="doPersonLookup">
-        <evaluate expression="personLookupHelper.doPersonQuery(personQuery)" result="flowScope.personQueryResults" />
+        <evaluate expression="personLookupHelper.doPersonQuery(externalContext, personQuery)" result="flowScope.personQueryResults" />
         
         <transition to="personLookup" on="${flowScope.personQueryResults == null or flowScope.personQueryResults.size == 0}">
             <set name="requestScope.emptyQueryResults" value="'true'" />
@@ -49,7 +49,7 @@
 
     <view-state id="personSearchResults">
         <on-entry>
-            <evaluate expression="personLookupHelper.getQueryDisplayResults(externalContext, personQueryResults)" result="viewScope.queryDisplayResults" />
+            <evaluate expression="personLookupHelper.getQueryDisplayResults(externalContext, personQueryResults.values)" result="viewScope.queryDisplayResults" />
         </on-entry>
         
         <transition on="newSearch" to="personLookup" />

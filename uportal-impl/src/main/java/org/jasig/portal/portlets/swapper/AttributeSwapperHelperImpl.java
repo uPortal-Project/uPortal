@@ -92,6 +92,8 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         
         //Use prefs configured list if available
         final String[] configuredAttributes = preferences.getValues(ATTRIBUTE_SWAPPER_ATTRIBUTES_FORM_SWAPPABLE_ATTRIBUTES, null);
+        final String[] excludedAttributes = preferences.getValues(ATTRIBUTE_SWAPPER_ATTRIBUTES_FORM_SWAPPABLE_ATTRIBUTES_EXCLUDES, null);
+        
         if (configuredAttributes != null) {
             swappableAttributes = new LinkedHashSet<String>(Arrays.asList(configuredAttributes));
         }
@@ -113,6 +115,12 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
                 else {
                     swappableAttributes = Collections.emptySet();
                 }
+            }
+        }
+        
+        if (excludedAttributes != null) {
+            for (final String excludedAttribute : excludedAttributes) {
+                swappableAttributes.remove(excludedAttribute);
             }
         }
         
@@ -176,13 +184,40 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
             }
         }
         
+        final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
+        final PortletPreferences preferences = portletRequest.getPreferences();
+
+        final String[] configuredAttributes = preferences.getValues(ATTRIBUTE_SWAPPER_ATTRIBUTES_FORM_SWAPPABLE_ATTRIBUTES, null);
+        final String[] excludedAttributes = preferences.getValues(ATTRIBUTE_SWAPPER_ATTRIBUTES_FORM_SWAPPABLE_ATTRIBUTES_EXCLUDES, null);
+        
+        //Calculate the Set of attributes that are OK to be swapped
+        final Set<String> allowedAttributes = new LinkedHashSet<String>();
+        if (configuredAttributes != null) {
+            allowedAttributes.addAll(Arrays.asList(configuredAttributes));
+        }
+        else {
+            allowedAttributes.addAll(attributes.keySet());
+        }
+        if (excludedAttributes != null) {
+            allowedAttributes.removeAll(Arrays.asList(excludedAttributes));
+        }
+        
+        //Filter the attributes map
+        for (final Iterator<String> attributeItr = attributes.keySet().iterator(); attributeItr.hasNext(); ) {
+            final String attribute = attributeItr.next();
+            if (!allowedAttributes.contains(attribute)) {
+                attributeItr.remove();
+                this.logger.warn("User '" + uid + "' attempted overriding attribute '" + attribute + "' which is not allowed in the current configuration. The attribute will be ignored.");
+            }
+        }
+
+        
         this.logger.warn("User '" + uid + "' setting attribute overrides: " + attributes);
         
         //Override attributes retrieved the person directory
         this.overwritingPersonAttributeDao.setUserAttributeOverride(uid, attributes);
 
         //Update the IPerson, setting the overridden attributes
-        final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
         final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
         
         final IPerson person = this.personManager.getPerson(portalRequest);
@@ -210,7 +245,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         
         final IPerson person = this.personManager.getPerson(portalRequest);
 
-        final Set<String> overriddenAttributes = (Set)person.getAttribute(OVERRIDDEN_ATTRIBUTES);
+        final Set<String> overriddenAttributes = (Set<String>)person.getAttribute(OVERRIDDEN_ATTRIBUTES);
         if (overriddenAttributes != null) {
             person.setAttribute(OVERRIDDEN_ATTRIBUTES, null);
             

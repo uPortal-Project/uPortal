@@ -13,9 +13,9 @@
 
 <div><spring:message code="personLookup.searchTitle" /></div>
 
-<portlet:renderURL var="queryUrl">
+<portlet:actionURL var="queryUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
-</portlet:renderURL>
+</portlet:actionURL>
 <form:form modelAttribute="personQuery" action="${queryUrl}">
     <table border="1">
         <tbody>

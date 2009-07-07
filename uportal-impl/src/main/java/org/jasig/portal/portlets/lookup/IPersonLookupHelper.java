@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.portlets.lookup;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +22,10 @@ public interface IPersonLookupHelper {
      */
     public static final String PERSON_LOOKUP_PERSON_LOOKUP_QUERY_ATTRIBUTES = "person-lookup.personLookup.queryAttributes";
     /**
+     * Portlet preference name to use to specify a List of attributes displayed in query UI
+     */
+    public static final String PERSON_LOOKUP_PERSON_LOOKUP_QUERY_ATTRIBUTES_EXCLUDES = "person-lookup.personLookup.queryAttributes.exclude";
+    /**
      * Portlet preference name to use to specify a MessageFormat string for search results list
      */
     public static final String PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_MESSAGE = "person-lookup.personSearchResults.resultsMessage";
@@ -32,6 +37,10 @@ public interface IPersonLookupHelper {
      * Portlet preference name to use to specify a attributes to display in the user details view
      */
     public static final String PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES = "person-lookup.personDetails.detailsAttributes";
+    /**
+     * Portlet preference name to use to specify a attributes to exclude in the user details view
+     */
+    public static final String PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES_EXCLUDES = "person-lookup.personDetails.detailsAttributes.exclude";
     
     /**
      * Gets the Set of attributes to allow the user to query with.
@@ -47,7 +56,7 @@ public interface IPersonLookupHelper {
      * @param query Query to run for users.
      * @return Map of users with their name attribute as the key.
      */
-    public Map<String, IPersonAttributes> doPersonQuery(PersonQuery query);
+    public Map<String, IPersonAttributes> doPersonQuery(ExternalContext externalContext, PersonQuery query);
 
     /**
      * Performs formatting of strings to display on the query results view.
@@ -56,7 +65,7 @@ public interface IPersonLookupHelper {
      * @param queryResults Results of the query
      * @return Formatted strings as values and user names as keys.
      */
-    public Map<String, String> getQueryDisplayResults(ExternalContext externalContext, Map<String, IPersonAttributes> queryResults);
+    public Map<IPersonAttributes, String> getQueryDisplayResults(ExternalContext externalContext, Collection<IPersonAttributes> queryResults);
     
     /**
      * Gets the Set of attributes to display in the user details view

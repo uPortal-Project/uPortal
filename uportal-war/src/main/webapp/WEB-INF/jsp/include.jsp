@@ -16,3 +16,5 @@
 <%@ taglib prefix="uwfn" uri="http://www.uportal.org/jsp/jstl/functions/1.1" %>
 
 <portlet:defineObjects/>
+
+<spring:htmlEscape defaultHtmlEscape="true" />
