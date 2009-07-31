@@ -16,18 +16,211 @@
      | Import Tasks
      +-->
 
-	<util:map id="importTasks" map-class="java.util.concurrent.ConcurrentHashMap">
-	    <entry key="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn">
-            <ref bean="import-entity-type_v2-6"/>
-	    </entry>
-        <entry key="classpath://org/jasig/portal/io/import-layout_v3-2.crn">
-            <ref bean="import-layout_v3-2"/>
-        </entry>
-        <entry key="classpath://org/jasig/portal/io/import-profile_v3-2.crn">
-            <ref bean="import-profile_v3-2"/>
-        </entry>
-	</util:map>
+  <util:map id="importTasks" map-class="java.util.concurrent.ConcurrentHashMap">
+    <entry key="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn">
+      <ref bean="import-entity-type_v2-6" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-entity-type_v3-2.crn">
+      <ref bean="import-entity-type_v3-2" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-layout_v3-2.crn">
+      <ref bean="import-layout_v3-2" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-profile_v3-2.crn">
+      <ref bean="import-profile_v3-2" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
+      <ref bean="import-channel_v2-6" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+      <ref bean="import-channel_v3-0" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
+      <ref bean="import-channel_v3-1" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-channel_v3-2.crn">
+      <ref bean="import-channel_v3-2" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-structure_v2-6.crn">
+      <ref bean="import-structure_v2-6" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-theme_v2-6.crn">
+      <ref bean="import-theme_v2-6" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-group_v2-6.crn">
+      <ref bean="import-group_v2-6" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
+      <ref bean="import-group_membership_v3-0" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
+      <ref bean="import-group_membership_v3-2" />
+    </entry>
+    <entry key="classpath://org/jasig/portal/io/import-membership_v2-6.crn">
+      <ref bean="import-membership_v2-6" />
+    </entry>
+  </util:map>
 
+  <bean id="import-membership_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-membership_v2-6.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+
+  <bean id="import-group_membership_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-group_membership_v3-2.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+
+  <bean id="import-group_membership_v3-0" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-group_membership_v3-0.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+
+  <bean id="import-group_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-group_v2-6.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+
+  <bean id="import-theme_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-theme_v2-6.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+
+  <bean id="import-structure_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-structure_v2-6.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+    
+  <bean id="import-channel_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-channel_v2-6.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+    
+  <bean id="import-channel_v3-0" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-channel_v3-0.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+    
+  <bean id="import-channel_v3-1" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-channel_v3-1.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+    
+  <bean id="import-channel_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-channel_v3-2.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+    
     <bean id="import-entity-type_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
 	    <property name="location">
 	        <value>classpath://org/jasig/portal/io/import-entity-type_v2-6.crn</value>
@@ -46,6 +239,27 @@
 		            </bean>
 		        </entry>
 		    </util:map>
+        </property>
+    </bean>
+    
+    <bean id="import-entity-type_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
+      <property name="location">
+          <value>classpath://org/jasig/portal/io/import-entity-type_v3-2.crn</value>
+      </property>
+      <property name="requestAttributes">
+            <util:map>
+                <entry key="entityTypesSingleton">
+                <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                    <property name="targetClass" value="org.jasig.portal.EntityTypes"/>
+                    <property name="targetMethod" value="singleton"/>
+                    <property name="arguments">
+                        <list>
+                            <ref bean="PortalDb"/>
+                        </list>
+                    </property>
+                </bean>
+            </entry>
+        </util:map>
         </property>
     </bean>
     
@@ -92,11 +306,96 @@
         <entry key="layout">
             <ref bean="export-layout"/>
         </entry>
+        <entry key="entity-type">
+            <ref bean="export-entity-type"/>
+        </entry>
         <entry key="profile">
             <ref bean="export-profile"/>
         </entry>
+        <entry key="channel">
+            <ref bean="export-channel"/>
+        </entry>
+        <entry key="structure">
+            <ref bean="export-structure"/>
+        </entry>
+        <entry key="theme">
+            <ref bean="export-theme"/>
+        </entry>
+        <entry key="group">
+            <ref bean="export-group"/>
+        </entry>
+        <entry key="group_membership">
+            <ref bean="export-group_membership"/>
+        </entry>
     </util:map>
-    
+
+  <bean id="export-group_membership" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/export-group_membership.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+        <entry key="exportPropertiesLocation">
+          <value>classpath://properties/export.properties</value>
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+
+    <bean id="export-group" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/export-group.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="export-theme" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/export-theme.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="export-structure" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/export-structure.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
     <bean id="export-layout" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
             <value>classpath://org/jasig/portal/io/export-layout.crn</value>
@@ -114,6 +413,41 @@
                 </entry>
                 <entry key="portletEntityPreferenceHandler">
                     <ref bean="portletEntityPreferenceHandler"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="export-entity-type" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/export-entity-type.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="export-channel" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/export-channel.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+                <entry key="portletDefinitionRegistry">
+                    <ref bean="portletDefinitionRegistry"/>
                 </entry>
             </util:map>
         </property>

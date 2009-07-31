@@ -41,6 +41,7 @@
                                                                 <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
 	                                                        </when>
 	                                                        <otherwise>
+                                                              <echo-ln>WARNING: Should not be here.  Unsupported Entity Type version.</echo-ln>
 	                                                            <crn location="${importScriptUrl}"/>
 	                                                        </otherwise>
 	                                                    </choose>
@@ -66,7 +67,17 @@
                                             <try>
                                                 <echo-ln>Import Structure:  ${Attributes.LOCATION}</echo-ln>
                                                 <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-                                                    <crn location="${valueOf(@script)}"/>
+	                                                <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
+	                                                    <choose>
+	                                                        <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
+                                                                <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
+	                                                        </when>
+	                                                        <otherwise>
+                                                              <echo-ln>WARNING: Should not be here.  Unsupported Structure version.</echo-ln>
+	                                                            <crn location="${importScriptUrl}"/>
+	                                                        </otherwise>
+	                                                    </choose>
+	                                                </with-attribute>
                                                 </with-attribute>
                                             </try>
                                             <catch>
@@ -88,7 +99,17 @@
                                             <try>
                                                 <echo-ln>Import Theme:  ${Attributes.LOCATION}</echo-ln>
                                                 <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-                                                    <crn location="${valueOf(@script)}"/>
+	                                                <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
+	                                                    <choose>
+	                                                        <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
+                                                                <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
+	                                                        </when>
+	                                                        <otherwise>
+                                                              <echo-ln>WARNING: Should not be here.  Unsupported Theme version.</echo-ln>
+	                                                            <crn location="${importScriptUrl}"/>
+	                                                        </otherwise>
+	                                                    </choose>
+	                                                </with-attribute>
                                                 </with-attribute>
                                             </try>
                                             <catch>
@@ -154,7 +175,17 @@
                                             <try>
                                                 <echo-ln>Import Group:  ${Attributes.LOCATION}</echo-ln>
                                                 <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-                                                    <crn location="${valueOf(@script)}"/>
+	                                                <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
+	                                                    <choose>
+	                                                        <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
+                                                                <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
+	                                                        </when>
+	                                                        <otherwise>
+                                                              <echo-ln>WARNING: Should not be here.  Unsupported Group version.</echo-ln>
+	                                                            <crn location="${importScriptUrl}"/>
+	                                                        </otherwise>
+	                                                    </choose>
+	                                                </with-attribute>
                                                 </with-attribute>
                                             </try>
                                             <catch>
@@ -179,7 +210,17 @@
                                                     <attribute key="Attributes.NODE">${parseXml(${Attributes.LOCATION})}</attribute>
                                                     <attribute key="IMPORT_ACTION">GROUP</attribute>
                                                     <subtasks>
-                                                        <crn location="${valueOf(@script)}"/>
+                                                      <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
+                                                          <choose>
+                                                              <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
+                                                                    <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
+                                                              </when>
+                                                              <otherwise>
+                                                                  <echo-ln>WARNING: Should not be here.  Unsupported Group Membership version.</echo-ln>
+                                                                  <crn location="${importScriptUrl}"/>
+                                                              </otherwise>
+                                                          </choose>
+                                                      </with-attribute>
                                                     </subtasks>
                                                 </with>
                                             </try>
@@ -192,23 +233,34 @@
                                 </if>
                             </file-iterator>
                         </thread-pool>
+                        <!-- group_memberships -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
                             <file-iterator dir="${$1}" includes="**/*.group_membership">
                                 <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
                                     <concurrent>
                                         <handle-error>
                                             <try>
-                                                <echo-ln>Import Memberships:  ${Attributes.LOCATION}</echo-ln>
+                                                <echo-ln>Import Group_Membership:  ${Attributes.LOCATION}</echo-ln>
                                                 <with>
                                                     <attribute key="Attributes.NODE">${parseXml(${Attributes.LOCATION})}</attribute>
                                                     <attribute key="IMPORT_ACTION">MEMBERS</attribute>
                                                     <subtasks>
-                                                        <crn location="${valueOf(@script)}"/>
+                                                      <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
+                                                          <choose>
+                                                              <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
+                                                                    <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
+                                                              </when>
+                                                              <otherwise>
+                                                                  <echo-ln>WARNING: Should not be here.  Unsupported Group Membership version.</echo-ln>
+                                                                  <crn location="${importScriptUrl}"/>
+                                                              </otherwise>
+                                                          </choose>
+                                                      </with-attribute>
                                                     </subtasks>
                                                 </with>
                                             </try>
                                             <catch>
-                                                <echo-ln>ERROR Failed to import Memberships from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <echo-ln>ERROR Failed to import Group_Membership from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
                                                 <throw/>
                                             </catch>
                                         </handle-error>
@@ -216,7 +268,6 @@
                                 </if>
                             </file-iterator>
                         </thread-pool>
-
                         <!-- channel-types -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
                             <file-iterator dir="${$1}" includes="**/*.channel-type">
@@ -248,7 +299,17 @@
                                             <try>
                                                 <echo-ln>Import Channel:  ${Attributes.LOCATION}</echo-ln>
                                                 <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-                                                    <crn location="${valueOf(@script)}"/>
+                                                  <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
+                                                      <choose>
+                                                          <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
+                                                                <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
+                                                          </when>
+                                                          <otherwise>
+                                                              <echo-ln>WARNING: Should not be here.  Unsupported Channel version.</echo-ln>
+                                                              <crn location="${importScriptUrl}"/>
+                                                          </otherwise>
+                                                      </choose>
+                                                  </with-attribute>
                                                 </with-attribute>
                                             </try>
                                             <catch>
@@ -270,7 +331,18 @@
                                             <try>
                                                 <echo-ln>Import Membership:  ${Attributes.LOCATION}</echo-ln>
                                                 <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-                                                    <crn location="${valueOf(@script)}"/>
+                                                  <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
+                                                      <choose>
+                                                          <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
+                                                                <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
+                                                          </when>
+                                                          <otherwise>
+                                                              <echo-ln>WARNING: Should not be here.  Unsupported Membership version.</echo-ln>
+                                                              <crn location="${importScriptUrl}"/>
+                                                          </otherwise>
+                                                      </choose>
+                                                  </with-attribute>
+<!--                                                    <crn location="${valueOf(@script)}"/>-->
                                                 </with-attribute>
                                             </try>
                                             <catch>
@@ -373,6 +445,7 @@
                                                                 <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
                                                             </when>
                                                             <otherwise>
+                                                                <echo-ln>WARNING: Should not be here.  Unsupported Fragment Layout version.</echo-ln>
                                                                 <crn location="${importScriptUrl}"/>
                                                             </otherwise>
                                                         </choose>
@@ -404,6 +477,7 @@
                                                                 <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
                                                             </when>
                                                             <otherwise>
+                                                                <echo-ln>WARNING: Should not be here.  Unsupported Layout version.</echo-ln>
                                                                 <crn location="${importScriptUrl}"/>
                                                             </otherwise>
                                                         </choose>
@@ -455,7 +529,7 @@
                     </with-attribute>
                 </subtasks>
             </with>
-            <echo-ln>Import of ${$1} Complete: ${groovy(System.currentTimeMillis() - IMPORT_START_TIME)}</echo-ln>
+            <echo-ln>Import of ${$1} Complete in ${groovy(System.currentTimeMillis() - IMPORT_START_TIME)} milliseconds.</echo-ln>
         </subtasks>
     </with>
 </properties>

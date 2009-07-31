@@ -6,7 +6,8 @@
 
 -->
 <with-attribute key="Attributes.NODE" value="${newDoc(group)}">
-    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-group_membership_v3-0.crn)}"/>
+  <properties location="${exportPropertiesLocation}">
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-group_membership_v3-2.crn)}"/>
     <echo-ln>Export Group and Members:  GROUP_NAME=${GROUP_NAME}</echo-ln>
     <append-node>
         <name>${GROUP_NAME}</name>
@@ -67,4 +68,5 @@
     </sql-query>
     
     <return value="${Attributes.NODE}"/>
+  </properties>
 </with-attribute>

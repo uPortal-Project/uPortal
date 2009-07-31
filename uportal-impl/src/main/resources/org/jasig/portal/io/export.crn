@@ -58,7 +58,7 @@
 					
 					</choose>
 					
-					<echo-ln>uPortal Export '${ENTITY_TYPE}' Complete: ${groovy(System.currentTimeMillis() - EXPORT_START_TIME)}</echo-ln>            
+					<echo-ln>uPortal Export '${ENTITY_TYPE}' Complete in ${groovy(System.currentTimeMillis() - EXPORT_START_TIME)} milliseconds.</echo-ln>            
                 </subtasks>
             </with>
         </subtasks>

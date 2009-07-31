@@ -20,7 +20,7 @@
  +-->
 <with-attribute key="Attributes.NODE" value="${newDoc(channel-definition)}">
     <echo-ln>Export Channel:  FNAME=${FNAME}</echo-ln>
-    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel_v3-1.crn)}"/>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel_v3-2.crn)}"/>
     <with-attribute key="CHAN_ID" value="${sql(SELECT MAX(chan_id) FROM up_channel WHERE chan_fname = '${FNAME}')}">
         <choose>
             <when test="${jexl(CHAN_ID == null)}">
@@ -52,33 +52,32 @@
                             <parameters/>
                             <portletPreferences/>
                         </append-node>
-                        <choose>
-                            <!-- Standard Channel Type -->
-                            <sql-query>
-                                <sql>SELECT type_name FROM up_chan_type WHERE type_id = ?</sql>
-                                <parameter value="${CHAN_TYPE_ID}"/>
-                                <subtasks>
-                                    <append-node sibling="${singleNode(desc)}">
-                                        <type>${TYPE_NAME}</type>
-                                    </append-node>
-                                </subtasks>
-                            </sql-query>
-                        </choose>
-                    </subtasks>
-                </sql-query>
-                <sql-query>
-                    <sql>
-                        SELECT upg.group_name
-                        FROM up_group upg LEFT JOIN up_group_membership upgm ON upg.group_id = upgm.group_id
-                        WHERE upgm.member_key = ? AND upg.entity_type_id = ? AND upgm.member_is_group = 'F'
-                        ORDER BY upg.group_name
-                    </sql>
-                    <parameter value="${valueOf(chan-id)}"/>
-                    <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.ChannelDefinition')}"/>
-                    <subtasks>
-                        <append-node parent="${singleNode(categories)}">
-                            <category>${GROUP_NAME}</category>
-                        </append-node>
+                        <!-- Standard Channel Type -->
+                        <sql-query>
+                            <sql>SELECT type_name FROM up_chan_type WHERE type_id = ?</sql>
+                            <parameter value="${CHAN_TYPE_ID}"/>
+                            <subtasks>
+                                <append-node sibling="${singleNode(desc)}">
+                                    <type>${TYPE_NAME}</type>
+                                </append-node>
+                            </subtasks>
+                        </sql-query>
+                        <!-- Categories -->
+                        <sql-query>
+                            <sql>
+                                SELECT upg.group_name
+                                FROM up_group upg LEFT JOIN up_group_membership upgm ON upg.group_id = upgm.group_id
+                                WHERE upgm.member_key = ? AND upg.entity_type_id = ? AND upgm.member_is_group = 'F'
+                                ORDER BY upg.group_name
+                            </sql>
+                            <parameter value="${valueOf(chan-id)}"/>
+                            <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.channel.IChannelDefinition')}"/>
+                            <subtasks>
+                                <append-node parent="${singleNode(categories)}">
+                                    <category>${GROUP_NAME}</category>
+                                </append-node>
+                            </subtasks>
+                        </sql-query>
                     </subtasks>
                 </sql-query>
                 <!--  Groups and Users  -->
@@ -136,7 +135,8 @@
                     </subtasks>
                 </sql-query>
                 <!--  Portlet preferences  -->
-                <with-attribute key="PORTLET_DEF" value="${groovy(PORTAL_CONTEXT.getBean('portletDefinitionRegistry').getPortletDefinition(CHAN_ID.intValue()))}">
+<!--                <with-attribute key="PORTLET_DEF" value="${groovy(PORTAL_CONTEXT.getBean('portletDefinitionRegistry').getPortletDefinition(CHAN_ID.intValue()))}">-->
+                <with-attribute key="PORTLET_DEF" value="${groovy(portletDefinitionRegistry.getPortletDefinition(CHAN_ID.intValue()))}">
                     <if test="${groovy(PORTLET_DEF != null)}">
                         <for-each items="${groovy(PORTLET_DEF.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
                             <with-attribute key="PORTLET_PREF_NAME" value="${groovy(portletPreference.getName())}">
