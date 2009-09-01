@@ -93,7 +93,7 @@
       </ul>
       
       <p>
-      	This uPortal release contains jQuery UI 1.6, release candidate 6.  
+      	This uPortal release contains the jQuery UI 1.7.2 final release.  
       	For more jQuery UI demos and sample source code, please visit 
       	<a href="http://jqueryui.com/demos/" target="_blank">http://jqueryui.com/demos</a>.
       </p>
@@ -105,7 +105,7 @@
       </ul>
       
       <p>
-      	This uPortal release contains the Fluid 0.8 final release.  For more 
+      	This uPortal release contains the Fluid 1.1.1 final release.  For more 
       	Fluid demos and sample source code, please visit 
       	<a href="http://wiki.fluidproject.org/display/fluid/Components" 
       		target="_blank">http://wiki.fluidproject.org/display/fluid/Components</a>.
@@ -259,14 +259,29 @@
 	<div class="demo-container pager">
 		<h2>Fluid Pager</h2>
 		
-		<div class="pager-demo">
-			<ul class="pager-top">
-                 <li class="previous"><a href="javascript:;">&lt; prev</a></li>
-                 <li value="1" class="page-link"><a href="javascript:;">1</a></li>
-                 <li value="2" class="page-link"><a href="javascript:;">2</a></li>
-                 <li value="3" class="page-link"><a href="javascript:;">3</a></li>
-                 <li class="next"><a href="javascript:;">next &gt;</a></li>
+		<div class="pager-demo fl-pager">
+          <div id="pager-top" class="flc-pager-top">
+			<ul class="fl-pager-ui">
+                 <li><a class="flc-pager-previous" href="javascript:;">&lt; prev</a></li>
+                 <li>
+                    <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
+		                 <li value="1" class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
+		                 <li value="2" class="flc-pager-pageLink"><a href="javascript:;">2</a></li>
+		                 <li value="3" class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
+                    </ul>
+                 </li>
+                 <li><a class="flc-pager-next" href="javascript:;">next &gt;</a></li>
+	            <!-- <li>
+	              <span class="flc-pager-summary">1 of 2</span>
+	              <span> <select class="pager-page-size flc-pager-page-size">
+		              <option value="5">5</option>
+		              <option value="10">10</option>
+	              </select></span>
+	            </li>  -->
 			</ul>
+		  </div>
+		</div>
+		<div>
 			<ul class="fluid-pager-demo-items">
 				<li>Item 1</li><li>Item 2</li><li>Item 3</li><li>Item 4</li><li>Item 5</li>
 				<li>Item 6</li><li>Item 7</li><li>Item 8</li><li>Item 9</li><li>Item 10</li>

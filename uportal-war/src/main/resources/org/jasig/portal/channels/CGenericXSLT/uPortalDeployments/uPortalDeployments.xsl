@@ -19,7 +19,7 @@
         
         <h2>uPortal Deployments</h2>
         
-        <div id="portal-deployment-list" class="portal-deployments">
+        <div id="portal-deployment-list" class="portal-deployments fl-pager">
             <xsl:call-template name="nav">
                 <xsl:with-param name="position">top</xsl:with-param>
             </xsl:call-template>
@@ -72,23 +72,28 @@
     
     <xsl:template name="nav">
         <xsl:param name="position">top</xsl:param>
-        <ul class="pager-nav pager-{$position}">
-            <li class="previous"><a href="javascript:;">&lt; previous</a></li>
-            <xsl:call-template name="navLink">
-                <xsl:with-param name="i">1</xsl:with-param>
-                <xsl:with-param name="max">
-                    <xsl:value-of select="ceiling(count(rss/channel/item) div $perScreen)"/>
-                </xsl:with-param>
-            </xsl:call-template>
-            <li class="next"><a href="javascript:">next &gt;</a></li>
-        </ul>
+        
+        <div id="pager-top" class="flc-pager-{$position}">
+            <ul class="fl-pager-ui pager-{$position}">
+                <li class="fl-pager-previous flc-pager-previous"><a href="javascript:;">&lt; previous</a></li>
+                    <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
+                        <xsl:call-template name="navLink">
+                        <xsl:with-param name="i">1</xsl:with-param>
+                        <xsl:with-param name="max">
+                            <xsl:value-of select="ceiling(count(rss/channel/item) div $perScreen)"/>
+                        </xsl:with-param>
+                        </xsl:call-template>
+                    </ul>
+                <li class="fl-pager-next flc-pager-next"><a href="javascript:">next &gt;</a></li>
+            </ul>
+        </div>
     </xsl:template>
     
     <xsl:template name="navLink">
         <xsl:param name="i" />
         <xsl:param name="max" />
         <xsl:if test="$i &lt;= $max">
-            <li value="{$i}" class="page-link">
+            <li value="{$i}" class="flc-pager-pageLink">
                 <a href="javascript:;"><xsl:value-of select="$i"/></a>    
             </li>
         </xsl:if>

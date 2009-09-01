@@ -300,16 +300,12 @@
 .fl-theme-uportal3 #portalDropWarning p{margin:0em; padding:0.5em 1em;}
 
 /* Fluid pager component styles */
-.fl-theme-uportal3 .pager-top .disabled a,
-.fl-theme-uportal3 .pager-bottom .disabled a {color: #777777; border: 0; text-decoration: none; cursor: default;}
-.fl-theme-uportal3 .pager-top .current-page a,
-.fl-theme-uportal3 .pager-bottom .current-page a { color: #000000; border: 0; text-decoration: none; cursor: default;}
-.fl-theme-uportal3 .pager-top a.current-page,
-.fl-theme-uportal3 .pager-bottom a.current-page { color: #000000; border: 0; text-decoration: none; cursor: default;}
-.fl-theme-uportal3 ul.pager-top,
-.fl-theme-uportal3 ul.pager-bottom {text-align:right}
-.fl-theme-uportal3 ul.pager-top li,
-.fl-theme-uportal3 ul.pager-bottom li {list-style-type:none; display:inline; padding-left:5px}
+.fl-theme-uportal3 .fl-pager ul.fl-pager-ui {text-align:right}
+.fl-theme-uportal3 .fl-pager .fl-pager-ui li {list-style-type:none; display:inline; padding-left:5px}
+.fl-theme-uportal3 .fl-pager .fl-pager-ui a.fl-pager-disabled,
+.fl-theme-uportal3 .fl-pager .fl-pager-ui .fl-pager-disabled a { color: #777777; border: 0; text-decoration: none; cursor: default; }
+.fl-theme-uportal3 .fl-pager .fl-pager-ui a.fl-pager-currentPage,
+.fl-theme-uportal3 .fl-pager .fl-pager-ui .fl-pager-currentPage a { color: #000000; border: 0; text-decoration: none; cursor: default;}
 
 /* Supress focus outline except for portlets */
 :focus{outline-width:0px;}
