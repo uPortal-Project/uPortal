@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
@@ -27,7 +29,7 @@ import org.jasig.portal.security.PersonFactory;
 public class PersonImpl implements IPerson {
     private static final long serialVersionUID = 1L;
 
-    protected Map<String, List<Object>> userAttributes = null;
+    protected ConcurrentMap<String, List<Object>> userAttributes = null;
     protected String m_FullName = null;
     protected int m_ID = -1;
     protected ISecurityContext m_securityContext = null;
@@ -127,7 +129,7 @@ public class PersonImpl implements IPerson {
     
     public void setAttribute(String key, List<Object> value) {
         if (this.userAttributes == null) {
-            this.userAttributes = new HashMap<String, List<Object>>();
+            this.userAttributes = new ConcurrentHashMap<String, List<Object>>();
         }
 
         if (value != null) {
