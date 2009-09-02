@@ -340,7 +340,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         }
 
         for (final IPortletPreference definitionPreference : preferencesList) {
-            preferencesMap.put(definitionPreference.getName(), definitionPreference);
+            preferencesMap.put(definitionPreference.getName(), new PortletPreferenceImpl(definitionPreference));
         }
     }
     
