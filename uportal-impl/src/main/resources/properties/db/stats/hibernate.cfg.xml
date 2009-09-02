@@ -25,5 +25,6 @@
         <mapping resource="properties/db/stats/portalEvents.hbm.xml"/>
 
         <class-cache class="org.jasig.portal.events.EventType" usage="read-only"/>
+        <class-cache class="org.jasig.portal.events.handlers.db.StatsSession" usage="read-write"/>
     </session-factory>
 </hibernate-configuration>
