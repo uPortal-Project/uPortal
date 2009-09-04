@@ -79,4 +79,20 @@ public class TransientDatasource implements DataSource {
         
     }
 
+    /* (non-Javadoc)
+     * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
+     */
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return iface.isAssignableFrom(this.delegate.getClass());
+    }
+
+    /* (non-Javadoc)
+     * @see java.sql.Wrapper#unwrap(java.lang.Class)
+     */
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        if (!isWrapperFor(iface)) {
+            throw new SQLException("No wrapper for '" + iface + "'");
+        }
+        return (T)this.delegate;
+    }
 }

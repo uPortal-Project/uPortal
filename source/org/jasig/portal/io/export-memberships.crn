@@ -106,7 +106,7 @@
                         </try>
                         <catch>
                             <echo-ln>ERROR Failed to export group membership for groupId=${GROUP_ID} and memberKey=${MEMBER_KEY} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                            <log logger-name="org.jasig.portal.io.export_internal" level="error" exception="${Attributes.EXCEPTION}">Failed to export group memberships for groupId=${GROUP_ID} and memberKey=${MEMBER_KEY} due to exception</log>
+                            <throw/>
                         </catch>
                     </handle-error>
                 </concurrent>
