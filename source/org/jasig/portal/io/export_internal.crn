@@ -1,0 +1,476 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<!-- Select export operation based on the specified ${ENTITY_TYPE} -->
+<choose>
+
+    <!-- layout -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
+        <sql-query>
+            <sql>SELECT user_id FROM up_user WHERE user_name = ?</sql>
+            <parameter value="${SYSID}"/>
+            <subtasks>
+                <with-attribute key="LAYOUT_DOC" value="${crn(export-layout.crn)}">
+                    <if test="${jexl(LAYOUT_DOC != null)}">
+        	            <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
+        	                <choose>
+        	                    <when test="${crn(is-fragment-owner.crn)}">
+        	                        <!-- This is a DLM fragment owner layout... -->
+        	                        <write-document node="${LAYOUT_DOC}" file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
+        	                    </when>
+        	                    <otherwise>
+        	                        <!-- This is a normal layout... -->
+        	                        <write-document node="${LAYOUT_DOC}" file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
+        	                    </otherwise>
+        	                </choose>
+        	            </with-attribute>
+                    </if>
+                </with-attribute>
+            </subtasks>
+            <empty-result>
+                <echo-ln>No user '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
+            </empty-result>
+        </sql-query>
+    </when>
+
+    <!-- all-layouts -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-layouts'))}">
+        <thread-pool threads="${THREAD_COUNT}">
+            <sql-query>
+                <sql>
+                    SELECT user_id, user_name FROM up_user
+                </sql>
+                <subtasks>
+                    <choose>
+                        <when test="${crn(is-user-included.crn)}">
+                            <concurrent>
+                                <handle-error>
+                                    <try>
+                                        <with>
+                                            <attribute key="SYSID">${USER_NAME}</attribute>
+                                            <attribute key="ENTITY_TYPE">layout</attribute>
+                                            <subtasks>
+                                                <crn location="export_internal.crn"/>
+                                            </subtasks>
+                                        </with>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export layout for user ${USER_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <throw/>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </when>
+                        <otherwise>
+                            <log logger-name="org.jasig.portal.io.export_internal" level="warn">layout, ${USER_NAME}: Not on included user list, skipping export</log>
+                        </otherwise>
+                    </choose>
+                </subtasks>
+            </sql-query>
+        </thread-pool>
+    </when>
+
+    <!-- all-permissions -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-permissions'))}">
+        <crn location="export-permissions.crn"/>
+    </when>
+
+    <!-- all-permission_sets -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-permission_sets'))}">
+        <crn location="export-permission_sets.crn"/>
+    </when>
+
+    <!-- all-memberships -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-memberships'))}">
+        <crn location="export-memberships.crn"/>
+    </when>
+
+    <!-- channel -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
+        <with-attribute key="FNAME" value="${SYSID}">
+            <with-attribute key="CHANNEL_DOC" value="${crn(export-channel.crn)}">
+                <if test="${jexl(CHANNEL_DOC != null)}">
+                    <with-attribute key="SAFE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${FNAME})}">
+                        <write-document node="${CHANNEL_DOC}" file="${EXPORT_DIR}/channel/${SAFE_FNAME}.channel"/>
+                    </with-attribute>
+                </if>
+            </with-attribute>
+        </with-attribute>
+    </when>
+
+    <!-- all-channels -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channels'))}">
+        <thread-pool threads="${THREAD_COUNT}">
+            <sql-query>
+                <sql>SELECT chan_fname FROM up_channel</sql>
+                <subtasks>
+                    <concurrent>
+                        <handle-error> 
+                            <try>
+	                            <with>
+	                                <attribute key="SYSID">${CHAN_FNAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">channel</attribute>
+	                                <subtasks>
+	                                    <crn location="export_internal.crn"/>
+	                                </subtasks>
+	                            </with>
+                            </try>
+                            <catch>
+                                <echo-ln>ERROR Failed to export channel ${CHAN_FNAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                <throw/>
+                            </catch>
+                        </handle-error>
+                    </concurrent>
+                </subtasks>
+            </sql-query>
+        </thread-pool>
+    </when>
+
+    <!-- channel-type -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel-type'))}">
+        <with-attribute key="NAME" value="${SYSID}">
+            <with-attribute key="CHANNEL_TYPE_DOC" value="${crn(export-channel-type.crn)}">
+                <if test="${jexl(CHANNEL_TYPE_DOC != null)}">
+                    <with-attribute key="SAFE_TYPE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
+                        <write-document node="${CHANNEL_TYPE_DOC}" file="${req(EXPORT_DIR)}/channel-type/${req(SAFE_TYPE_NAME)}.channel-type"/>
+                    </with-attribute>
+                </if>
+            </with-attribute>
+        </with-attribute>
+    </when>
+    
+    <!-- all-channel-types -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channel-types'))}">
+        <thread-pool threads="${THREAD_COUNT}">
+            <sql-query>
+                <sql>SELECT type_name FROM up_chan_type</sql>
+                <subtasks>
+                    <concurrent>
+                        <handle-error>
+                            <try>
+                                <with>
+                                    <attribute key="SYSID">${TYPE_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">channel-type</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
+                            </try>
+                            <catch>
+                                <echo-ln>ERROR Failed to export channel type ${TYPE_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                <throw/>
+                            </catch>
+                        </handle-error>
+                    </concurrent>
+                </subtasks>
+            </sql-query>
+        </thread-pool>
+    </when>
+                        
+    <!-- group -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
+        <sql-query>
+            <sql>
+                SELECT GROUP_ID FROM UP_GROUP WHERE GROUP_NAME = ?
+            </sql>
+            <parameter value="${SYSID}"/>
+            <subtasks>
+                <with-attribute key="GROUP_DOC" value="${crn(export-group.crn)}">
+                    <if test="${jexl(GROUP_DOC != null)}">
+        			    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME}-${GROUP_ID})}">
+        			        <write-document node="${GROUP_DOC}" file="${EXPORT_DIR}/group/${SAFE_NAME}.group"/>
+        			    </with-attribute>
+                    </if>
+                </with-attribute>
+            </subtasks>
+            <empty-result>
+                <echo-ln>No group '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
+            </empty-result>
+        </sql-query>
+    </when>
+
+    <!-- all-groups -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-groups'))}">
+        <thread-pool threads="${THREAD_COUNT}">
+            <sql-query>
+                <sql>
+                    SELECT UPG.*, UPET.ENTITY_TYPE_NAME
+                    FROM UP_GROUP UPG
+                        LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
+                </sql>
+                <subtasks>
+                    <concurrent>
+                        <handle-error>
+                            <try>
+                                <with>
+                                    <attribute key="SYSID">${GROUP_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">group</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
+                            </try>
+                            <catch>
+                                <echo-ln>ERROR Failed to export group ${GROUP_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                <throw/>
+                            </catch>
+                        </handle-error>
+                    </concurrent>
+                </subtasks>
+            </sql-query>
+        </thread-pool>
+    </when>
+                        
+    <!-- group_membership -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group_membership'))}">
+        <sql-query>
+            <sql>
+                SELECT UPG.*, UPET.ENTITY_TYPE_NAME
+                FROM UP_GROUP UPG
+                    LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
+                WHERE UPG.GROUP_NAME = ?
+            </sql>
+            <parameter value="${SYSID}"/>
+            <subtasks>
+                <with-attribute key="GROUP_MEMBERSHIP_DOC" value="${crn(export-group_membership.crn)}">
+                    <if test="${jexl(GROUP_MEMBERSHIP_DOC != null)}">
+        				<with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME})}">
+        					<write-document node="${GROUP_MEMBERSHIP_DOC}" file="${EXPORT_DIR}/group_membership/${SAFE_NAME}.group_membership" />
+        				</with-attribute>
+                    </if>
+                </with-attribute>
+            </subtasks>
+            <empty-result>
+                <echo-ln>No group '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
+            </empty-result>
+        </sql-query>
+    </when>
+
+    <!-- all-group_memberships -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-group_memberships'))}">
+        <thread-pool threads="${THREAD_COUNT}">
+            <sql-query>
+                <sql>
+                    SELECT UPG.*, UPET.ENTITY_TYPE_NAME
+                    FROM UP_GROUP UPG
+                        LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
+                </sql>
+                <subtasks>
+                    <concurrent>
+                        <handle-error>
+                            <try>
+                                <with>
+                                    <attribute key="SYSID">${GROUP_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">group_membership</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
+                            </try>
+                            <catch>
+                                <echo-ln>ERROR Failed to export group and membership for ${GROUP_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                <throw/>
+                            </catch>
+                        </handle-error>
+                    </concurrent>
+                </subtasks>
+            </sql-query>
+        </thread-pool>
+    </when>
+                        
+    <!-- user -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
+        <sql-query>
+            <sql>SELECT user_id, user_name, user_dflt_usr_id FROM up_user WHERE user_name=?</sql>
+            <parameter value="${SYSID}"/>
+            <subtasks>
+                <with-attribute key="USER_DOC" value="${crn(export-user.crn)}">
+                    <if test="${jexl(USER_DOC != null)}">
+        				<with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
+        				    <sql-query>
+        				        <sql>SELECT COUNT(USER_ID) AS DEFAULT_USER_COUNT FROM UP_USER WHERE USER_DFLT_USR_ID = ?</sql>
+        				        <parameter value="${USER_ID}"/>
+        				        <subtasks>
+        				            <choose>
+        				                <when test="${groovy(DEFAULT_USER_COUNT > 0)}">
+        				                    <write-document node="${USER_DOC}" file="${EXPORT_DIR}/user/${SAFE_NAME}.template-user"/>
+        				                </when>
+        				                <otherwise>
+        				                    <write-document node="${USER_DOC}" file="${EXPORT_DIR}/user/${SAFE_NAME}.user"/>
+        				                </otherwise>
+        				            </choose>
+        				        </subtasks>
+        				    </sql-query>
+        				</with-attribute>
+                    </if>
+                </with-attribute>
+            </subtasks>
+            <empty-result>
+                <echo-ln>No user '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
+            </empty-result>
+        </sql-query>
+    </when>
+
+    <!-- all-users -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-users'))}">
+        <thread-pool threads="${THREAD_COUNT}">
+            <sql-query>
+                <sql>SELECT user_id, user_name, user_dflt_usr_id FROM up_user</sql>
+                <subtasks>
+                    <choose>
+                        <when test="${crn(is-user-included.crn)}">
+                            <concurrent>
+                                <handle-error>
+                                    <try>
+		                                <with>
+		                                    <attribute key="SYSID">${USER_NAME}</attribute>
+		                                    <attribute key="ENTITY_TYPE">user</attribute>
+		                                    <subtasks>
+		                                        <crn location="export_internal.crn"/>
+		                                    </subtasks>
+		                                </with>
+                                    </try>
+                                    <catch>
+                                        <echo-ln>ERROR Failed to export user ${USER_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                        <throw/>
+                                    </catch>
+                                </handle-error>
+                            </concurrent>
+                        </when>
+                        <otherwise>
+                            <log logger-name="org.jasig.portal.io.export_internal" level="warn">user, ${USER_NAME}: Not on included user list, skipping export</log>
+                        </otherwise>
+                    </choose>
+                </subtasks>
+            </sql-query>
+        </thread-pool>
+    </when>
+
+    <!-- theme -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
+        <with-attribute key="NAME" value="${SYSID}">
+            <with-attribute key="THEME_DOC" value="${crn(export-theme.crn)}">
+                <if test="${jexl(THEME_DOC != null)}">
+                    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
+                        <write-document node="${THEME_DOC}" file="${EXPORT_DIR}/theme/${SAFE_NAME}.theme"/>
+                    </with-attribute>
+                </if>
+            </with-attribute>
+        </with-attribute>
+    </when>
+    
+    <!-- all-themes -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-themes'))}">
+        <thread-pool threads="${THREAD_COUNT}">
+            <sql-query>
+                <sql>SELECT ss_name FROM up_ss_theme</sql>
+                <subtasks>
+                    <concurrent>
+                        <handle-error>
+                            <try>
+                                <with>
+                                    <attribute key="SYSID">${SS_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">theme</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
+                            </try>
+                            <catch>
+                                <echo-ln>ERROR Failed to export theme ${SS_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                <throw/>
+                            </catch>
+                        </handle-error>
+                    </concurrent>
+                </subtasks>
+            </sql-query>
+        </thread-pool>
+    </when>
+
+    <!-- structure -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
+        <with-attribute key="NAME" value="${SYSID}">
+            <with-attribute key="STRUCT_DOC" value="${crn(export-structure.crn)}">
+                <if test="${jexl(STRUCT_DOC != null)}">
+                    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
+                        <write-document node="${STRUCT_DOC}" file="${req(EXPORT_DIR)}/structure/${req(SAFE_NAME)}.structure"/>
+                    </with-attribute>
+                </if>
+            </with-attribute>
+        </with-attribute>
+    </when>
+    
+    <!-- all-structures -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-structures'))}">
+        <thread-pool threads="${THREAD_COUNT}">
+            <sql-query>
+                <sql>SELECT ss_name FROM up_ss_struct</sql>
+                <subtasks>
+                    <concurrent>
+                        <handle-error>
+                            <try>
+                                <with>
+                                    <attribute key="SYSID">${SS_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">structure</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
+                            </try>
+                            <catch>
+                                <echo-ln>ERROR Failed to export structure ${SS_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                <throw/>
+                            </catch>
+                        </handle-error>
+                    </concurrent>
+                </subtasks>
+            </sql-query>
+        </thread-pool>
+    </when>
+
+    <!-- entity-type -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
+        <with-attribute key="NAME" value="${SYSID}">
+            <with-attribute key="ENTITY_TYPE_DOC" value="${crn(export-entity-type.crn)}">
+                <if test="${jexl(ENTITY_TYPE_DOC != null)}">
+                    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
+                        <write-document node="${ENTITY_TYPE_DOC}" file="${EXPORT_DIR}/entity-type/${SAFE_NAME}.entity-type"/>
+                    </with-attribute>
+                </if>
+            </with-attribute>
+        </with-attribute>
+    </when>
+    
+    <!-- all-entity-types -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-entity-types'))}">
+        <thread-pool threads="${THREAD_COUNT}">
+            <sql-query>
+                <sql>SELECT entity_type_name FROM up_entity_type</sql>
+                <subtasks>
+                    <concurrent>
+                        <handle-error>
+                            <try>
+                                <with>
+                                    <attribute key="SYSID">${ENTITY_TYPE_NAME}</attribute>
+                                    <attribute key="ENTITY_TYPE">entity-type</attribute>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
+                            </try>
+                            <catch>
+                                <echo-ln>ERROR Failed to export entity type ${ENTITY_TYPE_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                <throw/>
+                            </catch>
+                        </handle-error>
+                    </concurrent>
+                </subtasks>
+            </sql-query>
+        </thread-pool>
+    </when>
+
+</choose>

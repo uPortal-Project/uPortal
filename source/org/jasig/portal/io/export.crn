@@ -1,116 +1,62 @@
-<properties location="../../../../properties/rdbm.properties">
-    <sql-connection driver="${req(jdbcDriver)}" url="${req(jdbcUrl)}" username="${req(jdbcUser)}" password="${req(jdbcPassword)}">
-        <with-attribute key="EXPORT_DIR" value="${req($1)}">
-            <with-attribute key="ENTITY_TYPE" value="${req($2)}">
+<!--
 
-                <!-- Select export operation based on the specified ENTITY_TYPE -->
-                <choose>
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
-                    <!-- all -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all'))}">
-                        <with-attribute key="$2" value="all-layouts">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-channels">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-permissions">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-memberships">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-groups">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                        <with-attribute key="$2" value="all-users">
-                            <crn location="export.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- layout -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
-                        <with-attribute key="USER_NAME" value="${req($3)}">
-                            <crn location="export-layout.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- all-layouts -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-layouts'))}">
-                        <sql-query>
-                            <sql>SELECT DISTINCT upu.user_name FROM up_user upu, up_layout_struct upls WHERE upu.user_id = upls.user_id AND upls.layout_id = 1</sql>
-                            <subtasks>
-                                <crn location="export-layout.crn"/>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
-                    <!-- channel -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
-                        <with-attribute key="FNAME" value="${req($3)}">
-                            <crn location="export-channel.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- all-channels -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-channels'))}">
-                        <sql-query>
-                            <sql>SELECT chan_fname FROM up_channel</sql>
-                            <subtasks>
-                                <with-attribute key="FNAME" value="${req(CHAN_FNAME)}">
-                                    <crn location="export-channel.crn"/>
-                                </with-attribute>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
-                    <!-- all-permissions -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-permissions'))}">
-                        <crn location="export-permissions.crn"/>
-                    </when>
-
-                    <!-- all-memberships -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-memberships'))}">
-                        <crn location="export-memberships.crn"/>
-                    </when>
-
-                    <!-- group -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('group'))}">
-                        <with-attribute key="GROUP_NAME" value="${req($3)}">
-                            <crn location="export-group.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- all-groups -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-groups'))}">
-                        <sql-query>
-                            <sql>SELECT DISTINCT group_name FROM up_group</sql>
-                            <subtasks>
-                                <crn location="export-group.crn"/>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
-                    <!-- user -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('user'))}">
-                        <with-attribute key="USER_NAME" value="${req($3)}">
-                            <crn location="export-user.crn"/>
-                        </with-attribute>
-                    </when>
-
-                    <!-- all-users -->
-                    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all-users'))}">
-                        <sql-query>
-                            <sql>SELECT user_name FROM up_user</sql>
-                            <subtasks>
-                                <crn location="export-user.crn"/>
-                            </subtasks>
-                        </sql-query>
-                    </when>
-
-                </choose>
-
-            </with-attribute>
-        </with-attribute>
-    </sql-connection>
+-->
+<properties location="classpath://properties/export.properties"> 
+    <with>
+        <!-- The 1st argument passed to Cernunnos main():  the directory to which exported files will be written -->
+        <attribute key="EXPORT_DIR">${$1}</attribute>
+        <!-- The 2nd argument passed to Cernunnos main():  the type of entity to export -->
+        <attribute key="ENTITY_TYPE">${$2}</attribute>
+        <!-- The 3rd argument (optionally) passed to Cernunnos main():  Id of the specific entity to export;  not required for entity types that begin with 'all-' -->
+        <attribute key="SYSID">${groovy(ScriptAttributes.REQUEST.hasAttribute('$3') ? ScriptAttributes.REQUEST.getAttribute('$3') : null)}</attribute>
+        <attribute key="EXPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
+        <!-- Used by Cernunnos to boost performance -->
+        <attribute key="Attributes.CACHE">${groovy(java.util.Collections.synchronizedMap(new org.jasig.portal.io.LoggingLRUMap(${CACHE_SIZE})))}</attribute>
+        <subtasks>
+            <properties location="classpath://properties/rdbm.properties">
+                <!-- These attributes are used by Cernunnos SQL/RDBMS operations -->
+                <sql-datasource driver="${jdbcDriver}" url="${jdbcUrl}" username="${jdbcUser}" password="${jdbcPassword}">
+                    <with-attribute key="SqlAttributes.TRANSACTION_MANAGER" value="${groovy(new org.springframework.jdbc.datasource.DataSourceTransactionManager(SqlAttributes.DATA_SOURCE))}">
+                        <echo-ln>Begin uPortal Export '${ENTITY_TYPE}': ${EXPORT_START_TIME}</echo-ln>
+                
+    					<!-- Select export operation based on the specified ENTITY_TYPE -->
+    					<choose>
+    					
+    					    <!-- all -->
+    					    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all'))}">
+    					        <for-each attribute-name="ENTITY_TYPE" items="${groovy([
+                                                       'all-layouts',
+                                                       'all-permissions',
+                                                       'all-channels',
+                                                       'all-channel-types',
+                                                       'all-users',
+                                                       'all-themes',
+                                                       'all-structures',
+                                                       'all-entity-types',
+                                                       'all-group_memberships'
+    					                           ])}">
+                                    <with-attribute key="SUBTYPE_START_TIME" value="${groovy(System.currentTimeMillis())}">
+                                        <echo-ln>Begin Export of '${ENTITY_TYPE}': ${SUBTYPE_START_TIME}</echo-ln>
+                                        <crn location="export_internal.crn"/>
+                                        <echo-ln>Export of ${ENTITY_TYPE} Complete: ${groovy(System.currentTimeMillis() - SUBTYPE_START_TIME)}</echo-ln>
+                                    </with-attribute>
+    					        </for-each>
+    					    </when>
+    					
+    					    <otherwise>
+                                <crn location="export_internal.crn"/>
+    					    </otherwise>
+    					
+    					</choose>
+    					
+    					<echo-ln>uPortal Export '${ENTITY_TYPE}' Complete: ${groovy(System.currentTimeMillis() - EXPORT_START_TIME)}</echo-ln>            
+                    </with-attribute> 
+                </sql-datasource>
+            </properties>
+        </subtasks>
+    </with>
 </properties>

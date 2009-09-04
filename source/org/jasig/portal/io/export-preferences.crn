@@ -1,0 +1,59 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<with-attribute key="Attributes.NODE" value="${newDoc(preferences)}">
+    <sql-query>
+        <sql>
+            SELECT uppep.chan_desc_id AS DLM_NODEREF, uppep.portlet_pref_name, uppep.PREF_ID
+            FROM up_portlet_entity_prefs uppep 
+            WHERE uppep.user_id = ?
+        </sql>
+        <parameter value="${USER_ID}"/>
+        <subtasks>
+            <with-attribute key="PORTLET_DATA" value="${crn(lookup-dlm-noderef.crn)}">
+            <choose>
+                <when test="${groovy(PORTLET_DATA != null)}">
+                    <with-attribute key="CHAN_FNAME" value="${groovy(PORTLET_DATA[2])}">
+                        <if test="${groovy(org.apache.commons.lang.StringUtils.trimToNull(CHAN_FNAME) != null)}">
+                            <append-node>
+                                <entry entity="${groovy(PORTLET_DATA[0])}:${groovy(PORTLET_DATA[1])}" channel="${groovy(CHAN_FNAME)}" name="${PORTLET_PREF_NAME}"/>
+                            </append-node>
+                            <sql-query>
+                                <sql>
+                                    SELECT portlet_pref_value 
+                                    FROM up_portlet_pref_values 
+                                    WHERE pref_id = ?
+                                </sql>
+                                <parameter value="${PREF_ID}"/>
+                                <subtasks>
+                                    <append-node parent="${singleNode(entry[position() = last()])}">
+                                        <value>${groovy(PORTLET_PREF_VALUE.substring('UP_PORTLET_PREF_PREFIX__'.length()).trim())}</value>
+                                    </append-node>
+                                </subtasks>
+                            </sql-query>
+                        </if>
+                    </with-attribute>
+                </when>
+                <otherwise>
+                    <log logger-name="org.jasig.portal.io.export_preferences" level="warn">Preference references a deleted channel;  removing orphaned reference.</log>
+                </otherwise>
+            </choose>
+            </with-attribute>
+        </subtasks>
+    </sql-query>
+    <with-attribute key="ENTRY_NODE" value="${singleNode(entry)}">
+        <choose>
+            <when test="${jexl(ENTRY_NODE == null)}">
+                <!-- No preferences for this user, just return null... -->
+                <return value="${groovy(null)}" />
+            </when>
+            <otherwise>
+                <return value="${Attributes.NODE}" />
+            </otherwise>
+        </choose>
+    </with-attribute>
+</with-attribute>

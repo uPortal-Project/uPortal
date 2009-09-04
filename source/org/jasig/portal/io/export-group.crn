@@ -1,22 +1,48 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${GROUP_NAME}=the identifier of the entity to export
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |   - Settings defined in classpath://properties/db/entities/export.properties
+ |
+ +-->
 <with-attribute key="Attributes.NODE" value="${newDoc(group)}">
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-group_v2-6.crn)}"/>
-    <echo-ln>Export Group:  GROUP_NAME=${req(GROUP_NAME)}</echo-ln>
+    <echo-ln>Export Group:  GROUP_NAME=${GROUP_NAME}</echo-ln>
     <sql-query>
-        <sql>SELECT upg.*, upet.entity_type_name FROM up_group upg, up_entity_type upet WHERE upg.entity_type_id = upet.entity_type_id AND upg.group_name = ?</sql>
-        <parameter value="${req(GROUP_NAME)}"/>
+        <sql>
+            SELECT UPG.*, UPET.ENTITY_TYPE_NAME
+            FROM UP_GROUP UPG
+                LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
+            WHERE UPG.GROUP_NAME = ?
+        </sql>
+        <parameter value="${GROUP_NAME}"/>
         <subtasks>
             <append-node>
-                <name>${req(GROUP_NAME)}</name>
-                <entity-type>${req(ENTITY_TYPE_NAME)}</entity-type>
-                <creator>${req(CREATOR_ID)}</creator>
-                <description>${req(DESCRIPTION)}</description>
+                <name>${GROUP_NAME}</name>
+                <entity-type>${ENTITY_TYPE_NAME}</entity-type>
+                <creator>${CREATOR_ID}</creator>
+                <description>${DESCRIPTION}</description>
             </append-node>
-            <write-document file="${req(EXPORT_DIR)}/${req(GROUP_ID)}.group"/>
+            <return value="${Attributes.NODE}"/>
         </subtasks>
     </sql-query>
-    <if test="${isNull(${singleNode(name)})}">
-        <!-- The group element will be empty if the name didn't match a record... -->
-        <echo-ln>WARNING:  Group '${req(GROUP_ID)}' does not exist;  no group file will be generated.</echo-ln>
-        <log level="warn">Group '${req(GROUP_ID)}' does not exist;  no group file will be generated.</log>
-    </if>
+    <with-attribute key="NODE_NAME" value="${singleNode(name)}">
+        <if test="${jexl(NODE_NAME == null)}">
+            <!-- The group element will be empty if the name didn't match a record... -->
+            <echo-ln>WARNING:  Group '${GROUP_ID}' does not exist;  no group file will be generated.</echo-ln>
+            <log logger-name="org.jasig.portal.io.export-group" level="warn">Group '${GROUP_ID}' does not exist;  no group file will be generated.</log>
+        </if>
+    </with-attribute>
 </with-attribute>

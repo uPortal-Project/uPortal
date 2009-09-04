@@ -1,0 +1,65 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${NAME}=the identifier of the entity to export
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |   - Settings defined in classpath://properties/db/entities/export.properties
+ |
+ +-->
+<with-attribute key="Attributes.NODE" value="${newDoc(structure)}">
+    <echo-ln>Export structure:  NAME=${NAME}</echo-ln>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-structure_v2-6.crn)}"/>
+    <with-attribute key="SS_ID" value="${sql(SELECT MAX(ss_id) FROM up_ss_struct WHERE ss_name = '${NAME}')}">
+        <choose>
+            <when test="${jexl(SS_ID == null)}">
+                <echo-ln>WARNING:  Structure '${NAME}' does not exist;  no structure file will be generated.</echo-ln>
+                <log logger-name="org.jasig.portal.io.export-structure" level="warn">Structure '${NAME}' does not exist;  no structure file will be generated.</log>
+            </when>
+            <otherwise>
+                <sql-query>
+                    <sql>SELECT * FROM up_ss_struct WHERE ss_id = ?</sql>
+                    <parameter value="${SS_ID}"/>
+                    <subtasks>
+                        <!-- Establish basic structure of the document... -->
+                        <append-node>
+                            <struct-id>${SS_ID}</struct-id>
+                            <name>${SS_NAME}</name>
+                            <uri>${SS_URI}</uri>
+                            <description-uri>${SS_DESCRIPTION_URI}</description-uri>
+                            <description-text>${SS_DESCRIPTION_TEXT}</description-text>
+                            <parameters/>
+                        </append-node>
+                    </subtasks>
+                </sql-query>
+                <!--  struct Parameters  -->
+                <sql-query>
+                    <sql>SELECT * FROM up_ss_struct_par WHERE ss_id = ?</sql>
+                    <parameter value="${SS_ID}"/>
+                    <subtasks>
+                        <append-node parent="${singleNode(parameters)}">
+                            <parameter>
+                                <name>${PARAM_NAME}</name>
+                                <default-value>${groovy(PARAM_DEFAULT_VAL != null ? PARAM_DEFAULT_VAL : '')}</default-value>
+                                <description>${groovy(PARAM_DESCRIPT != null ? PARAM_DESCRIPT : '')}</description>
+                                <type>${TYPE}</type>
+                            </parameter>
+                        </append-node>
+                    </subtasks>
+                </sql-query>
+                <delete-node node="${singleNode(struct-id)}"/>
+                <return value="${Attributes.NODE}"/>
+            </otherwise>
+        </choose>
+    </with-attribute>
+</with-attribute>
