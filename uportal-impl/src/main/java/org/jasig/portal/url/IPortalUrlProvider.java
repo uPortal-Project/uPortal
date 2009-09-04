@@ -24,7 +24,7 @@ public interface IPortalUrlProvider {
      * @param request The current portal request
      * @return Information about the current request
      */
-    public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request);
+    public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request) throws InvalidPortalRequestException;
     
 //  Not implemented until all folders have fnames?
 //  public IBasePortalUrl getFolderUrlByFName(String folderFName);
