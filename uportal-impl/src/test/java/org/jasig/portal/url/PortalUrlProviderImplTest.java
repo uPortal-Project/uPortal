@@ -88,6 +88,8 @@ public class PortalUrlProviderImplTest {
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
         IPortalRequestInfo retrieved = provider.getPortalRequestInfo(mockRequest);
         Assert.assertEquals(requestInfo, retrieved);
+        
+        verify(mockPortletWindowId);
     }
     
     /**
@@ -118,6 +120,259 @@ public class PortalUrlProviderImplTest {
         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
         Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
         Assert.assertFalse(requestInfo.isAction());
+        
+        verify(mockPortletWindowId, mockPortletWindowRegistry);
+    }
+    
+    /**
+     * Verify expected results for:
+     <pre>
+     /uPortal/home/normal/weather.31/
+     </pre>
+     * The missing "render.uP" is still valid - assert requestInfo.isAction still returns false.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetPortalRequestInfoDefaultIsRender() throws Exception {
+         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+         mockRequest.setContextPath("/uPortal/");
+         mockRequest.setRequestURI("/uPortal/home/normal/weather.31/");
+         
+         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
+         expect(mockPortletWindowId.getStringId()).andReturn("weather");
+         replay(mockPortletWindowId);
+         ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+         expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
+         replay(mockPortletWindowRegistry);
+         
+         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
+         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
+         Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
+         Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
+         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
+         Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
+         Assert.assertFalse(requestInfo.isAction());
+         
+         verify(mockPortletWindowId, mockPortletWindowRegistry);
+    }
+    
+    /**
+     * * Verify expected results for:
+     <pre>
+     /uPortal/home/normal/weather/
+     </pre>
+     * Key points:
+     <ul>
+     <li>The missing "render.uP" is still valid - assert requestInfo.isAction still returns false.</li>
+     <li>No subscribe id</li>
+     </ul>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetPortalRequestInfoNoSubscribeId() throws Exception {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal/");
+        mockRequest.setRequestURI("/uPortal/home/normal/weather/");
+        
+        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
+        expect(mockPortletWindowId.getStringId()).andReturn("weather");
+        replay(mockPortletWindowId);
+        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
+        replay(mockPortletWindowRegistry);
+        
+        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
+        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
+        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
+        Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
+        Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
+        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
+        Assert.assertFalse(requestInfo.isAction());
+        
+        verify(mockPortletWindowId, mockPortletWindowRegistry);
+    }
+    
+    /**
+     * Verify expected results for:
+     <pre>
+     /uPortal/home/normal/
+     </pre>
+     * Key points:
+     <ul>
+     <li>The missing "render.uP" is still valid - assert requestInfo.isAction still returns false.</li>
+     <li>No subscribe id</li>
+     <li>No targeted channel</li>
+     </ul>
+     * 
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetPortalRequestInfoNoTargetedChannel() throws Exception {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal/");
+        mockRequest.setRequestURI("/uPortal/home/normal/");
+        
+        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
+        replay(mockPortletWindowId);
+        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+        replay(mockPortletWindowRegistry);
+        
+        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
+        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
+        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
+        Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
+        Assert.assertEquals(null, requestInfo.getTargetedPortletWindowId());
+        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
+        Assert.assertFalse(requestInfo.isAction());
+        
+        verify(mockPortletWindowId, mockPortletWindowRegistry);
+    }
+    
+    
+    /**
+     * Verify expected results for:
+     <pre>
+     /uPortal/home/
+     </pre>
+     * Key points:
+     <ul>
+     <li>The missing "render.uP" is still valid - assert requestInfo.isAction still returns false.</li>
+     <li>No subscribe id</li>
+     <li>No targeted channel</li>
+     <li>No window state</li>
+     </ul>
+     * 
+     * TODO is this a valid test? if so, our regex isn't capable of handling a URL without normal|max|legacy etc.
+     * @throws Exception
+     */
+    //@Test
+    public void testGetPortalRequestInfoOnlyHomeFolder() throws Exception {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal/");
+        mockRequest.setRequestURI("/uPortal/home/");
+        
+        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
+        replay(mockPortletWindowId);
+        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+        replay(mockPortletWindowRegistry);
+        
+        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
+        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
+        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
+        Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
+        Assert.assertEquals(null, requestInfo.getTargetedPortletWindowId());
+        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
+        Assert.assertFalse(requestInfo.isAction());
+        
+        verify(mockPortletWindowId, mockPortletWindowRegistry);
+    }
+    
+    /**
+     * Verify expected results for example 4:
+     <pre>
+     /uPortal/max/weather/render.uP
+     </pre>
+     * No folder here - just a maximized window state and a channel with no subscriber id.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetPortalRequestMaxWeather() throws Exception {
+         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+         mockRequest.setContextPath("/uPortal/");
+         mockRequest.setRequestURI("/uPortal/max/weather/render.uP");
+         
+         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
+         expect(mockPortletWindowId.getStringId()).andReturn("weather");
+         replay(mockPortletWindowId);
+         ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+         expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
+         replay(mockPortletWindowRegistry);
+         
+         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
+         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
+         Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
+         Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
+         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
+         Assert.assertEquals(null, requestInfo.getTargetedLayoutNodeId());
+         Assert.assertFalse(requestInfo.isAction());
+         
+         verify(mockPortletWindowId, mockPortletWindowRegistry);
+    }
+    
+    /**
+     * Verify expected results for a modified example 4:
+     <pre>
+     /uPortal/max/weather/
+     </pre>
+     * No folder here - just a maximized window state and a channel with no subscriber id.
+     * "render.uP" is not here either - assert not an action.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetPortalRequestMaxWeatherMissingRender() throws Exception {
+         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+         mockRequest.setContextPath("/uPortal/");
+         mockRequest.setRequestURI("/uPortal/max/weather/");
+         
+         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
+         expect(mockPortletWindowId.getStringId()).andReturn("weather");
+         replay(mockPortletWindowId);
+         ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+         expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
+         replay(mockPortletWindowRegistry);
+         
+         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
+         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
+         Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
+         Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
+         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
+         Assert.assertEquals(null, requestInfo.getTargetedLayoutNodeId());
+         Assert.assertFalse(requestInfo.isAction());
+         
+         verify(mockPortletWindowId, mockPortletWindowRegistry);
+    }
+    
+    /**
+     * Verify expected results for example 5:
+     <pre>
+     /uPortal/max/bookmarks.ctf1/render.uP
+     </pre>
+     * @throws Exception
+     */
+    @Test
+    public void testGetPortalRequestMaxBookmarksTransientSubscribeId() throws Exception {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal/");
+        mockRequest.setRequestURI("/uPortal/max/bookmarks.ctf1/render.uP");
+        
+        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
+        expect(mockPortletWindowId.getStringId()).andReturn("bookmarks");
+        replay(mockPortletWindowId);
+        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+        expect(mockPortletWindowRegistry.getPortletWindowId("bookmarks")).andReturn(mockPortletWindowId);
+        replay(mockPortletWindowRegistry);
+        
+        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
+        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
+        Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
+        Assert.assertEquals("ctf1", requestInfo.getTargetedChannelSubscribeId());
+        Assert.assertEquals("bookmarks", requestInfo.getTargetedPortletWindowId().getStringId());
+        Assert.assertEquals(null, requestInfo.getTargetedLayoutNodeId());
+        Assert.assertFalse(requestInfo.isAction());
+        
+        verify(mockPortletWindowId, mockPortletWindowRegistry);
     }
     
     /**
@@ -148,6 +403,8 @@ public class PortalUrlProviderImplTest {
         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
         Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
         Assert.assertTrue(requestInfo.isAction());
+        
+        verify(mockPortletWindowId, mockPortletWindowRegistry);
     }
     
     /**
@@ -178,6 +435,8 @@ public class PortalUrlProviderImplTest {
         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
         Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
         Assert.assertFalse(requestInfo.isAction());
+        
+        verify(mockPortletWindowId, mockPortletWindowRegistry);
     }
     
     /**
@@ -208,6 +467,8 @@ public class PortalUrlProviderImplTest {
         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
         Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
         Assert.assertFalse(requestInfo.isAction());
+        
+        verify(mockPortletWindowId, mockPortletWindowRegistry);
     }
     
     /**
@@ -239,6 +500,8 @@ public class PortalUrlProviderImplTest {
         // needs to match "deepest" folder
         Assert.assertEquals("subtab2", requestInfo.getTargetedLayoutNodeId());
         Assert.assertFalse(requestInfo.isAction());
+        
+        verify(mockPortletWindowId, mockPortletWindowRegistry);
     }
     
     /**
@@ -354,6 +617,8 @@ public class PortalUrlProviderImplTest {
         
         String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
         Assert.assertEquals("/uPortal/home/max/weather.31/render.uP?pltc_target=target", result);
+        
+        verify(mockPortalPortletUrl, mockPortletWindowId);
     }
     
     /**
@@ -401,6 +666,8 @@ public class PortalUrlProviderImplTest {
         
         String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
         Assert.assertEquals("/p/home/max/weather.31/render.uP?pltc_target=target", result);
+        
+        verify(mockPortalPortletUrl, mockPortletWindowId);
     }
     
     /**
@@ -437,6 +704,8 @@ public class PortalUrlProviderImplTest {
         
         String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
         Assert.assertEquals("/uPortal/home/normal/weather.31/render.uP?pltc_target=target", result);
+        
+        verify(mockPortalPortletUrl, mockPortletWindowId);
     }
     
     /**
@@ -473,6 +742,8 @@ public class PortalUrlProviderImplTest {
         
         String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
         Assert.assertEquals("/uPortal/home/normal/weather.31/render.uP?pltc_target=target&pltc_mode=help", result);
+        
+        verify(mockPortalPortletUrl, mockPortletWindowId);
     }
     
     /**
@@ -519,6 +790,8 @@ public class PortalUrlProviderImplTest {
         
         String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
         Assert.assertEquals("/uPortal/max/weather.ctf31/render.uP?pltc_target=target", result);
+        
+        verify(mockPortalPortletUrl, mockPortletWindowId);
     }
     
     /**
@@ -572,6 +845,8 @@ public class PortalUrlProviderImplTest {
         
         String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
         Assert.assertEquals("/uPortal/home/normal/weather.31/action.uP?pltc_target=target&pltp_pp_action=addCity&pltp_pp_zip=53706", result);
+        
+        verify(mockPortalPortletUrl, mockPortletWindowId);
     }
     
     

@@ -14,6 +14,9 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * Package private by design - see {@link IPortalUrlProvider} for a means to retrieve
  * an instance.
  * 
+ * Default value for "action" is <strong>false</strong>.
+ * Default urlState is {@link UrlState#NORMAL}.
+ * 
  * @author Nicholas Blair, nblair@doit.wisc.edu
  *
  */
@@ -22,8 +25,8 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
     private String targetedChannelSubscribeId;
     private String targetedLayoutNodeId;
     private IPortletWindowId targetedPortletWindowId;
-    private UrlState urlState;
-    private boolean action;
+    private UrlState urlState = UrlState.NORMAL;
+    private boolean action = false;
     
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalRequestInfo#getTargetedChannelSubscribeId()

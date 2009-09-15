@@ -22,9 +22,11 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
@@ -63,7 +65,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     public static final String PARAM_WINDOW_STATE = PORTLET_CONTROL_PREFIX + "state";
     public static final String PARAM_PORTLET_MODE = PORTLET_CONTROL_PREFIX + "mode";
     
-    public static final String PORTAL_REQUEST_REGEX = "^(?:([^/]*)/)*(normal|max|detached|exclusive|legacy)/(?:([^/]*)/)?(render|action)\\.uP$";
+    public static final String PORTAL_REQUEST_REGEX = "^(?:([^/]*)/)*(normal|max|detached|exclusive|legacy)/(?:([^/]*)/)?(render\\.uP|action\\.uP|)$";
     private static final Pattern PORTAL_REQUEST_PATTERN = Pattern.compile(PORTAL_REQUEST_REGEX);
     
     private static final String PORTAL_REQUEST_INFO_ATTR = PortalUrlProviderImpl.class.getName() + ".PORTAL_REQUEST_INFO"; 
@@ -75,7 +77,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private ITransientPortletWindowRegistry portletWindowRegistry;
-    
+    private IChannelRegistryStore channelRegistryStore;
 
     /**
      * @param defaultEncoding the defaultEncoding to set
@@ -112,6 +114,13 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         this.portletWindowRegistry = portletWindowRegistry;
     }
     
+    /**
+     * @param channelRegistryStore the channelRegistryStore to set
+     */
+    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
+        this.channelRegistryStore = channelRegistryStore;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortalRequestInfo(javax.servlet.http.HttpServletRequest)
      */
@@ -136,7 +145,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             // upper case group(2) to get UrlState enum
             requestInfo.setUrlState(UrlState.valueOf(stateInformation.toUpperCase()));
             // true if group(4) matches "action", false otherwise
-            requestInfo.setAction("action".equals(renderInformation));
+            requestInfo.setAction("action.uP".equals(renderInformation));
             
             // group(3) can be null - if so ignore setting targetedPortletWindowId and targetedChannelSubscribeId
             if(null != channelInformation) {
@@ -156,8 +165,12 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             
             // group(1) may contain slashes to separate sub folders
             // set targetedLayoutNodeId to LAST folder
-            String [] folderElements = folderInformation.split("\\/");
-            requestInfo.setTargetedLayoutNodeId(folderElements[folderElements.length-1]);
+            if(!StringUtils.isBlank(folderInformation)) {
+                String [] folderElements = folderInformation.split("\\/");
+                if(folderElements.length > 0) {
+                    requestInfo.setTargetedLayoutNodeId(folderElements[folderElements.length-1]);
+                }
+            }
             
             request.setAttribute(PORTAL_REQUEST_INFO_ATTR, requestInfo);
             
@@ -177,11 +190,15 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        // TODO is this the user's default folder?
         final String rootFolderId = userLayoutManager.getRootFolderId();
         
         //TODO determine default active tab for user
         
-        return new PortalLayoutUrlImpl(request, this, rootFolderId);
+        // call out to getFolderUrlByNodeId, pass in default nodeId for user
+        return getFolderUrlByNodeId(request, rootFolderId);
+        
+        //return new PortalLayoutUrlImpl(request, this, rootFolderId);
     }
 
     /* (non-Javadoc)
@@ -229,7 +246,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         //Find the channel and portlet definitions
         final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(portletNodeId);
         final String channelPublishId = channelNode.getChannelPublishId();
-        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(Integer.parseInt(channelPublishId));
+        final IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(channelPublishId);
+        if(null == channelDefinition) {
+            throw new IllegalArgumentException("No channel definition found for publish id: " + channelPublishId);
+        }
+        final IPortletDefinition portletDefinition = channelDefinition.getPortletDefinition();
         if (portletDefinition == null) {
             throw new IllegalArgumentException("No portlet defintion found for channel definition '" + channelPublishId + "'.");
         }
@@ -372,9 +393,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
 
         //TODO need to allow portal URLs to set the UrlState
         //TODO need to determine current URL state if specific UrlState is not already set?
-        //Add state information
+        //Add state information - call out to getPortalRequestInfo to get UrlState, and action?
+        // basePortalUrl may not have the ability to set state, also may never be action
         url.append("/").append(UrlState.NORMAL);
-        
         //TODO are portal URLs always render URLs?
         url.append("/render.uP");
 
