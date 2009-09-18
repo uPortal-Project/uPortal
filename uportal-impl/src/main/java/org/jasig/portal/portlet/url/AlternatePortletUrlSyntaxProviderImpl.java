@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.IPortalPortletUrl;
@@ -43,6 +44,7 @@ public class AlternatePortletUrlSyntaxProviderImpl implements
 	public String generatePortletUrl(HttpServletRequest request,
 			IPortletWindow portletWindow, PortletUrl portletUrl) {
 		IPortalPortletUrl portalPortletUrl = portalUrlProvider.getPortletUrl(request, portletWindow.getPortletWindowId());
+		portalPortletUrl = mergeWithPortletUrl(portalPortletUrl, portletUrl);
 		return portalPortletUrl.toString();
 	}
 
@@ -86,11 +88,40 @@ public class AlternatePortletUrlSyntaxProviderImpl implements
 			result.setRequestType(RequestType.RENDER);
 		}
 		
-		// null is the default value for this class
+		// null is the default value for the secure field
 		//result.setSecure(null);
 		
 		result.setWindowState(portalPortletUrl.getWindowState());
 		return result;
+	}
+	
+	/**
+	 * The purpose of this method is to port the fields of the {@link PortletUrl} argument
+	 * to the appropriate fields of the {@link IPortalPortletUrl} argument.
+	 * 
+	 * This method mutates the {@link IPortalPortletUrl} argument and return it.
+	 * 
+	 * Neither argument can be null.
+	 * 
+	 * @param original
+	 * @param mergeWith
+	 * @return the updated original {@link IPortalPortletUrl}
+	 */
+	protected static IPortalPortletUrl mergeWithPortletUrl(IPortalPortletUrl original, PortletUrl mergeWith) {
+		Validate.notNull(original, "original IPortalPortletUrl must not be null");
+		Validate.notNull(mergeWith, "mergeWith PortletUrl must not be null");
+		if(RequestType.ACTION.equals(mergeWith.getRequestType())) {
+			original.setAction(true);
+		}
+		original.setPortletMode(mergeWith.getPortletMode());
+		
+		original.setWindowState(mergeWith.getWindowState());
+		
+		Map<String, String[]> mergeWithParameters = mergeWith.getParameters();
+		for(String key: mergeWithParameters.keySet()) {
+			original.setPortalParameter(key, mergeWithParameters.get(key));
+		}
+		return original;
 	}
 
 }

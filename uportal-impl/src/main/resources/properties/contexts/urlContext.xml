@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="portalUrlProvider" class="org.jasig.portal.url.PortalUrlProviderImpl">
+        <property name="channelRegistryStore" ref="channelRegistryStore"/>
+        <property name="portalRequestUtils" ref="portalRequestUtils"/>
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry"/>
+        <property name="portletEntityRegistry" ref="portletEntityRegistry"/>
+        <property name="portletWindowRegistry" ref="portletWindowRegistry"/>
+        <property name="userInstanceManager" ref="userInstanceManager"/>
+    </bean>
+    
+</beans>

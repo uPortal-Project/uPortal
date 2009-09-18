@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.2.1.v200811281800]]></pluginVersion>
+	<pluginVersion><![CDATA[2.2.6.200908051215-RELEASE]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -36,6 +36,7 @@
 		<config>uportal-impl/src/test/resources/pooledCounterStoreTestApplicationContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/servicesContext.xml</config>
 		<config>uportal-impl/src/main/resources/properties/contexts/locatorContext.xml</config>
+		<config>uportal-impl/src/main/resources/properties/contexts/urlContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>

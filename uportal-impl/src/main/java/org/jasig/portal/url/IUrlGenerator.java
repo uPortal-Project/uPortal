@@ -31,4 +31,12 @@ public interface IUrlGenerator {
      * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
      */
     public String generatePortletUrl(HttpServletRequest request, IPortalPortletUrl portalPortletUrl, IPortletWindowId portletWindowId);
+    
+    /**
+     * 
+     * @param request The current request
+     * @param portalChannelUrl The channel Url object to create a URL String from
+     * @return a URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
+     */
+    public String generateChannelUrl(HttpServletRequest request, IPortalChannelUrl portalChannelUrl);
 }

@@ -14,6 +14,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.portlet.url.RequestType;
+import org.jasig.portal.spring.locator.PortalUrlProviderLocator;
+import org.jasig.portal.url.IPortalUrlProvider;
 
 /**
  * A set of runtime data accessible by a channel.
@@ -28,6 +30,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
     private BrowserInfo binfo=null;
     private Locale[] locales = null;
     private UPFileSpec channelUPFile;
+    // TODO remove baseActionUrl field
     private String baseActionURL = null;
     private String httpRequestMethod=null;
     private String remoteAddress=null;
@@ -57,6 +60,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
       crd.binfo = binfo;
       crd.locales = locales;
       crd.channelUPFile = channelUPFile;
+      // TODO remove baseActionUrl field
       crd.baseActionURL = baseActionURL;
       crd.httpRequestMethod = httpRequestMethod;
       crd.keywords = keywords;
@@ -105,9 +109,16 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
     /**
      * Sets the base action URL.  This was added back in for the benefit
      * of web services.  Not sure if it is going to stay this way.
+     * 
+     * This field is no longer persisted within instances of the class.
+     * {@link #getBaseActionURL()} is generated per-invocation
+     * with the help of {@link IPortalUrlProvider}.
+     * 
      * @param baseActionURL the base action URL
      */
+    @Deprecated
     public void setBaseActionURL(String baseActionURL) {
+    	// TODO remove baseActionUrl field
         this.baseActionURL = baseActionURL;
     }
 
@@ -224,12 +235,15 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
      * @return a value of URL to which parameter sequences should be appended.
      */
     public String getBaseActionURL() {
-        // If the base action URL was explicitly set, use it
+    	//TODO depend on on PortalUrlProvider
+    	//IPortalUrlProvider portalUrlProvider = PortalUrlProviderLocator.getPortalUrlProvider();
+    	//portalUrlProvider.getChannelUrlByNodeId
+
+    	// If the base action URL was explicitly set, use it
         // peterk: we should probably introduce idepotent version of this one as well, at some point
         if (baseActionURL != null) {
             return baseActionURL;
         }
-
         String url = null;
         try {
             url = channelUPFile.getUPFile();
@@ -262,6 +276,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
      * @since  2.5.1
      */
     public String getFnameActionURL(String fname) {
+    	//TODO portalUrlProvider.getChannelUrlByFName
         String url=null;
         try {
                 UPFileSpec upfs=new UPFileSpec(channelUPFile);
@@ -528,6 +543,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
         sb.append(" browserInfo = [").append(this.binfo).append("] ");
         sb.append(" locales = [").append(this.locales).append("] ");
         sb.append(" channelUPFile = [").append(this.channelUPFile).append("] ");
+        // TODO remove baseActionUrl field
         sb.append(" baseActionURL = [").append(this.baseActionURL).append("] ");
         sb.append(" httpRequestMethod = [").append(this.httpRequestMethod).append("] ");
         sb.append(" remoteAddress = [").append(this.remoteAddress).append("] ");

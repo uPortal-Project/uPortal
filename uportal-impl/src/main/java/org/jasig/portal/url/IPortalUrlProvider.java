@@ -45,8 +45,21 @@ public interface IPortalUrlProvider {
      */
     public IBasePortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId);
     
-//    public IPortalChannelUrl getChannelUrlByNodeId(HttpServletRequest request, String channelNodeId);
-//    public IPortalChannelUrl getChannelUrlByFName(HttpServletRequest request, String channelFName);
+    /**
+     * 
+     * @param request
+     * @param channelNodeId
+     * @return
+     */
+    public IPortalChannelUrl getChannelUrlByNodeId(HttpServletRequest request, String channelNodeId);
+    
+    /**
+     * 
+     * @param request the current 
+     * @param channelFName
+     * @return
+     */
+    public IPortalChannelUrl getChannelUrlByFName(HttpServletRequest request, String channelFName);
     
     /**
      * @param request The current portal request
