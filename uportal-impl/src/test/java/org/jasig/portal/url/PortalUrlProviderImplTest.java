@@ -46,24 +46,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
  *
  */
 public class PortalUrlProviderImplTest {
-
-    /**
-     * Pass invalid uri into {@link PortalUrlProviderImpl#getPortalRequestInfo(HttpServletRequest)},
-     * assert appropriate exception thrown.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoInvalidSyntax() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", "/no/way/is/this/a/valid/url");
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        try {
-            provider.getPortalRequestInfo(mockRequest);
-            Assert.fail("expected InvalidPortalRequestException not thrown");
-        } catch (InvalidPortalRequestException e) {
-            // success
-        }
-    }
     
     /**
      * {@link PortalUrlProviderImpl#getPortalRequestInfo(HttpServletRequest)} will cache the
@@ -251,7 +233,7 @@ public class PortalUrlProviderImplTest {
      * TODO is this a valid test? if so, our regex isn't capable of handling a URL without normal|max|legacy etc.
      * @throws Exception
      */
-    //@Test
+    @Test
     public void testGetPortalRequestInfoOnlyHomeFolder() throws Exception {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal/");

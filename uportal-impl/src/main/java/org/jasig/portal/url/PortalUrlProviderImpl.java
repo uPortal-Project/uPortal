@@ -65,6 +65,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     public static final String PARAM_WINDOW_STATE = PORTLET_CONTROL_PREFIX + "state";
     public static final String PARAM_PORTLET_MODE = PORTLET_CONTROL_PREFIX + "mode";
     
+    public static final String NO_STATE_REGEX = ".*(normal|max|detached|exclusive|legacy).*";
+    private static final Pattern NO_STATE_PATTERN = Pattern.compile(NO_STATE_REGEX);
     public static final String PORTAL_REQUEST_REGEX = "^(?:([^/]*)/)*(normal|max|detached|exclusive|legacy)/(?:([^/]*)/)?(render\\.uP|action\\.uP|)$";
     private static final Pattern PORTAL_REQUEST_PATTERN = Pattern.compile(PORTAL_REQUEST_REGEX);
     
@@ -134,6 +136,27 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
         
         final String requestPath = new UrlPathHelper().getPathWithinApplication(request);
+        // first pass looks for absence of state
+        Matcher firstPass = NO_STATE_PATTERN.matcher(requestPath);
+        if(!firstPass.matches()) {
+        	// requestPath doesn't contain state
+        	// assume NORMAL state, not an action
+        	// and that requestPath solely contains folder information (no targeted channel)
+        	PortalRequestInfoImpl requestInfo = new PortalRequestInfoImpl();
+        	requestInfo.setUrlState(UrlState.NORMAL);
+        	requestInfo.setAction(false);
+        	
+        	String [] folderElements = requestPath.split("\\/");
+            if(folderElements.length > 0) {
+                requestInfo.setTargetedLayoutNodeId(folderElements[folderElements.length-1]);
+            }
+            
+            if(logger.isDebugEnabled()) {
+                logger.debug("finished building requestInfo: " + requestInfo);
+            }
+            return requestInfo;
+        }
+        // if we get here, the requestPath contains one of the states
         Matcher m = PORTAL_REQUEST_PATTERN.matcher(requestPath);
         if(m.matches()) {
             PortalRequestInfoImpl requestInfo = new PortalRequestInfoImpl();
@@ -194,6 +217,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final String rootFolderId = userLayoutManager.getRootFolderId();
         
         //TODO determine default active tab for user
+        // xpath may look like: /layout/folder/folder[type='regular' and hidden='false'][0]/@ID
         
         // call out to getFolderUrlByNodeId, pass in default nodeId for user
         return getFolderUrlByNodeId(request, rootFolderId);
