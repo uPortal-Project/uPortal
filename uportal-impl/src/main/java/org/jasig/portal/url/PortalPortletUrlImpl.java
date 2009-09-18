@@ -143,7 +143,7 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
         if (object == this) {
             return true;
         }
-        if (!(object instanceof PortalLayoutUrlImpl)) {
+        if (!(object instanceof PortalPortletUrlImpl)) {
             return false;
         }
         PortalPortletUrlImpl rhs = (PortalPortletUrlImpl) object;
