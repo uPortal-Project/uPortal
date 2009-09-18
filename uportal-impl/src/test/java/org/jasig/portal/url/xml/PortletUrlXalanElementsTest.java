@@ -27,7 +27,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortalUrlXalanElementTest extends TestCase {
+public class PortletUrlXalanElementsTest extends TestCase {
 
     public void testPortalUrlElement() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -42,6 +42,7 @@ public class PortalUrlXalanElementTest extends TestCase {
         portalPortletUrl.addPortletParameter("page", "42");
         portalPortletUrl.addPortletParameter("node", "element");
         portalPortletUrl.addPortletParameter("empty", "");
+        portalPortletUrl.addPortalParameter("something", "for the portal");
         portalPortletUrl.setAction(false);
         EasyMock.expectLastCall(); //works for all previous void calls
         
@@ -71,7 +72,7 @@ public class PortalUrlXalanElementTest extends TestCase {
         final StringWriter resultWriter = new StringWriter();
 
         // set up configuration in the transformer impl
-        final StreamSource sourceStream = new StreamSource(this.getClass().getResourceAsStream("portletUrlTest.xml"));
+        final StreamSource sourceStream = new StreamSource(this.getClass().getResourceAsStream("test.xml"));
         transformer.transform(sourceStream, new StreamResult(resultWriter));
         
         final String result = resultWriter.getBuffer().toString();

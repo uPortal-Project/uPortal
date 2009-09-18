@@ -2,11 +2,15 @@
 <xsl:stylesheet 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:xalan="http://xml.apache.org/xalan" 
+    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
     xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-    extension-element-prefixes="portlet" 
-    exclude-result-prefixes="xalan portlet" 
+    extension-element-prefixes="portal portlet" 
+    exclude-result-prefixes="xalan portal portlet" 
     version="1.0">
 
+    <xalan:component prefix="portal" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+    </xalan:component>
     <xalan:component prefix="portlet" elements="url param">
         <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
     </xalan:component>
@@ -27,6 +31,7 @@
                 <portlet:param name="page" value="{$pageNum}" />
                 <portlet:param name="node"><xsl:value-of select="local-name()"/></portlet:param>
                 <portlet:param name="empty"/>
+                <portal:param name="something">for the portal</portal:param>
               </portlet:url>
             </xsl:variable>
             <xsl:attribute name="href"><xsl:value-of select="$bookmarksUrl"/></xsl:attribute>
