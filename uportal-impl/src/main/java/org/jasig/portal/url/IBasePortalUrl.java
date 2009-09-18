@@ -50,5 +50,5 @@ public interface IBasePortalUrl {
     /**
      * @return Generate a URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
      */
-    public String toString();
+    public String getUrlString();
 }

@@ -82,6 +82,25 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
     public void setPortletMode(PortletMode portletMode) {
         this.portletMode = portletMode;
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortalPortletUrl#addPortletParameter(java.lang.String, java.lang.String[])
+     */
+    public void addPortletParameter(String name, String... values) {
+        Validate.notNull(name, "name can not be null");
+        Validate.noNullElements(values, "values can not be null or contain null elements");
+        
+        List<String> valuesList = this.portletParameters.get(name);
+        if (valuesList == null) {
+            valuesList = new ArrayList<String>(values.length);
+        }
+        
+        for (final String value : values) {
+            valuesList.add(value);
+        }
+        
+        this.portletParameters.put(name, valuesList);
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalPortletUrl#setPortletParameter(java.lang.String, java.lang.String[])
@@ -112,13 +131,20 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
     public void setWindowState(WindowState windowState) {
         this.windowState = windowState;
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IBasePortalUrl#getUrlString()
+     */
+    public String getUrlString() {
+        return this.urlGenerator.generatePortletUrl(this.request, this, this.portletWindowId);
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return this.urlGenerator.generatePortletUrl(this.request, this, this.portletWindowId);
+        return this.getUrlString();
     }
 
     /**
@@ -143,7 +169,7 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
         if (object == this) {
             return true;
         }
-        if (!(object instanceof PortalLayoutUrlImpl)) {
+        if (!(object instanceof PortalPortletUrlImpl)) {
             return false;
         }
         PortalPortletUrlImpl rhs = (PortalPortletUrlImpl) object;

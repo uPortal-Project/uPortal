@@ -45,13 +45,19 @@ class PortalLayoutUrlImpl extends AbstractPortalUrl implements IPortalLayoutUrl 
         this.renderInNormal = renderInNormal;
     }
 
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IBasePortalUrl#getUrlString()
+     */
+    public String getUrlString() {
+        return this.urlGenerator.generatePortalUrl(this.request, this, this.targetFolderId);
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return this.urlGenerator.generatePortalUrl(this.request, this, this.targetFolderId);
+        return this.getUrlString();
     }
 
     /**

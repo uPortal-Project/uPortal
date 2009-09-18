@@ -31,6 +31,16 @@ public interface IPortalPortletUrl extends IBasePortalUrl {
     public void setPortletParameter(String name, String... values);
     
     /**
+     * Adds a URL parameter targeted to the portlet.
+     * 
+     * This method adds the provided parameters on to any existing parameters with the given key.
+     * 
+     * @param name The parameter name
+     * @param values The value or values for the parameter
+     */
+    public void addPortletParameter(String name, String... values);
+    
+    /**
      * Sets a portlet parameter map for this URL.
      * 
      * All previously set portal parameters are cleared.
