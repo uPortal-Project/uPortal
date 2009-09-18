@@ -75,7 +75,6 @@ public class PortalUrlXalanElementTest extends TestCase {
         transformer.transform(sourceStream, new StreamResult(resultWriter));
         
         final String result = resultWriter.getBuffer().toString();
-        System.out.println(result);
         final String expected = IOUtils.toString(this.getClass().getResourceAsStream("portletUrlResult.xml"));
 
         XMLUnit.setIgnoreWhitespace(true);

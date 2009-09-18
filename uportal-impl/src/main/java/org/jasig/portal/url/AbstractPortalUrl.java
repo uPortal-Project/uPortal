@@ -21,7 +21,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class AbstractPortalUrl {
+public abstract class AbstractPortalUrl implements IBasePortalUrl {
     protected final HttpServletRequest request;
     protected final IUrlGenerator urlGenerator;
     protected final ConcurrentMap<String, List<String>> portalParameters = new ConcurrentHashMap<String, List<String>>();
@@ -36,6 +36,23 @@ public class AbstractPortalUrl {
 
     public final Map<String, List<String>> getPortalParameters() {
         return this.portalParameters;
+    }
+    
+
+    public final void addPortalParameter(String name, String... values) {
+        Validate.notNull(name, "name can not be null");
+        Validate.noNullElements(values, "values can not be null or contain null elements");
+        
+        List<String> valuesList = this.portalParameters.get(name);
+        if (valuesList == null) {
+            valuesList = new ArrayList<String>(values.length);
+        }
+        
+        for (final String value : values) {
+            valuesList.add(value);
+        }
+        
+        this.portalParameters.put(name, valuesList);
     }
 
     public final void setPortalParameter(String name, String... values) {

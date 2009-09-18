@@ -32,6 +32,16 @@ public interface IBasePortalUrl {
     public void setPortalParameter(String name, String... values);
     
     /**
+     * Adds a URL parameter targeted to the portal.
+     * 
+     * This method adds the provided parameters on to any existing parameters with the given key.
+     * 
+     * @param name The parameter name
+     * @param values The value or values for the parameter
+     */
+    public void addPortalParameter(String name, String... values);
+    
+    /**
      * Sets a portal parameter map for this URL.
      * 
      * All previously set portal parameters are cleared.
