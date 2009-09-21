@@ -20,6 +20,9 @@ import org.w3c.dom.Node;
  * @version $Revision$
  */
 public class PortalUrlXalanElements extends BaseUrlXalanElements<IBasePortalUrl> {
+    public PortalUrlXalanElements() {
+        super(IBasePortalUrl.class);
+    }
     
     public String url(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
         final TransformerImpl transformer = context.getTransformer();

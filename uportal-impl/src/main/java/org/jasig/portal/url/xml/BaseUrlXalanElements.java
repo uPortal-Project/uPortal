@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang.Validate;
 import org.apache.xalan.templates.ElemExtensionCall;
 import org.apache.xalan.transformer.TransformerImpl;
 import org.jasig.portal.url.IBasePortalUrl;
@@ -28,6 +29,13 @@ public abstract class BaseUrlXalanElements<T extends IBasePortalUrl> {
     public static final String CURRENT_PORTAL_URL = BaseUrlXalanElements.class.getName() + ".CURRENT_PORTAL_URL";
     public static final String CURRENT_PORTAL_REQUEST = BaseUrlXalanElements.class.getName() + ".CURRENT_PORTAL_REQUEST";
     
+    private final Class<T> expectedUrlType;
+    
+    protected BaseUrlXalanElements(Class<T> expectedUrlType) {
+        Validate.notNull(expectedUrlType);
+        this.expectedUrlType = expectedUrlType;
+    }
+
     protected void transform(T portalUrl, TransformerImpl transformer, ElemExtensionCall elem) throws TransformerException {
         //Note, use of wrapper list since parameters cannot be removed or set to null this lets the url
         //object be removed after the child objects complete
@@ -40,12 +48,11 @@ public abstract class BaseUrlXalanElements<T extends IBasePortalUrl> {
         }
     }
     
-    @SuppressWarnings("unchecked")
     protected T getCurrentPortalUrl(TransformerImpl transformer) {
         final List<?> urlHolder = (List<?>)transformer.getParameter(CURRENT_PORTAL_URL);
         if (urlHolder == null || urlHolder.size() == 0) {
-            throw new IllegalStateException("There is no IBasePortalUrl available in the transformer");
+            throw new IllegalStateException("There is no '" + this.expectedUrlType.getName() + "' available in the transformer");
         }
-        return (T)urlHolder.get(0);
+        return this.expectedUrlType.cast(urlHolder.get(0));
     }
 }

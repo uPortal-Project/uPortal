@@ -26,7 +26,10 @@ import org.w3c.dom.Node;
 public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortalPortletUrl> {
     public static final String PORTLET_WINDOW_REGISTRY_PARAMETER = IPortletWindowRegistry.class.getName();
     
-    
+    public PortletUrlXalanElements() {
+        super(IPortalPortletUrl.class);
+    }
+
     public String url(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
         final TransformerImpl transformer = context.getTransformer();
         
