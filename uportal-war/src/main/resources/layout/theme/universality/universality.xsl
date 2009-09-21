@@ -32,25 +32,38 @@
 -->
 
 
+
 <!-- ============================================= -->
 <!-- ========== STYLESHEET DELCARATION =========== -->
 <!-- ============================================= -->
 <!-- 
  | RED
- | This statement defines this document as XSL.
+ | This statement defines this document as XSL and declares the Xalan extension
+ | elements used for URL generation and permissions checks.
+ |
+ | If a change is made to this section it MUST be copied to all other XSL files
+ | used by the theme
 -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<!-- ============================================= -->
-
-
-	<!-- ============================= -->
+<xsl:stylesheet 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xalan="http://xml.apache.org/xalan" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
+    xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
+    xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    extension-element-prefixes="portal portlet" 
+    exclude-result-prefixes="xalan portal portlet upAuth upGroup" 
+    version="1.0">
+  
+  <!-- ============================= -->
   <!-- ========== IMPORTS ========== -->
   <!-- ============================= -->
   <!-- 
-   | RED
-   | Imports are the XSL files that build the theme.
-   | Import statments and the XSL files they refer to should not be modified.
-   | For customization of the theme, use the Varaiables and Parameters and Templates sections below.
+    | RED
+    | Imports are the XSL files that build the theme.
+    | Import statments and the XSL files they refer to should not be modified.
+    | For customization of the theme, use the Varaiables and Parameters and Templates sections below.
   -->
   <xsl:import href="page.xsl" />        <!-- Templates for page structure -->
   <xsl:import href="navigation.xsl" />  <!-- Templates for navigation structure -->
@@ -59,6 +72,14 @@
   <xsl:import href="content.xsl" />     <!-- Templates for content structure (i.e. portlets) -->
   <xsl:import href="preferences.xsl" /> <!-- Templates for preferences-specific structures -->
   <!-- ============================= -->
+
+    <xalan:component prefix="portal" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+    </xalan:component>
+    <xalan:component prefix="portlet" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+    </xalan:component>
+<!-- ============================================= -->
   
   
   <!-- ========================================= -->
@@ -88,14 +109,15 @@
    | YELLOW
    | Skin Settings can be used to change the location of skin files.
   -->
+  <xsl:param name="CONTEXT_PATH">/uPortal/</xsl:param>
   <xsl:param name="skin">uportal3</xsl:param>
   <xsl:variable name="SKIN" select="$skin"/>
   <xsl:param name="FLUID_THEME_CLASS">fl-theme-<xsl:value-of select="$SKIN" /></xsl:param>
-  <xsl:variable name="MEDIA_PATH">media/skins/universality</xsl:variable>
+  <xsl:variable name="MEDIA_PATH" select="concat($CONTEXT_PATH,'media/skins/universality')"/>
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
-  <xsl:variable name="SCRIPT_PATH">media/skins/universality/common/javascript</xsl:variable>
+  <xsl:variable name="SCRIPT_PATH" select="concat($CONTEXT_PATH,'media/skins/universality/common/javascript')"/>
   <xsl:variable name="RESOURCE_PATH">/ResourceServingWebapp/rs</xsl:variable>
-  <xsl:variable name="PORTAL_SHORTCUT_ICON">favicon.ico</xsl:variable>
+  <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'favicon.ico')"/>
   
   <!-- 
    | The unofficial "theme-switcher".
@@ -133,7 +155,7 @@
   <xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
-  <xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param>
+  <xsl:param name="HOME_ACTION_URL"><portal:url/></xsl:param>
   <xsl:param name="PORTAL_VIEW">
   	<xsl:choose>
   		<xsl:when test="//layout_fragment">detached</xsl:when>

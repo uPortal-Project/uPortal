@@ -5,7 +5,6 @@ package org.jasig.portal.url;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -24,13 +23,15 @@ class PortalChannelUrlImpl extends AbstractPortalUrl implements IPortalChannelUr
 	 * @param urlGenerator
 	 */
 	protected PortalChannelUrlImpl(HttpServletRequest request,
-			IUrlGenerator urlGenerator) {
+			IUrlGenerator urlGenerator, String channelSubscribeId, String fName) {
 		super(request, urlGenerator);
+		this.channelSubscribeId = channelSubscribeId;
+		this.fName = fName;
 	}
 
-	private String channelSubscribeId;
-	private String fName;
-	private boolean worker;
+	private final String channelSubscribeId;
+	private final String fName;
+	private boolean worker = false;
 	
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.url.IPortalChannelUrl#getChannelSubscribeId()
@@ -45,23 +46,6 @@ class PortalChannelUrlImpl extends AbstractPortalUrl implements IPortalChannelUr
 	 */
 	public String getFName() {
 		return fName;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portal.url.IPortalChannelUrl#setFName(java.lang.String)
-	 */
-	public void setFName(String fName) {
-		Validate.notNull(fName, "fName was null");
-		this.fName = fName;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.url.IPortalChannelUrl#setChannelSubscribeId(java.lang.String)
-	 */
-	public void setChannelSubscribeId(String channelSubscribeId) {
-		Validate.notNull(channelSubscribeId, "channelSubscribeId was null");
-		this.channelSubscribeId = channelSubscribeId;
 	}
 
 	/* (non-Javadoc)

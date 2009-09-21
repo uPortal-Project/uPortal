@@ -12,13 +12,6 @@ package org.jasig.portal.url;
 public interface IPortalChannelUrl extends IBasePortalUrl {
 	
 	/**
-	 * Set the functional name for the channel this object represents.
-	 * 
-	 * @param fName
-	 */
-	public void setFName(String fName);
-	
-	/**
 	 * Get the functional name for the channel this object represents.
 	 * 
 	 * Cannot return null.
@@ -26,13 +19,6 @@ public interface IPortalChannelUrl extends IBasePortalUrl {
 	 * @return
 	 */
 	public String getFName();
-	
-	/**
-	 * Set the channel subscription id for the channel this object represents.
-	 * 
-	 * @param channelSubscribeId
-	 */
-	public void setChannelSubscribeId(String channelSubscribeId);
 	
 	/**
 	 * Get the channel subscription id for the channel this object represents.

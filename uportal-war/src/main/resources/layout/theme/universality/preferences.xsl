@@ -13,11 +13,36 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" 
- xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
- xmlns:dlm="http://www.uportal.org/layout/dlm"     
- xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
- exclude-result-prefixes="upGroup">  
+<!-- ============================================= -->
+<!-- ========== STYLESHEET DELCARATION =========== -->
+<!-- ============================================= -->
+<!-- 
+ | RED
+ | This statement defines this document as XSL and declares the Xalan extension
+ | elements used for URL generation and permissions checks.
+ |
+ | If a change is made to this section it MUST be copied to all other XSL files
+ | used by the theme
+-->
+<xsl:stylesheet 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xalan="http://xml.apache.org/xalan" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
+    xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
+    xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    extension-element-prefixes="portal portlet" 
+    exclude-result-prefixes="xalan portal portlet upAuth upGroup" 
+    version="1.0">
+
+    <xalan:component prefix="portal" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+    </xalan:component>
+    <xalan:component prefix="portlet" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+    </xalan:component>
+<!-- ============================================= -->
   
  <xsl:template name="preferences">
   

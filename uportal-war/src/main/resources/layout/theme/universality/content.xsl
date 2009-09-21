@@ -14,11 +14,36 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<!-- ============================================= -->
+<!-- ========== STYLESHEET DELCARATION =========== -->
+<!-- ============================================= -->
+<!-- 
+ | RED
+ | This statement defines this document as XSL and declares the Xalan extension
+ | elements used for URL generation and permissions checks.
+ |
+ | If a change is made to this section it MUST be copied to all other XSL files
+ | used by the theme
+-->
+<xsl:stylesheet 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xalan="http://xml.apache.org/xalan" 
     xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
+    xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
+    xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-    exclude-result-prefixes="upGroup">  
+    extension-element-prefixes="portal portlet" 
+    exclude-result-prefixes="xalan portal portlet upAuth upGroup" 
+    version="1.0">
+
+    <xalan:component prefix="portal" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+    </xalan:component>
+    <xalan:component prefix="portlet" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+    </xalan:component>
+<!-- ============================================= -->
   
   <!-- ========== TEMPLATE: PORTLET ========== -->
   <!-- ======================================= -->
@@ -87,7 +112,10 @@
             <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
             <div id="toolbar_{@ID}" class="up-portlet-toolbar"> <!-- Portlet toolbar. -->
               <h2> <!-- Portlet title. -->
-                <a name="{@ID}" id="{@ID}" href="{$BASE_ACTION_URL}?uP_root={@ID}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
+                <xsl:variable name="portletMaxUrl">
+                  <portlet:url layoutId="{@ID}" state="MAXIMIZED"/>
+                </xsl:variable>
+                <a name="{@ID}" id="{@ID}" href="{$portletMaxUrl}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
                   UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
                 </a>
               </h2>
@@ -150,27 +178,42 @@
   <xsl:template name="controls">
     <div class="up-portlet-controls">
       <xsl:if test="not(@hasHelp='false')"> <!-- Help. -->
-      	<a href="{$BASE_ACTION_URL}?uP_help_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_HELP_LONG_LABEL']}" class="up-portlet-control help">
+        <xsl:variable name="portletHelpUrl">
+          <portlet:url layoutId="{@ID}" mode="HELP"/>
+        </xsl:variable>
+        <a href="{$portletHelpUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_HELP_LONG_LABEL']}" class="up-portlet-control help">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_HELP_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(@hasAbout='false')"> <!-- About. -->
-      	<a href="{$BASE_ACTION_URL}?uP_about_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_ABOUT_LONG_LABEL']}" class="up-portlet-control about">
+        <xsl:variable name="portletAboutUrl">
+          <portlet:url layoutId="{@ID}" mode="ABOUT"/>
+        </xsl:variable>
+      	<a href="{$portletAboutUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_ABOUT_LONG_LABEL']}" class="up-portlet-control about">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_ABOUT_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(@editable='false')"> <!-- Edit. -->
-      	<a href="{$BASE_ACTION_URL}?uP_edit_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_EDIT_LONG_LABEL']}" class="up-portlet-control edit">
+        <xsl:variable name="portletEditUrl">
+          <portlet:url layoutId="{@ID}" mode="EDIT"/>
+        </xsl:variable>
+        <a href="{$portletEditUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_EDIT_LONG_LABEL']}" class="up-portlet-control edit">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_EDIT_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="@printable='true'"> <!-- Print. -->
-      	<a href="{$BASE_ACTION_URL}?uP_print_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_PRINT_LONG_LABEL']}" class="up-portlet-control print">
+        <xsl:variable name="portletPrintUrl">
+          <portlet:url layoutId="{@ID}" state="PRINT"/>
+        </xsl:variable>
+        <a href="{$portletPrintUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_PRINT_LONG_LABEL']}" class="up-portlet-control print">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_PRINT_LABEL']"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(//focused)"> <!-- Focus. -->
-      	<a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{$TOKEN[@name='PORTLET_MAXIMIZE_LONG_LABEL']}" class="up-portlet-control focus">
+        <xsl:variable name="portletMaxUrl">
+          <portlet:url layoutId="{@ID}" state="MAXIMIZED"/>
+        </xsl:variable>
+        <a href="{$portletMaxUrl}" title="{$TOKEN[@name='PORTLET_MAXIMIZE_LONG_LABEL']}" class="up-portlet-control focus">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_MAXIMIZE_LABEL']"/></span>
         </a>
       </xsl:if>

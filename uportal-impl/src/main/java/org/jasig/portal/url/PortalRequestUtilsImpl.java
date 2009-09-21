@@ -43,7 +43,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
             return portalRequest;
         }
         
-        throw new IllegalArgumentException("The orginal portal HttpServletRequest is not available from the HttpServletRequest using attribute '" + PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
+        return portletRequest;
     }
 
     /* (non-Javadoc)
@@ -79,12 +79,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         
         if (requestAttributes instanceof ServletRequestAttributes) {
             final HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            try {
-                return this.getOriginalPortalRequest(request);
-            }
-            catch (IllegalArgumentException iae) {
-                return request;
-            }
+            return this.getOriginalPortalRequest(request);
         }
         else if (requestAttributes instanceof PortletRequestAttributes) {
             final PortletRequest request = ((PortletRequestAttributes)requestAttributes).getRequest();

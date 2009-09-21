@@ -28,6 +28,8 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  */
 class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUrl {
     private final IPortletWindowId portletWindowId;
+    private final String channelSubscribeId;
+    
     private final ConcurrentMap<String, List<String>> portletParameters = new ConcurrentHashMap<String, List<String>>();
     private WindowState windowState = null;
     private PortletMode portletMode = null;
@@ -39,6 +41,15 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
         
         this.portletWindowId = portletWindowId;
+        this.channelSubscribeId = null;
+    }
+    
+    public PortalPortletUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, String channelSubscribeId) {
+        super(request, urlGenerator);
+        Validate.notNull(channelSubscribeId, "portletWindowId can not be null");
+        
+        this.portletWindowId = null;
+        this.channelSubscribeId = channelSubscribeId;
     }
 
     /* (non-Javadoc)
@@ -136,7 +147,11 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
      * @see org.jasig.portal.url.IBasePortalUrl#getUrlString()
      */
     public String getUrlString() {
-        return this.urlGenerator.generatePortletUrl(this.request, this, this.portletWindowId);
+        if (this.portletWindowId != null) {
+            return this.urlGenerator.generatePortletUrl(this.request, this, this.portletWindowId);
+        }
+        
+        return this.urlGenerator.generatePortletUrl(this.request, this, this.channelSubscribeId);
     }
 
     /* (non-Javadoc)

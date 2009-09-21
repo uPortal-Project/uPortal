@@ -611,7 +611,7 @@ public class PortalUrlProviderImplTest {
         
         // arguments are HttpServletRequest, IPortalPortletUrl, IPortletWindowId
         try {
-            provider.generatePortletUrl(null, null, null);
+            provider.generatePortletUrl(null, null, (IPortletWindowId)null);
             Assert.fail("expected IllegalArgumentException for null HttpServletRequest");
         } catch (IllegalArgumentException e) {
             // success
@@ -619,7 +619,7 @@ public class PortalUrlProviderImplTest {
         
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         try {
-            provider.generatePortletUrl(mockRequest, null, null);
+            provider.generatePortletUrl(mockRequest, null, (IPortletWindowId)null);
             Assert.fail("expected IllegalArgumentException for null IPortalPortletUrl");
         } catch (IllegalArgumentException e) {
             // success
@@ -629,7 +629,7 @@ public class PortalUrlProviderImplTest {
         replay(mockPortletUrl);
         
         try {
-            provider.generatePortletUrl(mockRequest, mockPortletUrl, null);
+            provider.generatePortletUrl(mockRequest, mockPortletUrl, (IPortletWindowId)null);
             Assert.fail("expected IllegalArgumentException for null IPortletWindowId");
         } catch (IllegalArgumentException e) {
             // success
@@ -1231,7 +1231,7 @@ public class PortalUrlProviderImplTest {
         replay(mockPortletWindowRegistry);
         
         IPortalRequestUtils mockPortalRequestUtils = createMock(IPortalRequestUtils.class);
-        expect(mockPortalRequestUtils.getOriginalPortletAdaptorRequest(details.getHttpServletRequest())).andReturn(details.getHttpServletRequest());
+        expect(mockPortalRequestUtils.getOriginalPortalRequest(details.getHttpServletRequest())).andReturn(details.getHttpServletRequest());
         replay(mockPortalRequestUtils);
         
         IChannelRegistryStore mockChannelRegistryStore = createMock(IChannelRegistryStore.class);

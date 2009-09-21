@@ -13,10 +13,37 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+
+<!-- ============================================= -->
+<!-- ========== STYLESHEET DELCARATION =========== -->
+<!-- ============================================= -->
+<!-- 
+ | RED
+ | This statement defines this document as XSL and declares the Xalan extension
+ | elements used for URL generation and permissions checks.
+ |
+ | If a change is made to this section it MUST be copied to all other XSL files
+ | used by the theme
+-->
+<xsl:stylesheet 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xalan="http://xml.apache.org/xalan" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
+    xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
     xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-    exclude-result-prefixes="upAuth">
+    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    extension-element-prefixes="portal portlet" 
+    exclude-result-prefixes="xalan portal portlet upAuth upGroup" 
+    version="1.0">
+
+    <xalan:component prefix="portal" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+    </xalan:component>
+    <xalan:component prefix="portlet" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+    </xalan:component>
+<!-- ============================================= -->
 	
   
   <!-- ========== TEMPLATE: PORTAL PIPE ========== -->
@@ -135,7 +162,10 @@
   <xsl:template name="portal.page.bar.link.admin">
   	<xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin')">
     	<span id="portalPageBarAdmin">
-        <a href="{$BASE_ACTION_URL}?uP_fname=portlet-admin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
+    	  <xsl:variable name="portletAdminUrl">
+    	    <portlet:url fname="portlet-admin" state="MAXIMIZED"/>
+    	  </xsl:variable>
+    	  <a href="{$portletAdminUrl}" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
           <span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
         </a>
         <xsl:call-template name="portal.pipe" />
@@ -153,7 +183,10 @@
   <xsl:template name="portal.page.bar.link.customize">
     <xsl:if test="$AUTHENTICATED='true'">
     	<span id="portalPageBarCustom">
-        <a href="{$BASE_ACTION_URL}?uP_fname=portal_userpreferences_dlm" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
+    	  <xsl:variable name="portalPrefsUrl">
+    	    <portlet:url fname="portal_userpreferences_dlm" state="MAXIMIZED"/>
+    	  </xsl:variable>
+    	  <a href="{$portalPrefsUrl}" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
           <span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
         </a>
         <xsl:call-template name="portal.pipe" />
@@ -171,7 +204,10 @@
   <xsl:template name="portal.page.bar.link.sitemap">
     <xsl:if test="$AUTHENTICATED='true'">
     	<span id="portalPageBarSitemap">
-        <a href="{$BASE_ACTION_URL}?uP_fname=layout-sitemap" title="{$TOKEN[@name='SITEMAP_LONG_LABEL']}">
+    	  <xsl:variable name="layoutSitemapUrl">
+    	    <portlet:url fname="layout-sitemap" state="MAXIMIZED"/>
+    	  </xsl:variable>
+    	  <a href="{$layoutSitemapUrl}" title="{$TOKEN[@name='SITEMAP_LONG_LABEL']}">
           <span><xsl:value-of select="$TOKEN[@name='SITEMAP_LABEL']"/></span>
         </a>
         <xsl:call-template name="portal.pipe" />
@@ -353,13 +389,19 @@
             <ul class="fl-listmenu">
               <xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin')">
                 <li id="portalAdminLinksPortletAdmin">
-                  <a href="{$BASE_ACTION_URL}?uP_fname=portlet-admin" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
+                  <xsl:variable name="portletAdminUrl">
+                    <portlet:url fname="portlet-admin" state="MAXIMIZED"/>
+                  </xsl:variable>
+                  <a href="{$portletAdminUrl}" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
                     <span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
                   </a>
                 </li>
               </xsl:if>
               <li id="portalAdminLinksCustomize">
-                <a href="{$BASE_ACTION_URL}?uP_fname=portal_userpreferences_dlm" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
+                <xsl:variable name="portalPrefsUrl">
+                  <portlet:url fname="portal_userpreferences_dlm" state="MAXIMIZED"/>
+                </xsl:variable>
+                <a href="{$portalPrefsUrl}" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
                   <span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
                 </a>
               </li>
@@ -413,7 +455,10 @@
       </xsl:choose>
     </xsl:variable>
     <li id="{$qLinkID}" class="{$POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
-      <a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{@name}">  <!-- Navigation item link. -->
+      <xsl:variable name="subNavUrl">
+        <portlet:url layoutId="{@ID}" state="MAXIMIZED"/>
+      </xsl:variable>
+      <a href="{$subNavUrl}" title="{@name}">  <!-- Navigation item link. -->
         <span>
           UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
         </span>
@@ -465,11 +510,17 @@
   -->
   <xsl:template name="breadcrumb">
       <div id="portalPageBodyBreadcrumb">
-      <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view" title="{$TOKEN[@name='HOME_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/></a>
+      <xsl:variable name="basePortalUrl">
+        <portal:url/>
+      </xsl:variable>
+      <a href="{$basePortalUrl}" title="{$TOKEN[@name='HOME_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/></a>
       <span class="breadcrumb-separator">&gt;</span>
       <xsl:for-each select="/layout/navigation/tab">
         <xsl:if test="@activeTab='true'">
-          <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}">
+          <xsl:variable name="tabUrl">
+            <portal:url layoutId="{@ID}"/>
+          </xsl:variable>
+          <a href="{$tabUrl}">
             <xsl:attribute name="title">
                 <xsl:value-of select="@name"/>
             </xsl:attribute>
