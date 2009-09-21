@@ -60,6 +60,7 @@
         <property name="userInstanceManager" ref="userInstanceManager" />
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
         <property name="channelRequestParameterManager" ref="channelRequestParameterManager" />
+        <property name="portalUrlProvider" ref="portalUrlProvider"/>
         <property name="maxUploadSize">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
                 <property name="targetClass" value="org.jasig.portal.properties.PropertiesManager" />
