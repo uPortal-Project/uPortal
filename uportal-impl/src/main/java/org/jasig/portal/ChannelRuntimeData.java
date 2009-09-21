@@ -18,7 +18,7 @@ import org.jasig.portal.car.CarResources;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.spring.locator.PortalRequestUtilsLocator;
 import org.jasig.portal.spring.locator.PortalUrlProviderLocator;
-import org.jasig.portal.url.IPortalChannelUrl;
+import org.jasig.portal.url.IChannelPortalUrl;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlProvider;
 
@@ -264,7 +264,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
     public String getBaseActionURL() {
     	IPortalUrlProvider portalUrlProvider = PortalUrlProviderLocator.getPortalUrlProvider();
     	IPortalRequestUtils portalRequestUtils = PortalRequestUtilsLocator.getPortalRequestUtils();
-    	IPortalChannelUrl channelUrl = portalUrlProvider.getChannelUrlByNodeId(portalRequestUtils.getCurrentPortalRequest(), this.channelSubscribeId);
+    	IChannelPortalUrl channelUrl = portalUrlProvider.getChannelUrlByNodeId(portalRequestUtils.getCurrentPortalRequest(), this.channelSubscribeId);
 
     	// If the base action URL was explicitly set, use it
         // peterk: we should probably introduce idepotent version of this one as well, at some point
@@ -312,7 +312,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
     public String getFnameActionURL(String fname) {
     	IPortalUrlProvider portalUrlProvider = PortalUrlProviderLocator.getPortalUrlProvider();
     	IPortalRequestUtils portalRequestUtils = PortalRequestUtilsLocator.getPortalRequestUtils();
-    	IPortalChannelUrl channelUrl = portalUrlProvider.getChannelUrlByFName(portalRequestUtils.getCurrentPortalRequest(), fname);
+    	IChannelPortalUrl channelUrl = portalUrlProvider.getChannelUrlByFName(portalRequestUtils.getCurrentPortalRequest(), fname);
     	
     	/*
         String url=null;
@@ -338,7 +338,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
     public String getBaseWorkerURL(String worker) {
         IPortalUrlProvider portalUrlProvider = PortalUrlProviderLocator.getPortalUrlProvider();
     	IPortalRequestUtils portalRequestUtils = PortalRequestUtilsLocator.getPortalRequestUtils();
-    	IPortalChannelUrl channelUrl = portalUrlProvider.getChannelUrlByNodeId(portalRequestUtils.getCurrentPortalRequest(), this.channelSubscribeId);
+    	IChannelPortalUrl channelUrl = portalUrlProvider.getChannelUrlByNodeId(portalRequestUtils.getCurrentPortalRequest(), this.channelSubscribeId);
     	
     	// update the returned channel to make it a worker
     	channelUrl.setWorker(true);
