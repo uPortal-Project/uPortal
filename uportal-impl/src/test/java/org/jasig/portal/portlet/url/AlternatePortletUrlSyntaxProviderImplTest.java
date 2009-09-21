@@ -41,7 +41,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 	@Test
 	public void testToPortletUrlControl() throws Exception {
 		IPortalPortletUrl mockPortletUrl = createMock(IPortalPortletUrl.class);
-		expect(mockPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
+		expect(mockPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
 		expect(mockPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
 		expect(mockPortletUrl.isAction()).andReturn(false);
 		expect(mockPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
@@ -64,7 +64,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 	@Test
 	public void testToPortletUrlMaximized() throws Exception {
 		IPortalPortletUrl mockPortletUrl = createMock(IPortalPortletUrl.class);
-		expect(mockPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
+		expect(mockPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
 		expect(mockPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
 		expect(mockPortletUrl.isAction()).andReturn(false);
 		expect(mockPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);
@@ -87,7 +87,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 	@Test
 	public void testToPortletUrlEdit() throws Exception {
 		IPortalPortletUrl mockPortletUrl = createMock(IPortalPortletUrl.class);
-		expect(mockPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
+		expect(mockPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
 		expect(mockPortletUrl.getPortletMode()).andReturn(PortletMode.EDIT);
 		expect(mockPortletUrl.isAction()).andReturn(false);
 		expect(mockPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
@@ -110,7 +110,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 	@Test
 	public void testToPortletUrlActionWithParameters() throws Exception {
 		IPortalPortletUrl mockPortletUrl = createMock(IPortalPortletUrl.class);
-		Map<String, List<String>> portalParameters = new HashMap<String, List<String>>();
+		Map<String, List<String>> portletParameters = new HashMap<String, List<String>>();
 		List<String> list1 = new ArrayList<String>();
 		list1.add("value1a");
 		list1.add("value2a");
@@ -119,10 +119,10 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 		list2.add("value2b");
 		list2.add("value3b");
 		List<String> list3 = new ArrayList<String>();
-		portalParameters.put("list1", list1);
-		portalParameters.put("list2", list2);
-		portalParameters.put("list3", list3);
-		expect(mockPortletUrl.getPortalParameters()).andReturn(portalParameters);
+		portletParameters.put("list1", list1);
+		portletParameters.put("list2", list2);
+		portletParameters.put("list3", list3);
+		expect(mockPortletUrl.getPortletParameters()).andReturn(portletParameters);
 		expect(mockPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
 		expect(mockPortletUrl.isAction()).andReturn(true);
 		expect(mockPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);

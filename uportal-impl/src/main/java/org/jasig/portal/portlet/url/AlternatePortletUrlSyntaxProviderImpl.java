@@ -73,7 +73,7 @@ public class AlternatePortletUrlSyntaxProviderImpl implements
 	protected static PortletUrl toPortletUrl(final IPortalPortletUrl portalPortletUrl) {
 		PortletUrl result = new PortletUrl();
 		Map<String, String[]> parameters = new HashMap<String, String[]>();
-		Map<String, List<String>> argParameters = portalPortletUrl.getPortalParameters();
+		Map<String, List<String>> argParameters = portalPortletUrl.getPortletParameters();
 		for(String key: argParameters.keySet()) {
 			String [] asArray = argParameters.get(key).toArray(new String[]{ });
 			parameters.put(key, asArray);
