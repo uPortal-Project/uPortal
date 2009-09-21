@@ -289,9 +289,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getFolderUrlByNodeId(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
-    public IBasePortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId) {
+    public ILayoutPortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId) {
         final String resolvedFolderId = this.verifyFolderId(request, folderNodeId);
-        return new PortalLayoutUrlImpl(request, this, resolvedFolderId);
+        return new LayoutPortalUrlImpl(request, this, resolvedFolderId);
 
     }
     

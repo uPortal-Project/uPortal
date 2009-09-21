@@ -43,7 +43,7 @@ public interface IPortalUrlProvider {
      * @return Folder targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified ID doesn't exist for a folder in the users layout.
      */
-    public IBasePortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId);
+    public ILayoutPortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId);
     
     /**
      * 

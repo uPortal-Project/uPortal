@@ -30,88 +30,6 @@ public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortletPortal
         super(IPortletPortalUrl.class);
     }
 
-    public String url(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
-        final TransformerImpl transformer = context.getTransformer();
-        
-        try {
-            // retrieve configuration
-            final IPortletPortalUrl portletUrl = this.createPortletPortalUrl(context, elem);
-            
-            this.transform(portletUrl, transformer, elem);
-            
-            final Node contextNode = context.getContextNode();
-            
-            final String state = elem.getAttribute("state", contextNode, transformer);
-            if (state != null) {
-                portletUrl.setWindowState(new WindowState(state));
-            }
-            
-            final String mode = elem.getAttribute("mode", contextNode, transformer);
-            if (mode != null) {
-                portletUrl.setPortletMode(new PortletMode(mode));
-            }
-            
-            final String action = elem.getAttribute("action", contextNode, transformer);
-            portletUrl.setAction(Boolean.parseBoolean(action));
-            
-            return portletUrl.getUrlString();
-        }
-        catch (Throwable t) {
-            if (t instanceof TransformerException) {
-                throw (TransformerException)t;
-            }
-            
-            final RuntimeException re;
-            if (t instanceof RuntimeException) {
-                re = (RuntimeException)t;
-            }
-            else {
-                re = new RuntimeException(t);
-            }
-            
-            transformer.setExceptionThrown(re);
-            throw re;
-        }
-    }
-    
-    public void param(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
-        final TransformerImpl transformer = context.getTransformer();
-        
-        try {
-            // retrieve configuration
-            final IPortletPortalUrl portletUrl = this.getCurrentPortalUrl(transformer);
-            
-            final Node contextNode = context.getContextNode();
-            final String name = elem.getAttribute("name", contextNode, transformer);
-            String value = elem.getAttribute("value", contextNode, transformer);
-            
-            //No value attribute, try running any nested part of the XSLT
-            if (value == null) {
-                final StringBuildingContentHandler contentHandler = new StringBuildingContentHandler(transformer);
-                transformer.executeChildTemplates(elem, contentHandler);
-                value = contentHandler.toString();
-            }
-
-            portletUrl.addPortletParameter(name, value);
-        }
-        catch (Throwable t) {
-            if (t instanceof TransformerException) {
-                throw (TransformerException)t;
-            }
-            
-            final RuntimeException re;
-            if (t instanceof RuntimeException) {
-                re = (RuntimeException)t;
-            }
-            else {
-                re = new RuntimeException(t);
-            }
-            
-            transformer.setExceptionThrown(re);
-            throw re;
-        }
-    }
-
 
     /**
      * Creates the appropriate IPortletPortalUrl
@@ -120,7 +38,8 @@ public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortletPortal
      * @param transformer The Xalan transformer
      * @return a new IPortalPortletUrl
      */
-    protected IPortletPortalUrl createPortletPortalUrl(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
+    @Override
+    protected IPortletPortalUrl createUrl(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
         final TransformerImpl transformer = context.getTransformer();
         
         final HttpServletRequest request = (HttpServletRequest)transformer.getParameter(CURRENT_PORTAL_REQUEST);
@@ -147,5 +66,37 @@ public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortletPortal
             throw new IllegalArgumentException("One and only one target attribute is allowed. Please specify one of: 'fname', 'windowId', 'layoutId'");
         }
         return portletUrl;
+    }
+    
+    
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.xml.BaseUrlXalanElements#postProcessUrl(org.jasig.portal.url.IBasePortalUrl, org.apache.xalan.extensions.XSLProcessorContext, org.apache.xalan.templates.ElemExtensionCall)
+     */
+    @Override
+    protected void postProcessUrl(IPortletPortalUrl url, XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
+        final Node contextNode = context.getContextNode();
+        final TransformerImpl transformer = context.getTransformer();
+        
+        final String state = elem.getAttribute("state", contextNode, transformer);
+        if (state != null) {
+            url.setWindowState(new WindowState(state));
+        }
+        
+        final String mode = elem.getAttribute("mode", contextNode, transformer);
+        if (mode != null) {
+            url.setPortletMode(new PortletMode(mode));
+        }
+        
+        final String action = elem.getAttribute("action", contextNode, transformer);
+        url.setAction(Boolean.parseBoolean(action));
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.xml.BaseUrlXalanElements#addParameter(org.jasig.portal.url.IBasePortalUrl, java.lang.String, java.lang.String)
+     */
+    @Override
+    protected void addParameter(IPortletPortalUrl url, String name, String value) {
+        url.addPortletParameter(name, value);
     }
 }
