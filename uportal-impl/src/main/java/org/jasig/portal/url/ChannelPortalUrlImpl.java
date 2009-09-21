@@ -9,29 +9,34 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
- * Implementation of {@link IPortalChannelUrl}.
+ * Implementation of {@link IChannelPortalUrl}.
  * Setters will throw IllegalArgumentException for null inputs.
  * 
  * @author Nicholas Blair, nblair@doit.wisc.edu
  *
  */
-class PortalChannelUrlImpl extends AbstractPortalUrl implements IPortalChannelUrl {
+class ChannelPortalUrlImpl extends PortletPortalUrlImpl implements IChannelPortalUrl {
 
+	private final String channelSubscribeId;
+	private final String fName;
+	private final IUrlGenerator urlGenerator;
+	private final HttpServletRequest request;
+	private boolean worker = false;
+	
 	/**
 	 * 
 	 * @param request
 	 * @param urlGenerator
 	 */
-	protected PortalChannelUrlImpl(HttpServletRequest request,
+	protected ChannelPortalUrlImpl(HttpServletRequest request,
 			IUrlGenerator urlGenerator, String channelSubscribeId, String fName) {
-		super(request, urlGenerator);
+		super(request, urlGenerator, channelSubscribeId);
 		this.channelSubscribeId = channelSubscribeId;
 		this.fName = fName;
+		this.urlGenerator = urlGenerator;
+		this.request = request;
 	}
 
-	private final String channelSubscribeId;
-	private final String fName;
-	private boolean worker = false;
 	
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.url.IPortalChannelUrl#getChannelSubscribeId()
@@ -70,10 +75,10 @@ class PortalChannelUrlImpl extends AbstractPortalUrl implements IPortalChannelUr
 		if (object == this) {
             return true;
         }
-        if (!(object instanceof PortalChannelUrlImpl)) {
+        if (!(object instanceof ChannelPortalUrlImpl)) {
             return false;
         }
-        PortalChannelUrlImpl rhs = (PortalChannelUrlImpl) object;
+        ChannelPortalUrlImpl rhs = (ChannelPortalUrlImpl) object;
         return new EqualsBuilder()
             .appendSuper(super.equals(object))
             .append(this.channelSubscribeId, rhs.channelSubscribeId)
@@ -110,5 +115,6 @@ class PortalChannelUrlImpl extends AbstractPortalUrl implements IPortalChannelUr
     public String toString() {
         return this.getUrlString();
     }
+
 
 }

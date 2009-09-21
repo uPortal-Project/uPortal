@@ -40,6 +40,13 @@ public interface IPortletPortalUrl extends IBasePortalUrl {
     public void setPortletParameters(Map<String, List<String>> parameters);
     
     /**
+     * 
+     * @param name
+     * @param value
+     */
+    public void addPortletParameter(String name, String value);
+    
+    /**
      * Get the current portlet parameters. The Map is mutable and making changes to the Map will affect the portlet parameters on the URL.
      * 
      * @return Map containing currently set portal parameters.

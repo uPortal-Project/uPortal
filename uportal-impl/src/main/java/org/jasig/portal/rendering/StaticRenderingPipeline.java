@@ -73,6 +73,7 @@ import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
+import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.xml.BaseUrlXalanElements;
 import org.jasig.portal.url.xml.PortletUrlXalanElements;
@@ -234,11 +235,15 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         final Object renderingLock = userInstance.getRenderingLock();
         
         // proccess possible portlet action
-        final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(req);
+        final IPortalRequestInfo requestInfo = portalUrlProvider.getPortalRequestInfo(req);
+        
+        
+        //final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(req);
+        final IPortletWindowId targetedPortletWindowId = requestInfo.getTargetedPortletWindowId();
         if (targetedPortletWindowId != null) {
-            final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(req);
-            
-            if (RequestType.ACTION.equals(portletRequestInfo.getRequestType())) {
+            //final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(req);
+            //if (RequestType.ACTION.equals(portletRequestInfo.getRequestType())) {
+            if(requestInfo.isAction()) {
                 final IPortletEntity targetedPortletEntity = this.portletWindowRegistry.getParentPortletEntity(req, targetedPortletWindowId);
                 final String channelSubscribeId = targetedPortletEntity.getChannelSubscribeId();
                 final boolean actionExecuted = channelManager.doChannelAction(req, res, channelSubscribeId, false);
@@ -523,6 +528,12 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     StructureAttributesIncorporationFilter saif = new StructureAttributesIncorporationFilter(ssth,
                             userPreferences.getStructureStylesheetUserPreferences());
 
+                    // TODO supply 2nd instance of SAIF with request based structureStyleSheetUserPreferences
+                    /*
+                    StructureAttributesIncorporationFilter saif2 = new StructureAttributesIncorporationFilter(ssth,
+                            );
+                            */
+                    
                     // This is a debug statement that will print out XML incoming to the
                     // structure transformation to a log file serializer to a printstream
                     StringWriter dbwr1 = null;
@@ -538,6 +549,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
 
                     // if operating in the detach mode, need wrap everything
                     // in a document node and a <layout_fragment> node
+                    // TODO switch to UrlState.DETACHED
                     boolean detachMode = !rootNodeId.equals(UPFileSpec.USER_LAYOUT_ROOT_NODE);
                     if (detachMode) {
                         saif.startDocument();

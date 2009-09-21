@@ -51,7 +51,7 @@ public interface IPortalUrlProvider {
      * @param channelNodeId
      * @return
      */
-    public IPortalChannelUrl getChannelUrlByNodeId(HttpServletRequest request, String channelNodeId);
+    public IChannelPortalUrl getChannelUrlByNodeId(HttpServletRequest request, String channelNodeId);
     
     /**
      * 
@@ -59,7 +59,7 @@ public interface IPortalUrlProvider {
      * @param channelFName
      * @return
      */
-    public IPortalChannelUrl getChannelUrlByFName(HttpServletRequest request, String channelFName);
+    public IChannelPortalUrl getChannelUrlByFName(HttpServletRequest request, String channelFName);
     
     /**
      * @param request The current portal request
@@ -67,7 +67,7 @@ public interface IPortalUrlProvider {
      * @return Portlet targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified ID doesn't exist for a channel in the users layout.
      */
-    public IPortalPortletUrl getPortletUrl(HttpServletRequest request, IPortletWindowId portletWindowId);
+    public IPortletPortalUrl getPortletUrl(HttpServletRequest request, IPortletWindowId portletWindowId);
     
     /**
      * @param request The current portal request
@@ -75,7 +75,7 @@ public interface IPortalUrlProvider {
      * @return Portlet targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified ID doesn't exist for a channel in the users layout.
      */
-    public IPortalPortletUrl getPortletUrlByNodeId(HttpServletRequest request, String portletNodeId);
+    public IPortletPortalUrl getPortletUrlByNodeId(HttpServletRequest request, String portletNodeId);
     
     /**
      * @param request The current portal request
@@ -83,5 +83,5 @@ public interface IPortalUrlProvider {
      * @return Portlet targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified fname does not exist.
      */
-    public IPortalPortletUrl getPortletUrlByFName(HttpServletRequest request, String portletFName);
+    public IPortletPortalUrl getPortletUrlByFName(HttpServletRequest request, String portletFName);
 }

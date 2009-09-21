@@ -141,7 +141,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.url.IPortalUrlProvider#getChannelUrlByFName(javax.servlet.http.HttpServletRequest, java.lang.String)
 	 */
-	public IPortalChannelUrl getChannelUrlByFName(HttpServletRequest request,
+	public IChannelPortalUrl getChannelUrlByFName(HttpServletRequest request,
 			String channelFName) {
 		final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
@@ -154,14 +154,14 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         	throw new IllegalArgumentException("channel fname does not exist: " + channelFName);
         }
         
-        return new PortalChannelUrlImpl(request, this, channelSubscribeId, channelFName);
+        return new ChannelPortalUrlImpl(request, this, channelSubscribeId, channelFName);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.url.IPortalUrlProvider#getChannelUrlByNodeId(javax.servlet.http.HttpServletRequest, java.lang.String)
 	 */
-	public IPortalChannelUrl getChannelUrlByNodeId(HttpServletRequest request,
+	public IChannelPortalUrl getChannelUrlByNodeId(HttpServletRequest request,
 			String channelNodeId) {
 		
 		final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
@@ -176,7 +176,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
         
         final String fName = channelNode.getFunctionalName();
-        return new PortalChannelUrlImpl(request, this, channelNodeId, fName);
+        return new ChannelPortalUrlImpl(request, this, channelNodeId, fName);
 	}
 	
 	/* (non-Javadoc)
@@ -298,14 +298,14 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortletUrlByNodeId(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
      */
-    public IPortalPortletUrl getPortletUrl(HttpServletRequest request, IPortletWindowId portletWindowId) {
-        return new PortalPortletUrlImpl(request, this, portletWindowId);
+    public IPortletPortalUrl getPortletUrl(HttpServletRequest request, IPortletWindowId portletWindowId) {
+        return new PortletPortalUrlImpl(request, this, portletWindowId);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortletUrlByFName(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
-    public IPortalPortletUrl getPortletUrlByFName(HttpServletRequest request, String portletFName) {
+    public IPortletPortalUrl getPortletUrlByFName(HttpServletRequest request, String portletFName) {
         //Get the user's layout manager
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
@@ -323,7 +323,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortletUrlByNodeId(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
-    public IPortalPortletUrl getPortletUrlByNodeId(HttpServletRequest request, String portletNodeId) {
+    public IPortletPortalUrl getPortletUrlByNodeId(HttpServletRequest request, String portletNodeId) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
@@ -338,7 +338,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         //Support using portlet URLs for channels, if not a portlet create a url using the subscribe ID
         if (!channelDefinition.isPortlet()) {
-            return new PortalPortletUrlImpl(request, this, portletNodeId);
+            return new PortletPortalUrlImpl(request, this, portletNodeId);
         }
         
         
@@ -390,7 +390,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlGenerator#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IPortalPortletUrl, org.jasig.portal.portlet.om.IPortletWindowId)
      */
-    public String generatePortletUrl(HttpServletRequest request, IPortalPortletUrl portalPortletUrl, IPortletWindowId portletWindowId) {
+    public String generatePortletUrl(HttpServletRequest request, IPortletPortalUrl portalPortletUrl, IPortletWindowId portletWindowId) {
         Validate.notNull(request, "HttpServletRequest was null");
         Validate.notNull(portalPortletUrl, "IPortalPortletUrl was null");
         Validate.notNull(portletWindowId, "IPortletWindowId was null");
@@ -500,7 +500,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlGenerator#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IPortalPortletUrl, java.lang.String)
      */
-    public String generatePortletUrl(HttpServletRequest request, IPortalPortletUrl portalPortletUrl, String channelSubscribeId) {
+    public String generatePortletUrl(HttpServletRequest request, IPortletPortalUrl portalPortletUrl, String channelSubscribeId) {
         Validate.notNull(request, "HttpServletRequest was null");
         Validate.notNull(portalPortletUrl, "IPortalPortletUrl was null");
         Validate.notNull(channelSubscribeId, "IPortletWindowId was null");
@@ -605,7 +605,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
 	 * @see org.jasig.portal.url.IUrlGenerator#generateChannelUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IPortalChannelUrl)
 	 */
 	public String generateChannelUrl(HttpServletRequest request,
-			IPortalChannelUrl portalChannelUrl) {
+			IChannelPortalUrl portalChannelUrl) {
 		Validate.notNull(request, "HttpServletRequest was null");
 		Validate.notNull(portalChannelUrl, "IPortalChannelUrl was null");
 		

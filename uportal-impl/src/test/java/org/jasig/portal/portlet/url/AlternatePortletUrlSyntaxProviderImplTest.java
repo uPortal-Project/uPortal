@@ -19,7 +19,7 @@ import javax.portlet.WindowState;
 
 import junit.framework.Assert;
 
-import org.jasig.portal.url.IPortalPortletUrl;
+import org.jasig.portal.url.IPortletPortalUrl;
 import org.junit.Test;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
@@ -40,7 +40,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 	 */
 	@Test
 	public void testToPortletUrlControl() throws Exception {
-		IPortalPortletUrl mockPortletUrl = createMock(IPortalPortletUrl.class);
+		IPortletPortalUrl mockPortletUrl = createMock(IPortletPortalUrl.class);
 		expect(mockPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
 		expect(mockPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
 		expect(mockPortletUrl.isAction()).andReturn(false);
@@ -63,7 +63,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 	 */
 	@Test
 	public void testToPortletUrlMaximized() throws Exception {
-		IPortalPortletUrl mockPortletUrl = createMock(IPortalPortletUrl.class);
+		IPortletPortalUrl mockPortletUrl = createMock(IPortletPortalUrl.class);
 		expect(mockPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
 		expect(mockPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
 		expect(mockPortletUrl.isAction()).andReturn(false);
@@ -86,7 +86,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 	 */
 	@Test
 	public void testToPortletUrlEdit() throws Exception {
-		IPortalPortletUrl mockPortletUrl = createMock(IPortalPortletUrl.class);
+		IPortletPortalUrl mockPortletUrl = createMock(IPortletPortalUrl.class);
 		expect(mockPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
 		expect(mockPortletUrl.getPortletMode()).andReturn(PortletMode.EDIT);
 		expect(mockPortletUrl.isAction()).andReturn(false);
@@ -109,7 +109,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 	 */
 	@Test
 	public void testToPortletUrlActionWithParameters() throws Exception {
-		IPortalPortletUrl mockPortletUrl = createMock(IPortalPortletUrl.class);
+		IPortletPortalUrl mockPortletUrl = createMock(IPortletPortalUrl.class);
 		Map<String, List<String>> portletParameters = new HashMap<String, List<String>>();
 		List<String> list1 = new ArrayList<String>();
 		list1.add("value1a");
@@ -147,8 +147,8 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 	 */
 	@Test
 	public void testMergeWithPortletUrlNullArguments() throws Exception {
-		IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
-		replay(mockPortalPortletUrl);
+		IPortletPortalUrl mockPortletUrl = createMock(IPortletPortalUrl.class);
+		replay(mockPortletUrl);
 		PortletUrl emptyPortletUrl = new PortletUrl();
 		
 		try {
@@ -159,7 +159,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 		}
 		
 		try {
-			AlternatePortletUrlSyntaxProviderImpl.mergeWithPortletUrl(mockPortalPortletUrl, null);
+			AlternatePortletUrlSyntaxProviderImpl.mergeWithPortletUrl(mockPortletUrl, null);
 			Assert.fail("expected IllegalArgumentException not thrown");
 		} catch (IllegalArgumentException e) {
 			//success
@@ -180,7 +180,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 		portletUrl.setRequestType(RequestType.RENDER);
 		portletUrl.setWindowState(WindowState.NORMAL);
 		
-		IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
+		IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
 		mockPortalPortletUrl.setPortletMode(PortletMode.VIEW);
 		expectLastCall();
 		mockPortalPortletUrl.setWindowState(WindowState.NORMAL);
@@ -205,7 +205,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 		portletUrl.setRequestType(RequestType.ACTION);
 		portletUrl.setWindowState(WindowState.NORMAL);
 		
-		IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
+		IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
 		mockPortalPortletUrl.setAction(true);
 		expectLastCall();
 		mockPortalPortletUrl.setPortletMode(PortletMode.VIEW);
@@ -236,7 +236,7 @@ public class AlternatePortletUrlSyntaxProviderImplTest {
 		portletUrl.setRequestType(RequestType.ACTION);
 		portletUrl.setWindowState(WindowState.NORMAL);
 		
-		IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
+		IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
 		mockPortalPortletUrl.setAction(true);
 		expectLastCall();
 		mockPortalPortletUrl.setPortletMode(PortletMode.EDIT);

@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.url.IPortalPortletUrl;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletPortalUrl;
 import org.jasig.portal.utils.Tuple;
 
 /**
@@ -43,7 +43,7 @@ public class AlternatePortletUrlSyntaxProviderImpl implements
 	 */
 	public String generatePortletUrl(HttpServletRequest request,
 			IPortletWindow portletWindow, PortletUrl portletUrl) {
-		IPortalPortletUrl portalPortletUrl = portalUrlProvider.getPortletUrl(request, portletWindow.getPortletWindowId());
+		IPortletPortalUrl portalPortletUrl = portalUrlProvider.getPortletUrl(request, portletWindow.getPortletWindowId());
 		portalPortletUrl = mergeWithPortletUrl(portalPortletUrl, portletUrl);
 		return portalPortletUrl.toString();
 	}
@@ -58,7 +58,7 @@ public class AlternatePortletUrlSyntaxProviderImpl implements
 			return null;
 		} else {
 			IPortletWindowId portletWindowId = requestInfo.getTargetedPortletWindowId(); 
-			IPortalPortletUrl portalPortletUrl = portalUrlProvider.getPortletUrl(request, portletWindowId);
+			IPortletPortalUrl portalPortletUrl = portalUrlProvider.getPortletUrl(request, portletWindowId);
 			Tuple<IPortletWindowId, PortletUrl> result = new Tuple<IPortletWindowId, PortletUrl>(portletWindowId, toPortletUrl(portalPortletUrl));
 			return result;
 		}
@@ -70,7 +70,7 @@ public class AlternatePortletUrlSyntaxProviderImpl implements
 	 * @param portalPortletUrl
 	 * @return
 	 */
-	protected static PortletUrl toPortletUrl(final IPortalPortletUrl portalPortletUrl) {
+	protected static PortletUrl toPortletUrl(final IPortletPortalUrl portalPortletUrl) {
 		PortletUrl result = new PortletUrl();
 		Map<String, String[]> parameters = new HashMap<String, String[]>();
 		Map<String, List<String>> argParameters = portalPortletUrl.getPortletParameters();
@@ -97,9 +97,9 @@ public class AlternatePortletUrlSyntaxProviderImpl implements
 	
 	/**
 	 * The purpose of this method is to port the fields of the {@link PortletUrl} argument
-	 * to the appropriate fields of the {@link IPortalPortletUrl} argument.
+	 * to the appropriate fields of the {@link IPortletPortalUrl} argument.
 	 * 
-	 * This method mutates the {@link IPortalPortletUrl} argument and return it.
+	 * This method mutates the {@link IPortletPortalUrl} argument and return it.
 	 * 
 	 * Neither argument can be null.
 	 * 
@@ -107,7 +107,7 @@ public class AlternatePortletUrlSyntaxProviderImpl implements
 	 * @param mergeWith
 	 * @return the updated original {@link IPortalPortletUrl}
 	 */
-	protected static IPortalPortletUrl mergeWithPortletUrl(IPortalPortletUrl original, PortletUrl mergeWith) {
+	protected static IPortletPortalUrl mergeWithPortletUrl(IPortletPortalUrl original, PortletUrl mergeWith) {
 		Validate.notNull(original, "original IPortalPortletUrl must not be null");
 		Validate.notNull(mergeWith, "mergeWith PortletUrl must not be null");
 		if(RequestType.ACTION.equals(mergeWith.getRequestType())) {

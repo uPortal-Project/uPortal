@@ -625,7 +625,7 @@ public class PortalUrlProviderImplTest {
             // success
         }
         
-        IPortalPortletUrl mockPortletUrl = createMock(IPortalPortletUrl.class);
+        IPortletPortalUrl mockPortletUrl = createMock(IPortletPortalUrl.class);
         replay(mockPortletUrl);
         
         try {
@@ -658,7 +658,7 @@ public class PortalUrlProviderImplTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal/");
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
+        IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);
         expect(mockPortalPortletUrl.isAction()).andReturn(false);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
@@ -707,7 +707,7 @@ public class PortalUrlProviderImplTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/p/");
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
+        IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);
         expect(mockPortalPortletUrl.isAction()).andReturn(false);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
@@ -745,7 +745,7 @@ public class PortalUrlProviderImplTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal/");
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
+        IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
         expect(mockPortalPortletUrl.isAction()).andReturn(false);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
@@ -783,7 +783,7 @@ public class PortalUrlProviderImplTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal/");
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
+        IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
         expect(mockPortalPortletUrl.isAction()).andReturn(false);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.HELP);
@@ -831,7 +831,7 @@ public class PortalUrlProviderImplTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal/");
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
+        IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);
         expect(mockPortalPortletUrl.isAction()).andReturn(false);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
@@ -879,7 +879,7 @@ public class PortalUrlProviderImplTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal/");
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
+        IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
         expect(mockPortalPortletUrl.isAction()).andReturn(true);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
@@ -915,7 +915,7 @@ public class PortalUrlProviderImplTest {
     }
     
     /**
-     * Control test for {@link PortalUrlProviderImpl#generateChannelUrl(HttpServletRequest, IPortalChannelUrl)}.
+     * Control test for {@link PortalUrlProviderImpl#generateChannelUrl(HttpServletRequest, IChannelPortalUrl)}.
      * Normal layoutstate, home folder, channelName, 32 subscribeId.
      * 
      * @throws Exception
@@ -926,7 +926,7 @@ public class PortalUrlProviderImplTest {
          mockRequest.setContextPath("/uPortal/");
          mockRequest.setRequestURI("/uPortal/home/normal/channelName.32/render.uP");
          
-         IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+         IChannelPortalUrl mockPortalChannelUrl = createMock(IChannelPortalUrl.class);
          expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("32");
          expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
          expect(mockPortalChannelUrl.isWorker()).andReturn(false);
@@ -964,7 +964,7 @@ public class PortalUrlProviderImplTest {
          mockRequest.setContextPath("/uPortal/");
          mockRequest.setRequestURI("/uPortal/home/normal/channelName.32/worker.uP");
          
-         IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+         IChannelPortalUrl mockPortalChannelUrl = createMock(IChannelPortalUrl.class);
          expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("32");
          expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
          expect(mockPortalChannelUrl.isWorker()).andReturn(true);
@@ -1003,7 +1003,7 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/home/max/channelName.32/render.uP");
         
-        IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+        IChannelPortalUrl mockPortalChannelUrl = createMock(IChannelPortalUrl.class);
         expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("32");
         expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
         expect(mockPortalChannelUrl.isWorker()).andReturn(false);
@@ -1041,7 +1041,7 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/home/normal/channelName.32/render.uP");
         
-        IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+        IChannelPortalUrl mockPortalChannelUrl = createMock(IChannelPortalUrl.class);
         expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("32");
         expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
         expect(mockPortalChannelUrl.isWorker()).andReturn(false);
@@ -1082,7 +1082,7 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/home/normal/channelName.32/render.uP");
         
-        IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+        IChannelPortalUrl mockPortalChannelUrl = createMock(IChannelPortalUrl.class);
         expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("32");
         expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
         expect(mockPortalChannelUrl.isWorker()).andReturn(false);
@@ -1125,7 +1125,7 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/max/channelName.ctf32/render.uP");
         
-        IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+        IChannelPortalUrl mockPortalChannelUrl = createMock(IChannelPortalUrl.class);
         expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("ctf32");
         expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
         expect(mockPortalChannelUrl.isWorker()).andReturn(false);
@@ -1251,7 +1251,7 @@ public class PortalUrlProviderImplTest {
     /**
      * Not a test case.
      * Internal method to mock up a {@link PortalUrlProviderImpl} for testing
-     * {@link PortalUrlProviderImpl#generateChannelUrl(HttpServletRequest, IPortalChannelUrl)}.
+     * {@link PortalUrlProviderImpl#generateChannelUrl(HttpServletRequest, IChannelPortalUrl)}.
      * 
      * @param request
      * @param portletWindowId

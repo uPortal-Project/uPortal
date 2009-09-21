@@ -138,13 +138,13 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
      */
     @Override
     public String toString() {
-        return new ToStringBuilder(ToStringStyle.SHORT_PREFIX_STYLE)
-        .append(this.targetedChannelSubscribeId)
-        .append(this.targetedLayoutNodeId)
-        .append(this.targetedPortletWindowId)
-        .append(this.urlState)
-        .append(this.action)
-        .toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+        	.append(this.targetedChannelSubscribeId)
+        	.append(this.targetedLayoutNodeId)
+        	.append(this.targetedPortletWindowId)
+        	.append(this.urlState)
+        	.append(this.action)
+        	.toString();
     }
 
     

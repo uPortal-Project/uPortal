@@ -15,19 +15,19 @@ import org.apache.xalan.templates.ElemExtensionCall;
 import org.apache.xalan.transformer.TransformerImpl;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.url.IPortalPortletUrl;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletPortalUrl;
 import org.w3c.dom.Node;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortalPortletUrl> {
+public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortletPortalUrl> {
     public static final String PORTLET_WINDOW_REGISTRY_PARAMETER = IPortletWindowRegistry.class.getName();
     
     public PortletUrlXalanElements() {
-        super(IPortalPortletUrl.class);
+        super(IPortletPortalUrl.class);
     }
 
     public String url(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
@@ -35,7 +35,7 @@ public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortalPortlet
         
         try {
             // retrieve configuration
-            final IPortalPortletUrl portletUrl = this.createPortalPortletUrl(context, elem);
+            final IPortletPortalUrl portletUrl = this.createPortletPortalUrl(context, elem);
             
             this.transform(portletUrl, transformer, elem);
             
@@ -79,7 +79,7 @@ public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortalPortlet
         
         try {
             // retrieve configuration
-            final IPortalPortletUrl portletUrl = this.getCurrentPortalUrl(transformer);
+            final IPortletPortalUrl portletUrl = this.getCurrentPortalUrl(transformer);
             
             final Node contextNode = context.getContextNode();
             final String name = elem.getAttribute("name", contextNode, transformer);
@@ -114,13 +114,13 @@ public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortalPortlet
 
 
     /**
-     * Creates the appropriate IPortalPortletUrl
+     * Creates the appropriate IPortletPortalUrl
      * 
      * @param elem The extension element
      * @param transformer The Xalan transformer
      * @return a new IPortalPortletUrl
      */
-    protected IPortalPortletUrl createPortalPortletUrl(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
+    protected IPortletPortalUrl createPortletPortalUrl(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
         final TransformerImpl transformer = context.getTransformer();
         
         final HttpServletRequest request = (HttpServletRequest)transformer.getParameter(CURRENT_PORTAL_REQUEST);
@@ -132,7 +132,7 @@ public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortalPortlet
         final String windowId = elem.getAttribute("windowId", contextNode, transformer);
         final String layoutNodeId = elem.getAttribute("layoutId", contextNode, transformer);
         
-        final IPortalPortletUrl portletUrl;
+        final IPortletPortalUrl portletUrl;
         if (fname != null && windowId == null && layoutNodeId == null) {
             portletUrl = portalUrlProvider.getPortletUrlByFName(request, fname);
         }

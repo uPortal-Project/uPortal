@@ -9,7 +9,7 @@ package org.jasig.portal.url;
  * 
  * @author Nicholas Blair, nblair@doit.wisc.edu
  */
-public interface IPortalChannelUrl extends IBasePortalUrl {
+public interface IChannelPortalUrl extends IPortletPortalUrl {
 	
 	/**
 	 * Get the functional name for the channel this object represents.

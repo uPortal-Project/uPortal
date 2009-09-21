@@ -19,8 +19,8 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.easymock.EasyMock;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.url.IPortalPortletUrl;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletPortalUrl;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
@@ -35,8 +35,8 @@ public class PortletUrlXalanElementsTest extends TestCase {
         
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
         
-        
-        final IPortalPortletUrl portalPortletUrl = EasyMock.createMock(IPortalPortletUrl.class);
+       
+        final IPortletPortalUrl portalPortletUrl = EasyMock.createMock(IPortletPortalUrl.class);
         portalPortletUrl.addPortletParameter("foo", "bar");
         portalPortletUrl.addPortletParameter("foo", "bor");
         portalPortletUrl.addPortletParameter("page", "42");

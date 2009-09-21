@@ -6,6 +6,7 @@
 package org.jasig.portal.url;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,7 +27,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @author Eric Dalquist
  * @version $Revision$
  */
-class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUrl {
+class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUrl {
     private final IPortletWindowId portletWindowId;
     private final String channelSubscribeId;
     
@@ -36,7 +37,7 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
     private boolean action = false;
     
     
-    public PortalPortletUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, IPortletWindowId portletWindowId) {
+    public PortletPortalUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, IPortletWindowId portletWindowId) {
         super(request, urlGenerator);
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
         
@@ -44,7 +45,7 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
         this.channelSubscribeId = null;
     }
     
-    public PortalPortletUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, String channelSubscribeId) {
+    public PortletPortalUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, String channelSubscribeId) {
         super(request, urlGenerator);
         Validate.notNull(channelSubscribeId, "portletWindowId can not be null");
         
@@ -184,10 +185,10 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
         if (object == this) {
             return true;
         }
-        if (!(object instanceof PortalPortletUrlImpl)) {
+        if (!(object instanceof PortletPortalUrlImpl)) {
             return false;
         }
-        PortalPortletUrlImpl rhs = (PortalPortletUrlImpl) object;
+        PortletPortalUrlImpl rhs = (PortletPortalUrlImpl) object;
         return new EqualsBuilder()
             .appendSuper(super.equals(object))
             .append(this.portletWindowId, rhs.portletWindowId)
@@ -196,4 +197,11 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
             .append(this.action, rhs.action)
             .isEquals();
     }
+
+    /**
+     * 
+     */
+	public void addPortletParameter(String name, String value) {
+		this.portletParameters.put(name, Arrays.asList(new String[] { value }));
+	}
 }
