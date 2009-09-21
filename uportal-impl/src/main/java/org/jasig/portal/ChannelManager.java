@@ -632,6 +632,7 @@ public class ChannelManager implements LayoutEventListener {
             new CError(errorCode,t,channelSubscribeId,oldInstance,message);
         if(setRuntimeData) {
             ChannelRuntimeData rd=new ChannelRuntimeData();
+            rd.setChannelSubscribeId(channelSubscribeId);
             rd.setBrowserInfo(browserInfo);
             if (localeManager != null)  {
                 rd.setLocales(localeManager.getLocales());
@@ -673,6 +674,7 @@ public class ChannelManager implements LayoutEventListener {
         CSecureInfo secureInfoChannel=new CSecureInfo(channelSubscribeId,oldInstance);
         if(setRuntimeData) {
             ChannelRuntimeData rd=new ChannelRuntimeData();
+            rd.setChannelSubscribeId(channelSubscribeId);
             rd.setBrowserInfo(browserInfo);
             if (localeManager != null)  {
                 rd.setLocales(localeManager.getLocales());
@@ -1193,7 +1195,7 @@ public class ChannelManager implements LayoutEventListener {
      */
     private ChannelRuntimeData getChannelRuntimeData(HttpServletRequest request, String channelSubscribeId, RequestType requestType) {
         final ChannelRuntimeData runtimeData = new ChannelRuntimeData();
-        
+        runtimeData.setChannelSubscribeId(channelSubscribeId);
         if (channelSubscribeId.equals(this.channelTarget) || RequestType.ACTION.equals(requestType)) {
             if (this.targetParams != null) {
                 runtimeData.setParameters(this.targetParams);

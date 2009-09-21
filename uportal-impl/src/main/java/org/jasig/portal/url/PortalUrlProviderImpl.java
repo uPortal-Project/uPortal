@@ -49,25 +49,31 @@ import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.web.util.UrlPathHelper;
 
 /**
- * 
+ * {@link IPortalUrlProvider} and {@link IUrlGenerator} implementation
+ * that uses a consistent human readable URL format.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator {
     
-    public static final String SEPERATOR = "_";
-    public static final String PORTAL_PARAM_PREFIX = "uP" + SEPERATOR;
-    public static final String PORTLET_CONTROL_PREFIX = "pltc" + SEPERATOR;
-    public static final String PORTLET_PARAM_PREFIX = "pltp" + SEPERATOR;
+    public static final String SEPARATOR = "_";
+    public static final String PORTAL_PARAM_PREFIX = "uP" + SEPARATOR;
+    public static final String PORTLET_CONTROL_PREFIX = "pltc" + SEPARATOR;
+    public static final String PORTLET_PARAM_PREFIX = "pltp" + SEPARATOR;
 
     public static final String PARAM_REQUEST_TARGET = PORTLET_CONTROL_PREFIX + "target";
     public static final String PARAM_WINDOW_STATE = PORTLET_CONTROL_PREFIX + "state";
     public static final String PARAM_PORTLET_MODE = PORTLET_CONTROL_PREFIX + "mode";
     
+    public static final String SLASH = "/";
+    public static final String ACTION_SUFFIX = "action.uP";
+    public static final String RENDER_SUFFIX = "render.uP";
+    public static final String WORKER_SUFFIX = "worker.uP";
+    
     public static final String NO_STATE_REGEX = ".*(normal|max|detached|exclusive|legacy).*";
     private static final Pattern NO_STATE_PATTERN = Pattern.compile(NO_STATE_REGEX);
-    public static final String PORTAL_REQUEST_REGEX = "^(?:([^/]*)/)*(normal|max|detached|exclusive|legacy)/(?:([^/]*)/)?(render\\.uP|action\\.uP|)$";
+    public static final String PORTAL_REQUEST_REGEX = "^(?:([^/]*)/)*(normal|max|detached|exclusive|legacy)/(?:([^/]*)/)?(render\\.uP|action\\.uP|worker\\.uP|)$";
     private static final Pattern PORTAL_REQUEST_PATTERN = Pattern.compile(PORTAL_REQUEST_REGEX);
     
     private static final String PORTAL_REQUEST_INFO_ATTR = PortalUrlProviderImpl.class.getName() + ".PORTAL_REQUEST_INFO"; 
@@ -222,8 +228,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             
             // upper case group(2) to get UrlState enum
             requestInfo.setUrlState(UrlState.valueOf(stateInformation.toUpperCase()));
-            // true if group(4) matches "action", false otherwise
-            requestInfo.setAction("action.uP".equals(renderInformation));
+            // true if group(4) matches ACTION, false otherwise
+            requestInfo.setAction(ACTION_SUFFIX.equals(renderInformation));
             
             // group(3) can be null - if so ignore setting targetedPortletWindowId and targetedChannelSubscribeId
             if(null != channelInformation) {
@@ -275,16 +281,14 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-        // TODO is this the user's default folder?
-        final String rootFolderId = userLayoutManager.getRootFolderId();
+
+        final IUserLayout userLayout = userLayoutManager.getUserLayout();
         
-        //TODO determine default active tab for user
-        // xpath may look like: /layout/folder/folder[type='regular' and hidden='false'][0]/@ID
-        
+        final XPathExpression defaultTabIdExpression = this.getUserDefaultTabIdExpression();
+        final String defaultTabId = userLayout.findNodeId(defaultTabIdExpression);
+          
         // call out to getFolderUrlByNodeId, pass in default nodeId for user
-        return getFolderUrlByNodeId(request, rootFolderId);
-        
-        //return new PortalLayoutUrlImpl(request, this, rootFolderId);
+        return getFolderUrlByNodeId(request, defaultTabId);
     }
 
     /* (non-Javadoc)
@@ -369,20 +373,20 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         //Add folder ID of parent tab if it exists
         if (tabId != null) {
             final String folderId = this.verifyFolderId(request, tabId);
-            url.append("/").append(folderId);
+            url.append(SLASH).append(folderId);
         }
         
         
         final String folderId = this.verifyFolderId(request, targetFolderId);
-        url.append("/").append(folderId);
+        url.append(SLASH).append(folderId);
 
         //TODO need to allow portal URLs to set the UrlState
         //TODO need to determine current URL state if specific UrlState is not already set?
         //Add state information - call out to getPortalRequestInfo to get UrlState, and action?
         // basePortalUrl may not have the ability to set state, also may never be action
-        url.append("/").append(UrlState.NORMAL);
+        url.append(SLASH).append(UrlState.NORMAL);
         //TODO are portal URLs always render URLs?
-        url.append("/render.uP");
+        url.append(SLASH).append(RENDER_SUFFIX);
 
         //Add all portal parameters
         final Map<String, List<String>> portalParameters = basePortalUrl.getPortalParameters();
@@ -433,7 +437,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             if (tabId != null) {
                 final String folderId = this.verifyFolderId(request, tabId);
                 url.append(folderId);
-                url.append("/");
+                url.append(SLASH);
             }
         }
         
@@ -462,14 +466,14 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
         final String fname = channelDefinition.getFName();
         final String validFname = FunctionalNameType.INVALID_CHARS_PATTERN.matcher(fname).replaceAll("_");
-        url.append("/").append(validFname).append(".").append(channelSubscribeId);
+        url.append(SLASH).append(validFname).append(".").append(channelSubscribeId);
         
         //File part 
         if (portalPortletUrl.isAction()) {
-            url.append("/action.uP");
+            url.append(SLASH).append(ACTION_SUFFIX);
         }
         else {
-            url.append("/render.uP");
+            url.append(SLASH).append(RENDER_SUFFIX);
         }
         final String encoding = this.getEncoding(request);
         
@@ -521,9 +525,6 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
 		
 		IPortalRequestInfo requestInfo = getPortalRequestInfo(request);
 		
-		//Convert the callback request to the portal request
-        request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
-		
         final StringBuilder url = this.getUrlBase(request);
         
         final String channelSubscribeId = portalChannelUrl.getChannelSubscribeId();
@@ -540,7 +541,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
              if (tabId != null) {
                  final String folderId = this.verifyFolderId(request, tabId);
                  url.append(folderId);
-                 url.append("/");
+                 url.append(SLASH);
              }
         }
         
@@ -552,14 +553,34 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             this.logger.warn("Unknown UrlState '" + urlState + "' specified, defaulting to NORMAL");
         }
         url.append(windowStateString);
-        url.append("/");
+        url.append(SLASH);
         
         url.append(portalChannelUrl.getFName());
         url.append(".");
         url.append(channelSubscribeId);
         
-        // channel urls always end with /render.uP
-        url.append("/render.uP");
+        if(portalChannelUrl.isWorker()) {
+        	url.append(SLASH).append(WORKER_SUFFIX);
+        } else {
+        	url.append(SLASH).append(RENDER_SUFFIX);
+        }
+        
+        Map<String, List<String>> portalParameters = portalChannelUrl.getPortalParameters();
+        if(!portalParameters.isEmpty()) {
+        	// parameters not empty, start query string
+        	url.append("?");
+        	final String encoding = this.getEncoding(request);
+        	
+        	for(Iterator<Map.Entry<String, List<String>>> i = portalParameters.entrySet().iterator(); i.hasNext();) {
+        		Map.Entry<String, List<String>> paramEntry = i.next();
+        		final String name = paramEntry.getKey();
+        		final List<String> values = paramEntry.getValue();
+        		this.encodeAndAppend(url, encoding, PORTAL_PARAM_PREFIX + name, values);
+        		if(i.hasNext()) {
+        			url.append("&");
+        		}
+        	}
+        }
 		return url.toString();
 	}
 
@@ -663,6 +684,12 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         return url;
     }
     
+    /**
+     * Returns an {@link XPathExpression} that represents the specified channel NodeId.
+     * 
+     * @param channelNodeId
+     * @return
+     */
     protected XPathExpression getFindChannelTabIdExpression(String channelNodeId) {
         final String expression = "/layout/folder/folder[descendant::channel[@ID='" + channelNodeId + "']]/@ID";
         
@@ -677,7 +704,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
     }
     
-    
+    /**
+     * Returns an {@link XPathExpression} that represents the specified tab NodeId.
+     * @param tabNodeId
+     * @return
+     */
     protected XPathExpression getFindTabIdExpression(String tabNodeId) {
         final String expression = "/layout/folder/folder[@ID='" + tabNodeId + "']/@ID";
         
@@ -692,5 +723,23 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
     }
 
+    /**
+     * Returns an {@link XPathExpression} that represent's the user's default tab.
+     * 
+     * @return
+     */
+    protected XPathExpression getUserDefaultTabIdExpression() {
+    	final String expression = "/layout/folder/folder[type='regular' and hidden='false'][0]/@ID";
+    	
+    	final XPathFactory xPathFactory = XPathFactory.newInstance();
+        final XPath xPath = xPathFactory.newXPath();
+        try {
+            //TODO compile the expression once and cache it!
+            return xPath.compile(expression);
+        }
+        catch (XPathExpressionException e) {
+            throw new IllegalArgumentException("Invalid XPath expression: " + expression, e);
+        }
+    }
 	
 }

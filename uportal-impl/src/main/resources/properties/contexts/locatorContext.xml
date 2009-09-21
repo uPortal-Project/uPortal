@@ -139,4 +139,9 @@
         class="org.jasig.portal.spring.locator.PortalUrlProviderLocator">
         <constructor-arg index="0" ref="portalUrlProvider"/>    
     </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.PortalRequestUtilsLocator"
+        class="org.jasig.portal.spring.locator.PortalRequestUtilsLocator">
+        <constructor-arg index="0" ref="portalRequestUtils"/>    
+    </bean>
 </beans>

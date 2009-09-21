@@ -10,11 +10,16 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.car.CarResources;
 import org.jasig.portal.portlet.url.RequestType;
+import org.jasig.portal.spring.locator.PortalRequestUtilsLocator;
 import org.jasig.portal.spring.locator.PortalUrlProviderLocator;
+import org.jasig.portal.url.IPortalChannelUrl;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlProvider;
 
 /**
@@ -25,13 +30,18 @@ import org.jasig.portal.url.IPortalUrlProvider;
  */
 public class ChannelRuntimeData extends Hashtable<String, Object> implements Cloneable {
     
-    private static final Log log = LogFactory.getLog(ChannelRuntimeData.class);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 53706L;
+
+	private static final Log log = LogFactory.getLog(ChannelRuntimeData.class);
     
     private BrowserInfo binfo=null;
     private Locale[] locales = null;
     private UPFileSpec channelUPFile;
     // TODO remove baseActionUrl field
-    private String baseActionURL = null;
+    //private String baseActionURL = null;
     private String httpRequestMethod=null;
     private String remoteAddress=null;
     private String keywords=null;
@@ -41,6 +51,8 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
     private static final String TRADITIONAL_MEDIA_BASE = "media/";
     public static final String CAR_BASE = "/CAR_BASE";
     public static final String WEB_APP_BASE = null;
+    
+    private String channelSubscribeId;
 
     /**
      * Default empty constructor
@@ -61,17 +73,32 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
       crd.locales = locales;
       crd.channelUPFile = channelUPFile;
       // TODO remove baseActionUrl field
-      crd.baseActionURL = baseActionURL;
+      //crd.baseActionURL = baseActionURL;
       crd.httpRequestMethod = httpRequestMethod;
       crd.keywords = keywords;
       crd.requestType = requestType;
       crd.renderingAsRoot = renderingAsRoot;
       crd.targeted = targeted;
+      crd.channelSubscribeId = channelSubscribeId;
       crd.putAll(this);
       return crd;
     }
-
+    
     /**
+	 * @return the channelSubscribeId
+	 */
+	public String getChannelSubscribeId() {
+		return channelSubscribeId;
+	}
+
+	/**
+	 * @param channelSubscribeId the channelSubscribeId to set
+	 */
+	public void setChannelSubscribeId(String channelSubscribeId) {
+		this.channelSubscribeId = channelSubscribeId;
+	}
+
+	/**
      * Set a UPFileSpec which will be used to produce
      * baseActionURL and workerActionURL.
      * @param upfs the UPFileSpec
@@ -119,7 +146,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
     @Deprecated
     public void setBaseActionURL(String baseActionURL) {
     	// TODO remove baseActionUrl field
-        this.baseActionURL = baseActionURL;
+        //this.baseActionURL = baseActionURL;
     }
 
     /**
@@ -235,15 +262,19 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
      * @return a value of URL to which parameter sequences should be appended.
      */
     public String getBaseActionURL() {
-    	//TODO depend on on PortalUrlProvider
-    	//IPortalUrlProvider portalUrlProvider = PortalUrlProviderLocator.getPortalUrlProvider();
-    	//portalUrlProvider.getChannelUrlByNodeId
+    	IPortalUrlProvider portalUrlProvider = PortalUrlProviderLocator.getPortalUrlProvider();
+    	IPortalRequestUtils portalRequestUtils = PortalRequestUtilsLocator.getPortalRequestUtils();
+    	IPortalChannelUrl channelUrl = portalUrlProvider.getChannelUrlByNodeId(portalRequestUtils.getCurrentPortalRequest(), this.channelSubscribeId);
 
     	// If the base action URL was explicitly set, use it
         // peterk: we should probably introduce idepotent version of this one as well, at some point
-        if (baseActionURL != null) {
+        /*
+    	if (baseActionURL != null) {
             return baseActionURL;
         }
+        */
+        
+        /*
         String url = null;
         try {
             url = channelUPFile.getUPFile();
@@ -252,6 +283,9 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
             log.error("Unable to construct a base action URL!", e);
         }
         return url;
+        */
+    	String result = channelUrl.toString();
+    	return channelUrl.getUrlString();
     }
 
     /**
@@ -276,7 +310,11 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
      * @since  2.5.1
      */
     public String getFnameActionURL(String fname) {
-    	//TODO portalUrlProvider.getChannelUrlByFName
+    	IPortalUrlProvider portalUrlProvider = PortalUrlProviderLocator.getPortalUrlProvider();
+    	IPortalRequestUtils portalRequestUtils = PortalRequestUtilsLocator.getPortalRequestUtils();
+    	IPortalChannelUrl channelUrl = portalUrlProvider.getChannelUrlByFName(portalRequestUtils.getCurrentPortalRequest(), fname);
+    	
+    	/*
         String url=null;
         try {
                 UPFileSpec upfs=new UPFileSpec(channelUPFile);
@@ -286,6 +324,8 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
             log.error("Unable to construct a fname action URL!", e);
         }
         return url;
+        */
+    	return channelUrl.getUrlString();
     }
 
     /**
@@ -296,7 +336,16 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
      * @return URL to invoke the worker.
      */
     public String getBaseWorkerURL(String worker) {
-        String url = null;
+        IPortalUrlProvider portalUrlProvider = PortalUrlProviderLocator.getPortalUrlProvider();
+    	IPortalRequestUtils portalRequestUtils = PortalRequestUtilsLocator.getPortalRequestUtils();
+    	IPortalChannelUrl channelUrl = portalUrlProvider.getChannelUrlByNodeId(portalRequestUtils.getCurrentPortalRequest(), this.channelSubscribeId);
+    	
+    	// update the returned channel to make it a worker
+    	channelUrl.setWorker(true);
+    	channelUrl.addPortalParameter("workerName", worker);
+    	return channelUrl.getUrlString();
+    	/*
+    	String url = null;
         try {
             UPFileSpec upfs = new UPFileSpec(channelUPFile);
             upfs.setMethod(UPFileSpec.WORKER_METHOD);
@@ -308,6 +357,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
             log.error("unable to construct a worker action URL for a worker '" + worker + "'.", e);
         }
         return url;
+        */
     }
 
     /**
@@ -333,7 +383,15 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
     public String getBaseMediaURL( Class aChannelClass )
     throws PortalException {
     	
-    String mediaBase = null;
+    	IPortalRequestUtils portalRequestUtils = PortalRequestUtilsLocator.getPortalRequestUtils();
+    	HttpServletRequest currentRequest = portalRequestUtils.getCurrentPortalRequest();
+    	
+    	StringBuilder result = new StringBuilder();
+    	final String contextPath = currentRequest.getContextPath();
+    	result.append(contextPath);
+    	result.append("/");
+    	
+        String mediaBase = null;
     
         if (aChannelClass == null) {
             mediaBase = TRADITIONAL_MEDIA_BASE;
@@ -346,11 +404,15 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
         	mediaBase = TRADITIONAL_MEDIA_BASE;	
         }
             
+        //return mediaBase;
+        result.append(mediaBase);
+        
         if (log.isTraceEnabled()) {
-        	log.trace("Returning media base [" + mediaBase + "] for class [" + aChannelClass + "]");
+        	log.trace("Returning media base [" + result.toString() + "] for class [" + aChannelClass + "]");
         }
         
-        return mediaBase;
+       
+        return result.toString();
     }
 
     /**
@@ -366,13 +428,26 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
     public String getBaseMediaURL( String resourcePath )
     throws PortalException
     {
-        if ( resourcePath == null || resourcePath.equals(WEB_APP_BASE))
-            return TRADITIONAL_MEDIA_BASE;
-        if ( resourcePath.equals(CAR_BASE))
+    	if ( resourcePath.equals(CAR_BASE)) {
             return createBaseCarMediaURL();
-        if ( CarResources.getInstance().containsResource( resourcePath ) )
+        }
+        if ( CarResources.getInstance().containsResource( resourcePath ) ) {
             return createBaseCarMediaURL();
-        return TRADITIONAL_MEDIA_BASE;
+        }
+        
+    	IPortalRequestUtils portalRequestUtils = PortalRequestUtilsLocator.getPortalRequestUtils();
+    	HttpServletRequest currentRequest = portalRequestUtils.getCurrentPortalRequest();
+    	StringBuilder result = new StringBuilder();
+    	final String contextPath = currentRequest.getContextPath();
+    	result.append(contextPath);
+    	result.append("/");
+    	
+        if ( resourcePath == null || resourcePath.equals(WEB_APP_BASE)) {
+            //return TRADITIONAL_MEDIA_BASE; 
+        	result.append(TRADITIONAL_MEDIA_BASE);
+        }
+        
+        return result.toString();
     }
 
     /**
@@ -544,7 +619,7 @@ public class ChannelRuntimeData extends Hashtable<String, Object> implements Clo
         sb.append(" locales = [").append(this.locales).append("] ");
         sb.append(" channelUPFile = [").append(this.channelUPFile).append("] ");
         // TODO remove baseActionUrl field
-        sb.append(" baseActionURL = [").append(this.baseActionURL).append("] ");
+        //sb.append(" baseActionURL = [").append(this.baseActionURL).append("] ");
         sb.append(" httpRequestMethod = [").append(this.httpRequestMethod).append("] ");
         sb.append(" remoteAddress = [").append(this.remoteAddress).append("] ");
         sb.append(" keywords = [").append(this.keywords).append("] ");

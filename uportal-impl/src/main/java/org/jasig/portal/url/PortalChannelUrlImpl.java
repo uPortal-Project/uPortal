@@ -30,6 +30,7 @@ class PortalChannelUrlImpl extends AbstractPortalUrl implements IPortalChannelUr
 
 	private String channelSubscribeId;
 	private String fName;
+	private boolean worker;
 	
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.url.IPortalChannelUrl#getChannelSubscribeId()
@@ -64,6 +65,20 @@ class PortalChannelUrlImpl extends AbstractPortalUrl implements IPortalChannelUr
 	}
 
 	/* (non-Javadoc)
+	 * @see org.jasig.portal.url.IPortalChannelUrl#isWorker()
+	 */
+	public boolean isWorker() {
+		return this.worker;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.url.IPortalChannelUrl#setWorker(boolean)
+	 */
+	public void setWorker(boolean worker) {
+		this.worker = worker;
+	}
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -79,6 +94,7 @@ class PortalChannelUrlImpl extends AbstractPortalUrl implements IPortalChannelUr
             .appendSuper(super.equals(object))
             .append(this.channelSubscribeId, rhs.channelSubscribeId)
             .append(this.fName, rhs.fName)
+            .append(this.worker, rhs.worker)
             .isEquals();
 	}
 
@@ -91,6 +107,7 @@ class PortalChannelUrlImpl extends AbstractPortalUrl implements IPortalChannelUr
         .appendSuper(super.hashCode())
         .append(this.channelSubscribeId)
         .append(this.fName)
+        .append(this.worker)
         .toHashCode();
 	}
 
@@ -101,5 +118,13 @@ class PortalChannelUrlImpl extends AbstractPortalUrl implements IPortalChannelUr
 	public String getUrlString() {
 		return this.urlGenerator.generateChannelUrl(request, this);
 	}
+	
+	/* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return this.getUrlString();
+    }
 
 }

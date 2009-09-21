@@ -9,7 +9,9 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -255,7 +257,6 @@ public class PortalUrlProviderImplTest {
      <li>No window state</li>
      </ul>
      * 
-     * TODO is this a valid test? if so, our regex isn't capable of handling a URL without normal|max|legacy etc.
      * @throws Exception
      */
     @Test
@@ -928,6 +929,8 @@ public class PortalUrlProviderImplTest {
          IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
          expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("32");
          expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
+         expect(mockPortalChannelUrl.isWorker()).andReturn(false);
+         expect(mockPortalChannelUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
          replay(mockPortalChannelUrl);
          
          IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
@@ -951,8 +954,208 @@ public class PortalUrlProviderImplTest {
     }
     
     /**
+     * Same test as {@link #testGenerateChannelUrlControl()}, only worker.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateChannelUrlWorker() throws Exception {
+    	 MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+         mockRequest.setContextPath("/uPortal/");
+         mockRequest.setRequestURI("/uPortal/home/normal/channelName.32/worker.uP");
+         
+         IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+         expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("32");
+         expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
+         expect(mockPortalChannelUrl.isWorker()).andReturn(true);
+         expect(mockPortalChannelUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
+         replay(mockPortalChannelUrl);
+         
+         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
+         expect(mockChannelDefinition.isPortlet()).andReturn(false);
+         replay(mockChannelDefinition);
+         IChannelRegistryStore mockChannelRegistryStore = createMock(IChannelRegistryStore.class);
+         expect(mockChannelRegistryStore.getChannelDefinition("channelName")).andReturn(mockChannelDefinition);
+         replay(mockChannelRegistryStore);
+         
+         ProviderSetupDetails details = new ProviderSetupDetails();
+         details.setChannelFName("channelName");
+         details.setChannelId("32");
+         details.setFolderName("home");
+         details.setHttpServletRequest(mockRequest);
+         PortalUrlProviderImpl provider = generateMockProviderForChannelUrl(details);
+         provider.setChannelRegistryStore(mockChannelRegistryStore);
+         String result = provider.generateChannelUrl(mockRequest, mockPortalChannelUrl);
+         
+         Assert.assertEquals("/uPortal/home/normal/channelName.32/worker.uP", result);
+         verify(mockPortalChannelUrl);
+    }
+    
+    /**
+     * Same url as {@link #testGenerateChannelUrlControl()}, set
+     * state to maximized.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateChannelUrlMaximized() throws Exception {
+    	MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal/");
+        mockRequest.setRequestURI("/uPortal/home/max/channelName.32/render.uP");
+        
+        IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+        expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("32");
+        expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
+        expect(mockPortalChannelUrl.isWorker()).andReturn(false);
+        expect(mockPortalChannelUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
+        replay(mockPortalChannelUrl);
+        
+        IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
+        expect(mockChannelDefinition.isPortlet()).andReturn(false);
+        replay(mockChannelDefinition);
+        IChannelRegistryStore mockChannelRegistryStore = createMock(IChannelRegistryStore.class);
+        expect(mockChannelRegistryStore.getChannelDefinition("channelName")).andReturn(mockChannelDefinition);
+        replay(mockChannelRegistryStore);
+        
+        ProviderSetupDetails details = new ProviderSetupDetails();
+        details.setChannelFName("channelName");
+        details.setChannelId("32");
+        details.setFolderName("home");
+        details.setHttpServletRequest(mockRequest);
+        PortalUrlProviderImpl provider = generateMockProviderForChannelUrl(details);
+        provider.setChannelRegistryStore(mockChannelRegistryStore);
+        String result = provider.generateChannelUrl(mockRequest, mockPortalChannelUrl);
+        
+        Assert.assertEquals("/uPortal/home/max/channelName.32/render.uP", result);
+        verify(mockPortalChannelUrl);
+    }
+    
+    /**
+     * Same url as {@link #testGenerateChannelUrlControl()}, add one portal parameter.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateChannelUrlParameter() throws Exception {
+    	MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal/");
+        mockRequest.setRequestURI("/uPortal/home/normal/channelName.32/render.uP");
+        
+        IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+        expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("32");
+        expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
+        expect(mockPortalChannelUrl.isWorker()).andReturn(false);
+        Map<String, List<String>> map = new LinkedHashMap<String, List<String>>();
+        List<String> list1 = Arrays.asList(new String[] {"value1"});
+        map.put("list1", list1);
+        expect(mockPortalChannelUrl.getPortalParameters()).andReturn(map);
+        replay(mockPortalChannelUrl);
+        
+        IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
+        expect(mockChannelDefinition.isPortlet()).andReturn(false);
+        replay(mockChannelDefinition);
+        IChannelRegistryStore mockChannelRegistryStore = createMock(IChannelRegistryStore.class);
+        expect(mockChannelRegistryStore.getChannelDefinition("channelName")).andReturn(mockChannelDefinition);
+        replay(mockChannelRegistryStore);
+        
+        ProviderSetupDetails details = new ProviderSetupDetails();
+        details.setChannelFName("channelName");
+        details.setChannelId("32");
+        details.setFolderName("home");
+        details.setHttpServletRequest(mockRequest);
+        PortalUrlProviderImpl provider = generateMockProviderForChannelUrl(details);
+        provider.setChannelRegistryStore(mockChannelRegistryStore);
+        String result = provider.generateChannelUrl(mockRequest, mockPortalChannelUrl);
+        
+        Assert.assertEquals("/uPortal/home/normal/channelName.32/render.uP?uP_list1=value1", result);
+        verify(mockPortalChannelUrl);
+    }
+    
+    /**
+     * Same url as {@link #testGenerateChannelUrlControl()}, add multiple portal parameters.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateChannelUrlParameters() throws Exception {
+    	MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal/");
+        mockRequest.setRequestURI("/uPortal/home/normal/channelName.32/render.uP");
+        
+        IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+        expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("32");
+        expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
+        expect(mockPortalChannelUrl.isWorker()).andReturn(false);
+        Map<String, List<String>> map = new LinkedHashMap<String, List<String>>();
+        List<String> list1 = Arrays.asList(new String[] {"value1", "value2" });
+        map.put("list1", list1);
+        List<String> list2 = Arrays.asList(new String[] {});
+        map.put("list2", list2);
+        expect(mockPortalChannelUrl.getPortalParameters()).andReturn(map);
+        replay(mockPortalChannelUrl);
+        
+        IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
+        expect(mockChannelDefinition.isPortlet()).andReturn(false);
+        replay(mockChannelDefinition);
+        IChannelRegistryStore mockChannelRegistryStore = createMock(IChannelRegistryStore.class);
+        expect(mockChannelRegistryStore.getChannelDefinition("channelName")).andReturn(mockChannelDefinition);
+        replay(mockChannelRegistryStore);
+        
+        ProviderSetupDetails details = new ProviderSetupDetails();
+        details.setChannelFName("channelName");
+        details.setChannelId("32");
+        details.setFolderName("home");
+        details.setHttpServletRequest(mockRequest);
+        PortalUrlProviderImpl provider = generateMockProviderForChannelUrl(details);
+        provider.setChannelRegistryStore(mockChannelRegistryStore);
+        String result = provider.generateChannelUrl(mockRequest, mockPortalChannelUrl);
+        
+        Assert.assertEquals("/uPortal/home/normal/channelName.32/render.uP?uP_list1=value1&uP_list1=value2&uP_list2=", result);
+        verify(mockPortalChannelUrl);
+    }
+    
+    /**
+     * Test a maximied transient channel url.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateChannelUrlTransient() throws Exception {
+    	MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal/");
+        mockRequest.setRequestURI("/uPortal/max/channelName.ctf32/render.uP");
+        
+        IPortalChannelUrl mockPortalChannelUrl = createMock(IPortalChannelUrl.class);
+        expect(mockPortalChannelUrl.getChannelSubscribeId()).andReturn("ctf32");
+        expect(mockPortalChannelUrl.getFName()).andReturn("channelName");
+        expect(mockPortalChannelUrl.isWorker()).andReturn(false);
+        expect(mockPortalChannelUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
+        replay(mockPortalChannelUrl);
+        
+        IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
+        expect(mockChannelDefinition.isPortlet()).andReturn(false);
+        replay(mockChannelDefinition);
+        IChannelRegistryStore mockChannelRegistryStore = createMock(IChannelRegistryStore.class);
+        expect(mockChannelRegistryStore.getChannelDefinition("channelName")).andReturn(mockChannelDefinition);
+        replay(mockChannelRegistryStore);
+        
+        ProviderSetupDetails details = new ProviderSetupDetails();
+        details.setChannelFName("channelName");
+        details.setChannelId("ctf32");
+        details.setFolderName(null);
+        details.setHttpServletRequest(mockRequest);
+        PortalUrlProviderImpl provider = generateMockProviderForChannelUrl(details);
+        provider.setChannelRegistryStore(mockChannelRegistryStore);
+        String result = provider.generateChannelUrl(mockRequest, mockPortalChannelUrl);
+        
+        Assert.assertEquals("/uPortal/max/channelName.ctf32/render.uP", result);
+        verify(mockPortalChannelUrl);
+    }
+    
+    /**
      * Not a test case.
-     * Internal method to mock up a {@link PortalUrlProviderImpl}.
+     * Internal method to mock up a {@link PortalUrlProviderImpl} for testing 
+     * {@link PortalUrlProviderImpl#generatePortletUrl(HttpServletRequest, IPortalPortletUrl, IPortletWindowId)}.
      * 
      * @param request
      * @param portletWindowId
@@ -1047,7 +1250,8 @@ public class PortalUrlProviderImplTest {
     
     /**
      * Not a test case.
-     * Internal method to mock up a {@link PortalUrlProviderImpl}.
+     * Internal method to mock up a {@link PortalUrlProviderImpl} for testing
+     * {@link PortalUrlProviderImpl#generateChannelUrl(HttpServletRequest, IPortalChannelUrl)}.
      * 
      * @param request
      * @param portletWindowId
@@ -1090,9 +1294,6 @@ public class PortalUrlProviderImplTest {
         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
         expect(mockChannelDefinition.getFName()).andReturn(details.getChannelFName());
         replay(mockChannelDefinition);
-        //IPortletDefinition mockPortletDefinition = createMock(IPortletDefinition.class);
-        //expect(mockPortletDefinition.getChannelDefinition()).andReturn(mockChannelDefinition);
-        //replay(mockPortletDefinition);
         IPortletEntity mockPortletEntity = createMock(IPortletEntity.class);
         expect(mockPortletEntity.getChannelSubscribeId()).andReturn(details.getChannelId()).times(2);
         replay(mockPortletEntity);
@@ -1102,15 +1303,10 @@ public class PortalUrlProviderImplTest {
         IUserInstanceManager mockUserInstanceManager= createMock(IUserInstanceManager.class);
         expect(mockUserInstanceManager.getUserInstance(details.getHttpServletRequest())).andReturn(mockUser).times(2);
         replay(mockUserInstanceManager);
-        
-        IPortalRequestUtils mockPortalRequestUtils = createMock(IPortalRequestUtils.class);
-        expect(mockPortalRequestUtils.getOriginalPortletAdaptorRequest(details.getHttpServletRequest())).andReturn(details.getHttpServletRequest());
-        replay(mockPortalRequestUtils);
         // END mock dependencies for PortalUrlProviderImpl
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
         provider.setUserInstanceManager(mockUserInstanceManager);
-        provider.setPortalRequestUtils(mockPortalRequestUtils);
         return provider;
     }
     

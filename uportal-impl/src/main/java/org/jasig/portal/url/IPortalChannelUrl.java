@@ -42,4 +42,19 @@ public interface IPortalChannelUrl extends IBasePortalUrl {
 	 * @return
 	 */
 	public String getChannelSubscribeId();
+	
+	/**
+	 * Return whether or not this request is a "worker" style request.
+	 * 
+	 * @return
+	 */
+	public boolean isWorker();
+	
+	/**
+	 * Specify whether or not this request is a "worker" style request.
+	 * 
+	 * @param worker
+	 */
+	public void setWorker(boolean worker);
+	
 }
