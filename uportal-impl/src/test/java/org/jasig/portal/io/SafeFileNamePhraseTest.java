@@ -35,6 +35,9 @@ public class SafeFileNamePhraseTest extends TestCase {
         safeName = safeFileNamePhrase.getSafeFileName("file*Name.channel");
         assertEquals("file_Name.channel", safeName);
         
+        safeName = safeFileNamePhrase.getSafeFileName("你好藍色.channel");
+        assertEquals("你好藍色.channel", safeName);
+        
         safeName = safeFileNamePhrase.getSafeFileName("This is my 3rd.test\\string/lets*se-how It goes");
         assertEquals("This_is_my_3rd.test.string.lets_se-how_It_goes", safeName);
     }
