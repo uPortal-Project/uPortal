@@ -12,6 +12,8 @@ package org.jasig.portal.url;
  * @version $Revision$
  */
 public enum UrlState {
+    /* IMPORTANT, all enum keys must be completely upper case for the helper methods to not cause problems */
+    
     /**
      * Rendering with multiple portlets in the view
      */
@@ -32,4 +34,18 @@ public enum UrlState {
      * Used by legacy content that is not using the new portal URL APIs
      */
     LEGACY;
+    
+    private final String lowercase;
+    
+    private UrlState() {
+        this.lowercase = this.toString().toLowerCase();
+    }
+    
+    public String toLowercaseString() {
+        return this.lowercase;
+    }
+    
+    public static UrlState valueOfIngoreCase(String name) {
+        return UrlState.valueOf(name.toUpperCase());
+    }
 }

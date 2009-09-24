@@ -222,7 +222,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             String renderInformation = m.group(4);
             
             // upper case group(2) to get UrlState enum
-            requestInfo.setUrlState(UrlState.valueOf(stateInformation.toUpperCase()));
+            requestInfo.setUrlState(UrlState.valueOfIngoreCase(stateInformation));
             // true if group(4) matches ACTION, false otherwise
             requestInfo.setAction(ACTION_SUFFIX.equals(renderInformation));
             
@@ -264,9 +264,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 logger.debug("finished building requestInfo: " + requestInfo);
             }
             return requestInfo;
-        } else {
-            throw new InvalidPortalRequestException("could not extract portal request from " + requestPath);
         }
+         
+        throw new InvalidPortalRequestException("could not extract portal request from " + requestPath);
     }
 
     /* (non-Javadoc)
@@ -371,22 +371,53 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         url.append(SLASH).append(RENDER_SUFFIX);
 
         //Add all portal parameters
+        final String encoding = this.getEncoding(request);
         final Map<String, List<String>> portalParameters = basePortalUrl.getPortalParameters();
-        if (portalParameters.size() > 0) {
-            final String encoding = this.getEncoding(request);
-            
-            String seperator = "?";
-            for (final Map.Entry<String, List<String>> paramEntry : portalParameters.entrySet()) {
-                final String name = paramEntry.getKey();
-                final List<String> values = paramEntry.getValue();
-                this.encodeAndAppend(url.append(seperator), encoding, PORTAL_PARAM_PREFIX + name, values);
-                seperator = "&";
-            }
-        }
+        this.addUrlParameters(encoding, "?", PORTAL_PARAM_PREFIX, portalParameters, url);
         
         return url.toString();
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IUrlGenerator#generateLayoutUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.ILayoutPortalUrl, java.lang.String)
+     */
+    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl, String targetFolderId) {
+        final StringBuilder url = this.getUrlBase(request);
+
+        final String folderId = this.verifyFolderId(request, targetFolderId);
+        url.append(folderId);
+
+        final Boolean renderInNormal = layoutPortalUrl.isRenderInNormal();
+        if (renderInNormal) {
+            url.append(SLASH).append(UrlState.NORMAL);
+        }
+        else {
+            final IPortalRequestInfo requestInfo = getPortalRequestInfo(request);
+            final UrlState urlState = requestInfo.getUrlState();
+            url.append(SLASH).append(urlState);
+        }
+        
+        final boolean action = layoutPortalUrl.isAction();
+        if (action) {
+            url.append(SLASH).append(ACTION_SUFFIX);
+        }
+        else {
+            url.append(SLASH).append(RENDER_SUFFIX);
+        }
+
+        final String encoding = this.getEncoding(request);
+        
+        //Add all portal parameters
+        final Map<String, List<String>> portalParameters = layoutPortalUrl.getPortalParameters();
+        String seperator = this.addUrlParameters(encoding, "?", PORTAL_PARAM_PREFIX, portalParameters, url);
+        
+        //Add all layout parameters
+        final Map<String, List<String>> layoutParameters = layoutPortalUrl.getLayoutParameters();
+        this.addUrlParameters(encoding, seperator, PORTAL_PARAM_PREFIX, layoutParameters, url);
+        
+        return url.toString();
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlGenerator#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IPortalPortletUrl, org.jasig.portal.portlet.om.IPortletWindowId)
      */
@@ -428,15 +459,15 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final WindowState currentWindowState = portletWindow.getWindowState();
         final WindowState urlWindowState = requestedWindowState != null ? requestedWindowState : currentWindowState;
       
-        String windowStateString = UrlState.NORMAL.toString().toLowerCase();
+        String windowStateString = UrlState.NORMAL.toLowercaseString();
         if (WindowState.MAXIMIZED.equals(urlWindowState)) {
-            windowStateString = UrlState.MAX.toString().toLowerCase();
+            windowStateString = UrlState.MAX.toLowercaseString();
         }
         else if (IPortletAdaptor.DETACHED.equals(urlWindowState)) {
-            windowStateString = UrlState.DETACHED.toString().toLowerCase();
+            windowStateString = UrlState.DETACHED.toLowercaseString();
         }
         else if (IPortletAdaptor.EXCLUSIVE.equals(urlWindowState)) {
-            windowStateString = UrlState.EXCLUSIVE.toString().toLowerCase();
+            windowStateString = UrlState.EXCLUSIVE.toLowercaseString();
         }
         else if(!WindowState.NORMAL.equals(urlWindowState)){
             this.logger.warn("Unknown WindowState '" + urlWindowState + "' specified for portlet window " + portletWindow + ", defaulting to NORMAL");
@@ -477,19 +508,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         //Add all portal parameters
         final Map<String, List<String>> portalParameters = portalPortletUrl.getPortalParameters();
-        for (final Map.Entry<String, List<String>> paramEntry : portalParameters.entrySet()) {
-            final String name = paramEntry.getKey();
-            final List<String> values = paramEntry.getValue();
-            this.encodeAndAppend(url.append("&"), encoding, PORTAL_PARAM_PREFIX + name, values);
-        }
+        this.addUrlParameters(encoding, "&", PORTAL_PARAM_PREFIX, portalParameters, url);
 
         //Add all portlet parameters
         final Map<String, List<String>> portletParameters = portalPortletUrl.getPortletParameters();
-        for (final Map.Entry<String, List<String>> paramEntry : portletParameters.entrySet()) {
-            final String name = paramEntry.getKey();
-            final List<String> values = paramEntry.getValue();
-            this.encodeAndAppend(url.append("&"), encoding, PORTLET_PARAM_PREFIX + name, values);
-        }
+        this.addUrlParameters(encoding, "&", PORTLET_PARAM_PREFIX, portletParameters, url);
         
         if(logger.isDebugEnabled()) {
             logger.debug("finished portlet url: " + url.toString());
@@ -531,15 +554,15 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
 
         final WindowState requestedWindowState = portalPortletUrl.getWindowState();
       
-        String windowStateString = UrlState.NORMAL.toString().toLowerCase();
+        String windowStateString = UrlState.NORMAL.toLowercaseString();
         if (WindowState.MAXIMIZED.equals(requestedWindowState)) {
-            windowStateString = UrlState.MAX.toString().toLowerCase();
+            windowStateString = UrlState.MAX.toLowercaseString();
         }
         else if (IPortletAdaptor.DETACHED.equals(requestedWindowState)) {
-            windowStateString = UrlState.DETACHED.toString().toLowerCase();
+            windowStateString = UrlState.DETACHED.toLowercaseString();
         }
         else if (IPortletAdaptor.EXCLUSIVE.equals(requestedWindowState)) {
-            windowStateString = UrlState.EXCLUSIVE.toString().toLowerCase();
+            windowStateString = UrlState.EXCLUSIVE.toLowercaseString();
         }
         else if (WindowState.MINIMIZED.equals(requestedWindowState)) {
             //TODO mark the channel minimized via the layout parameters
@@ -574,26 +597,13 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
         final String encoding = this.getEncoding(request);
         
-        //Query String  
-        String seperator = "?";
-          
         //Add all portal parameters
         final Map<String, List<String>> portalParameters = portalPortletUrl.getPortalParameters();
-        for (final Map.Entry<String, List<String>> paramEntry : portalParameters.entrySet()) {
-            final String name = paramEntry.getKey();
-            final List<String> values = paramEntry.getValue();
-            this.encodeAndAppend(url.append(seperator), encoding, PORTAL_PARAM_PREFIX + name, values);
-            seperator = "&";
-        }
-
+        String seperator = this.addUrlParameters(encoding, "?", PORTAL_PARAM_PREFIX, portalParameters, url);
+        
         //Add all portlet parameters
         final Map<String, List<String>> portletParameters = portalPortletUrl.getPortletParameters();
-        for (final Map.Entry<String, List<String>> paramEntry : portletParameters.entrySet()) {
-            final String name = paramEntry.getKey();
-            final List<String> values = paramEntry.getValue();
-            this.encodeAndAppend(url.append(seperator), encoding, PORTLET_PARAM_PREFIX + name, values);
-            seperator = "&";
-        }
+        this.addUrlParameters(encoding, seperator, PORTLET_PARAM_PREFIX, portletParameters, url);
         
         if(logger.isDebugEnabled()) {
             logger.debug("finished portlet url: " + url.toString());
@@ -632,9 +642,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
         
         final UrlState urlState = requestInfo.getUrlState();
-        String windowStateString = UrlState.NORMAL.toString().toLowerCase();
+        String windowStateString = UrlState.NORMAL.toLowercaseString();
         if (UrlState.MAX.equals(urlState)) {
-            windowStateString = UrlState.MAX.toString().toLowerCase();
+            windowStateString = UrlState.MAX.toLowercaseString();
         } 
         else if (!UrlState.NORMAL.equals(urlState)) {
             this.logger.warn("Unknown UrlState '" + urlState + "' specified, defaulting to NORMAL");
@@ -669,6 +679,19 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         	}
         }
 		return url.toString();
+	}
+	
+	protected String addUrlParameters(String encoding, String seperator, String prefix, Map<String, List<String>> parameters, StringBuilder url) {
+        if (parameters.size() > 0) {
+            for (final Map.Entry<String, List<String>> paramEntry : parameters.entrySet()) {
+                final String name = paramEntry.getKey();
+                final List<String> values = paramEntry.getValue();
+                this.encodeAndAppend(url.append(seperator), encoding, prefix + name, values);
+                seperator = "&";
+            }
+        }
+        
+        return seperator;
 	}
 
 	protected String verifyFolderId(HttpServletRequest request, String folderNodeId) {
