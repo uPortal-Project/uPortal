@@ -5,10 +5,6 @@
  */
 package org.jasig.portal.url;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -361,19 +357,23 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
      * @see org.jasig.portal.url.IUrlGenerator#generatePortalUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IBasePortalUrl, java.lang.String)
      */
     public String generatePortalUrl(HttpServletRequest request, IBasePortalUrl basePortalUrl, String targetFolderId) {
-        final StringBuilder url = this.getUrlBase(request);
+        final String encoding = this.getEncoding(request);
+        final UrlBuilder url = new UrlBuilder(encoding);
+        
+        final String contextPath = this.getCleanedContextPath(request);
+        url.setPath(contextPath);
 
         final String folderId = this.verifyFolderId(request, targetFolderId);
-        url.append(folderId);
+        url.addPath(folderId);
 
         //Folder targeted portal URL is always normal and render
-        url.append(SLASH).append(UrlState.NORMAL);
-        url.append(SLASH).append(RENDER_SUFFIX);
+        url.addPath(UrlState.NORMAL.toLowercaseString());
+        url.addPath(RENDER_SUFFIX);
 
         //Add all portal parameters
-        final String encoding = this.getEncoding(request);
+        
         final Map<String, List<String>> portalParameters = basePortalUrl.getPortalParameters();
-        this.addUrlParameters(encoding, "?", PORTAL_PARAM_PREFIX, portalParameters, url);
+        url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
         
         return url.toString();
     }
@@ -382,38 +382,40 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
      * @see org.jasig.portal.url.IUrlGenerator#generateLayoutUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.ILayoutPortalUrl, java.lang.String)
      */
     public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl, String targetFolderId) {
-        final StringBuilder url = this.getUrlBase(request);
+        final String encoding = this.getEncoding(request);
+        final UrlBuilder url = new UrlBuilder(encoding);
+        
+        final String contextPath = this.getCleanedContextPath(request);
+        url.setPath(contextPath);
 
         final String folderId = this.verifyFolderId(request, targetFolderId);
-        url.append(folderId);
+        url.addPath(folderId);
 
         final Boolean renderInNormal = layoutPortalUrl.isRenderInNormal();
         if (renderInNormal) {
-            url.append(SLASH).append(UrlState.NORMAL);
+            url.addPath(UrlState.NORMAL.toLowercaseString());
         }
         else {
             final IPortalRequestInfo requestInfo = getPortalRequestInfo(request);
             final UrlState urlState = requestInfo.getUrlState();
-            url.append(SLASH).append(urlState);
+            url.addPath(urlState.toLowercaseString());
         }
         
         final boolean action = layoutPortalUrl.isAction();
         if (action) {
-            url.append(SLASH).append(ACTION_SUFFIX);
+            url.addPath(ACTION_SUFFIX);
         }
         else {
-            url.append(SLASH).append(RENDER_SUFFIX);
+            url.addPath(RENDER_SUFFIX);
         }
 
-        final String encoding = this.getEncoding(request);
-        
         //Add all portal parameters
         final Map<String, List<String>> portalParameters = layoutPortalUrl.getPortalParameters();
-        String seperator = this.addUrlParameters(encoding, "?", PORTAL_PARAM_PREFIX, portalParameters, url);
+        url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
         
         //Add all layout parameters
         final Map<String, List<String>> layoutParameters = layoutPortalUrl.getLayoutParameters();
-        this.addUrlParameters(encoding, seperator, PORTAL_PARAM_PREFIX, layoutParameters, url);
+        url.addParameters(PORTAL_PARAM_PREFIX, layoutParameters);
         
         return url.toString();
     }
@@ -429,7 +431,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         //Convert the callback request to the portal request
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         
-        final StringBuilder url = this.getUrlBase(request);
+        final String encoding = this.getEncoding(request);
+        final UrlBuilder url = new UrlBuilder(encoding);
+        
+        final String contextPath = this.getCleanedContextPath(request);
+        url.setPath(contextPath);
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
         final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(portletWindow.getPortletEntityId());
@@ -449,8 +455,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             //Add folder ID of parent tab if it exists
             if (tabId != null) {
                 final String folderId = this.verifyFolderId(request, tabId);
-                url.append(folderId);
-                url.append(SLASH);
+                url.addPath(folderId);
             }
         }
         
@@ -472,47 +477,46 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         else if(!WindowState.NORMAL.equals(urlWindowState)){
             this.logger.warn("Unknown WindowState '" + urlWindowState + "' specified for portlet window " + portletWindow + ", defaulting to NORMAL");
         }
-        url.append(windowStateString);
+        url.addPath(windowStateString);
         
         //Add channel information: /fname.chanid
         final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletEntity.getPortletDefinitionId());
         final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
         final String fname = channelDefinition.getFName();
         final String validFname = FunctionalNameType.INVALID_CHARS_PATTERN.matcher(fname).replaceAll("_");
-        url.append(SLASH).append(validFname).append(".").append(channelSubscribeId);
+        url.addPath(validFname + "." + channelSubscribeId);
         
         //File part 
         if (portalPortletUrl.isAction()) {
-            url.append(SLASH).append(ACTION_SUFFIX);
+            url.addPath(ACTION_SUFFIX);
         }
         else {
-            url.append(SLASH).append(RENDER_SUFFIX);
+            url.addPath(RENDER_SUFFIX);
         }
-        final String encoding = this.getEncoding(request);
         
         //Query String  
         //Target portlet window info
-        this.encodeAndAppend(url.append("?"), encoding, PARAM_REQUEST_TARGET, portletWindowId.getStringId());
+        url.addParameter(PARAM_REQUEST_TARGET, portletWindowId.getStringId());
           
         //Portlet mode info
         final PortletMode portletMode = portalPortletUrl.getPortletMode();
         if (portletMode != null && !portletMode.equals(portletWindow.getPortletMode())) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE, portletMode.toString());
+            url.addParameter(PARAM_PORTLET_MODE, portletMode.toString());
         } 
         
         //Add window state param for switching between normal and maximized
         if (requestedWindowState != null && !requestedWindowState.equals(currentWindowState) 
                 && (WindowState.MINIMIZED.equals(urlWindowState) || WindowState.NORMAL.equals(urlWindowState))) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE, requestedWindowState.toString());
+            url.addParameter(PARAM_WINDOW_STATE, requestedWindowState.toString());
         }
         
         //Add all portal parameters
         final Map<String, List<String>> portalParameters = portalPortletUrl.getPortalParameters();
-        this.addUrlParameters(encoding, "&", PORTAL_PARAM_PREFIX, portalParameters, url);
+        url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
 
         //Add all portlet parameters
         final Map<String, List<String>> portletParameters = portalPortletUrl.getPortletParameters();
-        this.addUrlParameters(encoding, "&", PORTLET_PARAM_PREFIX, portletParameters, url);
+        url.addParameters(PORTLET_PARAM_PREFIX, portletParameters);
         
         if(logger.isDebugEnabled()) {
             logger.debug("finished portlet url: " + url.toString());
@@ -531,7 +535,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         //Convert the callback request to the portal request
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         
-        final StringBuilder url = this.getUrlBase(request);
+        final String encoding = this.getEncoding(request);
+        final UrlBuilder url = new UrlBuilder(encoding);
+        
+        final String contextPath = this.getCleanedContextPath(request);
+        url.setPath(contextPath);
         
         //Add folder information if available: /tabId
         // if not a transient node, we need to lookup user layout information
@@ -547,8 +555,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             //Add folder ID of parent tab if it exists
             if (tabId != null) {
                 final String folderId = this.verifyFolderId(request, tabId);
-                url.append(folderId);
-                url.append(SLASH);
+                url.addPath(folderId);
             }
         }
 
@@ -567,7 +574,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         else if (WindowState.MINIMIZED.equals(requestedWindowState)) {
             //TODO mark the channel minimized via the layout parameters
         }
-        url.append(windowStateString);
+        url.addPath(windowStateString);
         
         //TODO portlet mode to channel event mapping support
         
@@ -586,24 +593,23 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         final String fname = channelNode.getFunctionalName();
         final String validFname = FunctionalNameType.INVALID_CHARS_PATTERN.matcher(fname).replaceAll("_");
-        url.append(SLASH).append(validFname).append(".").append(channelSubscribeId);
+        url.addPath(validFname + "." + channelSubscribeId);
         
         //File part 
         if (portalPortletUrl.isAction()) {
-            url.append(SLASH).append(ACTION_SUFFIX);
+            url.addPath(ACTION_SUFFIX);
         }
         else {
-            url.append(SLASH).append(RENDER_SUFFIX);
+            url.addPath(RENDER_SUFFIX);
         }
-        final String encoding = this.getEncoding(request);
         
         //Add all portal parameters
         final Map<String, List<String>> portalParameters = portalPortletUrl.getPortalParameters();
-        String seperator = this.addUrlParameters(encoding, "?", PORTAL_PARAM_PREFIX, portalParameters, url);
+        url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
         
         //Add all portlet parameters
         final Map<String, List<String>> portletParameters = portalPortletUrl.getPortletParameters();
-        this.addUrlParameters(encoding, seperator, PORTLET_PARAM_PREFIX, portletParameters, url);
+        url.addParameters(PORTLET_PARAM_PREFIX, portletParameters);
         
         if(logger.isDebugEnabled()) {
             logger.debug("finished portlet url: " + url.toString());
@@ -621,7 +627,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
 		
 		IPortalRequestInfo requestInfo = getPortalRequestInfo(request);
 		
-        final StringBuilder url = this.getUrlBase(request);
+        final String encoding = this.getEncoding(request);
+        final UrlBuilder url = new UrlBuilder(encoding);
+        
+        final String contextPath = this.getCleanedContextPath(request);
+        url.setPath(contextPath);
         
         final String channelSubscribeId = portalChannelUrl.getChannelSubscribeId();
         if (!channelSubscribeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
@@ -636,8 +646,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
              //Add folder ID of parent tab if it exists
              if (tabId != null) {
                  final String folderId = this.verifyFolderId(request, tabId);
-                 url.append(folderId);
-                 url.append(SLASH);
+                 url.addPath(folderId);
              }
         }
         
@@ -649,49 +658,20 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         else if (!UrlState.NORMAL.equals(urlState)) {
             this.logger.warn("Unknown UrlState '" + urlState + "' specified, defaulting to NORMAL");
         }
-        url.append(windowStateString);
-        url.append(SLASH);
+        url.addPath(windowStateString);
         
-        url.append(portalChannelUrl.getFName());
-        url.append(".");
-        url.append(channelSubscribeId);
+        url.addPath(portalChannelUrl.getFName() + "." + channelSubscribeId);
         
         if(portalChannelUrl.isWorker()) {
-        	url.append(SLASH).append(WORKER_SUFFIX);
+        	url.addPath(WORKER_SUFFIX);
         } else {
-        	url.append(SLASH).append(RENDER_SUFFIX);
+        	url.addPath(RENDER_SUFFIX);
         }
         
         Map<String, List<String>> portalParameters = portalChannelUrl.getPortalParameters();
-        if(!portalParameters.isEmpty()) {
-        	// parameters not empty, start query string
-        	url.append("?");
-        	final String encoding = this.getEncoding(request);
-        	
-        	for(Iterator<Map.Entry<String, List<String>>> i = portalParameters.entrySet().iterator(); i.hasNext();) {
-        		Map.Entry<String, List<String>> paramEntry = i.next();
-        		final String name = paramEntry.getKey();
-        		final List<String> values = paramEntry.getValue();
-        		this.encodeAndAppend(url, encoding, PORTAL_PARAM_PREFIX + name, values);
-        		if(i.hasNext()) {
-        			url.append("&");
-        		}
-        	}
-        }
-		return url.toString();
-	}
-	
-	protected String addUrlParameters(String encoding, String seperator, String prefix, Map<String, List<String>> parameters, StringBuilder url) {
-        if (parameters.size() > 0) {
-            for (final Map.Entry<String, List<String>> paramEntry : parameters.entrySet()) {
-                final String name = paramEntry.getKey();
-                final List<String> values = paramEntry.getValue();
-                this.encodeAndAppend(url.append(seperator), encoding, prefix + name, values);
-                seperator = "&";
-            }
-        }
-        
-        return seperator;
+        url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
+
+        return url.toString();
 	}
 
 	protected String verifyFolderId(HttpServletRequest request, String folderNodeId) {
@@ -725,73 +705,25 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         return this.defaultEncoding;
     }
-    
-    
-    protected void encodeAndAppend(StringBuilder url, String encoding, String name, String... values) {
-        this.encodeAndAppend(url, encoding, name, Arrays.asList(values));
-    }
-    
-    /**
-     * Encodes parameter name and value(s) on to the url using the specified encoding. The option to pass more than one
-     * value is provided to avoid encoding the same name multiple times.  
-     * 
-     * @param url The URL StringBuilder to append the parameters to
-     * @param encoding The encoding to use.
-     * @param name The name of the parameter
-     * @param values The values for the parameter, a & will be appended between each name/value pair added when multiple values are passed.
-     */
-    protected void encodeAndAppend(StringBuilder url, String encoding, String name, List<String> values) {
-        try {
-            name = URLEncoder.encode(name, encoding);
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Failed to encode portlet URL parameter name '" + name + "' for encoding '" + encoding + "'");
-        }
-        
-        if (values.size() == 0) {
-            url.append(name).append("=");
-        }
-        else {
-            for (final Iterator<String> valueItr = values.iterator(); valueItr.hasNext(); ) {
-                String value = valueItr.next();
-                if (value == null) {
-                    value = "";
-                }
-                
-                try {
-                    value = URLEncoder.encode(value, encoding);
-                }
-                catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException("Failed to encode portlet URL parameter value '" + value + "' for encoding '" + encoding + "'");
-                }
-                
-                url.append(name).append("=").append(value);
-                
-                if (valueItr.hasNext()) {
-                    url.append("&");
-                }
-            }
-        }
-    }
 
     /**
      * @param request The current requet
      * @return The base URL, will be absolute (start with / or protocol://) and will end with a /
      */
-    protected StringBuilder getUrlBase(HttpServletRequest request) {
-        final StringBuilder url = new StringBuilder(request.getContextPath());
+    protected String getCleanedContextPath(HttpServletRequest request) {
+        String contextPath = request.getContextPath();
         
         //Make sure the URL starts with a /
-        if (url.charAt(0) != '/') {
-            url.insert(0, '/');
+        if (contextPath.charAt(0) == '/') {
+            contextPath = contextPath.substring(1);
         }
         
         //Make sure the URL ends with a /
-        if (url.charAt(url.length() - 1) != '/') {
-            url.append('/');
+        if (contextPath.charAt(contextPath.length() - 1) == '/') {
+            contextPath = contextPath.substring(0, contextPath.length() - 1);
         }
 
-        return url;
+        return contextPath;
     }
     
     /**
