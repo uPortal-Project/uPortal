@@ -1,2 +1,7 @@
+/**
+ * Copyright (c) 2000-2009, Jasig, Inc.
+ * See license distributed with this file and available online at
+ * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+ */
 #tooltip{position:absolute;z-index:3000;border:1px solid #111;background-color:#ffffe1;padding:2px;}
 #tooltip h3,#tooltip div{margin:0;}

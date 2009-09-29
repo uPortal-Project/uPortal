@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
 <!DOCTYPE channelDef PUBLIC "-//uPortal//Channel Publishing/EN" "channelPublishingDocument.dtd">
 
 <!--
