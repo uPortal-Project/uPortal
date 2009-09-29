@@ -36,6 +36,7 @@
                 <value>MAXIMIZED</value>
                 <value>EXCLUSIVE</value>
                 <value>DETACHED</value>
+                <value>PRINT</value>
             </set>
         </property>
         <property name="portletModes">

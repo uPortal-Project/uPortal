@@ -25,23 +25,27 @@
  | used by the theme
 -->
 <xsl:stylesheet 
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    xmlns:xalan="http://xml.apache.org/xalan" 
-    xmlns:dlm="http://www.uportal.org/layout/dlm"
-    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-    xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-    xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-    extension-element-prefixes="portal portlet" 
-    exclude-result-prefixes="xalan portal portlet upAuth upGroup" 
-    version="1.0">
-
-    <xalan:component prefix="portal" elements="url param">
-        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-    </xalan:component>
-    <xalan:component prefix="portlet" elements="url param">
-        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
-    </xalan:component>
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+  xmlns:xalan="http://xml.apache.org/xalan" 
+  xmlns:dlm="http://www.uportal.org/layout/dlm"
+  xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
+  xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
+  xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
+  xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+  xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+  extension-element-prefixes="portal portlet layout" 
+  exclude-result-prefixes="xalan portal portlet layout upAuth upGroup" 
+  version="1.0">
+  
+  <xalan:component prefix="portal" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+  </xalan:component>
+  <xalan:component prefix="portlet" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+  </xalan:component>
+  <xalan:component prefix="layout" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
+  </xalan:component>
 <!-- ============================================= -->
     
   
@@ -137,7 +141,7 @@
     
     <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
-        <portal:url layoutId="{@ID}"/>
+        <layout:url layoutId="{@ID}"/>
       </xsl:variable>
       <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
         <span class="portal-navigation-label"><xsl:value-of select="@name"/></span>
@@ -182,7 +186,7 @@
               <xsl:for-each select="tabChannel">
                 <li>
                   <xsl:variable name="tabLinkUrl">
-                    <portal:url layoutId="{@ID}"/>
+                    <layout:url layoutId="{@ID}"/>
                   </xsl:variable>
                   <a href="{$tabLinkUrl}" title="{@name}">  <!-- Navigation item link. -->
                     <span><xsl:value-of select="@name"/></span>

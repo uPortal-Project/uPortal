@@ -50,10 +50,11 @@
     xmlns:dlm="http://www.uportal.org/layout/dlm"
     xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
     xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
+    xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
     xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-    extension-element-prefixes="portal portlet" 
-    exclude-result-prefixes="xalan portal portlet upAuth upGroup" 
+    extension-element-prefixes="portal portlet layout" 
+    exclude-result-prefixes="xalan portal portlet layout upAuth upGroup" 
     version="1.0">
   
   <!-- ============================= -->
@@ -78,6 +79,9 @@
     </xalan:component>
     <xalan:component prefix="portlet" elements="url param">
         <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+    </xalan:component>
+    <xalan:component prefix="layout" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
     </xalan:component>
 <!-- ============================================= -->
   
@@ -153,9 +157,7 @@
   <xsl:param name="USER_NAME"><xsl:value-of select="$userName"/></xsl:param>
   <xsl:param name="uP_productAndVersion">uPortal</xsl:param>
   <xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
-  <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
-  <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
-  <xsl:param name="HOME_ACTION_URL"><portal:url/></xsl:param>
+  <xsl:param name="HOME_ACTION_URL"><portal:url></portal:url></xsl:param>
   <xsl:param name="PORTAL_VIEW">
   	<xsl:choose>
   		<xsl:when test="//layout_fragment">detached</xsl:when>

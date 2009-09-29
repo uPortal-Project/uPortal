@@ -286,7 +286,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
      * @see org.jasig.portal.url.IPortalUrlProvider#getFolderUrlByNodeId(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
     public ILayoutPortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId) {
-        final String resolvedFolderId = this.verifyFolderId(request, folderNodeId);
+        final String resolvedFolderId = this.verifyLayoutNodeId(request, folderNodeId);
         return new LayoutPortalUrlImpl(request, this, resolvedFolderId);
 
     }
@@ -352,47 +352,21 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         return this.getPortletUrl(request, portletWindowId);
     }
     
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlGenerator#generatePortalUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IBasePortalUrl, java.lang.String)
-     */
-    public String generatePortalUrl(HttpServletRequest request, IBasePortalUrl basePortalUrl, String targetFolderId) {
-        final String encoding = this.getEncoding(request);
-        final UrlBuilder url = new UrlBuilder(encoding);
-        
-        final String contextPath = this.getCleanedContextPath(request);
-        url.setPath(contextPath);
-
-        final String folderId = this.verifyFolderId(request, targetFolderId);
-        url.addPath(folderId);
-
-        //Folder targeted portal URL is always normal and render
-        url.addPath(UrlState.NORMAL.toLowercaseString());
-        url.addPath(RENDER_SUFFIX);
-
-        //Add all portal parameters
-        
-        final Map<String, List<String>> portalParameters = basePortalUrl.getPortalParameters();
-        url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
-        
-        return url.toString();
-    }
-    
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlGenerator#generateLayoutUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.ILayoutPortalUrl, java.lang.String)
      */
-    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl, String targetFolderId) {
+    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl, String targetNodeId) {
         final String encoding = this.getEncoding(request);
         final UrlBuilder url = new UrlBuilder(encoding);
         
         final String contextPath = this.getCleanedContextPath(request);
         url.setPath(contextPath);
 
-        final String folderId = this.verifyFolderId(request, targetFolderId);
+        final String folderId = this.verifyLayoutNodeId(request, targetNodeId);
         url.addPath(folderId);
 
         final Boolean renderInNormal = layoutPortalUrl.isRenderInNormal();
-        if (renderInNormal) {
+        if (renderInNormal != null && renderInNormal) {
             url.addPath(UrlState.NORMAL.toLowercaseString());
         }
         else {
@@ -454,7 +428,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             
             //Add folder ID of parent tab if it exists
             if (tabId != null) {
-                final String folderId = this.verifyFolderId(request, tabId);
+                final String folderId = this.verifyLayoutNodeId(request, tabId);
                 url.addPath(folderId);
             }
         }
@@ -464,7 +438,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final WindowState currentWindowState = portletWindow.getWindowState();
         final WindowState urlWindowState = requestedWindowState != null ? requestedWindowState : currentWindowState;
       
-        String windowStateString = UrlState.NORMAL.toLowercaseString();
+        final String windowStateString;
         if (WindowState.MAXIMIZED.equals(urlWindowState)) {
             windowStateString = UrlState.MAX.toLowercaseString();
         }
@@ -474,8 +448,12 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         else if (IPortletAdaptor.EXCLUSIVE.equals(urlWindowState)) {
             windowStateString = UrlState.EXCLUSIVE.toLowercaseString();
         }
-        else if(!WindowState.NORMAL.equals(urlWindowState)){
-            this.logger.warn("Unknown WindowState '" + urlWindowState + "' specified for portlet window " + portletWindow + ", defaulting to NORMAL");
+        else {
+            if(!WindowState.NORMAL.equals(urlWindowState)) {
+                this.logger.warn("Unknown WindowState '" + urlWindowState + "' specified for portlet window " + portletWindow + ", defaulting to NORMAL");
+            }
+            
+            windowStateString = UrlState.NORMAL.toLowercaseString();
         }
         url.addPath(windowStateString);
         
@@ -554,27 +532,48 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             
             //Add folder ID of parent tab if it exists
             if (tabId != null) {
-                final String folderId = this.verifyFolderId(request, tabId);
+                final String folderId = this.verifyLayoutNodeId(request, tabId);
                 url.addPath(folderId);
             }
         }
 
         final WindowState requestedWindowState = portalPortletUrl.getWindowState();
       
-        String windowStateString = UrlState.NORMAL.toLowercaseString();
         if (WindowState.MAXIMIZED.equals(requestedWindowState)) {
-            windowStateString = UrlState.MAX.toLowercaseString();
+            url.addPath(UrlState.MAX.toLowercaseString());
         }
         else if (IPortletAdaptor.DETACHED.equals(requestedWindowState)) {
-            windowStateString = UrlState.DETACHED.toLowercaseString();
+            url.addPath(UrlState.DETACHED.toLowercaseString());
         }
         else if (IPortletAdaptor.EXCLUSIVE.equals(requestedWindowState)) {
-            windowStateString = UrlState.EXCLUSIVE.toLowercaseString();
+            url.addPath(UrlState.EXCLUSIVE.toLowercaseString());
         }
         else if (WindowState.MINIMIZED.equals(requestedWindowState)) {
-            //TODO mark the channel minimized via the layout parameters
+            //Support for minimizing channels
+            url.addParameter(PORTAL_PARAM_PREFIX + "tcattr", "minimized");
+            url.addParameter("minimized_channelId", channelSubscribeId);
+            url.addParameter("minimized_" + channelSubscribeId + "_value", "true");
         }
-        url.addPath(windowStateString);
+        else {
+            url.addPath(UrlState.NORMAL.toLowercaseString());
+        }
+        
+        //TODO PRINT WindowState support, handle the same way as detached
+        
+        /**
+         * state - max, print
+         *  uP_print_target={@ID}
+         * mode - help, about, edit
+         *  uP_help|edit|about_target={@ID}
+         */
+        
+        final PortletMode requestedPortletMode = portalPortletUrl.getPortletMode();
+//        if (PortletMode.EDIT.equals(requestedPortletMode)) {
+//            
+//        }
+        if (requestedPortletMode != null) {
+            this.logger.warn("Request PortletMode '" + requestedPortletMode + "' is not handled for IChannel integration");
+        }
         
         //TODO portlet mode to channel event mapping support
         
@@ -645,7 +644,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
              
              //Add folder ID of parent tab if it exists
              if (tabId != null) {
-                 final String folderId = this.verifyFolderId(request, tabId);
+                 final String folderId = this.verifyLayoutNodeId(request, tabId);
                  url.addPath(folderId);
              }
         }
@@ -674,7 +673,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         return url.toString();
 	}
 
-	protected String verifyFolderId(HttpServletRequest request, String folderNodeId) {
+	protected String verifyLayoutNodeId(HttpServletRequest request, String folderNodeId) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
@@ -682,9 +681,6 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         if (node == null) {
             throw new IllegalArgumentException("No layout node exists for id: " + folderNodeId);
-        }
-        if (node.getType() != IUserLayoutNodeDescription.FOLDER) {
-            throw new IllegalArgumentException("Layout node is not a folder for id: " + folderNodeId);
         }
         
         final String resolvedFolderId = node.getId();

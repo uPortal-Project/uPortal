@@ -42,11 +42,11 @@ public class LayoutUrlXalanElements extends BaseUrlXalanElements<ILayoutPortalUr
         final Node contextNode = context.getContextNode();
         final String layoutNodeId = elem.getAttribute("layoutId", contextNode, transformer);
         
-        final ILayoutPortalUrl layoutUrl = portalUrlProvider.getFolderUrlByNodeId(request, layoutNodeId);
-//        else {
-//            throw new IllegalArgumentException("One and only one target attribute is allowed. Please specify one of: 'fname', 'windowId', 'layoutId'");
-//        }
-        return layoutUrl;
+        if (layoutNodeId == null) {
+            throw new IllegalArgumentException("layoutId attribute is required and the only valid layout url attribute.");
+        }
+        
+        return portalUrlProvider.getFolderUrlByNodeId(request, layoutNodeId);
     }
     
     /* (non-Javadoc)
@@ -59,6 +59,9 @@ public class LayoutUrlXalanElements extends BaseUrlXalanElements<ILayoutPortalUr
         
         final String action = elem.getAttribute("action", contextNode, transformer);
         url.setAction(Boolean.parseBoolean(action));
+        
+        final String renderInNormal = elem.getAttribute("renderInNormal", contextNode, transformer);
+        url.setRenderInNormal(Boolean.parseBoolean(renderInNormal));
     }
 
     /* (non-Javadoc)

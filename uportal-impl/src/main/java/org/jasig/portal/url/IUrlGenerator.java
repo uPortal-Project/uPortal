@@ -18,19 +18,11 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 public interface IUrlGenerator {
     /**
      * @param request The current request
-     * @param basePortalUrl The URL object to create a URL string from
-     * @param targetFolderId The targeted folder id from the user's layout
-     * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
-     */
-    public String generatePortalUrl(HttpServletRequest request, IBasePortalUrl basePortalUrl, String targetFolderId);
-    
-    /**
-     * @param request The current request
      * @param layoutPortalUrl The URL object to create a URL string from
      * @param targetFolderId The targeted folder id from the user's layout
      * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
      */
-    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl, String targetFolderId);
+    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl, String targetNodeId);
     
     /**
      * @param request The current request

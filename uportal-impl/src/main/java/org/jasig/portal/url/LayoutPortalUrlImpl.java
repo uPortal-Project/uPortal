@@ -97,7 +97,7 @@ class LayoutPortalUrlImpl extends AbstractPortalUrl implements ILayoutPortalUrl 
     }
 
     public String getUrlString() {
-        return this.urlGenerator.generatePortalUrl(this.request, this, this.targetFolderId);
+        return this.urlGenerator.generateLayoutUrl(this.request, this, this.targetFolderId);
     }
 
     @Override

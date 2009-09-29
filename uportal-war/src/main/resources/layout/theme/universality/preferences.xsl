@@ -25,23 +25,27 @@
  | used by the theme
 -->
 <xsl:stylesheet 
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    xmlns:xalan="http://xml.apache.org/xalan" 
-    xmlns:dlm="http://www.uportal.org/layout/dlm"
-    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-    xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-    xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-    extension-element-prefixes="portal portlet" 
-    exclude-result-prefixes="xalan portal portlet upAuth upGroup" 
-    version="1.0">
-
-    <xalan:component prefix="portal" elements="url param">
-        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-    </xalan:component>
-    <xalan:component prefix="portlet" elements="url param">
-        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
-    </xalan:component>
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+  xmlns:xalan="http://xml.apache.org/xalan" 
+  xmlns:dlm="http://www.uportal.org/layout/dlm"
+  xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
+  xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
+  xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
+  xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+  xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+  extension-element-prefixes="portal portlet layout" 
+  exclude-result-prefixes="xalan portal portlet layout upAuth upGroup" 
+  version="1.0">
+  
+  <xalan:component prefix="portal" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+  </xalan:component>
+  <xalan:component prefix="portlet" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+  </xalan:component>
+  <xalan:component prefix="layout" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
+  </xalan:component>
 <!-- ============================================= -->
   
  <xsl:template name="preferences">
@@ -71,7 +75,7 @@
      up.jQuery(document).ready(function(){
        up.jQuery.uportal.UportalLayoutManager(
        {
-          portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
+          portalUrl: 'TODO_UP-2045 was BASE_ACTION_URL',
           mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',
           currentSkin: '<xsl:value-of select="$SKIN"/>',
           isFocusMode: true
@@ -206,7 +210,7 @@
        up.jQuery(document).ready(function(){
           up.jQuery.uportal.UportalLayoutManager(
             {
-              portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
+              portalUrl: 'TODO_UP-2045 was BASE_ACTION_URL',
               mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',
               currentSkin: '<xsl:value-of select="$SKIN"/>',
               messages: { 

@@ -26,23 +26,27 @@
  | used by the theme
 -->
 <xsl:stylesheet 
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    xmlns:xalan="http://xml.apache.org/xalan" 
-    xmlns:dlm="http://www.uportal.org/layout/dlm"
-    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-    xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-    xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-    extension-element-prefixes="portal portlet" 
-    exclude-result-prefixes="xalan portal portlet upAuth upGroup" 
-    version="1.0">
-
-    <xalan:component prefix="portal" elements="url param">
-        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-    </xalan:component>
-    <xalan:component prefix="portlet" elements="url param">
-        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
-    </xalan:component>
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+  xmlns:xalan="http://xml.apache.org/xalan" 
+  xmlns:dlm="http://www.uportal.org/layout/dlm"
+  xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
+  xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
+  xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
+  xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+  xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+  extension-element-prefixes="portal portlet layout" 
+  exclude-result-prefixes="xalan portal portlet layout upAuth upGroup" 
+  version="1.0">
+  
+  <xalan:component prefix="portal" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+  </xalan:component>
+  <xalan:component prefix="portlet" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+  </xalan:component>
+  <xalan:component prefix="layout" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
+  </xalan:component>
 <!-- ============================================= -->
   
   <!-- ========== TEMPLATE: PORTLET ========== -->
@@ -218,7 +222,12 @@
         </a>
       </xsl:if>
       <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
-      	<a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$BASE_ACTION_URL}?uP_remove_target={@ID}" class="up-portlet-control remove">
+        <xsl:variable name="removePortletUrl">
+          <layout:url layoutId="{@ID}" renderInNormal="true" action="true">
+            <layout:param name="remove_target" value="{@ID}"/>
+          </layout:url>
+        </xsl:variable>
+        <a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$removePortletUrl}" class="up-portlet-control remove">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_REMOVE_LABEL']"/></span>
         </a>
       </xsl:if>

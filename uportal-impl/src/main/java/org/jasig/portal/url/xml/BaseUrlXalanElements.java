@@ -60,7 +60,9 @@ public abstract class BaseUrlXalanElements<T extends IBasePortalUrl> {
         }
         catch (Throwable t) {
             if (t instanceof TransformerException) {
-                throw (TransformerException)t;
+                final TransformerException te = (TransformerException)t;
+                transformer.setExceptionThrown(te);
+                throw te;
             }
             
             final RuntimeException re;

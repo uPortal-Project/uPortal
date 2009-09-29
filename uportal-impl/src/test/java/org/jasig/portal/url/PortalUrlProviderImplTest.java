@@ -26,6 +26,7 @@ import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -915,6 +916,56 @@ public class PortalUrlProviderImplTest {
     }
     
     /**
+     * From http://www.ja-sig.org/wiki/display/UPC/Consistent+Portal+URLs
+     * Tests "Example Url" #7:
+     <pre>
+    Action URL for the weather portlet on a normal view of the home tab that is passing two parameters, action and zip. Since this is an action it would redirect to a normal URL rendering the home tab.
+
+    /uPortal/normal/home/weather.31/action.uP?pltc_target=target&pltp_pp_action=addCity&pltp_pp_zip=53706
+     </pre>
+     *
+     * context path: /uPortal/
+     * channel fname: weather
+     * channel subscribe id: 31
+     * portlet window state: normal
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateChannelPortletUrlWeatherAction() throws Exception {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal/");
+        
+        IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
+        expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
+        expect(mockPortalPortletUrl.isAction()).andReturn(true);
+        expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
+        expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
+        Map<String, List<String>> portletParameters = new HashMap<String, List<String>>();
+        List<String> ppActionValues = new ArrayList<String>();
+        ppActionValues.add("addCity");
+        portletParameters.put("pp_action", ppActionValues);
+        List<String> ppZipValues = new ArrayList<String>();
+        ppZipValues.add("53706");
+        portletParameters.put("pp_zip", ppZipValues);
+        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(portletParameters);
+        replay(mockPortalPortletUrl);
+        
+        ProviderSetupDetails details = new ProviderSetupDetails();
+        details.setChannelFName("weather");
+        details.setChannelId("u1l1n1");
+        details.setFolderName("home");
+        details.setHttpServletRequest(mockRequest);
+        details.setPortletMode(PortletMode.VIEW);
+        details.setWindowState(WindowState.NORMAL);
+        PortalUrlProviderImpl provider = generateMockProviderForChannelUrl(details);
+        
+        String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, "u1l1n1");
+        Assert.assertEquals("/uPortal/home/normal/weather.u1l1n1/action.uP?pltp_pp_action=addCity&pltp_pp_zip=53706", result);
+        
+        verify(mockPortalPortletUrl);
+    }
+    
+    /**
      * Control test for {@link PortalUrlProviderImpl#generateChannelUrl(HttpServletRequest, IChannelPortalUrl)}.
      * Normal layoutstate, home folder, channelName, 32 subscribeId.
      * 
@@ -1153,6 +1204,35 @@ public class PortalUrlProviderImplTest {
     }
     
     /**
+     * Test layout URL targeting a folder.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGenerateLayoutUrl() throws Exception {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal/");
+        mockRequest.setRequestURI("/uPortal/foobar/max/render.uP");
+        
+        ILayoutPortalUrl mockLayoutUrl = createMock(ILayoutPortalUrl.class);
+        expect(mockLayoutUrl.isRenderInNormal()).andReturn(null);
+        expect(mockLayoutUrl.isAction()).andReturn(true);
+        expect(mockLayoutUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
+        expect(mockLayoutUrl.getLayoutParameters()).andReturn(new HashMap<String, List<String>>());
+        replay(mockLayoutUrl);
+        
+        ProviderSetupDetails details = new ProviderSetupDetails();
+        details.setHttpServletRequest(mockRequest);
+        details.setFolderName("somefolder");
+        details.setFolderId("n32");
+        PortalUrlProviderImpl provider = generateMockProviderForPortalUrl(details);
+        String result = provider.generateLayoutUrl(mockRequest, mockLayoutUrl, "n32");
+        
+        Assert.assertEquals("/uPortal/somefolder/max/action.uP", result);
+        verify(mockLayoutUrl);
+    }
+    
+    /**
      * Not a test case.
      * Internal method to mock up a {@link PortalUrlProviderImpl} for testing 
      * {@link PortalUrlProviderImpl#generatePortletUrl(HttpServletRequest, IPortalPortletUrl, IPortletWindowId)}.
@@ -1267,28 +1347,32 @@ public class PortalUrlProviderImplTest {
         replay(mockUserLayout);
         
         // BEGIN only expect IUserLayoutNodeDescription calls if folderName is defined
-        IUserLayoutNodeDescription mockUserLayoutNodeDescription = createMock(IUserLayoutNodeDescription.class);
+        IUserLayoutChannelDescription mockUserLayoutChannelDescription = createMock(IUserLayoutChannelDescription.class);
         if(null != details.getFolderName()) {
-            expect(mockUserLayoutNodeDescription.getType()).andReturn(IUserLayoutNodeDescription.FOLDER);
-            expect(mockUserLayoutNodeDescription.getId()).andReturn(details.getFolderName());
+            expect(mockUserLayoutChannelDescription.getType()).andReturn(IUserLayoutNodeDescription.FOLDER);
+            expect(mockUserLayoutChannelDescription.getId()).andReturn(details.getFolderName());
         }
-        replay(mockUserLayoutNodeDescription);
+        if(null != details.getChannelFName()) {
+            expect(mockUserLayoutChannelDescription.getFunctionalName()).andReturn(details.getChannelFName());
+        }
+        replay(mockUserLayoutChannelDescription);
         // END only expect IUserLayoutNodeDescription calls if folderName is defined
         
         IUserLayoutManager mockUserLayoutManager = createMock(IUserLayoutManager.class);
         if(null != details.getChannelFName()) {
         	expect(mockUserLayoutManager.getSubscribeId(details.getChannelFName())).andReturn(details.getChannelId());
-        } else {
-        	expect(mockUserLayoutManager.getNode(details.getChannelId())).andReturn(mockUserLayoutNodeDescription);
+        } 
+        if (null != details.getChannelId())  {
+        	expect(mockUserLayoutManager.getNode(details.getChannelId())).andReturn(mockUserLayoutChannelDescription);
         }
         expect(mockUserLayoutManager.getUserLayout()).andReturn(mockUserLayout);
-        expect(mockUserLayoutManager.getNode(expressionText)).andReturn(mockUserLayoutNodeDescription);
+        expect(mockUserLayoutManager.getNode(expressionText)).andReturn(mockUserLayoutChannelDescription);
         replay(mockUserLayoutManager);
         IUserPreferencesManager mockUserPreferencesManager = createMock(IUserPreferencesManager.class);
-        expect(mockUserPreferencesManager.getUserLayoutManager()).andReturn(mockUserLayoutManager).times(2);
+        expect(mockUserPreferencesManager.getUserLayoutManager()).andReturn(mockUserLayoutManager).times(3);
         replay(mockUserPreferencesManager);
         IUserInstance mockUser = createMock(IUserInstance.class);
-        expect(mockUser.getPreferencesManager()).andReturn(mockUserPreferencesManager).times(2);
+        expect(mockUser.getPreferencesManager()).andReturn(mockUserPreferencesManager).times(3);
         replay(mockUser);
         
         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
@@ -1298,6 +1382,74 @@ public class PortalUrlProviderImplTest {
         expect(mockPortletEntity.getChannelSubscribeId()).andReturn(details.getChannelId()).times(2);
         replay(mockPortletEntity);
         // END transient mock objects
+
+        // BEGIN mock dependencies for PortalUrlProviderImpl
+        IUserInstanceManager mockUserInstanceManager= createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceManager.getUserInstance(details.getHttpServletRequest())).andReturn(mockUser).times(3);
+        replay(mockUserInstanceManager);
+        // END mock dependencies for PortalUrlProviderImpl
+        
+        IPortalRequestUtils mockPortalRequestUtils = createMock(IPortalRequestUtils.class);
+        expect(mockPortalRequestUtils.getOriginalPortalRequest(details.getHttpServletRequest())).andReturn(details.getHttpServletRequest());
+        replay(mockPortalRequestUtils);
+        
+        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setUserInstanceManager(mockUserInstanceManager);
+        provider.setPortalRequestUtils(mockPortalRequestUtils);
+        return provider;
+    }
+    
+    /**
+     * Not a test case.
+     * Internal method to mock up a {@link PortalUrlProviderImpl} for testing
+     * {@link PortalUrlProviderImpl#generateChannelUrl(HttpServletRequest, IChannelPortalUrl)}.
+     * 
+     * @param request
+     * @param portletWindowId
+     * @return
+     */
+    protected PortalUrlProviderImpl generateMockProviderForPortalUrl(ProviderSetupDetails details) {
+//        // BEGIN transient mock objects
+//        String expressionText = "/layout/folder/folder[descendant::channel[@ID='" + details.getChannelId() + "']]/@ID";
+//        
+//        IUserLayout mockUserLayout = createMock(IUserLayout.class);
+//        // we have to tell EasyMock to expect ANY instance of XPathExpression as XPathExpression equals is based on instance equality
+//        expect(mockUserLayout.findNodeId(EasyMock.isA(XPathExpression.class))).andReturn(expressionText);
+//        replay(mockUserLayout);
+//        
+//        // BEGIN only expect IUserLayoutNodeDescription calls if folderName is defined
+        IUserLayoutNodeDescription mockUserLayoutNodeDescription = createMock(IUserLayoutNodeDescription.class);
+        if(null != details.getFolderName()) {
+            expect(mockUserLayoutNodeDescription.getType()).andReturn(IUserLayoutNodeDescription.FOLDER);
+            expect(mockUserLayoutNodeDescription.getId()).andReturn(details.getFolderName());
+        }
+        replay(mockUserLayoutNodeDescription);
+        // END only expect IUserLayoutNodeDescription calls if folderName is defined
+//        
+        IUserLayoutManager mockUserLayoutManager = createMock(IUserLayoutManager.class);
+        expect(mockUserLayoutManager.getNode(details.getFolderId())).andReturn(mockUserLayoutNodeDescription);
+//        if(null != details.getChannelFName()) {
+//            expect(mockUserLayoutManager.getSubscribeId(details.getChannelFName())).andReturn(details.getChannelId());
+//        } else {
+//            expect(mockUserLayoutManager.getNode(details.getChannelId())).andReturn(mockUserLayoutNodeDescription);
+//        }
+//        expect(mockUserLayoutManager.getUserLayout()).andReturn(mockUserLayout);
+//        expect(mockUserLayoutManager.getNode(expressionText)).andReturn(mockUserLayoutNodeDescription);
+        replay(mockUserLayoutManager);
+        IUserPreferencesManager mockUserPreferencesManager = createMock(IUserPreferencesManager.class);
+        expect(mockUserPreferencesManager.getUserLayoutManager()).andReturn(mockUserLayoutManager).times(2);
+        replay(mockUserPreferencesManager);
+        IUserInstance mockUser = createMock(IUserInstance.class);
+        expect(mockUser.getPreferencesManager()).andReturn(mockUserPreferencesManager).times(2);
+        replay(mockUser);
+//        
+//        IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
+//        expect(mockChannelDefinition.getFName()).andReturn(details.getChannelFName());
+//        replay(mockChannelDefinition);
+//        IPortletEntity mockPortletEntity = createMock(IPortletEntity.class);
+//        expect(mockPortletEntity.getChannelSubscribeId()).andReturn(details.getChannelId()).times(2);
+//        replay(mockPortletEntity);
+//        // END transient mock objects
 
         // BEGIN mock dependencies for PortalUrlProviderImpl
         IUserInstanceManager mockUserInstanceManager= createMock(IUserInstanceManager.class);
@@ -1325,6 +1477,20 @@ public class PortalUrlProviderImplTest {
         private String channelFName;
         private WindowState windowState;
         private PortletMode portletMode;
+        private String folderId;
+        
+        /**
+         * @return the folderId
+         */
+        public String getFolderId() {
+            return this.folderId;
+        }
+        /**
+         * @param folderId the folderId to set
+         */
+        public void setFolderId(String folderId) {
+            this.folderId = folderId;
+        }
         /**
          * @return the httpServletRequest
          */

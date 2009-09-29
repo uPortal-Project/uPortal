@@ -370,7 +370,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         final ChannelRuntimeData channelRuntimeData = (ChannelRuntimeData)request.getAttribute(IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA);
         if (channelRuntimeData == null) {
             throw new IllegalStateException("No ChannelRuntimeData was found as a request attribute for key '" + IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA + "' on request '" + request + "'");
-        }
+        } 
         
         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
         final IPortletEntity parentPortletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
