@@ -47,6 +47,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channel.IChannelType;
@@ -206,6 +207,19 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
         this.clazz = clazz;
         
         this.initClass();
+    }
+    
+    public ChannelLifecycleState getLifecycleState() {
+		Date now = new Date();
+		if (this.getExpirationDate() != null && this.getExpirationDate().before(now)) {
+			return ChannelLifecycleState.EXPIRED;
+		} else if (this.getPublishDate() != null && this.getPublishDate().before(now)) {
+			return ChannelLifecycleState.PUBLISHED;
+		} else if (this.getApprovalDate() != null && this.getApprovalDate().before(now)) {
+			return ChannelLifecycleState.APPROVED;
+		} else {
+			return ChannelLifecycleState.CREATED;
+		}
     }
     
     

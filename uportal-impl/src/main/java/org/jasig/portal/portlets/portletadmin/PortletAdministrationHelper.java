@@ -199,6 +199,69 @@ public class PortletAdministrationHelper {
 	    channelDef.setTimeout(form.getTimeout());
 	    channelDef.setTitle(form.getTitle());
 	    
+	    Date now = new Date();
+
+		int order = form.getLifecycleState().getOrder();
+		
+		if (form.getId() < 0) {
+			
+			if (order >= ChannelLifecycleState.APPROVED.getOrder()) {
+				channelDef.setApproverId(publisher.getID());
+				channelDef.setApprovalDate(now);
+			}
+			
+			if (order >= ChannelLifecycleState.PUBLISHED.getOrder()) {
+			    channelDef.setPublisherId(publisher.getID());
+			    if (channelDef.getPublishDate() == null) {
+				    channelDef.setPublishDate(now);
+			    }
+			}
+
+			if (order >= ChannelLifecycleState.EXPIRED.getOrder()) {
+			    channelDef.setExpirerId(publisher.getID());
+			    if (channelDef.getExpirationDate() == null) {
+			    	channelDef.setExpirationDate(now);
+			    }
+			}
+			
+		} 
+		
+		// if we're updating a channel
+		else {
+
+			if (order >= ChannelLifecycleState.APPROVED.getOrder() && channelDef.getApproverId() >= 0) {
+				channelDef.setApproverId(publisher.getID());
+				if (channelDef.getApprovalDate() == null) {
+					channelDef.setApprovalDate(now);
+				}
+			} else {
+				channelDef.setApprovalDate(null);
+				channelDef.setApproverId(-1);
+			}
+			
+			if (order >= ChannelLifecycleState.PUBLISHED.getOrder() && channelDef.getPublisherId() >= 0) {
+				channelDef.setPublisherId(publisher.getID());
+				if (channelDef.getPublishDate() == null) {
+					channelDef.setPublishDate(now);
+				}
+			} else {
+				channelDef.setPublishDate(null);
+				channelDef.setPublisherId(-1);
+			}
+			
+			if (order >= ChannelLifecycleState.EXPIRED.getOrder() && channelDef.getExpirerId() >= 0) {
+				channelDef.setExpirerId(publisher.getID());
+				if (channelDef.getExpirationDate() == null) {
+					channelDef.setExpirationDate(now);
+				}
+			} else {
+				channelDef.setExpirationDate(null);
+				channelDef.setExpirerId(-1);
+			}
+			
+		}
+
+	    
 	    final IChannelType channelType = channelRegistryStore.getChannelType(form.getTypeId());
 	    if (channelType == null) {
 	        throw new IllegalArgumentException("No IChannelType exists for ID " + form.getTypeId());

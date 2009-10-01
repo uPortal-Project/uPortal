@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.layout.dlm.remoting;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import org.jasig.portal.groups.IGroupMember;
  * @author Drew Mazurek
  */
 @SuppressWarnings("unchecked")
-public class JsonEntityBean {
+public class JsonEntityBean implements Serializable {
 
 	public static final String ENTITY_CATEGORY = "category";
 	public static final String ENTITY_GROUP = "group";

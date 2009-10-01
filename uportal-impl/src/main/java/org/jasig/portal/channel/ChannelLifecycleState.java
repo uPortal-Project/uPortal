@@ -7,6 +7,24 @@ package org.jasig.portal.channel;
 
 public enum ChannelLifecycleState {
 	
-	CREATED,APPROVED,PUBLISHED,EXPIRED;
+	CREATED(0),APPROVED(1),PUBLISHED(2),EXPIRED(3);
+	
+	private int order;
+	
+	private ChannelLifecycleState(int order) {
+		this.order = order;
+	}
+	
+	public int getOrder() {
+		return this.order;
+	}
+	
+	public boolean isBefore(ChannelLifecycleState state) {
+		return (this.getOrder() < state.getOrder());
+	}
+
+	public boolean isAfter(ChannelLifecycleState state) {
+		return (this.getOrder() > state.getOrder());
+	}
 
 }

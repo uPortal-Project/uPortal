@@ -5,6 +5,8 @@
  */
 package org.jasig.portal.channel;
 
+import java.util.Date;
+
 import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
@@ -16,13 +18,7 @@ public interface IChannelPublishingService {
 	public static final String GRANT_PERMISSION_TYPE = "GRANT";
 
 	public IChannelDefinition saveChannelDefinition(IChannelDefinition definition, IPerson publisher, ChannelCategory[] categories, IGroupMember[] groupMembers);
-	
+
 	public void removeChannelDefinition(IChannelDefinition channelDefinition, IPerson person);
-	
-	public IChannelDefinition approveChannelDefinition(IChannelDefinition channelDefinition, IPerson person);
-	
-	public IChannelDefinition publishChannelDefinition(IChannelDefinition channelDefinition, IPerson person);
-	
-	public IChannelDefinition expireChannelDefinition(IChannelDefinition channelDefinition, IPerson person);
 	
 }

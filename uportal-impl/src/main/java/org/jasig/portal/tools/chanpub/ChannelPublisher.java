@@ -41,6 +41,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channel.IChannelPublishingService;
@@ -424,6 +425,9 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             else if (tagname.equals("portletPreferences"))
                 getPreferences(ci, pele);
         }
+        
+        ci.chanDef.setApproverId(0);
+        ci.chanDef.setApprovalDate(new Date());
 
         ci.chanDef.setPublisherId(0); // system user
         ci.chanDef.setPublishDate(new Date());

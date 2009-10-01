@@ -19,6 +19,8 @@ import org.w3c.dom.Element;
 
 public interface IChannelDefinition extends IBasicEntity {
 
+    public ChannelLifecycleState getLifecycleState();
+
 	// Getter methods
 	public int getId();
 

@@ -52,6 +52,7 @@ import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channel.IChannelType;
@@ -3011,5 +3012,8 @@ public class RDBMDistributedLayoutStore
         }
         public void setType(IChannelType channelType) {
         }
+		public ChannelLifecycleState getLifecycleState() {
+			return null;
+		}
     }
 }

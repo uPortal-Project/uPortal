@@ -50,34 +50,17 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.channel.IChannelPublishingService#approveChannelDefinition(org.jasig.portal.channel.IChannelDefinition, org.jasig.portal.security.IPerson)
+	 * @see org.jasig.portal.channel.IChannelPublishingService#saveChannelDefinition(org.jasig.portal.channel.IChannelDefinition, org.jasig.portal.security.IPerson, org.jasig.portal.channel.ChannelLifecycleState, java.util.Date, java.util.Date, org.jasig.portal.ChannelCategory[], org.jasig.portal.groups.IGroupMember[])
 	 */
-	public IChannelDefinition approveChannelDefinition(
-			IChannelDefinition channelDefinition, IPerson person) {
-		// TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not implemented yet");
-	}
+	public IChannelDefinition saveChannelDefinition(IChannelDefinition definition, IPerson publisher, ChannelCategory[] categories, IGroupMember[] groupMembers) {
+		boolean newChannel = (definition.getId() < 0);
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portal.channel.IChannelPublishingService#saveChannelDefinition(org.jasig.portal.channel.IChannelDefinition, org.jasig.portal.security.IPerson, java.lang.String[], org.jasig.portal.groups.IGroupMember[])
-	 */
-	public IChannelDefinition saveChannelDefinition(IChannelDefinition channelDef, IPerson publisher, ChannelCategory[] categories, IGroupMember[] groupMembers) {
-		boolean newChannel = (channelDef.getId() < 0);
-		
-		// set the approval and publish dates for the channel
-	    Date now = new Date();
-	    channelDef.setPublisherId(publisher.getID());
-	    channelDef.setPublishDate(now);
-	    channelDef.setApproverId(publisher.getID());
-	    channelDef.setApprovalDate(now);
-	    
 	    // save the channel
-	    channelRegistryStore.saveChannelDefinition(channelDef);
-	    channelDef = channelRegistryStore.getChannelDefinition(channelDef.getFName());
+	    channelRegistryStore.saveChannelDefinition(definition);
+	    definition = channelRegistryStore.getChannelDefinition(definition.getFName());
 
 	    // Delete existing category memberships for this channel
-	    String chanKey = String.valueOf(channelDef.getId());
+	    String chanKey = String.valueOf(definition.getId());
 	    IEntity channelDefEntity = GroupService.getEntity(chanKey, IChannelDefinition.class);
 		@SuppressWarnings("unchecked")
 	    Iterator iter = channelDefEntity.getAllContainingGroups();
@@ -89,12 +72,12 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 
 	    // For each category ID, add channel to category
 	    for (ChannelCategory category : categories) {
-	      channelRegistryStore.addChannelToCategory(channelDef, category);
+	      channelRegistryStore.addChannelToCategory(definition, category);
 	    }
 
 	    // Set groups
 	    AuthorizationService authService = AuthorizationService.instance();
-	    String target = IPermission.CHANNEL_PREFIX + channelDef.getId();
+	    String target = IPermission.CHANNEL_PREFIX + definition.getId();
 	    IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
 	    IPermission[] permissions = new IPermission[groupMembers.length];
 	    for (int i = 0; i < groupMembers.length; i++) {
@@ -113,41 +96,21 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 	    upm.addPermissions(permissions);
 
 	    if (log.isInfoEnabled()) {
-	        log.info( "Channel " + channelDef.getId() + " has been " + 
+	        log.info( "Channel " + definition.getId() + " has been " + 
 	                (newChannel ? "published" : "modified") + ".");
 	    }
 
 	    // Record that a channel has been published or modified
 	    if (newChannel) {
-	    	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new PublishedChannelDefinitionPortalEvent(channelDef, publisher, channelDef));
+	    	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new PublishedChannelDefinitionPortalEvent(definition, publisher, definition));
 	    } else {
-	    	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ModifiedChannelDefinitionPortalEvent(channelDef, publisher, channelDef));
+	    	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ModifiedChannelDefinitionPortalEvent(definition, publisher, definition));
 	    }
 
 	    // Expire the cached channel registry
 	    ChannelRegistryManager.expireCache();
 	    
-		return channelDef;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portal.channel.IChannelPublishingService#expireChannelDefinition(org.jasig.portal.channel.IChannelDefinition, org.jasig.portal.security.IPerson)
-	 */
-	public IChannelDefinition expireChannelDefinition(
-			IChannelDefinition channelDefinition, IPerson person) {
-		// TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not implemented yet");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portal.channel.IChannelPublishingService#publishChannelDefinition(org.jasig.portal.channel.IChannelDefinition, org.jasig.portal.security.IPerson)
-	 */
-	public IChannelDefinition publishChannelDefinition(
-			IChannelDefinition channelDefinition, IPerson person) {
-		// TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not implemented yet");
+		return definition;
 	}
 
 	/*
