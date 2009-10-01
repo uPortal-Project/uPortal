@@ -73,7 +73,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      * @return lazily initialized access to the UserAgentMatcher
      * TODO this should be re-written & tested in a static initializer or injected
      */
-    static synchronized PropsMatcher getUserAgentMatcher() {
+    public static synchronized PropsMatcher getUserAgentMatcher() {
         if (userAgentMatcher == null) {
             InputStream userAgentMatcherStream = null;
             try {
@@ -140,11 +140,17 @@ public class UserPreferencesManager implements IUserPreferencesManager {
                 final PropsMatcher userAgentMatcher = getUserAgentMatcher();
                 if (userAgentMatcher != null) {
                     // try matching
-                    final String profileId = userAgentMatcher.match(userAgent);
+                    final String profileFname = userAgentMatcher.match(userAgent);
                     
                     // user agent has been matched
-                    if (profileId != null) {
-                        userProfile = userLayoutStore.getSystemProfileById(Integer.parseInt(profileId));
+                    if (profileFname != null) {
+                    	
+                    	userProfile = userLayoutStore.getUserProfileByFname(person, profileFname);
+                    	
+                    	if (userProfile == null) {
+                            userProfile = userLayoutStore.getSystemProfileByFname(profileFname);
+                    	}
+                    	
                     }
                 }
 
@@ -253,7 +259,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
       try {
         if (newPreferences != null) {
             // see if the profile has changed
-            if(completeUserPreferences.getProfile().getProfileId()!=newPreferences.getProfile().getProfileId() || completeUserPreferences.getProfile().isSystemProfile()!=newPreferences.getProfile().isSystemProfile()) {
+            if(!completeUserPreferences.getProfile().getProfileFname().equals(newPreferences.getProfile().getProfileFname()) || completeUserPreferences.getProfile().isSystemProfile()!=newPreferences.getProfile().isSystemProfile()) {
                 // see if a layout was passed
                 if(newUlm !=null && newUlm.getLayoutId()==newPreferences.getProfile().getLayoutId()) {
                     // just use a new layout

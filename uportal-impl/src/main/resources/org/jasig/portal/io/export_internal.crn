@@ -101,34 +101,36 @@
          +-->
         <sql-query>
             <sql>
-                SELECT upup.profile_id, upu.user_name
+                SELECT upup.profile_fname, upu.user_name
                 FROM up_user_profile upup, up_user upu 
                 WHERE upup.user_id = upu.user_id AND upu.user_name = ?
             </sql>
             <parameter value="${SYSID}"/>
             <subtasks>
                 <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
-                    <!-- This entire groovy task is essentially a long-winded with-attribute -->
-                    <groovy>
-                        <script>
-                            import org.danann.cernunnos.Attributes;
-                            import org.danann.cernunnos.ReturnValueImpl;
-                            import org.danann.cernunnos.runtime.RuntimeRequestResponse;
+                    <with-attribute key="SAFE_PROFILE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${PROFILE_FNAME})}">
+                        <!-- This entire groovy task is essentially a long-winded with-attribute -->
+                        <groovy>
+                            <script>
+                                import org.danann.cernunnos.Attributes;
+                                import org.danann.cernunnos.ReturnValueImpl;
+                                import org.danann.cernunnos.runtime.RuntimeRequestResponse;
                             
-                            ReturnValueImpl rslt = new ReturnValueImpl();
-                            RuntimeRequestResponse tr = new RuntimeRequestResponse();
-                            tr.setAttribute(Attributes.RETURN_VALUE, rslt);
-                            tr.setAttribute('USER_NAME', USER_NAME);
-                            tr.setAttribute('PROFILE_ID', PROFILE_ID);
+                                ReturnValueImpl rslt = new ReturnValueImpl();
+                                RuntimeRequestResponse tr = new RuntimeRequestResponse();
+                                tr.setAttribute(Attributes.RETURN_VALUE, rslt);
+                                tr.setAttribute('USER_NAME', USER_NAME);
+                                tr.setAttribute('PROFILE_FNAME', PROFILE_FNAME);
                             
-                            PORTAL_CONTEXT.getBean('export-profile').perform(tr, new RuntimeRequestResponse());
-                            def exportedProfileDoc = rslt.getValue();
-                            ScriptAttributes.RESPONSE.setAttribute('exportedProfileDoc', exportedProfileDoc);
-                        </script>
-                        <subtasks>
-	                        <write-document node="${exportedProfileDoc}" file="${EXPORT_DIR}/profile/${SAFE_USER_NAME}-${PROFILE_ID}.profile"/>
-                        </subtasks>
-                    </groovy>
+                                PORTAL_CONTEXT.getBean('export-profile').perform(tr, new RuntimeRequestResponse());
+                                def exportedProfileDoc = rslt.getValue();
+                                ScriptAttributes.RESPONSE.setAttribute('exportedProfileDoc', exportedProfileDoc);
+                            </script>
+                            <subtasks>
+	                           <write-document node="${exportedProfileDoc}" file="${EXPORT_DIR}/profile/${SAFE_USER_NAME}-${SAFE_PROFILE_FNAME}.profile"/>
+                            </subtasks>
+                        </groovy>
+                    </with-attribute>
                 </with-attribute>
             </subtasks>
             <empty-result>

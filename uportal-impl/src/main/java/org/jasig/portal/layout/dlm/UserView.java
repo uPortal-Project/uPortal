@@ -23,6 +23,7 @@ class UserView
     Document layout = null;
     int layoutId = 0;
     int profileId = 1;
+    String profileFname = "default"; /* Was 1 when profileId was the key. */
     int structureStylesheetId = 0;
     int themeStylesheetId = 0;
 
@@ -37,6 +38,7 @@ class UserView
         this.userId = fragmentOwnerUserId;
         layoutId = profile.getLayoutId();
         profileId = profile.getProfileId();
+        profileFname = profile.getProfileFname();
         structureStylesheetId = profile.getStructureStylesheetId();
         themeStylesheetId = profile.getThemeStylesheetId();
         this.layout = layout;

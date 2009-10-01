@@ -24,6 +24,7 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.CounterStoreFactory;
 
 /**
@@ -34,6 +35,7 @@ import org.jasig.portal.utils.CounterStoreFactory;
 public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
     private static final Log log = LogFactory.getLog(RDBMUserIdentityStore.class);
+    private static String PROFILE_TABLE = "UP_USER_PROFILE";
 
   //*********************************************************************
   // Constants
@@ -671,7 +673,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   deleteStmt.close();
 
                   query =
-                      "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, " +
+                      "SELECT USER_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, " +
                       "STRUCTURE_SS_ID, THEME_SS_ID " +
                       "FROM UP_USER_PROFILE " +
                       "WHERE USER_ID=?";
@@ -682,67 +684,28 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   rs = queryStmt.executeQuery();
 
                   insert =
-                      "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
+                      "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
                       "VALUES(?, ?, ?, ?, NULL, ?, ?)";
                   insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
+                	  int id = getNextKey();
 
-                      int profileId = rs.getInt("PROFILE_ID");
+                      String profileFname = rs.getString("PROFILE_FNAME");
                       String profileName = rs.getString("PROFILE_NAME");
                       String description = rs.getString("DESCRIPTION");
                       int structure = rs.getInt("STRUCTURE_SS_ID");
                       int theme = rs.getInt("THEME_SS_ID");
 
                       insertStmt.setInt(1, userId);
-                      insertStmt.setInt(2, profileId);
-                      insertStmt.setString(3, profileName);
-                      insertStmt.setString(4, description);
-                      insertStmt.setInt(5, structure);
-                      insertStmt.setInt(6, theme);
+                      insertStmt.setInt(2, id);
+                      insertStmt.setString(3, profileFname);
+                      insertStmt.setString(4, profileName);
+                      insertStmt.setString(5, description);
+                      insertStmt.setInt(6, structure);
+                      insertStmt.setInt(7, theme);
 
                       if (log.isDebugEnabled())
-                          log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", PROFILE_ID=" + profileId + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
-                      insertStmt.executeUpdate();
-                  }
-                  rs.close();
-                  queryStmt.close();
-                  insertStmt.close();
-
-
-                  // Update UP_USER_UA_MAP
-                  delete =
-                      "DELETE FROM UP_USER_UA_MAP " +
-                      "WHERE USER_ID=?";
-                  deleteStmt = con.prepareStatement(delete);
-                  deleteStmt.setInt(1, userId);
-                  if (log.isDebugEnabled())
-                      log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
-                  deleteStmt.executeUpdate();
-                  deleteStmt.close();
-
-                  query =
-                      "SELECT USER_ID, USER_AGENT, PROFILE_ID " +
-                      "FROM UP_USER_UA_MAP WHERE USER_ID=?";
-                  queryStmt = con.prepareStatement(query);
-                  queryStmt.setInt(1, templateUser.getUserId());
-                  if (log.isDebugEnabled())
-                      log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
-                  rs = queryStmt.executeQuery();
-
-                  insert =
-                      "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) " +
-                      "VALUES(?, ?, ?)";
-                  insertStmt = con.prepareStatement(insert);
-                  while (rs.next()) {
-                      String userAgent = rs.getString("USER_AGENT");
-                      String profileId = rs.getString("PROFILE_ID");
-
-                      insertStmt.setInt(1, userId);
-                      insertStmt.setString(2, userAgent);
-                      insertStmt.setString(3, profileId);
-
-                      if (log.isDebugEnabled())
-                          log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", USER_AGENT=" + userAgent + ", PROFILE_ID=" + profileId + "): " + insert);
+                          log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", PROFILE_FNAME=" + profileFname + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
                       insertStmt.executeUpdate();
                   }
                   rs.close();
@@ -862,7 +825,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
                   // Add to UP_USER_PROFILE
                   query =
-                      "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, " +
+                      "SELECT USER_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, " +
                       "STRUCTURE_SS_ID, THEME_SS_ID " +
                       "FROM UP_USER_PROFILE " +
                       "WHERE USER_ID=?";
@@ -873,67 +836,32 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                   rs = queryStmt.executeQuery();
 
                   insert =
-                      "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
-                      "VALUES(?, ?, ?, ?, NULL, ?, ?)";
+                      "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
+                      "VALUES(?, ?, ?, ?, ?, NULL, ?, ?)";
                   insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
+                	  int id = getNextKey();
 
-                      int profileId = rs.getInt("PROFILE_ID");
+                      String profileFname = rs.getString("PROFILE_FNAME");
                       String profileName = rs.getString("PROFILE_NAME");
                       String description = rs.getString("DESCRIPTION");
                       int structure = rs.getInt("STRUCTURE_SS_ID");
                       int theme = rs.getInt("THEME_SS_ID");
 
                       insertStmt.setInt(1, newUID);
-                      insertStmt.setInt(2, profileId);
-                      insertStmt.setString(3, profileName);
-                      insertStmt.setString(4, description);
-                      insertStmt.setInt(5, structure);
-                      insertStmt.setInt(6, theme);
+                      insertStmt.setInt(2, id);
+                      insertStmt.setString(3, profileFname);
+                      insertStmt.setString(4, profileName);
+                      insertStmt.setString(5, description);
+                      insertStmt.setInt(6, structure);
+                      insertStmt.setInt(7, theme);
 
                       if (log.isDebugEnabled())
-                          log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", PROFILE_ID=" + profileId + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
+                          log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", PROFILE_FNAME=" + profileFname + ", PROFILE_NAME=" + profileName + ", DESCRIPTION=" + description + "): " + insert);
                       insertStmt.executeUpdate();
                   }
                   rs.close();
                   queryStmt.close();
-
-                  if (insertStmt != null) {
-                    insertStmt.close();
-                    insertStmt = null;
-                  }
-
-
-                  query =
-                      "SELECT USER_ID, USER_AGENT, PROFILE_ID " +
-                      "FROM UP_USER_UA_MAP WHERE USER_ID=?";
-                  queryStmt = con.prepareStatement(query);
-                  queryStmt.setInt(1, templateUser.getUserId());
-                  if (log.isDebugEnabled())
-                      log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
-                  rs = queryStmt.executeQuery();
-
-                  insert =
-                      "INSERT INTO UP_USER_UA_MAP (USER_ID, USER_AGENT, PROFILE_ID) " +
-                      "VALUES(?, ?, ?)";
-                  insertStmt = con.prepareStatement(insert);
-                  while (rs.next()) {
-
-                      String userAgent = rs.getString("USER_AGENT");
-                      String profileId = rs.getString("PROFILE_ID");
-
-                      insertStmt.setInt(1, newUID);
-                      insertStmt.setString(2, userAgent);
-                      insertStmt.setString(3, profileId);
-
-                      if (log.isDebugEnabled())
-                          log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_AGENT=" + userAgent + ", PROFILE_ID=" + profileId + "): " + insert);
-                      insertStmt.executeUpdate();
-                  }
-                  rs.close();
-                  rs = null;
-                  queryStmt.close();
-                  queryStmt = null;
 
                   if (insertStmt != null) {
                     insertStmt.close();
@@ -963,6 +891,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       }
 
       return uPortalUID;
+  }
+
+  private int getNextKey() throws java.lang.Exception
+  {
+      return SequenceGenerator.instance().getNextInt(PROFILE_TABLE);
   }
 
   protected class PortalUser {

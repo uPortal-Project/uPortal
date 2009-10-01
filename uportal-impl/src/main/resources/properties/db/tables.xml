@@ -385,6 +385,9 @@
       <column> <name>PROFILE_ID</name>        <type>INTEGER</type>
         <desc>Internal sequence id of a profile id - primary key, see UP_SEQUENCE</desc>
       </column>
+      <column> <name>PROFILE_FNAME</name>        <type>VARCHAR</type> <param>50</param>
+        <desc>Persistent functional name of a user's profile - primary key</desc>
+      </column>
       <column> <name>PROFILE_NAME</name>      <type>VARCHAR</type> <param>50</param>
         <desc>Short name of profile</desc>
       </column>
@@ -400,6 +403,7 @@
     </columns>
     <not-null>USER_ID</not-null>
     <not-null>PROFILE_ID</not-null>
+    <not-null>PROFILE_FNAME</not-null>
     <primary-key>USER_ID</primary-key>
     <primary-key>PROFILE_ID</primary-key>
   </table>

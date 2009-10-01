@@ -25,8 +25,6 @@
             <attribute key="THEME_STYLESHEET_ID">${crn(lookup-ss_theme_id.crn)}</attribute>
             <subtasks>
                 <sql-transaction>
-                    <with-attribute key="HIGHEST_PROFILE_ID" value="${sql(SELECT MAX(profile_id) FROM up_user_profile WHERE user_id = ${USER_ID})}">
-                        <with-attribute key="PROFILE_ID" value="${groovy(HIGHEST_PROFILE_ID ? HIGHEST_PROFILE_ID + 1 : 1)}">
         
                             <!-- 
                              | Perform an 'upsert' operation on the PROFILE_NAME column
@@ -35,19 +33,20 @@
                                 <update-statement>
                                     UPDATE up_user_profile 
                                     SET description = ?, structure_ss_id = ?, theme_ss_id = ?
-                                    WHERE user_id = ? AND profile_name = ?
+                                    WHERE user_id = ? AND profile_fname = ?
                                 </update-statement>
                                 <insert-statement>
-                                    INSERT INTO up_user_profile(user_id, profile_id, profile_name, description, layout_id, structure_ss_id, theme_ss_id) 
-                                    VALUES(?, ?, ?, ?, ?, ?, ?)
+                                    INSERT INTO up_user_profile(user_id, profile_id, profile_fname, profile_name, description, layout_id, structure_ss_id, theme_ss_id) 
+                                    VALUES(?, ?, ?, ?, ?, ?, ?, ?)
                                 </insert-statement>
                                 <update-parameter value="${valueOf(description)}"/>
                                 <update-parameter value="${groovy(STRUCTURE_STYLESHEET_ID.intValue())}"/>
                                 <update-parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
                                 <update-parameter value="${USER_ID}"/>
-                                <update-parameter value="${valueOf(name)}"/>
+                                <update-parameter value="${valueOf(fname)}"/>
                                 <insert-parameter value="${USER_ID}"/>
-                                <insert-parameter value="${PROFILE_ID}"/>
+								<insert-parameter value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_SS_THEME)}"/>
+                                <insert-parameter value="${valueOf(fname)}"/>
                                 <insert-parameter value="${valueOf(name)}"/>
                                 <insert-parameter value="${valueOf(description)}"/>
                                 <insert-parameter value="${groovy(1.intValue())}"/>
@@ -55,6 +54,14 @@
                                 <insert-parameter value="${groovy(THEME_STYLESHEET_ID.intValue())}"/>
                             </sql-upsert>
         
+                    <sql-query>
+                        <sql>
+                            SELECT profile_id 
+                            FROM up_user_profile 
+                            WHERE profile_fname = ?
+                        </sql>
+                        <parameter value="${valueOf(fname)}" />
+                        <subtasks>
                             <!-- User (Profile) Parameters:  structure... -->
                             <node-iterator xpath="structure/parameter">
                                 <sql-upsert>
@@ -94,9 +101,12 @@
                                     <parameter value="${valueOf(name)}"/>
                                 </sql-upsert>
                             </node-iterator>
+                            
+                        </subtasks>
+                    </sql-query>
         
-                        </with-attribute>
-                    </with-attribute>
+                        <!-- </with-attribute>
+                    </with-attribute> -->
         		</sql-transaction>
             </subtasks>
         </with>

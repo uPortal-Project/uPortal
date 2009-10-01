@@ -48,6 +48,9 @@
       <column> <name>PROFILE_ID</name>        <type>INTEGER</type>
         <desc>Internal sequence id of a profile id - primary key, see UP_SEQUENCE</desc>
       </column>
+      <column> <name>PROFILE_FNAME</name>        <type>VARCHAR</type> <param>50</param>
+        <desc>Internal functional name - primary key</desc>
+      </column>
       <column> <name>LOCALE</name>       <type>VARCHAR</type>   <param>64</param>
         <desc>Locale - the locale of meta data element</desc>
       </column>
@@ -63,6 +66,7 @@
     <primary-key>LOCALE</primary-key>
     <not-null>USER_ID</not-null>
     <not-null>PROFILE_ID</not-null>
+    <not-null>PROFILE_FNAME</not-null>
     <not-null>LOCALE</not-null>
   </table>
 

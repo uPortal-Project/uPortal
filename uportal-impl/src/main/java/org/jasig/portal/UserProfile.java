@@ -17,6 +17,7 @@ import org.jasig.portal.i18n.LocaleManager;
 public class UserProfile implements Serializable {
     public static final String USER_PROFILE = "UserProfile";
     protected int id=-1;
+    protected String fname = null;
     protected String pName;
     protected String description;
     protected int layout_id;
@@ -26,8 +27,9 @@ public class UserProfile implements Serializable {
     protected LocaleManager localeManager;
 
     public UserProfile() {};
-    public UserProfile(int id, String name, String desc, int layout_id, int  struct_ss,int theme_ss) {
-        this.id=id;
+    public UserProfile(int id, String fname, String name, String desc, int layout_id, int  struct_ss,int theme_ss) {
+    	this.id=id;
+        this.fname=fname;
         pName=name;
         description=desc != null ? desc : "";
         this.layout_id=layout_id;
@@ -36,6 +38,7 @@ public class UserProfile implements Serializable {
     }
 
     public int getProfileId() { return id; }
+    public String getProfileFname() { return fname; }
     public String getProfileName() { return pName; }
     public String getProfileDescription() { return description; }
     public int getLayoutId() { return layout_id; }
@@ -44,6 +47,7 @@ public class UserProfile implements Serializable {
     public boolean isSystemProfile(){return system; }
 
     public void setProfileId(int id) { this.id=id; }
+    public void setProfileFname(String fname) { this.fname=fname; }
     public void setProfileName(String name) { pName=name; }
     public void setProfileDescription(String desc) { description=desc; }
     public void setLayoutId(int layout_id) { this.layout_id=layout_id; }

@@ -182,7 +182,8 @@ class ManageProfilesState extends BaseState {
                 UserProfile cp=context.getCurrentUserPreferences().getProfile();
                 if(cp!=null) {
                     // create a new profile
-                    UserProfile p=new UserProfile(0,"new profile","please edit the profile",cp.getLayoutId(),cp.getStructureStylesheetId(),cp.getThemeStylesheetId());
+                	// TODO: need to generate distinct profile fname?
+                    UserProfile p=new UserProfile(-1,"newProfile","new profile","please edit the profile",cp.getLayoutId(),cp.getStructureStylesheetId(),cp.getThemeStylesheetId());
                     try {
                       p=this.getUserLayoutStore().addUserProfile(context.getUserPreferencesManager().getPerson(),p);
                     } catch (Exception e) {

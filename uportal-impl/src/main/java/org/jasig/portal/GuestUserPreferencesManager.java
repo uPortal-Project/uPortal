@@ -130,17 +130,22 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
 
                 if(userAgentMatcher!=null) {
                     // try matching
-                    String profileId=userAgentMatcher.match(userAgent);
-                    if(profileId!=null) {
+                    String profileFname=userAgentMatcher.match(userAgent);
+                    if(profileFname!=null) {
                         // user agent has been matched
                         if (log.isDebugEnabled())
                             log.debug("GuestUserPreferencesManager::GuestUserPreferencesManager() : " +
-                                    "userAgent \"" + userAgent + "\" has matched to a profile " + profileId);
-                        upl=userLayoutStore.getSystemProfileById(Integer.parseInt(profileId));
+                                    "userAgent \"" + userAgent + "\" has matched to a profile " + profileFname);
+                    	upl = userLayoutStore.getUserProfileByFname(m_person, profileFname);
+                    	
+                    	if (upl == null) {
+                            upl = userLayoutStore.getSystemProfileByFname(profileFname);
+                    	}
+                    	
                         // save mapping
-                        if(SAVE_PROFILE_GUESSES) {
-                            userLayoutStore.setSystemBrowserMapping(userAgent,upl.getProfileId());
-                        }
+//                        if(SAVE_PROFILE_GUESSES) {
+//                            userLayoutStore.setSystemBrowserMapping(userAgent,upl.getProfileId());
+//                        }
                     } else {
                         if (log.isDebugEnabled())
                             log.debug("GuestUserPreferencesManager::GuestUserPreferencesManager() : " +

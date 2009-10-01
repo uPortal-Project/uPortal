@@ -794,7 +794,7 @@ public class TabColumnPrefsState extends BaseState
   {
       // check if we're editing the same layout (note: this relies on the layout Ids to be meaningful, which
       // is not entirely true with the current "template user layout" feature. Hopefully this will go away soon.
-      return (context.getUserPreferencesManager().getCurrentProfile().getProfileId()==editedUserProfile.getProfileId() && context.getUserPreferencesManager().getCurrentProfile().isSystemProfile()==editedUserProfile.isSystemProfile());
+      return (context.getUserPreferencesManager().getCurrentProfile().getProfileFname().equals(editedUserProfile.getProfileFname()) && context.getUserPreferencesManager().getCurrentProfile().isSystemProfile()==editedUserProfile.isSystemProfile());
   }
 
   /**

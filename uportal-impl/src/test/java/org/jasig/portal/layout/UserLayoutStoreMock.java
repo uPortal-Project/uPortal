@@ -154,6 +154,9 @@ public class UserLayoutStoreMock implements IUserLayoutStore {
     public UserProfile getSystemProfileById(int profileId) throws Exception {
 	return null;
     }
+    public UserProfile getSystemProfileByFname(String profileFname) throws Exception {
+    	return null;
+    }
     /** obtain a list of system profiles
      *
      * @return a <code>Hashtable</code> mapping system profile ids (<code>Integer</code> objects) to the {@link UserProfile} objects
@@ -229,6 +232,13 @@ public class UserLayoutStoreMock implements IUserLayoutStore {
      * @param profileId profile id
      */
     public UserProfile getUserProfileById(org.jasig.portal.security.IPerson person, int profileId) throws Exception {
+	return null;
+    }
+    /**  Obtains a user profile by profile id.    
+     * @param person an <code>IPerson</code> object representing the user 
+     * @param profileFname profile fname
+     */
+    public UserProfile getUserProfileByFname(org.jasig.portal.security.IPerson person, String profileFname) throws Exception {
 	return null;
     }
     /** retreive a list of profiles associated with a user

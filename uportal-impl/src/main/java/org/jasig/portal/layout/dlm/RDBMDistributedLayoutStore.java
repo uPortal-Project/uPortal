@@ -5,8 +5,10 @@
  */
 package org.jasig.portal.layout.dlm;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,6 +40,7 @@ import org.danann.cernunnos.Task;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DOMWriter;
+import org.dom4j.io.XMLWriter;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
@@ -383,15 +386,15 @@ public class RDBMDistributedLayoutStore
                 final IPerson person = ownerEntry.getKey();
                 final UserProfile profile;
                 try {
-                    profile = getUserProfileById(person, 1);
+                    profile = getUserProfileByFname(person, "default");
                 }
                 catch (Exception e) {
                     this.log.error("Failed to retrieve UserProfile for person " + person + " while cleaning fragment cache, person will be skipped", e);
                     continue;
                 }
                 
-                // TODO fix hard coded 1 later for profiling
-                profile.setProfileId(1);
+                // TODO fix hard coded "default" later for profiling
+                profile.setProfileFname("default");
                 
                 final Document layout;
                 try {
@@ -675,9 +678,9 @@ public class RDBMDistributedLayoutStore
             }
             person.setID(ownerId);
             person.setSecurityContext(new BrokenSecurityContext());
-            profile = this.getUserProfileById(person, 1);
+            profile = this.getUserProfileByFname(person, "default");
         } catch (Throwable t) {
-            String msg = "Unrecognized user;  you must import users before their layouts.";
+            String msg = "Unrecognized user " + person.getUserName() + "; you must import users before their layouts.";
             throw new RuntimeException(msg, t);
         }
         
@@ -1422,6 +1425,7 @@ public class RDBMDistributedLayoutStore
     private StructureStylesheetUserPreferences _getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
         int userId = person.getID();
         StructureStylesheetUserPreferences ssup;
+        
         Connection con = RDBMServices.getConnection();
         try {
             String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID = ?";
@@ -1442,6 +1446,7 @@ public class RDBMDistributedLayoutStore
                 // if no layout then get the default user id for this user
 
                 int origId = userId;
+                int origProfileId = profileId;
                 if (layoutId == 0) {
                     
                     pstmt.setInt(1,userId);
@@ -1451,6 +1456,13 @@ public class RDBMDistributedLayoutStore
                     try {
                         rs.next();
                         userId = rs.getInt(1);
+                        
+                        // get the profile ID for the default user
+                        UserProfile profile = getUserProfileById(person, profileId);
+                		IPerson defaultProfilePerson = new PersonImpl();
+                		defaultProfilePerson.setID(userId);
+                        profileId = getUserProfileByFname(defaultProfilePerson, profile.getProfileFname()).getProfileId();
+
                     } finally {
                         rs.close();
                         pstmt.close();
@@ -1511,6 +1523,7 @@ public class RDBMDistributedLayoutStore
 
                     if (userId != origId) {
                         pstmt.setInt(1, origId);
+                        pstmt.setInt(2,origProfileId);
                         rs = pstmt.executeQuery();
 
                         while (rs.next()) {
@@ -1701,6 +1714,7 @@ public class RDBMDistributedLayoutStore
                 
                 // if no layout then get the default user id for this user
                 int origId = userId;
+                int origProfileId = profileId;
                 if (layoutId == 0)
                 { // First time, grab the default layout for this user
                     String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=?";
@@ -1713,6 +1727,13 @@ public class RDBMDistributedLayoutStore
                     {
                         rs.next();
                         userId = rs.getInt(1);
+                        
+                        // get the profile ID for the default user
+                        UserProfile profile = getUserProfileById(person, profileId);
+                		IPerson defaultProfilePerson = new PersonImpl();
+                		defaultProfilePerson.setID(userId);
+                        profileId = getUserProfileByFname(defaultProfilePerson, profile.getProfileFname()).getProfileId();
+
                     } finally
                     {
                         rs.close();
@@ -1777,6 +1798,7 @@ public class RDBMDistributedLayoutStore
                     }
                     if (userId != origId) {
                         pstmt.setInt(1, origId);
+                        pstmt.setInt(2, origProfileId);
                         rs = pstmt.executeQuery();
                         while (rs.next()) {
                             String pName = rs.getString(1);
@@ -2074,7 +2096,7 @@ public class RDBMDistributedLayoutStore
         // make a copy so the original is unchanged for the user
         try
         {
-            UserProfile profile = getUserProfileById(person, 1);
+            UserProfile profile = getUserProfileByFname(person, "default");
             ssup = new DistributedUserPreferences(
                     (StructureStylesheetUserPreferences) ssup);
             final UserView userView = activator.getUserView(ownedFragment);

@@ -113,6 +113,12 @@ public interface IUserLayoutStore {
      */
     public UserProfile getUserProfileById (IPerson person,int profileId) throws Exception;
 
+    /**  Obtains a user profile by profile functional name.    
+     * @param person an <code>IPerson</code> object representing the user 
+     * @param profileFname profile functional name
+     */
+    public UserProfile getUserProfileByFname (IPerson person,String profileFname) throws Exception;
+
     /** retreive a list of profiles associated with a user
      *
      * @param person User
@@ -151,6 +157,8 @@ public interface IUserLayoutStore {
      * @param profileId system profile id
      */
     public UserProfile getSystemProfileById (int profileId) throws Exception;
+
+    public UserProfile getSystemProfileByFname (String profileFname) throws Exception;
 
     /** obtain a list of system profiles
      *

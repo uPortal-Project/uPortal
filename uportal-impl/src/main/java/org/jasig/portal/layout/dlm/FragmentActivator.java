@@ -329,15 +329,16 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         try
         {
             // fix hard coded 1 later for multiple profiles
-            UserProfile profile = dls.getUserProfileById(owner, 1);
+            UserProfile profile = dls.getUserProfileByFname(owner, "default");
             
             // see if we have structure & theme stylesheets for this user yet.
             // If not then fall back on system's selected stylesheets.
             if (profile.getStructureStylesheetId() == 0 ||
                     profile.getThemeStylesheetId() == 0)
-                profile = dls.getSystemProfileById(profile.getProfileId());
+                profile = dls.getSystemProfileByFname(profile.getProfileFname());
             
             view.profileId = profile.getProfileId();
+            view.profileFname = profile.getProfileFname();
             view.layoutId = profile.getLayoutId();
             view.structureStylesheetId = profile.getStructureStylesheetId();
             view.themeStylesheetId = profile.getThemeStylesheetId();

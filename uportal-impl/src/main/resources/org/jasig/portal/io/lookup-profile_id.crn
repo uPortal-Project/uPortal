@@ -1,0 +1,30 @@
+<!--
+    
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+    
+-->
+<!-- 
+    | Parameters:
+    |     SS_STRUCTURE_NAME - The requested name of a structure style sheet
+    |
+    | Returns the default structure name if force is true or the passed SS_STRUCTURE_NAME is null
+    +-->
+    <groovy>
+        <script>
+            def getProfileId(userId, userName, profileFname) {
+                def layoutStoreProvider = new org.jasig.portal.layout.dlm.LayoutStoreProvider();
+                def layoutStore = layoutStoreProvider.getLayoutStore();
+                def person = new org.jasig.portal.security.provider.PersonImpl();
+                person.setID(userId);
+                person.setUserName(USER_NAME);
+                person.setSecurityContext(new org.jasig.portal.security.provider.BrokenSecurityContext());
+                profile = layoutStore.getUserProfileByFname(person, profileFname);
+                return profile.getProfileId();
+            }
+        </script>
+        <subtasks>
+            <return value="${groovy(getProfileId(USER_ID, USER_NAME, PROFILE_FNAME))}"/>
+        </subtasks>
+    </groovy>
