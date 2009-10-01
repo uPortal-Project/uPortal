@@ -1209,7 +1209,8 @@ public class RDBMDistributedLayoutStore
         if ( definitions != null )
         {
             for (final FragmentDefinition fragmentDefinition : definitions) {
-                int fdId = activator.getUserView(fragmentDefinition).getUserId();
+                final UserView userView = activator.getUserView(fragmentDefinition);
+                int fdId = userView.getUserId();
                 if ( fdId == userId ) {
                     return fragmentDefinition;
                 }

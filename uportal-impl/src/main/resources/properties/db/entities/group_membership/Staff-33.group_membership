@@ -3,11 +3,9 @@
   <name>Staff</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>All university staff members</description>
+  <description>All staff members</description>
   <children>
-    <group>Developers</group>
-    <group>Officers</group>
-    <group>Support Staff</group>
     <literal>staff</literal>
+    <literal>staff-lo</literal>
   </children>
 </group>

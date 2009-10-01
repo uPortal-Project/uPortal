@@ -1,13 +1,15 @@
 
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
-  <name>Developers</name>
+  <name>Portal Developers</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
   <description>All IT developers</description>
   <children>
     <literal>admin</literal>
-    <literal>demo</literal>
-    <literal>ent-lo</literal>
-    <literal>news-lo</literal>
+    <literal>admin-lo</literal>
+    <literal>developer</literal>
+    <literal>developer-lo</literal>
+    <literal>staff</literal>
+    <literal>staff-lo</literal>
   </children>
 </group>

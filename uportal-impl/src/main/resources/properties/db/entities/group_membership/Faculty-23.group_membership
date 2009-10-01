@@ -3,10 +3,9 @@
   <name>Faculty</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>All university faculty</description>
+  <description>All Faculty</description>
   <children>
-    <group>Associate Professors</group>
-    <group>Tenured Professors</group>
     <literal>faculty</literal>
+    <literal>faculty-lo</literal>
   </children>
 </group>

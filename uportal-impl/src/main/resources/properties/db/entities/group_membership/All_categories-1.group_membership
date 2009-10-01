@@ -5,9 +5,20 @@
   <creator>system</creator>
   <description>All channel categories</description>
   <children>
-    <group>Applications</group>
+    <group>Academics</group>
+    <group>Administration</group>
+    <group>Advisor</group>
+    <group>Demonstration</group>
     <group>Development</group>
     <group>Entertainment</group>
+    <group>Finances</group>
+    <group>Information</group>
+    <group>Instructors</group>
+    <group>Library</group>
     <group>News</group>
+    <group>Research</group>
+    <group>Services</group>
+    <group>Testing</group>
+    <group>Work</group>
   </children>
 </group>

@@ -3,49 +3,13 @@
   <owner>org.jasig.portal.channels.groupsmanager.CGroupsManager</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
-    <group>Developers</group> 
+    <group>Portal Developers</group> 
   </principal>
   <activity>ADD/REMOVE</activity>
   <target permission-type="GRANT"> 
-    <group>Applications</group> 
+    <group>All categories</group> 
   </target>
   <target permission-type="GRANT"> 
-    <group>Business</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>CApplet</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>CGenericXSLT</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>CImage</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>CInlineFrame</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>CWebProxy</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>Channel Types</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>Development</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>Entertainment</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>Games</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>News</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>RSS</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>uPortal</group> 
+    <group>Everyone</group> 
   </target>
 </permission-set>

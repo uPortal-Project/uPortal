@@ -7,6 +7,9 @@
       <channel unremovable="" immutable="" hidden="" fname="session-locales-selector"/>
       <channel unremovable="" immutable="" hidden="" fname="fragment-admin"/>
     </header>
+    <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
+      <channel unremovable="" immutable="" hidden="" fname="footer"/>
+    </footer>
     <tab unremovable="N" immutable="N" hidden="N" name="Demos">
       <column unremovable="N" immutable="N" hidden="N" name="Column 1">
         <structure-attribute type="folder">
@@ -52,9 +55,6 @@
         <channel unremovable="" immutable="" hidden="" fname="uportal-data-dictionary"/>
       </column>
     </tab>
-    <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
-      <channel unremovable="" immutable="" hidden="" fname="footer"/>
-    </footer>
   </root>
   <profile name="My web browser profile"> 
     <description>A sample profile for web browsers</description>  

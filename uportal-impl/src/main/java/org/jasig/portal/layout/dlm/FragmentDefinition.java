@@ -156,7 +156,7 @@ public class FragmentDefinition extends Evaluator
     }
     
     public boolean isNoAudienceIncluded() {
-        return evaluators.size() == 0;
+        return evaluators == null || evaluators.size() == 0;
     }
 
     private void loadAudienceEvaluators( NodeList nodes )

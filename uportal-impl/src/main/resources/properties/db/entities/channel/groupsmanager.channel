@@ -13,11 +13,11 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>Applications</category>
+    <category>uPortal</category>
   </categories>
   <groups>
     <group>Portal Administrators</group>
-    <group>Developers</group>
+    <group>Portal Developers</group>
   </groups>
   <parameters/>
   <portletPreferences/>

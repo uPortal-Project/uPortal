@@ -122,7 +122,13 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public IPortletEntity getOrCreatePortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId) {
         final IPortletEntity portletEntity = this.getPortletEntity(channelSubscribeId, userId);
         if (portletEntity != null) {
-            return portletEntity;
+            if (!portletDefinitionId.equals(portletEntity.getPortletDefinitionId())) {
+                this.logger.warn("Found portlet entity '" + portletEntity + "' is not the correct entity for portlet definition id: " + portletDefinitionId + ". The entity will be deleted and a new one created.");
+                this.deletePortletEntity(portletEntity);
+            }
+            else {
+                return portletEntity;
+            }
         }
         
         return this.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);

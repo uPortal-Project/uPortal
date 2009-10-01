@@ -3,7 +3,7 @@
   <title>Bookmarks</title>
   <name>Bookmarks</name>
   <fname>pbookmarks</fname>
-  <desc>UW Eric Dalquist bookmarks portlet</desc>
+  <desc>Bookmarks portlet</desc>
   <type>Bookmarks Portlet</type>
   <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>60000</timeout>
@@ -13,7 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>Development</category>
+    <category>Information</category>
   </categories>
   <groups>
     <group>Everyone</group>

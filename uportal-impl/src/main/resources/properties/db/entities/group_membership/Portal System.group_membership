@@ -1,11 +1,12 @@
 
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
-  <name>Undergraduate Students</name>
+  <name>Portal System</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>All enrolled undergraduate students</description>
+  <description>Portal System Accounts</description>
   <children>
-    <group>Full Time</group>
-    <group>Part Time</group>
+    <group>Portal Administrators</group>
+    <group>Portal Developers</group>
+    <group>Fragment Owners</group>
   </children>
 </group>

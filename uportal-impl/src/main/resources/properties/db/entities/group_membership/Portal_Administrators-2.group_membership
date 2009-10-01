@@ -3,9 +3,9 @@
   <name>Portal Administrators</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>A group of system administrators with superuser capabilities</description>
+  <description>Portal Administrators with superuser capabilities</description>
   <children>
     <literal>admin</literal>
-    <group>Fragment Owners</group>
+    <literal>admin-lo</literal>
   </children>
 </group>

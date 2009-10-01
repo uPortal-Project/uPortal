@@ -1,8 +1,7 @@
 
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
-  <name>Business</name>
+  <name>uPortal</name>
   <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
   <creator>system</creator>
-  <description>Business or company news</description>
-  <children/>
+  <description>uPortal Integrated Portlets</description>
 </group>

@@ -13,7 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>Applications</category>
+    <category>Administration</category>
   </categories>
   <groups>
     <group>Portal Administrators</group>

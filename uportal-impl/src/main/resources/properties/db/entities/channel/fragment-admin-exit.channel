@@ -12,7 +12,9 @@
   <hasabout>N</hasabout>
   <secure>N</secure>
   <locale>en_US</locale>
-  <categories/>
+  <categories>
+    <category>Administration</category>
+  </categories>
   <groups>
     <group>Fragment Owners</group>
   </groups>

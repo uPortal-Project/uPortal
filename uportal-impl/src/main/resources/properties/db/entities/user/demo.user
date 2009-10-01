@@ -5,6 +5,6 @@
     <encrptd-pswd>(MD5)IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</encrptd-pswd>
     <first-name>Demo</first-name>
     <last-name>User</last-name>
-    <email>demo.user@jasig.org</email>
+    <email>demo.user@example.org</email>
   </person-directory>
 </user>

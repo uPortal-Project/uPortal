@@ -21,6 +21,8 @@
                 person.setUserName(USER_NAME);
                 person.setSecurityContext(new org.jasig.portal.security.provider.BrokenSecurityContext());
                 profile = layoutStore.getUserProfileByFname(person, profileFname);
+                profile.setLayoutId(LAYOUT_ID);
+                layoutStore.updateUserProfile(person, profile);
                 return profile.getProfileId();
             }
         </script>

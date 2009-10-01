@@ -13,10 +13,10 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>uPortal</category>
+    <category>Demonstration</category>
   </categories>
   <groups>
-    <group>Developers</group>
+    <group>Portal Developers</group>
   </groups>
   <parameters>
     <parameter> 

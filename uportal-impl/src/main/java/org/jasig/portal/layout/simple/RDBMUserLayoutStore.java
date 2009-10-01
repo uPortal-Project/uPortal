@@ -1793,9 +1793,9 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
         ResultSet rs = pstmt.executeQuery();
         try {
           if (rs.next()) {
-        	int temp2 = rs.getInt(2);
-            String temp3 = rs.getString(3);
-            String temp4 = rs.getString(4);
+        	int profileId = rs.getInt(2);
+            String profileName = rs.getString(3);
+            String profileDesc = rs.getString(4);
             int layoutId = rs.getInt(5);
             if (rs.wasNull()) {
               layoutId = 0;
@@ -1820,7 +1820,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
                     throw new IllegalStateException(msg);
                 }
             }
-            UserProfile userProfile = new UserProfile(temp2, profileFname, temp3,temp4, layoutId, structSsId, themeSsId);
+            UserProfile userProfile = new UserProfile(profileId, profileFname, profileName, profileDesc, layoutId, structSsId, themeSsId);
             userProfile.setLocaleManager(new LocaleManager(person));
             return userProfile;
           }
@@ -1839,7 +1839,9 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
         		if(defaultProfilePerson.getID() != person.getID()) {
         			UserProfile templateProfile = getUserProfileByFname(defaultProfilePerson,profileFname);
         			if(templateProfile != null) {
-        				return addUserProfile(person,templateProfile);
+        			    final UserProfile newUserProfile = new UserProfile(templateProfile);
+        			    newUserProfile.setLayoutId(0);
+        				return addUserProfile(person,newUserProfile);
         			} else {
                         throw new Exception("Unable to find template profile for " + userId + " and profile " + profileFname);
         			}
@@ -2734,8 +2736,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
       pstmt.setInt(3, profile.getStructureStylesheetId());
       pstmt.setString(4, profile.getProfileDescription());
       pstmt.setString(5, profile.getProfileName());
-      pstmt.setInt(6, userId);
-      pstmt.setString(7, profile.getProfileFname());
+      pstmt.setString(6, profile.getProfileFname());
+      pstmt.setInt(7, userId);
       pstmt.setInt(8, profile.getProfileId());
       try {
         if (log.isDebugEnabled())
@@ -2744,7 +2746,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
             	" structure_ss_id: " + profile.getStructureStylesheetId() + " description: " +
             	profile.getProfileDescription() + " name: " + profile.getProfileName() +
             	" user_id: " + userId + " fname: " + profile.getProfileFname());
-        pstmt.executeUpdate(query);
+        pstmt.execute();
       } finally {
         pstmt.close();
       }

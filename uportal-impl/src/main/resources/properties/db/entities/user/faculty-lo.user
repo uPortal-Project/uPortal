@@ -1,0 +1,8 @@
+
+<user script="classpath://org/jasig/portal/io/import-user_v3-2.crn" username="faculty-lo">
+  <default-user>defaultTemplateUser</default-user>
+  <person-directory>
+    <first-name>Faculty</first-name>
+    <last-name>Layout Owner</last-name>
+  </person-directory>
+</user>

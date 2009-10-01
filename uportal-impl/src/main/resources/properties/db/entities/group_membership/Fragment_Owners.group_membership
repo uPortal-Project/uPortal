@@ -5,9 +5,14 @@
   <creator>system</creator>
   <description>These are fragment layout owner accounts</description>
   <children>
+    <literal>admin-lo</literal>
+    <literal>developer-lo</literal>
     <literal>ent-lo</literal>
+    <literal>faculty-lo</literal>
     <literal>guest-lo</literal>
     <literal>news-lo</literal>
+    <literal>staff-lo</literal>
+    <literal>student-lo</literal>
     <literal>welcome-lo</literal>
     <literal>fragmentTemplate</literal>
   </children>

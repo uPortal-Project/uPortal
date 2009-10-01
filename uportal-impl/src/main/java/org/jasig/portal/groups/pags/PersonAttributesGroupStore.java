@@ -67,9 +67,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
          groupDefinitions = config.getConfig();
          initGroups(); 
       } catch ( Exception e ) {
-         String errorMsg = "PersonAttributeGroupStore.init(): " + "Problem initializing groups: " + e.getMessage();
-         log.error("Problem initializing groups.", e);
-         throw new RuntimeException(errorMsg);
+         throw new RuntimeException("Problem initializing groups", e);
       }
    }
    

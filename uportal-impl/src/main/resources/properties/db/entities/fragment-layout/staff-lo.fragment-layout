@@ -1,5 +1,5 @@
 
-<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="ent-lo">
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="staff-lo">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
       <channel unremovable="" immutable="" hidden="" fname="header"/>
@@ -10,27 +10,25 @@
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
       <channel unremovable="" immutable="" hidden="" fname="footer"/>
     </footer>
-    <tab unremovable="N" immutable="N" hidden="N" name="Entertainment">
-      <column unremovable="N" immutable="N" hidden="N" name="Column">
-        <structure-attribute type="folder">
-          <name>width</name>
-          <value>40%</value>
-        </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="word-of-the-day"/>
-        <channel unremovable="" immutable="" hidden="" fname="about-college-life"/>
-        <channel unremovable="" immutable="" hidden="" fname="e-online"/>
-      </column>
-      <column unremovable="N" immutable="N" hidden="N" name="Column">
+    <tab unremovable="N" immutable="N" hidden="N" name="Main Staff Tab">
+      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
         <structure-attribute type="folder">
           <name>width</name>
           <value>60%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="phd-comics"/>
-        <channel unremovable="" immutable="" hidden="" fname="new-movies"/>
+        <channel unremovable="" immutable="" hidden="" fname="staff-feature"/>
+        <channel unremovable="" immutable="" hidden="" fname="notifications"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>40%</value>
+        </structure-attribute>
+        <channel unremovable="" immutable="" hidden="" fname="whos-online"/>
       </column>
     </tab>
   </root>
-  <profile name="HTML browser profile"> 
+  <profile name="My web browser profile"> 
     <description>A system profile for common web browsers</description>  
     <structure name="DLM Tabs and columns"/>  
     <theme name="DLM XHTML"/> 

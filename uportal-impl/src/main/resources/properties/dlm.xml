@@ -33,7 +33,11 @@
   <!--
   <dlm:property name="ConfigurationLoader.impl" value="org.jasig.portal.layout.dlm.RDBMConfigurationLoader"/>
   -->
-
+  
+  <dlm:fragment name='Guests' ownerID='guest-lo' precedence='80'>
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/>
+  </dlm:fragment>
+  
   <dlm:fragment name='Welcome' ownerID='welcome-lo' precedence='80'>
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
       <paren mode="NOT">
@@ -43,27 +47,46 @@
   </dlm:fragment>
 
   <dlm:fragment name='News' ownerID='news-lo' precedence='60'>
-    <!--  <dlm:role>Students</dlm:role> -->
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.AllUsersEvaluatorFactory'/>
+  </dlm:fragment>
+  
+  <dlm:fragment name='Faculty' ownerID='developer-lo' precedence='50'>
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
-      <paren mode="AND">     
+      <paren mode="OR">     
+        <attribute mode='memberOf' name='Faculty'/>
+      </paren>
+    </dlm:audience>
+  </dlm:fragment>
+  
+  <dlm:fragment name='Staff' ownerID='staff-lo' precedence='50'>
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
+      <paren mode="OR">     
+        <attribute mode='memberOf' name='Staff'/>
+      </paren>
+    </dlm:audience>
+  </dlm:fragment>
+  
+  <dlm:fragment name='Student' ownerID='student-lo' precedence='50'>
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
+      <paren mode="OR">     
         <attribute mode='memberOf' name='Students'/>
       </paren>
     </dlm:audience>
   </dlm:fragment>
   
-  <dlm:fragment name='Guests' ownerID='guest-lo' precedence='20'>
-   <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/>
+  <dlm:fragment name='Developer' ownerID='developer-lo' precedence='40'>
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
+      <paren mode="OR">     
+        <attribute mode='memberOf' name='Portal Developers'/>
+      </paren>
+    </dlm:audience>
   </dlm:fragment>
   
-  <dlm:fragment name='Entertainment' ownerID='ent-lo' precedence='10'>
-    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
-      <paren mode="AND">
-        <paren mode="NOT">
-          <attribute name="username" mode='equals' value='guest'/>
-        </paren>
-        <paren mode="NOT">
-          <attribute name="username" mode='equals' value='admin'/>
-        </paren>
+  <dlm:fragment name='Admin' ownerID='admin-lo' precedence='40'>
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
+      <paren mode="OR">     
+        <attribute mode='memberOf' name='Portal Administrators'/>
+        <attribute mode='memberOf' name='Portal Developers'/>
       </paren>
     </dlm:audience>
   </dlm:fragment>

@@ -3,7 +3,7 @@
   <owner>UP_FRAMEWORK</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
-    <group>Developers</group> 
+    <group>Portal Developers</group> 
   </principal>
   <activity>PUBLISH</activity>
   <target permission-type="GRANT"> 

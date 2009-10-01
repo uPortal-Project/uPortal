@@ -152,6 +152,9 @@
     <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
         <echo message="Importing data" />
         <antcall target="crn-import">
+            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/base_entities" />
+        </antcall>
+        <antcall target="crn-import">
             <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/entities" />
         </antcall>
     </target>

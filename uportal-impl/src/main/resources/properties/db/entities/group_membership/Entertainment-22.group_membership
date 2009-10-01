@@ -3,8 +3,5 @@
   <name>Entertainment</name>
   <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
   <creator>system</creator>
-  <description>Entertainment</description>
-  <children>
-    <group>Games</group>
-  </children>
+  <description>Entertainment Portlets</description>
 </group>

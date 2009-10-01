@@ -36,12 +36,12 @@
 <!-- Group declarations: -->
 
 <!--
-  Group 0: "PAGS Root"
+  Group pags_root: "PAGS Root"
   IMPORTANT: The PAGS Root group is REQUIRED for uPortal to function. It Must be a member of the Everyone group in the
   local group store
 -->
   <group>
-    <group-key>0</group-key>
+    <group-key>pags_root</group-key>
     <group-name>PAGS Root</group-name>
     <group-description>Root group for all PAGS groups.  Convenience for adding PAGS groups to a local group.</group-description>
     <members>
@@ -51,12 +51,12 @@
 
 
 <!--
-  Group 1: "All Users (PAGS)"
+  Group all_users: "All Users (PAGS)"
   All IPersons are memebers of this group
   IMPORTANT: The All Users group is REQUIRED for uPortal to function. It Must be a member of the PAGS Root group
 -->
   <group>
-    <group-key>1</group-key>
+    <group-key>all_users</group-key>
     <group-name>All Users (PAGS)</group-name>
     <group-description>All Portal Users</group-description>
     <selection-test>

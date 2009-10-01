@@ -2,7 +2,6 @@
 <user script="classpath://org/jasig/portal/io/import-user_v3-2.crn" username="guest-lo">
   <default-user>defaultTemplateUser</default-user>
   <person-directory>
-    <encrptd-pswd>(MD5)NZpveCmtCTXi6qaq0Rx7O5HcQDEW3MTE</encrptd-pswd>
     <first-name>Guest</first-name>
     <last-name>Layout Owner</last-name>
   </person-directory>

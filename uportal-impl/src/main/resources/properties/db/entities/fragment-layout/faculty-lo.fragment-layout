@@ -1,36 +1,36 @@
 
-<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="guest">
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="faculty-lo">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
       <channel unremovable="" immutable="" hidden="" fname="header"/>
       <channel unremovable="" immutable="" hidden="" fname="portal_login_general"/>
       <channel unremovable="" immutable="" hidden="" fname="session-locales-selector"/>
-      <channel unremovable="" immutable="" hidden="" fname="fragment-admin"/>
+      <channel unremovable="" immutable="" hidden="" fname="fragment-admin-exit"/>
     </header>
-    <tab unremovable="N" immutable="N" hidden="N" name="uPortal News">
+    <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
+      <channel unremovable="" immutable="" hidden="" fname="footer"/>
+    </footer>
+    <tab unremovable="N" immutable="N" hidden="N" name="Main Faculty Tab">
       <column unremovable="N" immutable="N" hidden="N" name="Column 1">
         <structure-attribute type="folder">
           <name>width</name>
-          <value>40%</value>
+          <value>50%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="uportal-news"/>
-        <channel unremovable="" immutable="" hidden="" fname="uportal-powered-sites"/>
+        <channel unremovable="" immutable="" hidden="" fname="faculty-feature"/>
+        <channel unremovable="" immutable="" hidden="" fname="notifications"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
         <structure-attribute type="folder">
           <name>width</name>
-          <value>60%</value>
+          <value>50%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="jasig-news"/>
-        <channel unremovable="" immutable="" hidden="" fname="unicon-news"/>
+        <channel unremovable="" immutable="" hidden="" fname="courses"/>
+        <channel unremovable="" immutable="" hidden="" fname="whos-online"/>
       </column>
     </tab>
-    <footer unremovable="Y" immutable="Y" hidden="N" name="Footer folder">
-      <channel unremovable="" immutable="" hidden="" fname="footer"/>
-    </footer>
   </root>
-  <profile name="Guest Web Browser Profile"> 
-    <description>A sample profile for web browsers</description>  
+  <profile name="My web browser profile"> 
+    <description>A system profile for common web browsers</description>  
     <structure name="DLM Tabs and columns"/>  
     <theme name="DLM XHTML"/> 
   </profile>

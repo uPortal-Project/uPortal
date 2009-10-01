@@ -13,8 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>CImage</category>
-    <category>uPortal</category>
+    <category>Instructors</category>
   </categories>
   <groups>
     <group>Everyone</group>

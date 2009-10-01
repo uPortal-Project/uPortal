@@ -37,6 +37,16 @@ public class UserProfile implements Serializable {
         theme_ss_id=theme_ss;
     }
 
+    public UserProfile(UserProfile userProfile) {
+        this.id=userProfile.id;
+        this.fname=userProfile.fname;
+        pName=userProfile.pName;
+        description=userProfile.description;
+        this.layout_id=userProfile.layout_id;
+        struct_ss_id=userProfile.struct_ss_id;
+        theme_ss_id=userProfile.theme_ss_id;
+    }
+
     public int getProfileId() { return id; }
     public String getProfileFname() { return fname; }
     public String getProfileName() { return pName; }

@@ -101,12 +101,12 @@ public class CHeader extends BaseChannel implements ICacheable {
     headerEl.appendChild(timeStampShortEl);
     // Don't render the publish, subscribe, user preferences links if it's the guest user
     if (staticData.getPerson().getSecurityContext().isAuthenticated()) {
-      if (canUserAccessAdminNavigation()) {
-        // Create <chan-mgr-chanid> element under <header>
-        Element chanMgrChanidEl = doc.createElement("chan-mgr-chanid");
-        chanMgrChanidEl.appendChild(doc.createTextNode(Constants.NAVIGATION_CHAN_FNAME));
-        headerEl.appendChild(chanMgrChanidEl);
-      }
+//      if (canUserAccessAdminNavigation()) {
+//        // Create <chan-mgr-chanid> element under <header>
+//        Element chanMgrChanidEl = doc.createElement("chan-mgr-chanid");
+//        chanMgrChanidEl.appendChild(doc.createTextNode(Constants.NAVIGATION_CHAN_FNAME));
+//        headerEl.appendChild(chanMgrChanidEl);
+//      }
 
       // Create <preferences-chanid> element under <header>
       Element preferencesChanidEl = doc.createElement("preferences-chanid");
@@ -147,7 +147,7 @@ public class CHeader extends BaseChannel implements ICacheable {
     sbKey.append("locales:").append(LocaleManager.stringValueOf(runtimeData.getLocales()));
     sbKey.append("authenticated:").append(staticData.getPerson().getSecurityContext().isAuthenticated()).append(", ");
     sbKey.append("baseActionURL:").append(runtimeData.getBaseActionURL()).append(", ");
-    sbKey.append("hasAdminAccess:").append(String.valueOf(canUserAccessAdminNavigation())).append(", ");
+//    sbKey.append("hasAdminAccess:").append(String.valueOf(canUserAccessAdminNavigation())).append(", ");
     sbKey.append("stylesheetURI:");
     try {
       String sslUri = ResourceLoader.getResourceAsURLString(this.getClass(), sslLocation);

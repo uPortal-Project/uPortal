@@ -3,11 +3,9 @@
   <name>Students</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>All enrolled university students</description>
+  <description>All students</description>
   <children>
-    <group>Graduate Students</group>
-    <group>Prospective Students</group>
-    <group>Undergraduate Students</group>
     <literal>student</literal>
+    <literal>student-lo</literal>
   </children>
 </group>
