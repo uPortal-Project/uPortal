@@ -22,28 +22,34 @@
     <sql>SELECT user_id FROM up_user WHERE user_name = ?</sql>
     <parameter value="${USER_NAME}"/>
     <subtasks>
-
-        <!-- Structure Attributes -->
-        <sql-statement sql="DELETE FROM up_ss_user_atts WHERE user_id = ? AND ss_id = ?">
+    
+        <sql-query>
+            <sql>SELECT structure_ss_id FROM up_user_profile WHERE user_id = ?</sql> <!--  AND profile_id = 1 -->
             <parameter value="${USER_ID}"/>
-            <parameter value="${sql(SELECT structure_ss_id FROM up_user_profile WHERE user_id = ${USER_ID} AND profile_id = 1)}"/>
-        </sql-statement>
-
+            <subtasks>
+                <!-- Structure Attributes -->
+                <sql-statement sql="DELETE FROM up_ss_user_atts WHERE user_id = ? AND ss_id = ?">
+                    <parameter value="${USER_ID}"/>
+                    <parameter value="${STRUCTURE_SS_ID}"/>
+                </sql-statement>
+            </subtasks>
+        </sql-query>
+        
         <!-- Layout Parameters -->
         <sql-statement sql="DELETE FROM up_layout_param WHERE user_id = ?">
             <parameter value="${USER_ID}"/>
         </sql-statement>
-
+    
         <!-- Layout Structures (nodes) -->
         <sql-statement sql="DELETE FROM up_layout_struct WHERE user_id = ?">
             <parameter value="${USER_ID}"/>
         </sql-statement>
-
+    
         <!-- Layout (itself) -->
         <sql-statement sql="DELETE FROM up_user_layout WHERE user_id = ?">
             <parameter value="${USER_ID}"/>
         </sql-statement>
-
+    
         <!-- NEXT_STRUCT_ID column (UP_USER table) -->
         <sql-statement sql="UPDATE up_user SET next_struct_id = 1 WHERE user_id = ?">
             <parameter value="${USER_ID}"/>
