@@ -73,7 +73,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: portlet-msg -->
     
     <!-- Portlet Section -->
-    <div id="${n}channelAddingTabs" class="portlet-section" role="region"> 
+    <div id="${n}channelAddingTabs" class="portlet-section fl-pager" role="region"> 
       <h3 class="portlet-section-header" role="heading">
         <spring:message code="listChannels.portletListHeading"/>
       </h3>
@@ -86,19 +86,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <option value=""><spring:message code="listChannels.categoryFilterAllCategories"/></option>
           </select>
         </div>
-        <div class="fl-col view-pager">
-          <ul id="pager-top" class="pager-top">
-            <li class="previous"><a href="#">&lt; <spring:message code="listChannels.pagerPrevious"/></a></li>
+        <div class="fl-col view-pager flc-pager-top">
+          <ul id="pager-top" class="fl-pager-ui">
+            <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="listChannels.pagerPrevious"/></a></li>
             <li>
-              <ul class="pager-links" style="margin:0; display:inline">
-                <li class="page-link"><a href="javascript:;">1</a></li>
-                <li class="page-link-disabled">2</li>
-                <li class="page-link"><a href="javascript:;">3</a></li>
+              <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
+                <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
+                <li class="flc-pager-pageLink-disabled">2</li>
+                <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
               </ul>
             </li>
-            <li class="next"><a href="#"><spring:message code="listChannels.pagerNext"/> &gt;</a></li>
+            <li class="flc-pager-next"><a href="#"><spring:message code="listChannels.pagerNext"/> &gt;</a></li>
             <li>
-              <spring:message code="listChannels.pagerPerPagePrefix"/> <span> <select class="pager-page-size">
+              <span class="flc-pager-summary"><spring:message code="listChannels.pagerPerPagePrefix"/></span>
+              <span> <select class="pager-page-size flc-pager-page-size">
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="20">20</option>
@@ -114,8 +115,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <table id="${n}categoriesTable1" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
           <thead>
             <tr rsf:id="header:">
-              <th id="${n}portletName"><a rsf:id="name" title="Click to sort" href="#"><spring:message code="listChannels.portletTableNameHeading"/></a></th>
-              <th id="${n}portletType"><a rsf:id="type" title="Click to sort" href="#"><spring:message code="listChannels.portletTableTypeHeading"/></a></th>
+              <th id="${n}portletName" class="flc-pager-sort-header"><a rsf:id="name" title="Click to sort" href="#"><spring:message code="listChannels.portletTableNameHeading"/></a></th>
+              <th id="${n}portletType" class="flc-pager-sort-header"><a rsf:id="type" title="Click to sort" href="#"><spring:message code="listChannels.portletTableTypeHeading"/></a></th>
               <th id="${n}portletEditLink" rsf:id="editLink"><spring:message code="listChannels.portletTableEditHeading"/></th>
               <th id="${n}portletDeleteLink" rsf:id="deleteLink"><spring:message code="listChannels.portletTableDeleteHeading"/></th>
             </tr>
@@ -208,8 +209,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         bodyRenderer: {
                           type: "fluid.pager.selfRender",
                           options: {
-                              root: "#${n}categoriesTable1"
+                              selectors: {
+                                 root: "#${n}categoriesTable1 tbody"
+                              },
+                              row: "row:"
                             }
+                            
                         },
                         pagerBar: {type: "fluid.pager.pagerBar", options: {
                           pageList: {type: "fluid.pager.renderedPageList",
