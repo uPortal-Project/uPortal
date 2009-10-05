@@ -9,4 +9,7 @@
   <target permission-type="GRANT"> 
     <group>Everyone</group> 
   </target>
+  <target permission-type="GRANT"> 
+    <group>All Categories</group> 
+  </target>
 </permission-set>

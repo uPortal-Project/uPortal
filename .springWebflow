@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webflow-project-description>
+	<version>1</version>
+	<pluginVersion><![CDATA[2.2.6.200908051215-RELEASE]]></pluginVersion>
+	<configs>
+		<config>
+			<file>uportal-war/src/main/webapp/WEB-INF/flows/edit-portlet/edit-portlet.xml</file>
+			<name><![CDATA[edit-portlet]]></name>
+		</config>
+		<config>
+			<file>uportal-war/src/main/webapp/WEB-INF/flows/portlet-manager/portlet-manager.xml</file>
+			<name><![CDATA[portlet-manager]]></name>
+		</config>
+		<config>
+			<file>uportal-war/src/main/webapp/WEB-INF/flows/groups-selector/groups-selector.xml</file>
+			<name><![CDATA[groups-selector]]></name>
+		</config>
+		<config>
+			<file>uportal-war/src/main/webapp/WEB-INF/flows/person-lookup/person-lookup.xml</file>
+			<name><![CDATA[person-lookup]]></name>
+		</config>
+		<config>
+			<file>uportal-war/src/main/webapp/WEB-INF/flows/register-portal/register-portal.xml</file>
+			<name><![CDATA[register-portal]]></name>
+		</config>
+		<config>
+			<file>uportal-war/src/main/webapp/WEB-INF/flows/identity-swapper/identity-swapper.xml</file>
+			<name><![CDATA[identity-swapper]]></name>
+		</config>
+		<config>
+			<file>uportal-war/src/main/webapp/WEB-INF/flows/attribute-swapper/attribute-swapper.xml</file>
+			<name><![CDATA[attribute-swapper]]></name>
+		</config>
+	</configs>
+</webflow-project-description>

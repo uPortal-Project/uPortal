@@ -50,7 +50,7 @@
                                             </choose>
                                         </with-attribute>
                                     </when>
-                                    <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.ChannelDefinition'))}">
+                                    <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.channel.IChannelDefinition'))}">
                                         <with-attribute key="FNAME" value="${sql(SELECT chan_fname FROM up_channel WHERE chan_id = ${req(MEMBER_KEY)})}">
                                             <choose>
                                                 <when test="${jexl(FNAME == null)}">

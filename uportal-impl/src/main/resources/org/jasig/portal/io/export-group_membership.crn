@@ -57,7 +57,7 @@
                         </choose>
                     </with-attribute>
                 </when>
-                <when test="${jexl(!ENTITY_TYPE_NAME.equals('org.jasig.portal.ChannelDefinition'))}">
+                <when test="${jexl(!ENTITY_TYPE_NAME.equals('org.jasig.portal.channel.IChannelDefinition'))}">
                     <!-- Ignore channels, their group membership information is handled by the chanpub files -->
                     <append-node parent="${singleNode(children)}">
                         <literal>${MEMBER_KEY}</literal>

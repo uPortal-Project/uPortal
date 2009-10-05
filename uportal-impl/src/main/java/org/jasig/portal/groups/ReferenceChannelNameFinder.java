@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.channel.IChannelDefinition;
 
@@ -25,14 +26,9 @@ public class ReferenceChannelNameFinder
     private static final Log log = LogFactory.getLog(ReferenceChannelNameFinder.class);
     
     private static IEntityNameFinder _instance = null;
-    private Class type = null;
+    private final Class<? extends IBasicEntity> type = IChannelDefinition.class;
 
     protected ReferenceChannelNameFinder () {
-        try {
-            type = Class.forName("org.jasig.portal.ChannelDefinition");
-        } catch (Exception e) {
-            log.error("Exception instantiating ReferenceChannelNameFinder.", e);
-        }
     }
 
     public static synchronized IEntityNameFinder singleton () {

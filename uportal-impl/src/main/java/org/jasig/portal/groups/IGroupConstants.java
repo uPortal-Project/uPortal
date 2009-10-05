@@ -5,6 +5,9 @@
  */
 package org.jasig.portal.groups;
 
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.security.IPerson;
+
 /**
  * Defines constants for Groups related classes
  *
@@ -13,9 +16,9 @@ package org.jasig.portal.groups;
  */
 
 public interface IGroupConstants {
-    public final String EVERYONE = "org.jasig.portal.security.IPerson";
-    public final String CHANNEL_CATEGORIES = "org.jasig.portal.ChannelDefinition";
-    public final String PORTAL_ADMINISTRATORS = "org.jasig.portal.security.IPerson.PortalAdministrators";
+    public final String EVERYONE = IPerson.class.getName();
+    public final String CHANNEL_CATEGORIES = IChannelDefinition.class.getName();
+    public final String PORTAL_ADMINISTRATORS = EVERYONE + ".PortalAdministrators";
     
     //Search method constants
     public final int IS =1;

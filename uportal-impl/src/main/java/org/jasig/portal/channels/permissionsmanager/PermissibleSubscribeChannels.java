@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.IPermissible;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.apache.commons.logging.Log;
@@ -39,7 +40,7 @@ public class PermissibleSubscribeChannels
             activities.put("SUBSCRIBE", "Subscribe to Channel");
             Document chanregistry = ChannelRegistryManager.getChannelRegistry();
             NodeList chans = chanregistry.getElementsByTagName("channel");
-            IEntityNameFinder chanf = EntityNameFinderService.instance().getNameFinder(Class.forName("org.jasig.portal.ChannelDefinition"));
+            IEntityNameFinder chanf = EntityNameFinderService.instance().getNameFinder(IChannelDefinition.class);
             for (int i = 0; i < chans.getLength(); i++) {
                 Element chan = (Element)chans.item(i);
                 String chanID = chan.getAttribute("ID");

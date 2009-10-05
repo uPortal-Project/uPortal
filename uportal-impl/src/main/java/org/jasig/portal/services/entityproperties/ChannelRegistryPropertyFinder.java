@@ -25,7 +25,7 @@ public class ChannelRegistryPropertyFinder
     private static final Log log = LogFactory.getLog(ChannelRegistryPropertyFinder.class);
     
    protected static String[] names;
-   protected static Class chan = null;
+   protected static final Class chan = IChannelDefinition.class;
    protected static boolean INITIALIZED = false;
 
  /**
@@ -44,11 +44,6 @@ public class ChannelRegistryPropertyFinder
       names[2] = "Description";
       names[3] = "Functional Name";
       names[4] = "Timeout";
-      try {
-         chan = Class.forName("org.jasig.portal.ChannelDefinition");
-      } catch (Exception e) {
-         log.error( "ChannelRegistryPropertyFinder - static:", e);
-      }
       INITIALIZED = true;
    }
 

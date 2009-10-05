@@ -45,7 +45,7 @@
     <group-name>PAGS Root</group-name>
     <group-description>Root group for all PAGS groups.  Convenience for adding PAGS groups to a local group.</group-description>
     <members>
-      <member-key>1</member-key>
+      <member-key>all_users</member-key>
     </members>
   </group>
 
