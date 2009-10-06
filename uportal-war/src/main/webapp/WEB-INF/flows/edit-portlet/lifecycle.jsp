@@ -46,11 +46,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
      
     <form:form modelAttribute="channel" action="${queryUrl}" method="POST">
 
-    <div class="portlet-msg-info" role="alert">
-        This page is a placeholder for future functionality.  The values set below
-        are not persisted.
-    </div>
-	
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="channel">
         <div class="portlet-msg-error" role="alert">
@@ -87,29 +82,88 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </table>
       </div>
        
-      <h3 class="portlet-section-header" role="heading"><spring:message code="lifecycle.datesHeading"/></h3>
-      <div class="portlet-section-body"> 
- 
-        <table summary="<spring:message code="lifecycle.datesSummary"/>">
-          <thead>
-            <tr>
-              <th><spring:message code="lifecycle.optionHeading"/></th>
-              <th><spring:message code="lifecycle.settingHeading"/></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-                <td class="fl-text-align-right"><spring:message code="lifecycle.publishDate"/></td>
-                <td><form:input path="publishDate"/></td>
-            </tr>  
-            <tr>
-                <td class="fl-text-align-right"><spring:message code="lifecycle.expirationDate"/></td>
-                <td><form:input path="expirationDate"/></td>
-           </tr>      
-          </tbody>
-        </table>
- 
+      <div id="${n}publishingDateSection" style="${ channel.lifecycleState == 'PUBLISHED' || channel.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
+	      <h3 class="portlet-section-header" role="heading"><spring:message code="lifecycle.publishDateHeading"/></h3>
+	      <div class="portlet-section-body"> 
+	 
+	        <table summary="<spring:message code="lifecycle.datesSummary"/>">
+	          <thead>
+	            <tr>
+	              <th><spring:message code="lifecycle.optionHeading"/></th>
+	              <th><spring:message code="lifecycle.settingHeading"/></th>
+	            </tr>
+	          </thead>
+	          <tbody>
+	            <tr>
+	                <td class="fl-text-align-right"><spring:message code="lifecycle.publishDate"/></td>
+	                <td>
+	                   <form:input path="publishDate" size="10" cssClass="cal-datepicker"/>
+	                   <span style="${ channel.publishDate == null ? 'display:none' : '' }">
+                           <form:select path="publishHour">
+                              <c:forEach begin="1" end="12" var="hour">
+                                  <form:option value="${ hour }"/>
+                              </c:forEach>
+                           </form:select>:<form:select path="publishMinute">
+                              <c:forEach begin="0" end="59" var="min">
+                                  <fmt:formatNumber var="m" value="${ min }" minIntegerDigits="2"/>
+                                  <form:option value="${ m }"/>
+                              </c:forEach>
+                           </form:select>
+                           <form:select path="publishAmPm">
+                              <form:option value="0" label="AM"/>
+                              <form:option value="1" label="PM"/>
+                           </form:select>
+                           (<a class="clear-date" href="javascript:;"><spring:message code="lifecycle.autoDateReset"/></a>)
+                       </span>
+	                </td>
+	            </tr>  
+	          </tbody>
+	        </table>
+	 
+	      </div>
       </div>
+
+      <div id="${n}expirationDateSection" style="${ channel.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
+	      <h3 class="portlet-section-header" role="heading"><spring:message code="lifecycle.expirationDateHeading"/></h3>
+	      <div class="portlet-section-body"> 
+	 
+	        <table summary="<spring:message code="lifecycle.datesSummary"/>">
+	          <thead>
+	            <tr>
+	              <th><spring:message code="lifecycle.optionHeading"/></th>
+	              <th><spring:message code="lifecycle.settingHeading"/></th>
+	            </tr>
+	          </thead>
+	          <tbody>
+	            <tr>
+	                <td class="fl-text-align-right"><spring:message code="lifecycle.expirationDate"/></td>
+	                <td>
+	                   <form:input path="expirationDate" size="10" cssClass="cal-datepicker"/>
+                       <span style="${ channel.expirationDate == null ? 'display:none' : '' }">
+		                   <form:select path="expirationHour">
+		                      <c:forEach begin="1" end="12" var="hour">
+                                  <form:option value="${ hour }"/>
+		                      </c:forEach>
+		                   </form:select>:<form:select path="expirationMinute">
+                              <c:forEach begin="0" end="59" var="min">
+                                  <fmt:formatNumber var="m" value="${ min }" minIntegerDigits="2"/>
+                                  <form:option value="${ m }"/>
+                              </c:forEach>
+		                   </form:select>
+		                   <form:select path="expirationAmPm">
+		                      <form:option value="0" label="AM"/>
+                              <form:option value="1" label="PM"/>
+		                   </form:select>
+                           (<a class="clear-date" href="javascript:;"><spring:message code="lifecycle.autoDateReset"/></a>)
+		               </span>
+	                </td>
+	           </tr>      
+	          </tbody>
+	        </table>
+	 
+	      </div>
+      </div>
+      
     </div> <!-- end: portlet-section -->
 
 		<!-- Portlet Buttons -->    
@@ -131,3 +185,21 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-body -->
 
 </div> <!-- end: portlet -->
+
+<script type="text/javascript">
+up.jQuery(function() {
+    var $ = up.jQuery;
+    $(document).ready(function(){
+        $(".cal-datepicker").datepicker().change(function(){
+            if ($(this).val()) $(this).next().css("display", "inline");
+            else $(this).next().css("display", "none");
+        });
+        $(".clear-date").click(function(){ $(this).parent().css("display", "none").prev().val(""); });
+        $(":radio").click(function(){
+            var lifecycle = $(this).val();
+            $('#${n}publishingDateSection').css('display', '${ lifecycle == "PUBLISHED" || lifecycle == "EXPIRED" ? "none" : "block" }');
+            $('#${n}expirationDateSection').css('display', '${ lifecycle == "EXPIRED" ? "none" : "block" }');
+        });
+    });
+});
+</script>

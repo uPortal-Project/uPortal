@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.portlets.portletadmin;
 
+import java.util.Date;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
@@ -141,9 +142,9 @@ public class ChannelDefinitionFormValidator {
 	public void validateChooseGroup(ChannelDefinitionForm def, MessageContext context) {
 		// make sure the user has picked at least one group
 		if (def.getGroups().size() == 0) {
-//			context.addMessage(new MessageBuilder().error().source("groups")
-//					.code("errors.channelDefinition.groups.empty")
-//					.defaultText("Please choose at least one group").build());
+			context.addMessage(new MessageBuilder().error().source("groups")
+					.code("errors.channelDefinition.groups.empty")
+					.defaultText("Please choose at least one group").build());
 		}
 	}
 	
@@ -153,6 +154,28 @@ public class ChannelDefinitionFormValidator {
 			context.addMessage(new MessageBuilder().error().source("lifecycle")
 					.code("lifecycle.error.selectLifecycle")
 					.defaultText("Please select a lifecycle stage").build());
+		}
+		Date now = new Date();
+		if (def.getPublishDate() != null) {
+			if (def.getPublishDateTime().before(now)) {
+				context.addMessage(new MessageBuilder().error().source("publishDate")
+						.code("lifecycle.error.invalidPublishDate")
+						.defaultText("The auto-publishing date must be in the future").build());
+			}
+		}
+		if (def.getExpirationDate() != null) {
+			if (def.getExpirationDateTime().before(now)) {
+				context.addMessage(new MessageBuilder().error().source("expirationDate")
+						.code("lifecycle.error.invalidExpirationDate")
+						.defaultText("The auto-expiration date must be in the future").build());
+			}
+		}
+		if (def.getPublishDate() != null && def.getExpirationDate() != null) {
+			if (def.getExpirationDateTime().before(def.getPublishDateTime())) {
+				context.addMessage(new MessageBuilder().error().source("expirationDate")
+						.code("lifecycle.error.invalidPublishAndExpirationDate")
+						.defaultText("The auto-expiration date must be after the auto-publish date").build());
+			}
 		}
 	}
 	

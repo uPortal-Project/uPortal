@@ -215,6 +215,9 @@ public class PortletAdministrationHelper {
 			    if (channelDef.getPublishDate() == null) {
 				    channelDef.setPublishDate(now);
 			    }
+			} else if (form.getPublishDate() != null) {
+				channelDef.setPublishDate(form.getPublishDateTime());
+				channelDef.setPublisherId(publisher.getID());
 			}
 
 			if (order >= ChannelLifecycleState.EXPIRED.getOrder()) {
@@ -222,6 +225,9 @@ public class PortletAdministrationHelper {
 			    if (channelDef.getExpirationDate() == null) {
 			    	channelDef.setExpirationDate(now);
 			    }
+			} else if (form.getExpirationDate() != null) {
+				channelDef.setExpirationDate(form.getExpirationDateTime());
+				channelDef.setExpirerId(publisher.getID());
 			}
 			
 		} 
@@ -244,6 +250,9 @@ public class PortletAdministrationHelper {
 				if (channelDef.getPublishDate() == null) {
 					channelDef.setPublishDate(now);
 				}
+			} else if (form.getPublishDate() != null) {
+				channelDef.setPublishDate(form.getPublishDate());
+				channelDef.setPublisherId(publisher.getID());
 			} else {
 				channelDef.setPublishDate(null);
 				channelDef.setPublisherId(-1);
@@ -254,6 +263,9 @@ public class PortletAdministrationHelper {
 				if (channelDef.getExpirationDate() == null) {
 					channelDef.setExpirationDate(now);
 				}
+			} else if (form.getExpirationDate() != null) {
+				channelDef.setExpirationDate(form.getExpirationDate());
+				channelDef.setExpirerId(publisher.getID());
 			} else {
 				channelDef.setExpirationDate(null);
 				channelDef.setExpirerId(-1);

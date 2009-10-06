@@ -7,6 +7,7 @@ package org.jasig.portal.portlets.portletadmin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
@@ -34,7 +37,14 @@ import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
 
 public class ChannelDefinitionForm implements Serializable {
-
+	
+	private static final long serialVersionUID = 892741367149099647L;
+	private static Log log = LogFactory.getLog(ChannelDefinitionForm.class);
+	
+	/**
+	 * Main channel fields
+	 */
+	
 	private int id = -1;
 	private String fname = "";
 	private String name = "";
@@ -43,15 +53,41 @@ public class ChannelDefinitionForm implements Serializable {
 	private String javaClass = "";
 	private int timeout = 500;
 	private int typeId;
+	
+	/**
+	 * Lifecycle information
+	 */
+	
 	private ChannelLifecycleState lifecycleState = ChannelLifecycleState.CREATED;
 	private Date publishDate;
+	private int publishHour = 12;
+	private int publishMinute = 0;
+	private int publishAmPm = 0;
 	private Date expirationDate;
+	private int expirationHour = 12;
+	private int expirationMinute = 0;
+	private int expirationAmPm = 0;
+	
+	/**
+	 * Channel controls
+	 */
+	
 	private boolean editable;
 	private boolean hasHelp;
 	private boolean hasAbout;
 	private boolean secure;
+	
+	/**
+	 * Groups and categories
+	 */
+	
 	private List<String> groups = new ArrayList<String>();
 	private List<String> categories = new ArrayList<String>();
+
+	
+	/**
+	 * Parameters and preferences
+	 */
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, Attribute> parameters = LazyMap.decorate(
@@ -88,24 +124,20 @@ public class ChannelDefinitionForm implements Serializable {
 		this.setTitle(def.getTitle());
 		this.setJavaClass(def.getJavaClass());
 		this.setTimeout(def.getTimeout());
-		this.setTypeId(def.getTypeId());
+		this.setTypeId(def.getType().getId());
 		this.setEditable(def.isEditable());
 		this.setHasHelp(def.hasHelp());
 		this.setHasAbout(def.hasAbout());
-		this.setSecure(def.isSecure());
+		this.setSecure(def.isSecure());		
+		this.setLifecycleState(def.getLifecycleState());
 		
-		this.setExpirationDate(def.getExpirationDate());
-		this.setPublishDate(def.getPublishDate());
+		int order = this.getLifecycleState().getOrder();
+		if (order < ChannelLifecycleState.PUBLISHED.getOrder()) {
+			this.setPublishDateTime(def.getPublishDate());
+		}
 		
-		Date now = new Date();
-		if (def.getExpirationDate() != null && def.getExpirationDate().before(now)) {
-			this.setLifecycleState(ChannelLifecycleState.EXPIRED);
-		} else if (def.getPublishDate() != null && def.getPublishDate().before(now)) {
-			this.setLifecycleState(ChannelLifecycleState.PUBLISHED);
-		} else if (def.getApprovalDate() != null && def.getApprovalDate().before(now)) {
-			this.setLifecycleState(ChannelLifecycleState.APPROVED);
-		} else {
-			this.setLifecycleState(ChannelLifecycleState.CREATED);
+		if (order < ChannelLifecycleState.EXPIRED.getOrder()) {
+			this.setExpirationDateTime(def.getExpirationDate());
 		}
 		
 		for (IChannelParameter param : def.getParameters()) {
@@ -293,6 +325,7 @@ public class ChannelDefinitionForm implements Serializable {
 				final Class<?> channelClazz = Class.forName(this.javaClass);
 				return IPortletAdaptor.class.isAssignableFrom(channelClazz);
 			} catch (ClassNotFoundException e) {
+				log.info("Failed to find class " + this.javaClass + " for portlet");
 			}
 		}
 		return false;
@@ -338,7 +371,7 @@ public class ChannelDefinitionForm implements Serializable {
 	public void setPublishDate(Date publishDate) {
 		this.publishDate = publishDate;
 	}
-
+	
 	public Date getExpirationDate() {
 		return expirationDate;
 	}
@@ -346,7 +379,7 @@ public class ChannelDefinitionForm implements Serializable {
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
-
+	
 	public boolean isEditable() {
 		return editable;
 	}
@@ -436,4 +469,124 @@ public class ChannelDefinitionForm implements Serializable {
 		this.categories.add(category);
 	}
 
+	public int getPublishHour() {
+		return this.publishHour;
+	}
+
+	public void setPublishHour(int publishHour) {
+		this.publishHour = publishHour;
+	}
+
+	public int getPublishMinute() {
+		return this.publishMinute;
+	}
+
+	public void setPublishMinute(int publishMinute) {
+		this.publishMinute = publishMinute;
+	}
+
+	public int getPublishAmPm() {
+		return this.publishAmPm;
+	}
+
+	public void setPublishAmPm(int publishAmPm) {
+		this.publishAmPm = publishAmPm;
+	}
+
+	public int getExpirationHour() {
+		return this.expirationHour;
+	}
+
+	public void setExpirationHour(int expirationHour) {
+		this.expirationHour = expirationHour;
+	}
+
+	public int getExpirationMinute() {
+		return this.expirationMinute;
+	}
+
+	public void setExpirationMinute(int expirationMinute) {
+		this.expirationMinute = expirationMinute;
+	}
+
+	public int getExpirationAmPm() {
+		return this.expirationAmPm;
+	}
+
+	public void setExpirationAmPm(int expirationAmPm) {
+		this.expirationAmPm = expirationAmPm;
+	}
+	
+	/**
+	 * Return the full date and time at which this channel shoudl be automatically
+	 * published.  This value is built from the individual date/time fields.
+	 * 
+	 * @return
+	 */
+	public Date getPublishDateTime() {
+		if (this.getPublishDate() == null) {
+			return null;
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(this.getPublishDate());
+		cal.set(Calendar.HOUR, this.getPublishHour());
+		cal.set(Calendar.MINUTE, this.getPublishMinute());
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.set(Calendar.AM_PM, this.getPublishAmPm());
+		return cal.getTime();
+	}
+
+	/**
+	 * Return the full date and time at which this channel shoudl be automatically
+	 * expired.  This value is built from the individual date/time fields.
+	 * 
+	 * @return
+	 */
+	public Date getExpirationDateTime() {
+		if (this.getExpirationDate() == null) {
+			return null;
+		}
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(this.getExpirationDate());
+		cal.set(Calendar.HOUR, this.getExpirationHour());
+		cal.set(Calendar.MINUTE, this.getExpirationMinute());
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.set(Calendar.AM_PM, this.getExpirationAmPm());
+		return cal.getTime();
+	}
+
+	public void setPublishDateTime(Date publish) {
+		if (publish != null) {
+			this.setPublishDate(publish);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(publish);
+			if (cal.get(Calendar.HOUR) == 0) {
+				this.setPublishHour(12);
+			} else {
+				this.setPublishHour(cal.get(Calendar.HOUR));
+			}
+			this.setPublishMinute(cal.get(Calendar.MINUTE));
+			this.setPublishAmPm(cal.get(Calendar.AM_PM));
+		}
+	}
+	
+	public void setExpirationDateTime(Date expire) {
+		if (expire != null) {
+			this.setExpirationDate(expire);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(expire);
+			if (cal.get(Calendar.HOUR) == 0) {
+				this.setExpirationHour(12);
+			} else {
+				this.setExpirationHour(cal.get(Calendar.HOUR));
+			}
+			this.setExpirationMinute(cal.get(Calendar.MINUTE));
+			this.setExpirationAmPm(cal.get(Calendar.AM_PM));
+		}
+	}
+	
 }

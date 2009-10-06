@@ -17,7 +17,7 @@ import org.springframework.binding.convert.service.DefaultConversionService;
 public class PortalConversionService extends DefaultConversionService {
 
 	// TODO: this should be externalized
-	private static final String DATE_AND_TIME_FORMAT = "MM/dd/yyyy hh:mm aa";
+	private static final String DATE_AND_TIME_FORMAT = "M/d/yyyy";
 	
 	public PortalConversionService() {
 		super();
@@ -32,6 +32,6 @@ public class PortalConversionService extends DefaultConversionService {
 		/* Add the "shortDate" conversion. */
 		StringToDate dateAndTimeToDate = new StringToDate();
 		dateAndTimeToDate.setPattern(DATE_AND_TIME_FORMAT);
-		addConverter("dateAndTime", dateAndTimeToDate);
+		addConverter("date", dateAndTimeToDate);
 	}
 }

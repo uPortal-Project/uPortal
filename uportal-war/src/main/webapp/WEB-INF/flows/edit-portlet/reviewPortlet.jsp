@@ -278,16 +278,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                    work for portlet lifecycle management is done. --%>
               <td><a href="${ lifecycleUrl }" title="<spring:message code="lifecycle.name.${ channel.lifecycleState }"/>" class="pa-edit"><spring:message code="lifecycle.name.${ channel.lifecycleState }"/></a></td>
             </tr>
-            <tr>
-              <td class="fl-text-align-right"><spring:message code="lifecycle.publishDate"/></td>
-              <fmt:formatDate type="both" value="${channel.publishDate}" var="publishDate"/>
-              <td><a href="${ lifecycleUrl }" title="${ publishDate }" class="pa-edit">${ publishDate }</a></td>
-            </tr>
-            <tr>
-              <td class="fl-text-align-right"><spring:message code="lifecycle.expirationDate"/></td>
-              <fmt:formatDate type="both" value="${channel.expirationDate}" var="expirationDate"/>
-              <td><a href="${ lifecycleUrl }" title="${ expirationDate }" class="pa-edit">${ expirationDate }</a></td>
-            </tr>
+            <c:if test="${ (channel.lifecycleState != 'PUBLISHED' && channel.lifecycleState != 'EXPIRED') && channel.publishDate != null }">
+	            <tr>
+	              <td class="fl-text-align-right"><spring:message code="lifecycle.publishDate"/></td>
+	              <fmt:formatDate type="both" value="${channel.publishDate}" var="publishDate"/>
+	              <td><a href="${ lifecycleUrl }" title="${ publishDate }" class="pa-edit">${ publishDate }</a></td>
+	            </tr>
+            </c:if>
+            <c:if test="${ channel.lifecycleState != 'EXPIRED' && channel.expirationDate != null }">
+	            <tr>
+	              <td class="fl-text-align-right"><spring:message code="lifecycle.expirationDate"/></td>
+	              <fmt:formatDate type="both" value="${channel.expirationDate}" var="expirationDate"/>
+	              <td><a href="${ lifecycleUrl }" title="${ expirationDate }" class="pa-edit">${ expirationDate }</a></td>
+	            </tr>
+            </c:if>
           </tbody>
         </table>
         

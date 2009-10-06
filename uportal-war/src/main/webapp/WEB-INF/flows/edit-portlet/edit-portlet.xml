@@ -157,13 +157,17 @@
     <view-state id="lifecycle" model="channel">
         <binder>
             <binding property="lifecycleState"/>
-            <!-- The following should eventually be replaced by a Javascript date- 
-                 and time-picker. -->
-            <binding property="publishDate" converter="dateAndTime"/>
-            <binding property="expirationDate" converter="dateAndTime"/>
+            <binding property="publishHour"/>
+            <binding property="publishMinute"/>
+            <binding property="publishAmPm"/>
+            <binding property="expirationHour"/>
+            <binding property="expirationMinute"/>
+            <binding property="expirationAmPm"/>
+            <binding property="publishDate" converter="date"/>
+            <binding property="expirationDate" converter="date"/>
         </binder>
         <on-entry>
-            <set name="flashScope.lifecycleStates" value="portletAdministrationHelper.getLifecycleStates()"/>
+            <set name="viewScope.lifecycleStates" value="portletAdministrationHelper.getLifecycleStates()"/>
         </on-entry>
         <transition on="back" to="chooseGroup" validate="false"/>
         <transition on="next" to="reviewPortlet">
