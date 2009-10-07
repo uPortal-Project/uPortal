@@ -202,7 +202,11 @@
 		var updatePageName = function(name) {
 			$("#tabLink_" + settings.tabId + " > span").text(name);
 			$("#portalPageBodyTitle").text(name);
-			$.post(settings.preferencesUrl, {action: 'renameTab', tabId: settings.tabId, tabName: name}, function(xml){});
+			$.post(settings.preferencesUrl, {action: 'renameTab', tabId: settings.tabId, tabName: name}, 
+			    function(xml){
+			        if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
+			    }
+			);
 			return false;
 		};
 		// Column editing persistence functions
@@ -210,6 +214,7 @@
 		    settings.columnCount = newcolumns.length;
 			$.post(settings.preferencesUrl, {action: 'changeColumns', tabId: settings.tabId, columns: newcolumns}, 
 				function(xml) { 
+			        if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
 				    var columns = $('#portalPageBodyColumns > [id^=column_]');
 				    if (columns.length < newcolumns.length) {
 				    	$("newColumns > id", xml).each(function(){
@@ -267,26 +272,36 @@
 		        options['position'] = 'insertBefore';
 		    }
 			$.post(settings.preferencesUrl, options,
-			   function(xml) { window.location = settings.portalUrl; }, "text"
+			   function(xml) {
+			      if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
+			      window.location = settings.portalUrl; 
+			   }, "text"
 			);
 		};
 		var deletePortlet = function(id) {
 			if (!confirm(settings.messages.confirmRemovePortlet)) return false;
 			$('#portlet_'+id).remove();
-			$.post(settings.preferencesUrl, {action: 'removeElement', elementID: id}, null);
+			$.post(settings.preferencesUrl, {action: 'removeElement', elementID: id}, 
+			    function(xml){
+			        if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
+			    }
+			);
 		};
 		
 		
 		// Tab editing persistence functions
 		var addTab = function() {
 			$.post(settings.preferencesUrl, {action: 'addTab'}, function(xml) {
+                if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
 				window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
 					($("#portalNavigationList > li").length + 1);
 			});
 		};
 		var deleteTab = function() {
 			if (!confirm(settings.messages.confirmRemoveTab)) return false;
-			$.post(settings.preferencesUrl, {action: 'removeElement', elementID: settings.tabId}, function(xml) { 
+			$.post(settings.preferencesUrl, {action: 'removeElement', elementID: settings.tabId}, 
+			    function(xml) {
+                if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
 				window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; 
 			});
 		};
@@ -321,7 +336,9 @@
 					elementID: targetId,
 					tabPosition: tabPosition
 				},
-				function(xml){}
+				function(xml){
+	                if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
+				}
 			);
 			redoTabs(settings.tabId);
 			initTabEditLinks();
@@ -372,7 +389,10 @@
 		       target = $(movedNode).parent();
 		   }
 		   var columns = $('#portalPageBodyColumns > [id^=column_]');
-		   $.post(settings.preferencesUrl, {action: 'movePortletHere', method: method, elementID: $(target).attr('id').split('_')[1], sourceID: $(movedNode).attr('id').split('_')[1]}, function(xml) { });
+		   $.post(settings.preferencesUrl, {action: 'movePortletHere', method: method, elementID: $(target).attr('id').split('_')[1], sourceID: $(movedNode).attr('id').split('_')[1]}, 
+		       function(xml) { 
+		           if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
+		   });
 		};
 		
 		var addFocusedChannel = function(form) {
@@ -395,6 +415,7 @@
 		    		elementID: elementId
 		    	},
 		    	function(xml) {
+		    	    if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
 					window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + tabPosition;
 		    	}
 		    );
@@ -462,10 +483,15 @@
 			$.post(settings.preferencesUrl,
 				{ action: 'chooseSkin', skinName: newskin },
 				function(xml) {
+				    if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
 					window.location = settings.portalUrl;
 				}
 			);
 			return false;
+		};
+		
+		var handleServerError = function(xml) {
+		    alert($("message", xml).text());
 		};
 
 		// initialize our portal code

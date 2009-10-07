@@ -26,6 +26,7 @@ import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
@@ -77,15 +78,30 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		UserPreferencesManager upm = null;
 		IUserLayoutManager ulm = null;
 
+		// make sure the user has a current session
+		if (request.getSession(false) == null) {
+			log.warn("Attempting to use AJAX preferences as GUEST user");
+			printError(response, "Your session has timed out.  Please log in again to make changes to your layout.");
+			return;
+		}
+
 		try {
             final WebApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
             userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
 
+            
 			// Retrieve the user's UserInstance object
 			ui = userInstanceManager.getUserInstance(request);
 
 			// Retrieve the user's IPerson object
 			per = ui.getPerson();
+
+			// ensure that the user is currently logged in
+			if (per.isGuest()) {
+				log.warn("Attempting to use AJAX preferences as GUEST user");
+				printError(response, "Your session has timed out.  Please log in again to make changes to your layout.");
+				return;
+			}
 
 			// Retrieve the preferences manager
 			upm = (UserPreferencesManager) ui.getPreferencesManager();
@@ -93,22 +109,9 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			// Retrieve the layout manager
 			ulm = upm.getUserLayoutManager();
 
-		} catch (NullPointerException e1) {
-			// alert the user that his/her session has timed out
-			log
-					.debug(
-							"User encountered session timeout while attempting AJAX preferences action",
-							e1);
-			response
-					.sendError(
-							HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-							"Your session has timed out.  Please log in again to make changes to your layout.");
-			return;
-		} catch (PortalException e1) {
-			response
-					.sendError(
-							HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-							"Your session has timed out.  Please log in again to make changes to your layout.");
+		} catch (RuntimeException e) {
+			log.error(e);
+			printError(response, "An unknown error occurred.");
 			return;
 		}
 
@@ -170,8 +173,10 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 			}
 
-		} catch (PortalException e) {
+		} catch (RuntimeException e) {
 			log.error(e);
+			printError(response, "An unknown error occurred.");
+			return;
 		}
 
 	}
@@ -857,6 +862,18 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		response.getWriter().print("</status>");
 		if (data != null)
 			response.getWriter().print(data);
+		response.getWriter().print("</response>");
+	}
+
+	private void printError(HttpServletResponse response, String message) throws IOException {
+		response.setContentType("text/xml");
+		response.getWriter()
+				.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+		response.getWriter().print("<response>");
+		response.getWriter().print("<status>");
+		response.getWriter().print("<success>false</success>");
+		response.getWriter().print("<message>" + message + "</message>");
+		response.getWriter().print("</status>");
 		response.getWriter().print("</response>");
 	}
 
