@@ -105,22 +105,6 @@ Version $Revision: 1.1 $
         </description>
       </parameter>
 
-      <parameter modify="publish-only">
-        <name>disableDynamicTitle</name>
-        <label>Disable Dynamic Title</label>
-        <type base="string" input="single-choice" display="drop-down">
-            <restriction>
-                <defaultValue>false</defaultValue>
-                <value>true</value>
-                <value>false</value>
-            </restriction>
-        </type>
-        <example>false</example>
-        <description>
-          Prevent a portlet from updating the channel title.
-        </description>
-      </parameter>
-
     </step>
 
     <step>

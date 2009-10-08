@@ -187,18 +187,18 @@
     </filter-mapping>
 
     <!-- Temporarily commenting out this filter for development purposes -->
-    <!--filter-mapping>
+    <filter-mapping>
         <filter-name>pageCachingFilter</filter-name>
         <url-pattern>*.js</url-pattern>
         <url-pattern>*.css</url-pattern>
-    </filter-mapping-->
+    </filter-mapping>
 
-    <!--filter-mapping>
+    <filter-mapping>
         <filter-name>CacheExpiresFilter</filter-name>
         <url-pattern>/media/*</url-pattern>
         <url-pattern>*.js</url-pattern>
         <url-pattern>*.css</url-pattern>
-    </filter-mapping-->
+    </filter-mapping>
     
     <servlet>
         <servlet-name>uPortal</servlet-name>
