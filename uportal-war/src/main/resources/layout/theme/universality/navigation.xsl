@@ -116,6 +116,15 @@
           <xsl:with-param name="TAB_POSITION" select="position()"/>
         </xsl:call-template>
       </xsl:if>
+      <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
+        <xsl:call-template name="subnavigation">
+          <xsl:with-param name="CONTEXT" select="'flyout'"/>
+          <xsl:with-param name="TAB_POSITION" select="position()"/>
+        </xsl:call-template>
+      </xsl:if>
+      <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true' and @activeTab='true' and not($PORTAL_VIEW='focused')"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
+        <xsl:call-template name="preferences.editpage"/>
+      </xsl:if>
     </li>
   
   </xsl:template>
@@ -246,11 +255,6 @@
     	</div> 
     </div>
     
-    <!-- ????? NEED TO PROVIDE A TARGET FOR THE IFRAME TO BE VALID WITH SSL ????? -->
-    <xsl:if test="$USE_FLYOUT_MENUS='true' and $CONTEXT='flyout'">  <!-- IE fix. If using flyout menus, render an iframe behind the submenu to ensure the submenu renders on top of all other elements. -->
-    	<iframe id="navFrame_{@ID}" src="javascript:false;" style="display: none;" class="portal-flyout-iframe" frameborder="0"></iframe>
-    </xsl:if>
-    
   </xsl:template>
   
   
@@ -297,8 +301,6 @@
           </ul>
         </div> 
       </div>
-      
-      <iframe id="navFrame_{@ID}" src="javascript:false;" style="display: none;" class="portal-flyout-iframe" frameborder="0"></iframe>
   </xsl:template>
   <!-- ============================================= -->
 	
@@ -309,19 +311,6 @@
    | This template renders scripts specific to the flyout menus.
   -->
   <xsl:template name="flyout.menu.scripts">
-    <div id="portalFlyoutNavigation" class="portal-navigation">
-      <xsl:for-each select="/layout/navigation/tab">
-        <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
-          <xsl:call-template name="subnavigation">
-            <xsl:with-param name="CONTEXT" select="'flyout'"/>
-            <xsl:with-param name="TAB_POSITION" select="position()"/>
-          </xsl:call-template>
-        </xsl:if>
-        <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true' and @activeTab='true' and not($PORTAL_VIEW='focused')"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
-          <xsl:call-template name="preferences.editpage"/>
-        </xsl:if>
-      </xsl:for-each>
-    </div>
     <script type="text/javascript">
       up.jQuery(document).ready(function(){
         // initialize the flyout menus and add onmouseover and onmouseout events to 
