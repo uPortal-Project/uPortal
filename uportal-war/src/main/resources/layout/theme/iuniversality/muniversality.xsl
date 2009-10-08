@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
-
-    Copyright (c) 2000-2009, Jasig, Inc.
-    See license distributed with this file and available online at
-    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
-
+ | Copyright 2008 The JA-SIG Collaborative.  All rights reserved.
+ | See license distributed with this file and
+ | available online at http://www.uportal.org/license.html
 -->
+
 <!-- ========================================================================= -->
 <!-- ========== README ======================================================= -->
 <!-- ========================================================================= -->
@@ -89,7 +89,6 @@
 <xsl:variable name="SKIN" select="$skin"/>
 <xsl:variable name="MEDIA_PATH">media/skins/muniversality</xsl:variable>
 <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
-<xsl:variable name="RESOURCE_PATH">/ResourceServingWebapp/rs</xsl:variable>
 <xsl:variable name="SCRIPT_PATH">media/skins/muniversality/common/javascript</xsl:variable>
 <xsl:variable name="PORTAL_SHORTCUT_ICON">/favicon.ico</xsl:variable>
 <!-- ======================================== -->
@@ -113,7 +112,6 @@
 <xsl:param name="AUTHENTICATED" select="'false'"/>
 <xsl:param name="USE_SELECT_DROP_DOWN">true</xsl:param>
 <xsl:param name="BASE_ACTION_URL">render.userLayoutRootNode.uP</xsl:param>
-<xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param>
 <xsl:variable name="TOKEN" select="document($MESSAGE_DOC_URL)/theme-messages/tokens[lang($USER_LANG)]/token"/>
 
 
@@ -129,12 +127,7 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="page.css">
-    <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-reset.min.css" />
-    <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-transitions.min.css" />
-    <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-text.min.css" />
-    <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-mobile-iphone-layout.min.css" />
-    <link type="text/css" rel="stylesheet" href="{$SKIN_PATH}/fss-mobile-iphone-theme.min.css" />
-    <link rel="stylesheet" type="text/css" href="{$SKIN_PATH}/{$SKIN}.min.css" />
+    <link rel="stylesheet" type="text/css" href="{$SKIN_PATH}/{$SKIN}.css" />
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -152,16 +145,7 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="page.js">
-    <script type="text/javascript" src="{$RESOURCE_PATH}/jquery/1.3.2/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="{$RESOURCE_PATH}/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"></script>
-    <script type="text/javascript" src="{$RESOURCE_PATH}/fluid/1.1.1/js/fluid-all-1.1.1.js"></script>
-
-    <script type="text/javascript">
-        var up = up || {};
-        up.jQuery = jQuery.noConflict(true);
-        up.fluid = fluid;
-        fluid = null;
-    </script>    
+    <!-- NONE ADDED -->
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -189,11 +173,8 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="page.meta">
-    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="description" content="{$TOKEN[@name='PORTAL_META_DESCRIPTION']}" />
-    <meta name="keywords" content="{$TOKEN[@name='PORTAL_META_KEYWORDS']}" />
+   <meta name="description" content="{$TOKEN[@name='PORTAL_META_DESCRIPTION']}" />
+   <meta name="keywords" content="{$TOKEN[@name='PORTAL_META_KEYWORDS']}" />
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -209,9 +190,9 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="footer">
-    <p class="fl-panel fl-note fl-bevel-white fl-font-size-80">
+    <div class="mobile-footer">
     	<a href="{$TOKEN[@name='COPYRIGHT_URL']}"><xsl:value-of select="$TOKEN[@name='COPYRIGHT_TEXT']" /></a>
-    </p>
+    </div>
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -226,7 +207,7 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template match="/">
-    <html class="fl-theme-iphone">
+    <html>
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />

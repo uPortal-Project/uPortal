@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<theme-messages>
+	<tokens xml:lang="en-US">
+		<!-- Institution Information -->
+		<token name="INSTITUTION_NAME">JA-SIG</token>
+		<token name="PORTAL_NAME">uPortal Mobile</token>
+		<token name="PORTAL_PAGE_TITLE">uPortal Mobile by JA-SIG</token>
+		<token name="PORTAL_META_DESCRIPTION">uPortal Mobile by JA-SIG: The academic open source portal built for higher education by higher education</token>
+		<token name="PORTAL_META_KEYWORDS">portal, uPortal, academic, higher education, open source, enterprise, JA-SIG, JASIG</token>
+		
+		<!-- Logo -->
+		<token name="LOGO">uPortal Mobile by JA-SIG</token>
+		<token name="LOGO_TITLE">Go to Home</token>
+		
+		<!-- Welcome Message -->
+		<token name="WELCOME_PRE">Welcome </token>
+		<token name="WELCOME_POST">.</token>
+		<token name="WELCOME_LOGIN_HEADER">to uPortal Mobile</token>
+		<token name="WELCOME_SIGNOUT">Sign Out</token>
+		
+		<!-- Back to Main Control -->
+		<token name="BACK_TO_MAIN">Back to Main</token>
+		<token name="BACK_TO_MAIN_TITLE">Return to Multi-View</token>
+		<token name="BACK_TO_MAIN_IMG_ALT">Return to Multi-View</token>
+		<token name="BACK_TO_MAIN_IMG_TITLE">Return to Multi-View</token>
+		<token name="BACK_TO_MAIN_SPAN_TEXT">Back to Main</token>
+		
+		<!-- Select Drop-Down Form -->
+		<token name="FORM_SELECT_LABEL">View:</token>
+		<token name="FORM_SELECT_SUBMIT_VALUE">GO</token>
+		
+		<!-- Footer -->
+		<token name="COPYRIGHT_URL">http://www.uportal.org/license.html</token>
+		<token name="COPYRIGHT_TEXT">Copyright(c) 2000-2007, JA-SIG, Inc. All rights reserved.</token>
+	</tokens>
+</theme-messages>	
+	

@@ -1,0 +1,9 @@
+/* Default jqueryui css */
+@import url("/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css");
+
+/* uPortal jqueryui override css */
+@import url("../../universality/uportal3/jquery.min.css");
+
+
+#portalWelcome { text-align: right; padding-right: 10px; }
+.portlet-content-container { background-color: #fff; padding: 5px; margin: 5px; }

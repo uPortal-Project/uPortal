@@ -29,7 +29,6 @@ th,td{border:1px solid #000;padding:.5em;}
 th{font-weight:bold;text-align:center;}
 caption{margin-bottom:.5em;text-align:center;}
 p,fieldset,table,pre{margin-bottom:1em;}
-input[type=text],input[type=password],textarea{width:12.25em;*width:11.9em;}
 input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;}
 html{overflow:auto;font:13px/1.231 arial,helvetica,clean,sans-serif;}
 input,textarea,select{*font-size:100%;*font-family:sans-serif;}

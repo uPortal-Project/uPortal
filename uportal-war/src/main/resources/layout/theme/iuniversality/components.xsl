@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
-
-    Copyright (c) 2000-2009, Jasig, Inc.
-    See license distributed with this file and available online at
-    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
-
+ | Copyright 2008 The JA-SIG Collaborative.  All rights reserved.
+ | See license distributed with this file and
+ | available online at http://www.uportal.org/license.html
 -->
+
 <!-- ============================= -->
 <!-- ========== README =========== -->
 <!-- ============================= -->
@@ -122,11 +122,22 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.header">
-    <div class="flc-screenNavigator-navbar fl-navbar fl-table">
-        <h1 class="fl-table-cell">uPortal Mobile</h1>
-    </div>
-    <div class="fl-panel fl-note fl-bevel-white fl-font-size-80">
-        <xsl:copy-of select="/layout/header/channel[@name='Login']" />
+    <div class="mobile-header">
+        
+        <!--*** start: logo ***-->
+        <div class="mobile-logo">
+            <img src="{$SKIN_PATH}/images/mportal_logo.gif" title="{$TOKEN[@name='LOGO_TITLE']}" alt="{$TOKEN[@name='LOGO']}" />
+        </div>
+        <!--*** end: logo ***-->
+        
+        <!--*** start: login ***-->
+        <div class="mobile-authenticated">
+            <xsl:if test="$AUTHENTICATED='true'">
+                <xsl:copy-of select="/layout/header/channel[@name='Login']" />
+            </xsl:if>
+        </div>
+        <!--*** end: login ***-->
+        
     </div>
 </xsl:template>
 <!-- ========================================================================= -->
@@ -142,7 +153,7 @@
 -->
 <xsl:template name="mobile.channel.content">
     <xsl:if test="count(//mobilenavigation/group) &gt; 0">
-        <div class="fl-panel">
+        <div class="mobile-content">
             <xsl:apply-templates select="mobilenavigation" />
         </div>
     </xsl:if>
@@ -163,23 +174,21 @@
 <xsl:template match="mobilenavigation">
     <xsl:variable name="ALL_GROUPS" select="//group" />
     <xsl:for-each select="$ALL_GROUPS">
-        <xsl:if test="count(channel) > 0">
-            <div id="tab-section_{navblock/@ID}" class="fl-panel fl-panel-autoHeading">
-                <h3><xsl:value-of select="navblock/@name"/></h3>
-                <ul class="fl-listmenu">
-                    <xsl:for-each select="channel">
-                        <li>
-                            <a class="flc-screenNavigator-backButton" href="{$BASE_ACTION_URL}?uP_root={@ID}" title="To view {@name}">
-                                <xsl:value-of select="@name" />
-                            </a>
-                        </li>
-                    </xsl:for-each>
-                </ul>
-            </div>
-        </xsl:if>
+        <h2 class="mobile-nav-tab" id="{navblock/@name}"><xsl:value-of select="navblock/@name" /></h2>
+         <ul class="mobile-nav-link-container">
+            <xsl:for-each select="channel">
+                <li class="mobile-nav-link">
+                    <a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="To view {@name}">
+                        <xsl:value-of select="@name" />
+                    </a>
+                </li>
+            </xsl:for-each>
+         </ul>
     </xsl:for-each>
 </xsl:template>
 <!-- ========================================================================= -->
+
+
 
 
 
@@ -197,18 +206,10 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.header.focused">
-    <div class="flc-screenNavigator-navbar fl-navbar fl-table">
-        <div class="fl-table-row">
-            
-            <div class="fl-table-cell">
-                <a href="{$BASE_ACTION_URL}?uP_root=root" class="fl-button fl-backButton">
-                    <span class="fl-button-inner">Back</span>
-                </a>
-            </div>
-
-            <h1 class="fl-table-cell"><xsl:value-of select="mobilenavigation/focused/channel/@name" /></h1>
-            
-        </div>
+    <div class="mobile-header">					
+        <div class="mobile-logo">
+            <img src="{$SKIN_PATH}/images/mportal_logo_slim.gif" title="{$TOKEN[@name='LOGO_TITLE']}" alt="{$TOKEN[@name='LOGO']}" />
+        </div>	
     </div>
 </xsl:template>
 <!-- ========================================================================= -->
@@ -223,8 +224,8 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.channel.title.focused">
-    <div class="mobile-channel-title">
-    	<h2 class="fl-note fl-bevel-white"><xsl:value-of select="mobilenavigation/focused/channel/@name" /></h2>
+	<div class="mobile-channel-title">
+    	<h2><xsl:value-of select="mobilenavigation/focused/channel/@name" /></h2>
     </div>
 </xsl:template>
 <!-- ========================================================================= -->
