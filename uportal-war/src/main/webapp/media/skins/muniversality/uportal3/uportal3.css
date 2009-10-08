@@ -3,8 +3,12 @@
  * See license distributed with this file and available online at
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
-@import url("../common/reset-fonts.css");
-@import url("uportal3_mobile_global.css");
-@import url("uportal3_mobile_guest.css");
-@import url("uportal3_mobile.css");
-@import url("uportal3_mobile_focused.css");
+/* Default jqueryui css */
+@import url("/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css");
+
+/* uPortal jqueryui override css */
+@import url("../../universality/uportal3/jquery.min.css");
+
+
+#portalWelcome { text-align: right; padding-right: 10px; }
+.portlet-content-container { background-color: #fff; padding: 5px; margin: 5px; }
