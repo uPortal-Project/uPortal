@@ -3,43 +3,37 @@
  * See license distributed with this file and available online at
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
-// Revision: 2007-09-21 gthompson
+var uportal = uportal || {};
 
-(function($){
-    // if the uPortal scope is not availalable, add it
-    $.uportal = $.uportal || {};
-
-    $.uportal.initFlyouts = function(flyout, options) {
+(function($, fluid){
+    
+    /**
+     * Initialize the flyout menu item
+     */
+    var init = function(that) {
         
-        var defaults = {
-            iframeId: '',
-            divId: '',
-            orientation: 'horizontal',
-            horzalign: 'left',
-            vertalign: 'bottom'
-        };
+        zIndexWorkaround(that);
         
-        var options = $.extend(defaults, options || {});
-        
-        var container = flyout.parent();
-        
-        $(container).mouseover(function(){
-            var tab = $(this);
+        // set the mouseover event
+        $(that.container).mouseover(function(){
             
             //Show first so calculations are accurate
-            flyout.show();
-
+            that.openFlyout();
+            
+            var tab = $(this);
+            var flyout = that.locate('flyoutMenu');
+            
             var foTop;
             var foLeft;
-            if (options.orientation == 'horizontal') {
-                if (options.horzalign == 'left') {
+            if (that.options.orientation == 'horizontal') {
+                if (that.options.horzalign == 'left') {
                     foLeft = 0;
                 }
                 else {
                     foLeft = tab.outerWidth() - flyout.outerWidth();
                 }
                 
-                if (options.vertalign == 'bottom') {
+                if (that.options.vertalign == 'bottom') {
                     foTop = tab.outerHeight();
                 }
                 else {
@@ -47,66 +41,45 @@
                 }
             }
             else {
-                if (options.horzalign == 'left') {
+                if (that.options.horzalign == 'left') {
                     foLeft = flyout.outerWidth() * -1;
                 }
                 else {
                     foLeft = tab.outerWidth();
                 }
                 
-                if (options.vertalign == 'bottom') {
+                if (that.options.vertalign == 'bottom') {
                     foTop = 0;
                 }
                 else {
                     foTop = (flyout.outerHeight() - tab.outerHeight()) * -1;
                 }
             }
+
+            // set the mouseout event
+            $(that.container).mouseout(function(){
+                that.closeFlyout();
+            });
             
-            
+            // use the bgiframe plugin to ensure flyouts appear on top of
+            // form elements in earlier versions of IE
             flyout.css({
                 top: foTop,
                 left: foLeft
             }).bgiframe();
         });
-        
-        $(container).mouseout(function(event){
-            $.uportal.closeFlyout(this, event, flyout);
-        });
-        
-        $(flyout).mouseout(function(event){
-            $.uportal.closeFlyout(this, event, flyout);
-        });
-        
-        return;
-    
-    };
 
-    $.uportal.closeFlyout = function(element, event, flyout) {
-        // If the provided event is null use the window event
-        if (!event) {
-            event = window.event;
-        }
-            
-        var eventSource = $((event.relatedTarget) ? event.relatedTarget : event.toElement);
-        
-        if (
-            //if the event source is the flyout or container don't close
-            eventSource.is("#" + $(element).attr("id")) || eventSource.is("#" + $(flyout).attr("id")) || 
-            //if the event source is a child of the flyout or container don't close
-            eventSource.parents("#" + $(element).attr("id")).length > 0 || eventSource.parents("#" + $(flyout).attr("id")).length > 0 
-            ) {
-            return;
-        }
-        
-        // get the tab and find and hide it's subnavigation
-        flyout.hide();
     };
     
-    $.uportal.zIndexWorkaround = function() {
+    /**
+     * Provide fix for z-index layering issues in older IE browsers
+     * 
+     * From http://richa.avasthi.name/blogs/tepumpkin/2008/01/11/ie7-lessons-learned/
+     */
+    var zIndexWorkaround = function(that) {
         if($.browser.msie) {
-            // From http://richa.avasthi.name/blogs/tepumpkin/2008/01/11/ie7-lessons-learned/
             // Iterate over the parents of the flyout containers
-            $("div.portal-flyout-container").parents().each(function() {
+            that.locate('flyoutMenu').parents().each(function() {
                 var p = $(this);
                 var pos = p.css("position");
     
@@ -128,17 +101,36 @@
             
             return;
         }
-    }
-
-})(jQuery);
+    };
 
 
-function startFlyouts() {
-    up.jQuery.uportal.zIndexWorkaround();
+    /**
+     * Create a new flyout menu component
+     */
+    uportal.flyoutmenu = function(container, options) {
+        var that = fluid.initView("uportal.flyoutmenu", container, options);
+        
+        // initialize the flyout menu
+        init(that);
+        
+        that.openFlyout = function() {
+            that.locate('flyoutMenu').show();
+        };
+        
+        that.closeFlyout = function() {
+            that.locate('flyoutMenu').hide();
+        };
 
-    var flyouts = up.jQuery("ul.fl-tabs li.portal-navigation div.portal-flyout-container");
-    flyouts.each( function() {
-            up.jQuery.uportal.initFlyouts(up.jQuery(this))
+    };
+
+    // defaults
+    fluid.defaults("uportal.flyoutmenu", {
+        orientation: 'horizontal',
+        horzalign: 'left',
+        vertalign: 'bottom',
+        selectors: {
+            flyoutMenu: '.portal-flyout-container'
         }
-    );
-}
+    });
+    
+})(jQuery, fluid);

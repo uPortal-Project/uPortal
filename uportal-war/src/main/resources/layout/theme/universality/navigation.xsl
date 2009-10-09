@@ -315,7 +315,11 @@
       up.jQuery(document).ready(function(){
         // initialize the flyout menus and add onmouseover and onmouseout events to 
         // all the navigation elements with subnavigation flyouts
-        startFlyouts();
+        var flyouts = new Array();
+        var flyoutOptions = { flyoutMenu: '.portal-flyout-container' };
+        up.jQuery("ul.fl-tabs li.portal-navigation").each( function() {
+          flyouts.push(uportal.flyoutmenu(this, flyoutOptions));
+        });
       });
     </script>
   </xsl:template>
