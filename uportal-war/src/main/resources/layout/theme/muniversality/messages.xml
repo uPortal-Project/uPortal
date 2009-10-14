@@ -38,7 +38,7 @@
 		
 		<!-- Footer -->
 		<token name="COPYRIGHT_URL">http://www.uportal.org/license.html</token>
-		<token name="COPYRIGHT_TEXT">Copyright(c) 2000-2007, JA-SIG, Inc. All rights reserved.</token>
+		<token name="COPYRIGHT_TEXT">Copyright(c) 2000-2009, Jasig, Inc. All rights reserved.</token>
 	</tokens>
 </theme-messages>	
 	

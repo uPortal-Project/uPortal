@@ -226,14 +226,14 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template match="/">
-    <html class="fl-theme-iphone">
+    <html>
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
             <xsl:call-template name="page.css" />
             <xsl:call-template name="page.js" />
         </head>
-        <body>
+        <body class="fl-theme-iphone">
             <xsl:choose>
                 <xsl:when test="//focused">
                     <xsl:apply-templates mode="focused" />

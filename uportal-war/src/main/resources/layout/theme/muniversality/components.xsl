@@ -125,27 +125,6 @@
     <div class="flc-screenNavigator-navbar fl-navbar fl-table">
         <h1 class="fl-table-cell">uPortal Mobile</h1>
     </div>
-    <div class="fl-panel fl-note fl-bevel-white fl-font-size-80">
-        <xsl:copy-of select="/layout/header/channel[@name='Login']" />
-    </div>
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: MOBILE CHANNEL CONTENT ============================= -->
-<!-- ========================================================================= -->
-<!--
-| YELLOW
-| This tempate renders channel and portlet content when authenticated.
-| Only those with knowledge of xsl should configure this template.
--->
-<xsl:template name="mobile.channel.content">
-    <xsl:if test="count(//mobilenavigation/group) &gt; 0">
-        <div class="fl-panel">
-            <xsl:apply-templates select="mobilenavigation" />
-        </div>
-    </xsl:if>
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -161,6 +140,9 @@
 | Template contents can be any valid XSL or XHTML.
 -->  
 <xsl:template match="mobilenavigation">
+    <div class="fl-note fl-bevel-white fl-font-size-80">
+        <xsl:copy-of select="/layout/header/channel[@name='Login']" />
+    </div>
     <xsl:variable name="ALL_GROUPS" select="//group" />
     <xsl:for-each select="$ALL_GROUPS">
         <xsl:if test="count(channel) > 0">
@@ -181,8 +163,22 @@
 </xsl:template>
 <!-- ========================================================================= -->
 
+<xsl:template name="mobile.navigation">
+    <xsl:if test="count(//mobilenavigation/group) &gt; 0">
+        <div class="up-mobile-navigation-container fl-panel">
+            <xsl:apply-templates select="mobilenavigation"/>
+        </div>        
+    </xsl:if>
+</xsl:template>
 
-
+<xsl:template name="mobile.navigation.focused">
+    <xsl:if test="count(//mobilenavigation/group) &gt; 0">
+        <div class="up-mobile-navigation-container fl-panel" style="display:none;">
+            <xsl:apply-templates select="mobilenavigation"/>
+        </div>        
+    </xsl:if>
+</xsl:template>
+    
 <!-- ======================================================================================================================================================== -->
 <!-- ========== FOCUSED VIEW ================================================================================================================================ -->
 <!-- ======================================================================================================================================================== -->
@@ -201,12 +197,12 @@
         <div class="fl-table-row">
             
             <div class="fl-table-cell">
-                <a href="{$BASE_ACTION_URL}?uP_root=root" class="fl-button fl-backButton">
+                <a id="up-page-back-button" href="{$BASE_ACTION_URL}?uP_root=root" class="fl-button fl-backButton">
                     <span class="fl-button-inner">Back</span>
                 </a>
             </div>
 
-            <h1 class="fl-table-cell"><xsl:value-of select="mobilenavigation/focused/channel/@name" /></h1>
+            <xsl:call-template name="mobile.channel.title.focused"/>
             
         </div>
     </div>
@@ -223,30 +219,11 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.channel.title.focused">
-    <div class="mobile-channel-title">
-    	<h2 class="fl-note fl-bevel-white"><xsl:value-of select="mobilenavigation/focused/channel/@name" /></h2>
-    </div>
+    <h1 class="fl-table-cell">
+        <xsl:value-of select="content/focused/channel/@name" />
+    </h1>
 </xsl:template>
 <!-- ========================================================================= -->
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: MOBILE BACK FOCUSED ================================ -->
-<!-- ========================================================================= -->
-<!--
-| YELLOW
-| This tempate renders a 'Go Back To Main Link' when focused.
-| Only those with knowledge of xsl should configure this template.
--->
-<xsl:template name="mobile.back.focused">
-    <div class="mobile-back-to-main">
-        <a class="return" title="{$TOKEN[@name='BACK_TO_MAIN_TITLE']}" href="{$BASE_ACTION_URL}?uP_root=root">
-            <img src="{$SKIN_PATH}/images/arrow.gif" alt="{$TOKEN[@name='BACK_TO_MAIN_IMG_ALT']}" title="{$TOKEN[@name='BACK_TO_MAIN_IMG_TITLE']}" border="0" />
-            <span><xsl:value-of select="$TOKEN[@name='BACK_TO_MAIN_SPAN_TEXT']" /></span>
-        </a>
-    </div>
-</xsl:template>
-<!-- ========================================================================= -->
-
 
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: MOBILE CHANNEL CONTENT FOCUSED ===================== -->
@@ -257,8 +234,8 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.channel.content.focused">
-    <div class="mobile-content">
-        <xsl:apply-templates select="mobilenavigation" mode="focused" />
+    <div class="up-mobile-focused-content">
+        <xsl:apply-templates select="content" mode="focused" />
     </div>
 </xsl:template>
 <!-- ========================================================================= -->
@@ -274,7 +251,7 @@
 | need alteration and only those with knowledge of xsl should configure
 | this template. Template contents can be any valid XSL or XHTML.
 -->
-<xsl:template match="mobilenavigation/focused/channel" mode="focused">
+<xsl:template match="content/focused/channel" mode="focused">
     <div class="portlet-content-container">
         <xsl:copy-of select="." />
     </div>
@@ -282,59 +259,17 @@
 <!-- ========================================================================= -->
 
 
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: MOBILE SELECT NAVIGATION FOCUSED =================== -->
-<!-- ========================================================================= -->
-<!--
-| YELLOW
-| This tempate renders a select drop-down form element when focused.
-| Only those with knowledge of xsl should configure this template.
--->
-<xsl:template name="mobile.select.navigation.focused">
-    <xsl:if test="$USE_SELECT_DROP_DOWN='true'">
-        <div class="mobile-select-nav">
-            <form method="GET" action="{$BASE_ACTION_URL}">
-                <label for="portletNavigationSelect"><xsl:value-of select="$TOKEN[@name='FORM_SELECT_LABEL']" /></label>
-                <select name="uP_root" class="mobile-nav-select">
-                    <xsl:apply-templates select="mobilenavigation" mode="select" />
-                </select>
-                <input type="submit" value="{$TOKEN[@name='FORM_SELECT_SUBMIT_VALUE']}"></input>
-            </form>
-        </div>
-    </xsl:if>
+<xsl:template name="mobile.navigation.script">
+    <script type="text/javascript">
+        up.jQuery(document).ready(function(){
+            up.jQuery("#up-page-back-button").click(function(){
+                up.jQuery(".up-mobile-focused-content").hide();
+                up.jQuery(".up-mobile-navigation-container").show();
+                return false;
+            }).attr("href","javascript:;");
+        });
+    </script>
 </xsl:template>
-<!-- ========================================================================= -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: SELECT NAVIGATION FOCUSED - OPTIONS VALUE ========== -->
-<!-- ========================================================================= -->
-<!-- 
-| YELLOW
-| The below template defines the "selected" attribute for the <option> tag 
-| contained within the <select> drop-down. Only those with knowledge of xsl 
-| should configure this template. In short, when a user selects a channel 
-| or portlet from the select drop-down and clicks the "GO" button, this template 
-| tells the <option> tag to "select" and display the channel chosen by the user.
-| Template contents can be any valid XSL or XHTML.
--->
-<xsl:template match="mobilenavigation/focused/selection/channel" mode="select">
-    <xsl:variable name="CHANNEL_ID" select="@ID" />
-    <xsl:variable name="CHANNEL_NAME" select="@name" />
-    <xsl:variable name="FOCUSED_CHANNEL_ID" select="../../channel/@ID" />
-    <xsl:for-each select="$CHANNEL_ID">
-        <option value="{$CHANNEL_ID}">
-            <xsl:if test="$CHANNEL_ID=$FOCUSED_CHANNEL_ID">
-                <xsl:attribute name="selected">selected</xsl:attribute>
-            </xsl:if>
-            <xsl:value-of select="$CHANNEL_NAME" />
-        </option>
-    </xsl:for-each>
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-
 
 
 <!-- ======================================================================================================================================================== -->

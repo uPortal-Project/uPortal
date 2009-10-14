@@ -36,11 +36,10 @@
 <xsl:template match="layout" mode="focused">
    <div class="fl-view fl-transition-slide">
         <xsl:call-template name="mobile.header.focused" />
-        <!--<xsl:call-template name="mobile.back.focused" />
-        <xsl:call-template name="mobile.select.navigation.focused" />-->
-        <!--<xsl:call-template name="mobile.channel.title.focused" />-->
+        <xsl:call-template name="mobile.navigation.focused" />
         <xsl:call-template name="mobile.channel.content.focused" />
         <xsl:call-template name="mobile.footer" />
+        <xsl:call-template name="mobile.navigation.script"/>
     </div>
 </xsl:template>
 <!-- ========================================================================= -->

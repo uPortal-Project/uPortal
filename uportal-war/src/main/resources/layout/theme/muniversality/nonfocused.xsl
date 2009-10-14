@@ -39,7 +39,7 @@
     <div class="flc-screenNavigator-view-container">
         <div class="fl-screenNavigator-view fl-transition-slide">
             <xsl:call-template name="mobile.header" />
-            <xsl:call-template name="mobile.channel.content" />
+            <xsl:call-template name="mobile.navigation"/>
             <xsl:call-template name="mobile.footer" />
         </div>
     </div>

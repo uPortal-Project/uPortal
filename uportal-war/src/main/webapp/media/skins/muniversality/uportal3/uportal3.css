@@ -12,3 +12,24 @@
 
 #portalWelcome { text-align: right; padding-right: 10px; }
 .portlet-content-container { background-color: #fff; padding: 5px; margin: 5px; }
+
+/* Fluid pager component styles */
+.fl-theme-iphone .fl-pager ul.fl-pager-ui {text-align:right}
+.fl-theme-iphone .fl-pager .fl-pager-ui li {list-style-type:none; display:inline; padding-left:5px}
+.fl-theme-iphone .fl-pager .fl-pager-ui a.fl-pager-disabled,
+.fl-theme-iphone .fl-pager .fl-pager-ui .fl-pager-disabled a { color: #777777; border: 0; text-decoration: none; cursor: default; }
+.fl-theme-iphone .fl-pager .fl-pager-ui a.fl-pager-currentPage,
+.fl-theme-iphone .fl-pager .fl-pager-ui .fl-pager-currentPage a { color: #000000; border: 0; text-decoration: none; cursor: default;}
+
+.fl-theme-iphone a { color:#4b6b90; }
+
+.ui-tabs .ui-tabs-nav li a {
+    font-size: 0.8em;
+    padding:0.2em 0.5em;
+}
+
+.ui-tabs .ui-tabs-nav {
+    padding:0.2em 0.1em 0;
+}
+
+.up-mobile-navigation-container a { color:#000; }

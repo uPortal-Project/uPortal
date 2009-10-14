@@ -105,36 +105,26 @@
                         <xsl:value-of select="$activeTabID" />
                     </xsl:attribute>
                     
-                    <xsl:choose>
-                    	
-                        <!--not focused-->
-                        <xsl:when test="$userLayoutRoot = 'root'">
-                            <xsl:apply-templates select="folder" />
-                        </xsl:when>
-                        
-                        <!--focused-->
-                        <xsl:otherwise>
-                            <focused>
-                                <xsl:attribute name="in-user-layout">
-                                    <xsl:choose>
-                                        <xsl:when test="//folder[@type='regular' and @hidden='false']/channel[@ID = $userLayoutRoot]">yes</xsl:when>
-                                        <xsl:otherwise>no</xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:attribute>
-                                
-                            	<xsl:apply-templates select="//*[@ID = $userLayoutRoot]"/>
-                                
-                                <!--select dropdown menu-->
-                                <xsl:if test="$useSelectDropDown='true'">
-                                    <selection>
-                                        <xsl:apply-templates select="folder" mode="select" />
-                                    </selection>
-                                </xsl:if>
-                                
-                            </focused>
-                        </xsl:otherwise>
-                    </xsl:choose>
+                    <xsl:apply-templates select="folder" />
+                    
                 </mobilenavigation>
+
+                <!--focused-->
+                <xsl:if test="$userLayoutRoot != 'root'">
+                    <content>
+                        <focused>
+                            <xsl:attribute name="in-user-layout">
+                                <xsl:choose>
+                                    <xsl:when test="//folder[@type='regular' and @hidden='false']/channel[@ID = $userLayoutRoot]">yes</xsl:when>
+                                    <xsl:otherwise>no</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
+                            
+                            <xsl:apply-templates select="//*[@ID = $userLayoutRoot]"/>
+                            
+                        </focused>
+                    </content>
+                </xsl:if>
                 
                 <!--footer-->
                 <footer>
@@ -244,31 +234,6 @@
         </xsl:if>
     </xsl:template>
 <!--=====END: FOLDER TEMPLATE RULE (MOBILE)=====-->
-
-
-<!--=====START: SELECT DROPDOWN MENU (MOBILE)=====-->
-<!--
-    Code Description:
-    This template appears within the focused view and only appears when $useSelectDropDown is set to true.
-    This template selects all the channels and portlets of regular type that are not hidden. When handled by 
-    muniversality.xsl these channels and porlets are rendered into a <select> dropdown menu.
--->
-    <xsl:template match="folder" mode="select">
-        <xsl:if test="./@type='regular' and @hidden='false'">
-            <xsl:variable name="tab-folder" select="." />
-            <xsl:for-each select="$tab-folder">
-                <xsl:if test="child::folder">
-                    <xsl:variable name="column-folder" select="folder[@name]" />
-                    <xsl:for-each select="$column-folder">
-                        <xsl:if test="child::channel">
-                            <xsl:apply-templates />
-                        </xsl:if>
-                    </xsl:for-each>
-                </xsl:if>
-            </xsl:for-each>
-        </xsl:if>
-    </xsl:template>
-<!--=====END: SELECT DROPDOWN MENU (MOBILE)=====-->
 
 
 <!--=====START: CHANNEL TEMPLATE RULE=====-->
