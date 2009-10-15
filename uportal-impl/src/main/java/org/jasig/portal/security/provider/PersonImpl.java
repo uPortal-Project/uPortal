@@ -8,7 +8,6 @@ package org.jasig.portal.security.provider;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +15,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
@@ -278,4 +279,26 @@ public class PersonImpl implements IPerson {
         sb.append(this.isGuest());
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+    	int result = new HashCodeBuilder(209348721,-93847839)
+    		.append(m_ID)
+    		.toHashCode();
+    	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+    	if(obj == this)
+    		return true;
+    	if(!(obj instanceof IPerson))
+    		return false;
+    	
+    	IPerson other = (IPerson) obj;
+    	return new EqualsBuilder()
+    		.append(this.getID(), other.getID())
+    		.isEquals();
+    }
+
 }

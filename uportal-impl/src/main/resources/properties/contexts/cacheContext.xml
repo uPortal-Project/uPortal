@@ -50,6 +50,19 @@
         <property name="cacheManagerName" value="uPortal.cacheManager" />
         <property name="configLocation" value="classpath:/properties/ehcache.xml" />
     </bean>
+    
+    <bean id="baseCachingInterceptor" abstract="true" class="org.springmodules.cache.interceptor.caching.NameMatchCachingInterceptor">
+        <property name="cacheProviderFacade" ref="cacheProviderFacade" />
+        <property name="cacheKeyGenerator">
+            <bean class="org.springmodules.cache.key.HashCodeCacheKeyGenerator">
+                <property name="generateArgumentHashCode" value="true" />
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="baseFlushingInterceptor" abstract="true" class="org.springmodules.cache.interceptor.flush.NameMatchFlushingInterceptor">
+        <property name="cacheProviderFacade" ref="cacheProviderFacade" />
+    </bean>
 
     <!--
      | Service used by DLM to cache Layouts.

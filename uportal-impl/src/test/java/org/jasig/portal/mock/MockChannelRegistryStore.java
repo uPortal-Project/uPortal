@@ -142,6 +142,14 @@ public class MockChannelRegistryStore implements IChannelRegistryStore {
     }
 
     /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getAllChildChannels(org.jasig.portal.ChannelCategory,org.jasig.portal.security.IPerson)
+     */
+	public IChannelDefinition[] getAllChildChannels(ChannelCategory parent,
+			IPerson person) {
+        throw new UnsupportedOperationException("Not Implemented");
+	}
+
+    /* (non-Javadoc)
      * @see org.jasig.portal.IChannelRegistryStore#getChannelCategory(java.lang.String)
      */
     public ChannelCategory getChannelCategory(String channelCategoryId) {
@@ -186,6 +194,32 @@ public class MockChannelRegistryStore implements IChannelRegistryStore {
         throw new UnsupportedOperationException("Not Implemented");
         
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getChildChannels(org.jasig.portal.ChannelCategory,org.jasig.portal.security.IPerson)
+     */
+	public IChannelDefinition[] getChildChannels(ChannelCategory parent,
+			IPerson person) {
+        throw new UnsupportedOperationException("Not Implemented");
+        
+	}
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getManageableChildChannels(org.jasig.portal.ChannelCategory,org.jasig.portal.security.IPerson)
+     */
+	public IChannelDefinition[] getManageableChildChannels(
+			ChannelCategory parent, IPerson person) {
+        throw new UnsupportedOperationException("Not Implemented");
+        
+	}
+	
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getAllManageableChildChannels(org.jasig.portal.ChannelCategory,org.jasig.portal.security.IPerson)
+     */
+	public IChannelDefinition[] getAllManageableChildChannels(
+			ChannelCategory parent, IPerson person) {
+        throw new UnsupportedOperationException("Not Implemented"); 
+	}
 
     /* (non-Javadoc)
      * @see org.jasig.portal.IChannelRegistryStore#getParentCategories(org.jasig.portal.ChannelCategory)
@@ -284,9 +318,9 @@ public class MockChannelRegistryStore implements IChannelRegistryStore {
 
     /*
      * (non-Javadoc)
-     * @see org.jasig.portal.IChannelRegistryStore#getManageableChannelDefinitionsForUser(org.jasig.portal.security.IPerson)
+     * @see org.jasig.portal.IChannelRegistryStore#getChannelDefinitions(org.jasig.portal.security.IPerson)
      */
-	public List<IChannelDefinition> getManageableChannelDefinitionsForUser(
+	public List<IChannelDefinition> getChannelDefinitions(
 			IPerson person) {
         throw new UnsupportedOperationException("Not Implemented");
 	}

@@ -6,14 +6,57 @@
     https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ <beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
     <bean id="channelRegistryStore" class="org.jasig.portal.channel.JpaChannelRegistryStore">
         <property name="channelDao" ref="channelDefinitionDao"/>
         <property name="channelTypeDao" ref="channelTypeDao"/>
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry"/>
     </bean>
+    <bean id="jpaChannelRegistryStoreCachingInterceptor" parent="baseCachingInterceptor">
+        <property name="cachingModels">
+            <map>
+                <entry key="*">
+                    <bean class="org.springmodules.cache.provider.ehcache.EhCacheCachingModel">
+                        <property name="cacheName" value="org.jasig.portal.CHANNEL_REGISTRY_STORE_CACHE" />
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    <bean id="jpaChannelRegistryStoreFlushingInterceptor" parent="baseFlushingInterceptor">
+        <property name="flushingModels">
+            <map>
+                <entry key="*">
+                    <bean class="org.springmodules.cache.provider.ehcache.EhCacheFlushingModel">
+                        <property name="cacheNames" value="org.jasig.portal.CHANNEL_REGISTRY_STORE_CACHE" />
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <aop:config>
+        <aop:pointcut id="jpaChannelRegistryStoreCachingExecution"
+            expression="execution(* org.jasig.portal.channel.JpaChannelRegistryStore.get*(..))"/>
+            
+        <aop:pointcut id="jpaChannelRegistryStoreFlushingExecution"
+            expression="execution(* org.jasig.portal.channel.JpaChannelRegistryStore.add*(..)) || 
+                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.delete*(..)) || 
+                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.approveChannelDefinition(..)) || 
+                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.disapproveChannelDefinition(..)) || 
+                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.new*(..)) || 
+                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.remove*(..)) || 
+                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.save*(..))"/>
+
+        <!-- Priority -2147483647 so it is the highest priority -->   
+        <aop:advisor advice-ref="jpaChannelRegistryStoreCachingInterceptor"       order="-2147483647" pointcut-ref="jpaChannelRegistryStoreCachingExecution" />
+        <aop:advisor advice-ref="jpaChannelRegistryStoreFlushingInterceptor"      order="-2147483647" pointcut-ref="jpaChannelRegistryStoreFlushingExecution" />
+    </aop:config>
     
     <bean id="channelPublishingService" class="org.jasig.portal.channel.ChannelPublishingServiceImpl">
         <property name="channelRegistryStore" ref="channelRegistryStore"/>

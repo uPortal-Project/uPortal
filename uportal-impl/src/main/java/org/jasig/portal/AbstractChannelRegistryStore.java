@@ -18,9 +18,16 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 
+/**
+ * <p>Abstract channel registry store.  Be aware that calls to methods within
+ * this class may be cached.  The cache is configured in
+ * /uportal-impl/src/main/resources/properties/contexts/channelContainerContext.xml</p>
+ */
 public abstract class AbstractChannelRegistryStore implements IChannelRegistryStore {
     
     /**
@@ -145,6 +152,56 @@ public abstract class AbstractChannelRegistryStore implements IChannelRegistrySt
 
     }
 
+	public IChannelDefinition[] getAllChildChannels(ChannelCategory parent,
+			IPerson person) {
+        
+        Set<IChannelDefinition> rslt = new HashSet<IChannelDefinition>();
+        
+        try {
+            for (IChannelDefinition channel : getChildChannels(parent, person)) {
+                rslt.add(channel);
+            }
+            for (ChannelCategory category : getAllChildCategories(parent)) {
+                // append channels to list for each child category in the tree
+                for (IChannelDefinition channel : getChildChannels(category, person)) {
+                    rslt.add(channel);
+                }
+            }
+            
+        } catch (Exception e) {
+            String msg = "Failed to obtain child channels for the specified parent '" 
+                                    + parent.getName() + "', id=" +parent.getId();
+            throw new PortalException(msg, e);
+        }
+
+        return (IChannelDefinition[]) rslt.toArray(new IChannelDefinition[0]);
+	}
+
+	public IChannelDefinition[] getAllManageableChildChannels(ChannelCategory parent,
+			IPerson person) {
+        
+        Set<IChannelDefinition> rslt = new HashSet<IChannelDefinition>();
+        
+        try {
+            for (IChannelDefinition channel : getManageableChildChannels(parent, person)) {
+                rslt.add(channel);
+            }
+            for (ChannelCategory category : getAllChildCategories(parent)) {
+                // append channels to list for each child category in the tree
+                for (IChannelDefinition channel : getManageableChildChannels(category, person)) {
+                    rslt.add(channel);
+                }
+            }
+            
+        } catch (Exception e) {
+            String msg = "Failed to obtain child channels for the specified parent '" 
+                                    + parent.getName() + "', id=" +parent.getId();
+            throw new PortalException(msg, e);
+        }
+
+        return (IChannelDefinition[]) rslt.toArray(new IChannelDefinition[0]);
+	}
+
     /**
      * Gets an existing channel category.
      * @param channelCategoryId the id of the category to get
@@ -202,6 +259,56 @@ public abstract class AbstractChannelRegistryStore implements IChannelRegistrySt
         }
         return (IChannelDefinition[])channelDefs.toArray(new IChannelDefinition[channelDefs.size()]);
     }
+
+    /**
+     * Gets all child channel definitions for a parent category that the given
+     * user is allowed to subscribe to.
+     * @return channelDefinitions the children channel definitions for the
+     * given person
+     */
+	public IChannelDefinition[] getChildChannels(ChannelCategory parent,
+			IPerson person) {
+
+		EntityIdentifier ei = person.getEntityIdentifier();
+	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+	    
+        String parentKey = String.valueOf(parent.getId());
+        IEntityGroup parentGroup = GroupService.findGroup(parentKey);
+        Set<IChannelDefinition> channelDefs = new HashSet<IChannelDefinition>();
+        Iterator<IGroupMember> iter = parentGroup.getMembers();
+        while (iter.hasNext()) {
+            IGroupMember gm = (IGroupMember)iter.next();
+            if (gm.isEntity()) {
+                int channelPublishId = Integer.parseInt(gm.getKey());
+            	if(ap.canSubscribe(channelPublishId)) {
+            		channelDefs.add(getChannelDefinition(channelPublishId));
+            	}
+            }
+        }
+        return (IChannelDefinition[])channelDefs.toArray(new IChannelDefinition[channelDefs.size()]);
+	}
+	
+	public IChannelDefinition[] getManageableChildChannels(ChannelCategory parent,
+			IPerson person) {
+
+		EntityIdentifier ei = person.getEntityIdentifier();
+	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+	    
+        String parentKey = String.valueOf(parent.getId());
+        IEntityGroup parentGroup = GroupService.findGroup(parentKey);
+        Set<IChannelDefinition> channelDefs = new HashSet<IChannelDefinition>();
+        Iterator<IGroupMember> iter = parentGroup.getMembers();
+        while (iter.hasNext()) {
+            IGroupMember gm = (IGroupMember)iter.next();
+            if (gm.isEntity()) {
+                int channelPublishId = Integer.parseInt(gm.getKey());
+            	if(ap.canManage(channelPublishId)) {
+            		channelDefs.add(getChannelDefinition(channelPublishId));
+            	}
+            }
+        }
+        return (IChannelDefinition[])channelDefs.toArray(new IChannelDefinition[channelDefs.size()]);
+	}
 
     /**
      * Gets the immediate parent categories of this category.

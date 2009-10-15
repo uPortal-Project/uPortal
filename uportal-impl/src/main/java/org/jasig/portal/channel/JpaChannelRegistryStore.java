@@ -5,14 +5,19 @@
  */
 package org.jasig.portal.channel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AbstractChannelRegistryStore;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.channel.dao.IChannelDefinitionDao;
 import org.jasig.portal.channel.dao.IChannelTypeDao;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
 
 /**
  * JpaChannelRegistryStore is a JPA/Hibernate implementation of the 
@@ -122,6 +127,26 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
     	return defs;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getChannelDefinitions(org.jasig.portal.security.IPerson)
+     */
+    public List<IChannelDefinition> getChannelDefinitions(IPerson person) {
+    	
+        EntityIdentifier ei = person.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+    	
+        List<IChannelDefinition> defs = channelDao.getChannelDefinitions();
+        List<IChannelDefinition> manageableChannels = new ArrayList<IChannelDefinition>();
+        
+    	for(IChannelDefinition def : defs) {
+    		if(ap.canSubscribe(def.getId())) {
+    			manageableChannels.add(def);
+    		}
+    	}
+    	
+    	return manageableChannels;
+    }
     
     // Public ChannelType methods
     

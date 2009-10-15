@@ -107,6 +107,12 @@ public interface IChannelRegistryStore {
   public List<IChannelDefinition> getChannelDefinitions();
 
   /**
+   * Get all channel definitions filtered by a user's channel permissions
+   * @return the filtered list of channel definitions
+   */
+  public List<IChannelDefinition> getChannelDefinitions(IPerson person);
+  
+  /**
    * Persists a channel definition.
    * @param channelDef the channel definition
    * @throws java.lang.Exception
@@ -191,6 +197,22 @@ public interface IChannelRegistryStore {
   public IChannelDefinition[] getAllChildChannels(ChannelCategory parent);
 
   /**
+   * Recursively gets all child channel definitions for a parent category 
+   * that the given user is allowed to subscribe to.
+   * @return channelDefinitions the children channel definitions for the
+   * given person
+   */
+  public IChannelDefinition[] getAllChildChannels(ChannelCategory parent, IPerson person);
+
+  /**
+   * Recursively gets all child channel definitions for a parent category 
+   * that the given user is allowed to manage.
+   * @return channelDefinitions the children channel definitions for the
+   * given person
+   */
+  public IChannelDefinition[] getAllManageableChildChannels(ChannelCategory parent, IPerson person);
+  
+  /**
    * Gets all child channel categories for a parent category.
    * @return channelCategories the children categories
    * @throws java.lang.Exception
@@ -204,6 +226,22 @@ public interface IChannelRegistryStore {
    */
   public IChannelDefinition[] getChildChannels(ChannelCategory parent);
 
+  /**
+   * Gets all child channel definitions for a parent category that the given
+   * user is allowed to subscribe to.
+   * @return channelDefinitions the children channel definitions for the
+   * given person
+   */
+  public IChannelDefinition[] getChildChannels(ChannelCategory parent, IPerson person);
+  
+  /**
+   * Gets all child channel definitions for a parent category that the given
+   * user is allowed to manage.
+   * @return channelDefinitions the children channel definitions for the
+   * given person
+   */
+  public IChannelDefinition[] getManageableChildChannels(ChannelCategory parent, IPerson person);
+  
   /**
    * Gets the immediate parent categories of this category.
    * @return parents, the parent categories.

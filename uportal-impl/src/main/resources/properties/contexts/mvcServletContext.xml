@@ -27,4 +27,10 @@
     <bean name="groupListHelper"
         class="org.jasig.portal.layout.dlm.remoting.GroupListHelperImpl"/>
     
+    <bean name="/channelList"
+        class="org.jasig.portal.layout.dlm.remoting.ChannelListController">
+        <property name="channelRegistryStore" ref="channelRegistryStore"/>
+        <property name="personManager" ref="personManager"/>
+    </bean>
+    
 </beans>

@@ -15,4 +15,5 @@
            
     <bean name="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView"/>
     
+    <bean name="xmlView" class="org.jasig.portal.spring.web.servlet.view.XmlView"/>
 </beans>
