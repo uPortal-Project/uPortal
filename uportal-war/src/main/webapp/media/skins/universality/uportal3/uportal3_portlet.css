@@ -4,12 +4,22 @@
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
 
-/*
- * PORTLET AND CHANNEL CSS
+/* PORTLET AND CHANNEL CSS
+ * This CSS begins with the JSR-168 Java Portlet Specification v1.0 and is followed by uPortal extensions and overrides. 
  * These declarations are scoped for portlet and channel content specifically.
  * These declarations are theme overrides or new declarations necessary to format portlet and channel content.
- * These declarations may be for all portlets/channels and/or for a specific portlet/channel.
- * Theme CSS declarations are located in fluid.theme.(skin_name).css.
+ * These declarations may be scoped for all portlets/channels and/or for a specific portlet/channel.
+ * Portal theme CSS declarations are located in fluid.theme.(skin_name).css.
+ */
+ 
+/* PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
+ * For the standards and guidelines that govern
+ * the user interface of uPortal portlets
+ * including HTML, CSS, JavaScript, accessibilty,
+ * naming conventions, 3rd Party libraries
+ * (like jQuery and the Fluid Skinning System)
+ * and more, refer to:
+ * http://www.ja-sig.org/wiki/x/cQ
  */
 
 
@@ -19,27 +29,43 @@
 
 /* PLT.C CSS Style Definitions */
 /* 
-| For documentation on how these style definitions are used in uPortal, refer to: 
-| http://www.ja-sig.org/wiki/x/cg 
+ * For documentation on how these style definitions are used in uPortal, refer to: 
+ * http://www.ja-sig.org/wiki/x/cg 
  */
 
+
 /* PLT.C.1 Links (Anchor) */
-/*A custom CSS class is not defined for the <a> tag. The entity should use the default classes when embedding anchor tags.*/
+/* 
+ * By default, an override of the portal theme link styling is not defined for portlets,
+ * but instead portlets by default inherit the link styling declared by the portal theme. 
+ * If alternate link styling is desired for portlets, declare something like:
+ * .portlet a {[anchor declarations]}
+ * in the uPortal extenstions below.
+ */
+
 
 /* PLT.C.2 Fonts */
+/* 
+ * By default, a an override of the portal theme font styling is not defined for portlets,
+ * but instead portlets by default inherit the font styling declared by the portal theme.
+ * The portlet-font custom class is not recommended for use in portlet markup as it is unnecessary;
+ * the same effect can easily be done by better methods such as: 
+ * .portlet {[font declarations]}
+ * Additionally, portlet-font-dim is poorly defined and has limited use.
+ */
 .portlet-font {}
 .portlet-font-dim {color:#999;}
 
 
 /* PLT.C.3 Messages */
 /* 
-| Dynamic system messages to tell people that an (otherwise invisible, backend) event occurred.
-| Messages can be of these types: status, info, error, alert, success.
-| Change the base CSS class for the appropriate type of message.
-| Use an appropriate WAI-ARIA role on the HTML element to describe the message.
-| Use an h3 for the message title, and a paragraph for the message text.
-| Messages communicate a system event, but should be written so that a _person_ can understand it. Use plain, people-oriented language.
-*/
+ * Dynamic system messages to tell people that an (otherwise invisible, backend) event occurred.
+ * Messages can be of these types: status, info, error, alert, success.
+ * Change the base CSS class for the appropriate type of message.
+ * Use an appropriate WAI-ARIA role on the HTML element to describe the message.
+ * Use an h3 for the message title, and a paragraph for the message text.
+ * Messages communicate a system event, but should be written so that a _person_ can understand it. Use plain, people-oriented language.
+ */
 .portlet-msg-status,
 .portlet-msg-info, 
 .portlet-msg-error, 
@@ -47,21 +73,21 @@
 .portlet-msg-success {padding:1em 1em 1em 3em; border:2px solid #FFFF00; color:#666; background:#FFFFCC url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/bell.png) 1em 1em no-repeat;}
 .portlet-msg-status {}
 .portlet-msg-info {color:#000; background:#99ccff url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/information.png) 1em 1em no-repeat; border-color:#3399ff;}
-.portlet-msg-error {color:#000; background:#FFCC66 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/error.png) 1em 1em no-repeat; border-color:#FF6600;}
-.portlet-msg-alert {color:#f00; background:#ffeeee url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/exclamation.png) 1em 1em no-repeat; border-color:#cc0000;}
+.portlet-msg-error {color:#f00; background:#ffeeee url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/exclamation.png) 1em 1em no-repeat; border-color:#cc0000;}
+.portlet-msg-alert {color:#000; background:#FFCC66 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/error.png) 1em 1em no-repeat; border-color:#FF6600;}
 .portlet-msg-success {color:#000; background:#D1F0E0 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 1em 1em no-repeat; border-color:#009900;}
 
 
 /* PLT.C.4 Sections */
 /* 
-| A portlet-section is a structural element.
-| The parent container "portlet-section" is defined below
-| as the JSR-168 CSS style definitions does not include "portlet-section"
-| Sections are used mapped to the WAI-ARIA role "region";
-| "A large perceivable section of a web page or document, 
-| that the author feels should be included in a summary of page features."
-| Refer to: http://www.w3.org/TR/wai-aria/#region
-*/
+ * A portlet-section is a structural element.
+ * The parent container "portlet-section" is defined below in the uPortal extensions,
+ * as it is absent in the JSR-168 CSS style definitions.
+ * Sections are mapped to the WAI-ARIA role "region";
+ * "A large perceivable section of a web page or document, 
+ * that the author feels should be included in a summary of page features."
+ * Refer to: http://www.w3.org/TR/wai-aria/#region
+ */
 .portlet-section-header {padding-bottom:0.2em; border-bottom:0.1em solid #ddd;}
 .portlet-section-body {padding:1em;}
 .portlet-section-alternate {background-color:#eee;}
@@ -72,6 +98,16 @@
 
 
 /* PLT.C.5 Forms */
+/* 
+ * These JSR-168 classes for forms are not well thought out:
+ * (missing any root level class like .portlet-form 
+ * and cluttering markup with classes like .portlet-form-label 
+ * rather than using something cleaner like .portlet-form label {} ).
+ * Thus these classes are not recommended for use.
+ * It is instead recommended to use basic, semantic table markup
+ * and use the uPortal form extensions defined below.
+ * .portlet-form-button is currently in use by some portlets.
+ */
 .portlet-form-label {}
 .portlet-form-input-field {}
 .portlet-form-button {padding:0.2em 1em; background:#336699 url(images/button_bkd_flat.png) top left repeat-x; border:1px solid #000; color:#fff; font-size:85%; font-weight:bold;}
@@ -86,6 +122,12 @@
 
 
 /* PLT.C.6 Menus */
+/* 
+ * These JSR-168 classes are not comprehensive enough for sophisticated menus
+ * and specify some unusual classes (portlet-menu-caption ?) that are not well defined.
+ * It is recommended instead to use the Fluid Skinning System fl-tabs or fl-listmenu helpers,
+ * along with appropriate ARIA roles.
+ */
 .portlet-menu {background-color:#ddd;}
 .portlet-menu-item {}
 .portlet-menu-item-selected {font-weight:bold;}
@@ -103,6 +145,12 @@
 /* Overrides and extenstions to FSS specific to portlets. */
 
 /* Helper: Widget */
+/* 
+ * The FSS fl-widget structure should be applied to portlets.
+ * However, the fl-widget structure can be use for more than portlets.
+ * These classes specify how the fl-widget classes style a portlet.
+ * Use: .fl-widget.portlet
+ */
 .fl-widget.portlet {background:transparent; border:none;}
 .fl-widget.portlet .fl-widget-titlebar h2 {font-size:150%; margin-bottom:0.2em; color:#336699;}
 .focused .fl-widget.portlet .fl-widget-titlebar h2 {font-size:200%;}
@@ -114,34 +162,49 @@
 /*====================================*/
 /* uPortal-specific additions, extensions, and overrides. */
 
-/*== Portlet ==*/
+/* Portlet */
 /* 
-| The root portlet div. 
-| Uses FSS fl-widget structure.
-*/
+ * The root portlet div. 
+ * Uses FSS fl-widget structure.
+ */
 .portlet {}
 
-/*== Portlet Title ==*/
+
+/* Views */
 /* 
-| Title of the portlet view, which should always be an h2.
-| Subtitle (h3) is optional.
-| Uses FSS fl-widget-titlebar structure.
-*/
+ * Lists different views of the portlet as tabbed navigation. 
+ * Uses FSS fl-tabs for base structure and formatting.
+ * Active view contents are contained in the fl-tab-content div.
+ */
+.fl-widget.portlet .portlet-views .fl-widget-titlebar h2 {margin:0.5em 0 0.2em 0;}
+.fl-widget.portlet .portlet-views .fl-tab-content {padding:1em; border:1px solid #4070A1; border-top:none;}
+
+
+/* Title */
+/* 
+ * Title of the portlet view, which should always be an h2.
+ * Subtitle (h3) is optional.
+ * Uses FSS fl-widget-titlebar structure.
+ */
 .portlet .portlet-title h3 {margin:0 0 2em 0; padding-top:0.4em; font-size:120%; border-top:2px solid #ccc;}
 
-/*== Portlet Toolbar ==*/
-/*
-| A collection of commonly used functions represented in compact visual form.
-| Uses FSS fl-widget-options structure (renders the ul inline as a horizontal list).
-*/
+
+/* Toolbar */
+/* 
+ * A collection of commonly used functions represented in compact visual form.
+ * Uses FSS fl-widget-options structure (renders the ul inline as a horizontal list).
+ */
 .portlet .portlet-toolbar {margin-bottom:1em; padding:0.5em 0; background:#e2e8e7; border-top:0.2em solid #ccc;}
 .portlet .portlet-toolbar ul {margin:0; padding:0; overflow:hidden; zoom:1;}
 .portlet .portlet-toolbar ul li {list-style-type:none; float:left; display:inline; padding:0 5px; margin-left:-5px;}
 .portlet .portlet-toolbar ul a {display:block; margin-right:5px; padding:0.2em 1em; border:1px solid #ccc; text-decoration:none;}
 .portlet .portlet-toolbar ul a:hover {background-color:#5a95cf; color:#fff; border-color:#336699;}
 
-/*== Portlet Messages ==*/
-/* Mostly defined in PLT.C.3 Messages, above. Refer to notes there. */
+
+/* Messages */
+/* 
+ * Mostly defined in PLT.C.3 Messages, above. Refer to notes there. 
+ */
 .portlet-msg-status h2,
 .portlet-msg-info h2, 
 .portlet-msg-error h2, 
@@ -153,15 +216,19 @@
 .portlet-msg-alert h3, 
 .portlet-msg-success h3 {margin:0; color:#000;}
 
-/*== Portlet Note ==*/
-/* Optional. These notes help people know what to do with the portlet view. */
+
+/* Notes */
+/* 
+ * Optional. These notes help people know what to do in the active portlet view. 
+ */
 .porlet .portlet-note {}
 
-/*== Portlet Sections ==*/
+
+/* Sections */
 /* 
-| Other portlet-section elements are defined above in PLT.C.4 Sections.
-| Refer to notes there.
-*/
+ * Other portlet-section elements are defined above in PLT.C.4 Sections.
+ * Refer to notes there.
+ */
 .portlet .portlet-section {margin-bottom:1em;}
 .portlet h3.portlet-section-header {margin:0; padding-top:1em;}
 .portlet .portlet-section-note {}
@@ -170,6 +237,7 @@
 .portlet .portlet-section-options > a {padding:0.1em 0.5em;}
 .portlet .portlet-section-options a {text-decoration:none; color:#666; border-bottom:1px solid #ddd;}
 .portlet .portlet-section-options a:hover {text-decoration:none; background-color:#dfefff; color:#000;}
+
 
 /* Headings */
 .portlet .portlet-heading-selections,
@@ -180,14 +248,45 @@
 .portlet .portlet-heading-browse {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/chart_organisation.png);}
 .portlet .portlet-heading-browse {margin-top:2em;}
 
+
 /* 2 Panel */
 .portlet .portlet-2panel {border:2px solid #336699;}
 .portlet .portlet-2panel .portlet-panel-left {background-color:#e2e8e7;}
 .portlet .portlet-2panel .portlet-panel-right {background-color:#fff;}
 
+
+/* Buttons */
+.portlet .portlet-button {margin:0 5px; padding:0.3em 2em; border-width:1px; border-style:solid; background:#336699 url(images/button_bkd_flat.png) top left repeat-x; border-color:#000; color:#fff; font-weight:bold;}
+.portlet a.portlet-button {display:block; float:left; color:#fff; text-decoration:none;}
+.portlet .portlet-button-group {padding:1em 0; border-top:0.2em solid #ccc;}
+.portlet .portlet-button-group .portlet-button {background-color:#F0F0F0; border-color:#000; color:#000;}
+.portlet .portlet-button-group .portlet-button-primary {background-color:#336699; color:#fff;}
+.portlet .portlet-button-group a.portlet-button {color:#000;}
+.portlet .portlet-button-group a.portlet-button-primary {color:#fff;}
+.portlet .portlet-button:hover {background-color:#7a9e0d;}
+.portlet .portlet-button:hover,
+.portlet a.portlet-button:hover {color:#fff;}
+.portlet .portlet-button:hover {cursor:pointer;}
+
+
 /* Forms */
 .portlet fieldset {border: 1px solid #ccc; padding:0.5em 1em;}
 .portlet legend {margin-bottom:1em; font-size:85%; color:#ccc;}
+.portlet-form-box {width:400px; padding:1em; background-color:#eee; border:1px solid #ccc;}
+.portlet-form-box form {margin:0;}
+.portlet-form-box form table {}
+.portlet-form-box form table td {padding:0; border:none;}
+.portlet-form-box form table td.label {padding-right:3px; text-align:right; width:100px; font-size:11px; vertical-align:top; padding-top:5px;}
+.portlet-form-box form .field-container {display:inline-block; padding:1px; position:relative; width:auto;}
+.portlet-form-box form select,
+.portlet-form-box form .inputtext {padding:3px; font-size:11px; font-family:"lucida grande",tahoma,verdana,arial,sans-serif; border:1px solid #BDC7D8; border-color:#96A6C5; margin-top:2px;}
+.portlet-form-box form .inputtext,
+.portlet-form-box form .inputpassword {width:206px;}
+.portlet-form-box form .inputdate,
+.portlet-form-box form .inputtime {width:94px;}
+.portlet-form-box form .inputtime {margin-left:4px;}
+.portlet-form-box form .portlet-button-group {margin:0 0 0 105px;}
+.portlet-form-box form .portlet-button-group .portlet-button {padding:0.3em 1em; font-size:11px; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;}
 
 /* Tables */
 /* Normal data table styles
@@ -203,6 +302,10 @@ th {padding:0.1em 1em; border-color:#336699; background-color:#e2e8e7; color:#66
 .portlet table.gsc-search-box,
 .portlet table.gsc-search-box th,
 .portlet table.gsc-search-box td {border:none; background-color:transparent;}
+/* Also for Gateway portlet tables */
+.GatewayPortlet table,
+.GatewayPortlet th,
+.GatewayPortlet td {border:none; background-color:transparent;}
 
 /* Overflow box */
 .portlet .fl-overflow {width: 185px; height: 300px; border: 2px solid #dfdfdf; margin: 0 1em 1em 0; padding: 0.31em; overflow-x:auto; overflow-y:scroll;}
@@ -216,6 +319,14 @@ th {padding:0.1em 1em; border-color:#336699; background-color:#e2e8e7; color:#66
 
 /* Pager */
 .portlet .view-pager ul {margin:0; padding:0;}
+.fl-pager {}
+.fl-pager caption {padding:.63em 0em; margin-bottom:0em;}
+.fl-pager th {cursor:pointer;}
+.fl-pager th a {color:#3d80b3; text-decoration:none;}
+.fl-pager th a:hover {color:#2694e8; text-decoration:none;}
+.fl-pager-controls {padding:.69em .69em;}
+.flc-pager-links a {color:#666666; text-decoration:none; vertical-align:middle;}
+.flc-pager-links a:hover {color:#333333;}
 
 /* Selection Basket */
 .portlet .portlet-selection {padding-right:2em;}
@@ -229,7 +340,7 @@ th {padding:0.1em 1em; border-color:#336699; background-color:#e2e8e7; color:#66
 /* Search */
 .portlet .portlet-search form {margin-left:20px;}
 
-/* Browser */
+/* Content Browser */
 .portlet .portlet-browse .fl-tab-content {margin-left:20px; padding:0; border:1px solid #ccc;}
 .portlet .portlet-browse h5 {padding-top:0.1em; padding-left:30px; font-size:200%; font-weight:normal;}
 .portlet .portlet-browse .selected {background-color:#D1F0E0}
@@ -263,18 +374,6 @@ th {padding:0.1em 1em; border-color:#336699; background-color:#e2e8e7; color:#66
 .portlet .person-member a:hover,
 .portlet .category-member a:hover {background-color:#FFFFCC; color:#336699;}
 
-/* Buttons */
-.portlet .portlet-button {margin:0 5px; padding:0.3em 2em; border-width:1px; border-style:solid; background:#336699 url(images/button_bkd_flat.png) top left repeat-x; border-color:#000; color:#fff; font-weight:bold;}
-.portlet a.portlet-button {display:block; float:left; color:#fff; text-decoration:none;}
-.portlet .portlet-button-group {padding:1em 0; border-top:0.2em solid #ccc;}
-.portlet .portlet-button-group .portlet-button {background-color:#F0F0F0; border-color:#000; color:#000;}
-.portlet .portlet-button-group .portlet-button-primary {background-color:#336699; color:#fff;}
-.portlet .portlet-button-group a.portlet-button {color:#000;}
-.portlet .portlet-button-group a.portlet-button-primary {color:#fff;}
-.portlet .portlet-button:hover {background-color:#7a9e0d;}
-.portlet .portlet-button:hover,
-.portlet a.portlet-button:hover {color:#fff;}
-.portlet .portlet-button:hover {cursor:pointer;}
 
 
 /*====================================*/
