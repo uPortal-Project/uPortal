@@ -14,7 +14,7 @@
 (function($){
   $.channelbrowser = function(callerSettings) {
     var settings = $.extend({
-      channelXmlUrl: "ajax/channelList",
+      channelXmlUrl: "mvc/channelList?xml=true",
       onDataLoad: null
     }, callerSettings||{});
 

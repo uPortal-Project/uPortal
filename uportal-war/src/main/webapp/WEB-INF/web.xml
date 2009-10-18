@@ -240,16 +240,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>RetrieveChannelListServlet</servlet-name>
-        <servlet-class>org.jasig.portal.layout.dlm.remoting.RetrieveChannelListServlet</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>ManageableChannelsListServlet</servlet-name>
-        <servlet-class>org.jasig.portal.layout.dlm.remoting.ManageableChannelsListServlet</servlet-class>
-    </servlet>
-    
-    <servlet>
         <servlet-name>UpdatePreferencesServlet</servlet-name>
         <servlet-class>org.jasig.portal.layout.dlm.remoting.UpdatePreferencesServlet</servlet-class>
     </servlet>
@@ -285,11 +275,6 @@
             <param-name>scriptLocation</param-name>
             <param-value>ImportExportPortlet/doDownload</param-value>
         </init-param>
-    </servlet>
-
-    <servlet>
-        <servlet-name>GroupListServlet</servlet-name>
-        <servlet-class>org.jasig.portal.layout.dlm.remoting.GroupListServlet</servlet-class>
     </servlet>
 
     <!-- [INSERT JSPC FRAGMENT HERE] -->
@@ -346,16 +331,6 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>RetrieveChannelListServlet</servlet-name>
-        <url-pattern>/ajax/channelList</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ManageableChannelsListServlet</servlet-name>
-        <url-pattern>/ajax/adminChannelList</url-pattern>
-    </servlet-mapping>
-    
-    <servlet-mapping>
         <servlet-name>UpdatePreferencesServlet</servlet-name>
         <url-pattern>/ajax/preferences</url-pattern>
     </servlet-mapping>
@@ -365,11 +340,6 @@
         <url-pattern>/ImportExportServlet/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>GroupListServlet</servlet-name>
-        <url-pattern>/ajax/groupList</url-pattern>
-    </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>spring</servlet-name>
         <url-pattern>/mvc/*</url-pattern>

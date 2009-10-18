@@ -16,7 +16,7 @@
     $.uportal.UportalLayoutManager = function(callerSettings) {
 		var settings = $.extend({
 		    preferencesUrl: 'ajax/preferences',
-		    channelListUrl: 'ajax/channelList',
+		    channelListUrl: 'mvc/channelList?xml=true',
 		    portalUrl: null,
 		    mediaPath: null,
 		    currentSkin: null,

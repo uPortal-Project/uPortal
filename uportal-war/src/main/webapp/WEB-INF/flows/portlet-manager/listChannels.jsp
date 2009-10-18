@@ -178,7 +178,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
         $(document).ready(function() {
             channelBrowser = $.channelbrowser({
-                channelXmlUrl: 'ajax/adminChannelList',
+                channelXmlUrl: 'mvc/channelList?xml=true&type=manage',
                 onDataLoad: function(categories) {
                     var categorySelect = $("#${n}categorySelectMenu");
                     $(categories).each(function(i, val) {
