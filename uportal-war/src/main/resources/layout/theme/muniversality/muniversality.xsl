@@ -129,10 +129,11 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="page.css">
-    <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-reset.min.css" />
+    <!-- Fluid Skinning System CSS for layout and helpers. See http://wiki.fluidproject.org/x/96M7 for more details. -->
+    <link rel="stylesheet" type="text/css" media="screen" href="{$RESOURCE_PATH}/fluid/1.1.2/css/fss-framework-1.1.2.min.css"/>
+    <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-mobile-iphone-layout.min.css" />    
     <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-transitions.min.css" />
-    <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-text.min.css" />
-    <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-mobile-iphone-layout.min.css" />
+    
     <link type="text/css" rel="stylesheet" href="{$SKIN_PATH}/fss-mobile-iphone-theme.min.css" />
     <link rel="stylesheet" type="text/css" href="{$SKIN_PATH}/{$SKIN}.min.css" />
 </xsl:template>
@@ -154,7 +155,7 @@
 <xsl:template name="page.js">
     <script type="text/javascript" src="{$RESOURCE_PATH}/jquery/1.3.2/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="{$RESOURCE_PATH}/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"></script>
-    <script type="text/javascript" src="{$RESOURCE_PATH}/fluid/1.1.1/js/fluid-all-1.1.1.js"></script>
+    <script type="text/javascript" src="{$RESOURCE_PATH}/fluid/1.1.2/js/fluid-all-1.1.2.js"></script>
 
     <script type="text/javascript">
         var up = up || {};

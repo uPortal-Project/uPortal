@@ -311,7 +311,7 @@
   <xsl:template name="page.css">
     
     <!-- Fluid Skinning System CSS for layout and helpers. See http://wiki.fluidproject.org/x/96M7 for more details. -->
-    <link rel="stylesheet" type="text/css" media="screen" href="{$MEDIA_PATH}/common/css/fluid/fluid.fss.min.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="{$RESOURCE_PATH}/fluid/1.1.2/css/fss-framework-1.1.2.min.css"/>
     
     <!-- uPortal skin CSS -->
     <link rel="stylesheet" type="text/css" media="screen" href="{$SKIN_PATH}/{$SKIN}.min.css"/>
@@ -335,7 +335,7 @@
   <xsl:template name="page.js">
     <script type="text/javascript" src="{$RESOURCE_PATH}/jquery/1.3.2/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="{$RESOURCE_PATH}/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"></script>
-    <script type="text/javascript" src="{$RESOURCE_PATH}/fluid/1.1.1/js/fluid-all-1.1.1.js"></script>
+    <script type="text/javascript" src="{$RESOURCE_PATH}/fluid/1.1.2/js/fluid-all-1.1.2.min.js"></script>
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/ajax-preferences-jquery.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-channel-browser.min.js"></script>
