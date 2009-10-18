@@ -66,13 +66,13 @@ public class ChannelListController extends AbstractController {
 		
 		Element root = DocumentHelper.createElement("registry");
 		
-		final Element registryDocument = buildRegistryDocument(root, rootCategory, user, type);
+		final Element registryDocument = buildRegistryDocument(root, rootCategory, user, type, true);
         Document document = DocumentHelper.createDocument(registryDocument);
 		
 		return new ModelAndView("xmlView","xml",document);
 	}
 	
-	private Element buildRegistryDocument(Element element, ChannelCategory category, IPerson user, String type) {
+	private Element buildRegistryDocument(Element element, ChannelCategory category, IPerson user, String type, boolean isRootCategory) {
 		
 		IChannelDefinition[] channels;
 		
@@ -80,8 +80,12 @@ public class ChannelListController extends AbstractController {
 			channels = channelRegistryStore.getChildChannels(category);
 		} else if(type.equals(TYPE_MANAGE)) {
 			channels = channelRegistryStore.getManageableChildChannels(category, user);
-		} else {
+		} else if (!isRootCategory) {
+			// if this is a subscribe-type channel registry, don't add channels
+			// that are direct members of the root category
 			channels = channelRegistryStore.getChildChannels(category, user);
+		} else {
+			channels = new IChannelDefinition[]{};
 		}
 		
 		for(IChannelDefinition channelDef : channels) {
@@ -130,7 +134,7 @@ public class ChannelListController extends AbstractController {
 			newCategory.addAttribute("description",childCategory.getDescription());
 			newCategory.addAttribute("name",childCategory.getName());
 			/* Populate new category's children. */
-			buildRegistryDocument(newCategory, childCategory, user, type);
+			buildRegistryDocument(newCategory, childCategory, user, type, false);
 			element.add(newCategory);
 		}
 
@@ -141,13 +145,13 @@ public class ChannelListController extends AbstractController {
 		
 		JsonEntityBean root = new JsonEntityBean(rootCategory);
 		
-		root = buildJsonTree(root, rootCategory, user, type);
+		root = buildJsonTree(root, rootCategory, user, type, true);
 		
 		return new ModelAndView("jsonView", "registry", root);
 	}
 	
 	private JsonEntityBean buildJsonTree(JsonEntityBean bean,
-			ChannelCategory category, IPerson user, String type) {
+			ChannelCategory category, IPerson user, String type, boolean isRootCategory) {
 
 		IChannelDefinition[] channels;
 		
@@ -155,8 +159,12 @@ public class ChannelListController extends AbstractController {
 			channels = channelRegistryStore.getChildChannels(category);
 		} else if(type.equals(TYPE_MANAGE)) {
 			channels = channelRegistryStore.getManageableChildChannels(category, user);
-		} else {
+		} else if (!isRootCategory) {
+			// if this is a subscribe-type channel registry, don't add channels
+			// that are direct members of the root category
 			channels = channelRegistryStore.getChildChannels(category, user);
+		} else {
+			channels = new IChannelDefinition[]{};
 		}
 		
 		for(IChannelDefinition channelDef : channels) {
@@ -167,7 +175,7 @@ public class ChannelListController extends AbstractController {
 		for(ChannelCategory childCategory : channelRegistryStore.getChildCategories(category)) {
 
 			JsonEntityBean childBean = new JsonEntityBean(childCategory);
-			buildJsonTree(childBean, childCategory, user, type);
+			buildJsonTree(childBean, childCategory, user, type, false);
 			bean.addChild(childBean);
 		}
 			
