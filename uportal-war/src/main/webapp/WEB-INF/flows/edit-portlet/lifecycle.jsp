@@ -197,8 +197,8 @@ up.jQuery(function() {
         $(".clear-date").click(function(){ $(this).parent().css("display", "none").prev().val(""); });
         $(":radio").click(function(){
             var lifecycle = $(this).val();
-            $('#${n}publishingDateSection').css('display', '${ lifecycle == "PUBLISHED" || lifecycle == "EXPIRED" ? "none" : "block" }');
-            $('#${n}expirationDateSection').css('display', '${ lifecycle == "EXPIRED" ? "none" : "block" }');
+            $('#${n}publishingDateSection').css('display', lifecycle == "PUBLISHED" || lifecycle == "EXPIRED" ? "none" : "block");
+            $('#${n}expirationDateSection').css('display', lifecycle == "EXPIRED" ? "none" : "block");
         });
     });
 });
