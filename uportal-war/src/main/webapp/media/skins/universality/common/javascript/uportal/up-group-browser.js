@@ -22,7 +22,7 @@
 	that.getEntity = function(entityTypes, entityId) {
 		if (localCache[entityId] != null) return localCache[entityId];
 		$.ajax({ async: false, url: settings.groupXmlUrl,
-			type: "GET", dataType: "json", data: { entityType: entityTypes, entityId: entityId },
+			type: "POST", dataType: "json", data: { entityType: entityTypes, entityId: entityId },
 			success: function(json) {
 				var entity;
 				if (json.results.length > 0) {
@@ -48,7 +48,7 @@
 	that.searchEntities = function(entityTypes, searchTerm) {
 		var results;
 		$.ajax({ async: false, url: settings.groupXmlUrl,
-			type: "GET", dataType: "json", data: { entityType: entityTypes, searchTerm: searchTerm },
+			type: "POST", dataType: "json", data: { entityType: entityTypes, searchTerm: searchTerm },
 			success: function(json) { 
 				results = json.results;
 			}

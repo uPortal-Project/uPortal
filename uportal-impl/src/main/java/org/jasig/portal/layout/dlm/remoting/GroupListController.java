@@ -45,8 +45,14 @@ public class GroupListController extends AbstractController {
 	private static final Log log = LogFactory.getLog(GroupListController.class);
 	private IGroupListHelper groupListHelper;
 	private IPersonManager personManager;
+	
+	public GroupListController() {
+		// for security reasons, we only want to allow POST access to this
+		// service
+		this.setSupportedMethods(new String[]{"POST"});
+	}
 
-	@SuppressWarnings("unchecked")
+	@Override
 	public ModelAndView handleRequestInternal(HttpServletRequest request,
 		HttpServletResponse response) throws Exception {
 		
