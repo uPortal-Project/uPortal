@@ -316,7 +316,7 @@
 .fl-theme-uportal3 .fl-reorderer-movable-dragging{filter:alpha(opacity=50); opacity:.5;}
 .fl-theme-uportal3 .fl-reorderer-movable-selected {outline: 0.1em solid #f68922;}
 .fl-theme-uportal3 .fl-reorderer-avatar {background-color:#fff; border:1px dotted #999; width:auto; filter:alpha(opacity=60); opacity:.6;}
-.fl-theme-uportal3 div .orderable-drop-marker {height:200px !important; background-color:#D1F0E0; border:1px dashed #009900; margin-bottom:1em;}
+.fl-theme-uportal3 .fl-reorderer-dropMarker {height:200px !important; background-color:#D1F0E0; border:1px dashed #009900; margin-bottom:1em;}
 .fl-theme-uportal3 .drop-warning {position:absolute; top:50px; left:10px; border:2px solid red; background-color:#ffd7d7; display:none; padding:10px; margin:5px; z-index:65535;}
 .fl-theme-uportal3 #portalDropWarning {background-color:#FFCCCC; border:2px solid #FF0000; color:#FF0000; display:none; position:absolute; top:50px; left:10px;}
 .fl-theme-uportal3 #portalDropWarning p{margin:0em; padding:0.5em 1em;}
