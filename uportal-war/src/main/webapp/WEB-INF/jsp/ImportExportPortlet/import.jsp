@@ -10,22 +10,44 @@
 
 <portlet:defineObjects/>
 
-<p>| <b>Import</b> | <a href="<portlet:renderURL><portlet:param name="view" value="export"/></portlet:renderURL>">Export</a> | <a href="<portlet:renderURL><portlet:param name="view" value="delete"/></portlet:renderURL>">Delete</a> |</p>
+<div class="fl-widget portlet" role="section">
+    <div class="fl-widget-titlebar portlet-title" role="sectionhead">
+        <h2 role="heading">Import Portlet Entities</h2>
+        <h3>Upload an entity to be imported</h3>
+    </div>
+    
+    <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
+        <div class="fl-col">
+            <ul>
+                <li><a href="<portlet:renderURL><portlet:param name="view" value="export"/></portlet:renderURL>">Export</a></li>
+                <li><a href="<portlet:renderURL><portlet:param name="view" value="delete"/></portlet:renderURL>">Delete</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="fl-widget-content portlet-body" role="main">
+    
+        <div class="portlet-section" role="region">
+        
+            <div class="portlet-section-body">
 
-<p>Use this form to import portal entities through this Portlet.</p>
+                <div class="portlet-note" role="note">
+                    <p>You can allow/disallow entity types using Portlet 
+                    Preferences.  See uPortal's portlet.xml file for details.</p>
+    			</div>
+				
+				<form method="POST" enctype="multipart/form-data" action="<portlet:actionURL><portlet:param name="action" value="doImport"/><portlet:param name="view" value="status"/></portlet:actionURL>">
+					<p>
+	                    <label class="portlet-form-label" for="entityFile">File:</label>
+	                    <input type="file" id="entityFile" name="entityFile"/>
+					</p>
+					
+	                <div class="portlet-button-group">
+	    				<input class="portlet-button portlet-button-primary" type="submit" value="Import"/>
+	    		    </div>
+				</form>
 
-<form method="POST" enctype="multipart/form-data" action="<portlet:actionURL><portlet:param name="action" value="doImport"/><portlet:param name="view" value="status"/></portlet:actionURL>">
-
-<hr/>
-
-<label for="entityFile">File:</label>
-<input type="file" id="entityFile" name="entityFile"/>
-
-<hr/>
-
-<input type="submit" value="Import"/>
-
-</form>
-
-<p><strong>NOTE:</strong>  You can allow/disallow entity types using Portlet 
-Preferences.  See uPortal's portlet.xml file for details.</p>
+            </div>
+        </div>
+    </div>
+</div>
