@@ -30,7 +30,7 @@
                 person.setSecurityContext(new BrokenSecurityContext());
                 
                 def layoutStore = layoutStoreProvider.getLayoutStore();
-                def profile = layoutStore.getUserProfileById(person, 1);
+                def profile = layoutStore.getUserProfileByFname(person, UserProfile.DEFAULT_PROFILE_FNAME);
                 def layoutElement = layoutStore.exportLayout(person, profile);
                 
                 if (layoutElement != null) {

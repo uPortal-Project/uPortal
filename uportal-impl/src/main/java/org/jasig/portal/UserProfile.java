@@ -16,6 +16,7 @@ import org.jasig.portal.i18n.LocaleManager;
  */
 public class UserProfile implements Serializable {
     public static final String USER_PROFILE = "UserProfile";
+    public static final String DEFAULT_PROFILE_FNAME = "default";
     protected int id=-1;
     protected String fname = null;
     protected String pName;
