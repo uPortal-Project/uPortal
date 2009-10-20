@@ -42,10 +42,10 @@
                     <sql>
                         select param_name, param_val, ss_type
                         from UP_SS_USER_PARM 
-                        where user_id=? and profile_fname=? and ((ss_id=? and ss_type=1) or (ss_id=? and ss_type=2))
+                        where user_id=? and profile_id=? and ((ss_id=? and ss_type=1) or (ss_id=? and ss_type=2))
                     </sql>
                     <parameter value="${USER_ID}"/>
-                    <parameter value="${PROFILE_FNAME}"/>                    
+                    <parameter value="${PROFILE_ID}"/>                    
                     <parameter value="${STRUCTURE_SS_ID}"/>
                     <parameter value="${THEME_SS_ID}"/>
                     <subtasks>
