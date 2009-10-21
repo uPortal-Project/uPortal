@@ -6,6 +6,7 @@
 package org.jasig.portal;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Locale;
 import java.util.Map;
@@ -24,9 +25,11 @@ import org.jasig.portal.channels.support.IChannelTitle;
 import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.spring.locator.CacheFactoryLocator;
 import org.jasig.portal.spring.locator.JpaInterceptorLocator;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SetCheckInSemaphore;
+import org.jasig.portal.utils.cache.CacheFactory;
 import org.jasig.portal.utils.threading.BaseTask;
 import org.jasig.portal.utils.threading.Task;
 import org.jasig.portal.utils.threading.TrackingThreadLocal;
@@ -60,6 +63,8 @@ public class ChannelRenderer
     public static final boolean CACHE_CHANNELS=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelRenderer.cache_channels", DEFAULT_CACHE_CHANNELS);
 
     public static final String[] renderingStatus={"successful","failed","timed out"};
+    
+    public static final String SYSTEM_WIDE_CHANNEL_CACHE = "org.jasig.portal.ChannelRenderer.SYSTEM_WIDE_CHANNEL_CACHE";
 
     protected final IChannel channel;
     protected final ChannelRuntimeData rd;
@@ -80,7 +85,6 @@ public class ChannelRenderer
     protected boolean ccacheable;
 
     protected static ExecutorService tp=null;
-    protected static Map<String, ChannelCacheEntry> systemCache=null;
 
     protected SetCheckInSemaphore groupSemaphore;
     protected Object groupRenderingKey;
@@ -99,10 +103,6 @@ public class ChannelRenderer
         this.rendering = false;
         this.ccacheable=false;
         tp = threadPool;
-
-        if(systemCache==null) {
-            systemCache=ChannelManager.systemCache;
-        }
 
         this.groupSemaphore=null;
         this.groupRenderingKey=null;
@@ -525,6 +525,9 @@ public class ChannelRenderer
                 if(CACHE_CHANNELS) {
                     // try to obtain rendering from cache
                     if(channel instanceof ICacheable ) {
+                        final CacheFactory cacheFactory = CacheFactoryLocator.getCacheFactory();
+                        final Map<Serializable, ChannelCacheEntry> systemCache = cacheFactory.getCache(SYSTEM_WIDE_CHANNEL_CACHE);
+                        
                         ChannelCacheKey key=((ICacheable)channel).generateKey();
                         if(key!=null) {
                             if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
@@ -740,6 +743,8 @@ public class ChannelRenderer
             if(CACHE_CHANNELS) {
                 // try to obtain rendering from cache
                 if(channel instanceof ICacheable ) {
+                    final CacheFactory cacheFactory = CacheFactoryLocator.getCacheFactory();
+                    final Map<Serializable, ChannelCacheEntry> systemCache = cacheFactory.getCache(SYSTEM_WIDE_CHANNEL_CACHE);
                     ChannelCacheKey key=((ICacheable)channel).generateKey();
                     if(key!=null) {
                         if (log.isDebugEnabled()) {
