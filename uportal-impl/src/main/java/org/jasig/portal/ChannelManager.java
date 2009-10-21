@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections15.map.ReferenceMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.CSecureInfo;
@@ -96,10 +95,6 @@ public class ChannelManager implements LayoutEventListener {
     private static final IChannelRendererFactory cChannelRendererFactory = 
         ChannelRendererFactory.newInstance(ChannelManager.class.getName(), activeRenderers, maxRenderThreads);
     
-    // global channel rendering cache
-    public static final int SYSTEM_CHANNEL_CACHE_MIN_SIZE = 50; // this should be in a file somewhere
-    public static final Map<String, ChannelCacheEntry> systemCache = new ReferenceMap<String, ChannelCacheEntry>(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_CHANNEL_CACHE_MIN_SIZE, .75f, true);
-
     private static boolean useAnchors = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.ChannelManager.use_anchors", false);
     
 
