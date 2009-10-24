@@ -87,51 +87,6 @@ Version $Revision$
 
     </step>
 
-    <step>
-      <ID>2</ID>
-      <name>Display Settings</name>
-      <description>
-        These options influence how your Portlet is displayed within the portal
-      </description>
-
-        <parameter modify="publish-only">
-            <name>showChrome</name>
-            <label>Show Portlet Window Chrome</label>
-            <type base="string" input="single-choice" display="drop-down">
-                <restriction type="enumeration">
-                    <value>true</value>
-                    <value>false</value>
-                </restriction>
-            </type>
-            <defaultValue>true</defaultValue>
-        </parameter>
-
-        <parameter modify="publish-only">
-            <name>alternate</name>
-            <label>Use 'Alternate' Appearance (Theme Dependent)</label>
-            <type base="string" input="single-choice" display="drop-down">
-                <restriction type="enumeration">
-                    <value>false</value>
-                    <value>true</value>
-                </restriction>
-            </type>
-            <defaultValue>false</defaultValue>
-        </parameter>
-
-        <parameter modify="publish-only">
-            <name>highlight</name>
-            <label>Use Highlighted Appearance</label>
-            <type base="string" input="single-choice" display="drop-down">
-                <restriction type="enumeration">
-                    <value>false</value>
-                    <value>true</value>
-                </restriction>
-            </type>
-            <defaultValue>false</defaultValue>
-        </parameter>
-
-    </step>
-
   </params>
 
   <controls>

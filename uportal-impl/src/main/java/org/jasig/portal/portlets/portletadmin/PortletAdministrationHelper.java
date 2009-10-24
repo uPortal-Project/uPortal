@@ -46,6 +46,7 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
+import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameterList;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
@@ -65,6 +66,9 @@ import com.thoughtworks.xstream.XStream;
  * @revision $Revision$
  */
 public class PortletAdministrationHelper {
+	
+	private static final String CUSTOM_CPD_PATH = "org/jasig/portal/portlets/portletadmin/CustomChannel.cpd";
+	private static final String SHARED_PARAMETERS_PATH = "org/jasig/portal/channels/SharedParameters.cpd";
 
 	private Log log = LogFactory.getLog(PortletAdministrationHelper.class);
 	private IChannelRegistryStore channelRegistryStore;
@@ -346,7 +350,7 @@ public class PortletAdministrationHelper {
 			IChannelType type = channelRegistryStore.getChannelType(channelTypeId);
 			cpdUri = type.getCpdUri();
 		} else {
-			cpdUri = "org/jasig/portal/portlets/portletadmin/CustomChannel.cpd";
+			cpdUri = CUSTOM_CPD_PATH;
 		}
 		
 		// read in the CPD
@@ -363,6 +367,27 @@ public class PortletAdministrationHelper {
 		XStream stream = new XStream();
 		stream.processAnnotations(ChannelPublishingDefinition.class);
 		ChannelPublishingDefinition def = (ChannelPublishingDefinition) stream.fromXML(inputStream);
+		
+		// read in the shared CPD
+		try {
+			inputStream = ResourceLoader.getResourceAsStream(PortletAdministrationHelper.class, SHARED_PARAMETERS_PATH);
+		} catch (ResourceMissingException e) {
+			log.error("Failed to locate shared parameters CPD for channel type " + channelTypeId, e);
+		} catch (IOException e) {
+			log.error("Failed to load shared parameters CPD for channel type " + channelTypeId, e);
+		}
+		
+		// parse the CPD
+		stream = new XStream();
+		stream.processAnnotations(CPDParameterList.class);
+		CPDParameterList paramList = (CPDParameterList) stream.fromXML(inputStream);
+		int stepId = def.getParams().getSteps().size();
+		for (CPDStep step : paramList.getSteps()) {
+			stepId = stepId++;
+			step.setId(String.valueOf(stepId));
+		}
+		
+		def.getParams().getSteps().addAll(paramList.getSteps());
 		
 		// add the CPD to the cache and return it
 		this.cpdCache.put(channelTypeId, def);
