@@ -47,10 +47,10 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <description>
     This channel executes a SQL query against a DataSource and renders
-    the returned ResultSet via a configurable XSLT.
+    the returned ResultSet via a configurable JSP.
   </description>
 
-  <class>org.jasig.portal.channels.sqlquery.CSqlQuery</class>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
 
   <params>
     <step>
@@ -64,7 +64,53 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
         Configure the SQL and DataSource for the query.
       </description>
 
-      <parameter modify="publish">
+      <parameter modify="publish-only">
+        <name>isFrameworkPortlet</name>
+        <label>Framework Portlet</label>
+        <type base="string" input="single-choice" display="hidden">
+            <restriction>
+                <defaultValue>false</defaultValue>
+                <value>true</value>
+                <value>false</value>
+            </restriction>
+        </type>
+        <example>false</example>
+        <description>
+          Portlet is deployed in the same web-application as uPortal. If checked "Portlet Web Application Path"
+          is ignored.
+        </description>
+        <defaultValue>true</defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>portletApplicationId</name>
+        <label>Portlet Web Application Path</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>/pluto-testsuite</example>
+        <description>
+          This is the name of the web application the portlet resides in including a preceding /.
+        </description>
+        <defaultValue>/uPortal</defaultValue>
+      </parameter>
+      
+      <parameter modify="publish-only">
+        <name>portletName</name>
+        <label>Portlet Name</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>test-port-et-1</example>
+        <description>
+          This is the name of the portlet as defined in the portlet.xml descriptor.
+        </description>
+        <defaultValue>SqlQuery</defaultValue>
+      </parameter>
+
+      <preference modify="publish">
         <name>sql</name>
         <label>SQL</label>
         <type base="string" input="text" display="text">
@@ -84,11 +130,11 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
         <!-- default value for text field -->
         <defaultValue></defaultValue>
 
-      </parameter>
+      </preference>
 
-      <parameter modify="publish">
+      <preference modify="publish">
         <name>dataSource</name>
-          <label>Name of JNDI DataSource</label>
+          <label>Name of Spring-configured DataSource</label>
           <type base="string" input="text" display="text">
 
             <!-- length and maxlength for text field -->
@@ -98,52 +144,16 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
           </type>
 
         <description>
-        JNDI name for looking up DataSource.  This DataSource must be
-        provided by your servlet container.  In Tomcat this is configured in
-        server.xml or in the context file associated with the web application
-        context (typically, TOMCAT/conf/catalina/localhost/uPortal.xml).
+        Bean ID for looking up DataSource.  This DataSource must be
+        provided by your Spring configuration.
         </description>
 
           <!-- default value for text field -->
           <defaultValue>PortalDb</defaultValue>
 
-      </parameter>
-
+      </preference>
 
     </step>
-
-          <step>
-      <ID>2</ID>
-
-      <!-- displayed at the top of the step screen -->
-      <name>XSLT URI</name>
-
-      <!-- intention is for documentation but could be used for other things -->
-      <description>
-        URL of the XSLT to render the XML representation of the
-        data retrieved from the database.
-      </description>
-
-      <parameter modify="publish">
-        <name>xsltUri</name>
-        <label>URI of XSLT</label>
-        <type base="string" input="text" display="text">
-
-          <!-- length and maxlength for text field -->
-          <length>80</length>
-          <maxlength>255</maxlength>
-
-        </type>
-
-        <example>http://someschool.edu/somexslt.xsl</example>
-
-        <!-- default value for text field -->
-        <defaultValue>CSqlQuery/sqlquery.xsl</defaultValue>
-
-      </parameter>
-
-      </step>
-
     </params>
 
 
