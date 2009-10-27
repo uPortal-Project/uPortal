@@ -40,6 +40,7 @@ import org.danann.cernunnos.Task;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DOMWriter;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserIdentityStore;
@@ -498,10 +499,25 @@ public class RDBMDistributedLayoutStore
             throw new RuntimeException(msg, t);
         }
         
+        if (log.isDebugEnabled()) {
+            // Write out this version of the layout to the log for dev purposes...
+            StringWriter str = new StringWriter();
+            XMLWriter xml = new XMLWriter(str, new OutputFormat("  ", true));
+            try {
+                xml.write(layoutDoc);
+                xml.close();
+            } catch (Throwable t) {
+                throw new RuntimeException("Failed to write the layout for user '" 
+                            + person.getUserName() + "' to the DEBUG log", t);
+            }
+            log.debug("Layout for user:  " + person.getUserName() 
+                        + "\n" + str.getBuffer().toString());
+        }
+
         /*
          * Clean up the DOM for export.
          */
-
+        
         // (1) Add structure & theme attributes...
         StructureStylesheetUserPreferences ssup = up.getStructureStylesheetUserPreferences();
         // The structure transform supports both 'folder' and 'channel' attributes...
@@ -582,7 +598,8 @@ public class RDBMDistributedLayoutStore
                         "unremovable", 
                         "hidden", 
                         "immutable",
-                        "ID"    // we'll remove this one later...
+                        "ID",
+                        "dlm:plfID"
                     });
         Iterator<org.dom4j.Element> channels = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel").iterator();
         while (channels.hasNext()) {
@@ -590,7 +607,7 @@ public class RDBMDistributedLayoutStore
             org.dom4j.Element parent = oldCh.getParent();
             org.dom4j.Element newCh = fac.createElement("channel");
             for (String aName : channelAttributeWhitelist) {
-                org.dom4j.Attribute a = oldCh.attribute(aName);
+                org.dom4j.Attribute a = (org.dom4j.Attribute) oldCh.selectSingleNode("@" + aName);
                 if (a != null) {
                     newCh.addAttribute(a.getName(), a.getValue());
                 }
@@ -647,16 +664,26 @@ public class RDBMDistributedLayoutStore
             }
         }
 
-        // (5) Remove dlm:plfID...
-        for (Iterator<org.dom4j.Attribute> plfid = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:plfID").iterator(); plfid.hasNext();) {
-            org.dom4j.Attribute plf = plfid.next();
-            plf.getParent().remove(plf);
-        }
+        // Remove synthetic Ids, but from non-fragment owners only...
+        if (!isFragmentOwner(person)) {
+            
+            /*
+             * In the case of fragment owners, the original database Ids allow 
+             * us keep (not break) the associations that subscribers have with 
+             * nodes on the fragment layout.
+             */ 
+            
+            // (5) Remove dlm:plfID...
+            for (Iterator<org.dom4j.Attribute> plfid = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:plfID").iterator(); plfid.hasNext();) {
+                org.dom4j.Attribute plf = plfid.next();
+                plf.getParent().remove(plf);
+            }
 
-        // (6) Remove database Ids...
-        for (Iterator<org.dom4j.Attribute> ids = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@ID").iterator(); ids.hasNext();) {
-            org.dom4j.Attribute a = ids.next();
-            a.getParent().remove(a);
+            // (6) Remove database Ids...
+            for (Iterator<org.dom4j.Attribute> ids = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@ID").iterator(); ids.hasNext();) {
+                org.dom4j.Attribute a = ids.next();
+                a.getParent().remove(a);
+            }
         }
 
         return layoutDoc.getRootElement();
@@ -688,7 +715,7 @@ public class RDBMDistributedLayoutStore
         // (6) Add database Ids & (5) Add dlm:plfID ...
         int nextId = 1;
         for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("folder | dlm:*").iterator(); it.hasNext();) {
-            nextId = addIdAttributes(it.next(), nextId);
+            nextId = addIdAttributesIfNecessary(it.next(), nextId);
         }
         // Now update UP_USER...
         final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(RDBMServices.getDataSource());
@@ -856,38 +883,51 @@ public class RDBMDistributedLayoutStore
     }
     
     @SuppressWarnings("unchecked")
-    private final int addIdAttributes(org.dom4j.Element e, int nextId) {
-
-        char prefix;
-        if (e.getName().equals("folder")) {
-            prefix = 's';
-        } else if (e.getName().equals("channel")) {
-            prefix = 'n';
-        } else if (e.getQName().getNamespacePrefix().equals("dlm")) {
-            prefix = 'd';
-        } else {
-            throw new RuntimeException("Unrecognized element type:  " + e.getName());
-        }
-
-        String origin = e.valueOf("@dlm:origin");
-        // 'origin' may be null if the dlm:origin attribute is an 
-        // empty string (which also shouldn't happen);  'origin' 
-        // will be zero-length if dlm:origin is not defined...
-        if (origin != null && origin.length() != 0) {
-            // Add dlm:plfID ...
-            e.addAttribute("dlm:plfID", prefix + String.valueOf(nextId));
-        } else {
-            // Do the standard thing...
-            e.addAttribute("ID", prefix + String.valueOf(nextId));
-        }
+    private final int addIdAttributesIfNecessary(org.dom4j.Element e, int nextId) {
         
-        int childId = nextId + 1;
+        int idAfterThisOne = nextId;  // default...
+        if (e.selectSingleNode("@ID | @dlm:plfID") == null) {
+            if (log.isWarnEnabled()) {
+                log.warn("No ID or dlm:plfID attribute for the following node "
+                		    + "(one will be generated and added):  element" 
+                            + e.getName() + ", name=" + e.valueOf("@name") 
+                            + ", fname=" + e.valueOf("@fname"));
+            }
+            
+            // We need to add an ID to this node...
+            char prefix;
+            if (e.getName().equals("folder")) {
+                prefix = 's';
+            } else if (e.getName().equals("channel")) {
+                prefix = 'n';
+            } else if (e.getQName().getNamespacePrefix().equals("dlm")) {
+                prefix = 'd';
+            } else {
+                throw new RuntimeException("Unrecognized element type:  " + e.getName());
+            }
+
+            String origin = e.valueOf("@dlm:origin");
+            // 'origin' may be null if the dlm:origin attribute is an 
+            // empty string (which also shouldn't happen);  'origin' 
+            // will be zero-length if dlm:origin is not defined...
+            if (origin != null && origin.length() != 0) {
+                // Add as dlm:plfID, if necessary...
+                e.addAttribute("dlm:plfID", prefix + String.valueOf(nextId));
+            } else {
+                // Do the standard thing, if necessary...
+                e.addAttribute("ID", prefix + String.valueOf(nextId));
+            }
+
+            ++idAfterThisOne;
+        }
+
+        // Now check children...
         for (Iterator<org.dom4j.Element> itr = (Iterator<org.dom4j.Element>) e.selectNodes("folder | channel | dlm:*").iterator(); itr.hasNext();) {
             org.dom4j.Element child = itr.next();
-            childId = addIdAttributes(child, childId);
+            idAfterThisOne = addIdAttributesIfNecessary(child, idAfterThisOne);
         }
         
-        return childId;
+        return idAfterThisOne;
     
     }
 

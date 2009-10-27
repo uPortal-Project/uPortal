@@ -20,7 +20,7 @@
                 <subtasks>
                     <choose>
                         <when test="${groovy(new java.io.File(included_users_file).exists())}">
-                            <line-iterator string="${contentsOf(${included_users_file})}">
+                            <line-iterator string="${contents(${included_users_file})}">
                                 <groovy>
                                     <script>
                                         if (org.apache.commons.lang.StringUtils.trimToNull(Attributes.STRING) != null) {
