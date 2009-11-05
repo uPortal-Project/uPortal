@@ -46,10 +46,10 @@
             <scope>provided</scope>
             <exclusions>
                 <!-- Exclude as much as possible to keep the uPortal eclipse project neater -->
-                <exclusion>
+                <!--exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>servlet-api</artifactId>
-                </exclusion>
+                </exclusion-->
                 <exclusion>
                     <groupId>aspectj</groupId>
                     <artifactId>aspectjweaver</artifactId>
@@ -62,18 +62,18 @@
                     <groupId>commons-lang</groupId>
                     <artifactId>commons-lang</artifactId>
                 </exclusion>
-                <exclusion>
+                <!--exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webmvc</artifactId>
-                </exclusion>
+                </exclusion-->
                 <exclusion>
                     <groupId>net.sf.ehcache</groupId>
                     <artifactId>ehcache</artifactId>
                 </exclusion>
-                <exclusion>
+                <!--exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-webflow</artifactId>
-                </exclusion>
+                </exclusion-->
                 <exclusion>
                     <groupId>org.springframework.ldap</groupId>
                     <artifactId>spring-ldap</artifactId>
