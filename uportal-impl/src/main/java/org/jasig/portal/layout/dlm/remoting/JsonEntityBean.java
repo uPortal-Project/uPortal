@@ -22,6 +22,7 @@ import org.jasig.portal.groups.IGroupMember;
 public class JsonEntityBean implements Serializable {
 
 	public static final String ENTITY_CATEGORY = "category";
+	public static final String ENTITY_CHANNEL = "channel";
 	public static final String ENTITY_GROUP = "group";
 	public static final String ENTITY_PERSON = "person";
 	

@@ -68,7 +68,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <div class="portlet-section-body">
           <p class="portlet-section-note" role="note">${ step.description }</p>
           
-          <!-- Portlet Paramaters -->
+          <!-- Portlet Parameters -->
           <c:if test="${ fn:length(step.parameters) > 0 }">
             <table summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
               <thead>

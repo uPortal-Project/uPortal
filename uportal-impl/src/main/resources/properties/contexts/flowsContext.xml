@@ -30,7 +30,8 @@
     
 
     <!--  Beans for the group-selector flow -->
-    <bean id="groupsSelectorHelper" class="org.jasig.portal.portlets.groupselector.GroupsSelectorHelperImpl"/>
+    <bean name="groupListHelper"
+        class="org.jasig.portal.layout.dlm.remoting.GroupListHelperImpl"/>
     
     
     <!-- Beans for the attribute-swapper flow -->       
@@ -52,6 +53,7 @@
         <property name="channelRegistryStore" ref="channelRegistryStore"/>
         <property name="channelPublishingService" ref="channelPublishingService"/>
         <property name="optionalContainerServices" ref="optionalContainerServices"/>
+        <property name="groupListHelper" ref="groupListHelper"/>
         <property name="cpdCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
                 <property name="cacheFactory" ref="cacheFactory" />
@@ -59,6 +61,11 @@
             </bean>
         </property>
     </bean>
+    
+    <bean id="userLocaleHelper" class="org.jasig.portal.portlets.localization.UserLocaleHelper">
+        <property name="userInstanceManager" ref="userInstanceManager"/>
+    </bean>
+    
     
     <bean id="channelValidator"
         class="org.jasig.portal.portlets.portletadmin.ChannelDefinitionFormValidator">

@@ -40,11 +40,14 @@ import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
+import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlets.Attribute;
+import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameterList;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
@@ -71,6 +74,13 @@ public class PortletAdministrationHelper {
 	private static final String SHARED_PARAMETERS_PATH = "org/jasig/portal/channels/SharedParameters.cpd";
 
 	private Log log = LogFactory.getLog(PortletAdministrationHelper.class);
+	
+	private IGroupListHelper groupListHelper;
+
+	public void setGroupListHelper(IGroupListHelper groupListHelper) {
+		this.groupListHelper = groupListHelper;
+	}
+	
 	private IChannelRegistryStore channelRegistryStore;
 	
 	/**
@@ -131,11 +141,14 @@ public class PortletAdministrationHelper {
 		    form = new ChannelDefinitionForm();
 		}
 		
-		// if this is not a new channel, set the category and permissions
+		// if this is a pre-existing channel, set the category and permissions
         if (def != null) {
+        	
+        	// create a JsonEntityBean for each current category and add it 
+        	// to our form bean's category list
         	ChannelCategory[] categories = channelRegistryStore.getParentCategories(def);
         	for (ChannelCategory cat : categories) {
-        		form.addCategory(cat.getId());
+        		form.addCategory(new JsonEntityBean(cat));
         	}
 
 			try {
@@ -143,15 +156,41 @@ public class PortletAdministrationHelper {
                 IAuthorizationPrincipal[] prins = pm.getAuthorizedPrincipals(IChannelPublishingService.SUBSCRIBER_ACTIVITY,
                         "CHAN_ID." + String.valueOf(form.getId()));
                 for (int mp = 0; mp < prins.length; mp++) {
-                    form.addGroup(AuthorizationService.instance().getGroupMember(prins[mp]).getKey());
+                	JsonEntityBean bean;
+                	
+                	// first assume this is a group
+                	IEntityGroup group = GroupService.findGroup(prins[mp].getKey());
+                	if (group != null) {
+                    	bean = new JsonEntityBean(group, EntityEnum.GROUP.toString());
+                	} 
+                	
+                	// if a matching group can't be found, try to find a matching
+                	// non-group entity
+                	else {
+                    	IGroupMember member = AuthorizationService.instance().getGroupMember(prins[mp]);
+                    	bean = new JsonEntityBean(member, EntityEnum.PERSON.toString());
+                    	String name = groupListHelper.lookupEntityName(bean);
+                    	bean.setName(name);
+                	}
+                	
+                    form.addGroup(bean);
                 }
 			} catch (GroupsException e) {
 				e.printStackTrace();
 			}
-		} else {
-			// temporarily adding in a default group and category
-			form.addGroup("local.0");
-			form.addCategory("local.11");
+		} 
+        
+        // otherwise, if this is a new channel, pre-populate the categories
+        // and groups with some reasonable defaults
+        else {
+        	
+			// pre-populate with top-level category
+			IEntityGroup channelCategoriesGroup = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
+			form.addCategory(new JsonEntityBean(channelCategoriesGroup, groupListHelper.getEntityType(channelCategoriesGroup)));
+
+			// pre-populate with top-level group
+			IEntityGroup everyoneGroup = GroupService.getDistinguishedGroup(GroupService.EVERYONE);
+			form.addGroup(new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup)));
 		}
 
 		return form;
@@ -169,14 +208,20 @@ public class PortletAdministrationHelper {
 		// create the group array from the form's group list
 		IGroupMember[] groupMembers = new IGroupMember[form.getGroups().size()];
 		for (int i = 0; i < groupMembers.length; i++) {
-			groupMembers[i] = GroupService.getGroupMember(form.getGroups().get(i),
-					IEntityGroup.class);
+			JsonEntityBean bean = form.getGroups().get(i);
+			EntityEnum entityEnum = EntityEnum.getEntityEnum(bean.getEntityType());
+			if (entityEnum.isGroup()) {
+				groupMembers[i] = GroupService.findGroup(bean.getId());
+			} else {
+            	groupMembers[i] = GroupService.getGroupMember(bean.getId(), entityEnum.getClazz());
+				
+			}
 		}
 		
         // create the category array from the form's category list
 		ChannelCategory[] categories = new ChannelCategory[form.getCategories().size()];
-		for (ListIterator<String> iter = form.getCategories().listIterator(); iter.hasNext();) {
-			String id = iter.next();
+		for (ListIterator<JsonEntityBean> iter = form.getCategories().listIterator(); iter.hasNext();) {
+			String id = iter.next().getId();
 			String iCatID = id.startsWith("cat") ? id.substring(3) : id;
 			categories[iter.previousIndex()] = channelRegistryStore
 					.getChannelCategory(iCatID);
@@ -377,7 +422,8 @@ public class PortletAdministrationHelper {
 			log.error("Failed to load shared parameters CPD for channel type " + channelTypeId, e);
 		}
 		
-		// parse the CPD
+		// parse the shared CPD and add its steps to the end of the type-specific
+		// CPD
 		stream = new XStream();
 		stream.processAnnotations(CPDParameterList.class);
 		CPDParameterList paramList = (CPDParameterList) stream.fromXML(inputStream);

@@ -40,13 +40,13 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Drew Mazurek
  */
-public class GroupListController extends AbstractController {
+public class SearchEntitiesController extends AbstractController {
 
-	private static final Log log = LogFactory.getLog(GroupListController.class);
+	private static final Log log = LogFactory.getLog(SearchEntitiesController.class);
 	private IGroupListHelper groupListHelper;
 	private IPersonManager personManager;
 	
-	public GroupListController() {
+	public SearchEntitiesController() {
 		// for security reasons, we only want to allow POST access to this
 		// service
 		this.setSupportedMethods(new String[]{"POST"});
@@ -63,7 +63,6 @@ public class GroupListController extends AbstractController {
 		}
 		
 		String[] entityTypes = request.getParameterValues("entityType");
-		String entityId = request.getParameter("entityId");
 		String searchTerm = request.getParameter("searchTerm");
 
 		if(entityTypes == null || entityTypes.length == 0) {
@@ -73,7 +72,7 @@ public class GroupListController extends AbstractController {
 		Set<JsonEntityBean> results = new HashSet<JsonEntityBean>();
 		
 		for(String entityType : entityTypes) {
-			results.addAll(groupListHelper.search(entityType, entityId, searchTerm));
+			results.addAll(groupListHelper.search(entityType, searchTerm));
 		}
 
 		return new ModelAndView("jsonView", "results", results);	

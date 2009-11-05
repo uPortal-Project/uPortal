@@ -5,8 +5,10 @@
  */
 package org.jasig.portal.layout.dlm.remoting;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -16,113 +18,100 @@ import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
 
 public class GroupListHelperImpl implements IGroupListHelper {
 
-	private static final Log log = LogFactory.getLog(GroupListController.class);
-
-	// Inherit Javadoc
+	private static final Log log = LogFactory.getLog(GroupListHelperImpl.class);
+	
 	@SuppressWarnings("unchecked")
-	public Set<JsonEntityBean> search(String entityType, String entityId,
-			String searchTerm) {
+	public Set<JsonEntityBean> search(String entityType, String searchTerm) {
 		
 		Set<JsonEntityBean> results = new HashSet<JsonEntityBean>();
 
-		Class clazz;
+		EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
 
-		if(JsonEntityBean.ENTITY_CATEGORY.equals(entityType)) {
-			clazz = IChannelDefinition.class;
-		} else if(JsonEntityBean.ENTITY_PERSON.equals(entityType)) {
-			clazz = IPerson.class;
-		} else if(JsonEntityBean.ENTITY_GROUP.equals(entityType)) {
-			clazz = IPerson.class;
-		} else {
-			throw new IllegalArgumentException("Unknown entity type " + entityType);
+		EntityIdentifier[] identifiers;
+		
+		Class identifierType;
+		
+		// if the entity type is a group, use the group service's findGroup method
+		// to locate it
+		if (entityEnum.isGroup()) {
+			identifiers = GroupService.searchForGroups(searchTerm, GroupService.CONTAINS, 
+					entityEnum.getClazz());
+			identifierType = IEntityGroup.class;
+		} 
+		
+		// otherwise use the getGroupMember method
+		else {
+			identifiers = GroupService.searchForEntities(searchTerm, GroupService.CONTAINS,
+					entityEnum.getClazz());
+			identifierType = entityEnum.getClazz();
 		}
-
-		/* No entity ID or search term.  Return root plus one level
-		   beneath. */
-		if(entityId == null && searchTerm == null) {
-
-			IEntityGroup rootGroup = GroupService.getRootGroup(clazz);
-			JsonEntityBean jsonBean = new JsonEntityBean(rootGroup, getEntityType(rootGroup));
-			
-			/* We can't differentiate between channels and categories, so if
-			   the user wants categories, just return the categories.  For
-			   "person" or "group" searches, only return groups if the user
-			   wants groups.  If the user wants persons, return both groups
-			   and persons. */
-			if(JsonEntityBean.ENTITY_CATEGORY.equals(entityType) 
-					|| JsonEntityBean.ENTITY_GROUP.equals(entityType)) {
-				jsonBean = populateChildren(jsonBean, rootGroup.getMembers());
-			} else {
-				jsonBean = populateChildren(jsonBean, rootGroup.getAllMembers());
-			}
-
-			results.add(jsonBean);
-			
-		} else if(entityId != null) {
-			
-			if(JsonEntityBean.ENTITY_PERSON.equals(entityType)) {
-				IGroupMember person = GroupService.getGroupMember(entityId, clazz);
-				if(person == null || person instanceof IEntityGroup) {
-					return results;
-				}
-				JsonEntityBean jsonBean = new JsonEntityBean(person, getEntityType(person));
-				jsonBean.setName(lookupEntityName(person));
-				results.add(jsonBean);
-			} else {
-				IEntityGroup entity = GroupService.findGroup(entityId);
-				if(entity == null) {
-					return results;
+		
+		for(int i=0;i<identifiers.length;i++) {
+			if(identifiers[i].getType().equals(identifierType)) {
+				IGroupMember entity = GroupService.getGroupMember(identifiers[i]);
+				if(entity instanceof IEntityGroup) {
+					/* Don't look up the children for a search. */
+					JsonEntityBean jsonBean = new JsonEntityBean((IEntityGroup) entity, getEntityType(entity));
+					results.add(jsonBean);
 				} else {
 					JsonEntityBean jsonBean = new JsonEntityBean(entity, getEntityType(entity));
-					/* See comment above. */
-					if(JsonEntityBean.ENTITY_CATEGORY.equals(entityType) 
-							|| JsonEntityBean.ENTITY_GROUP.equals(entityType)) {
-						jsonBean = populateChildren(jsonBean, entity.getMembers());
-					} else {
-						jsonBean = populateChildren(jsonBean, entity.getAllMembers());
-					}
+					jsonBean.setName(lookupEntityName(jsonBean));
 					results.add(jsonBean);
-				}
-			}
-
-		} else if(searchTerm != null) {
-
-			EntityIdentifier[] identifiers;
-			
-			Class identifierType;
-			if(JsonEntityBean.ENTITY_PERSON.equals(entityType)) {
-				identifiers = GroupService.searchForEntities(searchTerm, GroupService.CONTAINS,
-						clazz);
-				identifierType = IPerson.class;
-			} else {
-				identifiers = GroupService.searchForGroups(searchTerm, GroupService.CONTAINS, 
-						clazz);
-				identifierType = IEntityGroup.class;
-			}
-			
-			for(int i=0;i<identifiers.length;i++) {
-				if(identifiers[i].getType().equals(identifierType)) {
-					IGroupMember entity = GroupService.getGroupMember(identifiers[i]);
-					if(entity instanceof IEntityGroup && !JsonEntityBean.ENTITY_PERSON.equals(entityType)) {
-						/* Don't look up the children for a search. */
-						JsonEntityBean jsonBean = new JsonEntityBean((IEntityGroup)entity, getEntityType(entity));
-						results.add(jsonBean);
-					} else if (JsonEntityBean.ENTITY_PERSON.equals(entityType)){
-						JsonEntityBean jsonBean = new JsonEntityBean(entity, getEntityType(entity));
-						jsonBean.setName(lookupEntityName(entity));
-						results.add(jsonBean);
-					}
 				}
 			}
 		}
 		
 		return results;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntity(java.lang.String, java.lang.String, boolean)
+	 */
+	public JsonEntityBean getEntity(String entityType, String entityId, boolean populateChildren) {
+
+		// get the EntityEnum for the specified entity type
+		EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
+		
+		// if the entity type is a group, use the group service's findGroup method
+		// to locate it
+		if(entityEnum.isGroup()) {
+			// attempt to find the entity
+			IEntityGroup entity = GroupService.findGroup(entityId);
+			if(entity == null) {
+				return null;
+			} else {
+				JsonEntityBean jsonBean = new JsonEntityBean(entity, entityEnum.toString());
+				if (populateChildren) {
+					@SuppressWarnings("unchecked")
+					Iterator<IGroupMember> members = (Iterator<IGroupMember>) entity.getMembers();
+					jsonBean = populateChildren(jsonBean, members);
+				}
+				return jsonBean;
+			}
+		} 
+		
+		// otherwise use the getGroupMember method
+		else {
+			IGroupMember entity = GroupService.getGroupMember(entityId, entityEnum.getClazz());
+			if(entity == null || entity instanceof IEntityGroup) {
+				return null;
+			}
+			JsonEntityBean jsonBean = new JsonEntityBean(entity, entityEnum.toString());
+			
+			// the group member interface doesn't include the entity name, so
+			// we'll need to look that up manually
+			jsonBean.setName(lookupEntityName(jsonBean));
+			return jsonBean;
+		}
+		
 	}
 
 	/**
@@ -134,84 +123,110 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	 * obtained from entity.getMembers().
 	 * @return jsonBean with the children populated
 	 */
-	@SuppressWarnings("unchecked")
-	private JsonEntityBean populateChildren(JsonEntityBean jsonBean, Iterator children) {
+	private JsonEntityBean populateChildren(JsonEntityBean jsonBean, Iterator<IGroupMember> children) {
 		
-		/* Populate the children only if we're a group or a category. */
-		if(!JsonEntityBean.ENTITY_GROUP.equals(jsonBean.getEntityType()) 
-				&& !JsonEntityBean.ENTITY_CATEGORY.equals(jsonBean.getEntityType())) {
-			return jsonBean;
-		}
-
 		while(children.hasNext()) {
-			IGroupMember member = (IGroupMember) children.next();		
-			if(member instanceof IEntityGroup) {
-				/* It's either a group or a category. */
-				if(member.getEntityType().equals(IPerson.class)) {
-					jsonBean.addChild(new JsonEntityBean(
-							(IEntityGroup) member,
-							JsonEntityBean.ENTITY_GROUP));
-				} else if(member.getEntityType().equals(IChannelDefinition.class)) {
-					jsonBean.addChild(new JsonEntityBean(
-							(IEntityGroup) member,
-							JsonEntityBean.ENTITY_CATEGORY));
-				} else {
-					/* Don't know what it is... skip it. */
-					continue;
-				}
-			} else if(member.getEntityType().equals(IPerson.class)) {
-				JsonEntityBean child = new JsonEntityBean(member,
-						JsonEntityBean.ENTITY_PERSON);
-				child.setName(lookupEntityName(member));
-				jsonBean.addChild(child);
+			
+			IGroupMember member = children.next();
+			
+			// get the type of this member entity
+			String entityType = getEntityType(member);
+			EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
+			
+			// construct a new entity bean for this entity
+			JsonEntityBean jsonChild;
+			if (entityEnum.isGroup()) {
+				jsonChild = new JsonEntityBean((IEntityGroup) member, entityEnum.toString());
+			} else {
+				jsonChild = new JsonEntityBean(member, entityEnum.toString());
 			}
+			
+			
+			// if the name hasn't been set yet, look up the entity name
+			if (jsonChild.getName() == null) {
+				jsonChild.setName(lookupEntityName(jsonChild));
+			}
+			
+			// add the entity bean to the list of children
+			jsonBean.addChild(jsonChild);
 		}
 		
+		// mark this entity bean as having had it's child list initialized
 		jsonBean.setChildrenInitialized(true);
 
 		return jsonBean;
 	}
 	
-	/**
-	 * <p>Tries to determine the JsonEntityBean entity type based on the
-	 * entity passed in.</p>
-	 * @param entity Entity whose type needs to be determined
-	 * @return One of JsonEntityBean.ENTITY_GROUP, ENTITY_PERSON, or
-	 * ENTITY_CATEGORY.
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntityType(org.jasig.portal.groups.IGroupMember)
 	 */
-	private String getEntityType(IGroupMember entity) {
+	public String getEntityType(IGroupMember entity) {
 		
+		// first check the possible person entity types
 		if(entity.getEntityType().equals(IPerson.class)) {
 			if(entity instanceof IEntityGroup) {
-				return JsonEntityBean.ENTITY_GROUP;
+				return EntityEnum.GROUP.toString();
 			} else {
-				return JsonEntityBean.ENTITY_PERSON;
+				return EntityEnum.PERSON.toString();
 			}
-		} else if(entity.getEntityType().equals(IChannelDefinition.class)) {
-			return JsonEntityBean.ENTITY_CATEGORY;
-		} else {
-			/* Don't know what it is. */
+		} 
+		
+		// next check the possible channel entity types  
+		else if(entity.getEntityType().equals(IChannelDefinition.class)) {
+			if (entity instanceof IEntityGroup) {
+				return EntityEnum.CATEGORY.toString();
+			} else {
+				return EntityEnum.CHANNEL.toString();
+			}
+		} 
+		
+		// We don't know what this is.  Just give up and return null. 
+		else {
 			return null;
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portal.portlets.groupselector.GroupsSelectorHelper#getEntityBeans(java.util.List)
+	 */
+	public List<JsonEntityBean> getEntityBeans(List<String> params) {
+		List<JsonEntityBean> beans = new ArrayList<JsonEntityBean>();
+		for (String param : params) {
+			String[] parts = param.split(":");
+			JsonEntityBean member = getEntity(parts[0], parts[1], false);
+			beans.add(member);
+		}
+		return beans;
+	}
+
 	/**
 	 * <p>Convenience method that looks up the name of the given group member.
 	 * Used for person types.</p>
 	 * @param groupMember Entity to look up
 	 * @return groupMember's name or null if there's an error
 	 */
-	private String lookupEntityName(IGroupMember groupMember) {
+	public String lookupEntityName(JsonEntityBean entity) {
+		
+		EntityEnum entityEnum = EntityEnum.getEntityEnum(entity.getEntityType());
+		IEntityNameFinder finder;
+		if (entityEnum.isGroup()) {
+			finder = EntityNameFinderService.instance()
+				.getNameFinder(IEntityGroup.class);
+		} else {
+			finder = EntityNameFinderService.instance()
+				.getNameFinder(entityEnum.getClazz());
+		}
 		
 		try {
-			IEntityNameFinder finder = EntityNameFinderService.instance()
-				.getNameFinder(groupMember.getEntityType());
-			return(finder.getName(groupMember.getKey()));
-		} catch(Exception ex) {
+			return finder.getName(entity.getId());
+		} catch (Exception e) {
 			/* An exception here isn't the end of the world.  Just log it
 			   and return null. */
-			log.warn("Couldn't find name for entity " + groupMember.getKey(),ex);
+			log.warn("Couldn't find name for entity " + entity.getId(), e);
 			return null;
 		}
 	}
+	
 }

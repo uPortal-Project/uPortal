@@ -8,7 +8,8 @@
 
   $.groupbrowser = function(callerSettings) {
     var settings = $.extend({
-      groupXmlUrl: "mvc/groupList"
+      findEntityUrl: "mvc/findEntity",
+      searchEntitiesUrl: "mvc/searchEntities"
     }, callerSettings||{});
 
 	var that = this;
@@ -19,23 +20,12 @@
 	/**
 	 * Retrieve a single entity.
 	 */
-	that.getEntity = function(entityTypes, entityId) {
+	that.getEntity = function(entityType, entityId) {
 		if (localCache[entityId] != null) return localCache[entityId];
-		$.ajax({ async: false, url: settings.groupXmlUrl,
-			type: "POST", dataType: "json", data: { entityType: entityTypes, entityId: entityId },
+		$.ajax({ async: false, url: settings.findEntityUrl,
+			type: "POST", dataType: "json", data: { entityType: entityType, entityId: entityId },
 			success: function(json) {
-				var entity;
-				if (json.results.length > 0) {
-					for (var i = 0; i < json.results.length; i++) {
-						if (json.results[i].name != entityId) {
-							entity = json.results[i];
-							break;
-						}
-					}
-				}
-				if (entity == null || entity == undefined) {
-					entity = json.results[0];
-				}
+				var entity = json.result;
 				localCache[entity.id] = entity;
 		    }
 		});
@@ -47,7 +37,7 @@
 	 */
 	that.searchEntities = function(entityTypes, searchTerm) {
 		var results;
-		$.ajax({ async: false, url: settings.groupXmlUrl,
+		$.ajax({ async: false, url: settings.searchEntitiesUrl,
 			type: "POST", dataType: "json", data: { entityType: entityTypes, searchTerm: searchTerm },
 			success: function(json) { 
 				results = json.results;

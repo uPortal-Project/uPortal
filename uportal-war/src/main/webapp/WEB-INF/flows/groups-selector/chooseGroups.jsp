@@ -57,10 +57,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <form action="${ submitUrl }" method="post">
           <div id="${n}selectionBasket" class="portlet-selection-basket">
             <ul>
-              <c:forEach items="${model.groups}" var="group">
+              <c:forEach items="${groups}" var="group">
                 <li>
-                  <a key="${group}" href="javascript:;"><c:out value="${groupNames[group]}"/></a>
-                  <input type="hidden" name="groups" value="<c:out value="${group}"/>"/>
+                  <a key="${group}" href="javascript:;"><c:out value="${group.name}"/></a>
+                  <input type="hidden" name="groups" value="${group.entityType}:${group.id}"/>
                 </li>
               </c:forEach>
             </ul>
@@ -174,8 +174,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 		$(document).ready(function(){
 			uportal.entityselection("#${n}chooseGroupsBody", {
 		        entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
-		        selected: [<c:forEach items="${model.groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
-		        initialFocusedEntity: '${rootEntityId}',
+		        selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
+		        initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',
 		        selectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="chooseGroups.selectButton"/></spring:escapeBody>',
 		        deselectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="chooseGroups.deselectButton"/></spring:escapeBody>',
 		        selectors: {

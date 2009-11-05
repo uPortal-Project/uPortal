@@ -21,6 +21,7 @@ import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
@@ -81,8 +82,8 @@ public class ChannelDefinitionForm implements Serializable {
 	 * Groups and categories
 	 */
 	
-	private List<String> groups = new ArrayList<String>();
-	private List<String> categories = new ArrayList<String>();
+	private List<JsonEntityBean> groups = new ArrayList<JsonEntityBean>();
+	private List<JsonEntityBean> categories = new ArrayList<JsonEntityBean>();
 
 	
 	/**
@@ -445,27 +446,27 @@ public class ChannelDefinitionForm implements Serializable {
 		this.portletParameterOverrides = portletParameterOverrides;
 	}
 
-	public List<String> getGroups() {
+	public List<JsonEntityBean> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(List<String> groups) {
+	public void setGroups(List<JsonEntityBean> groups) {
 		this.groups = groups;
 	}
 	
-	public void addGroup(String group) {
+	public void addGroup(JsonEntityBean group) {
 		this.groups.add(group);
 	}
 
-	public List<String> getCategories() {
+	public List<JsonEntityBean> getCategories() {
 		return categories;
 	}
 
-	public void setCategories(List<String> categories) {
+	public void setCategories(List<JsonEntityBean> categories) {
 		this.categories = categories;
 	}
 	
-	public void addCategory(String category) {
+	public void addCategory(JsonEntityBean category) {
 		this.categories.add(category);
 	}
 

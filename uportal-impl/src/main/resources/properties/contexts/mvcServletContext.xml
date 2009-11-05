@@ -15,22 +15,34 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">           
 
+    <bean name="groupListHelper"
+        class="org.jasig.portal.layout.dlm.remoting.GroupListHelperImpl"/>
+    
     <!-- 
-     | JSON groups and categories controller
+     | Search entities for multiple results by a search string
      +-->
-    <bean name="/groupList"
-        class="org.jasig.portal.layout.dlm.remoting.GroupListController">
+    <bean name="/searchEntities"
+        class="org.jasig.portal.layout.dlm.remoting.SearchEntitiesController">
+        <property name="groupListHelper" ref="groupListHelper"/>
+        <property name="personManager" ref="personManager"/>
+    </bean>
+
+    <!-- 
+     | Find a single entity by ID and type
+     +-->
+    <bean name="/findEntity"
+        class="org.jasig.portal.layout.dlm.remoting.FindEntityController">
         <property name="groupListHelper" ref="groupListHelper"/>
         <property name="personManager" ref="personManager"/>
     </bean>
     
-    <bean name="groupListHelper"
-        class="org.jasig.portal.layout.dlm.remoting.GroupListHelperImpl"/>
-    
+    <!-- 
+     | Channel registry list
+     +-->
     <bean name="/channelList"
         class="org.jasig.portal.layout.dlm.remoting.ChannelListController">
         <property name="channelRegistryStore" ref="channelRegistryStore"/>
         <property name="personManager" ref="personManager"/>
     </bean>
-    
+
 </beans>

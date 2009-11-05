@@ -26,10 +26,6 @@
         <set name="flowScope.channelTypes" 
             value="channelRegistryStore.getChannelTypes()"/>
         <set name="flowScope.completed" value="channel.id > 0"/>
-        <set name="flowScope.groupNames" 
-            value="groupsSelectorHelper.getGroupNames(channel.groups)"/>
-        <set name="flowScope.categoryNames" 
-            value="groupsSelectorHelper.getGroupNames(channel.categories)"/>
     </on-start>
     
     <!-- If we're creating a new portlet, display the first step in the workflow.
@@ -91,11 +87,12 @@
         <on-entry>
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('category')"/>
+            <set name="flashScope.rootEntity" value="groupListHelper.getEntity('category', 'local.1', false)"/>
         </on-entry>
         <!-- View Parameters -->
         <input name="selectTypes" value="entityTypes"/>
         <input name="selectMultiple" value="true"/>
-        <input name="rootEntityId" value="'local.1'"/>
+        <input name="rootEntity" value="rootEntity"/>
 
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="!completed"/>
@@ -111,10 +108,7 @@
         <output name="selectedGroups" value="channel.categories"/>
         
         <transition on="back" to="setParameters"/>
-        <transition on="finish" to="chooseCategoryNextScreen">
-            <set name="categoryNames" 
-                value="groupsSelectorHelper.getGroupNames(channel.categories)"/>
-        </transition>
+        <transition on="finish" to="chooseCategoryNextScreen"/>
     </subflow-state>
     
     <decision-state id="chooseCategoryNextScreen">
@@ -127,11 +121,12 @@
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('person')"/>
             <evaluate expression="entityTypes.add('group')"/>
+            <set name="flashScope.rootEntity" value="groupListHelper.getEntity('group', 'local.0', false)"/>
         </on-entry>
         <!-- View Parameters -->
         <input name="selectTypes" value="entityTypes"/>
         <input name="selectMultiple" value="true"/>
-        <input name="rootEntityId" value="'local.0'"/>
+        <input name="rootEntity" value="rootEntity"/>
         
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="!completed"/>
@@ -147,12 +142,13 @@
         <output name="selectedGroups" value="channel.groups"/>
         
         <transition on="back" to="chooseCategory"/>
-        <transition on="finish" to="lifecycle">
-            <set name="groupNames" 
-                value="groupsSelectorHelper.getGroupNames(channel.groups)"/>
-        </transition>
+        <transition on="finish" to="chooseGroupNextScreen"/>
     </subflow-state>
-    
+
+    <decision-state id="chooseGroupNextScreen">
+        <if test="completed" then="reviewPortlet" else="lifecycle"/>
+    </decision-state>
+        
     <!-- Lifecycle Management -->
     <view-state id="lifecycle" model="channel">
         <binder>

@@ -230,7 +230,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
         <ul class="category-member">
           <c:forEach items="${ channel.categories }" var="category">
-            <li><a href="${ chooseCategoryUrl }"><c:out value="${ categoryNames[category] }"/></a></li>
+            <li><a href="${ chooseCategoryUrl }"><c:out value="${ category.name }"/></a></li>
           </c:forEach>
         </ul>
         
@@ -247,7 +247,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       
         <ul class="group-member">
         <c:forEach items="${ channel.groups }" var="group">
-          <li><a href="${ chooseGroupUrl }"><c:out value="${ groupNames[group] }"/></a></li>
+          <li><a href="${ chooseGroupUrl }"><c:out value="${ group.name }"/></a></li>
         </c:forEach>
         </ul>
         
