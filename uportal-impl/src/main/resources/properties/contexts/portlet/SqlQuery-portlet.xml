@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+    <!-- Controllers -->
+    
+    <!-- main portlet view -->
+    <bean id="sqlController"
+        class="org.jasig.portal.portlets.sqlquery.SqlQueryPortletController"/>
+    
+    <!-- Handler Mapping -->
+    
+    <bean id="portletModeHandlerMapping"
+        class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+        <property name="portletModeMap">
+            <map>
+                <entry key="view" value-ref="sqlController"/>
+            </map>
+        </property>
+    </bean>
+    
+</beans>

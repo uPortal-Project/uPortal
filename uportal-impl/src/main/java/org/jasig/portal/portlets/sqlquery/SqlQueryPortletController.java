@@ -52,15 +52,9 @@ public class SqlQueryPortletController extends AbstractController {
      * parameter named "sql".  This parameter is required.
      */
     public static final String SQL_QUERY_PARAM_NAME = "sql";
-    
-    
-	@Override
-	public void handleActionRequest(ActionRequest request,
-			ActionResponse response) throws Exception {
-		// TODO Auto-generated method stub
-		super.handleActionRequest(request, response);
-	}
 
+    public static final String VIEW_PARAM_NAME = "view";
+    
 	@Override
 	public ModelAndView handleRenderRequest(RenderRequest request,
 			RenderResponse response) throws Exception {
@@ -69,6 +63,7 @@ public class SqlQueryPortletController extends AbstractController {
 		PortletPreferences preferences = request.getPreferences();
 		String sqlQuery = preferences.getValue(SQL_QUERY_PARAM_NAME, null);
 		String dsName = preferences.getValue(DATASOURCE_BEAN_NAME_PARAM_NAME, "PortalDb");
+		String viewName = preferences.getValue(VIEW_PARAM_NAME, "jsp/SqlQuery/results");
 		
 		// generate a JDBC template for the requested data source
 		DataSource ds = (DataSource) getApplicationContext().getBean(dsName);
@@ -84,7 +79,7 @@ public class SqlQueryPortletController extends AbstractController {
 		Map<Object,Object> model = new HashMap<Object,Object>();
 		model.put("results", results);
 		
-		return new ModelAndView("jsp/SqlQuery/results", model);
+		return new ModelAndView(viewName, model);
 	}
 
 }
