@@ -45,7 +45,7 @@
       <div class="portlet-section-body">
 		<table id="${n}sqlResults" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
 		    <thead rsf:id="header:">
-		        <tr>
+		        <tr style="text-transform:capitalize">
 			        <c:forEach items="${ results[0] }" var="cell" varStatus="status">
 			            <th id="${n}column${ status.index }" class="flc-pager-sort-header">
 			                <a rsf:id="column${ status.index }" href="javascript:;">${ cell.key }</a></th>

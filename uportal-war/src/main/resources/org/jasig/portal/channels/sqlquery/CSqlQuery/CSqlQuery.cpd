@@ -110,13 +110,30 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
         <defaultValue>SqlQuery</defaultValue>
       </parameter>
 
+      <parameter modify="publish-only">
+        <name>disableDynamicTitle</name>
+        <label>Disable Dynamic Title</label>
+        <type base="string" input="single-choice" display="hidden">
+            <restriction>
+                <defaultValue>true</defaultValue>
+                <value>true</value>
+                <value>false</value>
+            </restriction>
+        </type>
+        <example>false</example>
+        <description>
+          Disable dynamic title
+        </description>
+        <defaultValue>true</defaultValue>
+      </parameter>
+
       <preference modify="publish">
         <name>sql</name>
         <label>SQL</label>
-        <type base="string" input="text" display="text">
+        <type base="string" input="text" display="textarea">
 
           <!-- length and maxlength for text field -->
-          <length>120</length>
+          <length>80</length>
           <maxlength>1000</maxlength>
 
         </type>
@@ -152,6 +169,29 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
           <defaultValue>PortalDb</defaultValue>
 
       </preference>
+
+      <preference modify="publish">
+        <name>view</name>
+        <label>View Path</label>
+        <type base="string" input="text" display="text">
+
+          <!-- length and maxlength for text field -->
+          <length>60</length>
+          <maxlength>1000</maxlength>
+
+        </type>
+
+        <example>jsp/SqlQuery/results</example>
+
+        <description>
+        SQL query you wish to execute.
+        </description>
+
+        <!-- default value for text field -->
+        <defaultValue></defaultValue>
+
+      </preference>
+
 
     </step>
     </params>
