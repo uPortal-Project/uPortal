@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin:resources xmlns:skin="http://www.jasig.org/uportal/web/skin">
+
+    <!-- these 2 will aggregate -->
+	<css>../common/css/a.css</css>
+	<css>../common/css/b.css</css>
+	<!--  conditional will be by itself -->
+	<css conditional="condition!">../common/css/conditional.css</css>
+
+	<!-- absolute won't get touched, prove the 2 don't aggregate -->
+	<css>/ResourceServingWebapp/rs/1.css</css>
+	<css>/ResourceServingWebapp/rs/2.css</css>
+    
+    <!-- have same value for media, will get aggregated -->
+    <css media="alternate">css/a.css</css>
+    <css media="alternate">css/b.css</css>
+	
+
+	<js>../common/js/a.js</js>
+	<js>../common/js/b.js</js>
+	<!--  absolute won't get touched -->
+	<js>/universal.js</js>
+	<js>js/a.js</js>
+	<js>js/b.js</js>
+	<!-- compressed won't get aggregated -->
+	<js compressed="true">js/c-compressed.js</js>
+	<js conditional="if IE lt 7">js/ie6-hack.js</js>
+
+</skin:resources>
