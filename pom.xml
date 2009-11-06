@@ -186,6 +186,7 @@
         <xml-apis.version>1.0.b2</xml-apis.version>
         <xml-resolver.version>1.2-JASIG_PATCH</xml-resolver.version>
         <xmlParserAPIs.version>2.6.2</xmlParserAPIs.version>
+        <xmlunit.version>1.2</xmlunit.version>
         <xom.version>1.1</xom.version>
     </properties>
 
@@ -728,6 +729,11 @@
                 <groupId>xml-resolver</groupId>
                 <artifactId>xml-resolver</artifactId>
                 <version>${xml-resolver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>xmlunit</groupId>
+                <artifactId>xmlunit</artifactId>
+                <version>${xmlunit.version}</version>
             </dependency>
             <dependency>
                 <groupId>xom</groupId>
