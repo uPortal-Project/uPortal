@@ -1,0 +1,25 @@
+/**
+ * Copyright (c) 2000-2009, Jasig, Inc.
+ * See license distributed with this file and available online at
+ * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+ */
+/* 
+------------------------------------
+  Overrides to jqueryui css.
+------------------------------------ 
+*/
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button, 
+.ui-widget {font-size: 1em; font-family:arial,helvetica,clean,sans-serif;}
+
+.ui-tabs .ui-tabs-nav li a {
+    font-size: 0.8em;
+    padding:0.2em 0.5em;
+}
+
+.ui-tabs .ui-tabs-nav {
+    padding:0.2em 0.1em 0;
+}
+
+/* jQuery tooltip */
+#tooltip {background-color: #fffbbf; color: #344461; border: thin solid #b1c6f2;}

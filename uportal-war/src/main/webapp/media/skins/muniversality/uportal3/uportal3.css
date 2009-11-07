@@ -7,7 +7,9 @@
 @import url("/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css");
 
 /* uPortal jqueryui override css */
-@import url("../../universality/uportal3/jquery.min.css");
+@import url("jquery.min.css");
+@import url("../../universality/uportal3/uportal3_portlet.min.css");
+@import url("../../universality/uportal3/uportal3_legacy.min.css");
 
 
 #portalWelcome { text-align: right; padding-right: 10px; }
@@ -22,14 +24,5 @@
 .fl-theme-iphone .fl-pager .fl-pager-ui .fl-pager-currentPage a { color: #000000; border: 0; text-decoration: none; cursor: default;}
 
 .fl-theme-iphone a { color:#4b6b90; }
-
-.ui-tabs .ui-tabs-nav li a {
-    font-size: 0.8em;
-    padding:0.2em 0.5em;
-}
-
-.ui-tabs .ui-tabs-nav {
-    padding:0.2em 0.1em 0;
-}
 
 .up-mobile-navigation-container a { color:#000; }
