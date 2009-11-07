@@ -11,7 +11,7 @@ var uportal = uportal || {};
      * Browse to a particular entity.
      */
     var browseEntity = function(that, key) {
-        var entity = that.entityBrowser.getEntity(that.options.entityTypes, key);
+        var entity = that.entityBrowser.getEntity(key.split(":")[0], key.split(":")[1]);
         that.currentEntity = entity;
         
         updateBreadcrumbs(that, entity);
@@ -23,7 +23,7 @@ var uportal = uportal || {};
         // for each entity, create a list element in the correct section 
         $(entity.children).each(function(i){
             var link = $(document.createElement("a")).attr("href", "javascript:;")
-                .html("<span>" + this.name + "</span>").attr("key", this.id)
+                .html("<span>" + this.name + "</span>").attr("key", this.entityType + ":" + this.id)
                 .click(function(){ browseEntity(that, $(this).attr("key")); });
             $("." + this.entityType + "-member-list").append(
                 $(document.createElement("li")).addClass(this.entityType).append(link)
@@ -50,7 +50,7 @@ var uportal = uportal || {};
         var list = that.locate("searchResults").html("");
         $(entities).each(function(){
             var link = $(document.createElement("a")).attr("href", "javascript:;")
-                .html("<span>" + this.name + "</span>").attr("key", this.id)
+                .html("<span>" + this.name + "</span>").attr("key", this.entityType + ":" + this.id)
                 .click(function(){ selectEntity(that, $(this).attr("key")); $(this).addClass("selected"); });
             list.append($(document.createElement("li")).addClass(this.entityType).append(link));
         });
@@ -74,15 +74,15 @@ var uportal = uportal || {};
         if ($.inArray(key, that.options.selected) < 0) {
             // add the key to our selected list
             that.options.selected.push(key);
-            var entity = that.entityBrowser.getEntity(that.options.entityTypes, key);
+            var entity = that.entityBrowser.getEntity(key.split(":")[0], key.split(":")[1]);
             
             // add a element to the user-visible select list
             var li = $(document.createElement("li"));
             li.append($(document.createElement("a")).html(entity.name)
-                .attr("href", "javascript:;").attr("key", entity.id)
+                .attr("href", "javascript:;").attr("key", entity.entityType + ":" + entity.id)
                 .click(function(){ deselectEntity(that, $(this).attr("key")); }));
             li.append($(document.createElement("input")).attr("type", "hidden")
-                .attr("name", "groups").val(entity.id));
+                .attr("name", "groups").val(entity.entityType + ":" + entity.id));
             that.locate("selectionBasket").append(li);
             
             // if the selected item is the currently selected entity, update
@@ -117,13 +117,13 @@ var uportal = uportal || {};
         var link = that.locate("selectEntityLink").unbind("click");
         // deselect the currently-browsed entity
         if (!selected) {
-            link.click(function(){ selectEntity(that, that.currentEntity.id); })
+            link.click(function(){ selectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id); })
                 .find("span").text(that.options.selectButtonMessage);
             that.locate("entityBrowsingHeader").removeClass("selected");
             
         // select the currently-browsed activity
         } else {
-            link.click(function(){ deselectEntity(that, that.currentEntity.id); })
+            link.click(function(){ deselectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id); })
                 .find("span").text(that.options.deselectButtonMessage);
             that.locate("entityBrowsingHeader").addClass("selected");
         }
@@ -137,13 +137,13 @@ var uportal = uportal || {};
         var currentTitle = that.locate("currentEntityName");
         
         var breadcrumbs = that.locate("breadcrumbs");
-        if (breadcrumbs.find("span a[key=" + entity.id + "]").size() > 0) {
+        if (breadcrumbs.find("span a[key=" + entity.entityType + ":" + entity.id + "]").size() > 0) {
             // if this entity already exists in the breadcrumb trail
             var removeBreadcrumb = false;
             $(breadcrumbs.find("span")).each(function(){
                 if (removeBreadcrumb) { 
                     $(this).remove(); 
-                } else if ($(this).find("a[key=" + entity.id + "]").size() > 0) { 
+                } else if ($(this).find("a[key=" + entity.entityType + ":" + entity.id + "]").size() > 0) { 
                     removeBreadcrumb = true;
                     $(this).remove();
                 }
@@ -160,7 +160,7 @@ var uportal = uportal || {};
                 that.locate("breadcrumbs").append(breadcrumb);
             }
         }
-        currentTitle.text(entity.name).attr("key", entity.id);
+        currentTitle.text(entity.name).attr("key", entity.entityType + ":" + entity.id);
     };
     
 
@@ -189,7 +189,7 @@ var uportal = uportal || {};
     fluid.defaults("uportal.entityselection", {
         entityTypes: [],
         selected: [],
-        initialFocusedEntity: 'local.0',
+        initialFocusedEntity: 'group:local.0',
         selectButtonMessage: '',
         deselectButtonMessage: '',
         selectors: {
