@@ -131,10 +131,23 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     // string that defines which character set to use for content
     private static final String CHARACTER_SET = "UTF-8";
 
+    // external login configuration
+    private static final String SECURITY_PROPERTIES_FILE_NAME = "/properties/security.properties";
+	private static final String CAS_LOGIN_URL_PROPERTY = "org.jasig.portal.channels.CLogin.CasLoginUrl";
+    private static String externalLoginUrl = null;
+
     static {
         //TODO do via setter injection
         try {
             workerProperties = ResourceLoader.getResourceAsProperties(StaticRenderingPipeline.class, WORKER_PROPERTIES_FILE_NAME);
+        }
+        catch (IOException ioe) {
+            throw new PortalException("Unable to load worker.properties file. ", ioe);
+        }
+        try {
+			Properties securityProps = ResourceLoader.getResourceAsProperties(StaticRenderingPipeline.class,
+					SECURITY_PROPERTIES_FILE_NAME);
+			externalLoginUrl = securityProps.getProperty(CAS_LOGIN_URL_PROPERTY);
         }
         catch (IOException ioe) {
             throw new PortalException("Unable to load worker.properties file. ", ioe);
@@ -565,6 +578,9 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     // set up of the parameters
                     tst.setParameter("baseActionURL", uPElement.getUPFile());
                     tst.setParameter("baseIdempotentActionURL", uPIdempotentElement.getUPFile());
+                    if (externalLoginUrl != null) {
+                        tst.setParameter("EXTERNAL_LOGIN_URL", externalLoginUrl);
+                    }
 
                     Hashtable<String, String> tupTable = userPreferences.getThemeStylesheetUserPreferences()
                             .getParameterValues();

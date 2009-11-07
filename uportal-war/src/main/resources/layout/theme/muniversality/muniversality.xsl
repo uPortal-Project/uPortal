@@ -111,11 +111,18 @@
 | Portal Settings should generally not be (and not need to be) modified.
 -->
 <xsl:param name="AUTHENTICATED" select="'false'"/>
+<xsl:param name="USER_ID">guest</xsl:param>
+<xsl:param name="userName">Guest User</xsl:param>
+<xsl:param name="USER_NAME"><xsl:value-of select="$userName"/></xsl:param>
 <xsl:param name="USE_SELECT_DROP_DOWN">true</xsl:param>
-<xsl:param name="BASE_ACTION_URL">render.userLayoutRootNode.uP</xsl:param>
+<xsl:param name="uP_productAndVersion">uPortal</xsl:param>
+<xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
+<xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
+<xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
 <xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param>
 <xsl:variable name="TOKEN" select="document($MESSAGE_DOC_URL)/theme-messages/tokens[lang($USER_LANG)]/token"/>
-
+<xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
+    
 
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: PAGE CSS =========================================== -->

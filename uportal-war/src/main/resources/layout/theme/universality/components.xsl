@@ -246,39 +246,24 @@
   <!--
    | This template renders the login form.
   -->
-  <xsl:template name="login">  
-    <xsl:if test="$AUTHENTICATED='false'">
-      <div id="portalLogin">
-        <div id="portalLoginInner">
-          <div id="portalLoginHeader">
-            <div id="portalLoginHeaderInner">
-              <h3><xsl:value-of select="$TOKEN[@name='WELCOME_LOGIN_HEADER']"/></h3>
-            </div>
-          </div>
-          <div id="portalLoginBody">
-            <div id="portalLoginBodyInner">
-              <form method="post" action="/uP3/j_acegi_security_check">
-                <fieldset>
-                  <legend><xsl:value-of select="$TOKEN[@name='WELCOME_LOGIN_LEGEND']"/></legend>
-                  <ol>
-                    <li><label class="portal-login-username"><span><xsl:value-of select="$TOKEN[@name='WELCOME_LOGIN_USERNAME_LABEL']"/></span><input type="text" name="j_username" title="{$TOKEN[@name='WELCOME_LOGIN_USERNAME_FIELD_TITLE']}"/></label></li>
-                    <li><label class="portal-login-password"><span><xsl:value-of select="$TOKEN[@name='WELCOME_LOGIN_PASSWORD_LABEL']"/></span><input type="password" name="j_password" title="{$TOKEN[@name='WELCOME_LOGIN_PASSWORD_FIELD_TITLE']}"/></label></li>
-                  </ol>
-                </fieldset>
-                <div class="portal-login-controls-submit">
-                	<input type="submit" value="{$TOKEN[@name='WELCOME_LOGIN_BUTTON_LABEL']}"/>
-                </div>
-              </form>
-              <div id="portalLoginHelp">
-              	<a href="{$LOGIN_HELP_URL}" title="{$TOKEN[@name='WELCOME_LOGIN_HELP_LONG_LABEL']}">
-                	<xsl:value-of select="$TOKEN[@name='WELCOME_LOGIN_HELP_LABEL']"/>
-                </a>
-              </div>
-            </div>
-          </div>
+  <xsl:template name="login">
+    <div id="portalLogin" class="fl-widget">
+      <div class="fl-widget-inner">
+        <div class="fl-widget-titlebar">
+          <h2>Sign In</h2>
         </div>
+        <xsl:choose>
+          <xsl:when test="$EXTERNAL_LOGIN_URL != ''">
+            <!-- If an external SSO system is configured, render the external login link -->
+            <xsl:call-template name="external.login"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <!-- Otherwise render the local login form -->
+            <xsl:call-template name="local.login"/>
+          </xsl:otherwise>
+        </xsl:choose>
       </div>
-    </xsl:if>
+    </div>
   </xsl:template>
   <!-- ===================================== -->
   
@@ -288,7 +273,7 @@
   <!--
    | This template renders the CLogin channel.
   -->
-  <xsl:template name="login.channel">
+  <xsl:template name="local.login">
     <xsl:copy-of select="//channel[@name='Login']"/>
   </xsl:template>
   <!-- ============================================= -->
@@ -299,21 +284,17 @@
   <!--
    | This template renders links for CAS login.
   -->
-  <xsl:template name="cas.login">  
-    <xsl:if test="$AUTHENTICATED='false'">
-      <div id="portalLogin">
-      	<div id="portalLoginInner">
-          <div id="portalCASLogin">
-            <a id="portalCASLoginLink" href="{$CAS_LOGIN_URL}" title="{$TOKEN[@name='CAS_LOGIN_LONG_LABEL']}">
-            	<span><xsl:value-of select="$TOKEN[@name='CAS_LOGIN_LABEL']"/></span>
-            </a>
-            <a id="portalCASLoginNewLink" href="{$CAS_NEW_USER_URL}" title="{$TOKEN[@name='CAS_NEW_USER_LONG_LABEL']}">
-            	<span><xsl:value-of select="$TOKEN[@name='CAS_NEW_USER_LABEL']"/></span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </xsl:if>
+  <xsl:template name="external.login">  
+    <div id="portalCASLogin" class="fl-widget-content">
+      <a id="portalCASLoginLink" href="{$EXTERNAL_LOGIN_URL}" title="{$TOKEN[@name='CAS_LOGIN_LONG_LABEL']}">
+        <span>Sign In <span class="via-cas">with CAS</span></span>
+      </a>
+      <p>New user? 
+        <a id="portalCASLoginNewLink" href="{$CAS_NEW_USER_URL}" title="{$TOKEN[@name='CAS_NEW_USER_LONG_LABEL']}">
+          <xsl:value-of select="$TOKEN[@name='CAS_NEW_USER_LABEL']"/>
+        </a>.
+      </p>
+    </div>
   </xsl:template>
   <!-- ========================================= -->
   

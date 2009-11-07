@@ -36,6 +36,13 @@
 		<token name="FORM_SELECT_LABEL">View:</token>
 		<token name="FORM_SELECT_SUBMIT_VALUE">GO</token>
 		
+		<!-- Authentication -->
+		<token name="LOGIN_LABEL">Sign in</token>
+		<token name="LOGIN_LONG_LABEL">Sign in</token>
+		<token name="LOGOUT_LABEL">Sign out</token>
+		<token name="LOGOUT_LONG_LABEL">Sign out</token>
+		<token name="LOGGED_IN_AS_LABEL">Signed in as</token>
+		
 		<!-- Footer -->
 		<token name="COPYRIGHT_URL">http://www.uportal.org/license.html</token>
 		<token name="COPYRIGHT_TEXT">Copyright(c) 2000-2009, Jasig, Inc. All rights reserved.</token>

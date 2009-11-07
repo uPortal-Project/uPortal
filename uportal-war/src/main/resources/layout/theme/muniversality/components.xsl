@@ -21,7 +21,8 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:upAuthentication="xalan://org.jasig.portal.security.xslt.XalanAuthenticationHelper">
 
 
 <!-- ======================================================================================================================================================== -->
@@ -73,26 +74,6 @@
 <!-- ========================================================================= -->
 
 
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: MOBILE LOGIN PUBLIC ================================ -->
-<!-- ========================================================================= -->
-<!--
-| YELLOW
-| This tempate renders the login when unauthenticated.
-| Only those with knowledge of xsl should configure this template.
--->
-<xsl:template name="mobile.login.public">
-	<div class="mobile-login">
-        <div class="mobile-login-wrap">
-            <xsl:copy-of select="/layout/header/channel[@name='Login']" />
-        </div>
-    </div>
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-
-
 
 <!-- ======================================================================================================================================================== -->
 <!-- ========== AUTHENTICATED VIEW ========================================================================================================================== -->
@@ -124,7 +105,35 @@
 <xsl:template name="mobile.header">
     <div class="flc-screenNavigator-navbar fl-navbar fl-table">
         <h1 class="fl-table-cell">uPortal Mobile</h1>
+        <div class="fl-table-cell up-mobile-nav">
+            <xsl:call-template name="mobile.auth.link"/>
+        </div>
     </div>
+</xsl:template>
+    
+<xsl:template name="mobile.auth.link">
+    <xsl:choose>
+        <xsl:when test="$AUTHENTICATED='true'">
+            <a id="up-page-auth-button" href="Logout" title="{$TOKEN[@name='LOGOUT_LONG_LABEL']}" class="fl-button">
+                <span class="fl-button-inner"><xsl:value-of select="$TOKEN[@name='LOGOUT_LABEL']"/></span>
+            </a>
+        </xsl:when>
+        <xsl:otherwise>
+            <a id="up-page-auth-button" title="{$TOKEN[@name='LOGIN_LONG_LABEL']}" class="fl-button">
+                <xsl:attribute name="href">
+                    <xsl:choose>
+                        <xsl:when test="$EXTERNAL_LOGIN_URL != ''">
+                            <xsl:value-of select="$EXTERNAL_LOGIN_URL"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$BASE_ACTION_URL"/>?uP_fname=portal_login_general
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
+                <span class="fl-button-inner"><xsl:value-of select="$TOKEN[@name='LOGIN_LABEL']"/></span>
+            </a>
+        </xsl:otherwise>
+    </xsl:choose>        
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -140,8 +149,12 @@
 | Template contents can be any valid XSL or XHTML.
 -->  
 <xsl:template match="mobilenavigation">
-    <div class="fl-note fl-bevel-white fl-font-size-80">
-        <xsl:copy-of select="/layout/header/channel[@name='Login']" />
+    <div class="fl-panel">
+        <div class="fl-note fl-bevel-white fl-font-size-80 right">
+            <xsl:if test="$AUTHENTICATED='true'">
+                Welcome <xsl:value-of select="$USER_NAME"/>            
+            </xsl:if>
+        </div>
     </div>
     <xsl:variable name="ALL_GROUPS" select="//group" />
     <xsl:for-each select="$ALL_GROUPS">
@@ -165,7 +178,7 @@
 
 <xsl:template name="mobile.navigation">
     <xsl:if test="count(//mobilenavigation/group) &gt; 0">
-        <div class="up-mobile-navigation-container fl-panel">
+        <div class="up-mobile-navigation-container fl-panel up-mobile-nav">
             <xsl:apply-templates select="mobilenavigation"/>
         </div>        
     </xsl:if>
@@ -173,7 +186,7 @@
 
 <xsl:template name="mobile.navigation.focused">
     <xsl:if test="count(//mobilenavigation/group) &gt; 0">
-        <div class="up-mobile-navigation-container fl-panel" style="display:none;">
+        <div class="up-mobile-navigation-container fl-panel up-mobile-nav" style="display:none;">
             <xsl:apply-templates select="mobilenavigation"/>
         </div>        
     </xsl:if>
@@ -196,13 +209,17 @@
     <div class="flc-screenNavigator-navbar fl-navbar fl-table">
         <div class="fl-table-row">
             
-            <div class="fl-table-cell">
+            <div class="fl-table-cell up-mobile-focus">
                 <a id="up-page-back-button" href="{$BASE_ACTION_URL}?uP_root=root" class="fl-button fl-backButton">
                     <span class="fl-button-inner">Back</span>
                 </a>
             </div>
 
             <xsl:call-template name="mobile.channel.title.focused"/>
+
+            <div class="fl-table-cell up-mobile-nav" style="display:none">
+                <xsl:call-template name="mobile.auth.link"/>
+            </div>
             
         </div>
     </div>
@@ -219,7 +236,8 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.channel.title.focused">
-    <h1 class="fl-table-cell">
+    <h1 class="fl-table-cell up-mobile-nav" style="display:none">uPortal Mobile</h1>
+    <h1 class="fl-table-cell up-mobile-focus">
         <xsl:value-of select="content/focused/channel/@name" />
     </h1>
 </xsl:template>
@@ -234,7 +252,7 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.channel.content.focused">
-    <div class="up-mobile-focused-content">
+    <div class="up-mobile-focused-content up-mobile-focus">
         <xsl:apply-templates select="content" mode="focused" />
     </div>
 </xsl:template>
@@ -263,8 +281,8 @@
     <script type="text/javascript">
         up.jQuery(document).ready(function(){
             up.jQuery("#up-page-back-button").click(function(){
-                up.jQuery(".up-mobile-focused-content").hide();
-                up.jQuery(".up-mobile-navigation-container").show();
+                up.jQuery(".up-mobile-focus").hide();
+                up.jQuery(".up-mobile-nav").show();
                 return false;
             }).attr("href","javascript:;");
         });
