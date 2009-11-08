@@ -109,6 +109,7 @@ public class ChannelListController extends AbstractController {
 			channel.addAttribute("name",channelDef.getName());
 			channel.addAttribute("secure",Boolean.toString(channelDef.isSecure()));
 			channel.addAttribute("timeout",Integer.toString(channelDef.getTimeout()));
+			channel.addAttribute("state",channelDef.getLifecycleState().toString());
 			if(channelDef.getTitle() != null)
 				channel.addAttribute("title",channelDef.getTitle());
 			channel.addAttribute("typeID",Integer.toString(channelDef.getType().getId()));
