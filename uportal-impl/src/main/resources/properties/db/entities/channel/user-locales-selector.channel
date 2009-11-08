@@ -4,8 +4,8 @@
   <name>User Locales Selector</name>
   <fname>user-locales-selector</fname>
   <desc>Allows a user to indicate locale preferences</desc>
-  <type>Custom</type>
-  <class>org.jasig.portal.layout.channels.locales.CUserLocalesSelector</class>
+  <type>Portlet</type>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>30000</timeout>
   <hasedit>N</hasedit>
   <hashelp>N</hashelp>
@@ -18,6 +18,19 @@
   <groups>
     <group>Everyone</group>
   </groups>
-  <parameters/>
+  <parameters>
+    <parameter> 
+      <name>portletApplicationId</name>  
+      <value>/uPortal</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>portletName</name>  
+      <value>UserLocale</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
   <portletPreferences/>
 </channel-definition>

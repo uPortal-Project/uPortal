@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+    
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <on-start>
+        <set name="flowScope.currentLocale" 
+            value="userLocaleHelper.getCurrentUserLocale(externalContext.getNativeRequest())"/>
+    </on-start>
+    
+    <view-state id="selectLocale">
+        <on-entry>
+            <set name="viewScope.locales" value="userLocaleHelper.getLocales(currentLocale)"/>
+        </on-entry>
+        <transition to="finishLocaleSelection">
+            <evaluate expression="userLocaleHelper.updateUserLocale(externalContext.getNativeRequest(), requestParameters.locale)"></evaluate>
+        </transition>
+    </view-state>
+    
+    <!-- End state -->
+    <end-state id="finishLocaleSelection" />
+    
+</flow>
