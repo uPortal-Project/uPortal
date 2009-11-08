@@ -47,13 +47,9 @@ public class UserLocaleHelper {
 			if (currentLocale != null) {
 				// if a current locale is available, display language names
 				// using the current locale
-				locales.add(new LocaleBean(locale.toString(), 
-						locale.getCountry().toLowerCase(), 
-						locale.getDisplayLanguage(currentLocale)));
+				locales.add(new LocaleBean(locale, currentLocale));
 			} else {
-				locales.add(new LocaleBean(locale.toString(), 
-						locale.getCountry().toLowerCase(), 
-						locale.getDisplayLanguage()));
+				locales.add(new LocaleBean(locale));
 			}
 		}
 		return locales;

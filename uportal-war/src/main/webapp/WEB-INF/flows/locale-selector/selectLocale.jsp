@@ -28,9 +28,9 @@
 			<ul style="margin:0">
 				<c:forEach items="${ locales }" var="locale">
 				    <li style="list-style:none;padding:0.2em 0 0.2em 0">
-					    <input type="radio" name="locale" value="${ locale.locale }" ${ locale.locale == currentLocale ? "checked" : '' }/>
-					    <img src="/ResourceServingWebapp/rs/famfamfam/flags/${ locale.countryCode }.png"/>
-					    ${ locale.displayValue }
+					    <input type="radio" name="locale" value="${ locale.code }" ${ locale.code == currentLocale ? "checked" : '' }/>
+					    <img src="/ResourceServingWebapp/rs/famfamfam/flags/${ fn:toLowerCase(locale.locale.country) }.png"/>
+					    ${ locale.displayLanguage }
 				    </li>
 				</c:forEach>
 			</ul>
