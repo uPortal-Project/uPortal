@@ -37,7 +37,8 @@
 			name: el.attr("name"), 
 			description: el.attr("description"),
 			typeId: el.attr("typeID"),
-			userInputs: new Array()
+			userInputs: new Array(),
+			state: el.attr("state").toLowerCase()
 		};
 				
 	    var parameters = el.children("parameter[override=yes]");

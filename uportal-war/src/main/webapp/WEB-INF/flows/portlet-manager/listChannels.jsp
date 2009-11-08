@@ -115,18 +115,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <table id="${n}categoriesTable1" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
           <thead>
             <tr rsf:id="header:">
-              <th id="${n}portletName" class="flc-pager-sort-header"><a rsf:id="name" title="Click to sort" href="#"><spring:message code="listChannels.portletTableNameHeading"/></a></th>
-              <th id="${n}portletType" class="flc-pager-sort-header"><a rsf:id="type" title="Click to sort" href="#"><spring:message code="listChannels.portletTableTypeHeading"/></a></th>
+              <th id="${n}portletName" class="flc-pager-sort-header"><a rsf:id="name" title="Click to sort" href="javascript:;"><spring:message code="listChannels.portletTableNameHeading"/></a></th>
+              <th id="${n}portletType" class="flc-pager-sort-header"><a rsf:id="type" title="Click to sort" href="javascript:;"><spring:message code="listChannels.portletTableTypeHeading"/></a></th>
+              <th id="${n}portletState" class="flc-pager-sort-header"><a rsf:id="state" title="Click to sort" href="javascript:;"><spring:message code="listChannels.portletTableStateHeading"/></a></th>
               <th id="${n}portletEditLink" rsf:id="editLink"><spring:message code="listChannels.portletTableEditHeading"/></th>
               <th id="${n}portletDeleteLink" rsf:id="deleteLink"><spring:message code="listChannels.portletTableDeleteHeading"/></th>
             </tr>
           </thead>
           <tbody id="${n}categoriesBody">
             <tr rsf:id="row:">
-              <td headers="${n}portletName"><span rsf:id="name">Ahn, Jason</span></td>
-              <td headers="${n}portletType" rsf:id="type">15234314</td>
-              <td headers="${n}portletEditLink"><a href="" rsf:id="editLink">s</a></td>
-              <td headers="${n}portletDeleteLink"><a href="" rsf:id="deleteLink">Lorem ipsum dolor sit amet.</a></td>
+              <td headers="${n}portletName"><span rsf:id="name"></span></td>
+              <td headers="${n}portletType" rsf:id="type"></td>
+              <td headers="${n}portletState" rsf:id="state" style="text-transform:capitalize"></td>
+              <td headers="${n}portletEditLink"><a href="" rsf:id="editLink"></a></td>
+              <td headers="${n}portletDeleteLink"><a href="" rsf:id="deleteLink"></a></td>
             </tr>
           </tbody>
         </table>
@@ -169,9 +171,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             var newChannels = searchChannels();
             var newModel = up.fluid.copy(pager.model);
             newModel.totalRange = newChannels.length;
+            newModel.pageIndex = 0;
             newModel.pageCount = Math.max(1, Math.floor((newModel.totalRange - 1)/ newModel.pageSize) + 1);
             up.fluid.clear(pager.options.dataModel);
             up.fluid.model.copyModel(pager.options.dataModel, newChannels);
+            pager.permutation = undefined;
             pager.events.onModelChange.fire(newModel, pager.model, pager);
             up.fluid.model.copyModel(pager.model, newModel)
         }
@@ -193,6 +197,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         columnDefs: [
 	                        { key: "name", valuebinding: "*.name", sortable: true },
                             { key: "type", valuebinding: "*.type", sortable: true },
+                            { key: "state", valuebinding: "*.state", sortable: true },
                             { key: "editLink", valuebinding: "*.id",
                                 components: {
                                     target: editUrl.replace("PORTLETID", '${"${*.id}"}'),
@@ -210,7 +215,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                           type: "fluid.pager.selfRender",
                           options: {
                               selectors: {
-                                 root: "#${n}categoriesTable1 tbody"
+                                 root: "#${n}categoriesTable1"
                               },
                               row: "row:"
                             }
