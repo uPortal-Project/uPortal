@@ -5,15 +5,12 @@
  */
 package org.jasig.portal.channel;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelCategory;
-import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.ModifiedChannelDefinitionPortalEvent;
 import org.jasig.portal.events.support.PublishedChannelDefinitionPortalEvent;
 import org.jasig.portal.events.support.RemovedChannelDefinitionPortalEvent;
@@ -26,14 +23,20 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEventPublisher;
 
 /**
  * Default implementation of IChannelPublishingService.
  * 
  * @author Jen Bourey, jbourey@unicon.net
  */
-public class ChannelPublishingServiceImpl implements IChannelPublishingService {
-	
+public class ChannelPublishingServiceImpl implements IChannelPublishingService, ApplicationContextAware {
+
+	private Log log = LogFactory.getLog(ChannelPublishingServiceImpl.class);
+
 	private IChannelRegistryStore channelRegistryStore;
 	
 	/**
@@ -45,8 +48,16 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 		this.channelRegistryStore = channelRegistryStore;
 	}
 
+	private ApplicationEventPublisher eventPublisher;
 
-	private Log log = LogFactory.getLog(ChannelPublishingServiceImpl.class);
+	/*
+	 * (non-Javadoc)
+	 * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
+	 */
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
+		this.eventPublisher = applicationContext;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -102,14 +113,11 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 
 	    // Record that a channel has been published or modified
 	    if (newChannel) {
-	    	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new PublishedChannelDefinitionPortalEvent(definition, publisher, definition));
+	    	eventPublisher.publishEvent(new PublishedChannelDefinitionPortalEvent(definition, publisher, definition));
 	    } else {
-	    	EventPublisherLocator.getApplicationEventPublisher().publishEvent(new ModifiedChannelDefinitionPortalEvent(definition, publisher, definition));
+	    	eventPublisher.publishEvent(new ModifiedChannelDefinitionPortalEvent(definition, publisher, definition));
 	    }
 
-	    // Expire the cached channel registry
-	    ChannelRegistryManager.expireCache();
-	    
 		return definition;
 	}
 
@@ -119,20 +127,31 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService {
 	 */
 	public void removeChannelDefinition(IChannelDefinition channelDefinition, IPerson person) {
 		IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(channelDefinition.getId());
-		
-		// TODO
-		// The following is a temporary fix to allow "deleted" channels to be re-created
-		// with the same fname.  We are appending the existing fname with the current time
-		// so that subsequent channel creations won't result in a duplicate fname error.
-		channelDef.setFName(channelDef.getFName() + "_" + (new Date()).getTime());
-		
-	    channelRegistryStore.disapproveChannelDefinition(channelDef);
+
+	    // Delete existing category memberships for this channel
+	    String chanKey = String.valueOf(channelDefinition.getId());
+	    IEntity channelDefEntity = GroupService.getEntity(chanKey, IChannelDefinition.class);
+		@SuppressWarnings("unchecked")
+	    Iterator iter = channelDefEntity.getAllContainingGroups();
+	    while (iter.hasNext()) {
+	        IEntityGroup group = (IEntityGroup) iter.next();
+	        group.removeMember(channelDefEntity);
+	        group.update();
+	    }
+
+	    // remove permissions
+	    AuthorizationService authService = AuthorizationService.instance();
+	    String target = IPermission.CHANNEL_PREFIX + channelDefinition.getId();
+	    IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
+	    IPermission[] oldPermissions = upm.getPermissions(SUBSCRIBER_ACTIVITY, target);
+	    upm.removePermissions(oldPermissions);
+
+	    // delete the channel
+		channelRegistryStore.deleteChannelDefinition(channelDef);
 
 	    // Record that a channel has been deleted
-	    EventPublisherLocator.getApplicationEventPublisher().publishEvent(new RemovedChannelDefinitionPortalEvent(channelDef, person, channelDef));
-	    
-	    // Expire the cached channel registry
-	    ChannelRegistryManager.expireCache();
+	    eventPublisher.publishEvent(new RemovedChannelDefinitionPortalEvent(channelDef, person, channelDef));
+
 	}
 
 }
