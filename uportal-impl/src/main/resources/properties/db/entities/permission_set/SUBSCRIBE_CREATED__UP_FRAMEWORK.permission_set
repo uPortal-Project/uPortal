@@ -1,0 +1,13 @@
+
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+  <owner>UP_FRAMEWORK</owner>
+  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+  <principal> 
+    <group>Fragment Owners</group>
+    <group>Portal System</group> 
+  </principal>
+  <activity>SUBSCRIBE_CREATED</activity>
+  <target permission-type="GRANT"> 
+    <group>All categories</group> 
+  </target>
+</permission-set>

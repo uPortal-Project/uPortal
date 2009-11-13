@@ -21,6 +21,7 @@ import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.groups.GroupsException;
@@ -62,6 +63,9 @@ public class AuthorizationImpl implements IAuthorizationService {
 
     /** The default Permission Policy this Authorization implementation will use. */
     private IPermissionPolicy defaultPermissionPolicy;
+    
+    /** Spring-configured channel registry store instance */
+    protected final IChannelRegistryStore channelRegistryStore;
 
     /** The cache to hold the list of principals. */
     private Map<String, IAuthorizationPrincipal> principalCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.PRINCIPAL_CACHE);
@@ -83,6 +87,7 @@ public class AuthorizationImpl implements IAuthorizationService {
     {
         super();
         initialize();
+        this.channelRegistryStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
     }
 /**
  * Adds <code>IPermissions</code> to the back end store.
@@ -178,7 +183,9 @@ public boolean canPrincipalPublish (IAuthorizationPrincipal principal) throws Au
 }
 
 /**
- * Answers if the principal has permission to RENDER this Channel.
+ * Answers if the principal has permission to RENDER this Channel.  This 
+ * implementation currently delegates to the SUBSCRIBE permission.
+ * 
  * @return boolean
  * @param principal IAuthorizationPrincipal
  * @param channelPublishId int
@@ -187,6 +194,9 @@ public boolean canPrincipalPublish (IAuthorizationPrincipal principal) throws Au
 public boolean canPrincipalRender(IAuthorizationPrincipal principal, int channelPublishId)
 throws AuthorizationException
 {
+	// This code simply assumes that anyone who can subscribe to a channel 
+	// should be able to render it.  In the future, we'd like to update this
+	// implementation to use a separate permission for rendering.
     return canPrincipalSubscribe(principal, channelPublishId);
 }
 
@@ -202,8 +212,38 @@ throws AuthorizationException
 {
     String owner = IPermission.PORTAL_FRAMEWORK;
     String target = IPermission.CHANNEL_PREFIX + channelPublishId;
-    return doesPrincipalHavePermission
-      (principal, owner, IPermission.CHANNEL_SUBSCRIBER_ACTIVITY, target);
+    
+    // retrieve the indicated channel from the channel registry store and 
+    // determine its current lifecycle state
+	IChannelDefinition channel = this.channelRegistryStore
+				.getChannelDefinition(channelPublishId);
+    if (channel == null){
+    	throw new AuthorizationException("Unable to locate channel " + channelPublishId);
+    }    
+    ChannelLifecycleState state = channel.getLifecycleState();
+    
+    /*
+     * Each channel lifecycle state now has its own subscribe permission.  The
+     * following logic checks the appropriate permission for the lifecycle.
+     */
+    String permission;
+    if (state.equals(ChannelLifecycleState.PUBLISHED)) {
+    	permission = IPermission.CHANNEL_SUBSCRIBER_ACTIVITY;
+    } else if (state.equals(ChannelLifecycleState.APPROVED)) {
+    	permission = IPermission.CHANNEL_SUBSCRIBER_APPROVED_ACTIVITY;
+    } else if (state.equals(ChannelLifecycleState.CREATED)) {
+    	permission = IPermission.CHANNEL_SUBSCRIBER_CREATED_ACTIVITY;
+    } else if (state.equals(ChannelLifecycleState.EXPIRED)) {
+    	permission = IPermission.CHANNEL_SUBSCRIBER_EXPIRED_ACTIVITY;
+    } else {
+			throw new AuthorizationException(
+					"Unrecognized lifecycle state for channel "
+							+ channelPublishId);
+    }
+
+    // test the appropriate permission
+    return doesPrincipalHavePermission(principal, owner, permission, target);
+
 }
 
 /**
@@ -736,8 +776,14 @@ private IPermission[] primGetPermissionsForPrincipal
 throws AuthorizationException
 {
 
+    final IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
 
-
+    /*
+     * Get a list of all permissions for the specified principle, then iterate
+     * through them to build a list of the permissions matching the specified
+     * criteria.
+     */
+    
     IPermission[] perms = primGetPermissionsForPrincipal(principal);
     if ( owner == null && activity == null && target == null )
         { return perms; }
@@ -746,8 +792,16 @@ throws AuthorizationException
     
     for ( int i=0; i<perms.length; i++ ) {
         String permissionTarget = perms[i].getTarget();
-        if (    (activity != null) &&
-                (activity.equals("MANAGE"))    ) {            
+        
+        /*
+         * If the original permission target is a channel, we want to check the
+         * current target as a regex, then try all target channel's parent categories.
+         * This will allow us to do things like set a permission that matches
+         * all channels using the .* regex, or set permissions on a category
+         * which are inherited by all member channels.
+         */
+        if (    (target != null) &&
+                (target.startsWith(IPermission.CHANNEL_PREFIX))    ) {            
             if (    (owner == null || owner.equals(perms[i].getOwner())) &&
                     (activity == null || activity.equals(perms[i].getActivity()))    ) {
                 if (permissionTarget.startsWith(IPermission.CHANNEL_PREFIX)) {
@@ -758,7 +812,6 @@ throws AuthorizationException
                 }
                 else {
                     try {
-                        final IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
                         boolean bFound = false;
 
                         ChannelCategory category = crs.getChannelCategory(permissionTarget);
@@ -782,6 +835,13 @@ throws AuthorizationException
                 }
             }
         }
+        
+        /*
+         * If the target is not a channel, just test to see if the permission 
+         * matches.  Eventually this logic should be updated to allow permissions
+         * targeted to groups to cascade to their members.
+         */
+        
         else {
             if (    (owner == null || owner.equals(perms[i].getOwner())) &&
                     (activity == null || activity.equals(perms[i].getActivity())) &&

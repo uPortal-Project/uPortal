@@ -19,8 +19,26 @@ public interface IPermission {
   public String CHANNEL_MANAGER_ACTIVITY = "MANAGE";
   public String CHANNEL_PUBLISHER_ACTIVITY = "PUBLISH";
   public String CHANNEL_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
+  
   /*
-    Permisison types.  At present only 2, but that could change.
+   * Channel subscribe permissions by lifecycle state 
+   */
+  public static final String CHANNEL_SUBSCRIBER_CREATED_ACTIVITY = "SUBSCRIBE_CREATED";
+  public static final String CHANNEL_SUBSCRIBER_APPROVED_ACTIVITY = "SUBSCRIBE_APPROVED";
+  public static final String CHANNEL_SUBSCRIBER_EXPIRED_ACTIVITY = "SUBSCRIBE_EXPIRED";
+  
+  /*
+   * Channel render permissions by lifecycle state.  These permissions are not
+   * actually used in the codebase yet and are included here for future planning 
+   * purposes only.
+   */
+  public static final String CHANNEL_RENDERER_CREATED_ACTIVITY = "RENDER_CREATED";
+  public static final String CHANNEL_RENDERER_APPROVED_ACTIVITY = "RENDER_APPROVED";
+  public static final String CHANNEL_RENDERER_PUBLISHED_ACTIVITY = "RENDER_PUBLISHED";
+  public static final String CHANNEL_RENDERER_EXPIRED_ACTIVITY = "RENDER_EXPIRED";
+    
+  /*
+    Permission types.  At present only 2, but that could change.
   */
   public String PERMISSION_TYPE_GRANT = "GRANT";
   public String PERMISSION_TYPE_DENY = "DENY";
