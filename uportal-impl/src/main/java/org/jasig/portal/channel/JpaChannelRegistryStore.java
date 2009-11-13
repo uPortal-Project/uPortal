@@ -99,6 +99,14 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
     
     /*
      * (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getChannelDefinitionByName(java.lang.String)
+     */
+    public IChannelDefinition getChannelDefinitionByName(String name) {
+    	return channelDao.getChannelDefinitionByName(name);
+    }
+    
+    /*
+     * (non-Javadoc)
      * @see org.jasig.portal.IChannelRegistryStore#saveChannelDefinition(org.jasig.portal.channel.IChannelDefinition)
      */
     public void saveChannelDefinition(IChannelDefinition channelDef) {

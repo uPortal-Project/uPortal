@@ -98,6 +98,15 @@ public interface IChannelRegistryStore {
    * @throws java.lang.Exception
    */
   public IChannelDefinition getChannelDefinition(String channelFunctionalName);
+  
+  /**
+   * Get a channel definition by name.
+   * 
+   * @param channelName a channel name
+   * @return a definition of the channel or <code>null</code> if no matching 
+   * 		 channel definition can be found
+   */
+  public IChannelDefinition getChannelDefinitionByName(String channelName);
 
   /**
    * Get all channel definitions including ones that haven't been approved.

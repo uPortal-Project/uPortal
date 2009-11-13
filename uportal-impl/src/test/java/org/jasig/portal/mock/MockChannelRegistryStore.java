@@ -163,6 +163,14 @@ public class MockChannelRegistryStore implements IChannelRegistryStore {
         throw new UnsupportedOperationException("Not Implemented");
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jasig.portal.IChannelRegistryStore#getChannelDefinitionByName(java.lang.String)
+     */
+    public IChannelDefinition getChannelDefinitionByName(String channelName) {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.IChannelRegistryStore#getChannelType(int)
      */

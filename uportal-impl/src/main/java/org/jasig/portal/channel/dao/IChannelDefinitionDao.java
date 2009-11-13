@@ -63,6 +63,15 @@ public interface IChannelDefinitionDao {
      * @throws IllegalArgumentException if fname is null.
      */
     public IChannelDefinition getChannelDefinition(String fname);
+    
+    /**
+     * Get a {@link IChannelDefinition} for the specified channel name.
+     * 
+     * @param name The name to get the definition for.
+     * @return THe channel definition for the name, null if no definition exists for the name.
+     * @throws IllegalArgumentException if the name is null.
+     */
+    public IChannelDefinition getChannelDefinitionByName(String name);
 	
 	/**
 	 * @return A {@link List} of all persisted {@link IChannelDefinition}s

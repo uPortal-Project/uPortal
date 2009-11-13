@@ -65,6 +65,21 @@ public class ChannelDefinitionFormValidator {
 					.code("errors.channelDefinition.title.empty")
 					.defaultText("Please enter a title").build());
 		}
+		
+		if (StringUtils.isEmpty(def.getName())) {
+			context.addMessage(new MessageBuilder().error().source("name")
+					.code("errors.channelDefinition.name.empty")
+					.defaultText("Please enter an fname").build());
+		}
+
+		// if this is a new channel and the name is already taken
+		if (def.getId() == -1 && channelStore.getChannelDefinitionByName(def.getName()) != null) {
+			context.addMessage(new MessageBuilder().error().source("name")
+					.code("errors.channelDefinition.name.duplicate")
+					.defaultText("This name is already in use").build());
+		}
+		
+
 	}
 	
 	public void validateSetParameters(ChannelDefinitionForm def, MessageContext context) {

@@ -37,6 +37,9 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
     private static final String FIND_CHANNEL_DEF_BY_FNAME = 
         "from ChannelDefinitionImpl channel where channel.fname = :fname";
 
+    private static final String FIND_CHANNEL_DEF_BY_NAME = 
+        "from ChannelDefinitionImpl channel where channel.name = :name";
+
     private EntityManager entityManager;
     
     /**
@@ -108,7 +111,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
 	public IChannelDefinition getChannelDefinition(int id) {
 		return entityManager.find(ChannelDefinitionImpl.class, id);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.dao.IChannelDefinitionDao#getChannelDefinition(java.lang.String)
@@ -124,6 +127,21 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
         IChannelDefinition definition = (IChannelDefinition) DataAccessUtils.uniqueResult(channelDefinitions);
 		return definition;
 	}
+    
+    /*
+     * (non-Javadoc)
+     * @see org.jasig.portal.channel.dao.IChannelDefinitionDao#getChannelDefinitionByName(java.lang.String)
+     */
+    public IChannelDefinition getChannelDefinitionByName(String name) {
+        final Query query = this.entityManager.createQuery(FIND_CHANNEL_DEF_BY_NAME);
+        query.setParameter("name", name);
+        query.setHint("org.hibernate.cacheable", true);
+        query.setMaxResults(1);
+        
+        final List<IChannelDefinition> channelDefinitions = query.getResultList();
+        IChannelDefinition definition = (IChannelDefinition) DataAccessUtils.uniqueResult(channelDefinitions);
+		return definition;
+    }
 
     /*
      * (non-Javadoc)
@@ -133,7 +151,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
 	public IChannelDefinition updateChannelDefinition(IChannelDefinition definition) {
         Validate.notNull(definition, "definition can not be null");
         
-        this.entityManager.persist(definition);
+        this.entityManager.merge(definition);
         
         return definition;
 	}
