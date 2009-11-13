@@ -17,6 +17,7 @@ import junit.framework.Assert;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -41,13 +42,17 @@ public class ResourcesXalanElementsTest {
 	public void testResourcesOutput() throws Exception {
 		JAXBContext context = JAXBContext.newInstance("org.jasig.portal.web.skin");
 		Unmarshaller u = context.createUnmarshaller();
-		Resources config = (Resources) u.unmarshal(new ClassPathResource("org/jasig/portal/web/skin/resources1.xml").getInputStream());
+		Resources sampleResources = (Resources) u.unmarshal(new ClassPathResource("org/jasig/portal/web/skin/resources1.xml").getInputStream());
 
+		ResourcesDao mockResourcesDao = EasyMock.createMock(ResourcesDao.class);
+		EasyMock.expect(mockResourcesDao.getResources(EasyMock.isA(String.class))).andReturn(sampleResources);
+		EasyMock.replay(mockResourcesDao);
+		
 		final TransformerFactory tFactory = TransformerFactory.newInstance();
 		final Transformer transformer = tFactory.newTransformer(new StreamSource(new ClassPathResource("org/jasig/portal/web/skin/resources1.xsl").getInputStream()));
 
-		transformer.setParameter(ResourcesXalanElements.SKIN_RESOURCES_PARAMETER_NAME, 
-				config);
+		transformer.setParameter(ResourcesXalanElements.SKIN_RESOURCESDAO_PARAMETER_NAME, 
+				mockResourcesDao);
 
 		final StringWriter resultWriter = new StringWriter();
 
@@ -62,5 +67,6 @@ public class ResourcesXalanElementsTest {
         Diff d = new Diff(expected, result);
         Assert.assertTrue("Transformation result differs from what's expected" + d, d.similar());
        
+        EasyMock.verify(mockResourcesDao);
 	}
 }

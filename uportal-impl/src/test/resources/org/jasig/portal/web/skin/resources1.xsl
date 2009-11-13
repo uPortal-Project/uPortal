@@ -12,7 +12,7 @@
     
 	<xsl:template match="head">
 		<head>
-			<resources:output/>
+			<resources:output path="media/skins/test/uportal3/"/>
 		</head>
 	</xsl:template>
 

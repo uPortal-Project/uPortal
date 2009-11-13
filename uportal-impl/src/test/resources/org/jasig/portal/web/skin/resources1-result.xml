@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <head>
-<link rel="stylesheet" type="text/css" href="../common/css/a.css" media="all"/>
-<link rel="stylesheet" type="text/css" href="../common/css/b.css" media="all"/>
-<!--[condition!]> <link rel="stylesheet" type="text/css" href="../common/css/conditional.css" media="all"/> <![endif]-->
+<link rel="stylesheet" type="text/css" href="media/skins/test/common/css/a.css" media="all"/>
+<link rel="stylesheet" type="text/css" href="media/skins/test/common/css/b.css" media="all"/>
+<!--[condition!]> <link rel="stylesheet" type="text/css" href="media/skins/test/common/css/conditional.css" media="all"/> <![endif]-->
 <link rel="stylesheet" type="text/css" href="/ResourceServingWebapp/rs/1.css" media="all"/>
 <link rel="stylesheet" type="text/css" href="/ResourceServingWebapp/rs/2.css" media="all"/>
-<link rel="stylesheet" type="text/css" href="css/a.css" media="alternate"/>
-<link rel="stylesheet" type="text/css" href="css/b.css" media="alternate"/>
-<script type="text/javascript" src="../common/js/a.js"></script>
-<script type="text/javascript" src="../common/js/b.js"></script>
+<link rel="stylesheet" type="text/css" href="media/skins/test/uportal3/css/a.css" media="alternate"/>
+<link rel="stylesheet" type="text/css" href="media/skins/test/uportal3/css/b.css" media="alternate"/>
+<script type="text/javascript" src="media/skins/test/common/js/a.js"></script>
+<script type="text/javascript" src="media/skins/test/common/js/b.js"></script>
 <script type="text/javascript" src="/universal.js"></script>
-<script type="text/javascript" src="js/a.js"></script>
-<script type="text/javascript" src="js/b.js"></script>
-<script type="text/javascript" src="js/c-compressed.js"></script>
-<!--[if IE lt 7]> <script type="text/javascript" src="js/ie6-hack.js"></script> <![endif]-->
+<script type="text/javascript" src="media/skins/test/uportal3/js/a.js"></script>
+<script type="text/javascript" src="media/skins/test/uportal3/js/b.js"></script>
+<script type="text/javascript" src="media/skins/test/uportal3/js/c-compressed.js"></script>
+<!--[if IE lt 7]> <script type="text/javascript" src="media/skins/test/uportal3/js/ie6-hack.js"></script> <![endif]-->
 </head>
