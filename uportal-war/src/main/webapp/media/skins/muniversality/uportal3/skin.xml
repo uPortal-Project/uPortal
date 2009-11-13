@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
+
+  <css>../common/fss-mobile-iphone-layout.css</css>
+  <css>../common/fss-reset.css</css>
+  <css>../common/fss-text.css</css>
+  <css>../common/fss-transitions.css</css>
+  
+  <css>fss-mobile-iphone-theme.css</css>
+  <css>uportal3_mobile_focused.css</css>
+  <css>uportal3_mobile_global.css</css>
+  <css>uportal3_mobile_guest.css</css>
+  <css>uportal3_mobile.css</css>
+  <css>uportal3_mobile_focused.css</css>
+  <css>uportal3.css</css> 
+  
+</s:resources>
