@@ -120,7 +120,7 @@ public class ResourcesXalanElements {
 		if(!js.isAbsolute()) {
 			scriptPath = FilenameUtils.normalize(relativeRoot + js.getValue());
 			if(log.isDebugEnabled()) {
-				log.debug("translated js value " + js.getValue() + " to " + scriptPath);
+				log.debug("translated relative js value " + js.getValue() + " to " + scriptPath);
 			}
 		}
 		
