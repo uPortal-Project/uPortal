@@ -30,10 +30,39 @@ public class ResourcesXalanElements {
 
 	private Log log = LogFactory.getLog(this.getClass());
 	
+	/**
+	 * Name of {@link Transformer} parameter used to retrieve the {@link ResourcesDao}.
+	 */
 	public static final String SKIN_RESOURCESDAO_PARAMETER_NAME = ResourcesXalanElements.class.getName() + "SKIN_RESOURCESDAO";
-	
+	/**
+	 * Name of {@link System} property used to toggle default/aggregated skin output.
+	 */
 	public static final String AGGREGATED_THEME_PARAMETER = "org.jasig.portal.web.skin.aggregated_theme";
-    
+    /**
+     * File name for default skin configuration (non-aggregated).
+     */
+	public static final String DEFAULT_SKIN_FILENAME = "skin.xml";
+	/**
+	 * File name for aggregated skin configuraiton.
+	 */
+	public static final String AGGREGATED_SKIN_FILENAME = "uportal3_aggr.skin.xml";
+	
+	private static final String OPEN_COND_COMMENT_PRE = "[";
+	private static final String OPEN_COND_COMMENT_POST = "]> ";
+	private static final String CLOSE_COND_COMMENT = " <![endif]";
+	private static final String OPEN_SCRIPT = "<script type=\"text/javascript\" src=\"";
+	private static final String CLOSE_SCRIPT = "\"></script>";
+	private static final String OPEN_STYLE = "<link rel=\"stylesheet\" type=\"text/css\" href=\"";
+	private static final String CLOSE_STYLE = "\"/>";
+	
+	private static final String SCRIPT = "script";
+	private static final String LINK = "link";
+	private static final String REL = "rel";
+	private static final String SRC = "src";
+	private static final String HREF = "href";
+	private static final String TYPE = "type";
+	private static final String MEDIA = "media";
+	
 	/**
 	 * Pulls the {@link Resources} to render from the Transformer parameter
 	 * named {@link #SKIN_RESOURCESDAO_PARAMETER_NAME}.
@@ -57,9 +86,9 @@ public class ResourcesXalanElements {
 		
 		StringBuilder pathToSkinXml = new StringBuilder(path);
 		if(aggregatedThemeEnabled) {
-			pathToSkinXml.append("uportal3_aggr.skin.xml");
+			pathToSkinXml.append(AGGREGATED_SKIN_FILENAME);
 		} else {
-			pathToSkinXml.append("skin.xml");
+			pathToSkinXml.append(DEFAULT_SKIN_FILENAME);
 		}
 		
 		Resources skinResources = resourcesDao.getResources(pathToSkinXml.toString());
@@ -84,6 +113,7 @@ public class ResourcesXalanElements {
 	 * @param document
 	 * @param head
 	 * @param js
+	 * @param relativeRoot
 	 */
 	protected void appendJsNode(Document document, DocumentFragment head, Js js, String relativeRoot) {
 		String scriptPath = js.getValue();
@@ -96,18 +126,18 @@ public class ResourcesXalanElements {
 		
 		if(js.isConditional()) {
 			Comment c = document.createComment("");
-			c.appendData("[");
+			c.appendData(OPEN_COND_COMMENT_PRE);
 			c.appendData(js.getConditional());
-			c.appendData("]> ");
-			c.appendData("<script type=\"text/javascript\" src=\"");
+			c.appendData(OPEN_COND_COMMENT_POST);
+			c.appendData(OPEN_SCRIPT);
 			c.appendData(scriptPath);
-			c.appendData("\"></script>");
-			c.appendData(" <![endif]");
+			c.appendData(CLOSE_SCRIPT);
+			c.appendData(CLOSE_COND_COMMENT);
 			head.appendChild(c);
 		} else {
-			Element element = document.createElement("script");
-			element.setAttribute("type", "text/javascript");
-			element.setAttribute("src", scriptPath);
+			Element element = document.createElement(SCRIPT);
+			element.setAttribute(TYPE, "text/javascript");
+			element.setAttribute(SRC, scriptPath);
 			head.appendChild(element);
 		}
 	}
@@ -119,6 +149,7 @@ public class ResourcesXalanElements {
 	 * @param document
 	 * @param head
 	 * @param css
+	 * @param relativeRoot
 	 */
 	protected void appendCssNode(Document document, DocumentFragment head, Css css, String relativeRoot) {
 		String stylePath = css.getValue();
@@ -131,22 +162,22 @@ public class ResourcesXalanElements {
 		
 		if(css.isConditional()) {
 			Comment c = document.createComment("");
-			c.appendData("[");
+			c.appendData(OPEN_COND_COMMENT_PRE);
 			c.appendData(css.getConditional());
-			c.appendData("]> ");
-			c.appendData("<link rel=\"stylesheet\" type=\"text/css\" href=\"");
+			c.appendData(OPEN_COND_COMMENT_POST);
+			c.appendData(OPEN_STYLE);
 			c.appendData(stylePath);
 			c.appendData("\" media=\"");
 			c.appendData(css.getMedia());
-			c.appendData("\"/>");
-			c.appendData(" <![endif]");
+			c.appendData(CLOSE_STYLE);
+			c.appendData(CLOSE_COND_COMMENT);
 			head.appendChild(c);
 		} else {
-			Element element = document.createElement("link");
-			element.setAttribute("rel", "stylesheet");
-			element.setAttribute("type", "text/css");
-			element.setAttribute("href", stylePath);
-			element.setAttribute("media", css.getMedia());
+			Element element = document.createElement(LINK);
+			element.setAttribute(REL, "stylesheet");
+			element.setAttribute(TYPE, "text/css");
+			element.setAttribute(HREF, stylePath);
+			element.setAttribute(MEDIA, css.getMedia());
 			head.appendChild(element);
 		}
 	}
