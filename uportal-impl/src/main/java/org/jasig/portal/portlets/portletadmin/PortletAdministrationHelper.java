@@ -284,8 +284,10 @@ public class PortletAdministrationHelper {
 		// if we're updating a channel
 		else {
 
-			if (order >= ChannelLifecycleState.APPROVED.getOrder() && channelDef.getApproverId() >= 0) {
-				channelDef.setApproverId(publisher.getID());
+			if (order >= ChannelLifecycleState.APPROVED.getOrder()) {
+				if (channelDef.getApproverId() < 0) {
+					channelDef.setApproverId(publisher.getID());
+				}
 				if (channelDef.getApprovalDate() == null) {
 					channelDef.setApprovalDate(now);
 				}
@@ -294,27 +296,35 @@ public class PortletAdministrationHelper {
 				channelDef.setApproverId(-1);
 			}
 			
-			if (order >= ChannelLifecycleState.PUBLISHED.getOrder() && channelDef.getPublisherId() >= 0) {
-				channelDef.setPublisherId(publisher.getID());
+			if (order >= ChannelLifecycleState.PUBLISHED.getOrder()) {
+				if (channelDef.getPublisherId() < 0) {
+					channelDef.setPublisherId(publisher.getID());
+				}
 				if (channelDef.getPublishDate() == null) {
 					channelDef.setPublishDate(now);
 				}
 			} else if (form.getPublishDate() != null) {
 				channelDef.setPublishDate(form.getPublishDate());
-				channelDef.setPublisherId(publisher.getID());
+				if (channelDef.getPublisherId() < 0) {
+					channelDef.setPublisherId(publisher.getID());
+				}
 			} else {
 				channelDef.setPublishDate(null);
 				channelDef.setPublisherId(-1);
 			}
 			
-			if (order >= ChannelLifecycleState.EXPIRED.getOrder() && channelDef.getExpirerId() >= 0) {
-				channelDef.setExpirerId(publisher.getID());
+			if (order >= ChannelLifecycleState.EXPIRED.getOrder()) {
+				if (channelDef.getExpirerId() < 0) {
+					channelDef.setExpirerId(publisher.getID());
+				}
 				if (channelDef.getExpirationDate() == null) {
 					channelDef.setExpirationDate(now);
 				}
 			} else if (form.getExpirationDate() != null) {
 				channelDef.setExpirationDate(form.getExpirationDate());
-				channelDef.setExpirerId(publisher.getID());
+				if (channelDef.getExpirerId() < 0) {
+					channelDef.setExpirerId(publisher.getID());
+				}
 			} else {
 				channelDef.setExpirationDate(null);
 				channelDef.setExpirerId(-1);
