@@ -31,7 +31,7 @@
 		  });
 		  
 		  // set up jQuery UI widget demos
-		  $(".accordion-demo").accordion({ header:"h3", alwaysOpen:false});
+		  $(".accordion-demo").accordion({ clearStyle:true, collapsible:true, active:false });
 		  $(".datepicker-demo").datepicker();
 		  $(".tabs-demo").tabs();
 		  
@@ -53,6 +53,10 @@
 		    $(".demo-list").css("display", "none");
 		    $("." + $(this).text().toLowerCase().replace(" ", "-")).css("display", "block");
 		    $(".demo-back-link").css("display", "block");
+		    if ($(this).text() == 'Accordion') {
+			    console.log('accordion');
+		        $(".accordion-demo").accordion('activate', 0);
+		    }
 		    return false;
 		  });
 		  $(".demo-back-link").click(function(){
@@ -105,10 +109,10 @@
       </ul>
       
       <p>
-      	This uPortal release contains the Fluid 1.1.1 final release.  For more 
+      	This uPortal release contains the Fluid 1.1.2 final release.  For more 
       	Fluid demos and sample source code, please visit 
-      	<a href="http://wiki.fluidproject.org/display/fluid/Components" 
-      		target="_blank">http://wiki.fluidproject.org/display/fluid/Components</a>.
+      	<a href="http://build.fluidproject.org/infusion/demos/" 
+      		target="_blank">http://build.fluidproject.org/infusion/demos/</a>.
       </p>
       
     </div>
@@ -116,19 +120,13 @@
     <div class="demo-container accordion">
       <h2>Accordion Demo</h2>
       <div class="accordion-demo">
-        <div>
-          <h3><a href="#">Section 1</a></h3>
-          <div><p>Proin euismod nibh ac enim. Nam augue est, tempus ut, semper id, ornare vel, lorem. Cras id ligula. Etiam porttitor ullamcorper felis. Proin egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris in nibh. Fusce eget odio. Duis bibendum elit eget ante. Ut sollicitudin tortor. Ut posuere lorem vitae mauris. Mauris lobortis felis nec nulla. Fusce accumsan sagittis ante. </p></div>
-        </div>
-        <div>
-          <h3><a href="#">Section 2</a></h3>
-          <div><p>Ut et nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In dapibus sagittis felis. Nullam tempus velit at nisi. Phasellus nulla tortor, commodo eu, lobortis ac, convallis nec, mi. Donec cursus eros ac velit. Sed mattis, tortor sed laoreet tempor, risus ipsum posuere nisi, non vehicula dui libero sed mauris. Sed nisl nulla, vulputate nec, ornare vel, ultricies at, nulla. Proin purus nisi, scelerisque eget, consequat quis, aliquet nec, pede. Pellentesque erat augue, rhoncus in, convallis sit amet, pellentesque a, leo. Duis tortor nunc, ornare ac, volutpat quis, molestie et, mauris. Cras rhoncus massa eget enim. Aliquam erat volutpat.</p></div>
-        </div>
-        <div>
-          <h3><a href="#">Section 3</a></h3>
-          <div><p>Aliquam a leo. Phasellus congue tempor massa. In hac habitasse platea dictumst. Ut eu arcu eu velit pulvinar tempus. Nullam sit amet lorem ut dolor sagittis viverra. Curabitur in lacus dictum risus ultrices bibendum. Ut eu nibh et mauris ornare condimentum. Duis iaculis rutrum nisi. Sed facilisis augue ut neque. Pellentesque cursus libero vel neque. Nunc ornare eleifend lorem. Praesent ultrices hendrerit purus. Sed vitae tortor. Nunc velit. Suspendisse potenti.</p>
-			<p>In hac habitasse platea dictumst. Nullam eget nisi id risus mollis porta. Morbi mollis gravida est. Cras vehicula tellus a lorem. Nunc risus metus, ultricies vel, cursus sit amet, rhoncus non, felis. Nunc porttitor diam id enim. Duis quam neque, eleifend id, faucibus quis, iaculis vitae, diam. Praesent ante. Fusce malesuada hendrerit sapien. Nulla tincidunt dui in diam. Integer pharetra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In fermentum quam non magna. Sed a felis. Cras quis ipsum. Duis elit odio, facilisis scelerisque, vehicula et, posuere quis, elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris nibh quam, porttitor quis, commodo at, cursus ac, quam. Donec lacinia. Fusce eget justo quis libero egestas porttitor. </p></div>
-        </div>
+        <h3><a href="#">Section 1</a></h3>
+        <div><p>Proin euismod nibh ac enim. Nam augue est, tempus ut, semper id, ornare vel, lorem. Cras id ligula. Etiam porttitor ullamcorper felis. Proin egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris in nibh. Fusce eget odio. Duis bibendum elit eget ante. Ut sollicitudin tortor. Ut posuere lorem vitae mauris. Mauris lobortis felis nec nulla. Fusce accumsan sagittis ante. </p></div>
+        <h3><a href="#">Section 2</a></h3>
+        <div><p>Ut et nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In dapibus sagittis felis. Nullam tempus velit at nisi. Phasellus nulla tortor, commodo eu, lobortis ac, convallis nec, mi. Donec cursus eros ac velit. Sed mattis, tortor sed laoreet tempor, risus ipsum posuere nisi, non vehicula dui libero sed mauris. Sed nisl nulla, vulputate nec, ornare vel, ultricies at, nulla. Proin purus nisi, scelerisque eget, consequat quis, aliquet nec, pede. Pellentesque erat augue, rhoncus in, convallis sit amet, pellentesque a, leo. Duis tortor nunc, ornare ac, volutpat quis, molestie et, mauris. Cras rhoncus massa eget enim. Aliquam erat volutpat.</p></div>
+        <h3><a href="#">Section 3</a></h3>
+        <div><p>Aliquam a leo. Phasellus congue tempor massa. In hac habitasse platea dictumst. Ut eu arcu eu velit pulvinar tempus. Nullam sit amet lorem ut dolor sagittis viverra. Curabitur in lacus dictum risus ultrices bibendum. Ut eu nibh et mauris ornare condimentum. Duis iaculis rutrum nisi. Sed facilisis augue ut neque. Pellentesque cursus libero vel neque. Nunc ornare eleifend lorem. Praesent ultrices hendrerit purus. Sed vitae tortor. Nunc velit. Suspendisse potenti.</p>
+		<p>In hac habitasse platea dictumst. Nullam eget nisi id risus mollis porta. Morbi mollis gravida est. Cras vehicula tellus a lorem. Nunc risus metus, ultricies vel, cursus sit amet, rhoncus non, felis. Nunc porttitor diam id enim. Duis quam neque, eleifend id, faucibus quis, iaculis vitae, diam. Praesent ante. Fusce malesuada hendrerit sapien. Nulla tincidunt dui in diam. Integer pharetra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In fermentum quam non magna. Sed a felis. Cras quis ipsum. Duis elit odio, facilisis scelerisque, vehicula et, posuere quis, elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris nibh quam, porttitor quis, commodo at, cursus ac, quam. Donec lacinia. Fusce eget justo quis libero egestas porttitor. </p></div>
       </div>
     </div>
     
@@ -161,7 +159,7 @@
     
     <div class="demo-container effects">
       <h2>jQuery Effects Demo</h2>
-      <div class="fl-col-flex">
+      <div class="fl-col-flex2">
         <div class="fl-col-flex60">
           <div class="effects-demo-outerbox ui-widget-content ui-corner-all" style="height:240px;width:90%; text-align:center">
             <div class="effects-demo-innerbox ui-widget-content ui-corner-all" style="min-width:100px; max-width: 200px; margin: 10px">
@@ -175,7 +173,7 @@
 
         <div class="fl-col-flex40">
           <h3>Choose an effect</h3>
-          <div class="fl-col-flex">
+          <div class="fl-col-flex2">
             <div class="fl-col-flex50">
               <h4>General</h4>
               <ul class="general-effects">
