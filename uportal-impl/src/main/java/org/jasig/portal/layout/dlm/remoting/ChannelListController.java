@@ -1,20 +1,26 @@
 package org.jasig.portal.layout.dlm.remoting;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.jasig.portal.ChannelCategory;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
+import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
+import org.jasig.portal.layout.dlm.remoting.registry.ChannelRegistryBean;
 import org.jasig.portal.security.AdminEvaluator;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.jasig.portal.services.AuthorizationService;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * <p>A Spring controller that returns a JSON or XML view of channels.  For
@@ -30,6 +36,8 @@ import org.springframework.web.servlet.ModelAndView;
  * </ul>
  *
  * @author Drew Mazurek
+ * @author Jen Bourey, jbourey@unicon.net
+ * @version $Revsion$
  */
 public class ChannelListController extends AbstractController {
 
@@ -42,9 +50,7 @@ public class ChannelListController extends AbstractController {
 	public ModelAndView handleRequestInternal(HttpServletRequest request,
 		HttpServletResponse response) throws Exception {
 		
-		ChannelCategory rootCategory = channelRegistryStore.getTopLevelChannelCategory();
 		String type = request.getParameter("type");
-		
 		if(type == null || (!type.equals(TYPE_MANAGE) && !type.equals(TYPE_ALL))) {
 			type = TYPE_SUBSCRIBE;
 		}
@@ -55,135 +61,88 @@ public class ChannelListController extends AbstractController {
 			type = TYPE_SUBSCRIBE;
 		}
 
+		ChannelRegistryBean registry = getRegistry(user, type);
+
 		if("true".equals(request.getParameter("xml"))) {
-			return buildXmlModelAndView(rootCategory, user, type);
+			XStream stream = new XStream();
+			stream.processAnnotations(ChannelRegistryBean.class);
+			String xml = stream.toXML(registry);
+			return new ModelAndView("xmlView", "xml", xml);
 		} else {
-			return buildJsonModelAndView(rootCategory, user, type);
+			return new ModelAndView("jsonView", "registry", registry);
 		}
 	}
 	
-	private ModelAndView buildXmlModelAndView(ChannelCategory rootCategory, IPerson user, String type) {
+	private ChannelRegistryBean getRegistry(IPerson user, String type) {
 		
-		Element root = DocumentHelper.createElement("registry");
+		// get a list of all channels 
+		List<IChannelDefinition> allChannels = channelRegistryStore.getChannelDefinitions();
+
+		// construct a new channel registry
+		ChannelRegistryBean registry = new ChannelRegistryBean();
 		
-		final Element registryDocument = buildRegistryDocument(root, rootCategory, user, type, true);
-        Document document = DocumentHelper.createDocument(registryDocument);
-		
-		return new ModelAndView("xmlView","xml",document);
-	}
-	
-	private Element buildRegistryDocument(Element element, ChannelCategory category, IPerson user, String type, boolean isRootCategory) {
-		
-		IChannelDefinition[] channels;
-		
-		if(type.equals(TYPE_ALL)) {
-			channels = channelRegistryStore.getChildChannels(category);
-		} else if(type.equals(TYPE_MANAGE)) {
-			channels = channelRegistryStore.getManageableChildChannels(category, user);
-		} else if (!isRootCategory) {
-			// if this is a subscribe-type channel registry, don't add channels
-			// that are direct members of the root category
-			channels = channelRegistryStore.getChildChannels(category, user);
-		} else {
-			channels = new IChannelDefinition[]{};
-		}
-		
-		for(IChannelDefinition channelDef : channels) {
-			
-			Element channel = DocumentHelper.createElement("channel");
-			channel.addAttribute("ID","chan" + Integer.toString(channelDef.getId()));
-			if(channelDef.getEntityIdentifier() != null)
-				channel.addAttribute("chanID",channelDef.getEntityIdentifier().getKey());
-			if(channelDef.getJavaClass() != null)
-				channel.addAttribute("class",channelDef.getJavaClass());
-			channel.addAttribute("description",channelDef.getDescription());
-			if(channelDef.getDescription() != null)
-				channel.addAttribute("editable",Boolean.toString(channelDef.isEditable()));
-			if(channelDef.getFName() != null)
-				channel.addAttribute("fname",channelDef.getFName());
-			channel.addAttribute("hasAbout",Boolean.toString(channelDef.hasAbout()));
-			channel.addAttribute("hasHelp",Boolean.toString(channelDef.hasHelp()));
-			channel.addAttribute("isPortlet",Boolean.toString(channelDef.isPortlet()));
-			if(channelDef.getLocale() != null)
-				channel.addAttribute("locale",channelDef.getLocale());
-			channel.addAttribute("name",channelDef.getName());
-			channel.addAttribute("secure",Boolean.toString(channelDef.isSecure()));
-			channel.addAttribute("timeout",Integer.toString(channelDef.getTimeout()));
-			channel.addAttribute("state",channelDef.getLifecycleState().toString());
-			if(channelDef.getTitle() != null)
-				channel.addAttribute("title",channelDef.getTitle());
-			channel.addAttribute("typeID",Integer.toString(channelDef.getType().getId()));
-		
-			for(IChannelParameter param : channelDef.getParameters()) {
-				Element childParam = DocumentHelper.createElement("parameter");
-				childParam.addAttribute("name",param.getName());
-				childParam.addAttribute("override",param.getOverride() ? "yes" : "no");
-				childParam.addAttribute("value",param.getValue());
-				if(param.getDescription() != null && !param.getDescription().trim().equals(""))
-					childParam.addAttribute("description",param.getDescription());
-				channel.add(childParam);
+		// add the root category and all its children to the registry
+		ChannelCategory rootCategory = channelRegistryStore.getTopLevelChannelCategory();
+		registry.addCategory(addChildren(rootCategory, allChannels, user, type));
+
+	    /*
+	     * uPortal historically has provided for a convention that channels
+	     * not in any category may potentially be viewed by users but may not
+	     * be subscribed to.  We'd like administrators to still be able to 
+	     * modify these channels through the portlet administration tool.  The
+	     * logic below takes any channels that have not already been identified
+	     * as belonging to a category and adds them to the top-level of the 
+	     * registry, assuming the current user has manage permissions.
+	     */
+	    
+		EntityIdentifier ei = user.getEntityIdentifier();
+	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+
+		for (IChannelDefinition channel : allChannels) {
+			if(type.equals(TYPE_ALL) || ap.canManage(channel.getId())) {
+				registry.addChannel(new ChannelBean(channel));
 			}
-			
-			element.add(channel);
 		}
-
-		/* Now add children categories. */
-		for(ChannelCategory childCategory : channelRegistryStore.getChildCategories(category)) {
-
-			Element newCategory = DocumentHelper.createElement("category");
-			newCategory.addAttribute("ID","cat" + childCategory.getId());
-			newCategory.addAttribute("description",childCategory.getDescription());
-			newCategory.addAttribute("name",childCategory.getName());
-			/* Populate new category's children. */
-			buildRegistryDocument(newCategory, childCategory, user, type, false);
-			element.add(newCategory);
-		}
-
-		return element;
+		
+		return registry;
 	}
 	
-	private ModelAndView buildJsonModelAndView(ChannelCategory rootCategory, IPerson user, String type) {
+	private ChannelCategoryBean addChildren(ChannelCategory category, List<IChannelDefinition> allChannels, IPerson user, String type) {
 		
-		JsonEntityBean root = new JsonEntityBean(rootCategory);
+		// construct a new channel category bean for this category
+		ChannelCategoryBean categoryBean = new ChannelCategoryBean(category);
 		
-		root = buildJsonTree(root, rootCategory, user, type, true);
-		
-		return new ModelAndView("jsonView", "registry", root);
-	}
-	
-	private JsonEntityBean buildJsonTree(JsonEntityBean bean,
-			ChannelCategory category, IPerson user, String type, boolean isRootCategory) {
-
-		IChannelDefinition[] channels;
-		
+		// add the direct child channels for this category
+		IChannelDefinition[] channels;		
 		if(type.equals(TYPE_ALL)) {
 			channels = channelRegistryStore.getChildChannels(category);
 		} else if(type.equals(TYPE_MANAGE)) {
 			channels = channelRegistryStore.getManageableChildChannels(category, user);
-		} else if (!isRootCategory) {
-			// if this is a subscribe-type channel registry, don't add channels
-			// that are direct members of the root category
-			channels = channelRegistryStore.getChildChannels(category, user);
 		} else {
-			channels = new IChannelDefinition[]{};
+			channels = channelRegistryStore.getChildChannels(category, user);
 		}
 		
 		for(IChannelDefinition channelDef : channels) {
-		
-			bean.addChild(channelDef);
-		}
-		
-		for(ChannelCategory childCategory : channelRegistryStore.getChildCategories(category)) {
-
-			JsonEntityBean childBean = new JsonEntityBean(childCategory);
-			buildJsonTree(childBean, childCategory, user, type, false);
-			bean.addChild(childBean);
-		}
 			
-		return bean;
+			// construct a new channel bean from this channel
+			ChannelBean channel = new ChannelBean(channelDef);
+			categoryBean.addChannel(channel);
+			
+			// remove the channel of the list of all channels
+			allChannels.remove(channel);
+		}
+
+		/* Now add child categories. */
+		for(ChannelCategory childCategory : channelRegistryStore.getChildCategories(category)) {
+			ChannelCategoryBean childCategoryBean = addChildren(childCategory, allChannels, user, type);
+			
+			categoryBean.addCategory(childCategoryBean);
+		}
+		
+		return categoryBean;
+		
 	}
 	
-
 	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
 		this.channelRegistryStore = channelRegistryStore;
 	}
