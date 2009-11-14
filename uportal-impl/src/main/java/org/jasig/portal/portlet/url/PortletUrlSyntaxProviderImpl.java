@@ -253,7 +253,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
             final String channelPublishId = channelNode.getChannelPublishId();
             final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(Integer.parseInt(channelPublishId));
-            if (portletDefinition == null) {
+            if (!portletDefinition.getChannelDefinition().isPortlet()) {
                 this.logger.info("No portlet defintion found for channel definition '" + channelPublishId + "' with fname '" + targetedFname + "'. skipping portlet parameter processing");
                 return null;
             }
