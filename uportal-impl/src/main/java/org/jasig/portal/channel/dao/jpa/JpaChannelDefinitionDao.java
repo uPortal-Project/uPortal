@@ -151,7 +151,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
 	public IChannelDefinition updateChannelDefinition(IChannelDefinition definition) {
         Validate.notNull(definition, "definition can not be null");
         
-        this.entityManager.merge(definition);
+        this.entityManager.persist(definition);
         
         return definition;
 	}
