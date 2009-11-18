@@ -40,13 +40,7 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:/properties/contexts/*.xml</param-value>
     </context-param>
-
-    <!-- location of your cas server's proxy service -->
-    <context-param>
-        <param-name>edu.yale.its.tp.cas.proxyUrl</param-name>
-        <param-value>https://localhost:8080/cas/proxy</param-value>
-    </context-param>
-    
+   
     <!--
         - Configures Log4J for this web app.
         - As this context specifies a context-param "log4jConfigLocation", its file path
@@ -101,29 +95,29 @@
     </listener>
 
     <filter>
-        <filter-name>CAS Validate Filter</filter-name>       
-        <filter-class>edu.yale.its.tp.cas.client.filter.CASValidateFilter</filter-class>
+        <filter-name>CAS Validate Filter</filter-name>
+        <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
         <init-param>
-            <param-name>edu.yale.its.tp.cas.client.filter.validateUrl</param-name>
-            <param-value>http://localhost:8080/cas/serviceValidate</param-value>
+          <param-name>casServerUrlPrefix</param-name>
+          <param-value>http://localhost:8080/cas</param-value>
         </init-param>
         <init-param>
-            <param-name>edu.yale.its.tp.cas.client.filter.serverName</param-name>
-            <param-value>localhost:8080</param-value>
+          <param-name>serverName</param-name>
+          <param-value>http://localhost:8080</param-value>
         </init-param>
         <init-param>
-            <param-name>edu.yale.its.tp.cas.client.filter.proxyCallbackUrl</param-name>
+            <param-name>proxyCallbackUrl</param-name>
             <param-value>http://localhost:8080/uPortal/CasProxyServlet</param-value>
         </init-param>
         <init-param>
-            <param-name>BROKEN_SECURITY_ALLOW_NON_SSL</param-name>
-            <param-value>NOT_SECURE_DO_NOT_USE_THIS_SETTING_IN_PRODUCTION</param-value>
+            <param-name>proxyReceptorUrl</param-name>
+            <param-value>/CasProxyServlet</param-value>
         </init-param>
     </filter>
     
     <filter>
-        <filter-name>CAS Receipt Cache Filter</filter-name>
-        <filter-class>edu.yale.its.tp.cas.client.filter.StaticCasReceiptCacherFilter</filter-class>
+        <filter-name>CAS Assertion ThreadLocal Filter</filter-name>
+        <filter-class>org.jasig.cas.client.util.AssertionThreadLocalFilter</filter-class>
     </filter>
     
     <filter>
@@ -165,9 +159,14 @@
         <filter-name>CAS Validate Filter</filter-name>
         <url-pattern>/Login</url-pattern>
     </filter-mapping>
-    
+
     <filter-mapping>
-        <filter-name>CAS Receipt Cache Filter</filter-name>
+        <filter-name>CAS Validate Filter</filter-name>
+        <url-pattern>/CasProxyServlet</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>CAS Assertion ThreadLocal Filter</filter-name>
         <url-pattern>/Login</url-pattern>
     </filter-mapping>
     
@@ -218,11 +217,6 @@
         <load-on-startup>3</load-on-startup>
     </servlet>
 
-    <servlet>
-        <servlet-name>CasProxyServlet</servlet-name>
-        <servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
-        <load-on-startup>4</load-on-startup>
-    </servlet>
     <!-- Uncomment this servlet and the corresponding servlet-mapping if ProxyWriter is enabled in portal.properties
     <servlet>
         <servlet-name>HttpProxyServlet</servlet-name>
@@ -305,10 +299,6 @@
         <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>CasProxyServlet</servlet-name>
-        <url-pattern>/CasProxyServlet</url-pattern>
-    </servlet-mapping>
     <!-- Uncomment this servlet-mapping and the corresponding servlet if ProxyWriter is enabled in portal.properties
     <servlet-mapping>
         <servlet-name>HttpProxyServlet</servlet-name>

@@ -29,8 +29,8 @@
         
         <!-- ===== Compile Dependencies ======================================= -->
         <dependency>
-            <groupId>cas</groupId>
-            <artifactId>casclient</artifactId>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-client-core</artifactId>
             <scope>compile</scope>
         </dependency>
 

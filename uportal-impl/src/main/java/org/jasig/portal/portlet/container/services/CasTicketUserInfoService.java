@@ -34,7 +34,6 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.cas.CasProxyTicketAcquisitionException;
-import org.jasig.portal.security.provider.cas.CasSecurityContext;
 import org.jasig.portal.security.provider.cas.ICasSecurityContext;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
@@ -280,12 +279,12 @@ public class CasTicketUserInfoService implements UserInfoService  {
 
 	/**
 	 * Looks for a security context
-	 * @param rootContext the principal security context
+	 * @param context the principal security context
 	 * @return the CAS security contex, or null if not found.
 	 */
 	@SuppressWarnings("unchecked")
 	private static ISecurityContext getCasContext(ISecurityContext context) {
-		if (context instanceof CasSecurityContext) {
+		if (context instanceof ICasSecurityContext) {
 			return context;
 		}
 		Enumeration contextEnum = context.getSubContexts();

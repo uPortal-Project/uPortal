@@ -32,7 +32,7 @@ public interface ICasSecurityContext {
      * should result in a CASProxyTicketAcquisitionException.
      * @param target - URL for which a proxy ticket is desired.
      * @return a valid proxy ticket for the target, or null.
-     * @throws CASProxyTicketAcquisitionException - when unable to obtain Proxy Ticket.
+     * @throws CasProxyTicketAcquisitionException - when unable to obtain Proxy Ticket.
      */
     public String getCasServiceToken(String target) throws CasProxyTicketAcquisitionException;
 }
