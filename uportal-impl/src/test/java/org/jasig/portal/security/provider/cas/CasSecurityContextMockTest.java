@@ -7,6 +7,7 @@ package org.jasig.portal.security.provider.cas;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.security.Principal;
 
 import junit.framework.TestCase;
 
@@ -68,7 +69,11 @@ public class CasSecurityContextMockTest
         dummyExceptions.add(dummyRuntimeException);
 
         CasProxyTicketAcquisitionException cptae
-            = new CasProxyTicketAcquisitionException("dummyservice", "dummypgtiou");
+            = new CasProxyTicketAcquisitionException("dummyservice", new Principal() {
+            public String getName() {
+                return "test";
+            }
+        });
 
         dummyExceptions.add(cptae);
 
