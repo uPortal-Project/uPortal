@@ -88,6 +88,11 @@
 
     <pluginRepositories>
         <pluginRepository>
+            <id>jasig-m2</id>
+            <name>Jasig Maven2 Repository</name>
+            <url>http://developer.jasig.org/repo/content/repositories/m2</url>
+        </pluginRepository>
+        <pluginRepository>
             <id>apache.snapshots</id>
             <url>http://people.apache.org/repo/m2-snapshot-repository</url>
             <snapshots>
