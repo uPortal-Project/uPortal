@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
+  
+  <css>/ResourceServingWebapp/rs/fluid/1.1.2/css/fss-framework-1.1.2.min.css</css>
+  
+  <!-- base Fluid Skinning System -->
+  <css>../common/css/fluid/fluid.reset.css</css>
+  <css>../common/css/fluid/fluid.layout.css</css>
+  <css>../common/css/fluid/fluid.text.css</css>
+  
+  <!-- For printing of portal pages. Common to all skins using the universality theme -->
+  <css>../common/css/print.css</css>
+  
+  <!-- For layout of portal pages (in tandem with FSS fluid.layout.css). Common to all skins using the universality theme. -->
+  <css>../common/css/layout.css</css>
+  
+  <css>ivy_base.css</css>
+  <css>ivy_jsr168.css</css>
+  <css>ivy_legacy.css</css>
+  
+  <!-- Default jqueryui css -->
+  <css>/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css</css>
+  
+  <!-- uPortal jqueryui override css -->
+  <css>jquery.css</css>
+  
+  <js>/ResourceServingWebapp/rs/jquery/1.3.2/jquery-1.3.2.min.js</js>
+  <js>/ResourceServingWebapp/rs/jqueryui/1.7.2/jquery-ui-1.7.2.min.js</js>
+  <js>/ResourceServingWebapp/rs/fluid/1.1.2/js/fluid-all-1.1.2.min.js</js>
+  
+  <js>../common/javascript/uportal/ajax-preferences-jquery.js</js>
+  <js>../common/javascript/uportal/up-channel-browser.js</js>
+  <js>../common/javascript/uportal/up-group-browser.js</js>
+  <js>../common/javascript/uportal/flyout-nav.js</js>
+</s:resources>
