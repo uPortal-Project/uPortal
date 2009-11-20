@@ -47,10 +47,6 @@
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
         
-    <cache name="org.jasig.portal.CHANNEL_REGISTRY_STORE_CACHE"
-        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
-
     <cache name="org.jasig.portal.layout.dlm.LAYOUT_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="1800" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />

@@ -17,46 +17,6 @@
         <property name="channelTypeDao" ref="channelTypeDao"/>
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry"/>
     </bean>
-    <bean id="jpaChannelRegistryStoreCachingInterceptor" parent="baseCachingInterceptor">
-        <property name="cachingModels">
-            <map>
-                <entry key="*">
-                    <bean class="org.springmodules.cache.provider.ehcache.EhCacheCachingModel">
-                        <property name="cacheName" value="org.jasig.portal.CHANNEL_REGISTRY_STORE_CACHE" />
-                    </bean>
-                </entry>
-            </map>
-        </property>
-    </bean>
-    <bean id="jpaChannelRegistryStoreFlushingInterceptor" parent="baseFlushingInterceptor">
-        <property name="flushingModels">
-            <map>
-                <entry key="*">
-                    <bean class="org.springmodules.cache.provider.ehcache.EhCacheFlushingModel">
-                        <property name="cacheNames" value="org.jasig.portal.CHANNEL_REGISTRY_STORE_CACHE" />
-                    </bean>
-                </entry>
-            </map>
-        </property>
-    </bean>
-    
-    <aop:config>
-        <aop:pointcut id="jpaChannelRegistryStoreCachingExecution"
-            expression="execution(* org.jasig.portal.channel.JpaChannelRegistryStore.get*(..))"/>
-            
-        <aop:pointcut id="jpaChannelRegistryStoreFlushingExecution"
-            expression="execution(* org.jasig.portal.channel.JpaChannelRegistryStore.add*(..)) || 
-                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.delete*(..)) || 
-                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.approveChannelDefinition(..)) || 
-                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.disapproveChannelDefinition(..)) || 
-                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.new*(..)) || 
-                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.remove*(..)) || 
-                        execution(* org.jasig.portal.channel.JpaChannelRegistryStore.save*(..))"/>
-
-        <!-- Priority -2147483647 so it is the highest priority -->   
-        <aop:advisor advice-ref="jpaChannelRegistryStoreCachingInterceptor"       order="-2147483647" pointcut-ref="jpaChannelRegistryStoreCachingExecution" />
-        <aop:advisor advice-ref="jpaChannelRegistryStoreFlushingInterceptor"      order="-2147483647" pointcut-ref="jpaChannelRegistryStoreFlushingExecution" />
-    </aop:config>
     
     <bean id="channelPublishingService" class="org.jasig.portal.channel.ChannelPublishingServiceImpl">
         <property name="channelRegistryStore" ref="channelRegistryStore"/>
