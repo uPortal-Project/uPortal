@@ -54,11 +54,6 @@ public class ResourcesDaoImplTest {
 		
 		ResourcesDaoImpl resourcesDao = new ResourcesDaoImpl();
 		resourcesDao.setServletContext(mockContext);
-		try {
-			resourcesDao.getResources("media/path/to/skin.xml");
-			Assert.fail("expected IllegalArgumentException not thrown");
-		} catch (IllegalArgumentException e) {
-			// success
-		}
+		Assert.assertNull(resourcesDao.getResources("media/path/to/skin.xml"));
 	}
 }
