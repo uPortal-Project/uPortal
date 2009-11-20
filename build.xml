@@ -26,10 +26,71 @@
      +-->
     <property environment="env" />
     <property file="${basedir}/build.properties" />
+    
+    <!--
+     | Setup temp directories
+     +-->
     <property name="jasig.tmpdir" value="${java.io.tmpdir}/jasig" />
     <mkdir dir="${jasig.tmpdir}" />
-        
-    <tempfile property="parentPomInstallMarker.file" destdir="${jasig.tmpdir}" prefix="uportal-parent.pom-" suffix="-marker" />
+    <chmod type="dir" dir="${jasig.tmpdir}" perm="ugo+rxws" />
+    <chmod perm="ugo+rw">
+        <fileset dir="${jasig.tmpdir}">
+            <include name="**/*"/>
+        </fileset>
+    </chmod>
+    
+    <tempfile property="parentPomInstallMarker.file" destdir="${jasig.tmpdir}" prefix="uportal-parent.pom-" suffix="-marker" deleteonexit="true"/>
+    
+    <!--
+     | Define maven.home and maven.settings variables if they are not set
+     +-->
+    <condition property="maven.home" value="${env.M2_HOME}">
+        <and>
+            <not>
+                <isset property="maven.home"/>
+            </not>
+            <available file="${env.M2_HOME}"/>
+        </and>
+    </condition>
+    <fail message="maven.home=${maven.home} does not exist.${line.separator}Either set maven.home in build.properties or set the M2_HOME environment variable.">
+        <condition>
+            <not>
+                <available file="${maven.home}" />
+            </not>
+        </condition>
+    </fail>
+    
+    <condition property="maven.settings" value="${user.home}/.ant/settings.xml">
+        <and>
+            <not>
+                <isset property="maven.settings"/>
+            </not>
+            <available file="${user.home}/.ant/settings.xml"/>
+        </and>
+    </condition>
+    <condition property="maven.settings" value="${user.home}/.m2/settings.xml">
+        <and>
+            <not>
+                <isset property="maven.settings"/>
+            </not>
+            <available file="${user.home}/.m2/settings.xml"/>
+        </and>
+    </condition>
+    <condition property="maven.settings" value="${maven.home}/conf/settings.xml">
+        <and>
+            <not>
+                <isset property="maven.settings"/>
+            </not>
+            <available file="${maven.home}/conf/settings.xml"/>
+        </and>
+    </condition>
+    <fail message="maven.settings=${maven.settings} does not exist.${line.separator}Either set maven.settings in build.properties or ensure one of the following files exist:${line.separator}    - ${user.home}/.ant/settings.xml${line.separator}    - ${user.home}/.m2/settings.xml${line.separator}    - ${maven.home}/conf/settings.xml">
+        <condition>
+            <not>
+                <available file="${maven.settings}" />
+            </not>
+        </condition>
+    </fail>
     
     <!--
      | Properties that describe the maven project
@@ -151,11 +212,15 @@
 
     <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
         <echo message="Importing data" />
+        <!--
         <antcall target="crn-import">
-            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/base_entities" />
+            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/entities.base" />
+            <param name="noprompt" value="true" />
         </antcall>
+        -->
         <antcall target="crn-import">
             <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/entities" />
+            <param name="noprompt" value="true" />
         </antcall>
     </target>
 
@@ -217,7 +282,8 @@
         <uportal-impl-macro>
             <!-- Two properties control the import:  dir and pattern -->
             <property name="dir" value="." />
-            <property name="pattern" value="org.jasig.portal.FilePatternPhrase.USE_DEFAULT_VALUE "/>
+            <property name="pattern" value="org.jasig.portal.FilePatternPhrase.USE_DEFAULT_VALUE"/>
+            <property name="noprompt" value="false"/>
 
             <!-- Invoke Cernunnos specifying script and parameters -->
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
@@ -226,6 +292,7 @@
                 <arg value="classpath://org/jasig/portal/io/import.crn" />
                 <arg value="${dir}" />
                 <arg value="${pattern}" />
+                <arg value="${noprompt}" />
             </java>
         </uportal-impl-macro>
     </target>
@@ -274,7 +341,7 @@
     <target name="clean-tomcat" depends="checkForTomcat" description="Removes the deployed uPortal from the container">
         <uportal-parent-macro>
             <!-- Clean out uPortal from Tomcat -->
-            <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" />
+            <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" settingsFile="${maven.settings}"/>
             <property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
             <echo>Deleting '${destDir}'</echo>
             <delete dir="${destDir}" />
@@ -302,7 +369,7 @@
                 </then>
             </if>
                 
-            <artifact:dependencies pathid="uportal-ant" verbose="false">
+            <artifact:dependencies pathid="uportal-ant" settingsFile="${maven.settings}">
                 <pom file="${bootstrap-pom.dir}/uportal-ant-tasks-pom.xml" />
             </artifact:dependencies>
             
@@ -355,8 +422,8 @@
         <basename property="war.filename" file="${portletAppPath}" />
 
         <uportal-parent-macro>
-            <artifact:dependencies pathid="pluto-ant" verbose="false">
-                <pom file="${bootstrap-pom.dir}/pluto-assembler-pom.xml" />
+            <artifact:dependencies pathid="pluto-ant" settingsFile="${maven.settings}">
+                <artifact:pom file="${bootstrap-pom.dir}/pluto-assembler-pom.xml" settingsFile="${maven.settings}" />
             </artifact:dependencies>
     
             <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
@@ -465,8 +532,8 @@
         <property name="failonerror" value="true" />
             
         <uportal-parent-macro>
-            <artifact:dependencies pathid="hsql.classpath" verbose="false">
-                <pom file="${bootstrap-pom.dir}/hsqldb-pom.xml" />
+            <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
+                <artifact:pom file="${bootstrap-pom.dir}/hsqldb-pom.xml" settingsFile="${maven.settings}" />
             </artifact:dependencies>
     
             <property name="database" value="${basedir}/data/uP3_uPortal" />
@@ -487,8 +554,8 @@
     
     <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
         <uportal-parent-macro>
-            <artifact:dependencies pathid="hsql.classpath" verbose="false">
-                <pom file="${bootstrap-pom.dir}/hsqldb-pom.xml" />
+            <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
+                <artifact:pom file="${bootstrap-pom.dir}/hsqldb-pom.xml" settingsFile="${maven.settings}" />
             </artifact:dependencies>
     
             <echo message="Stopping HSQL" />
@@ -708,8 +775,8 @@
     </macrodef>
     
     <target name="install-parent-pom">
-        <artifact:pom file="${basedir}/pom.xml" id="uportal-parent.pom" />
-        <artifact:install file="${basedir}/pom.xml" pomrefid="uportal-parent.pom" />
+        <artifact:pom file="${basedir}/pom.xml" id="uportal-parent.pom" settingsFile="${maven.settings}" />
+        <artifact:install file="${basedir}/pom.xml" pomrefid="uportal-parent.pom" settingsFile="${maven.settings}" />
     </target>
     
     <!--
@@ -734,9 +801,9 @@
             <!--
              | Load the pom & classpath
              +-->
-            <artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" />
-            <artifact:dependencies pathid="@{project-name}.classpath" verbose="false">
-                <pom refid="@{project-name}.pom" />
+            <artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" settingsFile="${maven.settings}" />
+            <artifact:dependencies pathid="@{project-name}.classpath" settingsFile="${maven.settings}">
+                <artifact:pom refid="@{project-name}.pom" settingsFile="${maven.settings}" />
             </artifact:dependencies>
 
             <!--
@@ -797,7 +864,7 @@
                 </then>
                 <else>
                     <echo message="Artifact '${@{project-name}.artifact}' is up-to-date" />
-                    <artifact:install file="${@{project-name}.artifact}" pomrefid="@{project-name}.pom" />
+                    <artifact:install file="${@{project-name}.artifact}" pomrefid="@{project-name}.pom" settingsFile="${maven.settings}" />
                 </else>
             </if>
 
@@ -883,8 +950,8 @@
                 <!--
                  | Install the overlay parent project pom
                  +-->
-                <artifact:pom file="${uportal-portlets-overlay.dir}/pom.xml" id="uportal-portlets-overlay.pom" />
-                <artifact:install file="${uportal-portlets-overlay.dir}/pom.xml" pomrefid="uportal-portlets-overlay.pom" />
+                <artifact:pom file="${uportal-portlets-overlay.dir}/pom.xml" id="uportal-portlets-overlay.pom" settingsFile="${maven.settings}" />
+                <artifact:install file="${uportal-portlets-overlay.dir}/pom.xml" pomrefid="uportal-portlets-overlay.pom" settingsFile="${maven.settings}" />
                 
                 <fileset id="uportal-portlets-overlay.pom.fsid" dir="${basedir}">
                     <filename name="${basedir}/pom.xml"/>
@@ -957,45 +1024,28 @@
      | target should automaticly work on all OSs as long as 'mvn' is on the path.
      +-->
     <target name="mvn">
-        <property name="goal" value="" />
-        <property name="goal1" value="" />
-        <property name="goal2" value="" />
-        <property name="goal3" value="" />
-        <property name="goal4" value="" />
-        <property name="goal5" value="" />
-        <property name="goal6" value="" />
-        <property name="goal7" value="" />
-        <property name="goal8" value="" />
-        <property name="goal9" value="" />
+        <property name="goal" value="-Djasig.ignore" />
+        <property name="goal1" value="-Djasig.ignore" />
+        <property name="goal2" value="-Djasig.ignore" />
+        <property name="goal3" value="-Djasig.ignore" />
+        <property name="goal4" value="-Djasig.ignore" />
+        <property name="goal5" value="-Djasig.ignore" />
+        <property name="goal6" value="-Djasig.ignore" />
+        <property name="goal7" value="-Djasig.ignore" />
+        <property name="goal8" value="-Djasig.ignore" />
+        <property name="goal9" value="-Djasig.ignore" />
 
-        <if>
-            <os family="windows" />
-            <then>
-                <property name="mvnExecutable" value="mvn.bat" />
-            </then>
-            <else>
-                <property name="mvnExecutable" value="mvn" />
-            </else>
-        </if>
-        
-        <condition property="maven.bin" value="${maven.home}/bin/">
-            <isset property="maven.home"/>
-        </condition>
-        <property name="maven.bin" value="" />
-        
         <condition property="test.skip" value="-Dmaven.test.skip=true">
             <isset property="maven.test.skip"/>
         </condition>
-        <property name="test.skip" value="-Djasig" />
+        <property name="test.skip" value="-Dmaven.test.skip=false" />
         
         <condition property="offline" value="-o">
             <isset property="maven.offline"/>
         </condition>
-        <property name="offline" value="-Djasig" />
+        <property name="offline" value="-Djasig.ignore" />
         
-
-        <exec executable="${maven.bin}${mvnExecutable}" dir="${pomDir}" vmlauncher="true" resolveexecutable="true" searchpath="true" failonerror="true">
-            <env key="MAVEN_TERMINATE_CMD" value="on" />
+        <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
             <arg value="${test.skip}" />
             <arg value="${offline}" />
             <arg value="${goal}" />
@@ -1008,6 +1058,28 @@
             <arg value="${goal7}" />
             <arg value="${goal8}" />
             <arg value="${goal9}" />
-        </exec>
+        </artifact:mvn>
+    </target>
+    
+    <target name="ehcache-remote-debug" description="Imports the specified XML file or files">
+        <uportal-impl-macro>
+            <artifact:dependencies pathid="ehcache-debug.classpath" settingsFile="${maven.settings}">
+                <artifact:pom file="${bootstrap-pom.dir}/ehcache-debug-pom.xml" settingsFile="${maven.settings}" />
+            </artifact:dependencies>
+            
+            <property name="cache" value=""/>
+
+            <!-- Invoke Cernunnos specifying script and parameters -->
+            <java fork="true" failonerror="true" dir="${basedir}" classname="net.sf.ehcache.distribution.RemoteDebugger">
+                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                <classpath refid="uportal-impl-full.classpath" />
+                <classpath>
+                    <path refid="uportal-impl-full.classpath"/>
+                    <path refid="ehcache-debug.classpath"/>
+                </classpath>
+                <arg value="${basedir}/uportal-impl/src/main/resources/properties/ehcache.xml" />
+                <arg value="${cache}"/>
+            </java>
+        </uportal-impl-macro>
     </target>
 </project>
