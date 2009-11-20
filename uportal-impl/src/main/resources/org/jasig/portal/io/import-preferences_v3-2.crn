@@ -1,0 +1,90 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<!--
+ | NB:  This script does not end with a suffix like '_v2-6' because it happens
+ | entirely within the layout import process, and therefore won't appear in any
+ | exported documents.
+ +-->
+<!-- <Object, LinkedHashMap<String, List<String>>> -->
+<with>
+    <attribute key="PORTLET_MAP">${groovy(new HashMap())}</attribute>
+    <attribute key="USER_ID">${crn(lookup-user_id.crn)}</attribute>
+    <subtasks>
+	    <groovy>
+	        <script>
+	            def getPortletPefsMap(fName, chanSubId, userId) {
+	                List portletInfo = Arrays.asList(fName, chanSubId, userId);
+	            
+	                Map portletPrefs = PORTLET_MAP.get(portletInfo);
+	                if (portletPrefs == null) {
+	                    portletPrefs = new LinkedHashMap();
+	                    PORTLET_MAP.put(portletInfo, portletPrefs);
+	                }
+	                
+	                return portletPrefs;
+	            }
+	            
+	            def getPrefValues(prefsMap, prefName) {
+	                List values = prefsMap.get(prefName);
+	                if (values == null) {
+	                    values = new LinkedList();
+	                    prefsMap.put(prefName, values);
+	                }
+	                
+	                return values;
+	            }
+	        </script>
+	        <subtasks>
+                <echo-ln>Finding preferences</echo-ln>
+	            <node-iterator xpath="entry">
+	                <with-attribute key="DLM_PATHREF" value="${valueOf(@entity)}">
+	                    <with>
+	                        <attribute key="DLM_NODEREF">${crn(lookup-dlm-pathref_v3-2.crn)}</attribute>
+	                        <attribute key="PREF_NAME">${valueOf(@name)}</attribute>
+	                        <attribute key="FNAME">${valueOf(@channel)}</attribute>
+	                        <subtasks>
+	                            <if test="${jexl(DLM_NODEREF != null and FNAME != null and FNAME != 'null')}">
+	                                <with-attribute key="PORTLET_PREFS_MAP" value="${groovy(getPortletPefsMap(FNAME, DLM_NODEREF, USER_ID))}">
+	                                    <with-attribute key="PORTLET_PREF_VALUES" value="${groovy(getPrefValues(PORTLET_PREFS_MAP, PREF_NAME))}">
+	                                        <node-iterator xpath="value">
+	                                            <with-attribute key="PREF_VALUE" value="${valueOf(text())}">
+	                                                <groovy>
+	                                                    <script>
+	                                                        PORTLET_PREF_VALUES.add(PREF_VALUE);
+	                                                    </script>
+	                                                </groovy>
+	                                            </with-attribute>
+	                                        </node-iterator>
+	                                    </with-attribute>
+	                                </with-attribute>
+	                            </if>
+	                        </subtasks>
+	                    </with>
+	                </with-attribute>
+	            </node-iterator>
+	        </subtasks>
+	    </groovy>
+	        
+	    <!--
+	     | Iterate over the collated Map and call the helper class to do the actual persisting
+	     +-->
+	    <with-attribute key="portletEntityPreferenceHandler" value="${groovy(PORTAL_CONTEXT.getBean('portletEntityPreferenceHandler'))}">
+	        <for-each items="${groovy(PORTLET_MAP.entrySet())}" attribute-name="portletPrefsEntry">
+	            <groovy>
+	                <script>
+	                    portletEntityPreferenceHandler.setEntityPreference(
+	                        portletPrefsEntry.getKey().get(0),
+	                        portletPrefsEntry.getKey().get(1),
+	                        portletPrefsEntry.getKey().get(2).intValue(),
+	                        portletPrefsEntry.getValue());
+	                </script>
+	            </groovy>
+	        </for-each>
+	    </with-attribute>
+	</subtasks>
+</with>

@@ -15,7 +15,7 @@
  |
  +-->
 <with>
-    <attribute key="USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${USER_NAME}')}</attribute>
+    <attribute key="USER_ID">${crn(lookup-user_id.crn)}</attribute>
     <attribute key="Attributes.NODE">${newDoc(layout)}</attribute><!-- In case there's none in the DB... -->
     <subtasks>
         <groovy>

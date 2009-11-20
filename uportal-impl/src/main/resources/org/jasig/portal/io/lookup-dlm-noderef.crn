@@ -36,33 +36,20 @@
              +-->
             <script>
                 def parseUriTokens(descId) {
-                    def userNodeRef = ~/n([0-9]+)/
-                    def dlmNodeRef = ~/u([0-9]+)l[0-9]+n([0-9]+)/
-                    def dlmStructRef = ~/u([0-9]+)l[0-9]+s([0-9]+)/
+                    def userNodeRef = ~/n[0-9]+/
+                    def dlmNodeRef = ~/u([0-9])+l[0-9]+n|s[0-9]+/
                     
                     rslt = new String[3];
                     
                     matcher = userNodeRef.matcher(descId)
                     if (matcher.matches()) {
                         rslt[0] = null; // signals that we don't need to query for the username...
-                        rslt[1] = String.valueOf(matcher[0][1]);
-                        rslt[2] = null;
                         return rslt;
                     }
                     
                     matcher = dlmNodeRef.matcher(descId)
                     if (matcher.matches()) {
                         rslt[0] = String.valueOf(matcher[0][1]);
-                        rslt[1] = String.valueOf(matcher[0][2]);
-                        rslt[2] = null;
-                        return rslt;
-                    }
-                    
-                    matcher = dlmStructRef.matcher(descId)
-                    if (matcher.matches()) {
-                        rslt[0] = String.valueOf(matcher[0][1]);
-                        rslt[1] = String.valueOf(matcher[0][2]);
-                        rslt[2] = null;
                         return rslt;
                     }
                     
@@ -95,45 +82,41 @@
                                     </with-attribute>
                                 </otherwise>
                             </choose>
-                            <with>
-                                <attribute key="LAYOUT_USER_NAME">${jexl(NODEREF_DATA[0])}</attribute>
-                                <attribute key="LAYOUT_STRUCT_ID">${jexl(NODEREF_DATA[1])}</attribute>
-                                <subtasks>
-                                    <cache key="LAYOUT_NODE_INFO" cache-key="${groovy('LAYOUT_USER_NAME.' + LAYOUT_USER_NAME + ',LAYOUT_STRUCT_ID.' + LAYOUT_STRUCT_ID)}">
-                                        <factory>
-                                            <with>
-                                                <attribute key="LAYOUT_NODE_INFO">${groovy(new String[2])}</attribute>
-                                                <attribute key="Attributes.NODE">${crn(load-limited-layout.crn)}</attribute>
-                                                <subtasks>
-                                                    <with-attribute key="Attributes.NODE" value="${singleNode(//*[@struct-id = $LAYOUT_STRUCT_ID])}">
-                                                        <with>
-                                                            <attribute key="CHANNEL_PATH">${jexl(Attributes.NODE.getUniquePath())}</attribute>
-                                                            <attribute key="CHANNEL_FNAME">${valueOf(@fname)}</attribute>
-                                                            <subtasks>
-                                                                <groovy>
-                                                                    <script>
-                                                                        LAYOUT_NODE_INFO[0] = CHANNEL_PATH;
-                                                                        LAYOUT_NODE_INFO[1] = CHANNEL_FNAME;
-                                                                    </script>
-                                                                </groovy>
-                                                                <return value="${LAYOUT_NODE_INFO}" />
-                                                            </subtasks>
-                                                        </with>
-                                                    </with-attribute>
-                                                </subtasks>
-                                            </with>
-                                        </factory>
-                                        <subtasks>
-                                            <groovy>
-                                                <script>
-                                                    NODEREF_DATA[1] = LAYOUT_NODE_INFO[0];
-                                                    NODEREF_DATA[2] = LAYOUT_NODE_INFO[1];
-                                                </script>
-                                            </groovy>
-                                        </subtasks>
-                                    </cache>
-                                </subtasks>
-                            </with>
+                            <with-attribute key="LAYOUT_USER_NAME" value="${jexl(NODEREF_DATA[0])}">
+                                <cache key="LAYOUT_NODE_INFO" cache-key="${groovy('LAYOUT_USER_NAME.' + LAYOUT_USER_NAME + ',DLM_NODEREF.' + DLM_NODEREF)}">
+                                    <factory>
+                                        <with>
+                                            <attribute key="LAYOUT_NODE_INFO">${groovy(new String[2])}</attribute>
+                                            <attribute key="Attributes.NODE">${crn(load-layout.crn)}</attribute>
+                                            <subtasks>
+                                                <with-attribute key="Attributes.NODE" value="${singleNode(//*[@ID = $DLM_NODEREF])}">
+                                                    <with>
+                                                        <attribute key="CHANNEL_PATH">${jexl(Attributes.NODE.getUniquePath())}</attribute>
+                                                        <attribute key="CHANNEL_FNAME">${valueOf(@fname)}</attribute>
+                                                        <subtasks>
+                                                            <groovy>
+                                                                <script>
+                                                                    LAYOUT_NODE_INFO[0] = CHANNEL_PATH;
+                                                                    LAYOUT_NODE_INFO[1] = CHANNEL_FNAME;
+                                                                </script>
+                                                            </groovy>
+                                                            <return value="${LAYOUT_NODE_INFO}" />
+                                                        </subtasks>
+                                                    </with>
+                                                </with-attribute>
+                                            </subtasks>
+                                        </with>
+                                    </factory>
+                                    <subtasks>
+                                        <groovy>
+                                            <script>
+                                                NODEREF_DATA[1] = LAYOUT_NODE_INFO[0];
+                                                NODEREF_DATA[2] = LAYOUT_NODE_INFO[1];
+                                            </script>
+                                        </groovy>
+                                    </subtasks>
+                                </cache>
+                            </with-attribute>
                             <return value="${NODEREF_DATA}"/>
                         </when>
                         <otherwise>

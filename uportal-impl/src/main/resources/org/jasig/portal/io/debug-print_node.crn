@@ -1,0 +1,20 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<!-- 
+ | Parameters:
+ |     Attributes.NODE - The dom4j Node to print out
+ |
+ | Prints out the node to System.out
+ +-->
+<groovy>
+    <script>
+        org.dom4j.io.OutputFormat format = org.dom4j.io.OutputFormat.createPrettyPrint();
+        org.dom4j.io.XMLWriter writer = new org.dom4j.io.XMLWriter( System.out, format );
+        writer.write( Attributes.NODE );
+    </script>
+</groovy>

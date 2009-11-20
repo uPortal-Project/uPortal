@@ -475,7 +475,7 @@
 
     <bean id="layoutStoreProvider" class="org.jasig.portal.layout.dlm.LayoutStoreProvider">
         <property name="lookupNoderefTask" ref="lookup-dlm-noderef"/>
-        <property name="lookupPathrefTask" ref="lookup-dlm-pathref"/>
+        <property name="lookupPathrefTask" ref="lookup-dlm-pathref_v3-2"/>
     </bean>
 
     <bean id="lookup-dlm-noderef" class="org.danann.cernunnos.runtime.PojoTask">
@@ -503,9 +503,9 @@
         </property>
     </bean>
 
-    <bean id="lookup-dlm-pathref" class="org.danann.cernunnos.runtime.PojoTask">
+    <bean id="lookup-dlm-pathref_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
-            <value>classpath://org/jasig/portal/io/lookup-dlm-pathref.crn</value>
+            <value>classpath://org/jasig/portal/io/lookup-dlm-pathref_v3-2.crn</value>
         </property>
         <property name="requestAttributes">
             <util:map>

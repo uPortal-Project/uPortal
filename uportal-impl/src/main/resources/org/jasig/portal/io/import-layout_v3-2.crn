@@ -31,7 +31,7 @@
         <sql-transaction>
             <with-attribute key="Attributes.NODE" value="${preferencesElement}">
                 <if test="${jexl(Attributes.NODE != null)}">
-                    <crn location="import-preferences.crn"/>
+                    <crn location="import-preferences_v3-2.crn"/>
                 </if>
             </with-attribute>
         </sql-transaction>

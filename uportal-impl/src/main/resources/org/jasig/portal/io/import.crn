@@ -445,7 +445,6 @@
                                                                 <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
                                                             </when>
                                                             <otherwise>
-                                                                <echo-ln>WARNING: Should not be here.  Unsupported Fragment Layout version.</echo-ln>
                                                                 <crn location="${importScriptUrl}"/>
                                                             </otherwise>
                                                         </choose>
