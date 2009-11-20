@@ -16,7 +16,7 @@
 
     <name>uPortal WAR</name>
     <description>The uPortal web application.</description>
-
+    
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
@@ -136,6 +136,51 @@
                         <goals>
                             <goal>assemble</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jasig.portal</groupId>
+                <artifactId>maven-uportal-plugin</artifactId>
+                <version>1.0.0-M2</version>
+                <configuration>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>aggregate-universality-uportal3-skin</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <skinConfigurationFile>src/main/webapp/media/skins/universality/uportal3/skin.xml</skinConfigurationFile>
+                            <outputRootDirectory>target/uPortal/media/skins/universality/uportal3/</outputRootDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>aggregate-universality-ivy-skin</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <skinConfigurationFile>src/main/webapp/media/skins/universality/ivy/skin.xml</skinConfigurationFile>
+                            <outputRootDirectory>target/uPortal/media/skins/universality/ivy/</outputRootDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>aggregate-muniversality-skin</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <skinConfigurationFile>src/main/webapp/media/skins/muniversality/uportal3/skin.xml</skinConfigurationFile>
+                            <outputRootDirectory>target/uPortal/media/skins/muniversality/uportal3/</outputRootDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

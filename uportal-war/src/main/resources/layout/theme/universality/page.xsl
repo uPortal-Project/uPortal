@@ -13,8 +13,15 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xalan="http://xml.apache.org/xalan" 
+    xmlns:resources="http://www.jasig.org/uportal/XSL/web/skin"
+    extension-element-prefixes="resources" 
+    exclude-result-prefixes="xalan resources" >
 
+  <xalan:component prefix="resources" elements="output">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.web.skin.ResourcesXalanElements" />
+  </xalan:component>
   
   <!-- ========== TEMPLATE: PAGE ========== -->
   <!-- ==================================== -->
@@ -78,6 +85,21 @@
         <!-- ****** JAVASCRIPT ****** -->
         <xsl:call-template name="page.js"/> <!-- Sets javascript links -->
         <!-- ****** JAVASCRIPT ****** -->
+        
+        <!-- 
+        In order to enable resource aggregation (UP-2505), comment out the
+        call-template elements for page.css and page.js above and
+        uncomment the following section: 
+        -->
+        <!--  
+        <resources:output path="media/skins/universality/{$SKIN}/"/>
+        <script type="text/javascript">
+            var up = up || {};
+            up.jQuery = jQuery.noConflict(true);
+            up.fluid = fluid;
+            fluid = null;
+        </script>
+        -->
       </head>
       
       <body id="portal" class="{$FLUID_THEME_CLASS}">

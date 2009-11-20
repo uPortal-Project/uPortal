@@ -13,5 +13,8 @@
         <property name="portletRequestParameterManager"  ref="portletRequestParameterManager" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="carResources" ref="carResources" />
+        <property name="resourcesDao" ref="resourcesDao"/>
     </bean>
+    
+    <bean id="resourcesDao" class="org.jasig.portal.web.skin.ResourcesDaoImpl"/>
 </beans>
