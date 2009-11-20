@@ -49,7 +49,7 @@ public class ResourcesDaoImpl implements ResourcesDao, ServletContextAware {
 	public Resources getResources(String pathToSkinXml) {
 		InputStream skinSource = servletContext.getResourceAsStream(pathToSkinXml);
 		if(null == skinSource) {
-			throw new IllegalArgumentException("no skin resources found at " + pathToSkinXml);
+			return null;
 		}
 		try {
 			Unmarshaller u = context.createUnmarshaller();
