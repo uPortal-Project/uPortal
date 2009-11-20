@@ -29,100 +29,100 @@
  * ===================================
  */
 
-.fl-col-flex6 {width: 6%;float:left; display:inline;}
-.fl-col-flex7 {width: 7%;float:left; display:inline;}
-.fl-col-flex8 {width: 8%;float:left; display:inline;}
-.fl-col-flex9 {width: 9%;float:left; display:inline;}
-.fl-col-flex10 {width: 10%;float:left; display:inline;}
-.fl-col-flex11 {width: 11%;float:left; display:inline;}
-.fl-col-flex12 {width: 12%;float:left; display:inline;}
-.fl-col-flex13 {width: 13%;float:left; display:inline;}
-.fl-col-flex14 {width: 14%;float:left; display:inline;}
-.fl-col-flex15 {width: 15%;float:left; display:inline;}
-.fl-col-flex16 {width: 16%;float:left; display:inline;}
-.fl-col-flex17 {width: 17%;float:left; display:inline;}
-.fl-col-flex18 {width: 18%;float:left; display:inline;}
-.fl-col-flex19 {width: 19%;float:left; display:inline;}
-.fl-col-flex20 {width: 20%;float:left; display:inline;}
-.fl-col-flex21 {width: 21%;float:left; display:inline;}
-.fl-col-flex22 {width: 22%;float:left; display:inline;}
-.fl-col-flex23 {width: 23%;float:left; display:inline;}
-.fl-col-flex24 {width: 24%;float:left; display:inline;}
-.fl-col-flex25 {width: 25%;float:left; display:inline;}
-.fl-col-flex26 {width: 26%;float:left; display:inline;}
-.fl-col-flex27 {width: 27%;float:left; display:inline;}
-.fl-col-flex28 {width: 28%;float:left; display:inline;}
-.fl-col-flex29 {width: 29%;float:left; display:inline;}
-.fl-col-flex30 {width: 30%;float:left; display:inline;}
-.fl-col-flex31 {width: 31%;float:left; display:inline;}
-.fl-col-flex32 {width: 32%;float:left; display:inline;}
-.fl-col-flex33 {width: 33%;float:left; display:inline;}
-.fl-col-flex34 {width: 34%;float:left; display:inline;}
-.fl-col-flex35 {width: 35%;float:left; display:inline;}
-.fl-col-flex36 {width: 36%;float:left; display:inline;}
-.fl-col-flex37 {width: 37%;float:left; display:inline;}
-.fl-col-flex38 {width: 38%;float:left; display:inline;}
-.fl-col-flex39 {width: 39%;float:left; display:inline;}
-.fl-col-flex40 {width: 40%;float:left; display:inline;}
-.fl-col-flex41 {width: 41%;float:left; display:inline;}
-.fl-col-flex42 {width: 42%;float:left; display:inline;}
-.fl-col-flex43 {width: 43%;float:left; display:inline;}
-.fl-col-flex44 {width: 44%;float:left; display:inline;}
-.fl-col-flex45 {width: 45%;float:left; display:inline;}
-.fl-col-flex46 {width: 46%;float:left; display:inline;}
-.fl-col-flex47 {width: 47%;float:left; display:inline;}
-.fl-col-flex48 {width: 48%;float:left; display:inline;}
-.fl-col-flex49 {width: 49%;float:left; display:inline;}
-.fl-col-flex50 {width: 50%;float:left; display:inline;}
-.fl-col-flex51 {width: 51%;float:left; display:inline;}
-.fl-col-flex52 {width: 52%;float:left; display:inline;}
-.fl-col-flex53 {width: 53%;float:left; display:inline;}
-.fl-col-flex54 {width: 54%;float:left; display:inline;}
-.fl-col-flex55 {width: 55%;float:left; display:inline;}
-.fl-col-flex56 {width: 56%;float:left; display:inline;}
-.fl-col-flex57 {width: 57%;float:left; display:inline;}
-.fl-col-flex58 {width: 58%;float:left; display:inline;}
-.fl-col-flex59 {width: 59%;float:left; display:inline;}
-.fl-col-flex60 {width: 60%;float:left; display:inline;}
-.fl-col-flex61 {width: 61%;float:left; display:inline;}
-.fl-col-flex62 {width: 62%;float:left; display:inline;}
-.fl-col-flex63 {width: 63%;float:left; display:inline;}
-.fl-col-flex64 {width: 64%;float:left; display:inline;}
-.fl-col-flex65 {width: 65%;float:left; display:inline;}
-.fl-col-flex66 {width: 66%;float:left; display:inline;}
-.fl-col-flex67 {width: 67%;float:left; display:inline;}
-.fl-col-flex68 {width: 68%;float:left; display:inline;}
-.fl-col-flex69 {width: 69%;float:left; display:inline;}
-.fl-col-flex70 {width: 70%;float:left; display:inline;}
-.fl-col-flex71 {width: 71%;float:left; display:inline;}
-.fl-col-flex72 {width: 72%;float:left; display:inline;}
-.fl-col-flex73 {width: 73%;float:left; display:inline;}
-.fl-col-flex74 {width: 74%;float:left; display:inline;}
-.fl-col-flex75 {width: 75%;float:left; display:inline;}
-.fl-col-flex76 {width: 76%;float:left; display:inline;}
-.fl-col-flex77 {width: 77%;float:left; display:inline;}
-.fl-col-flex78 {width: 78%;float:left; display:inline;}
-.fl-col-flex79 {width: 79%;float:left; display:inline;}
-.fl-col-flex80 {width: 80%;float:left; display:inline;}
-.fl-col-flex81 {width: 81%;float:left; display:inline;}
-.fl-col-flex82 {width: 82%;float:left; display:inline;}
-.fl-col-flex83 {width: 83%;float:left; display:inline;}
-.fl-col-flex84 {width: 84%;float:left; display:inline;}
-.fl-col-flex85 {width: 85%;float:left; display:inline;}
-.fl-col-flex86 {width: 86%;float:left; display:inline;}
-.fl-col-flex87 {width: 87%;float:left; display:inline;}
-.fl-col-flex88 {width: 88%;float:left; display:inline;}
-.fl-col-flex89 {width: 89%;float:left; display:inline;}
-.fl-col-flex90 {width: 90%;float:left; display:inline;}
-.fl-col-flex91 {width: 91%;float:left; display:inline;}
-.fl-col-flex92 {width: 92%;float:left; display:inline;}
-.fl-col-flex93 {width: 93%;float:left; display:inline;}
-.fl-col-flex94 {width: 94%;float:left; display:inline;}
-.fl-col-flex95 {width: 95%;float:left; display:inline;}
-.fl-col-flex96 {width: 96%;float:left; display:inline;}
-.fl-col-flex97 {width: 97%;float:left; display:inline;}
-.fl-col-flex98 {width: 98%;float:left; display:inline;}
-.fl-col-flex99 {width: 99%;float:left; display:inline;}
+.fl-col-flex6 {width:6%; float:left; display:inline;}
+.fl-col-flex7 {width:7%; float:left; display:inline;}
+.fl-col-flex8 {width:8%; float:left; display:inline;}
+.fl-col-flex9 {width:9%; float:left; display:inline;}
+.fl-col-flex10 {width:10%; float:left; display:inline;}
+.fl-col-flex11 {width:11%; float:left; display:inline;}
+.fl-col-flex12 {width:12%; float:left; display:inline;}
+.fl-col-flex13 {width:13%; float:left; display:inline;}
+.fl-col-flex14 {width:14%; float:left; display:inline;}
+.fl-col-flex15 {width:15%; float:left; display:inline;}
+.fl-col-flex16 {width:16%; float:left; display:inline;}
+.fl-col-flex17 {width:17%; float:left; display:inline;}
+.fl-col-flex18 {width:18%; float:left; display:inline;}
+.fl-col-flex19 {width:19%; float:left; display:inline;}
+.fl-col-flex20 {width:20%; float:left; display:inline;}
+.fl-col-flex21 {width:21%; float:left; display:inline;}
+.fl-col-flex22 {width:22%; float:left; display:inline;}
+.fl-col-flex23 {width:23%; float:left; display:inline;}
+.fl-col-flex24 {width:24%; float:left; display:inline;}
+.fl-col-flex25 {width:25%; float:left; display:inline;}
+.fl-col-flex26 {width:26%; float:left; display:inline;}
+.fl-col-flex27 {width:27%; float:left; display:inline;}
+.fl-col-flex28 {width:28%; float:left; display:inline;}
+.fl-col-flex29 {width:29%; float:left; display:inline;}
+.fl-col-flex30 {width:30%; float:left; display:inline;}
+.fl-col-flex31 {width:31%; float:left; display:inline;}
+.fl-col-flex32 {width:32%; float:left; display:inline;}
+.fl-col-flex33 {width:33%; float:left; display:inline;}
+.fl-col-flex34 {width:34%; float:left; display:inline;}
+.fl-col-flex35 {width:35%; float:left; display:inline;}
+.fl-col-flex36 {width:36%; float:left; display:inline;}
+.fl-col-flex37 {width:37%; float:left; display:inline;}
+.fl-col-flex38 {width:38%; float:left; display:inline;}
+.fl-col-flex39 {width:39%; float:left; display:inline;}
+.fl-col-flex40 {width:40%; float:left; display:inline;}
+.fl-col-flex41 {width:41%; float:left; display:inline;}
+.fl-col-flex42 {width:42%; float:left; display:inline;}
+.fl-col-flex43 {width:43%; float:left; display:inline;}
+.fl-col-flex44 {width:44%; float:left; display:inline;}
+.fl-col-flex45 {width:45%; float:left; display:inline;}
+.fl-col-flex46 {width:46%; float:left; display:inline;}
+.fl-col-flex47 {width:47%; float:left; display:inline;}
+.fl-col-flex48 {width:48%; float:left; display:inline;}
+.fl-col-flex49 {width:49%; float:left; display:inline;}
+.fl-col-flex50 {width:50%; float:left; display:inline;}
+.fl-col-flex51 {width:51%; float:left; display:inline;}
+.fl-col-flex52 {width:52%; float:left; display:inline;}
+.fl-col-flex53 {width:53%; float:left; display:inline;}
+.fl-col-flex54 {width:54%; float:left; display:inline;}
+.fl-col-flex55 {width:55%; float:left; display:inline;}
+.fl-col-flex56 {width:56%; float:left; display:inline;}
+.fl-col-flex57 {width:57%; float:left; display:inline;}
+.fl-col-flex58 {width:58%; float:left; display:inline;}
+.fl-col-flex59 {width:59%; float:left; display:inline;}
+.fl-col-flex60 {width:60%; float:left; display:inline;}
+.fl-col-flex61 {width:61%; float:left; display:inline;}
+.fl-col-flex62 {width:62%; float:left; display:inline;}
+.fl-col-flex63 {width:63%; float:left; display:inline;}
+.fl-col-flex64 {width:64%; float:left; display:inline;}
+.fl-col-flex65 {width:65%; float:left; display:inline;}
+.fl-col-flex66 {width:66%; float:left; display:inline;}
+.fl-col-flex67 {width:67%; float:left; display:inline;}
+.fl-col-flex68 {width:68%; float:left; display:inline;}
+.fl-col-flex69 {width:69%; float:left; display:inline;}
+.fl-col-flex70 {width:70%; float:left; display:inline;}
+.fl-col-flex71 {width:71%; float:left; display:inline;}
+.fl-col-flex72 {width:72%; float:left; display:inline;}
+.fl-col-flex73 {width:73%; float:left; display:inline;}
+.fl-col-flex74 {width:74%; float:left; display:inline;}
+.fl-col-flex75 {width:75%; float:left; display:inline;}
+.fl-col-flex76 {width:76%; float:left; display:inline;}
+.fl-col-flex77 {width:77%; float:left; display:inline;}
+.fl-col-flex78 {width:78%; float:left; display:inline;}
+.fl-col-flex79 {width:79%; float:left; display:inline;}
+.fl-col-flex80 {width:80%; float:left; display:inline;}
+.fl-col-flex81 {width:81%; float:left; display:inline;}
+.fl-col-flex82 {width:82%; float:left; display:inline;}
+.fl-col-flex83 {width:83%; float:left; display:inline;}
+.fl-col-flex84 {width:84%; float:left; display:inline;}
+.fl-col-flex85 {width:85%; float:left; display:inline;}
+.fl-col-flex86 {width:86%; float:left; display:inline;}
+.fl-col-flex87 {width:87%; float:left; display:inline;}
+.fl-col-flex88 {width:88%; float:left; display:inline;}
+.fl-col-flex89 {width:89%; float:left; display:inline;}
+.fl-col-flex90 {width:90%; float:left; display:inline;}
+.fl-col-flex91 {width:91%; float:left; display:inline;}
+.fl-col-flex92 {width:92%; float:left; display:inline;}
+.fl-col-flex93 {width:93%; float:left; display:inline;}
+.fl-col-flex94 {width:94%; float:left; display:inline;}
+.fl-col-flex95 {width:95%; float:left; display:inline;}
+.fl-col-flex96 {width:96%; float:left; display:inline;}
+.fl-col-flex97 {width:97%; float:left; display:inline;}
+.fl-col-flex98 {width:98%; float:left; display:inline;}
+.fl-col-flex99 {width:99%; float:left; display:inline;}
 
 
 /* Removes padding and margin compensations for padding. */
@@ -138,6 +138,11 @@
 .fl-col-mixed-250 .fl-col-flex-right {margin-right:250px;}
 .fl-col-mixed-300 .fl-col-flex-left {margin-left:300px;}
 .fl-col-mixed-300 .fl-col-flex-right {margin-right:300px;}
+
+
+/* Prevent cascading margins of nested column layouts. */
+.layout-1-columns #portalPageBodyColumns.fl-col-flex,
+.layout-1-columns #portalPageBodyColumns .fl-col-flex {margin:0;}
 
 
 /* uPortal layout and structure
@@ -218,12 +223,10 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalLogin input {margin-bottom:1em;}
 
 /* navigation */
-#portletNavigation ul,
-#portletNavigation li {margin:0; padding:0;}
+#portalNavigation ul,
+#portalNavigation li {margin:0; padding:0;}
 /* subrow */
 #portalNavigationSubrow {padding:0.5em 0;}
-#portalNavigationSubrow ul,
-#portalNavigationSubrow li {margin:0; padding:0;}
 .sidebar-left-100 #portalNavigationSubrow ul {margin-left:120px;}
 .sidebar-left-150 #portalNavigationSubrow ul {margin-left:170px;}
 .sidebar-left-200 #portalNavigationSubrow ul {margin-left:220px;}
@@ -237,11 +240,13 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigationSubrow li {list-style-type:none; display:inline;}
 #portalNavigationSubrow a {padding:0em 1em;}
 /* Flyout subnav */
-#portalFlyoutNavigation .portal-flyout-container {width:200px; position:absolute; z-index:10;}
-#portalFlyoutNavigation .portal-flyout-container ul.portal-subnav-list {padding:0; margin:0;}
-#portalFlyoutNavigation .portal-flyout-container li {list-style:none;}
-#portalFlyoutNavigation a {display:block;}
-#portalFlyoutNavigation .portal-flyout-iframe {position:absolute; z-index:9;}
+#portalNavigation .portal-flyout-container {width:200px; position:absolute; z-index:100000; display:none;}
+#portalNavigation .portal-flyout-container li {list-style:none;}
+#portalNavigation .portal-flyout-container .portal-subnav-list li {display:list-item; position:static; padding:0;}
+#portalNavigation .portal-flyout-container .portal-subnav-list li a {display:block;}
+#portalNavigation .portal-flyout-iframe {position:absolute; z-index:9;}
+/* Add Tab */
+#portalNavigation .add-tab {display:inline-block;}
 
 /*
  | The obsolete 3.0 - 3.0.2 rendering of the navigation as an absolutely positioned element.
@@ -286,7 +291,7 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalPageHeader #webSearchContainer select {margin-left:0.3em;}
 
 #tooltip h3, #tooltip div { margin: 0; }
-#tooltip {position: absolute; z-index: 3000; opacity: 0.85; max-width: 400px; padding: 4px;}
+#tooltip {position:absolute; z-index:3000; opacity:0.85; max-width:400px; padding:4px;}
 
 /* Fragment Administration */
 #fragmentAdminForm {margin:0; padding:0;}
@@ -296,6 +301,10 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* Portlet Navigation */
 #portletNavigation h3 {margin:0.5em 0 0 0; padding:0.2em 0.5em;}
+
+/* Ajax Menus */
+#changeColumns tr td { text-align: center; }
+#changeColumns img { vertical-align: middle; padding:3px; }
 
 
 /* uPortal specific channels and portlets

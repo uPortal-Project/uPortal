@@ -30,9 +30,6 @@
 /* Support for legacy uPortal css classes. */
 @import url("uportal3_legacy.min.css");
 
-/* Default jqueryui css */
-@import url("/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css");
-
 /* uPortal jqueryui override css */
 @import url("jquery.min.css");
 
