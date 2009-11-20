@@ -80,18 +80,35 @@ public class ResourcesXalanElements {
 		
 		final String path = elem.getAttribute("path", context.getContextNode(), transformer);
 		final String relativeRoot = FilenameUtils.getPath(path);
-		
-		//TODO default value for aggregated_theme? temporarily set to true
-		boolean aggregatedThemeEnabled = Boolean.parseBoolean(System.getProperty(AGGREGATED_THEME_PARAMETER, "true"));
-		
-		StringBuilder pathToSkinXml = new StringBuilder(path);
-		if(aggregatedThemeEnabled) {
-			pathToSkinXml.append(AGGREGATED_SKIN_FILENAME);
-		} else {
-			pathToSkinXml.append(DEFAULT_SKIN_FILENAME);
+		if(log.isDebugEnabled()) {
+			log.debug("relativeRoot from element path: " + relativeRoot);
 		}
 		
-		Resources skinResources = resourcesDao.getResources(pathToSkinXml.toString());
+		boolean aggregatedThemeEnabled = Boolean.parseBoolean(System.getProperty(AGGREGATED_THEME_PARAMETER, "true"));
+		
+		StringBuilder primaryPath = new StringBuilder(path);
+		StringBuilder secondaryPath = new StringBuilder(path);
+		if(aggregatedThemeEnabled) {
+			primaryPath.append(AGGREGATED_SKIN_FILENAME);
+			secondaryPath.append(DEFAULT_SKIN_FILENAME);
+		} else {
+			primaryPath.append(DEFAULT_SKIN_FILENAME);
+			secondaryPath.append(AGGREGATED_SKIN_FILENAME);
+		}
+		
+		Resources skinResources = resourcesDao.getResources(primaryPath.toString());
+		if(null == skinResources) {		
+			if(log.isWarnEnabled()) {
+				log.warn(primaryPath.toString() + " not found, attempting " + secondaryPath.toString());
+			}
+			skinResources = resourcesDao.getResources(secondaryPath.toString());
+		}
+		// if it's still null, we have to bail out
+		if(null == skinResources) {
+			throw new IllegalStateException("no skin configuration found at " + primaryPath.toString() + " or " + secondaryPath.toString());
+		}
+		
+		
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = builder.newDocument();
 		DocumentFragment headFragment = doc.createDocumentFragment();
