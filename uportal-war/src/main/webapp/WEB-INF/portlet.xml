@@ -251,6 +251,25 @@
     </portlet> 
 
     <portlet>
+        <portlet-name>IFrame</portlet-name>
+        <display-name xml:lang="en">Image</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/IFrame-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>IFrame</title>
+        </portlet-info>
+    </portlet>
+    
+    <portlet>
         <portlet-name>Image</portlet-name>
         <display-name xml:lang="en">Image</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>

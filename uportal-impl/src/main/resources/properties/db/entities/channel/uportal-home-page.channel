@@ -5,7 +5,7 @@
   <fname>uportal-home-page</fname>
   <desc>uPortal Home Page channel</desc>
   <type>Inline Frame</type>
-  <class>org.jasig.portal.channels.CInlineFrame</class>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>20000</timeout>
   <hasedit>N</hasedit>
   <hashelp>N</hashelp>
@@ -20,17 +20,32 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>height</name>  
-      <value>800</value>  
+      <name>portletApplicationId</name>  
+      <value>/uPortal</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>url</name>  
-      <value>http://uportal.org/</value>  
+      <name>portletName</name>  
+      <value>IFrame</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
+      <description/>  
+      <ovrd>N</ovrd>
+    </parameter>
   </parameters>
-  <portletPreferences/>
+  <portletPreferences>
+    <portletPreference> 
+      <name>height</name>  
+      <values><value>800</value></values>  
+    </portletPreference>
+    <portletPreference> 
+      <name>url</name>  
+      <values><value>http://uportal.org/</value></values>  
+    </portletPreference>
+  </portletPreferences>
 </channel-definition>

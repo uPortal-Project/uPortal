@@ -30,6 +30,7 @@ import org.xml.sax.ContentHandler;
  * @author Susan Bramhall
  * @version $Revision$
  */
+@Deprecated
 public class CInlineFrame extends BaseChannel implements ICacheable {
 
   private static final String sslLocation = "CInlineFrame/CInlineFrame.ssl";
