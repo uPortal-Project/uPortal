@@ -5,7 +5,7 @@
   <fname>demo-feature</fname>
   <desc>Demo-targeted welcome screen</desc>
   <type>Image</type>
-  <class>org.jasig.portal.channels.CImage</class>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>30000</timeout>
   <hasedit>N</hasedit>
   <hashelp>N</hashelp>
@@ -20,35 +20,44 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>img-border</name>  
-      <value>0</value>  
+      <name>portletApplicationId</name>  
+      <value>/uPortal</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>img-height</name>  
-      <value>200</value>  
+      <name>portletName</name>  
+      <value>Image</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
-    <parameter> 
-      <name>img-link</name>  
-      <value>demo_feature.png</value>  
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
       <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>img-uri</name>  
-      <value>media/org/jasig/portal/channels/CImage/demo_feature.png</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>img-width</name>  
-      <value>468</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
+      <ovrd>N</ovrd>
     </parameter>
   </parameters>
-  <portletPreferences/>
+  <portletPreferences>
+    <portletPreference> 
+      <name>img-border</name>  
+      <values><value>0</value></values>  
+    </portletPreference>
+    <portletPreference> 
+      <name>img-height</name>  
+      <values><value>200</value></values>  
+    </portletPreference>
+    <portletPreference> 
+      <name>img-link</name>  
+      <values><value>demo_feature.png</value></values>  
+    </portletPreference>
+    <portletPreference> 
+      <name>img-uri</name>  
+      <values><value>media/org/jasig/portal/channels/CImage/demo_feature.png</value></values>  
+    </portletPreference>
+    <portletPreference> 
+      <name>img-width</name>  
+      <values><value>468</value></values>  
+    </portletPreference>
+  </portletPreferences>
 </channel-definition>

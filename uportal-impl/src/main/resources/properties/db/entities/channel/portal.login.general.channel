@@ -12,9 +12,7 @@
   <hasabout>Y</hasabout>
   <secure>N</secure>
   <locale>en_US</locale>
-  <categories>
-    <category>uPortal</category>
-  </categories>
+  <categories/>
   <groups>
     <group>Everyone</group>
   </groups>

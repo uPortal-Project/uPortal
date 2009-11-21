@@ -37,6 +37,7 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
+@Deprecated
 public class CImage extends BaseChannel implements ICacheable, IChannel
 {
     public static final String ALT_TEXT_CHANNEL_PARAM_NAME = "alt-text";

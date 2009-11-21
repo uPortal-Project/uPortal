@@ -47,10 +47,10 @@ Version $Revision$
 <channelDef>
 
   <description>
-    This is a channel for rendering an image with an optional title and subtitle
+    This is a portlet for rendering an image with an optional title and subtitle
   </description>
 
-  <class>org.jasig.portal.channels.CImage</class>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
 
   <params>
     <step>
@@ -64,6 +64,44 @@ Version $Revision$
       </description>
 
       <parameter modify="publish-only">
+        <name>portletApplicationId</name>
+        <label>Portlet Web Application Path</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>/uPortal</example>
+        <description>
+          This is the name of the web application the portlet resides in including a preceding /.
+        </description>
+        <defaultValue>/uPortal</defaultValue>
+      </parameter>
+      
+      <parameter modify="publish-only">
+        <name>portletName</name>
+        <label>Portlet Name</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>Image</example>
+        <description>
+          This is the name of the portlet as defined in the portlet.xml descriptor.
+        </description>
+        <defaultValue>Image</defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>disableDynamicTitle</name>
+        <label>Disable Dynamic Title</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <defaultValue>true</defaultValue>
+      </parameter>
+
+      <preference modify="publish-only">
         <name>img-uri</name>
         <label>Image URI</label>
         <type base="string" input="text" display="text">
@@ -71,9 +109,9 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <example>http://www.mysite.com/image.jpg</example>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish-only">
+      <preference modify="publish-only">
         <name>alt-text</name>
         <label>Image alt-text</label>
         <type base="string" input="text" display="text">
@@ -81,9 +119,9 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <example>Photo of two roads diverging in a yellow wood</example>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish-only">
+      <preference modify="publish-only">
         <name>img-width</name>
         <label>Image width (pixels)</label>
         <type base="integer" input="text" display="text">
@@ -91,9 +129,9 @@ Version $Revision$
           <maxlength>5</maxlength>
         </type>
         <defaultValue>400</defaultValue>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish-only">
+      <preference modify="publish-only">
         <name>img-height</name>
         <label>Image height (pixels)</label>
         <type base="integer" input="text" display="text">
@@ -101,9 +139,9 @@ Version $Revision$
           <maxlength>5</maxlength>
         </type>
         <defaultValue>400</defaultValue>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish-only">
+      <preference modify="publish-only">
         <name>img-border</name>
         <label>Image border (pixels)</label>
         <type base="integer" input="text" display="text">
@@ -111,9 +149,9 @@ Version $Revision$
           <maxlength>2</maxlength>
         </type>
         <defaultValue>0</defaultValue>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish-only">
+      <preference modify="publish-only">
         <name>img-link</name>
         <label>Image link</label>
         <type base="string" input="text" display="text">
@@ -121,7 +159,7 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <example>http://www.mysite.com</example>
-      </parameter>
+      </preference>
     </step>
 
     <step>
@@ -132,7 +170,7 @@ Version $Revision$
         and may not display on all devices
       </description>
 
-      <parameter modify="publish-only">
+      <preference modify="publish-only">
         <name>caption</name>
         <label>Caption</label>
         <type base="string" input="text" display="text">
@@ -140,9 +178,9 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <example>My Image</example>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish-only">
+      <preference modify="publish-only">
         <name>subcaption</name>
         <label>Sub-caption</label>
         <type base="string" input="text" display="text">
@@ -150,7 +188,7 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <example>Refreshes every hour</example>
-      </parameter>
+      </preference>
 
     </step>
 
