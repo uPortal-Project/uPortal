@@ -47,10 +47,10 @@ Version $Revision$
 <channelDef>
 
   <description>
-    This is a channel for rendering web content inside an internal frame.
+    This is a portlet for rendering web content inside an internal frame.
   </description>
 
-  <class>org.jasig.portal.channels.CInlineFrame</class>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
 
   <params>
     <step>
@@ -66,6 +66,44 @@ Version $Revision$
       </description>
 
       <parameter modify="publish-only">
+        <name>portletApplicationId</name>
+        <label>Portlet Web Application Path</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>/uPortal</example>
+        <description>
+          This is the name of the web application the portlet resides in including a preceding /.
+        </description>
+        <defaultValue>/uPortal</defaultValue>
+      </parameter>
+      
+      <parameter modify="publish-only">
+        <name>portletName</name>
+        <label>Portlet Name</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <example>IFrame</example>
+        <description>
+          This is the name of the portlet as defined in the portlet.xml descriptor.
+        </description>
+        <defaultValue>IFrame</defaultValue>
+      </parameter>
+
+      <parameter modify="publish-only">
+        <name>disableDynamicTitle</name>
+        <label>Disable Dynamic Title</label>
+        <type base="string" input="text" display="hidden">
+          <length>40</length>
+          <maxlength>2000</maxlength>
+        </type>
+        <defaultValue>true</defaultValue>
+      </parameter>
+
+      <preference modify="publish-only">
         <name>url</name>
         <label>URL</label>
         <type base="string" input="text" display="text">
@@ -73,9 +111,9 @@ Version $Revision$
           <maxlength>2000</maxlength>
         </type>
         <example>http://www.udel.edu/uPortal</example>
-      </parameter>
+      </preference>
 
-      <parameter modify="publish">
+      <preference modify="publish">
         <name>height</name>
         <label>Frame Height (pixels)</label>
         <type base="integer" input="text" display="text">
@@ -83,7 +121,7 @@ Version $Revision$
           <maxlength>4</maxlength>
         </type>
         <defaultValue>600</defaultValue>
-      </parameter>
+      </preference>
 
     </step>
 
