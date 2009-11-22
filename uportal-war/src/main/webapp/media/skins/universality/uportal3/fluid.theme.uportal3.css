@@ -120,14 +120,14 @@
 .fl-theme-uportal3 #portalNavigation .fl-tabs,
 .fl-theme-uportal3 #portalNavigation .fl-tabs li,
 .fl-theme-uportal3 #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:transparent;}
-.fl-theme-uportal3 #portalNavigation .fl-tabs {text-align:center; border:none;}
+.fl-theme-uportal3 #portalNavigation .fl-tabs {padding:0.3em 0; text-align:center; border:none;}
 .fl-theme-uportal3 #portalNavigation .fl-tabs li.portal-navigation {position:relative; padding:0.4em 0;}
 .fl-theme-uportal3 #portalNavigation .fl-tabs li.portal-navigation a {padding:0.4em 2em; font-size:120%; font-weight:bold; color:#fff; text-decoration:none;}
 .fl-theme-uportal3 #portalNavigation .fl-tabs li.portal-navigation:hover,
 .fl-theme-uportal3 #portalNavigation .fl-tabs li.portal-navigation:hover a,
 .fl-theme-uportal3 #portalNavigation .fl-tabs li.portal-navigation a:hover {background:#608695 url(images/nav_tab_bkd.gif) 0px -300px repeat-x}
-.fl-theme-uportal3 #portalNavigation .fl-tabs li.portal-navigation.fl-activeTab a,
-.fl-theme-uportal3 #portalNavigation .fl-tabs li.portal-navigation.fl-activeTab a:hover {background:#2e5579 url(images/nav_tab_bkd.gif) top left repeat-x; border-left:1px solid #1e3851; border-right:1px solid #1e3851; color:#fff;}
+.fl-theme-uportal3 #portalNavigation .fl-tabs li.portal-navigation.fl-activeTab a.portal-navigation-link,
+.fl-theme-uportal3 #portalNavigation .fl-tabs li.portal-navigation.fl-activeTab a.portal-navigation-link:hover {background:#2e5579 url(images/nav_tab_bkd.gif) top left repeat-x; border-left:1px solid #1e3851; border-right:1px solid #1e3851; color:#fff;}
 .fl-theme-uportal3 #portalNavigation .fl-tab-content {background-color:#fff; color:#000;}
 .fl-theme-uportal3 #portalNavigationSubrow.fl-tab-content {text-align:center; background:#336699 url(images/nav_subrow_bkd.gif) top right repeat-x;}
 .fl-theme-uportal3 #portalNavigationSubrow a {text-decoration:none; color:#acc9e6;}
