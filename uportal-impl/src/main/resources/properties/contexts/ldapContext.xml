@@ -24,7 +24,7 @@
      +-->
     <!--
     <bean id="defaultLdapServer" class="org.jasig.portal.ldap.ContextSourceLdapServerImpl">
-        <property name="ldapContextSource">
+        <property name="contextSource">
             <bean id="legacyLdapContext" class="org.springframework.ldap.core.support.LdapContextSource">    
                 <property name="url" value="ldap://ldap.myuniv.edu:389"/>
                 <property name="userName" value="cn=AuthUser, ou=People, dc=myuniv, dc=edu"/>
