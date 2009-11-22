@@ -126,6 +126,7 @@
     
     
         <!-- Portlet WAR Dependency Version Properties -->
+        <cas-proxy-test-portlet.version>0.1-SNAPSHOT</cas-proxy-test-portlet.version>
         <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
         <FunctionalTestsPortlet.version>1.0.2-SNAPSHOT</FunctionalTestsPortlet.version>
         <googleportlet.version>0.4</googleportlet.version>

@@ -33,6 +33,13 @@
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>cas-proxy-test-portlet</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>BookmarksPortlet</artifactId>
             <version>${pom.parent.version}</version>
             <type>war</type>
@@ -142,6 +149,12 @@
                             <artifactId>cas</artifactId>
                             <bundleFileName>cas.war</bundleFileName>
                             <contextRoot>/cas</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>cas-proxy-test-portlet</artifactId>
+                            <bundleFileName>cas-proxy-test-portlet.war</bundleFileName>
+                            <contextRoot>/cas-proxy-test-portlet</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>

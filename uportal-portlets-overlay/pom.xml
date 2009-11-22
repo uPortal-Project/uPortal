@@ -18,6 +18,7 @@
     <description>Parent package for portlets deployed with uPortal.</description>
 
     <modules>
+        <module>cas-proxy-test-portlet</module>
         <module>BookmarksPortlet</module>
         <module>googleportlet</module>
         <module>RssPortlet</module>

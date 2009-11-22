@@ -1,0 +1,72 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
+  <title>WebProxy Cas Test</title>
+  <name>WebProxy Cas Test</name>
+  <fname>webproxy-cas-test</fname>
+  <desc>Test the CAS-proxy capability of the built-in Web Proxy channel</desc>
+  <type>Web Proxy</type>
+  <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>cw_edit</name>  
+      <value></value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_help</name>  
+      <value></value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_info</name>  
+      <value></value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_passThrough</name>  
+      <value>none</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_ssl</name>  
+      <value>XHTML.ssl</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_tidy</name>  
+      <value>off</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>cw_xml</name>  
+      <value>http://localhost:8080/cas-proxy-test-portlet/content/index.jsp</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>upc_localConnContext</name>  
+      <value>org.jasig.portal.security.provider.cas.CasConnectionContext</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+  <portletPreferences/>
+</channel-definition>
