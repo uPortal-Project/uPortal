@@ -163,6 +163,9 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
     		seedValue.add(ei.getKey());
     		seed.put(IPerson.USERNAME, seedValue);
     		Map<String,List<Object>> attr = PersonDirectory.getPersonAttributeDao().getMultivaluedUserAttributes(seed);
+            // avoid NPEs and unnecessary IPerson creation
+            if (attr != null && !attr.isEmpty()) {
+
     		IPerson p = PersonFactory.createPerson();
     		p.setAttributes(attr);
 
@@ -193,6 +196,7 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
     				}
         		}
     		}
+            }
     		
     	} else {
     		// WTF...
