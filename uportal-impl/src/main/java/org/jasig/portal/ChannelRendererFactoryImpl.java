@@ -164,21 +164,36 @@ public final class ChannelRendererFactoryImpl
     	if (channel instanceof CError){
     	    		threadPoolExecutor = cErrorThreadPool;
     	    	}else if (cSharedThreadPool != null){
-    	        	int activeCount = cSharedThreadPool.getActiveCount();
-    	        	int queueSize = cSharedThreadPool.getQueue().size();
-    	        	
-    	        	if (queueSize > 50 || activeCount > 40){
-    	        		log.error("queueSize: "+queueSize+" activeCount: "+activeCount+" "+
-    	        				"largestPoolSize: "+cSharedThreadPool.getLargestPoolSize());
-    	        	}
-    	        	
-    	        	log.debug(
-    	        			"stp-activeCount: "+cSharedThreadPool.getActiveCount()+" " +
-    	        			"stp-completedTaskCount: "+cSharedThreadPool.getCompletedTaskCount()+" " +
-    	        			"stp-corePoolSize: "+cSharedThreadPool.getCorePoolSize()+" " +
-    	        			"stp-queue-size: "+cSharedThreadPool.getQueue().size()+" " +
-    	        			"");
-    	        	
+                    int activeCount = cSharedThreadPool.getActiveCount();
+                    int queueSize = cSharedThreadPool.getQueue().size();
+                    int largestPoolSize = cSharedThreadPool.getLargestPoolSize();
+                    int maxPoolSize = cSharedThreadPool.getMaximumPoolSize();
+        
+                    //If 75% of pool used, warn
+                    if (log.isWarnEnabled() && activeCount >= (int) (0.75 * maxPoolSize)) {
+                        log.warn(String.format("Rendering thread pool is nearly full. activeCount: %d/%d queueSize: %d largestPoolSize: %d",
+                            activeCount,
+                            maxPoolSize,
+                            queueSize,
+                            largestPoolSize));
+                    }
+                    //If queue is greater than 50% of pool, warn
+                    if (log.isWarnEnabled() && queueSize >= (int) (0.5 * maxPoolSize)) {
+                        log.warn(String.format("Rendering thread pool queue size is high. activeCount: %d/%d queueSize: %d largestPoolSize: %d",
+                            activeCount,
+                            maxPoolSize,
+                            queueSize,
+                            largestPoolSize));
+                    }
+        
+                    if (log.isDebugEnabled()) {
+                        log.debug(
+                                 "stp-activeCount: " + activeCount + 
+                                " stp-completedTaskCount: " + cSharedThreadPool.getCompletedTaskCount() + 
+                                " stp-corePoolSize: " + cSharedThreadPool.getCorePoolSize() + 
+                                " stp-queue-size: " + queueSize);
+                    }
+
     	    		threadPoolExecutor = cSharedThreadPool;
     	        }else{
     	        	threadPoolExecutor = this.mThreadPool;
