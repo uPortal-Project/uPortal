@@ -82,6 +82,8 @@ public class RDBMDistributedLayoutStore
 {
     public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(RDBMDistributedLayoutStore.class);
+    
+    private final static Pattern USER_NODE_PATTERN = Pattern.compile("\\A([a-zA-Z]\\d*)\\z");
 
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
@@ -702,8 +704,7 @@ public class RDBMDistributedLayoutStore
         String[] rslt = null;  // This will be the response if we can't make a match...
         
         // Find the userId contained in the dlmNoderef...
-        final Pattern p = Pattern.compile("\\A([a-zA-Z]\\d*)\\z");
-        final Matcher m = p.matcher(dlmNoderef);
+        final Matcher m = USER_NODE_PATTERN.matcher(dlmNoderef);
         if (m.find()) {
             // We need a pathref based on the new style of layout b/c on 
             // import this users own layout will not be in the database 
