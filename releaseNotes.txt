@@ -1,91 +1,41 @@
 Release notes for uPortal 2.5.3 General Audience
 (the general audience release of uPortal 2.5.3):
 
-CVS branch: 2-5-patches
+SVN branch:     2-5-export
+Online Notes:   http://www.ja-sig.org/wiki/display/UPC/2.5-export.1
 
 
-Known issues
-
-There are many known bugs in uPortal.
-
-You can query the JA-SIG issue tracking system for the latest information about
-known issues.  The uPortal 2.5.3 wiki page summarizes:
-
-http://www.ja-sig.org/wiki/display/UPC/2.5.3
-
-The most serious known issues at this writing include lack of access control
-on the ALM Fragment Manager, bugs in supporting JSR-168 portlets for
-guest user (non logged in), bugs in publishing fragments to particular users,
-caching problems, thread pooling size problems, 
-lost opportunities to chain some exceptions, Aggregated Layouts
-committing broken transactions, DLM layout resetting not behaving as expected,
-Group manager servant failing to complete when no selections are made, lack of
-error checking in ALM fragment pushing...
+*************** This release cannot be used to run uPortal ***************
 
 
-Upgrading:
-
-uPortal 2.5.3 uses a patched Xalan 2.6.0 rather than the standard 2.6.0.
-The new jar file has a different name to reflect its different contents and so
-the xalan.jar property in build.properties must be updated to reflect this new
-.jar name.  This change has been applied to the build.properties included in
-this release.  applicationContext.xml in the properties directory also changes
-to check for this modified .jar instead of for the standard .jar.
-
-
-Major new features and improvements in this release:
-
-The WSRP consumer portlet in uPortal is now working.
-
-Xsltc Translet Manager -- This enables the XSLT utility to use precompiled
-xsltc translets.  The translet manager will keep track of a blacklist of
-stylesheets that either fail to compile or fail to execute. Any translet in
-the blacklist will fall back the default transformer factory.  This feature
-is turned off by default.  To enable it, set the activated property to 'true'
-in the xsltcTransletManager bean located in the xsltcTransletManager.xml context
-file.
-
-Bug fixes in this release:
-
-WSRP consumption is no longer broken.
-By virtue of using a patched xalan, xalan no longer leaks memory.
-Portlet file upload now works and request parameter mapping works better
-(yielding better support for the Struts Bridge portlet framework.)
-DLM no longer produces a StackOverflowError under load.
-Render parameters are no longer "sticky" between different requests
-Named LDAP service problems in Persondirs.xml are resolved.
-CGenericXSLT now chains more exceptions.
-CGroupsManager now implements ADD/REMOVE permission correctly
-Suggested CAS configuration is corrected in security.properties comments.
-...
-
-
-Important deprecations:
-
-IMultithreaded channel APIs of all flavors are now deprecated.  
-It is more performant,
-cleaner, simpler, and preferred to write IChannels or to write JSR-168 portlets
-in place of writing IMultithreaded channels.  
-
-
-Database schema changes
-
-There are no database schema changes between 2.5.2 and 2.5.3.
+This release can be configured with your existing uPortal 2.5 configuration
+files and then used to export your database into a format that can be imported
+into uPortal 3.0 and later.
 
 
 
-Discussing this release and reporting issues:
+##### Unsupported Data
 
-Please discuss 2.5.3 on the uPortal project discussion lists.  
-Please post issues discovered into JIRA.
+The following data cannot be automatically exported for use in uPortal 3:
+    * Aggregated Layout Manager (ALM) fragments
+    * Groups that don't have unique names (i.e. two or more groups have the
+      same name)
 
-(Almost) all changes applied to 2-5-patches working towards 2.5.3 should be reflected in JIRA issues.
 
-The uPortal project discussion lists are also the place to discuss work going forward on the 2-5-patches
-branch towards 2.5.4 and beyond.
+##### Usage
+   1. Download and extract the release
+   2. Configure the uPortal-2.5-export.0 project as your current uPortal 2.5.x
+      project is configured. This generally includes the following files:
+         1. properties/rdbm.properties
+         2. properties/ldap.properties or properties/ldap.xml if LDAP is used
+         3. properties/dlm.xml
+         4. properties/groups/*
+         5. properties/personDirectory.xml or properties/PersonDirs.xml
+         6. properties/portal.properties
+   3. Run the command ant -f import-export.xml export -Ddir=exportDataDir -Dtype=all
 
-Release engineer's environment:
-
-This release was tested and tagged on a Dell WinXP pro laptop using JDK 1.5, Eclipse 3.1, and Tomcat 5.5.17.
-The release deliverable was built on the tp.its.yale.edu Linux server using the shell script in /etc/
-that checks out a tag and builds a release from it.
+The export task will compile the uPortal code, connect to the portal database
+configured in rdbm.properties and export all portal data. The exported data 
+will be in such a format that uPortal 3.0 is the minimum compatible version to
+import the data into.
+ 
