@@ -1,0 +1,48 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<!-- 
+ | Expects a parameter named LAYOUT_USER_NAME
+ |
+ | Returns a Document that is the limitied-layout of the user
+ +-->
+<cache key="Attributes.NODE" cache-key="${groovy('LOADED-LAYOUT.' + LAYOUT_USER_NAME)}">
+    <factory> 
+        <with-attribute key="USER_ID" value="${crn(lookup-user_id.crn)}">
+            <groovy>
+                <script>
+                    import org.jasig.portal.UserProfile;
+                    import org.jasig.portal.security.provider.PersonImpl;
+                    import org.jasig.portal.security.provider.BrokenSecurityContext;
+                    import org.dom4j.io.DOMReader;
+                    
+                    def person = new PersonImpl();
+                    person.setUserName(LAYOUT_USER_NAME);
+                    person.setID(USER_ID.intValue());
+                    person.setSecurityContext(new BrokenSecurityContext());
+                    
+                    def layoutStore = layoutStoreProvider.getLayoutStore();
+                    def profile = layoutStore.getUserProfileById(person, 1);
+                    def layoutElement = layoutStore.getUserLayout(person, profile);
+                    
+                    if (layoutElement != null) {
+                        def reader = new DOMReader();
+                        def dom4jLayoutElement = reader.read(layoutElement);
+                        
+                        ScriptAttributes.RESPONSE.setAttribute('Attributes.NODE', dom4jLayoutElement);
+                    }
+                </script>
+                <subtasks>
+                    <return value="${Attributes.NODE}"/>
+                </subtasks>
+            </groovy>
+        </with-attribute>
+    </factory>
+    <subtasks>
+        <return value="${Attributes.NODE}"/>
+    </subtasks>
+</cache>
