@@ -16,6 +16,7 @@
         <attribute key="EXPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
         <!-- Used by Cernunnos to boost performance -->
         <attribute key="Attributes.CACHE">${groovy(java.util.Collections.synchronizedMap(new org.jasig.portal.io.LoggingLRUMap(${CACHE_SIZE})))}</attribute>
+        <attribute key="PORTAL_CONTEXT">${groovy(new org.springframework.context.support.ClassPathXmlApplicationContext("/properties/importExportContext.xml"))}</attribute>
         <subtasks>
             <properties location="classpath://properties/rdbm.properties">
                 <!-- These attributes are used by Cernunnos SQL/RDBMS operations -->

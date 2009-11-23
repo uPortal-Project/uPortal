@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+                    
+                    
+    <bean id="propertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+        <property name="locations">
+            <list>
+                <value>classpath:/properties/rdbm.properties</value>
+            </list>
+        </property>
+    </bean>
+    
+   <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="${jdbcDriver}" />
+        <property name="url" value="${jdbcUrl}" />
+        <property name="username" value="${jdbcUser}" />
+        <property name="password" value="${jdbcPassword}" />
+        
+        <property name="maxActive" value="50" />
+        <property name="maxIdle" value="10" />
+        <property name="maxWait" value="1000" />
+        <property name="logAbandoned" value="true" />
+        <property name="poolPreparedStatements" value="true" />
+    </bean>
+
+    <bean id="layoutStoreProvider" class="org.jasig.portal.layout.dlm.LayoutStoreProvider">
+        <property name="lookupNoderefTask" ref="lookup-dlm-noderef"/>
+    </bean>
+    
+    <bean id="cache" class="org.jasig.portal.io.LoggingLRUMap" />
+
+    <bean id="lookup-dlm-noderef" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/lookup-dlm-noderef.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="Attributes.CACHE" value-ref="cache" />
+                <entry key="Attributes.CACHE_MODEL">
+                    <value>ALL</value>
+                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+</beans>
