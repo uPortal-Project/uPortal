@@ -1,5 +1,5 @@
-Release notes for uPortal 2.5.3 General Audience
-(the general audience release of uPortal 2.5.3):
+Release notes for uPortal 2.5.export.1
+(the general audience release of uPortal 2.5.export.1):
 
 SVN branch:     2-5-export
 Online Notes:   http://www.ja-sig.org/wiki/display/UPC/2.5-export.1
@@ -24,7 +24,7 @@ The following data cannot be automatically exported for use in uPortal 3:
 
 ##### Usage
    1. Download and extract the release
-   2. Configure the uPortal-2.5-export.0 project as your current uPortal 2.5.x
+   2. Configure the uPortal-2.5-export.1 project as your current uPortal 2.5.x
       project is configured. This generally includes the following files:
          1. properties/rdbm.properties
          2. properties/ldap.properties or properties/ldap.xml if LDAP is used
