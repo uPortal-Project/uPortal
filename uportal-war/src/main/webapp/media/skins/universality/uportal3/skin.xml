@@ -3,11 +3,9 @@
   
   <css>/ResourceServingWebapp/rs/fluid/1.1.2/css/fss-framework-1.1.2.min.css</css>
   
-  <!-- base Fluid Skinning System -->
-  <css>../common/css/fluid/fluid.reset.css</css>
-  <css>../common/css/fluid/fluid.layout.css</css>
-  <css>../common/css/fluid/fluid.text.css</css>
-  
+  <!-- Default jqueryui css -->
+  <css>/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css</css>
+
   <!-- For printing of portal pages. Common to all skins using the universality theme -->
   <css>../common/css/print.css</css>
   
@@ -16,9 +14,6 @@
   
   <!-- Support for legacy uPortal css classes. -->
   <css>uportal3_legacy.css</css>
-  
-  <!-- Default jqueryui css -->
-  <css>/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css</css>
   
   <!-- uPortal jqueryui override css -->
   <css>jquery.css</css>
