@@ -1,0 +1,41 @@
+Release notes for uPortal 2.6.export.1
+(the general audience release of uPortal 2.6.export.1):
+
+SVN branch:     2-6-export
+Online Notes:   http://www.ja-sig.org/wiki/display/UPC/2.6-export.1
+
+
+*************** This release cannot be used to run uPortal ***************
+
+
+This release can be configured with your existing uPortal 2.6 configuration
+files and then used to export your database into a format that can be imported
+into uPortal 3.0 and later.
+
+
+
+##### Unsupported Data
+
+The following data cannot be automatically exported for use in uPortal 3:
+    * Aggregated Layout Manager (ALM) fragments
+    * Groups that don't have unique names (i.e. two or more groups have the
+      same name)
+
+
+##### Usage
+   1. Download and extract the release
+   2. Configure the uPortal-2.6-export.1 project as your current uPortal 2.6.x
+      project is configured. This generally includes the following files:
+         1. properties/rdbm.properties
+         2. properties/ldap.properties or properties/ldap.xml if LDAP is used
+         3. properties/dlm.xml
+         4. properties/groups/*
+         5. properties/personDirectory.xml or properties/PersonDirs.xml
+         6. properties/portal.properties
+   3. Run the command ant -f import-export.xml export -Ddir=exportDataDir -Dtype=all
+
+The export task will compile the uPortal code, connect to the portal database
+configured in rdbm.properties and export all portal data. The exported data 
+will be in such a format that uPortal 3.0 is the minimum compatible version to
+import the data into.
+ 
