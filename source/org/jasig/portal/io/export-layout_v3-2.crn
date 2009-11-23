@@ -1,0 +1,61 @@
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${USER_NAME}=the identifier of the entity to export
+ |
+ +-->
+<with>
+    <attribute key="USER_ID">${crn(lookup-user_id.crn)}</attribute>
+    <attribute key="Attributes.NODE">${newDoc(layout)}</attribute><!-- In case there's none in the DB... -->
+    <attribute key="layoutStoreProvider">${groovy(PORTAL_CONTEXT.getBean('layoutStoreProvider'))}</attribute>
+    <subtasks>
+        <groovy>
+            <script>
+                import org.jasig.portal.UserProfile;
+                import org.jasig.portal.security.provider.PersonImpl;
+                import org.jasig.portal.security.provider.BrokenSecurityContext;
+                
+                def person = new PersonImpl();
+                person.setAttribute(PersonImpl.USERNAME, USER_NAME);
+                person.setID(USER_ID.intValue());
+                person.setSecurityContext(new BrokenSecurityContext());
+                
+                def layoutStore = layoutStoreProvider.getLayoutStore();
+                def profile = layoutStore.getUserProfileById(person, 1);
+                def layoutElement = layoutStore.exportLayout(person, profile);
+                
+                if (layoutElement != null) {
+                    ScriptAttributes.RESPONSE.setAttribute('Attributes.NODE', layoutElement);
+                }
+            </script>
+            <subtasks>
+                <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-layout_v3-2.crn)}"/>
+                <append-node node="${attributeNode(username=${USER_NAME})}"/>
+                <with-attribute key="PREFERENCES" value="${crn(export-preferences_v3-2.crn)}">
+                    <if test="${jexl(PREFERENCES ne null)}">
+                        <append-node node="${PREFERENCES}"/>
+                    </if>
+                    <choose>
+                        <when test="${jexl(Attributes.NODE.elements().size() ne 0)}">
+                            <echo-ln>Export Layout: USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
+                            <return value="${Attributes.NODE}"/>
+                        </when>
+                        <otherwise>
+                            <echo-ln>Export Layout: Nothing to export for USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
+                        </otherwise>
+                    </choose>
+                </with-attribute>
+            </subtasks>
+        </groovy>
+    </subtasks>
+</with>
