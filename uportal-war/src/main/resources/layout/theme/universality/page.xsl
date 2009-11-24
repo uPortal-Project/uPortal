@@ -78,28 +78,13 @@
         	<link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
         </xsl:if>
         
-        <!-- ****** CSS ****** -->
-        <xsl:call-template name="page.css"/> <!-- Sets CSS links -->
-        <!-- ****** CSS ****** -->
-        
-        <!-- ****** JAVASCRIPT ****** -->
-        <xsl:call-template name="page.js"/> <!-- Sets javascript links -->
-        <!-- ****** JAVASCRIPT ****** -->
-        
-        <!-- 
-        In order to enable resource aggregation (UP-2505), comment out the
-        call-template elements for page.css and page.js above and
-        uncomment the following section: 
-        -->
-        <!--  
-        <resources:output path="media/skins/universality/{$SKIN}/"/>
+        <resources:output path="{$SKIN_PATH}/"/>
         <script type="text/javascript">
             var up = up || {};
             up.jQuery = jQuery.noConflict(true);
             up.fluid = fluid;
             fluid = null;
         </script>
-        -->
       </head>
       
       <body id="portal" class="{$FLUID_THEME_CLASS}">
