@@ -9,6 +9,8 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 
+import org.apache.commons.lang.SystemUtils;
+
 /**
  * Checks the Xalan version against a configured value.
  * 
@@ -43,17 +45,31 @@ public class XalanVersionCheck extends BaseCheck {
             if (this.desiredVersion.equals(versionFound)){
                 result = CheckResult.createSuccess("Xalan version [" + versionFound + "] is present.");
             } else {
+            	String jarLocation = "";
                 String locationInfo = "";
                 final ProtectionDomain protectionDomain = org.apache.xalan.Version.class.getProtectionDomain();
                 if (protectionDomain != null) {
                     final CodeSource codeSource = protectionDomain.getCodeSource();
                     if (codeSource != null) {
                         final URL location = codeSource.getLocation();
-                        locationInfo = " loaded from '" + location + "'";
+                        jarLocation = location.toString();
+                        locationInfo = " loaded from '" + jarLocation + "'";
                     }
                 }
-                
-                result = CheckResult.createFailure("Xalan version [" + versionFound + "]" + locationInfo + " is present, rather than the desired version [" + this.desiredVersion + "]", "Install the Xalan jar corresponding to [" + this.desiredVersion + "] in the /endorsed/lib/ directory of the JRE.");
+                StringBuffer message = new StringBuffer();
+                message.append("Xalan version [").append(versionFound).append("]");
+                message.append(locationInfo).append(" is present, rather than the desired version [");
+                message.append(this.desiredVersion).append("]");
+                StringBuffer remediation = new StringBuffer();
+                if(SystemUtils.IS_OS_MAC_OSX && jarLocation.endsWith("14compatibility.jar")) {
+                	remediation.append("Running uPortal on Mac OS X requires you to disable a library that is included in its Java distribution; rename or delete ")
+                		.append(jarLocation);
+                } else {
+                	remediation.append("uPortal includes the appropriate version of Xalan; please remove the file ")
+                		.append(jarLocation)
+                		.append(" from the classpath.");
+                }
+                result = CheckResult.createFailure(message.toString(), remediation.toString());
             }
         } catch (NoClassDefFoundError ncdfe) {
             result = CheckResult.createFailure("Class org.apache.xalan.Version could not be found.", "Install the xalan jar corresponding to [" + this.desiredVersion + "] in the /lib/endorsed directory of the JRE.");
