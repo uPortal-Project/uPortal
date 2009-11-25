@@ -136,6 +136,7 @@ public class ResourcesXalanElements {
 		String scriptPath = js.getValue();
 		if(!js.isAbsolute()) {
 			scriptPath = FilenameUtils.normalize(relativeRoot + js.getValue());
+			scriptPath = FilenameUtils.separatorsToUnix(scriptPath);
 			if(log.isDebugEnabled()) {
 				log.debug("translated relative js value " + js.getValue() + " to " + scriptPath);
 			}
@@ -172,6 +173,7 @@ public class ResourcesXalanElements {
 		String stylePath = css.getValue();
 		if(!css.isAbsolute()) {
 			stylePath = FilenameUtils.normalize(relativeRoot + css.getValue());
+			stylePath = FilenameUtils.separatorsToUnix(stylePath);
 			if(log.isDebugEnabled()) {
 				log.debug("translated relative css value " + css.getValue() + " to " + stylePath);
 			}
