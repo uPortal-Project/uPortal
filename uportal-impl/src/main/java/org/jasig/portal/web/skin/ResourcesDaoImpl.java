@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -25,6 +26,7 @@ import org.springframework.web.context.ServletContextAware;
  */
 public class ResourcesDaoImpl implements ResourcesDao, ServletContextAware {
 
+	private static final String LEADING_SLASH = "/";
 	private final JAXBContext context;
 	private ServletContext servletContext;
 	
@@ -47,6 +49,9 @@ public class ResourcesDaoImpl implements ResourcesDao, ServletContextAware {
 	 * @see org.jasig.portal.web.skin.ResourcesDao#getResources(java.lang.String)
 	 */
 	public Resources getResources(String pathToSkinXml) {
+		if(!StringUtils.startsWith(pathToSkinXml, LEADING_SLASH)) {
+			pathToSkinXml = LEADING_SLASH + pathToSkinXml;
+		}
 		InputStream skinSource = servletContext.getResourceAsStream(pathToSkinXml);
 		if(null == skinSource) {
 			return null;
