@@ -6,5 +6,6 @@
         <property name="databaseMetadata" ref="PortalDB.metadata" />
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="entityCachingService" ref="entityCachingService" />
+        <property name="simpleJdbcOperations" ref="simpleJdbcOperations" />
     </bean>
 </beans>

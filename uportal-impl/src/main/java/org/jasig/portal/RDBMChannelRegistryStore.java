@@ -46,6 +46,8 @@ import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.utils.CounterStoreFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.jdbc.core.simple.SimpleJdbcOperations;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Reference implementation of IChannelRegistryStore.
@@ -64,6 +66,7 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 	private IDatabaseMetadata databaseMetadata;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 	private IEntityCachingService entityCachingService;
+	private SimpleJdbcOperations simpleJdbcOperations;
 	
 
     /**
@@ -110,6 +113,18 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
         Validate.notNull(entityCachingService);
         this.entityCachingService = entityCachingService;
     }
+    
+    public SimpleJdbcOperations getSimpleJdbcOperations() {
+        return this.simpleJdbcOperations;
+    }
+    /**
+     * @param simpleJdbcOperations Used to run SQL commands within this class
+     */
+    @Required
+    public void setSimpleJdbcOperations(SimpleJdbcOperations simpleJdbcOperations) {
+        this.simpleJdbcOperations = simpleJdbcOperations;
+    }
+    
     
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
@@ -639,200 +654,154 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
 		return channelDefs;
 	}
 
-	/**
-	 * Persists a channel definition.
-	 * @param channelDef the channel definition
-	 * @throws java.sql.SQLException
-	 */
-	public void saveChannelDefinition (ChannelDefinition channelDef) throws Exception {
-		Connection con = RDBMServices.getConnection();
-		try {
-			int channelPublishId = channelDef.getId();
+    /**
+     * Persists a channel definition.
+     * @param channelDef the channel definition
+     * @throws java.sql.SQLException
+     */
+    @Transactional
+    public void saveChannelDefinition (ChannelDefinition channelDef) throws Exception {
+        int channelPublishId = channelDef.getId();
 
-			// Set autocommit false for the connection
-			RDBMServices.setAutoCommit(con, false);
-			try {
-				saveChannelDef(con, channelDef);
-				
-				deleteChannelParams(con, channelPublishId);
-				ChannelParameter[] parameters = channelDef.getParameters();
+        saveChannelDef(channelDef);
+        
+        deleteChannelParams(channelPublishId);
+        ChannelParameter[] parameters = channelDef.getParameters();
 
-                // Keep track of any portlet preferences
-                final boolean isPortlet = channelDef.isPortlet();
-                final LinkedHashMap<String, List<String>> portletPreferencesBuilder = new LinkedHashMap<String, List<String>>();
-                final Map<String, Boolean> portletPreferencesReadOnly = new HashMap<String, Boolean>();
-				
-				if (parameters != null) {
-					for (int i = 0; i < parameters.length; i++) {
-						String paramName = parameters[i].getName();
-						String paramValue = parameters[i].getValue();
-						boolean paramOverride = parameters[i].getOverride();
+        // Keep track of any portlet preferences
+        final boolean isPortlet = channelDef.isPortlet();
+        
+        final LinkedHashMap<String, List<String>> portletPreferencesBuilder = new LinkedHashMap<String, List<String>>();
+        final Map<String, Boolean> portletPreferencesReadOnly = new HashMap<String, Boolean>();
+        
+        if (parameters != null) {
+            for (int i = 0; i < parameters.length; i++) {
+                String paramName = parameters[i].getName();
+                String paramValue = parameters[i].getValue();
+                boolean paramOverride = parameters[i].getOverride();
 
-						if (paramName == null && paramValue == null) {
-							throw new RuntimeException("Invalid parameter node");
-						}
+                if (paramName == null && paramValue == null) {
+                    throw new RuntimeException("Invalid parameter node");
+                }
 
-						//TODO Add a ChannelDefinition.getPortletPreferences() API to store/track definition level portlet preferences
-						if (isPortlet && paramName.startsWith(PORTLET_CHANNEL_PARAM_PREFIX)) {
-                            // We have a portlet preference
-                            final String prefName = paramName.substring(PORTLET_CHANNEL_PARAM_PREFIX.length());
-                            final String prefValue = paramValue;
-                            
-                            List<String> prefValues = portletPreferencesBuilder.get(prefName);
-                            if (prefValues == null) {
-                                prefValues = new LinkedList<String>();
-                                portletPreferencesBuilder.put(prefName, prefValues);
-                                
-                                portletPreferencesReadOnly.put(prefName, !paramOverride);
-                            }
-                            
-                            prefValues.add(prefValue);
-                        }
-                        else {
-                            insertChannelParam(con, channelPublishId, paramName, paramValue, paramOverride);
-                        }
-					}
-				}
-                
-                if (isPortlet) {
-                    //Get or Create the portlet definition
-                    final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getOrCreatePortletDefinition(channelPublishId);
+                //TODO Add a ChannelDefinition.getPortletPreferences() API to store/track definition level portlet preferences
+                if (isPortlet && paramName.startsWith(PORTLET_CHANNEL_PARAM_PREFIX)) {
+                    // We have a portlet preference
+                    final String prefName = paramName.substring(PORTLET_CHANNEL_PARAM_PREFIX.length());
+                    final String prefValue = paramValue;
                     
-                    //Convert the Lists into actual IPortletPreference objects
-                    final List<IPortletPreference> portletPreferencesList = new ArrayList<IPortletPreference>(portletPreferencesBuilder.size());
-                    for (final Entry<String, List<String>> prefEntry : portletPreferencesBuilder.entrySet()) {
-                        final String prefName = prefEntry.getKey();
-                        final List<String> prefValues = prefEntry.getValue();
-                        final Boolean readOnly = portletPreferencesReadOnly.get(prefName);
+                    List<String> prefValues = portletPreferencesBuilder.get(prefName);
+                    if (prefValues == null) {
+                        prefValues = new LinkedList<String>();
+                        portletPreferencesBuilder.put(prefName, prefValues);
                         
-                        final IPortletPreference portletPreference = new PortletPreferenceImpl(prefName, readOnly != null ? readOnly : false, prefValues.toArray(new String[prefValues.size()]));
-                        portletPreferencesList.add(portletPreference);
+                        portletPreferencesReadOnly.put(prefName, !paramOverride);
                     }
                     
-                    //Update the preferences of the portlet definition
-                    final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
-                    portletPreferences.setPortletPreferences(portletPreferencesList);
-                    this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
+                    prefValues.add(prefValue);
                 }
-
-				// Commit the transaction
-				RDBMServices.commit(con);
-				
-				// Notify the cache
-				try {
-				    this.entityCachingService.update(channelDef);
+                else {
+                    insertChannelParam(channelPublishId, paramName, paramValue, paramOverride);
                 }
-                catch (Exception e) {
-                    log.error("Error updating cache for channel definition " + channelDef, e);
-                }
+            }
+        }
+                
+        if (isPortlet) {
+            //Get or Create the portlet definition
+            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getOrCreatePortletDefinition(channelPublishId);
+            
+            //Convert the Lists into actual IPortletPreference objects
+            final List<IPortletPreference> portletPreferencesList = new ArrayList<IPortletPreference>(portletPreferencesBuilder.size());
+            for (final Entry<String, List<String>> prefEntry : portletPreferencesBuilder.entrySet()) {
+                final String prefName = prefEntry.getKey();
+                final List<String> prefValues = prefEntry.getValue();
+                final Boolean readOnly = portletPreferencesReadOnly.get(prefName);
+                
+                final IPortletPreference portletPreference = new PortletPreferenceImpl(prefName, readOnly != null ? readOnly : false, prefValues.toArray(new String[prefValues.size()]));
+                portletPreferencesList.add(portletPreference);
+            }
+            
+            //Update the preferences of the portlet definition
+            final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
+            portletPreferences.setPortletPreferences(portletPreferencesList);
+            this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
+        }
 
-			} catch (Exception sqle) {
-				log.error("Exception saving channel definition " + channelDef, sqle);
-				RDBMServices.rollback(con);
-				throw sqle;
-			}
-		} finally {
-			RDBMServices.releaseConnection(con);
-		}
-	}
+        // Notify the cache
+        try {
+            this.entityCachingService.update(channelDef);
+        }
+        catch (Exception e) {
+            log.error("Error updating cache for channel definition " + channelDef, e);
+        }
+    }
 
-	private void saveChannelDef(Connection con, ChannelDefinition channelDef) throws SQLException {
-		int channelPublishId = channelDef.getId();
-		String sqlTitle = RDBMServices.sqlEscape(channelDef.getTitle());
-		String sqlDescription = RDBMServices.sqlEscape(channelDef.getDescription());
-		String sqlClass = channelDef.getJavaClass();
-		int sqlTypeID = channelDef.getTypeId();
-		int chanPublisherId = channelDef.getPublisherId();
-		String chanPublishDate = this.databaseMetadata.sqlTimeStamp(channelDef.getPublishDate());
-		int chanApproverId = channelDef.getApproverId();
-		String chanApprovalDate = this.databaseMetadata.sqlTimeStamp(channelDef.getApprovalDate());
-		int sqlTimeout = channelDef.getTimeout();
-		String sqlEditable = RDBMServices.dbFlag(channelDef.isEditable());
-		String sqlHasHelp = RDBMServices.dbFlag(channelDef.hasHelp());
-		String sqlHasAbout = RDBMServices.dbFlag(channelDef.hasAbout());
-		String sqlName = RDBMServices.sqlEscape(channelDef.getName());
-		String sqlFName = RDBMServices.sqlEscape(channelDef.getFName());
-		String sqlIsSecure = RDBMServices.dbFlag(channelDef.isSecure());
+    private void saveChannelDef(ChannelDefinition channelDef) {
+        int channelPublishId = channelDef.getId();
+        
+        final int rowsAffected = this.simpleJdbcOperations.update(
+                "UPDATE UP_CHANNEL " +
+                "SET CHAN_TITLE=?, CHAN_DESC=?, CHAN_CLASS=?, CHAN_TYPE_ID=?, CHAN_PUBL_ID=?, CHAN_PUBL_DT=?, " +
+                    "CHAN_APVL_ID=?, CHAN_APVL_DT=?, CHAN_TIMEOUT=?, CHAN_EDITABLE=?, CHAN_HAS_HELP=?, " +
+                    "CHAN_HAS_ABOUT=?, CHAN_NAME=?, CHAN_FNAME=?, CHAN_SECURE=? " + 
+                "WHERE CHAN_ID=?", 
+                channelDef.getTitle(),
+                channelDef.getDescription(),
+                channelDef.getJavaClass(),
+                channelDef.getTypeId(),
+                channelDef.getPublisherId(),
+                channelDef.getPublishDate(),
+                channelDef.getApproverId(),
+                channelDef.getApprovalDate(),
+                channelDef.getTimeout(),
+                RDBMServices.dbFlag(channelDef.isEditable()),
+                RDBMServices.dbFlag(channelDef.hasHelp()),
+                RDBMServices.dbFlag(channelDef.hasAbout()),
+                channelDef.getName(),
+                channelDef.getFName(),
+                RDBMServices.dbFlag(channelDef.isSecure()),
+                channelPublishId
+            );
+        
+        // no rows affected, do an insert
+        if (rowsAffected == 0) {
+            this.simpleJdbcOperations.update(
+                    "INSERT INTO UP_CHANNEL (" +
+                        "CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT, " +
+                        "CHAN_APVL_ID, CHAN_APVL_DT, CHAN_TIMEOUT, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, " +
+                        "CHAN_NAME, CHAN_FNAME, CHAN_SECURE) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+                    channelPublishId,
+                    channelDef.getTitle(),
+                    channelDef.getDescription(),
+                    channelDef.getJavaClass(),
+                    channelDef.getTypeId(),
+                    channelDef.getPublisherId(),
+                    channelDef.getPublishDate(),
+                    channelDef.getApproverId(),
+                    channelDef.getApprovalDate(),
+                    channelDef.getTimeout(),
+                    RDBMServices.dbFlag(channelDef.isEditable()),
+                    RDBMServices.dbFlag(channelDef.hasHelp()),
+                    RDBMServices.dbFlag(channelDef.hasAbout()),
+                    channelDef.getName(),
+                    channelDef.getFName(),
+                    RDBMServices.dbFlag(channelDef.isSecure())
+                );
+        }
+    }
 
-		// If channel is already there, do an update, otherwise do an insert
-		String sql;
-		if (channelExists(con, channelPublishId)) {
-			sql = "UPDATE UP_CHANNEL SET " +
-			"CHAN_TITLE='" + sqlTitle + "', " +
-			"CHAN_DESC='" + sqlDescription + "', " +
-			"CHAN_CLASS='" + sqlClass + "', " +
-			"CHAN_TYPE_ID=" + sqlTypeID + ", " +
-			"CHAN_PUBL_ID=" + chanPublisherId + ", " +
-			"CHAN_PUBL_DT=" + chanPublishDate + ", " +
-			"CHAN_APVL_ID=" + chanApproverId + ", " +
-			"CHAN_APVL_DT=" + chanApprovalDate + ", " +
-			"CHAN_TIMEOUT=" + sqlTimeout + ", " +
-			"CHAN_EDITABLE='" + sqlEditable + "', " +
-			"CHAN_HAS_HELP='" + sqlHasHelp + "', " +
-			"CHAN_HAS_ABOUT='" + sqlHasAbout + "', " +
-			"CHAN_NAME='" + sqlName + "', " +
-			"CHAN_FNAME='" + sqlFName + "', " +
-			"CHAN_SECURE='" + sqlIsSecure + "' " +
-			"WHERE CHAN_ID=" + channelPublishId;
-		} else {
-			sql = "INSERT INTO UP_CHANNEL (CHAN_ID, CHAN_TITLE, CHAN_DESC, CHAN_CLASS, CHAN_TYPE_ID, CHAN_PUBL_ID, CHAN_PUBL_DT, "
-				+ "CHAN_APVL_ID, CHAN_APVL_DT, CHAN_TIMEOUT, CHAN_EDITABLE, CHAN_HAS_HELP, CHAN_HAS_ABOUT, CHAN_NAME, CHAN_FNAME, CHAN_SECURE) ";
-			sql += "VALUES (" + channelPublishId + ", '" + sqlTitle + "', '" + sqlDescription + "', '" + sqlClass + "', " + sqlTypeID + ", "
-			+ chanPublisherId + ", " + chanPublishDate + ", " + chanApproverId + ", " + chanApprovalDate + ", " + sqlTimeout
-			+ ", '" + sqlEditable + "', '" + sqlHasHelp + "', '" + sqlHasAbout
-			+ "', '" + sqlName + "', '" + sqlFName + "', '" + sqlIsSecure + "')";
-		}
-		if (log.isDebugEnabled())
-			log.debug(sql);
-		Statement stmt = con.createStatement();
-		try{
-			stmt.executeUpdate(sql);
-		}finally{
-			stmt.close();
-		}
-	}
+    private void insertChannelParam(int channelPublishId, String paramName, String paramValue, boolean paramOverride) {
+        this.simpleJdbcOperations.update(
+                "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (?, ?, ?, ?)", 
+                channelPublishId, paramName, paramValue, RDBMServices.dbFlag(paramOverride));
+    }
 
-	private static boolean channelExists(Connection con, int channelPublishId) throws SQLException {
-		String query = "SELECT CHAN_ID FROM UP_CHANNEL WHERE CHAN_ID=" + channelPublishId;
-		if (log.isDebugEnabled())
-			log.debug(query);
-		Statement stmt = con.createStatement();
-		boolean doUpdate = false;
-		try{
-			ResultSet rs = stmt.executeQuery(query);
-			doUpdate = rs.next();
-		}finally{
-			stmt.close();
-		}
-		return doUpdate;
-	}
-
-	private static void insertChannelParam(Connection con, int channelPublishId, String paramName, String paramValue, boolean paramOverride) throws SQLException {
-		Statement stmt2 = con.createStatement();
-		try{
-			// We have a normal channel parameter
-			String sql = "INSERT INTO UP_CHANNEL_PARAM (CHAN_ID, CHAN_PARM_NM, CHAN_PARM_VAL, CHAN_PARM_OVRD) VALUES (" + channelPublishId +
-			",'" + paramName + "','" + paramValue + "', '" + (paramOverride ? "Y" : "N") + "')";
-			if (log.isDebugEnabled())
-				log.debug(sql);
-			stmt2.executeUpdate(sql);
-		}finally{
-			stmt2.close();
-		}
-	}
-
-	private static void deleteChannelParams(Connection con, int channelPublishId) throws SQLException {
-		Statement stmt2 = con.createStatement();
-		try{
-			// First delete existing parameters for this channel
-			String sql = "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=" + channelPublishId;
-			if (log.isDebugEnabled())
-				log.debug(sql);
-			stmt2.executeUpdate(sql);
-		}finally{
-			stmt2.close();
-		}
-	}
+    private void deleteChannelParams(int channelPublishId) {
+        this.simpleJdbcOperations.update(
+                "DELETE FROM UP_CHANNEL_PARAM WHERE CHAN_ID=?", 
+                channelPublishId);
+    }
 
 	/**
 	 * Permanently deletes a channel definition from the store.

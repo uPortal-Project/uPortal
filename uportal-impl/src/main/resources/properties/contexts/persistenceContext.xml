@@ -8,6 +8,11 @@
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
+    <!-- ********** Utility Classes ********** -->
+    <bean id="simpleJdbcOperations" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
+        <constructor-arg ref="PortalDb" />
+    </bean>
+
     <!-- ********** Portlet DAOs ********** -->
     
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
