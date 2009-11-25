@@ -22,6 +22,10 @@
     <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao">
     </bean>
     -->
+    <!-- ********** Utility Classes ********** -->
+    <bean id="simpleJdbcOperations" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
+        <constructor-arg ref="PortalDb" />
+    </bean>
     
     <!-- ********** Portlet DAOs ********** -->
     
