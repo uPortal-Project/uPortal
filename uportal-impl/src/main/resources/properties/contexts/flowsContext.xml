@@ -101,7 +101,10 @@
     
     <!-- bean for toggle-resources-aggregation flow -->
     <bean id="resourcesAggregationHelper" class="org.jasig.portal.web.skin.ResourcesAggregationHelper"/>
-    
+    <!-- bean for cache-manager flow -->
+    <bean id="cacheManagementHelper" class="org.jasig.portal.utils.cache.CacheManagementHelper">
+        <property name="cacheManager" ref="cacheManager"/>
+    </bean>
     
     <!-- Executes flows: the central entry point into the Spring Web Flow system -->
     <webflow:flow-executor id="flowExecutor">
