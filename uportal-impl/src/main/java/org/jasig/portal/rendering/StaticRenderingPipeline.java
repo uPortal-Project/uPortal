@@ -846,6 +846,13 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         List<String> systemBuffers = null;
         List<String> channelIds = null;
     }
+    
+    /**
+     * Calls {@link Map#clear()} on the system character cache.
+     */
+    public static void clearSystemCharacterCache() {
+    	systemCharacterCache.clear();
+    }
 
     /**
      * Class providing exposure to causal exception information for exceptions
