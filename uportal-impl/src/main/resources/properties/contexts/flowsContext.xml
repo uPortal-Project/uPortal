@@ -99,6 +99,9 @@
         <property name="submitUrl" value="http://developer.ja-sig.org/PortalRegistration/dataCollector/v1" />
     </bean>
     
+    <!-- bean for toggle-resources-aggregation flow -->
+    <bean id="resourcesAggregationHelper" class="org.jasig.portal.web.skin.ResourcesAggregationHelper"/>
+    
     
     <!-- Executes flows: the central entry point into the Spring Web Flow system -->
     <webflow:flow-executor id="flowExecutor">

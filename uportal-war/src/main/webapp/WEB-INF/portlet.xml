@@ -383,4 +383,23 @@
         </portlet-info>
     </portlet>
     
+    <portlet>
+        <portlet-name>ToggleResourcesAggregation</portlet-name>
+        <display-name xml:lang="en">Toggle CSS/JavaScript Aggregation</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/ToggleResourcesAggregation-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Toggle Resources Aggregation</title>
+        </portlet-info>
+    </portlet>
+    
 </portlet-app>

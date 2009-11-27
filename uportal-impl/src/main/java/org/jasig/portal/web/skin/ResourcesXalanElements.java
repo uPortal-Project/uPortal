@@ -38,6 +38,7 @@ public class ResourcesXalanElements {
 	 * Name of {@link System} property used to toggle default/aggregated skin output.
 	 */
 	public static final String AGGREGATED_THEME_PARAMETER = "org.jasig.portal.web.skin.aggregated_theme";
+	public static final String DEFAULT_AGGREGATION_ENABLED = "true";
     /**
      * File name for default skin configuration (non-aggregated).
      */
@@ -84,7 +85,7 @@ public class ResourcesXalanElements {
 			log.debug("relativeRoot from element path: " + relativeRoot);
 		}
 		
-		boolean aggregatedThemeEnabled = Boolean.parseBoolean(System.getProperty(AGGREGATED_THEME_PARAMETER, "true"));
+		boolean aggregatedThemeEnabled = Boolean.parseBoolean(System.getProperty(AGGREGATED_THEME_PARAMETER, DEFAULT_AGGREGATION_ENABLED));
 		
 		StringBuilder primaryPath = new StringBuilder(path);
 		StringBuilder secondaryPath = new StringBuilder(path);
