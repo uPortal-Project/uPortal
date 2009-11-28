@@ -5,6 +5,8 @@
  */
 package org.jasig.portal.serialize;
 
+import java.io.IOException;
+
 import org.jasig.portal.IAnchoringSerializer;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.DTDHandler;
@@ -14,5 +16,5 @@ import org.xml.sax.ext.LexicalHandler;
 
 public interface MarkupSerializer extends ContentHandler, DocumentHandler, LexicalHandler,
 DTDHandler, DeclHandler, DOMSerializer, Serializer, IAnchoringSerializer {
-
+    public void flush() throws IOException;
 }

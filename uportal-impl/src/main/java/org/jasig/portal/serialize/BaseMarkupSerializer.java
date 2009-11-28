@@ -978,6 +978,11 @@ public abstract class BaseMarkupSerializer
             throw new SAXException( except );
         }
     }
+    
+    public void flush() throws IOException {
+        _printer.flush();
+    }
+    
 
 
     //------------------------------------------//

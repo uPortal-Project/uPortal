@@ -13,7 +13,10 @@ import java.util.LinkedList;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.serialize.CachingSerializer;
+import org.jasig.portal.serialize.MarkupSerializer;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -43,6 +46,8 @@ import org.xml.sax.SAXException;
  * @version $Revision$ $Date$
  */
 public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
+    
+    protected final Log logger = LogFactory.getLog(this.getClass());
     
     /** 
      * Track what, if any, incorporation element we are currently processing.
@@ -294,7 +299,9 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 						if (ccaching) {
 							cacheEntries.add(new ChannelContentCacheEntry(channelSubscribeId));
 						}
+						this.flush();
 						cm.outputChannel(this.request, this.response, this.channelSubscribeId, contentHandler);
+						this.flush();
 						if (ccaching) {
                             startCaching();
 						}
@@ -312,6 +319,18 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
         } else {
         	// pass non-incorporation elements through untouched.
             super.endElement (uri,localName,qName);
+        }
+    }
+    
+    public void flush() {
+        final ContentHandler contentHandler = this.getContentHandler();
+        if (contentHandler instanceof MarkupSerializer) {
+            try {
+                ((MarkupSerializer) contentHandler).flush();
+            }
+            catch (IOException e) {
+                logger.warn("IOException while flushing serializer output", e);
+            }
         }
     }
     
