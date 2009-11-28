@@ -228,6 +228,9 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Initia
             return;
         }
         
+        //Set a larger buffer to allow for explicit flushing
+        res.setBufferSize(16 * 1024);
+        
         final long startTime = System.currentTimeMillis();
         synchronized (renderingLock) {
             // This function does ALL the content gathering/presentation work.
