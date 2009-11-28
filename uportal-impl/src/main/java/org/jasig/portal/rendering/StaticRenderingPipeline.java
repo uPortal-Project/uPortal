@@ -852,8 +852,10 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     
     /**
      * Calls {@link Map#clear()} on the system character cache.
+     * 
+     * @see org.jasig.portal.rendering.IPortalRenderingPipeline#clearSystemCharacterCache()
      */
-    public static void clearSystemCharacterCache() {
+    public void clearSystemCharacterCache() {
     	systemCharacterCache.clear();
     }
 

@@ -30,4 +30,9 @@ public interface IPortalRenderingPipeline {
      * @exception PortalException if an error occurs
      */
     public void renderState(HttpServletRequest req, HttpServletResponse res, IUserInstance userInstance) throws PortalException;
+    
+    /**
+     * Clear the system character cache.
+     */
+    public void clearSystemCharacterCache();
 }

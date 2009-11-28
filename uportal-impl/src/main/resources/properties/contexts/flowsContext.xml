@@ -100,7 +100,9 @@
     </bean>
     
     <!-- bean for toggle-resources-aggregation flow -->
-    <bean id="resourcesAggregationHelper" class="org.jasig.portal.web.skin.ResourcesAggregationHelper"/>
+    <bean id="resourcesAggregationHelper" class="org.jasig.portal.web.skin.ResourcesAggregationHelper">
+        <property name="portalRenderingPipeline" ref="portalRenderingPipeline"/>
+    </bean>
     <!-- bean for cache-manager flow -->
     <bean id="cacheManagementHelper" class="org.jasig.portal.utils.cache.CacheManagementHelper">
         <property name="cacheManager" ref="cacheManager"/>

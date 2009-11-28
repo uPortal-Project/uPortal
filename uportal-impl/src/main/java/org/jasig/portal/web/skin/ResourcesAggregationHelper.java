@@ -5,7 +5,8 @@ package org.jasig.portal.web.skin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.rendering.StaticRenderingPipeline;
+import org.jasig.portal.rendering.IPortalRenderingPipeline;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Class to facilitate enabling/disabling Resources aggregation.
@@ -15,7 +16,18 @@ import org.jasig.portal.rendering.StaticRenderingPipeline;
  */
 public class ResourcesAggregationHelper {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	protected final Log logger = LogFactory.getLog(this.getClass());
+	
+	private IPortalRenderingPipeline portalRenderingPipeline;
+	
+	/**
+	 * @param portalRenderingPipeline the portalRenderingPipeline to set
+	 */
+	@Required
+	public void setPortalRenderingPipeline(
+			IPortalRenderingPipeline portalRenderingPipeline) {
+		this.portalRenderingPipeline = portalRenderingPipeline;
+	}
 	/**
 	 * 
 	 * @return true if aggregation is currently enabled.
@@ -34,15 +46,15 @@ public class ResourcesAggregationHelper {
 	}
 	/**
 	 * Toggle resources aggregation (if and only if value parameter differs from current value).
-	 * Additionally invokes {@link StaticRenderingPipeline#clearSystemCharacterCache()}.
+	 * Additionally invokes {@link IPortalRenderingPipeline#clearSystemCharacterCache()}.
 	 * @param value
 	 */
 	public void setAggregationEnabled(boolean value) {
 		boolean currentValue = isAggregationEnabled();
 		if(currentValue != value) {
 			System.setProperty(ResourcesXalanElements.AGGREGATED_THEME_PARAMETER, Boolean.toString(value));
-			log.warn("resources aggregation set: " + value);
-			StaticRenderingPipeline.clearSystemCharacterCache();
+			logger.warn("resources aggregation set: " + value);
+			portalRenderingPipeline.clearSystemCharacterCache();
 		}
 	}
 	
