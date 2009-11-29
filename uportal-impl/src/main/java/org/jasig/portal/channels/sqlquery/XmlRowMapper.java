@@ -44,9 +44,9 @@ public class XmlRowMapper implements RowMapper {
             String columnValue = null;
             if (columnType != Types.ARRAY && columnType != Types.BLOB && 
                 columnType != Types.CLOB && columnType != Types.STRUCT &&
-                columnType != Types.REF && columnType != Types.JAVA_OBJECT &&
-                columnType != Types.ROWID&& columnType != Types.NCLOB &&
-                columnType != Types.SQLXML) {
+                columnType != Types.REF && columnType != Types.JAVA_OBJECT /* &&
+                columnType != Types.ROWID && columnType != Types.NCLOB &&
+                columnType != Types.SQLXML */) {
               columnValue = resultSet.getString(i);
             } else {
                 throw new RuntimeException(
