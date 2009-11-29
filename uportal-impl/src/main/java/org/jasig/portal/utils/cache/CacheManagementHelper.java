@@ -5,6 +5,7 @@ package org.jasig.portal.utils.cache;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import net.sf.ehcache.Cache;
@@ -16,7 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import edu.emory.mathcs.backport.java.util.Collections;
+
 
 /**
  * This class exposes some limited functions around the provided
