@@ -17,26 +17,62 @@
         
 <!-- Portlet -->
 <div class="fl-widget portlet" role="section">
+  <!-- Portlet Title -->
+  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
+    <h2 role="heading">Cache Statistics</h2>
+    <h3><c:out value="${cacheName}"/></h3>
+  </div> <!-- end: portlet-title -->
+
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="portlet-section-body">
-      <h3>Cache Statistics for <c:out value="${cacheName}"/></h3>
-        <ul>
-        <li>Object count: <c:out value="${statistics.objectCount }"/></li>
-        <li>Cache hits: <c:out value="${statistics.cacheHits }"/></li>
-        <li>Cache misses: <c:out value="${statistics.cacheMisses }"/></li>
-        <li>Disk store object count: <c:out value="${statistics.diskStoreObjectCount }"/></li>
-        <li>On disk hits: <c:out value="${statistics.onDiskHits }"/></li>
-        <li>Eviction count: <c:out value="${statistics.evictionCount }"/></li>
-        <li>In memory hits: <c:out value="${statistics.inMemoryHits }"/></li>
-        <li>Memory store object count: <c:out value="${statistics.memoryStoreObjectCount }"/></li>
-        <li>Accuracy: <c:out value="${statistics.statisticsAccuracyDescription }"/></li>
-        </ul>   
-        <a href="${flushUrl}">Flush this cache</a>, or <a href="${homeUrl}">Select a different cache</a>.
+      
+        <table>
+            <thead>
+                <tr><th>Cache property</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Object count</td><td>${statistics.objectCount}</td>
+                </tr>
+                <tr>
+                    <td>Cache hits</td><td>${statistics.cacheHits}</td>
+                </tr>
+                <tr>
+                    <td>Cache misses</td><td>${statistics.cacheMisses}</td>
+                </tr>
+                <tr>
+                    <td>Dist store object count</td><td>${statistics.diskStoreObjectCount}</td>
+                </tr>
+                <tr>
+                    <td>On disk hits</td><td>${statistics.onDiskHits}</td>
+                </tr>
+                <tr>
+                    <td>Eviction count</td><td>${statistics.evictionCount}</td>
+                </tr>
+                <tr>
+                    <td>In memory hits</td><td>${statistics.inMemoryHits}</td>
+                </tr>
+                <tr>
+                    <td>Memory store object count</td><td>${statistics.memoryStoreObjectCount}</td>
+                </tr>
+                <tr>
+                    <td>Accuracy</td><td>${statistics.statisticsAccuracyDescription}</td>
+                </tr>
+            </tbody>
+        </table>
+        
       </div>
     </div>
+
+    <!-- Portlet Buttons -->
+    <div class="portlet-button-group">
+        <a class="portlet-button portlet-button-primary" href="${ flushUrl }">Flush</a>
+        <a class="portlet-button" href="${ homeUrl }">Cancel</a>
+    </div>
+    
   </div>
   
 </div>

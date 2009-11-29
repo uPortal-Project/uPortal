@@ -6,29 +6,58 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
+
+<portlet:actionURL var="flushAllUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="flush-all"/>
+</portlet:actionURL>
+
+<style type="text/css">
+.portlet ul.cache-member {margin:0;}
+.portlet .cache-member li {list-style:none;}
+.portlet .cache-member a {display:block; padding:0.2em 0 0.2em 20px; background-position:0 50%; background-repeat:no-repeat;}
+.portlet .cache-member a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/drive.png)}
+.portlet .cache-member a:hover {background-color:#FFFFCC; color:#336699;}
+</style>
+
 <!-- Portlet -->
 <div class="fl-widget portlet" role="section">
+
+  <!-- Portlet Title -->
+  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
+    <h2 role="heading">uPortal Cache Manager</h2>
+  </div> <!-- end: portlet-title -->
+  
+  <!-- Portlet Toolbar -->
+  <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
+    <div class="fl-col">
+        <ul>
+            <li><a href="${flushAllUrl}"><span>Flush all caches</span></a></li>
+      </ul>
+    </div>
+  </div> <!-- end: portlet-toolbar -->
+
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
+      <h3 class="portlet-section-header" role="heading">
+        Available caches
+      </h3>
+      
       <div class="portlet-section-body">
-        <ul>
+        <p class="portlet-section-note" role="note">Select a cache to view statistics or flush current contents.</p>
+      
+        <ul class="cache-member">
         <c:forEach items="${cacheNames}" var="cacheName">
         <portlet:actionURL var="viewStatsUrl">
             <portlet:param name="cacheName" value="${cacheName}"/>
             <portlet:param name="execution" value="${flowExecutionKey}" />
             <portlet:param name="_eventId" value="view-statistics"/>
         </portlet:actionURL>
-        <li><a href="${viewStatsUrl}">View statistics for <c:out value="${cacheName}"/></a></li>
+        <li><a href="${viewStatsUrl}"><c:out value="${cacheName}"/></a></li>
         </c:forEach>
         </ul>
-        <br/>
-        <portlet:actionURL var="flushAllUrl">
-            <portlet:param name="execution" value="${flowExecutionKey}" />
-            <portlet:param name="_eventId" value="flush-all"/>
-        </portlet:actionURL>
-        <a href="${flushAllUrl}">Flush All Caches</a>
       </div>
     </div>
   </div>

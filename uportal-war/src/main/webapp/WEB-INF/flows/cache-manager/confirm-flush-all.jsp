@@ -18,18 +18,24 @@
     <div class="portlet-section" role="region">
       <div class="portlet-section-body">
         
-        <div class="warning">
-        <strong>Warning!</strong>
-        <br/>
-        Flushing caches while uPortal running will slow performance temporarily.
-        Use caution with this feature in production environments. Please be patient,
-        this operation may take several moments to complete.
-        </div>
+        <div class="portlet-msg-alert" role="alert">
+	        <h3>Warning!</h3>
+	        <p>Flushing caches while uPortal running will slow performance temporarily.
+	        Use caution with this feature in production environments. Please be patient,
+	        this operation may take several moments to complete.</p>
+	    </div>
+
+        <!-- Portlet Section -->
+        <div class="portlet-section" role="region">
+          <div class="portlet-section-body">
+            <p>Are you sure you want to flush all caches?</p>
+          </div>
+        </div> <!-- end: portlet-section -->
+
         <form action="${flushUrl}" method="POST">
         <div class="portlet-button-group">
-        <label for="_eventId_confirm">Are you sure you want to Flush All Caches?</label><br/><br/>
-        <input class="portlet-button portlet-button-primary" type="submit" value="Flush All Caches" name="_eventId_confirm"/>
-        <input class="portlet-button portlet-button-primary" type="submit" value="Cancel" name="_eventId_cancel"/>
+	        <input class="portlet-button portlet-button-primary" type="submit" value="Flush All Caches" name="_eventId_confirm"/>
+	        <input class="portlet-button secondary" type="submit" value="Cancel" name="_eventId_cancel"/>
         </div>
         </form>
       </div>
