@@ -10,7 +10,7 @@
 */
 (function($){
 	
-    // if the uPortal scope is not availalable, add it
+    // if the uPortal scope is not available, add it
     $.uportal = $.uportal || {};
     
     $.uportal.UportalLayoutManager = function(callerSettings) {

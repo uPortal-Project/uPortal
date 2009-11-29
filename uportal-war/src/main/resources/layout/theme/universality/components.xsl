@@ -420,11 +420,9 @@
 					<script language="JavaScript" type="text/javascript">
             var skinPath='<xsl:value-of select="$SKIN_PATH"/>/<xsl:value-of select="$SKIN"/>/';
           </script>
-          <script type="text/javascript" language="JavaScript" src="{$SCRIPT_PATH}/uportal/cookies.min.js">
-            // Included JS file
-          </script>
-          <script type="text/javascript" language="JavaScript" src="{$SCRIPT_PATH}/uportal/search.min.js">
-            // Included JS file
+          <script type="text/javascript">
+            up.research = new up.ResearchObject();
+            up.research.writeSearchInDocument();
           </script>
           <noscript>
             <form target="_parent" method="get" action="http://www.google.com/search" id="webSearchForm">

@@ -335,9 +335,11 @@
   <xsl:template name="page.js">
     <script type="text/javascript" src="{$RESOURCE_PATH}/jquery/1.3.2/jquery-1.3.2.min.js"></script>
     <script type="text/javascript" src="{$RESOURCE_PATH}/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"></script>
+    <script type="text/javascript" src="{$RESOURCE_PATH}/jquery-plugins/cookie/1.0/jquery.cookie-1.0.min.js"></script>
     <script type="text/javascript" src="{$RESOURCE_PATH}/fluid/1.1.2/js/fluid-all-1.1.2.min.js"></script>
     <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/ajax-preferences-jquery.min.js"></script>
+      <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/search.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-channel-browser.min.js"></script>
       <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-group-browser.min.js"></script>
     </xsl:if>

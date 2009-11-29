@@ -5,13 +5,10 @@
  */
 // Revision: 2007-8-24 gthompson
 
-// Create global variable uPortal if one not already found
-if (!window.uPortal) {
-    window.uPortal = {};
-}
+var up = up || {};
 
 // Add an instance of the research object to it as a singleton
-uPortal.ResearchObject = function () {
+up.ResearchObject = function () {
     // Private methods
     var buildUrlDefault = function(searchType,searchString)
     {
@@ -169,25 +166,19 @@ uPortal.ResearchObject = function () {
     // Write Search as HTML into the Document (as document is being read or written)
     this.writeSearchInDocument = function ()
     {
-        //var defaultSearch = "google";
-        //alert(getCookie("searchDefault"));
-        
-        var defaultSearch = (window.UniconCookieHandler)? window.UniconCookieHandler.getCookie("searchDefault"):"google";
-        if (!defaultSearch)
-        {
-            defaultSearch = "google";
-        }
+
+        var defaultSearch = up.jQuery.cookie("searchDefault") || "google";
+
         var HTMLText = "";
-        HTMLText += '<form onsubmit="if (window.uPortal && uPortal.research) return uPortal.research.openSearchWindow(this,this.searchType.options[this.searchType.selectedIndex].value)" action="#" id="webSearchForm">';
+        HTMLText += '<form onsubmit="return up.research.openSearchWindow(this,this.searchType.options[this.searchType.selectedIndex].value)" action="#" id="webSearchForm">';
         HTMLText += '<input type="text" name="search" value="" id="webSearchInput" title="Enter text to search for" />';
-        HTMLText += '<select name="searchType" onchange="UniconCookieHandler.setCookie(\'searchDefault\',this.options[this.selectedIndex].value.split(\'|\')[1])" title="Select Search Type">';
+        HTMLText += '<select name="searchType" onchange="up.jQuery.cookie(\'searchDefault\',this.options[this.selectedIndex].value.split(\'|\')[1], { path:\'/\' })" title="Select Search Type">';
 
         for (var i in searchTypes)
         {
             HTMLText += '<optgroup label="'+searchTypes[i].label+'">';
             for (var ii in searchTypes[i].options)
             {
-                //alert("|"+ii+"|"+defaultSearch+"|");
                 HTMLText += '<option value="'+i+'|'+ii+'"'+((ii==defaultSearch)?' selected="selected" ':'')+'>'+searchTypes[i].options[ii].title+'</option>';
             }
             HTMLText += '</optgroup>';
@@ -195,13 +186,7 @@ uPortal.ResearchObject = function () {
         HTMLText += '</select>';
         HTMLText += '<input type="Submit" name="submit" value="Search" id="webSearchSubmit" />';
         HTMLText += '</form>';
-        //prompt('',HTMLText);
+
         document.writeln(HTMLText);
     }
 };
-uPortal.research = new uPortal.ResearchObject();
-
-// Write Search into the document at this point.
-uPortal.research.writeSearchInDocument();
-
-
