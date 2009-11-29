@@ -12,7 +12,11 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Statistics;
 import net.sf.ehcache.Status;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * This class exposes some limited functions around the provided
@@ -23,6 +27,8 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class CacheManagementHelper {
 
+	protected final Log logger = LogFactory.getLog(this.getClass());
+	
 	private CacheManager cacheManager;
 
 	/**
@@ -41,6 +47,7 @@ public class CacheManagementHelper {
 	public List<String> getCacheNames() {
 		List<String> result = new ArrayList<String>();
 		result.addAll(Arrays.asList(this.cacheManager.getCacheNames()));
+		Collections.sort(result);
 		return result;
 	}
 	
@@ -63,7 +70,7 @@ public class CacheManagementHelper {
 	}
 	
 	/**
-	 * Call {@link Cache#flush} on the specified cache, if it
+	 * Call {@link Cache#flush()} on the specified cache, if it
 	 * exists and is alive.
 	 * 
 	 * @see Status#STATUS_ALIVE
@@ -74,6 +81,18 @@ public class CacheManagementHelper {
 		Cache cache = this.cacheManager.getCache(cacheName);
 		if(null != cache && Status.STATUS_ALIVE.equals(cache.getStatus())) {
 			cache.flush();
+			logger.warn("flushed cache: " + cacheName);
 		}
+	}
+	
+	/**
+	 * Call {@link Cache#flush()} on ALL caches.
+	 */
+	public void flushAllCaches() {
+		logger.warn("beginning request to flush all caches");
+		for(String cacheName: getCacheNames()) {
+			flushCache(cacheName);
+		}
+		logger.warn("completed request to flush all caches");
 	}
 }

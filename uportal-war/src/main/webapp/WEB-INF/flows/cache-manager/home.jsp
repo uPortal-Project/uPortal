@@ -8,27 +8,27 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <!-- Portlet -->
 <div class="fl-widget portlet" role="section">
-
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading">Cache Management</h2>
-  </div> <!-- end: portlet-title -->
-  
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
-  
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="portlet-section-body">
         <ul>
         <c:forEach items="${cacheNames}" var="cacheName">
-        <portlet:renderURL var="renderUrl" windowState="maximized">
+        <portlet:actionURL var="viewStatsUrl">
             <portlet:param name="cacheName" value="${cacheName}"/>
             <portlet:param name="execution" value="${flowExecutionKey}" />
-        </portlet:renderURL>
-        <li><a href="${renderUrl}">View statistics for <c:out value="${cacheName}"/></a></li>
+            <portlet:param name="_eventId" value="view-statistics"/>
+        </portlet:actionURL>
+        <li><a href="${viewStatsUrl}">View statistics for <c:out value="${cacheName}"/></a></li>
         </c:forEach>
         </ul>
+        <br/>
+        <portlet:actionURL var="flushAllUrl">
+            <portlet:param name="execution" value="${flowExecutionKey}" />
+            <portlet:param name="_eventId" value="flush-all"/>
+        </portlet:actionURL>
+        <a href="${flushAllUrl}">Flush All Caches</a>
       </div>
     </div>
   </div>

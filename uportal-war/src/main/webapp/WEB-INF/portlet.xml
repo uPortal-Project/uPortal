@@ -402,4 +402,23 @@
         </portlet-info>
     </portlet>
     
+    <portlet>
+        <portlet-name>CacheManager</portlet-name>
+        <display-name xml:lang="en">Cache Manager</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/CacheManager-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Cache Manager</title>
+        </portlet-info>
+    </portlet>
+    
 </portlet-app>

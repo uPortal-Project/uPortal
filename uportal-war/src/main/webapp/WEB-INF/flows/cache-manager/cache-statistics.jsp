@@ -7,25 +7,22 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <portlet:actionURL var="flushUrl">
-  <portlet:param name="action" value="flush"/>
-  <portlet:param name="cacheName" value="${cacheName}"/>
+  <portlet:param name="_eventId" value="flush"/>
+  <portlet:param name="execution" value="${flowExecutionKey}" />
+</portlet:actionURL>
+<portlet:actionURL var="homeUrl">
+  <portlet:param name="_eventId" value="home"/>
   <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
         
 <!-- Portlet -->
 <div class="fl-widget portlet" role="section">
-
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading">Cache Statistics for <c:out value="${cacheName}"/></h2>
-  </div> <!-- end: portlet-title -->
-  
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
-  
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="portlet-section-body">
+      <h3>Cache Statistics for <c:out value="${cacheName}"/></h3>
         <ul>
         <li>Object count: <c:out value="${statistics.objectCount }"/></li>
         <li>Cache hits: <c:out value="${statistics.cacheHits }"/></li>
@@ -36,12 +33,8 @@
         <li>In memory hits: <c:out value="${statistics.inMemoryHits }"/></li>
         <li>Memory store object count: <c:out value="${statistics.memoryStoreObjectCount }"/></li>
         <li>Accuracy: <c:out value="${statistics.statisticsAccuracyDescription }"/></li>
-        </ul>
-        
-        <div class="warning">
-        Flushing caches while uPortal running will inevitable slow performance temporarily.
-        </div>
-        <a href="${flushUrl}">Flush this cache</a>
+        </ul>   
+        <a href="${flushUrl}">Flush this cache</a>, or <a href="${homeUrl}">Select a different cache</a>.
       </div>
     </div>
   </div>

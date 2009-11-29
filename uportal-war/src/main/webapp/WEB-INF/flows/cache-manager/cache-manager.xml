@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+    
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <on-start>
+       <set name="flowScope.cacheNames" 
+            value="cacheManagementHelper.getCacheNames()"/>
+    </on-start>
+    
+    <view-state id="home">
+        <transition on="view-statistics" to="cache-statistics">
+            <set name="flowScope.cacheName"
+                value="requestParameters.cacheName"/>
+            <set name="flowScope.statistics" 
+                value="cacheManagementHelper.getCacheStatistics(flowScope.cacheName)"/>
+        </transition>
+        <transition on="flush-all" to="confirm-flush-all"/>
+    </view-state>
+    
+    <view-state id="cache-statistics">
+        <transition to="confirm-flush" on="flush"/>
+        <transition to="home" on="home"/>
+    </view-state>
+    
+    <view-state id="confirm-flush">
+        <transition to="finishCacheManager" on="confirm">
+            <evaluate expression="cacheManagementHelper.flushCache(flowScope.cacheName)"/>
+        </transition>
+        <transition to="cache-statistics" on="cancel"/>
+    </view-state>
+    
+    <view-state id="confirm-flush-all">
+        <transition to="finishCacheManager" on="confirm">
+            <evaluate expression="cacheManagementHelper.flushAllCaches()"/>
+        </transition>
+        <transition to="home" on="cancel"/>
+    </view-state>
+    
+    <end-state id="finishCacheManager" />
+    
+</flow>
