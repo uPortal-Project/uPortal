@@ -30,8 +30,8 @@
             <attribute key="LAYOUT_ID">${groovy(1)}</attribute> <!-- TODO eventually support more than just one layout for a user -->
             <attribute key="PROFILE_FNAME">${user_profile_fname_default}</attribute>
             <attribute key="USER_NAME">${valueOf(@username)}</attribute>
-            <attribute key="STRUCTURE_STYLESHEET_NAME">${valueOf(structure/@name)}</attribute>
-            <attribute key="THEME_STYLESHEET_NAME">${valueOf(theme/@name)}</attribute>
+            <attribute key="STRUCTURE_STYLESHEET_NAME">${valueOf(profile/structure/@name)}</attribute>
+            <attribute key="THEME_STYLESHEET_NAME">${valueOf(profile/theme/@name)}</attribute>
             <subtasks>
                 <with>
                     <attribute key="STRUCTURE_STYLESHEET_ID">${crn(lookup-ss_struct_id.crn)}</attribute>
