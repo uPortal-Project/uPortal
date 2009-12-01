@@ -1,11 +1,11 @@
 <!-- 
  | Parameters:
- |     SS_THEME_NAME - The requested name of a theme style sheet
+ |     THEME_STYLESHEET_NAME - The requested name of a theme style sheet
  |
- | Returns the default theme name if force is true or the passed SS_THEME_NAME is null
+ | Returns the default theme name if force is true or the passed THEME_STYLESHEET_NAME is null
  +-->
-<with-attribute key="SS_THEME_NAME" value="${crn(determine-ss_theme_name.crn)}">
-    <cache key="THEME_STYLESHEET_ID" cache-key="${jexl('THEME_STYLESHEET_ID.' + SS_THEME_NAME)}">
+<with-attribute key="THEME_STYLESHEET_NAME" value="${crn(determine-ss_theme_name.crn)}">
+    <cache key="THEME_STYLESHEET_ID" cache-key="${jexl('THEME_STYLESHEET_ID.' + THEME_STYLESHEET_NAME)}">
         <factory>
             <sql-query>
                 <sql>
@@ -13,7 +13,7 @@
                     FROM up_ss_theme 
                     WHERE ss_name = ?
                 </sql>
-                <parameter value="${SS_THEME_NAME}" />
+                <parameter value="${THEME_STYLESHEET_NAME}" />
                 <subtasks>
                     <return value="${THEME_STYLESHEET_ID}" />
                 </subtasks>
