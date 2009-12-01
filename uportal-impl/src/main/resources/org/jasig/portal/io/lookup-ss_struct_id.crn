@@ -7,12 +7,12 @@
 -->
 <!-- 
  | Parameters:
- |     SS_STRUCTURE_NAME - The requested name of a structure style sheet
+ |     STRUCTURE_STYLESHEET_NAME - The requested name of a structure style sheet
  |
- | Returns the default structure name if force is true or the passed SS_STRUCTURE_NAME is null
+ | Returns the default structure name if force is true or the passed STRUCTURE_STYLESHEET_NAME is null
  +-->
-<with-attribute key="SS_STRUCTURE_NAME" value="${crn(determine-ss_struct_name.crn)}">
-    <cache key="STRUCTURE_STYLESHEET_ID" cache-key="${jexl('STRUCTURE_STYLESHEET_ID.' + SS_STRUCTURE_NAME)}">
+<with-attribute key="STRUCTURE_STYLESHEET_NAME" value="${crn(determine-ss_struct_name.crn)}">
+    <cache key="STRUCTURE_STYLESHEET_ID" cache-key="${jexl('STRUCTURE_STYLESHEET_ID.' + STRUCTURE_STYLESHEET_NAME)}">
         <factory>
             <sql-query>
                 <sql>
@@ -20,7 +20,7 @@
                     FROM up_ss_struct 
                     WHERE ss_name = ?
                 </sql>
-                <parameter value="${SS_STRUCTURE_NAME}" />
+                <parameter value="${STRUCTURE_STYLESHEET_NAME}" />
                 <subtasks>
                     <return value="${STRUCTURE_STYLESHEET_ID}" />
                 </subtasks>
