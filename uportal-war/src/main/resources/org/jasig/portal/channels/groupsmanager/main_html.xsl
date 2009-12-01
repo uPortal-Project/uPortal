@@ -251,24 +251,26 @@
           <xsl:with-param name="group" select="$group"/>
         </xsl:call-template>
         
-        <!-- Select checkbox or selected tick mark -->
-        <xsl:if test="($mode='select') and not($group/@searchResults='true')">
-          <xsl:if test="not($group/@id=0) and ($group/@canSelect='true')">
-            <xsl:choose>
-              <xsl:when test="($group/@selected='true') or (key('selectedGroup',$group/@key))">
-                <img border="0" src="{$famfamfamBase}/tick.png" alt="Selected" title="Selected"/>
-              </xsl:when>
-              <xsl:otherwise>
-                <input type="checkbox" name="grpSelect//{$group/@id}|group" value="true" />
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:if>
-        </xsl:if>
         <xsl:choose>
         
             <!-- View Mode -->
           <xsl:when test="not($mode='edit') or not($group/@canUpdate='true')">
-            <h3><xsl:value-of select="$group/RDF/Description/title" /></h3>
+            <!-- Select checkbox or selected tick mark -->
+            <h3>
+              <xsl:if test="($mode='select') and not($group/@searchResults='true')">
+                <xsl:if test="not($group/@id=0) and ($group/@canSelect='true')">
+                  <xsl:choose>
+                    <xsl:when test="($group/@selected='true') or (key('selectedGroup',$group/@key))">
+                      <img border="0" src="{$famfamfamBase}/tick.png" alt="Selected" title="Selected"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <input type="checkbox" name="grpSelect//{$group/@id}|group" value="true" />
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </xsl:if>
+              </xsl:if>
+              <xsl:value-of select="$group/RDF/Description/title" />
+            </h3>
             <p><xsl:value-of select="string($group/RDF/Description/description)" /></p>
           </xsl:when>
           
