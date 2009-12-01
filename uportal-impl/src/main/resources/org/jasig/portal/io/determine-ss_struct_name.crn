@@ -7,15 +7,15 @@
 -->
 <!-- 
  | Parameters:
- |     SS_STRUCTURE_NAME - The requested name of a structure style sheet
+ |     STRUCTURE_STYLESHEET_NAME - The requested name of a structure style sheet
  |
- | Returns the default structure name if force is true or the passed SS_STRUCTURE_NAME is null
+ | Returns the default structure name if force is true or the passed STRUCTURE_STYLESHEET_NAME is null
  +-->
 <choose>
-    <when test="${jexl(user_profile_structure_force == 'true' or SS_STRUCTURE_NAME == null)}">
+    <when test="${jexl(user_profile_structure_force == 'true' or STRUCTURE_STYLESHEET_NAME == null)}">
         <return value="${user_profile_structure_name_default}" />
     </when>
     <otherwise>
-        <return value="${SS_STRUCTURE_NAME}" />
+        <return value="${STRUCTURE_STYLESHEET_NAME}" />
     </otherwise>
 </choose>
