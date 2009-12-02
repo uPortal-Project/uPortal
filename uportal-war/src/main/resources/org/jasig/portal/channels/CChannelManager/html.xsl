@@ -1437,11 +1437,44 @@
           <xsl:apply-templates select="label"/>
           <xsl:apply-templates select="example"/>
           <br/>
-<select name="{name}" class="uportal-input-text">
-            <xsl:for-each select="type/restriction/value">
-            <xsl:variable name="name"><xsl:value-of select="../../../name"/></xsl:variable>
-            <xsl:variable name="value"><xsl:value-of select="."/></xsl:variable>
+          <select name="{name}" class="uportal-input-text">
+<xsl:choose>
+<xsl:when test="starts-with(name, 'PORTLET.')">
+<!-- BEGIN custom handling for portlet preferences -->
+<xsl:variable name="portletPrefName" select="substring-after(name, 'PORTLET.')"/>
+<xsl:for-each select="type/restriction/value">
+<xsl:variable name="name"><xsl:value-of select="../../../name"/></xsl:variable>
+<xsl:variable name="value"><xsl:value-of select="."/></xsl:variable>
 
+   <option value="{.}">
+   
+<xsl:choose>
+<xsl:when test="/manageChannels/channelDef/params/step[$stepID]/channel/definitionPreferences/preference/@name = $portletPrefName">
+<xsl:if test="/manageChannels/channelDef/params/step[$stepID]/channel/definitionPreferences/preference[@name = $portletPrefName]/values = $value">
+<xsl:attribute name="selected">selected</xsl:attribute>
+</xsl:if>
+</xsl:when> 
+<xsl:otherwise>
+<xsl:if test=". = ../defaultValue[1]"><xsl:attribute name="selected">selected</xsl:attribute></xsl:if>
+</xsl:otherwise>
+</xsl:choose>
+<xsl:choose>
+  <xsl:when test="@display">
+    <xsl:value-of select="@display"/>
+  </xsl:when>
+  <xsl:otherwise>
+    <xsl:value-of select="."/>
+  </xsl:otherwise>
+</xsl:choose>
+    </option>
+</xsl:for-each>
+<!-- END custom handling for portlet preferences -->
+</xsl:when> 
+<xsl:otherwise>
+<!-- begin channel preference traditional handling -->
+			<xsl:for-each select="type/restriction/value">
+			<xsl:variable name="name"><xsl:value-of select="../../../name"/></xsl:variable>
+			<xsl:variable name="value"><xsl:value-of select="."/></xsl:variable>
 
               <option value="{.}">
 
@@ -1470,9 +1503,11 @@
 
               </option>
 
-            </xsl:for-each>
-
-          </select>
+</xsl:for-each>
+<!-- end traditional handling -->
+</xsl:otherwise>
+</xsl:choose>
+</select>
         </td>
       </xsl:when>
       <xsl:when test="type/@display='radio'">
