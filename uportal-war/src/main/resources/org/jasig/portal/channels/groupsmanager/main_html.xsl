@@ -254,7 +254,7 @@
         <xsl:choose>
         
             <!-- View Mode -->
-          <xsl:when test="not($mode='edit') or not($group/@canUpdate='true')">
+          <xsl:when test="not($mode='edit')">
             <!-- Select checkbox or selected tick mark -->
             <h3>
               <xsl:if test="($mode='select') and not($group/@searchResults='true')">
