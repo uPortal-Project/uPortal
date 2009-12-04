@@ -267,7 +267,7 @@
         <xsl:choose>
         
             <!-- View Mode -->
-          <xsl:when test="not($mode='edit') or not($group/@canUpdate='true')">
+          <xsl:when test="not($mode='edit')">
             <h3><xsl:value-of select="$group/RDF/Description/title" /></h3>
             <p><xsl:value-of select="string($group/RDF/Description/description)" /></p>
           </xsl:when>
