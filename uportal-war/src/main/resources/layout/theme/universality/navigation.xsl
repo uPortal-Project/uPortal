@@ -156,7 +156,7 @@
                 <xsl:otherwise></xsl:otherwise>
               </xsl:choose>
             </xsl:variable>
-            <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+            <li id="uPchannel_{@ID}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
               <a href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}&amp;uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
                 <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
               </a>
