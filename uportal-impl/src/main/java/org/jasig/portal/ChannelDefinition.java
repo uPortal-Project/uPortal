@@ -22,7 +22,6 @@ import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 /**
  * Describes a published channel.
@@ -49,7 +48,7 @@ public class ChannelDefinition implements IBasicEntity {
   private boolean chanHasAbout;
   private boolean chanIsSecure;    
   private Map<String, ChannelParameter> parameters; // Consider implementing as a Set
-  private Map<String, IPortletPreference> portletPreferences;
+  private Map<String, IPortletPreference> portletPreferences = Collections.emptyMap();
   private String chanLocale;
   private Map<String, String> chanDescs;
   private Map<String, String> chanTitles;
@@ -65,7 +64,6 @@ public class ChannelDefinition implements IBasicEntity {
     this.chanDesc = "";
     this.setJavaClass("");
     this.parameters = new HashMap<String, ChannelParameter>();
-    this.portletPreferences = new LinkedHashMap<String, IPortletPreference>(); //Preserve preference order
     this.chanLocale = null;
     this.chanTitles = new Hashtable<String, String>();
     this.chanNames = new Hashtable<String, String>();
@@ -208,11 +206,16 @@ public class ChannelDefinition implements IBasicEntity {
   public IPortletPreference[] getPortletPreferences() {
       return this.portletPreferences.values().toArray(new IPortletPreference[this.portletPreferences.size()]);
   }
+  public Map<String, IPortletPreference> getPortletPreferencesMap() {
+      return this.portletPreferences;
+  }
   public void replacePortletPreference(List<IPortletPreference> portletPreferences) {
-      this.portletPreferences.clear();
+      final Map<String, IPortletPreference> preferences = new LinkedHashMap<String, IPortletPreference>();
       for (final IPortletPreference portletPreference : portletPreferences) {
-          this.portletPreferences.put(portletPreference.getName(), portletPreference);
+          preferences.put(portletPreference.getName(), portletPreference);
       }
+      
+      this.portletPreferences = Collections.unmodifiableMap(preferences);
   }
   
   /**

@@ -11,10 +11,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -667,9 +668,31 @@ public class RDBMChannelRegistryStore implements IChannelRegistryStore, Initiali
             //Get or Create the portlet definition
             final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getOrCreatePortletDefinition(channelPublishId);
             
-            //Update the preferences of the portlet definition
+            //Update the preferences of the portlet definition if needed
+            final Map<String, IPortletPreference> channelDefPortletPreferences = new LinkedHashMap<String, IPortletPreference>(channelDef.getPortletPreferencesMap());
+            
             final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
-            portletPreferences.setPortletPreferences(Arrays.asList(channelDef.getPortletPreferences()));
+            final List<IPortletPreference> portletPreferencesList = portletPreferences.getPortletPreferences();
+            
+            for (final Iterator<IPortletPreference> portletPreferencesItr = portletPreferencesList.iterator(); portletPreferencesItr.hasNext();) {
+                final IPortletPreference portletPreference = portletPreferencesItr.next();
+                final String name = portletPreference.getName();
+                final IPortletPreference channelPreference = channelDefPortletPreferences.remove(name);
+                //preference doesn't exist in channel def any more, remove it from the portlet def list
+                if (channelPreference == null) {
+                    portletPreferencesItr.remove();
+                }
+                //preference does exist, copy over the values array
+                else {
+                    portletPreference.setValues(channelPreference.getValues());
+                }
+            }
+            
+            //Add any remaining channel def preferences to the portlet list
+            for (final IPortletPreference channelPreference : channelDefPortletPreferences.values()) {
+                portletPreferencesList.add(channelPreference);                
+            }
+            
             this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
         }
 
