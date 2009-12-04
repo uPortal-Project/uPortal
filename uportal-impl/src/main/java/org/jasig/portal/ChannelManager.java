@@ -178,7 +178,13 @@ public class ChannelManager implements LayoutEventListener {
         final IJndiManager jndiManager = (IJndiManager)applicationContext.getBean("jndiManager", IJndiManager.class);
         final JndiTemplate jndiTemplate = jndiManager.getJndiTemplate();
         
+        final Thread currentThread = Thread.currentThread();
+        final ClassLoader contextClassLoader = currentThread.getContextClassLoader();
         try {
+            //Switch to the portal classloader to ensure the JNDI lookup works
+            final ClassLoader portalClassLoader = this.getClass().getClassLoader();
+            currentThread.setContextClassLoader(portalClassLoader);
+            
             // create a new InitialContext
             final Context cic = new MemoryContext(new Hashtable<Object, Object>());
             // get services context
@@ -196,8 +202,11 @@ public class ChannelManager implements LayoutEventListener {
             return cic;
         }
         catch (NamingException ne) {
-            log.error("Failed to create channel JNDI Context. No JNDI context will be available for rendering channels.", ne);
+            log.warn("Failed to create channel JNDI Context. No JNDI context will be available for inter-channel-communication.", ne);
             return null;
+        }
+        finally {
+            currentThread.setContextClassLoader(contextClassLoader);
         }
     }
     
