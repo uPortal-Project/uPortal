@@ -279,7 +279,7 @@ public class CSyndFeed extends BaseChannel implements ICacheable{
 						throw new PortalException("HttpStatus:"+ rc+" url: " + xmlUri);
 					}
 					final InputStream in = get.getResponseBodyAsStream();
-					feed = input.build(new InputStreamReader(in));
+					feed = input.build(new XmlReader(in));
 				} finally {
 					get.releaseConnection();
 				}
