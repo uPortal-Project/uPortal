@@ -9,8 +9,9 @@ package org.jasig.portal.portlets.registerportal;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -27,8 +28,6 @@ import org.springframework.validation.ValidationUtils;
  * @version $Revision$
  */
 public class PortalRegistrationRequest implements Serializable {
-    public static final Pattern EMAIL_PATTERN = Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum)\\b");
-    
     private static final long serialVersionUID = 1L;
 
     private String institutionName;
@@ -71,8 +70,11 @@ public class PortalRegistrationRequest implements Serializable {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deployerName", "", null, "Contact Name is required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "deployerAddress", "", null, "Contact email is required");
         if (StringUtils.isNotBlank(this.deployerAddress)) {
-            final Matcher emailMatcher = EMAIL_PATTERN.matcher(this.deployerAddress);
-            if (!emailMatcher.matches()) {
+            try {
+                final InternetAddress email = new InternetAddress(this.deployerAddress);
+                email.validate();
+            }
+            catch (AddressException ae) {
                 errors.rejectValue("deployerAddress", "", null, "Contact email must be a valid email address");
             }
         }
