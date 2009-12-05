@@ -32,7 +32,7 @@
   <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
     <div class="fl-col">
         <ul>
-            <li><a href="${flushAllUrl}"><span>Flush all caches</span></a></li>
+            <li><a href="${flushAllUrl}"><span>Empty all caches</span></a></li>
       </ul>
     </div>
   </div> <!-- end: portlet-toolbar -->
@@ -46,7 +46,7 @@
       </h3>
       
       <div class="portlet-section-body">
-        <p class="portlet-section-note" role="note">Select a cache to view statistics or flush current contents.</p>
+        <p class="portlet-section-note" role="note">Select a cache to view statistics or clear its contents.</p>
       
         <ul class="cache-member">
         <c:forEach items="${cacheNames}" var="cacheName">

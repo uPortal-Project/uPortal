@@ -20,14 +20,14 @@
 
         <div class="portlet-msg-alert" role="alert">
 	        <h3>Warning!</h3>
-	        <p>Flushing caches while uPortal is running can slow performance temporarily.
+	        <p>Emptying caches while uPortal is running can degrade performance temporarily.
 	        Use caution with this feature in production environments.</p>
         </div>
 
 	    <!-- Portlet Section -->
 	    <div class="portlet-section" role="region">
 	      <div class="portlet-section-body">
-            <p>Are you sure you want to flush <c:out value="${cacheName}"/>?</p>
+            <p>Are you sure you want to remove all elements from <c:out value="${cacheName}"/>?</p>
 	      </div>
 	    </div> <!-- end: portlet-section -->
         

@@ -71,29 +71,29 @@ public class CacheManagementHelper {
 	}
 	
 	/**
-	 * Call {@link Cache#flush()} on the specified cache, if it
+	 * Call {@link Cache#removeAll()} on the specified cache, if it
 	 * exists and is alive.
 	 * 
 	 * @see Status#STATUS_ALIVE
 	 * @see Cache#getStatus()
 	 * @param cacheName
 	 */
-	public void flushCache(String cacheName) {
+	public void clearCache(String cacheName) {
 		Cache cache = this.cacheManager.getCache(cacheName);
 		if(null != cache && Status.STATUS_ALIVE.equals(cache.getStatus())) {
-			cache.flush();
-			logger.warn("flushed cache: " + cacheName);
+			cache.removeAll();
+			logger.warn("finished removeAll for cache: " + cacheName);
 		}
 	}
 	
 	/**
-	 * Call {@link Cache#flush()} on ALL caches.
+	 * Call {@link #clearCache(String)} on ALL caches.
 	 */
-	public void flushAllCaches() {
-		logger.warn("beginning request to flush all caches");
+	public void clearAllCaches() {
+		logger.warn("beginning request to clear all caches");
 		for(String cacheName: getCacheNames()) {
-			flushCache(cacheName);
+			clearCache(cacheName);
 		}
-		logger.warn("completed request to flush all caches");
+		logger.warn("completed request to clear all caches");
 	}
 }

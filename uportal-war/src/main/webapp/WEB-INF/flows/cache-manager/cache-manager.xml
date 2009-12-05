@@ -32,14 +32,14 @@
     
     <view-state id="confirm-flush">
         <transition to="finishCacheManager" on="confirm">
-            <evaluate expression="cacheManagementHelper.flushCache(flowScope.cacheName)"/>
+            <evaluate expression="cacheManagementHelper.clearCache(flowScope.cacheName)"/>
         </transition>
         <transition to="cache-statistics" on="cancel"/>
     </view-state>
     
     <view-state id="confirm-flush-all">
         <transition to="finishCacheManager" on="confirm">
-            <evaluate expression="cacheManagementHelper.flushAllCaches()"/>
+            <evaluate expression="cacheManagementHelper.clearAllCaches()"/>
         </transition>
         <transition to="home" on="cancel"/>
     </view-state>

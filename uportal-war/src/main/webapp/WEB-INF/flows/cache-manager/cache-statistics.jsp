@@ -69,7 +69,7 @@
 
     <!-- Portlet Buttons -->
     <div class="portlet-button-group">
-        <a class="portlet-button portlet-button-primary" href="${ flushUrl }">Flush</a>
+        <a class="portlet-button portlet-button-primary" href="${ flushUrl }">Empty this cache</a>
         <a class="portlet-button" href="${ homeUrl }">Cancel</a>
     </div>
     
