@@ -169,7 +169,7 @@
         <pluto.version>1.1.7</pluto.version>
         <portlet-api.version>1.0</portlet-api.version>
         <quartz.version>1.6.1</quartz.version>
-        <resource-server.version>1.0.0-RC2</resource-server.version>
+        <resource-server.version>1.0.5</resource-server.version>
         <rome.version>0.9</rome.version>
         <servlet-api.version>2.5</servlet-api.version>
         <spring-framework.version>2.5.6</spring-framework.version>
@@ -470,6 +470,12 @@
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-utils</artifactId>
                 <version>${resource-server.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>net.sf.ehcache</groupId>
+                        <artifactId>ehcache</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jasig.service</groupId>
