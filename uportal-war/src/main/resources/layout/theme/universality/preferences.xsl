@@ -85,7 +85,7 @@
           <input id="addChannelSearchTerm" type="text"/>
          </p>
          <h3><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_SEARCH_RESULTS_TITLE']"/></h3>
-         <ul id="addChannelSearchResults" style="list-style-type: none; list-style-image: none; padding: 0px; margin-left: 5px; max-height: 160px; overflow: auto"></ul>
+         <ul id="addChannelSearchResults" style="list-style-type: none; list-style-image: none; padding: 0px; margin-left: 5px; max-height:15em; min-height:15em; overflow: auto"></ul>
          </div>
         </div>
       <h3 class="portal-section-header"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_DETAILS_TITLE']"/></h3>
