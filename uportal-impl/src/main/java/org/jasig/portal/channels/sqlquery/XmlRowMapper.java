@@ -37,14 +37,12 @@ public class XmlRowMapper implements RowMapper {
             
             int columnType = md.getColumnType(i);
             String columnValue = null;
-            if (columnType == Types.VARCHAR || columnType == Types.LONGVARCHAR) {
-                columnValue = resultSet.getString(i);
-            } else if (columnType == Types.DOUBLE || columnType == Types.FLOAT) {
-                double columnValueDouble = resultSet.getDouble(i);
-                columnValue = Double.toString(columnValueDouble);
-            } else if (columnType == Types.INTEGER) {
-                int columnValueInt = resultSet.getInt(i);
-                columnValue = Integer.toString(columnValueInt);
+            if (columnType != Types.ARRAY && columnType != Types.BLOB && 
+                columnType != Types.CLOB && columnType != Types.STRUCT &&
+                columnType != Types.REF && columnType != Types.JAVA_OBJECT /*&&
+                columnType != Types.ROWID && columnType != Types.NCLOB &&
+            columnType != Types.SQLXML */) {
+              columnValue = resultSet.getString(i);
             } else {
                 throw new RuntimeException(
                         "Encountered unsupported column type " + 
