@@ -182,8 +182,11 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
             final String attributeName = userAttributeDD.getName();
             final Object valueObj = portalUserAttributes.get(attributeName);
             
-            final String value = String.valueOf(valueObj);
-            portletUserAttributes.put(attributeName, value);
+            //TODO a personAttributes.hasAttribute(String) API is needed here, if hasAttribute and null then put the key with no value in the returned map
+            if (valueObj != null) {
+                final String value = String.valueOf(valueObj);
+                portletUserAttributes.put(attributeName, value);
+            }
         }
         
         return portletUserAttributes;
