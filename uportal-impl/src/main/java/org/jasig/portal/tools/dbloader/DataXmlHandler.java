@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.tools.dbloader;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -19,8 +20,6 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * Generates and executes SQL INSERT statements as the data XML document is
