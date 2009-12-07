@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.events.support;
 
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.events.PortalEvent;
@@ -28,6 +29,8 @@ public abstract class ChannelLayoutPortalEvent extends PortalEvent {
 	        final EventType eventType) {
 		
 	    super(source, person, eventType);
+	    
+	    Validate.notNull(description, "IUserLayoutChannelDescription can not be null");
 		
 		this.profile = profile;
 		this.description = description;
