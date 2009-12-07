@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Random;
 
@@ -188,7 +189,21 @@ public void init() throws ServletException {
         //Check if the servlet failed to initialize
         if (fatalError) {
             try {
-                final String encodedRedirectURL = res.encodeRedirectURL("error/fatal.htm");
+                final StringBuilder loginRedirect = new StringBuilder();
+                
+                loginRedirect.append(writableRequest.getContextPath());
+                loginRedirect.append("/Login?refUrl=");
+                
+                final String requestEncoding = writableRequest.getCharacterEncoding();
+                loginRedirect.append(URLEncoder.encode(writableRequest.getRequestURI(), requestEncoding));
+                
+                final String queryString = writableRequest.getQueryString();
+                if (queryString != null) {
+                    loginRedirect.append(URLEncoder.encode("?", requestEncoding));
+                    loginRedirect.append(URLEncoder.encode(queryString, requestEncoding));
+                }
+                
+                final String encodedRedirectURL = res.encodeRedirectURL(loginRedirect.toString());
                 res.sendRedirect(encodedRedirectURL);
             } catch (IOException e) {
                 ExceptionHelper.genericTopHandler(Errors.bug,e);
