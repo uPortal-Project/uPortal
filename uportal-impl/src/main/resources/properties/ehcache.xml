@@ -125,8 +125,11 @@
     
     <cache name="PortalStats.org.jasig.portal.events.EventType"
         eternal="false" maxElementsInMemory="200" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
-
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" />
+    
+    <cache name="PortalStats.org.jasig.portal.events.handlers.db.StatsSession"
+        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="600" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" />
 
     <cache name="PortalStats.org.hibernate.cache.UpdateTimestampsCache"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 

@@ -40,7 +40,7 @@ import org.springframework.stereotype.Repository;
 public class JpaPortalEventStore extends AbstractLimitedSupportEventHandler implements BatchingEventHandler, IPortalEventStore {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    protected static final String STATS_SESSION_PERSON_ATTR = JpaPortalEventStore.class.getName() + ".StatsSession";
+    protected static final String STATS_SESSION_ID_PERSON_ATTR = JpaPortalEventStore.class.getName() + ".StatsSessionId";
     
     private EntityManager entityManager;
     private boolean logSessionGroups = true;
@@ -126,11 +126,17 @@ public class JpaPortalEventStore extends AbstractLimitedSupportEventHandler impl
      * Gets a StatsSession object for the specified person, creating, populating and persisting it if needed
      */
     protected StatsSession getStatsSession(final IPerson person) {
-        //Gets the StatsSession from the IPerson object
-        StatsSession statsSession = (StatsSession)person.getAttribute(STATS_SESSION_PERSON_ATTR);
+        //Gets the statsSessionId from the IPerson object
+        final Long statsSessionId = (Long)person.getAttribute(STATS_SESSION_ID_PERSON_ATTR);
+
+        StatsSession statsSession = null;
+        //Try and load the appropriate stats session based on the ID in the user's person object
+        if (statsSessionId != null && statsSessionId > 0) {
+            statsSession = this.entityManager.find(StatsSession.class, statsSessionId);
+        }
         
-        //If no StatsSession is found, create one for the user
-        if (statsSession == null || statsSession.getSessionId() == 0) {
+        //If no statsSessionId is found, create one for the user
+        if (statsSession == null) {
             statsSession = new StatsSession();
             final String userName = (String)person.getAttribute(IPerson.USERNAME);
             statsSession.setUserName(userName);
@@ -147,7 +153,7 @@ public class JpaPortalEventStore extends AbstractLimitedSupportEventHandler impl
             
             this.entityManager.persist(statsSession);
             
-            person.setAttribute(STATS_SESSION_PERSON_ATTR, statsSession);
+            person.setAttribute(STATS_SESSION_ID_PERSON_ATTR, statsSession.getSessionId());
         }
 
         return statsSession;
