@@ -250,17 +250,6 @@
             </java>
         </uportal-impl-macro>
     </target>
-
-    <target name="crn-make-data-xml" description="Runs the DbUnload tool against all tables listed in data.xml">
-        <uportal-impl-macro>
-
-            <!-- Invoke Cernunnos specifying script and parameters -->
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-                <classpath refid="uportal-impl-full.classpath" />
-                <arg value="classpath://org/jasig/portal/tools/dbloader/dbunload.crn" />
-            </java>
-        </uportal-impl-macro>
-    </target>
     
     <target name="clean-shared" depends="checkForTomcat" description="Removes the ALL shared libraries from the container.">
         <delete>
