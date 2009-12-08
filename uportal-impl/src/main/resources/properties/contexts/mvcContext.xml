@@ -27,6 +27,7 @@
                 <value>/WEB-INF/flows/groups-selector/groups-selector</value>
                 <value>/WEB-INF/flows/edit-portlet/edit-portlet</value>
                 <value>/WEB-INF/flows/portlet-manager/portlet-manager</value>
+                <value>/WEB-INF/flows/cache-manager/cache-manager</value>
             </list>
         </property>                                     
     </bean>

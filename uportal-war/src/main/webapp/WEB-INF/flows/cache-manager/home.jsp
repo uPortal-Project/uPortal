@@ -25,14 +25,14 @@
 
   <!-- Portlet Title -->
   <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading">uPortal Cache Manager</h2>
+    <h2 role="heading"><spring:message code="home.title"/></h2>
   </div> <!-- end: portlet-title -->
   
   <!-- Portlet Toolbar -->
   <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
     <div class="fl-col">
         <ul>
-            <li><a href="${flushAllUrl}"><span>Empty all caches</span></a></li>
+            <li><a href="${flushAllUrl}"><span><spring:message code="home.emptyAllButton" /></span></a></li>
       </ul>
     </div>
   </div> <!-- end: portlet-toolbar -->
@@ -42,11 +42,11 @@
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <h3 class="portlet-section-header" role="heading">
-        Available caches
+       <spring:message code="home.listHeading"/>
       </h3>
       
       <div class="portlet-section-body">
-        <p class="portlet-section-note" role="note">Select a cache to view statistics or clear its contents.</p>
+        <p class="portlet-section-note" role="note"><spring:message code="home.listDescription"/></p>
       
         <ul class="cache-member">
         <c:forEach items="${cacheNames}" var="cacheName">
