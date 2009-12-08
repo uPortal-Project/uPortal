@@ -10,7 +10,7 @@ the uPortal Confluence site http://www.ja-sig.org/wiki/display/UPC/Home
 JDK 1.5 - Just a JRE is not sufficent, a full JDK is required
 Servlet 2.4 Container - Tomcat 5.5 is recommended
 Maven 2.0.8 or later
-Ant 1.7.1 or 1.6.5 - Ant 1.7.0 has a SERIOUS bug and will NOT work with uPortal
+Ant 1.7.1 - Ant 1.7.0 has a SERIOUS bug and will NOT work with uPortal
     
     
 +------------------------------------------------------------------------------+
@@ -20,7 +20,7 @@ uPortal uses Maven for its project configuration and build system. An Ant
 build.xml is also provided which handles the initialization and deployment
 related tasks. As a uPortal deployer you will likely only ever need to use the
 Ant tasks. Note that Ant 1.7.0 has a SERIOUS bug and will NOT work with uPortal,
-use Ant 1.7.1 or 1.6.5 instead.
+use Ant 1.7.1 instead.
 
 Ant tasks:
     hsql - Starts a HSQL database instance. The default uPortal configuration
