@@ -155,7 +155,7 @@
                         <inherited>false</inherited>
                         <configuration>
                             <skinConfigurationFile>src/main/webapp/media/skins/universality/uportal3/skin.xml</skinConfigurationFile>
-                            <outputRootDirectory>target/uPortal/media/skins/universality/uportal3/</outputRootDirectory>
+                            <outputRootDirectory>${project.build.directory}/${project.build.finalName}/media/skins/universality/uportal3/</outputRootDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -167,7 +167,7 @@
                         <inherited>false</inherited>
                         <configuration>
                             <skinConfigurationFile>src/main/webapp/media/skins/universality/ivy/skin.xml</skinConfigurationFile>
-                            <outputRootDirectory>target/uPortal/media/skins/universality/ivy/</outputRootDirectory>
+                            <outputRootDirectory>${project.build.directory}/${project.build.finalName}/media/skins/universality/ivy/</outputRootDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -179,7 +179,7 @@
                         <inherited>false</inherited>
                         <configuration>
                             <skinConfigurationFile>src/main/webapp/media/skins/muniversality/uportal3/skin.xml</skinConfigurationFile>
-                            <outputRootDirectory>target/uPortal/media/skins/muniversality/uportal3/</outputRootDirectory>
+                            <outputRootDirectory>${project.build.directory}/${project.build.finalName}/media/skins/muniversality/uportal3/</outputRootDirectory>
                         </configuration>
                     </execution>
                 </executions>
