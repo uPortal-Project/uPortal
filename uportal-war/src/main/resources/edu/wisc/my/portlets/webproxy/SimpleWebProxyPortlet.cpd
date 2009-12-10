@@ -159,6 +159,7 @@ Author: Andrew Petro, apetro@unicon.net
       </preference>
 
     </step>
+  </params>
 
   <controls>
     <control type="edit" include="no" override="no"/>
