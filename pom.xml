@@ -787,7 +787,7 @@
                               <version>2.0.6</version>
                             </requireMavenVersion>
                             <requireJavaVersion>
-                              <version>1.5</version>
+                              <version>1.6</version>
                             </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -853,8 +853,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.0.2</version>
                     <configuration>
-                        <source>1.5</source>
-                        <target>1.5</target>
+                        <source>1.6</source>
+                        <target>1.6</target>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -980,7 +980,7 @@
                     <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <minimumTokens>100</minimumTokens>
-                    <targetJdk>1.5</targetJdk>
+                    <targetJdk>1.6</targetJdk>
                 </configuration>
             </plugin>
             <plugin>
@@ -998,10 +998,10 @@
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <source>1.5</source>
+                    <source>1.6</source>
                     <maxmemory>512m</maxmemory>
                     <links>
-                        <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                        <link>http://java.sun.com/javase/6/docs/api/</link>
                         <link>http://java.sun.com/javaee/5/docs/api/</link>
                         <link>http://portals.apache.org/pluto/portlet-1.0-apidocs/</link>
                         <!-- Pluto apidocs are for 2.0 now
