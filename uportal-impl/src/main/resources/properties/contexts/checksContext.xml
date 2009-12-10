@@ -24,11 +24,11 @@
             <list value-type="org.jasig.portal.tools.checks.ICheck">
             
                 <!--
-                 | Check that we're running in JDK 1.5 or newer
+                 | Check that we're running in JDK 1.6 or newer
                  +-->
-                <bean id="jdk15Check" class="org.jasig.portal.tools.checks.SystemPropertyCheck">
+                <bean id="jdk16Check" class="org.jasig.portal.tools.checks.SystemPropertyCheck">
                     <constructor-arg value="java.specification.version" />
-                    <constructor-arg value="1.5" />
+                    <constructor-arg value="1.6" />
                     <constructor-arg>
                         <bean class="org.jasig.portal.utils.compare.OrComparator">
                             <constructor-arg>
@@ -39,7 +39,7 @@
                             </constructor-arg>
                         </bean>
                     </constructor-arg>
-                    <property name="remediation" value="uPortal must be run in JDK 1.5 or newer" />
+                    <property name="remediation" value="uPortal must be run in JDK 1.6 or newer" />
                     <property name="fatal" value="true" />
                 </bean>
             
