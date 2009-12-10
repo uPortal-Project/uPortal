@@ -96,4 +96,15 @@
         <constructor-arg value="org.jasig.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"/>
     </bean>
     
+    <bean id="CacheExpiresFilter" class="org.jasig.resourceserver.utils.filter.PathBasedCacheExpirationFilter">
+        <property name="cacheMaxAges">
+            <map>
+                <entry key="/**/*.aggr.min.js" value="31536000"/>
+                <entry key="/**/*.aggr.min.css" value="31536000"/>
+                <entry key="/**/*.min.js" value="1800"/>
+                <entry key="/**/*.min.css" value="1800"/>
+            </map>
+        </property>
+    </bean>
+    
 </beans>

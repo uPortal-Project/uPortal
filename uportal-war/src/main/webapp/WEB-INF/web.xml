@@ -146,12 +146,7 @@
     
     <filter>
         <filter-name>CacheExpiresFilter</filter-name>
-        <filter-class>org.jasig.resourceserver.utils.filter.CacheExpirationFilter</filter-class>
-        <!-- Length of time to set in cache headers (in seconds) -->
-        <init-param>
-            <param-name>cacheMaxAge</param-name>
-            <param-value>300</param-value>
-        </init-param>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
     
     
