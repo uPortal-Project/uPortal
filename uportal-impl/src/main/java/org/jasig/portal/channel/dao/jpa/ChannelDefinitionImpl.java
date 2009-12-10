@@ -142,7 +142,7 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 
 	@org.hibernate.annotations.CollectionOfElements(fetch = FetchType.EAGER)
 	@JoinTable(name = "UP_CHANNEL_MDATA", joinColumns = @JoinColumn(name = "CHAN_ID"))
-	@org.hibernate.annotations.MapKey(columns = @Column(name = "LOCALE", length = 64))
+	@org.hibernate.annotations.MapKey(columns = @Column(name = "LOCALE", length = 64, nullable = false))
 	private Map<String, ChannelLocalizationData> localizations = new HashMap<String, ChannelLocalizationData>();
 
 	@OneToOne(targetEntity = PortletDefinitionImpl.class, mappedBy = "channelDefinition", fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
