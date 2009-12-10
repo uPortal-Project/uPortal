@@ -41,5 +41,17 @@
             <defaultValue>false</defaultValue>
         </parameter>
     
+        <parameter modify="publish-only">
+            <name>quicklink</name>
+            <label>Quicklinks index</label>
+            <type base="integer" input="text" display="text">
+              <!-- length and maxlength for text field -->
+              <length>2</length>
+              <maxlength>2</maxlength>
+            </type>
+            <description>Order in quicklinks list in portal sidebar</description>
+            <defaultValue></defaultValue>
+        </parameter>
+    
     </step>
 </params>
