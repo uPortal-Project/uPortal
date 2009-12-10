@@ -66,17 +66,21 @@ Version $Revision$
       </description>
 
       <parameter modify="publish-only">
-        <name>portletApplicationId</name>
-        <label>Portlet Web Application Path</label>
-        <type base="string" input="text" display="hidden">
-          <length>40</length>
-          <maxlength>2000</maxlength>
+        <name>isFrameworkPortlet</name>
+        <label>Framework Portlet</label>
+        <type base="string" input="single-choice" display="hidden">
+            <restriction>
+                <defaultValue>true</defaultValue>
+                <value>true</value>
+                <value>false</value>
+            </restriction>
         </type>
-        <example>/uPortal</example>
+        <example>true</example>
         <description>
-          This is the name of the web application the portlet resides in including a preceding /.
+          Portlet is deployed in the same web-application as uPortal. If checked "Portlet Web Application Path"
+          is ignored.
         </description>
-        <defaultValue>/uPortal</defaultValue>
+        <defaultValue>true</defaultValue>
       </parameter>
       
       <parameter modify="publish-only">

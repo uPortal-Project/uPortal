@@ -69,12 +69,12 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
         <label>Framework Portlet</label>
         <type base="string" input="single-choice" display="hidden">
             <restriction>
-                <defaultValue>false</defaultValue>
+                <defaultValue>true</defaultValue>
                 <value>true</value>
                 <value>false</value>
             </restriction>
         </type>
-        <example>false</example>
+        <example>true</example>
         <description>
           Portlet is deployed in the same web-application as uPortal. If checked "Portlet Web Application Path"
           is ignored.
@@ -82,20 +82,6 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
         <defaultValue>true</defaultValue>
       </parameter>
 
-      <parameter modify="publish-only">
-        <name>portletApplicationId</name>
-        <label>Portlet Web Application Path</label>
-        <type base="string" input="text" display="hidden">
-          <length>40</length>
-          <maxlength>2000</maxlength>
-        </type>
-        <example>/pluto-testsuite</example>
-        <description>
-          This is the name of the web application the portlet resides in including a preceding /.
-        </description>
-        <defaultValue>/uPortal</defaultValue>
-      </parameter>
-      
       <parameter modify="publish-only">
         <name>portletName</name>
         <label>Portlet Name</label>

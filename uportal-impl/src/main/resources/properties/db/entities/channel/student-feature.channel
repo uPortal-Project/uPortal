@@ -20,8 +20,8 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>portletApplicationId</name>  
-      <value>/uPortal</value>  
+      <name>isFrameworkPortlet</name>  
+      <value>true</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

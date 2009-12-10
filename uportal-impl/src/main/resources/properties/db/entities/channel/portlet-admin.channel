@@ -19,10 +19,13 @@
     <group>Portal Administrators</group>
     <group>Portal Developers</group>
   </groups>
+  <users>
+    <user>studentadmin</user>
+  </users>
   <parameters>
     <parameter> 
-      <name>portletApplicationId</name>  
-      <value>/uPortal</value>  
+      <name>isFrameworkPortlet</name>  
+      <value>true</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

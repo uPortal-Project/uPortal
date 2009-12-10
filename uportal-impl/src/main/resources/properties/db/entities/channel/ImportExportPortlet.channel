@@ -32,12 +32,6 @@
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>portletApplicationId</name>  
-      <value>/uPortal</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
       <name>portletName</name>  
       <value>ImportExportPortlet</value>  
       <description/>  
