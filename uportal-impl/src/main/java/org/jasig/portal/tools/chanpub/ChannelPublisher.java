@@ -266,10 +266,10 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             	groupMembers = ci.groups;
             } else {
                 groupMembers = new IGroupMember[ci.groups.length + ci.users.length];
-                System.arraycopy(groupMembers, 0, ci.groups, 0, ci.groups.length);
-                System.arraycopy(groupMembers, 0, ci.users, ci.groups.length, ci.users.length);
+                System.arraycopy(ci.groups, 0, groupMembers, 0, ci.groups.length);
+                System.arraycopy(ci.users, 0, groupMembers, ci.groups.length, ci.users.length);
             }
-
+            
             // save the channel
             if (ci.categories == null) { ci.categories = new ChannelCategory[0]; }
             ci.chanDef = channelPublishingService
