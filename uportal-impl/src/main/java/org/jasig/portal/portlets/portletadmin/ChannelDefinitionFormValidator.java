@@ -41,20 +41,19 @@ public class ChannelDefinitionFormValidator {
 	}
 	
 	public void validateBasicInfo(ChannelDefinitionForm def, MessageContext context) {
+		Matcher matcher = FunctionalNameType.VALID_FNAME_PATTERN.matcher(def.getFname());
 		if (StringUtils.isEmpty(def.getFname())) {
 			context.addMessage(new MessageBuilder().error().source("fName")
 					.code("errors.channelDefinition.fName.empty")
 					.defaultText("Please enter an fname").build());
-		}
-		Matcher matcher = FunctionalNameType.VALID_FNAME_PATTERN.matcher(def.getFname());
-		if (!matcher.matches()) {
+		} else if (!matcher.matches()) {
 			context.addMessage(new MessageBuilder().error().source("fName")
 					.code("errors.channelDefinition.fName.invalid")
-					.defaultText("Fnames may only contain letters, numbers, dashes, and underscores").build());
-		}
+					.defaultText("Fnames may only contain letters, numbers, dashes, and underscores").build());		
+		} 
 		
 		// if this is a new channel and the fname is already taken
-		if (def.getId() == -1 && channelStore.getChannelDefinition(def.getFname()) != null) {
+		else if (def.getId() == -1 && channelStore.getChannelDefinition(def.getFname()) != null) {
 			context.addMessage(new MessageBuilder().error().source("fName")
 					.code("errors.channelDefinition.fName.duplicate")
 					.defaultText("This fname is already in use").build());
