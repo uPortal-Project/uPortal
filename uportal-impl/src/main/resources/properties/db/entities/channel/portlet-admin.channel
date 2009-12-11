@@ -19,9 +19,6 @@
     <group>Portal Administrators</group>
     <group>Portal Developers</group>
   </groups>
-  <users>
-    <user>studentadmin</user>
-  </users>
   <parameters>
     <parameter> 
       <name>isFrameworkPortlet</name>  
