@@ -90,11 +90,9 @@
   -->
   <xsl:param name="skin">uportal3</xsl:param>
   <xsl:variable name="SKIN" select="$skin"/>
-  <xsl:param name="FLUID_THEME_CLASS">fl-theme-<xsl:value-of select="$SKIN" /></xsl:param>
+  <xsl:param name="FLUID_THEME_CLASS">fl-theme-uportal</xsl:param>
   <xsl:variable name="MEDIA_PATH">media/skins/universality</xsl:variable>
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
-  <xsl:variable name="SCRIPT_PATH">media/skins/universality/common/javascript</xsl:variable>
-  <xsl:variable name="RESOURCE_PATH">/ResourceServingWebapp/rs</xsl:variable>
   <xsl:variable name="PORTAL_SHORTCUT_ICON">favicon.ico</xsl:variable>
   
   <!-- 
@@ -294,67 +292,6 @@
    | Changes to templates may require a restart of the portal server.
    | Template contents can be any valid XSL or XHTML.
   -->
-  
-  
-  <!-- ========== TEMPLATE: PAGE CSS ========== -->
-  <!-- ======================================== -->
-	<!-- 
-   | GREEN
-   | This template renders the CSS links in the page <head>.
-   | Cascading Stylesheets (CSS) that provide the visual style and presentation of the portal.
-   | Refer to [http://www.w3.org/Style/CSS/] for CSS definition and syntax.
-   | CSS files are located in the uPortal skins directory: webpages/media/skins.
-   | Template contents can be any valid XSL or XHTML.
-   |
-   | NOTE: CSS files are minimized (linearized) for performance during the build process and thus these links reference a .min version of the file in the deployed webapp.
-  -->
-  <xsl:template name="page.css">
-    
-    <!-- Fluid Skinning System CSS for layout and helpers. See http://wiki.fluidproject.org/x/96M7 for more details. -->
-    <link rel="stylesheet" type="text/css" media="screen" href="{$RESOURCE_PATH}/fluid/1.1.2/css/fss-framework-1.1.2.min.css"/>
-    
-    <!-- uPortal skin CSS -->
-    <link rel="stylesheet" type="text/css" media="screen" href="{$SKIN_PATH}/{$SKIN}.min.css"/>
-    
-  </xsl:template>
-  <!-- ======================================== -->
-  
-  
-  <!-- ========== TEMPLATE: PAGE JAVASCRIPT ========== -->
-  <!-- =============================================== -->
-  <!-- 
-   | YELLOW
-   | This template renders the Javascript links in the page <head>.
-   | Javascript provides AJAX and enhanced client-side interaction to the portal.
-   | Javascript files are located in the uPortal skins directory:
-   | /media/skins/[theme_name]/common/javascript/
-   | Template contents can be any valid XSL or XHTML.
-   |
-   | NOTE: JavaScript files are minimized (linearized) for performance during the build process and thus these links reference a .min version of the file in the deployed webapp.
-  -->
-  <xsl:template name="page.js">
-    <script type="text/javascript" src="{$RESOURCE_PATH}/jquery/1.3.2/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="{$RESOURCE_PATH}/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"></script>
-    <script type="text/javascript" src="{$RESOURCE_PATH}/jquery-plugins/cookie/1.0/jquery.cookie-1.0.min.js"></script>
-    <script type="text/javascript" src="{$RESOURCE_PATH}/fluid/1.1.2/js/fluid-all-1.1.2.min.js"></script>
-    <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true'">
-      <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/ajax-preferences-jquery.min.js"></script>
-      <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/search.min.js"></script>
-      <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-channel-browser.min.js"></script>
-      <script type="text/javascript" src="{$SCRIPT_PATH}/uportal/up-group-browser.min.js"></script>
-    </xsl:if>
-    <xsl:if test="$USE_FLYOUT_MENUS='true'">
-      <script src="{$SCRIPT_PATH}/uportal/flyout-nav.min.js" type="text/javascript"></script>
-    </xsl:if>
-    <script type="text/javascript">
-      var up = up || {};
-      up.jQuery = jQuery.noConflict(true);
-      up.fluid = fluid;
-      fluid = null;
-    </script>
-  </xsl:template>
-  
-  <!-- =============================================== -->
   
   
   <!-- ========== TEMPLATE: HEADER BLOCK ========== -->

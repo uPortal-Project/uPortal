@@ -12,21 +12,17 @@
   <!-- For layout of portal pages (in tandem with FSS fluid.layout.css). Common to all skins using the universality theme. -->
   <css>../common/css/layout.css</css>
   
-  <!-- Support for legacy uPortal css classes. -->
-  <css>uportal3_legacy.css</css>
-  
-  <!-- uPortal jqueryui override css -->
-  <css>jquery.css</css>
-  
   <!-- Visual style for the portal. Built and formatted as a Fluid Skinning System theme. -->
-  <css>fluid.theme.uportal3.css</css>
+  <css>portal.css</css>
   
   <!-- Visual style for portlet content. An extension of the uportal3 skin. -->
-  <css>uportal3_portlet.css</css>
-  <css>jsr168_portlet_spec.css</css>
-  
+  <css>portlet.css</css>
+
+  <!-- Support for legacy uPortal css classes. -->
+  <css>legacy.css</css>
+    
   <!-- Overrides specific to IE6. -->
-  <css conditional="if IE 6">uportal3_ie6override.css</css>
+  <css conditional="if IE 6">ie6override.css</css>
   
   <js>/ResourceServingWebapp/rs/jquery/1.3.2/jquery-1.3.2.min.js</js>
   <js>/ResourceServingWebapp/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.min.js</js>

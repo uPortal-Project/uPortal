@@ -87,7 +87,7 @@
         </script>
       </head>
       
-      <body id="portal" class="{$FLUID_THEME_CLASS}">
+      <body id="portal" class="up {$FLUID_THEME_CLASS}">
         <div id="portalPage" class="{$LOGIN_STATE} {$PORTAL_VIEW} fl-container-flex">  <!-- Main div for presentation/formatting options. -->
         	<div id="portalPageInner" class="{$PAGE_COLUMN_CLASS} {$SIDEBAR_CLASS} {$FRAGMENT_ADMIN_CLASS}">  <!-- Inner div for additional presentation/formatting options. -->
             <xsl:choose>

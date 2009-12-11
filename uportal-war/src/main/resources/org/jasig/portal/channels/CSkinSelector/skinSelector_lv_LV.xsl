@@ -97,7 +97,7 @@
 				<img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 			</td>
 			<td>
-				<img height="90" alt="{skin-name} sīktēls" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
+				<img height="90" alt="{skin-name} sīktēls" src="{$skinsPath}/{skin}/thumb.gif" width="120" border="0"/>
 			</td>
 			<td>
 				<img alt="saskarnes attēls" src="{$mediaPath}/transparent.gif" width="1" height="1"/>

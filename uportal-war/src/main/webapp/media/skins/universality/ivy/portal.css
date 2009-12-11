@@ -859,3 +859,15 @@ div .orderable-drop-marker{height:10px !important; background-color:#fa7019;}
 :focus{outline-width:0px;}
 .fl-theme-ivy .orderable-selected:focus,
 .fl-theme-ivy .orderable-dragging:focus {outline:2px solid #39f;}
+
+
+/* 
+------------------------------------
+  Overrides to jqueryui css.
+------------------------------------ 
+*/
+
+.ui-widget {font-size: 1em;}
+
+/* jQuery tooltip */
+#tooltip {background-color: #fffbbf; color: #344461; border: thin solid #b1c6f2;}

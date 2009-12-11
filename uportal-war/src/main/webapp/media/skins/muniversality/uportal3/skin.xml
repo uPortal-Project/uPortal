@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
 
+  <css>/ResourceServingWebapp/rs/fluid/1.1.2/css/fss-framework-1.1.2.min.css</css>
+    
+  <!-- Default jqueryui css -->
+  <css>/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css</css>
+    
   <css>../common/fss-mobile-iphone-layout.css</css>
-  <css>../common/fss-reset.css</css>
-  <css>../common/fss-text.css</css>
-  <css>../common/fss-transitions.css</css>
-  
-  <css>fss-mobile-iphone-theme.css</css>
-  <css>uportal3_mobile_focused.css</css>
-  <css>uportal3_mobile_global.css</css>
-  <css>uportal3_mobile_guest.css</css>
-  <css>uportal3_mobile.css</css>
-  <css>uportal3_mobile_focused.css</css>
-  <css>uportal3.css</css> 
-  
+
+  <!-- Visual style for the portal. Built and formatted as a Fluid Mobile Skinning System theme. -->
+  <css>portal.css</css>
+    
+  <!-- Visual style for portlet content. An extension of the uportal3 skin. -->
+  <css>../../universality/uportal3/portlet.css</css>
+    
+  <!-- Support for legacy uPortal css classes. -->
+  <css>legacy.css</css>
+    
+
+  <js>/ResourceServingWebapp/rs/jquery/1.3.2/jquery-1.3.2.min.js</js>
+  <js>/ResourceServingWebapp/rs/jqueryui/1.7.2/jquery-ui-1.7.2.min.js</js>
+  <js>/ResourceServingWebapp/rs/fluid/1.1.2/js/fluid-all-1.1.2.min.js</js>
+    
 </s:resources>

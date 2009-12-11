@@ -463,7 +463,7 @@
 							.css("padding-bottom", "10px");
 						div.append($(document.createElement("span")).text($(this).children("skin-description").text()));
 						div.append($(document.createElement("br")));
-						div.append($(document.createElement("img")).attr("src", settings.mediaPath + "/" + key + "/" + key + "_thumb.gif"));
+						div.append($(document.createElement("img")).attr("src", settings.mediaPath + "/" + key + "/" + "thumb.gif"));
 						skinMenu.append(div);
 					});
 		

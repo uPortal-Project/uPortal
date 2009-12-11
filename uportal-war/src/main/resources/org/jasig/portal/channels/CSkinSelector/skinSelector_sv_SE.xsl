@@ -97,7 +97,7 @@
 				<img alt="utfyllnad" src="{$mediaPath}/transparent.gif" width="1" height="1"/>
 			</td>
 			<td>
-				<img height="90" alt="{skin-name} tumnagel" src="{$skinsPath}/{skin}/skin/{skin}_thumb.gif" width="120" border="0"/>
+				<img height="90" alt="{skin-name} tumnagel" src="{$skinsPath}/{skin}/thumb.gif" width="120" border="0"/>
 			</td>
 			<td>
 				<img alt="utfyllnad" src="{$mediaPath}/transparent.gif" width="1" height="1"/>

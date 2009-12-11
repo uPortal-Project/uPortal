@@ -81,7 +81,7 @@
       </td>
       <td><img src="{$mediaPath}/{$currentSkin}/images/transparent.gif" width="1" height="1"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img></td>
       <td>
-        <img height="90" width="120" border="0"><xsl:attribute name="src"><xsl:value-of select="$skinsPath"/>/<xsl:value-of select="skin-key"/>/<xsl:value-of select="skin-key"/><xsl:value-of select="$IMAGE_SRC_THUMB_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="skin-name"/><xsl:text> </xsl:text><xsl:value-of select="$SKINNAME_THUMBNAIL"/></xsl:attribute></img>
+        <img height="90" width="120" border="0"><xsl:attribute name="src"><xsl:value-of select="$skinsPath"/>/<xsl:value-of select="skin-key"/>/<xsl:value-of select="$IMAGE_SRC_THUMB_GIF"/></xsl:attribute><xsl:attribute name="alt"><xsl:value-of select="skin-name"/><xsl:text> </xsl:text><xsl:value-of select="$SKINNAME_THUMBNAIL"/></xsl:attribute></img>
       </td>
       <td><img src="{$mediaPath}/{$currentSkin}/images/transparent.gif" width="1" height="1"><xsl:attribute name="alt"><xsl:value-of select="$IMAGE_ALT_INTERFACE_IMAGE"/></xsl:attribute></img></td>
       <td class="uportal-channel-table-header">

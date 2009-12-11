@@ -51,7 +51,12 @@
  | RED
  | This statement defines this document as XSL.
 -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:xalan="http://xml.apache.org/xalan" 
+    xmlns:resources="http://www.jasig.org/uportal/XSL/web/skin"
+    extension-element-prefixes="resources" 
+    exclude-result-prefixes="xalan resources" >
+
 <!-- ========================================================================= -->
 
 
@@ -68,6 +73,20 @@
 <xsl:import href="focused.xsl" />
 <!-- ========================================================================= -->
 
+<xalan:component prefix="resources" elements="output">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.web.skin.ResourcesXalanElements" />
+</xalan:component>
+    
+
+<!-- ========================================= -->
+<!-- ========== OUTPUT DELCARATION =========== -->
+<!-- ========================================= -->
+<!-- 
+    | RED
+    | This statement instructs the XSL how to output.
+-->
+<xsl:output method="xml" indent="no" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" omit-xml-declaration="yes" />
+<!-- ========================================= -->
 
 <!-- ============================================== -->
 <!-- ========== VARIABLES and PARAMETERS ========== -->
@@ -89,8 +108,6 @@
 <xsl:variable name="SKIN" select="$skin"/>
 <xsl:variable name="MEDIA_PATH">media/skins/muniversality</xsl:variable>
 <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
-<xsl:variable name="RESOURCE_PATH">/ResourceServingWebapp/rs</xsl:variable>
-<xsl:variable name="SCRIPT_PATH">media/skins/muniversality/common/javascript</xsl:variable>
 <xsl:variable name="PORTAL_SHORTCUT_ICON">/favicon.ico</xsl:variable>
 <!-- ======================================== -->
 
@@ -125,29 +142,6 @@
     
 
 <!-- ========================================================================= -->
-<!-- ========== TEMPLATE: PAGE CSS =========================================== -->
-<!-- ========================================================================= -->
-<!-- 
-| GREEN
-| This template renders the CSS links in the page <head>.
-| Cascading Stylesheets (CSS) that provide the visual style and presentation of the portal.
-| Refer to [http://www.w3.org/Style/CSS/] for CSS definition and syntax.
-| CSS files are located in the uPortal mobile skins directory: /media/skins/muniversality/.
-| Template contents can be any valid XSL or XHTML.
--->
-<xsl:template name="page.css">
-    <!-- Fluid Skinning System CSS for layout and helpers. See http://wiki.fluidproject.org/x/96M7 for more details. -->
-    <link rel="stylesheet" type="text/css" media="screen" href="{$RESOURCE_PATH}/fluid/1.1.2/css/fss-framework-1.1.2.min.css"/>
-    <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-mobile-iphone-layout.min.css" />    
-    <link type="text/css" rel="stylesheet" href="{$MEDIA_PATH}/common/fss-transitions.min.css" />
-    
-    <link type="text/css" rel="stylesheet" href="{$SKIN_PATH}/fss-mobile-iphone-theme.min.css" />
-    <link rel="stylesheet" type="text/css" href="{$SKIN_PATH}/{$SKIN}.min.css" />
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-<!-- ========================================================================= -->
 <!-- ========== TEMPLATE: PAGE JAVASCRIPT ==================================== -->
 <!-- ========================================================================= -->
 <!-- 
@@ -160,10 +154,6 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="page.js">
-    <script type="text/javascript" src="{$RESOURCE_PATH}/jquery/1.3.2/jquery-1.3.2.min.js"></script>
-    <script type="text/javascript" src="{$RESOURCE_PATH}/jqueryui/1.7.2/jquery-ui-1.7.2.min.js"></script>
-    <script type="text/javascript" src="{$RESOURCE_PATH}/fluid/1.1.2/js/fluid-all-1.1.2.js"></script>
-
     <script type="text/javascript">
         var up = up || {};
         up.jQuery = jQuery.noConflict(true);
@@ -238,10 +228,10 @@
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
-            <xsl:call-template name="page.css" />
+            <resources:output path="{$SKIN_PATH}/"/>
             <xsl:call-template name="page.js" />
         </head>
-        <body class="fl-theme-iphone">
+        <body class="up fl-theme-uportal">
             <xsl:choose>
                 <xsl:when test="//focused">
                     <xsl:apply-templates mode="focused" />
