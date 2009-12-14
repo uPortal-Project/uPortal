@@ -194,6 +194,8 @@
         <xmlParserAPIs.version>2.6.2</xmlParserAPIs.version>
         <xmlunit.version>1.2</xmlunit.version>
         <xom.version>1.1</xom.version>
+        
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <modules>
@@ -855,6 +857,7 @@
                     <configuration>
                         <source>1.6</source>
                         <target>1.6</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
                 <plugin>
