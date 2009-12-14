@@ -177,6 +177,8 @@
         <maven-war-plugin.version>2.1-alpha-2</maven-war-plugin.version>
         <surefire-report-maven-plugin.version>2.0-beta-1</surefire-report-maven-plugin.version>
         <taglist-maven-plugin.version>2.0</taglist-maven-plugin.version>
+        
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <modules>
@@ -237,6 +239,7 @@
                     <configuration>
                         <source>1.5</source>
                         <target>1.5</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
                 <plugin>
