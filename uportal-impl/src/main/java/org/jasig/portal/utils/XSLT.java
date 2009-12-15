@@ -45,6 +45,8 @@ import org.jasig.portal.StylesheetSet;
 import org.jasig.portal.car.ResourceResolver;
 import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.spring.locator.CacheFactoryLocator;
+import org.jasig.portal.utils.cache.CacheFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -82,6 +84,17 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class XSLT {
     
+	private static final String ROOT_CACHE_NAME = "org.jasig.portal.utils.XSLT.STYLESHEET_ROOT_CACHE";
+	private static final String SET_CACHE_NAME = "org.jasig.portal.utils.XSLT.STYLESHEET_SET_CACHE";
+	private static final Map<String, Templates> stylesheetRootCache;
+	private static final Map<String, StylesheetSet> stylesheetSetCache;
+	
+	static {
+		CacheFactory factory = CacheFactoryLocator.getCacheFactory();
+		stylesheetRootCache = factory.getCache(ROOT_CACHE_NAME);
+		stylesheetSetCache = factory.getCache(SET_CACHE_NAME);
+	}
+	
     private static final Log log = LogFactory.getLog(XSLT.class);
     
   // These flags should be set to true for production to
@@ -91,9 +104,7 @@ public class XSLT {
   protected static boolean stylesheetSetCacheEnabled 
       = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.utils.XSLT.stylesheet_set_caching", true);
   protected static final String mediaProps = "/properties/media.properties";
-  protected static final Hashtable stylesheetRootCache = new Hashtable(); // Consider changing to org.jasig.portal.utils.SmartCache
-  protected static final Hashtable stylesheetSetCache = new Hashtable();  // Consider changing to org.jasig.portal.utils.SmartCache
-
+ 
   private static SAXTransformerFactory saxTFactory = null;
 
   protected Object caller = null;
@@ -358,8 +369,11 @@ public class XSLT {
        */
     public static Templates getTemplates(String stylesheetURI, ResourceBundle l18n) throws SAXException, PortalException, TransformerConfigurationException {
         String lookup = new StringBuffer(stylesheetURI).append(l18n.getLocale().toString()).toString();
-        Templates temp = (Templates)stylesheetRootCache.get(lookup);
-        if(temp == null) {
+        Templates temp = stylesheetRootCache.get(lookup);
+        if(null != temp) {
+        	// cache hit
+        	return temp;
+        }	else {
             Document xsl = null;
             try {
                 URL url = ResourceLoader.getResourceAsURL(DocumentFactory.class, stylesheetURI);
@@ -374,10 +388,10 @@ public class XSLT {
             TransformerFactory tFactory = TransformerFactory.newInstance();
             temp = tFactory.newTemplates(src);
             if(stylesheetRootCacheEnabled) {
-                stylesheetRootCache.put(lookup, temp);
+            	stylesheetRootCache.put(lookup, temp);
             }
+            return temp;
         }
-        return temp;
     }
 
   /**
@@ -388,8 +402,11 @@ public class XSLT {
    */
   public static Templates getTemplates(String stylesheetURI) throws SAXException, PortalException {
     // First, check the cache...
-    Templates temp = (Templates)stylesheetRootCache.get(stylesheetURI);
-    if (temp == null) {
+	Templates temp = stylesheetRootCache.get(stylesheetURI);
+    if(null != temp) {
+    	// cache hit
+    	return temp;
+    } else {
       // Get the Templates and cache them
       try
       {
@@ -400,9 +417,12 @@ public class XSLT {
         temp = thand.getTemplates();
         if (stylesheetRootCacheEnabled) {
           stylesheetRootCache.put(stylesheetURI, temp);
-          if (log.isInfoEnabled())
-              log.info( "Caching templates for: " + stylesheetURI);
+          if (log.isInfoEnabled()) {
+              log.info( "Cached templates for: " + stylesheetURI);
+          }
         }
+        
+        return temp;
       } catch (IOException ioe) {
         throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from [" + stylesheetURI + "]. Please check the stylesheet URL", ioe);
       } catch (TransformerConfigurationException tce) {
@@ -420,7 +440,6 @@ public class XSLT {
         throw sx;
       }
     }
-    return temp;
   }
 
    /**
@@ -507,17 +526,22 @@ public class XSLT {
    */
   public static StylesheetSet getStylesheetSet (String stylesheetListURI) throws PortalException {
     // First, check the cache...
-    StylesheetSet stylesheetSet = (StylesheetSet)stylesheetSetCache.get(stylesheetListURI);
-    if (stylesheetSet == null) {
+	StylesheetSet stylesheetSet = stylesheetSetCache.get(stylesheetListURI);
+    if(null != stylesheetSet) {
+    	// cache hit
+    	return stylesheetSet;
+    } else {
       // Get the StylesheetSet and cache it
       stylesheetSet = new StylesheetSet(stylesheetListURI);
       if (stylesheetSetCacheEnabled) {
-        stylesheetSetCache.put(stylesheetListURI, stylesheetSet);
-        if (log.isInfoEnabled())
-            log.info( "Caching StylesheetSet for: " + stylesheetListURI);
+    	  stylesheetSetCache.put(stylesheetListURI, stylesheetSet);
+        if (log.isInfoEnabled()) {
+            log.info( "Cached StylesheetSet for: " + stylesheetListURI);
+        }
       }
+      return stylesheetSet;
     }
-    return stylesheetSet;
+    
   }
 
   /**
@@ -626,8 +650,8 @@ public class XSLT {
      * Purge the cache of stylesheet roots and stylesheet sets.
      */
     public static void purgeStylesheetCache () {
-        stylesheetRootCache.clear();
-        stylesheetSetCache.clear();
+    	stylesheetRootCache.clear();
+    	stylesheetSetCache.clear();
       }
       
     /**

@@ -154,5 +154,17 @@
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
     
+    <!-- XSLT caches -->
+    <!-- 
+     | Note: overflowToDisk MUST be false for XSLT caches as these caches store "javax.xml.transform.Templates" or
+     | "org.jasig.portal.StylesheetSet" instances which are not Serializable
+     +-->
+    <cache name="org.jasig.portal.utils.XSLT.STYLESHEET_ROOT_CACHE"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+    
+    <cache name="org.jasig.portal.utils.XSLT.STYLESHEET_SET_CACHE"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
     
 </ehcache>
