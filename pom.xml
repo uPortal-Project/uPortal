@@ -221,6 +221,10 @@
                         <groupId>org.springframework</groupId>
                         <artifactId>spring</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>net.sf.retrotranslator</groupId>
+                        <artifactId>retrotranslator-runtime</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency> 
