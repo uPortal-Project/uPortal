@@ -58,6 +58,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <form:errors path="*" element="div"/>
         </div> <!-- end: portlet-msg -->
     </spring:hasBindErrors>
+          
+    <!-- Add a note to the page if the portle supports config mode  -->
+    <c:if test="${supportsConfig}">
+      <div class="portlet-msg-info" role="alert">
+        <spring:message code="setParameters.portletSupportsConfig"/>
+      </div>
+    </c:if>
 
     <!-- Step Loop -->
     <c:forEach items="${ cpd.params.steps }" var="step">

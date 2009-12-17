@@ -5,7 +5,10 @@
  */
 package org.jasig.portal.portlet.url;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -32,7 +35,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     private final HttpServletRequest httpServletRequest;
     private final IPortletUrlSyntaxProvider portletUrlSyntaxProvider;
     
-    private final PortletUrl portletUrl = new PortletUrl();
+    private final PortletUrl portletUrl;
     
     public PortletURLProviderImpl(IPortletWindow portletWindow, HttpServletRequest httpServletRequest, IPortletUrlSyntaxProvider portletUrlSyntaxProvider) {
         Validate.notNull(portletWindow, "portletWindow can not be null");
@@ -44,7 +47,8 @@ public class PortletURLProviderImpl implements PortletURLProvider {
         this.portletUrlSyntaxProvider = portletUrlSyntaxProvider;
         
         //Init the portlet URL to have the same default assumptions as the PortletURLProvider interface
-        this.portletUrl.setParameters(new HashMap<String, String[]>());
+        this.portletUrl = new PortletUrl(this.portletWindow.getPortletWindowId());
+        this.portletUrl.setParameters(new HashMap<String, List<String>>());
         this.portletUrl.setRequestType(RequestType.RENDER);
     }
     
@@ -90,7 +94,21 @@ public class PortletURLProviderImpl implements PortletURLProvider {
      */
     @SuppressWarnings("unchecked")
     public void setParameters(Map parameters) {
-        this.portletUrl.setParameters(parameters);
+        final Map<String, List<String>> listParameters = new LinkedHashMap<String, List<String>>();
+        
+        for (final Map.Entry<String, String[]> parameterEntry : ((Map<String, String[]>)parameters).entrySet()) {
+            final String name = parameterEntry.getKey();
+            final String[] values = parameterEntry.getValue();
+            
+            if (values == null) {
+                listParameters.put(name, null);
+            }
+            else {
+                listParameters.put(name, Arrays.asList(values));
+            }
+        }
+        
+        this.portletUrl.setParameters(listParameters);
     }
 
     /* (non-Javadoc)

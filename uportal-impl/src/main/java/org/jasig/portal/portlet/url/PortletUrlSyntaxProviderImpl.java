@@ -10,9 +10,12 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -44,7 +47,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -59,9 +61,10 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private static final String PORTLET_PARAM_PREFIX = "pltp" + SEPERATOR;
 
     private static final String PARAM_REQUEST_TARGET = PORTLET_CONTROL_PREFIX + "target";
-    private static final String PARAM_REQUEST_TYPE = PORTLET_CONTROL_PREFIX + "type";
-    private static final String PARAM_WINDOW_STATE = PORTLET_CONTROL_PREFIX + "state";
-    private static final String PARAM_PORTLET_MODE = PORTLET_CONTROL_PREFIX + "mode";
+    private static final String PARAM_REQUEST_TYPE_PREFIX = PORTLET_CONTROL_PREFIX + "type" + SEPERATOR;
+    private static final String PARAM_WINDOW_STATE_PREFIX = PORTLET_CONTROL_PREFIX + "state" + SEPERATOR;
+    private static final String PARAM_PORTLET_MODE_PREFIX = PORTLET_CONTROL_PREFIX + "mode" + SEPERATOR;
+    private static final String PARAM_DELEGATE_PREFIX = PORTLET_CONTROL_PREFIX + "delegate" + SEPERATOR;
     
     private static final Pattern URL_PARAM_NAME = Pattern.compile("&([^&?=\n]*)");
    
@@ -221,53 +224,28 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider#parsePortletParameters(javax.servlet.http.HttpServletRequest)
      */
-    public Tuple<IPortletWindowId, PortletUrl> parsePortletParameters(HttpServletRequest request) {
+    public List<PortletUrl> parsePortletParameters(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
         
-        final IPortletWindowId targetedPortletWindowId;
-        
-        final String targetedPortletWindowIdStr = request.getParameter(PARAM_REQUEST_TARGET);
-        if (targetedPortletWindowIdStr != null) {
-            targetedPortletWindowId = this.portletWindowRegistry.getPortletWindowId(targetedPortletWindowIdStr);
-        }
-        else {
-            //Fail over to looking for a fname
-            final String targetedFname = request.getParameter("uP_fname");
-            if (targetedFname == null) {
-                return null;
-            }
-            
-            //Get the user's layout manager
-            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-            final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-            final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-            
-            //Determine the subscribe ID
-            final String channelSubscribeId = userLayoutManager.getSubscribeId(targetedFname);
-            if (channelSubscribeId == null) {
-                this.logger.info("No channel subscribe ID found for fname '" + targetedFname + "'. skipping portlet parameter processing");
-                return null;
-            }
-            
-            //Find the channel and portlet definitions
-            final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
-            final String channelPublishId = channelNode.getChannelPublishId();
-            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(Integer.parseInt(channelPublishId));
-            if (!portletDefinition.getChannelDefinition().isPortlet()) {
-                this.logger.info("No portlet defintion found for channel definition '" + channelPublishId + "' with fname '" + targetedFname + "'. skipping portlet parameter processing");
-                return null;
-            }
-            
-            //Determine the appropriate portlet window ID
-            final IPerson person = userInstance.getPerson();
-            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinition.getPortletDefinitionId(), channelSubscribeId, person.getID());
-            final IPortletWindow defaultPortletWindow = this.portletWindowRegistry.createDefaultPortletWindow(request, portletEntity.getPortletEntityId());
-            targetedPortletWindowId = this.portletWindowRegistry.createTransientPortletWindowId(request, defaultPortletWindow.getPortletWindowId());
+        final IPortletWindowId targetedPortletWindowId = resolveTargetWindowId(request);
+        if (targetedPortletWindowId == null) {
+            return null;
         }
         
-        final PortletUrl portletUrl = new PortletUrl();
+        final List<PortletUrl> parsedUrls = new LinkedList<PortletUrl>();
         
-        final String requestTypeStr = request.getParameter(PARAM_REQUEST_TYPE);
+        this.parsePortletParameters(request, targetedPortletWindowId, parsedUrls);
+    
+        return parsedUrls;
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected void parsePortletParameters(HttpServletRequest request, IPortletWindowId portletWindowId, List<PortletUrl> parsedUrls) {
+        final String portletWindowIdStr = portletWindowId.toString();
+        
+        final PortletUrl portletUrl = new PortletUrl(portletWindowId);
+        
+        final String requestTypeStr = request.getParameter(PARAM_REQUEST_TYPE_PREFIX + portletWindowIdStr);
         if (requestTypeStr != null) {
             final RequestType requestType = RequestType.valueOf(requestTypeStr);
             portletUrl.setRequestType(requestType);
@@ -277,13 +255,13 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             portletUrl.setRequestType(RequestType.RENDER);
         }
         
-        final String windowStateStr = request.getParameter(PARAM_WINDOW_STATE);
+        final String windowStateStr = request.getParameter(PARAM_WINDOW_STATE_PREFIX + portletWindowIdStr);
         if (windowStateStr != null) {
             final WindowState windowState = new WindowState(windowStateStr);
             portletUrl.setWindowState(windowState);
         }
         
-        final String portletModeStr = request.getParameter(PARAM_PORTLET_MODE);
+        final String portletModeStr = request.getParameter(PARAM_PORTLET_MODE_PREFIX + portletWindowIdStr);
         if (portletModeStr != null) {
             final PortletMode portletMode = new PortletMode(portletModeStr);
             portletUrl.setPortletMode(portletMode);
@@ -292,29 +270,106 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         final Map<String, String[]> requestParameters = request.getParameterMap();
         final Set<String> urlParameterNames = this.getUrlParameterNames(request);
         
-        final Map<String, String[]> portletParameters = new HashMap<String, String[]>(requestParameters.size());
+        final Map<String, List<String>> portletParameters = new LinkedHashMap<String, List<String>>(requestParameters.size());
+        final String fqParameterName = PORTLET_PARAM_PREFIX + portletWindowIdStr + SEPERATOR;
         for (final Map.Entry<String, String[]> parameterEntry : requestParameters.entrySet()) {
             final String parameterName = parameterEntry.getKey();
             
             //If the parameter starts with the param prefix add it to the Map
-            if (parameterName.startsWith(PORTLET_PARAM_PREFIX)) {
-                final String portletParameterName = parameterName.substring(PORTLET_PARAM_PREFIX.length());
+            if (parameterName.startsWith(fqParameterName)) {
+                final String portletParameterName = parameterName.substring(fqParameterName.length());
                 final String[] portletParameterValues = parameterEntry.getValue();
 
-                portletParameters.put(portletParameterName, portletParameterValues);
+                if (portletParameterValues == null) {
+                    portletParameters.put(portletParameterName, null);
+                }
+                else {
+                    portletParameters.put(portletParameterName, Arrays.asList(portletParameterValues));
+                }
             }
             //If it did not appear on the URL it must be a submit parameter so add it to the Map
             else if (urlParameterNames != null && !urlParameterNames.contains(parameterName)) {
                 final String[] portletParameterValues = parameterEntry.getValue();
 
-                portletParameters.put(parameterName, portletParameterValues);
+                if (portletParameterValues == null) {
+                    portletParameters.put(parameterName, null);
+                }
+                else {
+                    portletParameters.put(parameterName, Arrays.asList(portletParameterValues));
+                }
             }
         }
         portletUrl.setParameters(portletParameters);
         
         portletUrl.setSecure(request.isSecure());
+
+        parsedUrls.add(portletUrl);
         
-        return new Tuple<IPortletWindowId, PortletUrl>(targetedPortletWindowId, portletUrl);
+        //If delegating recurse
+        final String delegateWindowIdStr = request.getParameter(PARAM_DELEGATE_PREFIX + portletWindowIdStr);
+        if (delegateWindowIdStr != null) {
+            final IPortletWindowId delegateWindowId = this.portletWindowRegistry.getPortletWindowId(delegateWindowIdStr);
+            
+            //Delegate windows must be transient
+            if (!this.portletWindowRegistry.isTransient(request, delegateWindowId)) {
+                throw new IllegalArgumentException("Only transient windows can be delegated to. Window '" + delegateWindowId + "' is not transient.");
+            }
+            
+            //Verify delegation change
+            final IPortletWindow delegateWindow = this.portletWindowRegistry.getPortletWindow(request, delegateWindowId);
+            final IPortletWindowId delegationParentId = delegateWindow.getDelegationParent();
+            if (delegationParentId == null) {
+                throw new IllegalArgumentException("Delegate window '" + delegateWindowId + "' has no parent. Parent specified in the URL is '" + portletWindowId + "'");
+            }
+            else if (!portletWindowId.equals(delegationParentId)) {
+                throw new IllegalArgumentException("Parent '" + delegationParentId + "' of delegate window '" + delegateWindowId + "' is not the parent specified in the URL: '" + portletWindowId + "'");
+            }
+            
+            this.parsePortletParameters(request, delegateWindowId, parsedUrls);
+        }
+    }
+    
+    protected IPortletWindowId resolveTargetWindowId(HttpServletRequest request) {
+        final String targetedPortletWindowIdStr = request.getParameter(PARAM_REQUEST_TARGET);
+        if (targetedPortletWindowIdStr != null) {
+            return this.portletWindowRegistry.getPortletWindowId(targetedPortletWindowIdStr);
+        }
+        
+        //Fail over to looking for a fname
+        final String targetedFname = request.getParameter("uP_fname");
+        if (targetedFname == null) {
+            return null;
+        }
+        
+        //Found an FName lookup the appropriate portlet window id
+        
+        //Get the user's layout manager
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        
+        //Determine the subscribe ID
+        final String channelSubscribeId = userLayoutManager.getSubscribeId(targetedFname);
+        if (channelSubscribeId == null) {
+            this.logger.info("No channel subscribe ID found for fname '" + targetedFname + "'. skipping portlet parameter processing");
+            return null;
+        }
+        
+        //Find the channel and portlet definitions
+        final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
+        final String channelPublishId = channelNode.getChannelPublishId();
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(Integer.parseInt(channelPublishId));
+        if (!portletDefinition.getChannelDefinition().isPortlet()) {
+            this.logger.info("No portlet defintion found for channel definition '" + channelPublishId + "' with fname '" + targetedFname + "'. skipping portlet parameter processing");
+            return null;
+        }
+        
+        //Determine the appropriate portlet window ID
+        final IPerson person = userInstance.getPerson();
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinition.getPortletDefinitionId(), channelSubscribeId, person.getID());
+        final IPortletWindow defaultPortletWindow = this.portletWindowRegistry.createDefaultPortletWindow(request, portletEntity.getPortletEntityId());
+
+        return this.portletWindowRegistry.createTransientPortletWindowId(request, defaultPortletWindow.getPortletWindowId());
     }
     
 
@@ -366,144 +421,193 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         //Convert the callback request to the portal request
         request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
         
-        //Get the channel runtime data from the request attributes, it should have been set there by the portlet adapter
-        final ChannelRuntimeData channelRuntimeData = (ChannelRuntimeData)request.getAttribute(IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA);
-        if (channelRuntimeData == null) {
-            throw new IllegalStateException("No ChannelRuntimeData was found as a request attribute for key '" + IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA + "' on request '" + request + "'");
-        }
-        
-        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-        final IPortletEntity parentPortletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
-        final String channelSubscribeId = parentPortletEntity.getChannelSubscribeId();
-
-        //Get the encoding to use for the URL
-        final String encoding = this.getEncoding(request);
-        
-        
-        // TODO Need to decide how to deal with 'secure' URL requests
-
-
         //Build the base of the URL with the context path
         final StringBuilder url = new StringBuilder(this.bufferLength);
         final String contextPath = request.getContextPath();
         url.append(contextPath).append("/");
         
-        final WindowState windowState = portletUrl.getWindowState();
-        final WindowState previousWindowState = portletWindow.getWindowState();
-        
-        // Determine the base path for the URL
-        // If the next state is EXCLUSIVE or there is no state change and the current state is EXCLUSIVE use the worker URL base
-        if (IPortletAdaptor.EXCLUSIVE.equals(windowState) || (windowState == null && IPortletAdaptor.EXCLUSIVE.equals(previousWindowState))) {
-            final String urlBase = channelRuntimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
-            url.append(urlBase);
-        }
-        //In detached, need to make sure the URL is right
-        else if (IPortletAdaptor.DETACHED.equals(windowState) || (windowState == null && IPortletAdaptor.DETACHED.equals(previousWindowState))) {
-            final UPFileSpec upFileSpec = new UPFileSpec(channelRuntimeData.getUPFile());
-            upFileSpec.setMethodNodeId(channelSubscribeId);
-            final String urlBase = upFileSpec.getUPFile();
-            url.append(urlBase);
-        }
-        //Switching back from detached to a normal state
-        else if (IPortletAdaptor.DETACHED.equals(previousWindowState) && windowState != null && !previousWindowState.equals(windowState)) {
-            final UPFileSpec upFileSpec = new UPFileSpec(channelRuntimeData.getUPFile());
-            upFileSpec.setMethodNodeId(UPFileSpec.USER_LAYOUT_ROOT_NODE);
-            final String urlBase = upFileSpec.getUPFile();
-            url.append(urlBase);
-        }
-        //No special handling, just use the base action URL
-        else {
-            final String urlBase = channelRuntimeData.getBaseActionURL();
-            url.append(urlBase);
-        }
-        
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace("Using root url base '" + url + "'");
-        }
-
-        //Set the request target, creating a transient window ID if needed
-        final String portletWindowIdString;
-        if (this.transientWindowStates.contains(windowState) && !this.transientWindowStates.contains(previousWindowState)) {
-            final IPortletWindowId transientPortletWindowId = this.portletWindowRegistry.createTransientPortletWindowId(request, portletWindowId);
-            portletWindowIdString = transientPortletWindowId.toString();
-        }
-        else if (this.portletWindowRegistry.isTransient(request, portletWindowId) && !this.transientWindowStates.contains(windowState) &&
-                      (windowState != null || !this.transientWindowStates.contains(previousWindowState))) {
-            //Get non-transient version of id
-            final IPortletEntityId portletEntityId = portletWindow.getPortletEntityId();
-            final IPortletWindowId defaultPortletWindowId = this.portletWindowRegistry.getDefaultPortletWindowId(portletEntityId);
-            portletWindowIdString = defaultPortletWindowId.getStringId();
-        }
-        else {
-            portletWindowIdString = portletWindowId.getStringId();
-        }
-        this.encodeAndAppend(url.append("?"), encoding, PARAM_REQUEST_TARGET, portletWindowIdString);
-        
-        //Set the request type
-        final RequestType requestType = portletUrl.getRequestType();
-        final String requestTypeString = requestType != null ? requestType.toString() : RequestType.RENDER.toString();
-        this.encodeAndAppend(url.append("&"), encoding, PARAM_REQUEST_TYPE, requestTypeString);
-        
-        // If set add the window state
-        if (windowState != null && !previousWindowState.equals(windowState)) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE, windowState.toString());
-            
-            //Add the parameters needed by the portal structure & theme to render the correct window state 
-            if (WindowState.MAXIMIZED.equals(windowState)) {
-                this.encodeAndAppend(url.append("&"), encoding, "uP_root", channelSubscribeId);
-            }
-            else if (WindowState.NORMAL.equals(windowState)) {
-                this.encodeAndAppend(url.append("&"), encoding, "uP_root", IUserLayout.ROOT_NODE_NAME);
-                this.encodeAndAppend(url.append("&"), encoding, "uP_tcattr", "minimized");
-                this.encodeAndAppend(url.append("&"), encoding, "minimized_channelId", channelSubscribeId);
-                this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "false");
-            }
-            else if (WindowState.MINIMIZED.equals(windowState)) {
-                this.encodeAndAppend(url.append("&"), encoding, "uP_root", IUserLayout.ROOT_NODE_NAME);
-                this.encodeAndAppend(url.append("&"), encoding, "uP_tcattr", "minimized");
-                this.encodeAndAppend(url.append("&"), encoding, "minimized_channelId", channelSubscribeId);
-                this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "true");
-            }
-            else if (IPortletAdaptor.DETACHED.equals(windowState)) {
-                this.encodeAndAppend(url.append("&"), encoding, "uP_detach_target", channelSubscribeId);
-            }
-        }
-        //Or for any transient state always add the window state
-        else if (this.transientWindowStates.contains(windowState) || this.transientWindowStates.contains(previousWindowState)) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE, previousWindowState.toString());
-        }
-        
-        //If set add the portlet mode
-        final PortletMode portletMode = portletUrl.getPortletMode();
-        if (portletMode != null) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE, portletMode.toString());
-        }
-        //Or for any transient state always add the portlet mode
-        else if (this.transientWindowStates.contains(windowState) || this.transientWindowStates.contains(previousWindowState)) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE, portletWindow.getPortletMode().toString());
-        }
-        
-        //Add the parameters to the URL
-        final Map<String, String[]> parameters = portletUrl.getParameters();
-        if (parameters != null) {
-            for (final Map.Entry<String, String[]> parameterEntry : parameters.entrySet()) {
-                final String name = parameterEntry.getKey();
-                final String[] values = parameterEntry.getValue();
-
-                this.encodeAndAppend(url.append("&"), encoding, PORTLET_PARAM_PREFIX + name, values);
-            }
-        }
-       
-        //Add the anchor if anchoring is enabled
-        if (this.useAnchors && !RequestType.ACTION.equals(requestType) && ((windowState != null && this.anchoringWindowStates.contains(windowState)) || (windowState == null && this.anchoringWindowStates.contains(previousWindowState)))) {
-            url.append("#").append(channelSubscribeId);
-        }
+        this.generatePortletUrl(request, portletWindow, null, portletUrl, url);
  
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Generated portlet URL '" + url + "' for IPortletWindow='" + portletWindow + "' and PortletUrl='" + portletUrl + "'. StringBuilder started with length " + this.bufferLength + " and ended with length " + url.capacity() + ".");
         }
         
         return url.toString();
+    }
+    
+    protected void generatePortletUrl(HttpServletRequest request, IPortletWindow portletWindow, IPortletWindowId delegationChildId, PortletUrl portletUrl, StringBuilder url) {
+        //Get the encoding to use for the URL
+        final String encoding = this.getEncoding(request);
+        
+        final IPortletWindowId delegationParentId = portletWindow.getDelegationParent();
+        if (delegationParentId != null) {
+            final IPortletWindow delegateParent = this.portletWindowRegistry.getPortletWindow(request, delegationParentId);
+            
+            final PortletUrl parentUrl = new PortletUrl(delegationParentId);
+            parentUrl.setParameters(delegateParent.getRequestParameters());
+            parentUrl.setRequestType(portletUrl.getRequestType());
+            
+            this.generatePortletUrl(request, delegateParent, portletWindow.getPortletWindowId(), parentUrl, url);
+        }
+        
+        // TODO Need to decide how to deal with 'secure' URL requests
+
+        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+        final IPortletEntity parentPortletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
+        final String channelSubscribeId = parentPortletEntity.getChannelSubscribeId();
+
+        WindowState windowState = portletUrl.getWindowState();
+        PortletMode portletMode = portletUrl.getPortletMode();
+        
+        final WindowState previousWindowState = portletWindow.getWindowState();
+        final PortletMode previousPortletMode = portletWindow.getPortletMode();
+        
+        //Only do this stuff for the top level window
+        if (delegationParentId == null) {
+            //Get the channel runtime data from the request attributes, it should have been set there by the portlet adapter
+            final ChannelRuntimeData channelRuntimeData = (ChannelRuntimeData)request.getAttribute(IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA);
+            if (channelRuntimeData == null) {
+                throw new IllegalStateException("No ChannelRuntimeData was found as a request attribute for key '" + IPortletAdaptor.ATTRIBUTE__RUNTIME_DATA + "' on request '" + request + "'");
+            }
+            
+            // Determine the base path for the URL
+            // If the next state is EXCLUSIVE or there is no state change and the current state is EXCLUSIVE use the worker URL base
+            if (IPortletAdaptor.EXCLUSIVE.equals(windowState) || (windowState == null && IPortletAdaptor.EXCLUSIVE.equals(previousWindowState))) {
+                final String urlBase = channelRuntimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
+                url.append(urlBase);
+            }
+            //In detached, need to make sure the URL is right
+            else if (IPortletAdaptor.DETACHED.equals(windowState) || (windowState == null && IPortletAdaptor.DETACHED.equals(previousWindowState))) {
+                final UPFileSpec upFileSpec = new UPFileSpec(channelRuntimeData.getUPFile());
+                upFileSpec.setMethodNodeId(channelSubscribeId);
+                final String urlBase = upFileSpec.getUPFile();
+                url.append(urlBase);
+            }
+            //Switching back from detached to a normal state
+            else if (IPortletAdaptor.DETACHED.equals(previousWindowState) && windowState != null && !previousWindowState.equals(windowState)) {
+                final UPFileSpec upFileSpec = new UPFileSpec(channelRuntimeData.getUPFile());
+                upFileSpec.setMethodNodeId(UPFileSpec.USER_LAYOUT_ROOT_NODE);
+                final String urlBase = upFileSpec.getUPFile();
+                url.append(urlBase);
+            }
+            //No special handling, just use the base action URL
+            else {
+                final String urlBase = channelRuntimeData.getBaseActionURL();
+                url.append(urlBase);
+            }
+            
+            if (this.logger.isTraceEnabled()) {
+                this.logger.trace("Using root url base '" + url + "'");
+            }
+        }
+        
+        //Set the request target, creating a transient window ID if needed
+        boolean forceWindowState = false;
+        final String portletWindowIdString;
+        //If rendering as a delegate just reuse the id (it will always be transient)
+        if (delegationParentId != null) {
+            portletWindowIdString = portletWindowId.toString();
+        }
+        //If switching from a non-transient state to a transient state generate a new transient window id
+        else if (this.transientWindowStates.contains(windowState) && !this.transientWindowStates.contains(previousWindowState)) {
+            final IPortletWindowId transientPortletWindowId = this.portletWindowRegistry.createTransientPortletWindowId(request, portletWindowId);
+            portletWindowIdString = transientPortletWindowId.toString();
+        }
+        //If the window is transient, it is in a transient state and it is switching from a non-transient state
+        else if (this.portletWindowRegistry.isTransient(request, portletWindowId) && 
+                !this.transientWindowStates.contains(windowState) &&
+                (windowState != null || !this.transientWindowStates.contains(previousWindowState))) {
+            //Get non-transient version of id
+            final IPortletEntityId portletEntityId = portletWindow.getPortletEntityId();
+            final IPortletWindowId defaultPortletWindowId = this.portletWindowRegistry.getDefaultPortletWindowId(portletEntityId);
+            portletWindowIdString = defaultPortletWindowId.getStringId();
+            
+            if (windowState == null) {
+                final IPortletWindow defaultPortletWindow = this.portletWindowRegistry.getPortletWindow(request, defaultPortletWindowId);
+                if (!previousWindowState.equals(defaultPortletWindow.getWindowState())) {
+                    forceWindowState = true;
+                    windowState = previousWindowState;
+                }
+                if (!previousPortletMode.equals(defaultPortletWindow.getPortletMode())) {
+                    portletMode = previousPortletMode;
+                }
+            }
+        }
+        else {
+            portletWindowIdString = portletWindowId.getStringId();
+        }
+        
+        //Only one target per url
+        if (delegationParentId == null) {
+            this.encodeAndAppend(url.append("?"), encoding, PARAM_REQUEST_TARGET, portletWindowIdString);
+        }
+        
+        //Only if actually delegating rendering
+        if (delegationChildId != null) {
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_DELEGATE_PREFIX + portletWindowIdString, delegationChildId.toString());
+        }
+        
+        //Set the request type
+        final RequestType requestType = portletUrl.getRequestType();
+        final String requestTypeString = requestType != null ? requestType.toString() : RequestType.RENDER.toString();
+        this.encodeAndAppend(url.append("&"), encoding, PARAM_REQUEST_TYPE_PREFIX + portletWindowIdString, requestTypeString);
+        
+        // If set add the window state
+        if (windowState != null && (forceWindowState || !previousWindowState.equals(windowState))) {
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE_PREFIX + portletWindowIdString, windowState.toString());
+            
+            //uPortal specific parameters are only needed the top most parent portlet window
+            if (delegationParentId == null) {
+                //Add the parameters needed by the portal structure & theme to render the correct window state 
+                if (WindowState.MAXIMIZED.equals(windowState)) {
+                    this.encodeAndAppend(url.append("&"), encoding, "uP_root", channelSubscribeId);
+                }
+                else if (WindowState.NORMAL.equals(windowState)) {
+                    this.encodeAndAppend(url.append("&"), encoding, "uP_root", IUserLayout.ROOT_NODE_NAME);
+                    this.encodeAndAppend(url.append("&"), encoding, "uP_tcattr", "minimized");
+                    this.encodeAndAppend(url.append("&"), encoding, "minimized_channelId", channelSubscribeId);
+                    this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "false");
+                }
+                else if (WindowState.MINIMIZED.equals(windowState)) {
+                    this.encodeAndAppend(url.append("&"), encoding, "uP_root", IUserLayout.ROOT_NODE_NAME);
+                    this.encodeAndAppend(url.append("&"), encoding, "uP_tcattr", "minimized");
+                    this.encodeAndAppend(url.append("&"), encoding, "minimized_channelId", channelSubscribeId);
+                    this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "true");
+                }
+                else if (IPortletAdaptor.DETACHED.equals(windowState)) {
+                    this.encodeAndAppend(url.append("&"), encoding, "uP_detach_target", channelSubscribeId);
+                }
+            }
+        }
+        //Or for any transient state always add the window state
+        else if (this.transientWindowStates.contains(windowState) || this.transientWindowStates.contains(previousWindowState)) {
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE_PREFIX + portletWindowIdString, previousWindowState.toString());
+        }
+        
+        //If set add the portlet mode
+        if (portletMode != null) {
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE_PREFIX + portletWindowIdString, portletMode.toString());
+        }
+        //Or for any transient state always add the portlet mode
+        else if (this.transientWindowStates.contains(windowState) || this.transientWindowStates.contains(previousWindowState)) {
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE_PREFIX + portletWindowIdString, portletWindow.getPortletMode().toString());
+        }
+        
+        //Add the parameters to the URL
+        final Map<String, List<String>> parameters = portletUrl.getParameters();
+        if (parameters != null) {
+            for (final Map.Entry<String, List<String>> parameterEntry : parameters.entrySet()) {
+                final String name = parameterEntry.getKey();
+                final List<String> values = parameterEntry.getValue();
+
+                this.encodeAndAppend(url.append("&"), encoding, PORTLET_PARAM_PREFIX + portletWindowIdString + SEPERATOR + name, values);
+            }
+        }
+       
+        //Add the anchor if anchoring is enabled
+        if (this.useAnchors && delegationParentId == null && !RequestType.ACTION.equals(requestType) && ((windowState != null && this.anchoringWindowStates.contains(windowState)) || (windowState == null && this.anchoringWindowStates.contains(previousWindowState)))) {
+            url.append("#").append(channelSubscribeId);
+        }
     }
     
     /**
@@ -521,6 +625,10 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         return this.defaultEncoding;
     }
     
+    protected void encodeAndAppend(StringBuilder url, String encoding, String name, String... values) {
+        this.encodeAndAppend(url, encoding, name, Arrays.asList(values));
+    }
+    
     /**
      * Encodes parameter name and value(s) on to the url using the specified encoding. The option to pass more than one
      * value is provided to avoid encoding the same name multiple times.  
@@ -530,7 +638,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
      * @param name The name of the parameter
      * @param values The values for the parameter, a & will be appeneded between each name/value pair added when multiple values are passed.
      */
-    protected void encodeAndAppend(StringBuilder url, String encoding, String name, String... values) {
+    protected void encodeAndAppend(StringBuilder url, String encoding, String name, List<String> values) {
         try {
             name = URLEncoder.encode(name, encoding);
         }
@@ -538,12 +646,13 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             throw new RuntimeException("Failed to encode portlet URL parameter name '" + name + "' for encoding '" + encoding + "'");
         }
         
-        if (values.length == 0) {
+        if (values.size() == 0) {
             url.append(name).append("=");
         }
         else {
-            for (int index = 0; index < values.length; index++) {
-                String value = values[index];
+            boolean first = true;
+            for (final Iterator<String> valuesItr = values.iterator(); valuesItr.hasNext(); ) {
+                String value = valuesItr.next();
                 
                 if (value == null) {
                     value = "";
@@ -556,11 +665,12 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                     throw new RuntimeException("Failed to encode portlet URL parameter value '" + value + "' for encoding '" + encoding + "'");
                 }
                 
-                if (index > 0) {
+                if (!first) {
                     url.append("&");
                 }
                 
                 url.append(name).append("=").append(value);
+                first = false;
             }
         }
     }

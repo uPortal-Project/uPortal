@@ -7,6 +7,7 @@ package org.jasig.portal.channels.portlet;
 
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,13 +38,25 @@ public class PortletHttpRequestWrapper extends HttpServletRequestWrapper {
     private final IPerson person;
     private final List<SecurityRoleRefDD> securityRoleRefs;
     
-    public PortletHttpRequestWrapper(HttpServletRequest request, Map<String, String[]> parameters, IPerson person, List<SecurityRoleRefDD> securityRoleRefs) {
+    public PortletHttpRequestWrapper(HttpServletRequest request, Map<String, List<String>> parameters, IPerson person, List<SecurityRoleRefDD> securityRoleRefs) {
         super(request);
         Validate.notNull(parameters, "parameters can not be null");
         Validate.notNull(person, "person can not be null");
         Validate.notNull(securityRoleRefs, "securityRoleRefs can not be null");
         
-        this.parameters = Collections.unmodifiableMap(parameters);
+        this.parameters = new LinkedHashMap<String, String[]>();
+        for (final Map.Entry<String, List<String>> parameterEntry : parameters.entrySet()) {
+            final String name = parameterEntry.getKey();
+            final List<String> values = parameterEntry.getValue();
+            
+            if (values == null) {
+                this.parameters.put(name, null);
+            }
+            else {
+                this.parameters.put(name, values.toArray(new String[values.size()]));
+            }
+        }
+        
         this.person = person;
         this.securityRoleRefs = securityRoleRefs;
     }
@@ -132,7 +145,6 @@ public class PortletHttpRequestWrapper extends HttpServletRequestWrapper {
     /**
      * Gets a SecurityRoleRefDD for the specified role name;
      */
-    @SuppressWarnings("unchecked")
     private SecurityRoleRefDD getSecurityRoleRef(String role) {
         for (final SecurityRoleRefDD securityRoleRef : this.securityRoleRefs) {
             final String roleRefName = securityRoleRef.getRoleName();

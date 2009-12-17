@@ -10,6 +10,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -39,8 +40,9 @@ public class MockPortletWindow implements IPortletWindow {
     private IPortletWindowId portletWindowId;
     private String contextPath;
     private String portletName;
+    private IPortletWindowId delegationParent;
     
-    private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
+    private Map<String, List<String>> requestParameters = new HashMap<String, List<String>>();
     private transient PortletMode portletMode = PortletMode.VIEW;
     private transient WindowState windowState = WindowState.NORMAL;
     private Integer expirationCache = null;
@@ -50,16 +52,25 @@ public class MockPortletWindow implements IPortletWindow {
         this.portletEntityId = null;
         this.contextPath = null;
         this.portletName = null;
+        this.delegationParent = null;
+    }
+    
+    /**
+     * Creates a new PortletWindow with the default settings
+     */
+    public MockPortletWindow(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, String contextPath, String portletName, IPortletWindowId delegateParent) {
+        this.portletWindowId = portletWindowId;
+        this.portletEntityId = portletEntityId;
+        this.contextPath = contextPath;
+        this.portletName = portletName;
+        this.delegationParent = delegateParent;
     }
     
     /**
      * Creates a new PortletWindow with the default settings
      */
     public MockPortletWindow(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, String contextPath, String portletName) {
-        this.portletWindowId = portletWindowId;
-        this.portletEntityId = portletEntityId;
-        this.contextPath = contextPath;
-        this.portletName = portletName;
+        this(portletWindowId, portletEntityId, contextPath, portletName, null);
     }
     
     /**
@@ -141,14 +152,14 @@ public class MockPortletWindow implements IPortletWindow {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#getRequestParameers()
      */
-    public Map<String, String[]> getRequestParameers() {
+    public Map<String, List<String>> getRequestParameers() {
         return this.requestParameters;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
      */
-    public void setRequestParameters(Map<String, String[]> requestParameters) {
+    public void setRequestParameters(Map<String, List<String>> requestParameters) {
         this.requestParameters = requestParameters;
     }
     
@@ -169,7 +180,7 @@ public class MockPortletWindow implements IPortletWindow {
     /**
      * @return the requestParameters
      */
-    public Map<String, String[]> getRequestParameters() {
+    public Map<String, List<String>> getRequestParameters() {
         return requestParameters;
     }
 
@@ -199,6 +210,17 @@ public class MockPortletWindow implements IPortletWindow {
      */
     public void setPortletName(String portletName) {
         this.portletName = portletName;
+    }
+    
+    public void setDelegationParent(IPortletWindowId delegationParent) {
+        this.delegationParent = delegationParent;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.om.IPortletWindow#getDelegationParent()
+     */
+    public IPortletWindowId getDelegationParent() {
+        return this.delegationParent;
     }
 
     
@@ -263,6 +285,7 @@ public class MockPortletWindow implements IPortletWindow {
             .append(this.portletMode, rhs.getPortletMode())
             .append(this.expirationCache, rhs.getExpirationCache())
             .append(this.requestParameters, rhs.getRequestParameters())
+            .append(this.delegationParent, rhs.getDelegationParent())
             .isEquals();
     }
 
@@ -279,6 +302,7 @@ public class MockPortletWindow implements IPortletWindow {
             .append(this.portletMode)
             .append(this.expirationCache)
             .append(this.requestParameters)
+            .append(this.delegationParent)
             .toHashCode();
     }
 
@@ -295,6 +319,7 @@ public class MockPortletWindow implements IPortletWindow {
             .append("portletMode", this.portletMode)
             .append("expirationCache", this.expirationCache)
             .append("requestParameters", this.requestParameters)
+            .append("delegationParent", this.delegationParent)
             .toString();
     }
 }

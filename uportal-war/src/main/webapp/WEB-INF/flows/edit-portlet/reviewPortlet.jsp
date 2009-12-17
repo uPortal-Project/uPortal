@@ -16,6 +16,10 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="chooseType"/>
 </portlet:actionURL>
+<portlet:actionURL var="configModeUrl">
+  <portlet:param name="execution" value="${flowExecutionKey}" />
+  <portlet:param name="_eventId" value="configMode"/>
+</portlet:actionURL>
 <portlet:actionURL var="setParametersUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="setParameters"/>
@@ -39,6 +43,10 @@
 <portlet:actionURL var="saveUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="save"/>
+</portlet:actionURL>
+<portlet:actionURL var="saveAndConfigUrl">
+  <portlet:param name="execution" value="${flowExecutionKey}" />
+  <portlet:param name="_eventId" value="saveAndConfig"/>
 </portlet:actionURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
 
@@ -135,6 +143,21 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         
       </div>
     </div> <!-- end: portlet-section -->
+    
+    
+      
+    <c:if test="${supportsConfig and channel.id >= 0}">
+    <!-- Portlet Section -->
+      <div class="portlet-section" role="region">
+        <h3 class="portlet-section-header" role="heading"><spring:message code="reviewPortlet.configModeHeading"/></h3>
+        <div class="portlet-section-options">
+          <a href="${ configModeUrl }"><span><spring:message code="reviewPortlet.enterConfigModeButton"/></span></a>
+        </div>
+        <div class="portlet-section-body">
+          <spring:message code="reviewPortlet.portletSupportsConfig"/>
+        </div>
+      </div>
+    </c:if>
     
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
@@ -301,6 +324,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 		<!-- Portlet Buttons -->
     <div class="portlet-button-group">
     	<a class="portlet-button portlet-button-primary" href="${ saveUrl }"><spring:message code="edit-portlet.saveButton"/></a>
+    	<c:if test="${supportsConfig and channel.id < 0}">
+    	   <a class="portlet-button portlet-button-primary" href="${ saveAndConfigUrl }"><spring:message code="edit-portlet.saveAndConfigButton"/></a>
+    	</c:if>
     	<a class="portlet-button" href="${ cancelUrl }"><spring:message code="edit-portlet.cancelButton"/></a>
     </div>
     

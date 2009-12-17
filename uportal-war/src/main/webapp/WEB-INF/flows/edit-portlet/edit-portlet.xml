@@ -57,6 +57,9 @@
             <evaluate expression="portletAdministrationHelper.prepopulatePortlet(requestParameters.application, requestParameters.portlet, channel)"/>
         </transition>
         <transition on="back" to="chooseType" validate="false"/>
+        <on-exit>
+            <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(channel)"/>
+        </on-exit>
     </view-state>
     
     <!-- BASIC INFO view (title, fname, etc.) -->
@@ -176,11 +179,13 @@
         <on-entry>
             <set name="flowScope.cpd" 
                 value="portletAdministrationHelper.getChannelType(channel.typeId)"/>
+            <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(channel)"/>
         </on-entry>
         
         <!-- edit transitions -->
         <transition on="basicInfo" to="basicInfo"/>
         <transition on="chooseType" to="chooseType"/>
+        <transition on="configMode" to="configMode"/>
         <transition on="setParameters" to="setParameters"/>
         <transition on="controls" to="controls"/>
         <transition on="chooseCategory" to="chooseCategory"/>
@@ -196,9 +201,24 @@
                 value="personManager.getPerson(servletRequest)"/>
             <evaluate expression="portletAdministrationHelper.savePortletRegistration(channel, person)"></evaluate>
         </transition>
+
+        <!-- save the portlet -->
+        <transition on="saveAndConfig" to="configMode">
+            <set name="flashScope.servletRequest" 
+                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+            <set name="flashScope.person" 
+                value="personManager.getPerson(servletRequest)"/>
+            <evaluate expression="portletAdministrationHelper.savePortletRegistration(channel, person)"></evaluate>
+        </transition>
         
         <!-- cancel our portlet edit and exit the sub-flow -->
         <transition on="cancel" to="cancelPortletEdit" bind="false"/>
+    </view-state>
+    
+    <view-state id="configMode" view="portletView">
+        <on-entry>
+            <set name="flashScope.CHANNEL_DEFINITION_ID" value="channel.getId()"/>
+        </on-entry>
     </view-state>
 
     <decision-state id="cancelEditScreen">

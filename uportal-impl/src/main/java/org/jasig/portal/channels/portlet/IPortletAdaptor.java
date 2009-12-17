@@ -29,6 +29,7 @@ public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, 
     public static final WindowState DETACHED = new WindowState("DETACHED");
     
     public static final PortletMode ABOUT = new PortletMode("ABOUT");
+    public static final PortletMode CONFIG = new PortletMode("CONFIG");
     
     /**
      * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the current

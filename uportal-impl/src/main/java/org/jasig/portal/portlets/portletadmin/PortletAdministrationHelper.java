@@ -18,6 +18,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -480,6 +481,56 @@ public class PortletAdministrationHelper {
 		return currentPrefs;
 	}
 	
+	/**
+	 * If the channel is a portlet and if one of the supported portlet modes is {@link IPortletAdaptor#CONFIG}
+	 */
+	public boolean supportsConfigMode(ChannelDefinitionForm form) {
+	    if (!form.isPortlet()) {
+	        return false;
+	    }
+	    
+	    final Map<String, Attribute> parameters = form.getParameters();
+	    
+	    final Attribute portletAppIdAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+	    final Attribute portletNameAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
+	    if (portletAppIdAttribute == null || portletNameAttribute == null) {
+	        return false;
+	    }
+	    
+	    final String portletAppId = portletAppIdAttribute.getValue();
+	    final String portletName = portletNameAttribute.getValue();
+        if (portletAppId == null || portletName == null) {
+            return false;
+        }
+	    
+        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
+        final PortletDD portletDescriptor;
+        try {
+            portletDescriptor = portletRegistryService.getPortletDescriptor(portletAppId, portletName);
+        }
+        catch (PortletContainerException e) {
+            this.log.warn("Failed to load portlet descriptor for appId='" + portletAppId + "', portletName='" + portletName + "'", e);
+            return false;
+        }
+        
+        if (portletDescriptor == null) {
+            return false;
+        }
+        
+        //Iterate over supported portlet modes, this ignores the content types for now
+        final List<SupportsDD> supports = portletDescriptor.getSupports();
+        for (final SupportsDD support : supports) {
+            final List<String> portletModes = support.getPortletModes();
+            for (final String portletMode : portletModes) {
+                if (IPortletAdaptor.CONFIG.equals(new PortletMode(portletMode))) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+	}
+	
 	public void cleanOptions(ChannelDefinitionForm form, PortletRequest request) {
 		Set<String> preferenceNames = new HashSet<String>();
 		Set<String> parameterNames = new HashSet<String>();
@@ -586,24 +637,28 @@ public class PortletAdministrationHelper {
 	 */
 	public void prepopulatePortlet(String application, String portlet, ChannelDefinitionForm form) {
 		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
+		final PortletDD portletDD;
 		try {
-			PortletDD portletDD = portletRegistryService.getPortletDescriptor(application, portlet);
-			form.setTitle(portletDD.getPortletName());
-			form.setName(portletDD.getPortletName());
-			form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID, new Attribute(application));
-			form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME, new Attribute(portletDD.getPortletName()));
-			for (Object obj : portletDD.getSupports()) {
-				SupportsDD supports = (SupportsDD) obj;
-				for (Object mode : supports.getPortletModes()) {
-					if ("edit".equals(mode)) {
-						form.setEditable(true);
-					} else if ("help".equals(mode)) {
-						form.setHasHelp(true);
-					}
+		    portletDD = portletRegistryService.getPortletDescriptor(application, portlet);
+        }
+		catch (PortletContainerException e) {
+		    this.log.warn("Failed to load portlet descriptor for appId='" + application + "', portletName='" + portlet + "'", e);
+            return;
+        }
+		    
+	    form.setTitle(portletDD.getPortletName());
+		form.setName(portletDD.getPortletName());
+		form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID, new Attribute(application));
+		form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME, new Attribute(portletDD.getPortletName()));
+		for (Object obj : portletDD.getSupports()) {
+			SupportsDD supports = (SupportsDD) obj;
+			for (Object mode : supports.getPortletModes()) {
+				if ("edit".equals(mode)) {
+					form.setEditable(true);
+				} else if ("help".equals(mode)) {
+					form.setHasHelp(true);
 				}
 			}
-		} catch (PortletContainerException e) {
-			e.printStackTrace();
 		}
 	}
 	

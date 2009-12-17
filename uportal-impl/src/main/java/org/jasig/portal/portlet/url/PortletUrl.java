@@ -5,16 +5,18 @@
  */
 package org.jasig.portal.portlet.url;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * Simple bean that describes a Portlet URL, all properties are null by default
@@ -23,13 +25,25 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * @version $Revision$
  */
 public class PortletUrl {
+    private final IPortletWindowId targetWindowId;
     private RequestType requestType = null;
-    private Map<String, String[]> parameters = null;
+    private Map<String, List<String>> parameters = null;
     private WindowState windowState = null;
     private PortletMode portletMode = null;
     private Boolean secure = null;
     
     
+    public PortletUrl(IPortletWindowId targetWindowId) {
+        Validate.notNull(targetWindowId);
+        this.targetWindowId = targetWindowId;
+    }
+    
+    /**
+     * @return The {@link IPortletWindowId} this URL targets
+     */
+    public IPortletWindowId getTargetWindowId() {
+        return this.targetWindowId;
+    }
     /**
      * @return the requestType
      */
@@ -45,13 +59,13 @@ public class PortletUrl {
     /**
      * @return the parameters
      */
-    public Map<String, String[]> getParameters() {
+    public Map<String, List<String>> getParameters() {
         return parameters;
     }
     /**
      * @param parameters the parameters to set
      */
-    public void setParameters(Map<String, String[]> parameters) {
+    public void setParameters(Map<String, List<String>> parameters) {
         this.parameters = parameters;
     }
     /**
@@ -104,34 +118,14 @@ public class PortletUrl {
             return false;
         }
         PortletUrl rhs = (PortletUrl) object;
-        if (new EqualsBuilder()
+        return new EqualsBuilder()
+            .append(this.targetWindowId, rhs.targetWindowId)
             .append(this.secure, rhs.secure)
             .append(this.requestType, rhs.requestType)
             .append(this.windowState, rhs.windowState)
             .append(this.portletMode, rhs.portletMode)
-            .isEquals()) {
-            
-            //Nasty logic for doing equality checking on the parameters Map that has String[] values
-            if (this.parameters == rhs.parameters || (this.parameters != null && this.parameters.equals(rhs.parameters))) {
-                return true;
-            }
-            else if ((this.parameters != rhs.parameters && (this.parameters == null || rhs.parameters == null)) || this.parameters.size() != rhs.parameters.size()) {
-                return false;
-            }
-            else {
-                for (final Map.Entry<String, String[]> paramEntry : this.parameters.entrySet()) {
-                    final String key = paramEntry.getKey();
-                    
-                    if (!Arrays.equals(paramEntry.getValue(), rhs.parameters.get(key))) {
-                        return false;
-                    }
-                }
-                
-                return true;
-            }
-        }
-        
-        return false;
+            .append(this.parameters, rhs.parameters)
+            .isEquals();
     }
     /**
      * @see java.lang.Object#hashCode()
@@ -139,6 +133,7 @@ public class PortletUrl {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(836501397, 1879998837)
+            .append(this.targetWindowId)
             .append(this.secure)
             .append(this.requestType)
             .append(this.windowState)
@@ -152,6 +147,7 @@ public class PortletUrl {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+        .append("targetWindowId", this.targetWindowId)
         .append("secure", this.secure)
         .append("requestType", this.requestType)
         .append("windowState", this.windowState)

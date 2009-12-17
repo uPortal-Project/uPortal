@@ -10,6 +10,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -39,8 +40,9 @@ class PortletWindowImpl implements IPortletWindow {
     private final IPortletWindowId portletWindowId;
     private final String contextPath;
     private final String portletName;
+    private final IPortletWindowId delegationParent;
     
-    private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
+    private Map<String, List<String>> requestParameters = new HashMap<String, List<String>>();
     private transient PortletMode portletMode = PortletMode.VIEW;
     private transient WindowState windowState = WindowState.NORMAL;
     private Integer expirationCache = null;
@@ -52,9 +54,10 @@ class PortletWindowImpl implements IPortletWindow {
      * @param portletEntityId The unique identifier of the parent IPortletEntity
      * @param contextPath The path of the {@link javax.servlet.ServletContext} the portlet resides in
      * @param portletName The name of the portlet this window represents
+     * @param delegationParent The ID of the PortletWindow delegating rendering to this portlet
      * @throws IllegalArgumentException if portletWindowId, contextPath, or portletName are null
      */
-    public PortletWindowImpl(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, String contextPath, String portletName) {
+    public PortletWindowImpl(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, String contextPath, String portletName, IPortletWindowId delegationParent) {
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
         Validate.notNull(contextPath, "contextPath can not be null");
@@ -64,6 +67,20 @@ class PortletWindowImpl implements IPortletWindow {
         this.portletEntityId = portletEntityId;
         this.contextPath = contextPath;
         this.portletName = portletName;
+        this.delegationParent = delegationParent;
+    }
+    
+    /**
+     * Creates a new PortletWindow with the default settings
+     * 
+     * @param portletWindowId The unique identifier for this PortletWindow
+     * @param portletEntityId The unique identifier of the parent IPortletEntity
+     * @param contextPath The path of the {@link javax.servlet.ServletContext} the portlet resides in
+     * @param portletName The name of the portlet this window represents
+     * @throws IllegalArgumentException if portletWindowId, contextPath, or portletName are null
+     */
+    public PortletWindowImpl(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, String contextPath, String portletName) {
+        this(portletWindowId, portletEntityId, contextPath, portletName, null);
     }
     
     /**
@@ -83,12 +100,14 @@ class PortletWindowImpl implements IPortletWindow {
         this.portletName = portletWindow.getPortletName();
         this.portletMode = portletWindow.getPortletMode();
         this.windowState = portletWindow.getWindowState();
+        this.delegationParent = portletWindow.getDelegationParent();
         
         Validate.notNull(this.portletEntityId, "portletWindow.parentPortletEntityId can not be null");
         Validate.notNull(this.contextPath, "portletWindow.contextPath can not be null");
         Validate.notNull(this.portletName, "portletWindow.portletName can not be null");
         Validate.notNull(this.portletMode, "portletWindow.portletMode can not be null");
         Validate.notNull(this.windowState, "portletWindow.windowState can not be null");
+        Validate.notNull(this.delegationParent, "portletWindow.delegationParent can not be null");
     }
 
     /* (non-Javadoc)
@@ -159,14 +178,14 @@ class PortletWindowImpl implements IPortletWindow {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#getRequestParameers()
      */
-    public Map<String, String[]> getRequestParameters() {
+    public Map<String, List<String>> getRequestParameters() {
         return this.requestParameters;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
      */
-    public void setRequestParameters(Map<String, String[]> requestParameters) {
+    public void setRequestParameters(Map<String, List<String>> requestParameters) {
         this.requestParameters = requestParameters;
     }
     
@@ -184,6 +203,13 @@ class PortletWindowImpl implements IPortletWindow {
         this.expirationCache = expirationCache;
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.om.IPortletWindow#getDelegationParent()
+     */
+    public IPortletWindowId getDelegationParent() {
+        return this.delegationParent;
+    }
+
     
     //********** Serializable Methods **********//
 
@@ -242,6 +268,7 @@ class PortletWindowImpl implements IPortletWindow {
             .append(this.portletMode, rhs.getPortletMode())
             .append(this.expirationCache, rhs.getExpirationCache())
             .append(this.requestParameters, rhs.getRequestParameters())
+            .append(this.delegationParent, rhs.getDelegationParent())
             .isEquals();
     }
 
@@ -258,6 +285,7 @@ class PortletWindowImpl implements IPortletWindow {
             .append(this.portletMode)
             .append(this.expirationCache)
             .append(this.requestParameters)
+            .append(this.delegationParent)
             .toHashCode();
     }
 
@@ -274,6 +302,7 @@ class PortletWindowImpl implements IPortletWindow {
             .append("portletMode", this.portletMode)
             .append("expirationCache", this.expirationCache)
             .append("requestParameters", this.requestParameters)
+            .append("delegationParent", this.delegationParent)
             .toString();
     }
 }

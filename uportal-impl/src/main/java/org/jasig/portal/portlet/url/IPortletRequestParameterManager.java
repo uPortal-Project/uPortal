@@ -5,6 +5,8 @@
  */
 package org.jasig.portal.portlet.url;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -17,22 +19,13 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  */
 public interface IPortletRequestParameterManager {
     /**
-     * Mark this request as not having any portlet request parameters associated with it.
+     * Set the PortletUrls for this request
      * 
      * @param request The current request.
-     * @throws IllegalArgumentException If request is null
-     */
-    public void setNoPortletRequest(HttpServletRequest request);
-    
-    /**
-     * Set the type of request for this portlet.
-     * 
-     * @param request The current request.
-     * @param portletId The ID of the portlet targeted
-     * @param portletRequestInfo Data about the request
+     * @param portletUrls List of PortletUrls parsed from the request. The first item in the list is assumed to be the targeted portlet, subsequent items are assumed to be delegate portlets in delegation order.
      * @throws IllegalArgumentException If request, portletId, or portletRequest are null.
      */
-    public void setRequestInfo(HttpServletRequest request, IPortletWindowId portletId, PortletRequestInfo portletRequestInfo);
+    public void setRequestInfo(HttpServletRequest request, List<PortletUrl> portletUrls);
     
     /**
      * Gets the portlet window ID targeted by the request, returns null if no portlet was targeted.
@@ -45,12 +38,14 @@ public interface IPortletRequestParameterManager {
     public IPortletWindowId getTargetedPortletWindowId(HttpServletRequest request);
     
     /**
-     * Gets the request information for the targeted portlet, returns null if no portlet was targeted.
+     * Gets the request information for the specified portlet, returns null if the specified portlet was not targeted.
      * 
      * @param request The current request.
-     * @return The PortletRequestInfo for the targeted IPortletWindowId, null if no portlet was targeted.
+     * @param portletWindowId The id of the portlet to get request information for
+     * @return The PortletUrl for the specified IPortletWindowId, null if the specified portlet was not targeted.
+     * 
      * @throws IllegalArgumentException If request is null
      * @throws org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException If this request doesn't have the necessary information associated with it yet to return a request type
      */
-    public PortletRequestInfo getPortletRequestInfo(HttpServletRequest request);
+    public PortletUrl getPortletRequestInfo(HttpServletRequest request, IPortletWindowId portletWindowId);
 }

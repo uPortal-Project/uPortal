@@ -36,7 +36,7 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
-import org.jasig.portal.portlet.url.PortletRequestInfo;
+import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -212,11 +212,13 @@ public class SpringPortletChannelImplTest extends TestCase {
         EasyMock.expectLastCall();
         
         
-        final PortletRequestInfo portletRequestInfo = new PortletRequestInfo(RequestType.RENDER, Collections.EMPTY_MAP);
+        final PortletUrl portletUrl = new PortletUrl(portletWindowId);
+        portletUrl.setRequestType(RequestType.RENDER);
+        portletUrl.setParameters(Collections.EMPTY_MAP);
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
         EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(portletWindowId);
-        EasyMock.expect(portletRequestParameterManager.getPortletRequestInfo(pcsRequest)).andReturn(portletRequestInfo);
+        EasyMock.expect(portletRequestParameterManager.getPortletRequestInfo(pcsRequest, portletWindowId)).andReturn(portletUrl);
         
         final IPersonManager personManager = EasyMock.createMock(IPersonManager.class);
         EasyMock.expect(personManager.getPerson(pcsRequest)).andReturn(person);
@@ -898,11 +900,12 @@ public class SpringPortletChannelImplTest extends TestCase {
         });
         
         
-        final PortletRequestInfo portletRequestInfo = new PortletRequestInfo(RequestType.RENDER);
+        final PortletUrl portletUrl = new PortletUrl(portletWindowId);
+        portletUrl.setRequestType(RequestType.RENDER);
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
         EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(portletWindowId);
-        EasyMock.expect(portletRequestParameterManager.getPortletRequestInfo(pcsRequest)).andReturn(portletRequestInfo);
+        EasyMock.expect(portletRequestParameterManager.getPortletRequestInfo(pcsRequest, portletWindowId)).andReturn(portletUrl);
         
         final IPersonManager personManager = EasyMock.createMock(IPersonManager.class);
         EasyMock.expect(personManager.getPerson(pcsRequest)).andReturn(person);

@@ -15,8 +15,8 @@
         <property name="dynamicRequestParameterProcessors">
             <list value-type="org.jasig.portal.url.processing.IRequestParameterProcessor">
                 <!-- <ref local="urlParameterProcessor" />  -->
-                <ref local="userLayoutParameterProcessor" />
                 <ref local="portletRequestParameterProcessor" />
+                <ref local="userLayoutParameterProcessor" />
                 <ref local="channelRequestParameterProcessor" />
             </list>
         </property>

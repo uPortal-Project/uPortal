@@ -6,6 +6,7 @@
 package org.jasig.portal.portlet.om;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -49,12 +50,12 @@ public interface IPortletWindow extends PortletWindow, Serializable {
      * @param requestParameters The current request parameters for the portlet
      * @throws IllegalArgumentException if parameters is null.
      */
-    public void setRequestParameters(Map<String, String[]> requestParameters);
+    public void setRequestParameters(Map<String, List<String>> requestParameters);
     
     /**
      * @return The current request parameters for the portlet
      */
-    public Map<String, String[]> getRequestParameters();
+    public Map<String, List<String>> getRequestParameters();
     
     /**
      * Sets the expiration timeout for the portlet rendering cache. If null is set
@@ -68,4 +69,10 @@ public interface IPortletWindow extends PortletWindow, Serializable {
      * @return The expiration timeout for the portlet, if null the value from portlet.xml should be used.
      */
     public Integer getExpirationCache();
+    
+    /**
+     * @return The ID of the parent portlet window that is delegating rendering to this portlet, null if
+     *      this portlet is not being delegated to.
+     */
+    public IPortletWindowId getDelegationParent();
 }

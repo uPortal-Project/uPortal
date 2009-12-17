@@ -61,7 +61,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
-import org.jasig.portal.portlet.url.PortletRequestInfo;
+import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPermission;
@@ -249,9 +249,9 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         // proccess possible portlet action
         final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(req);
         if (targetedPortletWindowId != null) {
-            final PortletRequestInfo portletRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(req);
+            final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(req, targetedPortletWindowId);
             
-            if (RequestType.ACTION.equals(portletRequestInfo.getRequestType())) {
+            if (RequestType.ACTION.equals(portletUrl.getRequestType())) {
                 final IPortletEntity targetedPortletEntity = this.portletWindowRegistry.getParentPortletEntity(req, targetedPortletWindowId);
                 final String channelSubscribeId = targetedPortletEntity.getChannelSubscribeId();
                 final boolean actionExecuted = channelManager.doChannelAction(req, res, channelSubscribeId, false);
