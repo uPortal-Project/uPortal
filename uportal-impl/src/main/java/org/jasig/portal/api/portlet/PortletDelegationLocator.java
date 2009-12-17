@@ -13,10 +13,10 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface LocatingPortletContext {
-    public PortletWindowRequestDispatcher createRequestDispatcher(String fName);
+public interface PortletDelegationLocator {
+    public PortletDelegationDispatcher createRequestDispatcher(String fName);
     
-    public PortletWindowRequestDispatcher createRequestDispatcher(IPortletDefinitionId portletDefinitionId);
+    public PortletDelegationDispatcher createRequestDispatcher(IPortletDefinitionId portletDefinitionId);
     
-    public PortletWindowRequestDispatcher getRequestDispatcher(IPortletWindowId iPortletWindowId);
+    public PortletDelegationDispatcher getRequestDispatcher(IPortletWindowId iPortletWindowId);
 }

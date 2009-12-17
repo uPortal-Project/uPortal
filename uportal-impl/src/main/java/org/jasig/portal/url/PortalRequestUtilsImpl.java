@@ -7,6 +7,7 @@ package org.jasig.portal.url;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -45,6 +46,42 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         
         throw new IllegalArgumentException("The orginal portal HttpServletRequest is not available from the HttpServletRequest using attribute '" + PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
     }
+    
+    @Override
+    public HttpServletResponse getOriginalPortalResponse(HttpServletRequest portletRequest) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public HttpServletResponse getOriginalPortalResponse(PortletRequest portletRequest) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortalRequestUtils#getCurrentPortalRequest()
+     */
+    public HttpServletRequest getCurrentPortalRequest() {
+        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        
+        if (requestAttributes instanceof ServletRequestAttributes) {
+            final HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
+            try {
+                return this.getOriginalPortalRequest(request);
+            }
+            catch (IllegalArgumentException iae) {
+                return request;
+            }
+        }
+        else if (requestAttributes instanceof PortletRequestAttributes) {
+            final PortletRequest request = ((PortletRequestAttributes)requestAttributes).getRequest();
+            return this.getOriginalPortalRequest(request);
+        }
+        else {
+            throw new IllegalStateException("No ServletRequestAttributes or PortletRequestAttributes available from the RequestContextHolder. " + (requestAttributes == null ? null : requestAttributes.getClass().getName()));
+        }
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalRequestUtils#getOriginalPortletAdaptorRequest(javax.portlet.PortletRequest)
@@ -71,28 +108,15 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
 
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IPortalRequestUtils#getCurrentPortalRequest()
-     */
-    public HttpServletRequest getCurrentPortalRequest() {
-        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        
-        if (requestAttributes instanceof ServletRequestAttributes) {
-            final HttpServletRequest request = ((ServletRequestAttributes)requestAttributes).getRequest();
-            try {
-                return this.getOriginalPortalRequest(request);
-            }
-            catch (IllegalArgumentException iae) {
-                return request;
-            }
-        }
-        else if (requestAttributes instanceof PortletRequestAttributes) {
-            final PortletRequest request = ((PortletRequestAttributes)requestAttributes).getRequest();
-            return this.getOriginalPortalRequest(request);
-        }
-        else {
-            throw new IllegalStateException("No ServletRequestAttributes or PortletRequestAttributes available from the RequestContextHolder. " + (requestAttributes == null ? null : requestAttributes.getClass().getName()));
-        }
+    @Override
+    public HttpServletResponse getOriginalPortletAdaptorResponse(HttpServletRequest portletRequest) {
+        // TODO Auto-generated method stub
+        return null;
     }
-    
+
+    @Override
+    public HttpServletResponse getOriginalPortletAdaptorResponse(PortletRequest portletRequest) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

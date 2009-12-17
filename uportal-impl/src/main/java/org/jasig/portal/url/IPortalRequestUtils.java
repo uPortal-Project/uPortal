@@ -7,6 +7,7 @@ package org.jasig.portal.url;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Eric Dalquist
@@ -28,6 +29,22 @@ public interface IPortalRequestUtils {
     public HttpServletRequest getOriginalPortletAdaptorRequest(HttpServletRequest portletRequest);
     
     /**
+     * Useful for container service callbacks that are provided with the portlet's request
+     * but need access to the HttpServletResponse passed into the portlet container. 
+     * 
+     * @param portletRequest The request targeted to the portlet
+     * @return The portlet scoped response passed to the portlet container
+     */
+    public HttpServletResponse getOriginalPortletAdaptorResponse(PortletRequest portletRequest);
+    
+    /**
+     * @see #getOriginalPortletAdaptorResponse(PortletRequest)
+     */
+    public HttpServletResponse getOriginalPortletAdaptorResponse(HttpServletRequest portletRequest);
+    
+    
+    
+    /**
      * Useful for container service callbacks and service portlets that are provided with
      * the portlet's request but need access to the portal's HttpServletRequest. 
      * 
@@ -40,6 +57,20 @@ public interface IPortalRequestUtils {
      * @see #getOriginalPortalRequest(PortletRequest)
      */
     public HttpServletRequest getOriginalPortalRequest(HttpServletRequest portletRequest);
+    
+    /**
+     * Useful for container service callbacks and service portlets that are provided with
+     * the portlet's request but need access to the portal's HttpServletResponse. 
+     * 
+     * @param portletRequest The request targeted to the portlet
+     * @return The portal's response, not scoped to a particular portlet
+     */
+    public HttpServletResponse getOriginalPortalResponse(PortletRequest portletRequest);
+    
+    /**
+     * @see #getOriginalPortalResponse(PortletRequest)
+     */
+    public HttpServletResponse getOriginalPortalResponse(HttpServletRequest portletRequest);
     
     /**
      * Uses {@link org.springframework.web.context.request.RequestContextHolder} to retrieve the current

@@ -338,6 +338,18 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel, Applicat
         //Get the portlet window
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
+        final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
+        
+        try {
+            this.doAction(portletWindowId, httpServletRequest, httpServletResponse);
+        }
+        catch (PortletDispatchException e) {
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+            throw new PortletDispatchException("Exception portlet ActionRequest: " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, e);
+        }
+    }
+    
+    protected void doAction(final IPortletWindowId portletWindowId, final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Load the parameters to provide to the portlet with the request and update the state and mode
@@ -366,35 +378,34 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel, Applicat
         try {
             final PortletDD portletDescriptor = this.getPortletDD(httpServletRequest, portletWindowId);
             if (portletDescriptor == null) {
-                throw new InconsistentPortletModelException("Could not retrieve PortletDD for portlet window '" + portletWindowId + "', this usually means the Portlet application is not deployed correctly. " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindowId);
+                throw new InconsistentPortletModelException("Could not retrieve PortletDD for portlet window '" + portletWindowId + "', this usually means the Portlet application is not deployed correctly.", portletWindowId);
             }
             
             securityRoleRefs = portletDescriptor.getSecurityRoleRefs();
         }
         catch (PortletContainerException pce) {
-            throw new InconsistentPortletModelException("Could not retrieve PortletDD for portlet window '" + portletWindowId + "' to provide the required SecurityRoleRefDD List to the PortletHttpRequestWrapper. " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindowId, pce);
+            throw new InconsistentPortletModelException("Could not retrieve PortletDD for portlet window '" + portletWindowId + "' to provide the required SecurityRoleRefDD List to the PortletHttpRequestWrapper.", portletWindowId, pce);
         }
         
         //Setup the request and response
         final PortletHttpRequestWrapper parameterRequestWrapper = new PortletHttpRequestWrapper(httpServletRequest, parameters, person, securityRoleRefs);
-        final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
         
         //Execute the action, 
         if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Executing portlet action for window '" + portletWindow + "' with " + this.getChannelLogInfo(channelStaticData, portletWindow));
+            this.logger.debug("Executing portlet action for window '" + portletWindow + "'");
         }
         
         try {
             this.portletContainer.doAction(portletWindow, parameterRequestWrapper, httpServletResponse);
         }
         catch (PortletException pe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, pe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action.", portletWindow, pe);
         }
         catch (PortletContainerException pce) {
-            throw new PortletDispatchException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'. " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, pce);
+            throw new PortletDispatchException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'.", portletWindow, pce);
         }
         catch (IOException ioe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action. " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, ioe);
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action.", portletWindow, ioe);
         }
     }
 
