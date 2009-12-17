@@ -112,209 +112,210 @@
 ------------------------------------
   uPortal specific CSS.
 ------------------------------------ 
-*/
+ * uPortal is namespaced with "up", a class of the <body> tag.
+ */
 
 /* Page */
-.fl-theme-uportal #portalPage {background-color:#fff;}
+.up #portalPage {background-color:#fff;}
 
 /* Portal Page Bar */
-.fl-theme-uportal #portalPageBarLinks {float:right; margin-left:250px; padding-right:15px;}
-.fl-theme-uportal .logged-in #portalPageBarLogout .portal-pipe {display:none;}
-.fl-theme-uportal .not-logged-in #portalPageBarHelp .portal-pipe {display:none;}
+.up #portalPageBarLinks {float:right; margin-left:250px; padding-right:15px;}
+.up .logged-in #portalPageBarLogout .portal-pipe {display:none;}
+.up .not-logged-in #portalPageBarHelp .portal-pipe {display:none;}
 
 /* Header */
-.fl-theme-uportal #portalPageHeader {background:transparent url(images/header_bkd.jpg) bottom left repeat-x;}
-.fl-theme-uportal #portalLogo {padding:20px 50px;}
-.fl-theme-uportal .focused #portalLogo {padding:10px 30px;}
+.up #portalPageHeader {background:transparent url(images/header_bkd.jpg) bottom left repeat-x;}
+.up #portalLogo {padding:20px 50px;}
+.up .focused #portalLogo {padding:10px 30px;}
 
 /* Welcome
  Keep the top value relative to the text size so that the top position remains good when the browser text size is increased. 
  Set the left width to the width of your logo (plus logo margins).
  This margin prevents it from colliding with the logo if the browser window is shrunk down. 
 */
-#portalWelcome {top:3.5em; left:250px;}
+.up #portalWelcome {top:3.5em; left:250px;}
 
 /* Web Search */
-.fl-theme-uportal #webSearchContainer,
-.fl-theme-uportal #webSearchContainer .fl-widget-content {margin:0; padding:0; background:transparent; border:none;} {background:transparent; border:none;}
-.fl-theme-uportal #webSearchContainer #webSearchSubmit {background:#000 url(images/btn_bkd.gif) top left repeat-x; border:1px solid #000; color:#333; font-size:90%; font-weight:bold; padding:0.1em 0.5em;}
-.fl-theme-uportal #webSearchContainer #webSearchSubmit:hover {background-position:0 -200px; cursor:pointer;}
+.up #webSearchContainer,
+.up #webSearchContainer .fl-widget-content {margin:0; padding:0; background:transparent; border:none;} {background:transparent; border:none;}
+.up #webSearchContainer #webSearchSubmit {background:#000 url(images/btn_bkd.gif) top left repeat-x; border:1px solid #000; color:#333; font-size:90%; font-weight:bold; padding:0.1em 0.5em;}
+.up #webSearchContainer #webSearchSubmit:hover {background-position:0 -200px; cursor:pointer;}
 
 /* Navigation */
-.fl-theme-uportal #portalNavigation {background:#98b6c1 url(images/nav_bkd_btm.gif) bottom right repeat-x; border-top:1px solid #44626a;}
-.fl-theme-uportal #portalNavigationInner {background:transparent url(images/nav_bkd_top.gif) top right repeat-x; border-top:1px solid #44626a; border-bottom:1px solid #4b6f7d;}
-.fl-theme-uportal #portalNavigation .fl-tabs,
-.fl-theme-uportal #portalNavigation .fl-tabs li,
-.fl-theme-uportal #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:transparent;}
-.fl-theme-uportal #portalNavigation .fl-tabs {padding:0.3em 0; text-align:center; border:none;}
-.fl-theme-uportal #portalNavigation .fl-tabs li.portal-navigation {position:relative; padding:0.4em 0;}
-.fl-theme-uportal #portalNavigation .fl-tabs li.portal-navigation a {padding:0.4em 2em; font-size:120%; font-weight:bold; color:#fff; text-decoration:none;}
-.fl-theme-uportal #portalNavigation .fl-tabs li.portal-navigation:hover,
-.fl-theme-uportal #portalNavigation .fl-tabs li.portal-navigation:hover a,
-.fl-theme-uportal #portalNavigation .fl-tabs li.portal-navigation a:hover {background:#608695 url(images/nav_tab_bkd.gif) 0px -300px repeat-x}
-.fl-theme-uportal #portalNavigation .fl-tabs li.portal-navigation.fl-activeTab a.portal-navigation-link,
-.fl-theme-uportal #portalNavigation .fl-tabs li.portal-navigation.fl-activeTab a.portal-navigation-link:hover {background:#2e5579 url(images/nav_tab_bkd.gif) top left repeat-x; border-left:1px solid #1e3851; border-right:1px solid #1e3851; color:#fff;}
-.fl-theme-uportal #portalNavigation .fl-tab-content {background-color:#fff; color:#000;}
-.fl-theme-uportal #portalNavigationSubrow.fl-tab-content {text-align:center; background:#336699 url(images/nav_subrow_bkd.gif) top right repeat-x;}
-.fl-theme-uportal #portalNavigationSubrow a {text-decoration:none; color:#acc9e6;}
-.fl-theme-uportal #portalNavigationSubrow a:hover {color:#eee;}
+.up #portalNavigation {background:#98b6c1 url(images/nav_bkd_btm.gif) bottom right repeat-x; border-top:1px solid #44626a;}
+.up #portalNavigationInner {background:transparent url(images/nav_bkd_top.gif) top right repeat-x; border-top:1px solid #44626a; border-bottom:1px solid #4b6f7d;}
+.up #portalNavigation .fl-tabs,
+.up #portalNavigation .fl-tabs li,
+.up #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:transparent;}
+.up #portalNavigation .fl-tabs {padding:0.3em 0; text-align:center; border:none;}
+.up #portalNavigation .fl-tabs li.portal-navigation {position:relative; padding:0.4em 0;}
+.up #portalNavigation .fl-tabs li.portal-navigation a {padding:0.4em 2em; font-size:120%; font-weight:bold; color:#fff; text-decoration:none;}
+.up #portalNavigation .fl-tabs li.portal-navigation:hover,
+.up #portalNavigation .fl-tabs li.portal-navigation:hover a,
+.up #portalNavigation .fl-tabs li.portal-navigation a:hover {background:#608695 url(images/nav_tab_bkd.gif) 0px -300px repeat-x}
+.up #portalNavigation .fl-tabs li.portal-navigation.fl-activeTab a.portal-navigation-link,
+.up #portalNavigation .fl-tabs li.portal-navigation.fl-activeTab a.portal-navigation-link:hover {background:#2e5579 url(images/nav_tab_bkd.gif) top left repeat-x; border-left:1px solid #1e3851; border-right:1px solid #1e3851; color:#fff;}
+.up #portalNavigation .fl-tab-content {background-color:#fff; color:#000;}
+.up #portalNavigationSubrow.fl-tab-content {text-align:center; background:#336699 url(images/nav_subrow_bkd.gif) top right repeat-x;}
+.up #portalNavigationSubrow a {text-decoration:none; color:#acc9e6;}
+.up #portalNavigationSubrow a:hover {color:#eee;}
 
 /* Flyout Navigation */
-.fl-theme-uportal #portalNavigation .portal-flyout-container {border-bottom:2px solid #336699;}
-.fl-theme-uportal #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav {border-bottom:1px solid #336699; border-left:1px solid #336699; border-right:1px solid #336699;}
-.fl-theme-uportal #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link {padding:4px 10px 4px 25px; color:#336699; font-weight:normal; font-size:100%; background-color:#e2e8e7; background-position:5px 3px; background-repeat:no-repeat; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); text-decoration:none; text-align:left; display:block; border:none}
-.fl-theme-uportal #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:hover {color:#fff; background-color:#5a95cf;}
+.up #portalNavigation .portal-flyout-container {border-bottom:2px solid #336699;}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav {border-bottom:1px solid #336699; border-left:1px solid #336699; border-right:1px solid #336699;}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link {padding:4px 10px 4px 25px; color:#336699; font-weight:normal; font-size:100%; background-color:#e2e8e7; background-position:5px 3px; background-repeat:no-repeat; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); text-decoration:none; text-align:left; display:block; border:none}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:hover {color:#fff; background-color:#5a95cf;}
 
 /* Body */
-.fl-theme-uportal .sidebar-left-100 #portalPageBodyTitleRow,
-.fl-theme-uportal .sidebar-left-150 #portalPageBodyTitleRow,
-.fl-theme-uportal .sidebar-left-200 #portalPageBodyTitleRow,
-.fl-theme-uportal .sidebar-left-250 #portalPageBodyTitleRow,
-.fl-theme-uportal .sidebar-left-300 #portalPageBodyTitleRow {background:transparent url(images/page_corner_topleft.png) top left no-repeat;}
-.fl-theme-uportal .sidebar-right-100 #portalPageBodyTitleRow,
-.fl-theme-uportal .sidebar-right-150 #portalPageBodyTitleRow,
-.fl-theme-uportal .sidebar-right-200 #portalPageBodyTitleRow,
-.fl-theme-uportal .sidebar-right-250 #portalPageBodyTitleRow,
-.fl-theme-uportal .sidebar-right-300 #portalPageBodyTitleRow {background:transparent url(images/page_corner_topright.png) top right no-repeat;}
-.fl-theme-uportal #portalPageBodyTitleRow h1 {color:#333; font-size:200%; border:none;}
+.up .sidebar-left-100 #portalPageBodyTitleRow,
+.up .sidebar-left-150 #portalPageBodyTitleRow,
+.up .sidebar-left-200 #portalPageBodyTitleRow,
+.up .sidebar-left-250 #portalPageBodyTitleRow,
+.up .sidebar-left-300 #portalPageBodyTitleRow {background:transparent url(images/page_corner_topleft.png) top left no-repeat;}
+.up .sidebar-right-100 #portalPageBodyTitleRow,
+.up .sidebar-right-150 #portalPageBodyTitleRow,
+.up .sidebar-right-200 #portalPageBodyTitleRow,
+.up .sidebar-right-250 #portalPageBodyTitleRow,
+.up .sidebar-right-300 #portalPageBodyTitleRow {background:transparent url(images/page_corner_topright.png) top right no-repeat;}
+.up #portalPageBodyTitleRow h1 {color:#333; font-size:200%; border:none;}
 /* Focused */
-.fl-theme-uportal .focused #portalPageBodyTitleRow h1 {font-size:300%;}
-.fl-theme-uportal #portalPageBodyBreadcrumb {font-size:90%; color:#ddd;}
-.fl-theme-uportal #portalPageBodyBreadcrumb a {color:#999; font-weight:normal;}
+.up .focused #portalPageBodyTitleRow h1 {font-size:300%;}
+.up #portalPageBodyBreadcrumb {font-size:90%; color:#ddd;}
+.up #portalPageBodyBreadcrumb a {color:#999; font-weight:normal;}
 
 /* Columns */
-.fl-theme-uportal #portalPageBodyColumns.fl-col-flex,
-.fl-theme-uportal .layout-1-columns .portal-page-column.fl-col-flex {padding:0;} /* Removes default padding from FSS  */
+.up #portalPageBodyColumns.fl-col-flex,
+.up .layout-1-columns .portal-page-column.fl-col-flex {padding:0;} /* Removes default padding from FSS  */
 
 /* Sidebar */
-.fl-theme-uportal #portalSidebar {background:#336699 url(images/portlet_corner_bottomleft.png) bottom left no-repeat;}
-.fl-theme-uportal #portalSidebarInner {background:transparent url(images/portlet_corner_bottomright.png) bottom right no-repeat;}
+.up #portalSidebar {background:#336699 url(images/portlet_corner_bottomleft.png) bottom left no-repeat;}
+.up #portalSidebarInner {background:transparent url(images/portlet_corner_bottomright.png) bottom right no-repeat;}
 /* Sidebar Widgets */
-.fl-theme-uportal #portalSidebar .fl-widget {margin-bottom:0.5em;}
-.fl-theme-uportal #portalSidebar .fl-widget-titlebar h2 {font-size:85%;}
-.fl-theme-uportal #portalSidebar #portletNavigation .fl-widget-content {background-color:#e2e8e7;}
-.fl-theme-uportal #portalSidebar #portalFragAdminList .fl-widget-content {padding:0.3em}
-.fl-theme-uportal #portalSidebar #portletNavigation h3 {font-size:85%; color:#44626a;}
-.fl-theme-uportal #portalSidebar .fl-widget .fl-listmenu {border:none; border-bottom:1px solid #ccc;}
-.fl-theme-uportal #portalSidebar .fl-widget .fl-listmenu a {padding-left:28px; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); background-position:0.5em 0.5em; background-repeat:no-repeat;}
+.up #portalSidebar .fl-widget {margin-bottom:0.5em;}
+.up #portalSidebar .fl-widget-titlebar h2 {font-size:85%;}
+.up #portalSidebar #portletNavigation .fl-widget-content {background-color:#e2e8e7;}
+.up #portalSidebar #portalFragAdminList .fl-widget-content {padding:0.3em}
+.up #portalSidebar #portletNavigation h3 {font-size:85%; color:#44626a;}
+.up #portalSidebar .fl-widget .fl-listmenu {border:none; border-bottom:1px solid #ccc;}
+.up #portalSidebar .fl-widget .fl-listmenu a {padding-left:28px; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); background-position:0.5em 0.5em; background-repeat:no-repeat;}
 
 /* Login */
-.fl-theme-uportal #portalLogin {}
-.fl-theme-uportal #portalLogin .fl-widget-content {padding:1em;}
-.fl-theme-uportal #portalLogin #portalLoginButton,
-.fl-theme-uportal #portalLogin #portalCASLoginLink {display:block; padding:0.5em 1em; text-decoration:none; text-align:center; font-weight:bold; color:#fff; background-color:#FF6600; background-image:none; border-top:1px solid #FFCA95; border-left:1px solid #FFCA95; border-bottom:1px solid #884400; border-right:1px solid #884400;}
-.fl-theme-uportal #portalLogin #portalLoginButton:hover,
-.fl-theme-uportal #portalLogin #portalCASLoginLink:hover {background-color:#FF3300; cursor:pointer;}
-.fl-theme-uportal #portalLogin #portalLoginButton {padding:0.3em 1em;}
-.fl-theme-uportal .via-cas {color:#FFCC66;}
-.fl-theme-uportal #portalLogin p {margin:1em 0 0 0;}
-.fl-theme-uportal #portalLogin #portalLoginForgot,
-.fl-theme-uportal #portalLogin #portalLoginErrorForgot {font-weight:normal;}
-.fl-theme-uportal #portalLogin a#portalLoginErrorForgot {color:#FF6600;}
-.fl-theme-uportal #portalLogin a#portalLoginErrorForgot:hover {color:#000;}
+.up #portalLogin {}
+.up #portalLogin .fl-widget-content {padding:1em;}
+.up #portalLogin #portalLoginButton,
+.up #portalLogin #portalCASLoginLink {display:block; padding:0.5em 1em; text-decoration:none; text-align:center; font-weight:bold; color:#fff; background-color:#FF6600; background-image:none; border-top:1px solid #FFCA95; border-left:1px solid #FFCA95; border-bottom:1px solid #884400; border-right:1px solid #884400;}
+.up #portalLogin #portalLoginButton:hover,
+.up #portalLogin #portalCASLoginLink:hover {background-color:#FF3300; cursor:pointer;}
+.up #portalLogin #portalLoginButton {padding:0.3em 1em;}
+.up .via-cas {color:#FFCC66;}
+.up #portalLogin p {margin:1em 0 0 0;}
+.up #portalLogin #portalLoginForgot,
+.up #portalLogin #portalLoginErrorForgot {font-weight:normal;}
+.up #portalLogin a#portalLoginErrorForgot {color:#FF6600;}
+.up #portalLogin a#portalLoginErrorForgot:hover {color:#000;}
 
 /* Customization Links */
-.fl-theme-uportal #portalCustomizationLinks #portalCustomizationLinksAddContent a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_add.png);}
-.fl-theme-uportal #portalCustomizationLinks #portalCustomizationLinksChangeLayout a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/layout_content.png);}
-.fl-theme-uportal #portalCustomizationLinks #portalCustomizationLinksChooseSkin a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/color_swatch.png);}
-.fl-theme-uportal #portalCustomizationLinks #portalCustomizationLinksAddTab a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tab_add.png);}
+.up #portalCustomizationLinks #portalCustomizationLinksAddContent a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_add.png);}
+.up #portalCustomizationLinks #portalCustomizationLinksChangeLayout a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/layout_content.png);}
+.up #portalCustomizationLinks #portalCustomizationLinksChooseSkin a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/color_swatch.png);}
+.up #portalCustomizationLinks #portalCustomizationLinksAddTab a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tab_add.png);}
 
 /* Administration Links */
-.fl-theme-uportal #portalAdminLinks #portalAdminLinksPortletAdmin a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_cascade.png);}
-.fl-theme-uportal #portalAdminLinks #portalAdminLinksCustomize a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/overlays.png);}
+.up #portalAdminLinks #portalAdminLinksPortletAdmin a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_cascade.png);}
+.up #portalAdminLinks #portalAdminLinksCustomize a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/overlays.png);}
 
 /* Portlet Navigation (focused view) */
-.fl-theme-uportal #portletNavigation #portletNavigationLinkHome a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tab_go.png);}
+.up #portletNavigation #portletNavigationLinkHome a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tab_go.png);}
 
 /* Fragment Administration */
-.fl-theme-uportal #portalFragAdminExit {border-bottom:1px solid #ff6600;}
-.fl-theme-uportal #portalFragAdminExit h2 {color:#ff6600;}
-.fl-theme-uportal #portalFragAdminExit #exitFragment {font-weight:bold; color:#fff; background-color:#FF6600; background-image:none; border-top:1px solid #FFCA95; border-left:1px solid #FFCA95; border-bottom:1px solid #884400; border-right:1px solid #884400;}
-.fl-theme-uportal #portalFragAdminExit #exitFragment:hover {background-color:#FF3300; cursor:pointer;}
-.fl-theme-uportal .sidebar-left-100 #portalFragAdminExit,
-.fl-theme-uportal .sidebar-left-150 #portalFragAdminExit,
-.fl-theme-uportal .sidebar-left-200 #portalFragAdminExit,
-.fl-theme-uportal .sidebar-left-250 #portalFragAdminExit,
-.fl-theme-uportal .sidebar-left-300 #portalFragAdminExit {background:#ffffcc url(images/page_corner_topleft.png) top left no-repeat;}
-.fl-theme-uportal .sidebar-right-100 #portalFragAdminExit,
-.fl-theme-uportal .sidebar-right-150 #portalFragAdminExit,
-.fl-theme-uportal .sidebar-right-200 #portalFragAdminExit,
-.fl-theme-uportal .sidebar-right-250 #portalFragAdminExit,
-.fl-theme-uportal .sidebar-right-300 #portalFragAdminExit {background:#ffffcc url(images/page_corner_topright.png) top right no-repeat;}
-/*.fl-theme-uportal .sidebar #portalPageBodyTitleRow {background:none;}*/
+.up #portalFragAdminExit {border-bottom:1px solid #ff6600;}
+.up #portalFragAdminExit h2 {color:#ff6600;}
+.up #portalFragAdminExit #exitFragment {font-weight:bold; color:#fff; background-color:#FF6600; background-image:none; border-top:1px solid #FFCA95; border-left:1px solid #FFCA95; border-bottom:1px solid #884400; border-right:1px solid #884400;}
+.up #portalFragAdminExit #exitFragment:hover {background-color:#FF3300; cursor:pointer;}
+.up .sidebar-left-100 #portalFragAdminExit,
+.up .sidebar-left-150 #portalFragAdminExit,
+.up .sidebar-left-200 #portalFragAdminExit,
+.up .sidebar-left-250 #portalFragAdminExit,
+.up .sidebar-left-300 #portalFragAdminExit {background:#ffffcc url(images/page_corner_topleft.png) top left no-repeat;}
+.up .sidebar-right-100 #portalFragAdminExit,
+.up .sidebar-right-150 #portalFragAdminExit,
+.up .sidebar-right-200 #portalFragAdminExit,
+.up .sidebar-right-250 #portalFragAdminExit,
+.up .sidebar-right-300 #portalFragAdminExit {background:#ffffcc url(images/page_corner_topright.png) top right no-repeat;}
+/*.up .sidebar #portalPageBodyTitleRow {background:none;}*/
 
 /* Portlets */
 /* The styling here is for the portlet container or "chrome" that uPortal renders.  CSS that directly styles portlet content is specified in portlet.css. */
-.fl-theme-uportal .dashboard .up-portlet-top {background:#e5e5e5 url(images/portlet_corner_topleft.png) top left no-repeat;}
-.fl-theme-uportal .dashboard .up-portlet-top-inner {height:3px; background:transparent url(images/portlet_corner_topright.png) top right no-repeat;}
-.fl-theme-uportal .dashboard .up-portlet-toolbar  {white-space:nowrap; background:#e5e5e5 url(images/portlet_title_bkd.gif) top right repeat-x;}
-.fl-theme-uportal .dashboard .up-portlet-toolbar a {text-decoration:none; color:#666;}
-.fl-theme-uportal .dashboard .up-portlet-toolbar a:hover {text-decoration:none; color:#000;}
-.fl-theme-uportal .dashboard .up-portlet-toolbar a:hover span {background-color:#dfefff;}
-.fl-theme-uportal .dashboard .up-portlet-content {background-color:#fff; border-left:1px solid #e5e5e5; border-right:1px solid #e5e5e5;}
-.fl-theme-uportal .dashboard .up-portlet-bottom {background:#e5e5e5 url(images/portlet_corner_bottomleft.png) bottom left no-repeat;}
-.fl-theme-uportal .dashboard .up-portlet-bottom-inner {height:3px; background:transparent url(images/portlet_corner_bottomright.png) bottom right no-repeat;}
-.fl-theme-uportal .dashboard .up-portlet-controls .up-portlet-control {font-size:80%;}
+.up .dashboard .up-portlet-top {background:#e5e5e5 url(images/portlet_corner_topleft.png) top left no-repeat;}
+.up .dashboard .up-portlet-top-inner {height:3px; background:transparent url(images/portlet_corner_topright.png) top right no-repeat;}
+.up .dashboard .up-portlet-toolbar  {white-space:nowrap; background:#e5e5e5 url(images/portlet_title_bkd.gif) top right repeat-x;}
+.up .dashboard .up-portlet-toolbar a {text-decoration:none; color:#666;}
+.up .dashboard .up-portlet-toolbar a:hover {text-decoration:none; color:#000;}
+.up .dashboard .up-portlet-toolbar a:hover span {background-color:#dfefff;}
+.up .dashboard .up-portlet-content {background-color:#fff; border-left:1px solid #e5e5e5; border-right:1px solid #e5e5e5;}
+.up .dashboard .up-portlet-bottom {background:#e5e5e5 url(images/portlet_corner_bottomleft.png) bottom left no-repeat;}
+.up .dashboard .up-portlet-bottom-inner {height:3px; background:transparent url(images/portlet_corner_bottomright.png) bottom right no-repeat;}
+.up .dashboard .up-portlet-controls .up-portlet-control {font-size:80%;}
 /* No Chrome */
-.fl-theme-uportal .dashboard .no-chrome .up-portlet-content {border:none;}
+.up .dashboard .no-chrome .up-portlet-content {border:none;}
 /* Alternate */
-.fl-theme-uportal .dashboard .alternate .up-portlet-top,
-.fl-theme-uportal .dashboard .alternate .up-portlet-bottom,
-.fl-theme-uportal .dashboard .alternate .up-portlet-content {border-color:#98b6c1;}
-.fl-theme-uportal .dashboard .alternate .up-portlet-top,
-.fl-theme-uportal .dashboard .alternate .up-portlet-bottom {background-color:#98b6c1;}
-.fl-theme-uportal .dashboard .alternate .up-portlet-toolbar {background:#98b6c1 url(images/nav_bkd_top.gif) top right repeat-x;}
+.up .dashboard .alternate .up-portlet-top,
+.up .dashboard .alternate .up-portlet-bottom,
+.up .dashboard .alternate .up-portlet-content {border-color:#98b6c1;}
+.up .dashboard .alternate .up-portlet-top,
+.up .dashboard .alternate .up-portlet-bottom {background-color:#98b6c1;}
+.up .dashboard .alternate .up-portlet-toolbar {background:#98b6c1 url(images/nav_bkd_top.gif) top right repeat-x;}
 /* Highlight */
-.fl-theme-uportal .dashboard .highlight .up-portlet-top,
-.fl-theme-uportal .dashboard .highlight .up-portlet-bottom,
-.fl-theme-uportal .dashboard .highlight .up-portlet-content {border-color:#FF6600;}
-.fl-theme-uportal .dashboard .highlight .up-portlet-top,
-.fl-theme-uportal .dashboard .highlight .up-portlet-bottom {background-color:#FF6600;}
-.fl-theme-uportal .dashboard .highlight .up-portlet-toolbar {background:#FF6600;}
-.fl-theme-uportal .dashboard .highlight .up-portlet-toolbar a {color:#fff;}
+.up .dashboard .highlight .up-portlet-top,
+.up .dashboard .highlight .up-portlet-bottom,
+.up .dashboard .highlight .up-portlet-content {border-color:#FF6600;}
+.up .dashboard .highlight .up-portlet-top,
+.up .dashboard .highlight .up-portlet-bottom {background-color:#FF6600;}
+.up .dashboard .highlight .up-portlet-toolbar {background:#FF6600;}
+.up .dashboard .highlight .up-portlet-toolbar a {color:#fff;}
 /* Locked Portlet */
-.fl-theme-uportal .portal-page-column-inner .locked .up-portlet-top,
-.fl-theme-uportal .portal-page-column-inner .locked .up-portlet-bottom {display:none;}
-.fl-theme-uportal .portal-page-column-inner .locked .up-portlet-toolbar {background:#e5e5e5; border:1px solid #ccc;}
-.fl-theme-uportal .portal-page-column-inner .locked .up-portlet-toolbar h2 {margin-left:0.5em; padding-left:20px; background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/lock.png) 0 3px no-repeat;}
-.fl-theme-uportal .dashboard .portal-page-column-inner .locked .up-portlet-content {border:none; padding:0;}
+.up .portal-page-column-inner .locked .up-portlet-top,
+.up .portal-page-column-inner .locked .up-portlet-bottom {display:none;}
+.up .portal-page-column-inner .locked .up-portlet-toolbar {background:#e5e5e5; border:1px solid #ccc;}
+.up .portal-page-column-inner .locked .up-portlet-toolbar h2 {margin-left:0.5em; padding-left:20px; background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/lock.png) 0 3px no-repeat;}
+.up .dashboard .portal-page-column-inner .locked .up-portlet-content {border:none; padding:0;}
 
 /* Footer */
-.fl-theme-uportal #portalPageFooter {text-align:center; color:#999;}
-.fl-theme-uportal #portalPageFooterInner {border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5;}
-.fl-theme-uportal #portalPageFooter #portalProductAndVersion,
-.fl-theme-uportal #portalPageFooter #portalCopyright,
-.fl-theme-uportal #portalPageFooter #silkIconsAttribution {font-size:80%;}
-.fl-theme-uportal #portalPageFooter #portalProductAndVersion a,
-.fl-theme-uportal #portalPageFooter #portalCopyright a,
-.fl-theme-uportal #portalPageFooter #silkIconsAttribution a {color:#999;}
-.fl-theme-uportal #portalPageFooter #portalProductAndVersion a:hover,
-.fl-theme-uportal #portalPageFooter #portalCopyright a:hover,
-.fl-theme-uportal #portalPageFooter #silkIconsAttribution a:hover {color:#5a95cf;}
+.up #portalPageFooter {text-align:center; color:#999;}
+.up #portalPageFooterInner {border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5;}
+.up #portalPageFooter #portalProductAndVersion,
+.up #portalPageFooter #portalCopyright,
+.up #portalPageFooter #silkIconsAttribution {font-size:80%;}
+.up #portalPageFooter #portalProductAndVersion a,
+.up #portalPageFooter #portalCopyright a,
+.up #portalPageFooter #silkIconsAttribution a {color:#999;}
+.up #portalPageFooter #portalProductAndVersion a:hover,
+.up #portalPageFooter #portalCopyright a:hover,
+.up #portalPageFooter #silkIconsAttribution a:hover {color:#5a95cf;}
 
 /* Fluid Layout Customizer (drag and drop) */
-.fl-theme-uportal .fl-reorderer-movable-hover {cursor:move;}
-.fl-theme-uportal .fl-reorderer-movable-dragging-mouse {display:none;}
-.fl-theme-uportal .fl-reorderer-movable-dragging{filter:alpha(opacity=50); opacity:.5;}
-.fl-theme-uportal .fl-reorderer-movable-selected {outline: 0.1em solid #f68922;}
-.fl-theme-uportal .fl-reorderer-avatar {background-color:#fff; border:1px dotted #999; width:auto; filter:alpha(opacity=60); opacity:.6;}
-.fl-theme-uportal .fl-reorderer-dropMarker {height:200px !important; background-color:#D1F0E0; border:1px dashed #009900; margin-bottom:1em;}
-.fl-theme-uportal .drop-warning {position:absolute; top:50px; left:10px; border:2px solid red; background-color:#ffd7d7; display:none; padding:10px; margin:5px; z-index:65535;}
-.fl-theme-uportal #portalDropWarning {background-color:#FFCCCC; border:2px solid #FF0000; color:#FF0000; display:none; position:absolute; top:50px; left:10px;}
-.fl-theme-uportal #portalDropWarning p{margin:0em; padding:0.5em 1em;}
+.up .fl-reorderer-movable-hover {cursor:move;}
+.up .fl-reorderer-movable-dragging-mouse {display:none;}
+.up .fl-reorderer-movable-dragging{filter:alpha(opacity=50); opacity:.5;}
+.up .fl-reorderer-movable-selected {outline: 0.1em solid #f68922;}
+.up .fl-reorderer-avatar {background-color:#fff; border:1px dotted #999; width:auto; filter:alpha(opacity=60); opacity:.6;}
+.up .fl-reorderer-dropMarker {height:200px !important; background-color:#D1F0E0; border:1px dashed #009900; margin-bottom:1em;}
+.up .drop-warning {position:absolute; top:50px; left:10px; border:2px solid red; background-color:#ffd7d7; display:none; padding:10px; margin:5px; z-index:65535;}
+.up #portalDropWarning {background-color:#FFCCCC; border:2px solid #FF0000; color:#FF0000; display:none; position:absolute; top:50px; left:10px;}
+.up #portalDropWarning p{margin:0em; padding:0.5em 1em;}
 
 /* Fluid Pager */
-.fl-theme-uportal .fl-pager ul.fl-pager-ui {text-align:right}
-.fl-theme-uportal .fl-pager .fl-pager-ui li {list-style-type:none; display:inline; padding-left:5px}
-.fl-theme-uportal .fl-pager .fl-pager-ui a.fl-pager-disabled,
-.fl-theme-uportal .fl-pager .fl-pager-ui .fl-pager-disabled a { color: #777777; border: 0; text-decoration: none; cursor: default; }
-.fl-theme-uportal .fl-pager .fl-pager-ui a.fl-pager-currentPage,
-.fl-theme-uportal .fl-pager .fl-pager-ui .fl-pager-currentPage a { color: #000000; border: 0; text-decoration: none; cursor: default;}
+.up .fl-pager ul.fl-pager-ui {text-align:right}
+.up .fl-pager .fl-pager-ui li {list-style-type:none; display:inline; padding-left:5px}
+.up .fl-pager .fl-pager-ui a.fl-pager-disabled,
+.up .fl-pager .fl-pager-ui .fl-pager-disabled a { color: #777777; border: 0; text-decoration: none; cursor: default; }
+.up .fl-pager .fl-pager-ui a.fl-pager-currentPage,
+.up .fl-pager .fl-pager-ui .fl-pager-currentPage a { color: #000000; border: 0; text-decoration: none; cursor: default;}
 
 /* Focus */
 :focus{outline-width:0px;}
-.fl-theme-uportal .fl-reorderer-movable-selected:focus,
-.fl-theme-uportal .fl-reorderer-movable-dragging:focus {outline: 2px solid #f68922;}
+.up .fl-reorderer-movable-selected:focus,
+.up .fl-reorderer-movable-dragging:focus {outline: 2px solid #f68922;}
 
 
 /* 

@@ -3,150 +3,157 @@
  * See license distributed with this file and available online at
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
-/*
- * LAYOUT STYLES
- *
- * Override and extension of the Fluid Skinning System (FSS) Layout 
- * to establish the basic portal layout structure.
- * Refer to [http://wiki.fluidproject.org/x/96M7] for more details.
- *
- * Only CSS that affects the layout (positioning) of major elements should be
- * listed here.  Such as:
- *   display, position, float, clear, width, height, min-width, min-height
- *   margin, border, padding, overflow
- *
- * This CSS assumes use of the Fluid Skinning System (FSS) CSS reset 
- * to establish a common, cross-browser base rendering.
- * Refer to [http://wiki.fluidproject.org/x/96M7] for more details.
- * 
- * This CSS should render well and consistently across A-grade browsers.
- * Refer to [http://developer.yahoo.com/yui/articles/gbs/] for more details. 
- *
+ 
+/* uPORTAL UNIVERSALITY THEME LAYOUT CSS
+ * These declarations are scoped both for the portal and for portlets.
+ * These declarations are specific to the "universality" theme.
+ * This CSS is shared across all skins that use the "universality" theme.
+ * These declarations work with the Fluid Skinning System (FSS) to establish the basic portal layout structure.
+ * Only CSS that affects the layout (positioning) of major elements should be listed here.  Such as:
+ *   display, position, float, clear, width, height, min-width, min-height, margin, border, padding, overflow
+ * CSS that sets the visual style of the portal (and portlets) is handled by individual skins.
+ * This CSS assumes the use of a CSS reset (by default the FSS "fss-reset.css") for browser normalization.
+ */
+ 
+/* uPORTAL DEVELOPMENT STANDARDS AND GUIDELINES
+ * For the standards and guidelines that govern the user interface of uPortal portlets including HTML, CSS, JavaScript, accessibilty, naming conventions, 3rd Party libraries (like jQuery and the Fluid Skinning System) and more, refer to:
+ * http://www.ja-sig.org/wiki/x/cQ
+ */
+ 
+ 
+/* 
+----------------------------------------------------
+  Fluid Skinning System extensions and overrides.
+----------------------------------------------------
+ * The Fluid Skinning System is a group of CSS files with a specially designed modular structure and class-specific format.
+ * It is meant to work well as both a standalone CSS foundation for your site and Fluid Infusion components.
+ * In FSS, "themes" refer to the color schemes and "window dressings" for basic markup and FSS Helpers, such as Tabs, Widgets, Menus, etc.
+ * For more information on FSS themes, refer to:
+ * http://wiki.fluidproject.org/x/egNS
+ * The FSS theme created for uPortal is "fl-theme-uportal", and is a class of the <body> tag, used for namespacing.
  */
 
-
-/* FSS Layout extensions and overrides
- * ===================================
- */
-
-.fl-col-flex6 {width:6%; float:left; display:inline;}
-.fl-col-flex7 {width:7%; float:left; display:inline;}
-.fl-col-flex8 {width:8%; float:left; display:inline;}
-.fl-col-flex9 {width:9%; float:left; display:inline;}
-.fl-col-flex10 {width:10%; float:left; display:inline;}
-.fl-col-flex11 {width:11%; float:left; display:inline;}
-.fl-col-flex12 {width:12%; float:left; display:inline;}
-.fl-col-flex13 {width:13%; float:left; display:inline;}
-.fl-col-flex14 {width:14%; float:left; display:inline;}
-.fl-col-flex15 {width:15%; float:left; display:inline;}
-.fl-col-flex16 {width:16%; float:left; display:inline;}
-.fl-col-flex17 {width:17%; float:left; display:inline;}
-.fl-col-flex18 {width:18%; float:left; display:inline;}
-.fl-col-flex19 {width:19%; float:left; display:inline;}
-.fl-col-flex20 {width:20%; float:left; display:inline;}
-.fl-col-flex21 {width:21%; float:left; display:inline;}
-.fl-col-flex22 {width:22%; float:left; display:inline;}
-.fl-col-flex23 {width:23%; float:left; display:inline;}
-.fl-col-flex24 {width:24%; float:left; display:inline;}
-.fl-col-flex25 {width:25%; float:left; display:inline;}
-.fl-col-flex26 {width:26%; float:left; display:inline;}
-.fl-col-flex27 {width:27%; float:left; display:inline;}
-.fl-col-flex28 {width:28%; float:left; display:inline;}
-.fl-col-flex29 {width:29%; float:left; display:inline;}
-.fl-col-flex30 {width:30%; float:left; display:inline;}
-.fl-col-flex31 {width:31%; float:left; display:inline;}
-.fl-col-flex32 {width:32%; float:left; display:inline;}
-.fl-col-flex33 {width:33%; float:left; display:inline;}
-.fl-col-flex34 {width:34%; float:left; display:inline;}
-.fl-col-flex35 {width:35%; float:left; display:inline;}
-.fl-col-flex36 {width:36%; float:left; display:inline;}
-.fl-col-flex37 {width:37%; float:left; display:inline;}
-.fl-col-flex38 {width:38%; float:left; display:inline;}
-.fl-col-flex39 {width:39%; float:left; display:inline;}
-.fl-col-flex40 {width:40%; float:left; display:inline;}
-.fl-col-flex41 {width:41%; float:left; display:inline;}
-.fl-col-flex42 {width:42%; float:left; display:inline;}
-.fl-col-flex43 {width:43%; float:left; display:inline;}
-.fl-col-flex44 {width:44%; float:left; display:inline;}
-.fl-col-flex45 {width:45%; float:left; display:inline;}
-.fl-col-flex46 {width:46%; float:left; display:inline;}
-.fl-col-flex47 {width:47%; float:left; display:inline;}
-.fl-col-flex48 {width:48%; float:left; display:inline;}
-.fl-col-flex49 {width:49%; float:left; display:inline;}
-.fl-col-flex50 {width:50%; float:left; display:inline;}
-.fl-col-flex51 {width:51%; float:left; display:inline;}
-.fl-col-flex52 {width:52%; float:left; display:inline;}
-.fl-col-flex53 {width:53%; float:left; display:inline;}
-.fl-col-flex54 {width:54%; float:left; display:inline;}
-.fl-col-flex55 {width:55%; float:left; display:inline;}
-.fl-col-flex56 {width:56%; float:left; display:inline;}
-.fl-col-flex57 {width:57%; float:left; display:inline;}
-.fl-col-flex58 {width:58%; float:left; display:inline;}
-.fl-col-flex59 {width:59%; float:left; display:inline;}
-.fl-col-flex60 {width:60%; float:left; display:inline;}
-.fl-col-flex61 {width:61%; float:left; display:inline;}
-.fl-col-flex62 {width:62%; float:left; display:inline;}
-.fl-col-flex63 {width:63%; float:left; display:inline;}
-.fl-col-flex64 {width:64%; float:left; display:inline;}
-.fl-col-flex65 {width:65%; float:left; display:inline;}
-.fl-col-flex66 {width:66%; float:left; display:inline;}
-.fl-col-flex67 {width:67%; float:left; display:inline;}
-.fl-col-flex68 {width:68%; float:left; display:inline;}
-.fl-col-flex69 {width:69%; float:left; display:inline;}
-.fl-col-flex70 {width:70%; float:left; display:inline;}
-.fl-col-flex71 {width:71%; float:left; display:inline;}
-.fl-col-flex72 {width:72%; float:left; display:inline;}
-.fl-col-flex73 {width:73%; float:left; display:inline;}
-.fl-col-flex74 {width:74%; float:left; display:inline;}
-.fl-col-flex75 {width:75%; float:left; display:inline;}
-.fl-col-flex76 {width:76%; float:left; display:inline;}
-.fl-col-flex77 {width:77%; float:left; display:inline;}
-.fl-col-flex78 {width:78%; float:left; display:inline;}
-.fl-col-flex79 {width:79%; float:left; display:inline;}
-.fl-col-flex80 {width:80%; float:left; display:inline;}
-.fl-col-flex81 {width:81%; float:left; display:inline;}
-.fl-col-flex82 {width:82%; float:left; display:inline;}
-.fl-col-flex83 {width:83%; float:left; display:inline;}
-.fl-col-flex84 {width:84%; float:left; display:inline;}
-.fl-col-flex85 {width:85%; float:left; display:inline;}
-.fl-col-flex86 {width:86%; float:left; display:inline;}
-.fl-col-flex87 {width:87%; float:left; display:inline;}
-.fl-col-flex88 {width:88%; float:left; display:inline;}
-.fl-col-flex89 {width:89%; float:left; display:inline;}
-.fl-col-flex90 {width:90%; float:left; display:inline;}
-.fl-col-flex91 {width:91%; float:left; display:inline;}
-.fl-col-flex92 {width:92%; float:left; display:inline;}
-.fl-col-flex93 {width:93%; float:left; display:inline;}
-.fl-col-flex94 {width:94%; float:left; display:inline;}
-.fl-col-flex95 {width:95%; float:left; display:inline;}
-.fl-col-flex96 {width:96%; float:left; display:inline;}
-.fl-col-flex97 {width:97%; float:left; display:inline;}
-.fl-col-flex98 {width:98%; float:left; display:inline;}
-.fl-col-flex99 {width:99%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex6 {width:6%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex7 {width:7%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex8 {width:8%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex9 {width:9%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex10 {width:10%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex11 {width:11%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex12 {width:12%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex13 {width:13%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex14 {width:14%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex15 {width:15%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex16 {width:16%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex17 {width:17%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex18 {width:18%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex19 {width:19%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex20 {width:20%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex21 {width:21%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex22 {width:22%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex23 {width:23%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex24 {width:24%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex25 {width:25%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex26 {width:26%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex27 {width:27%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex28 {width:28%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex29 {width:29%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex30 {width:30%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex31 {width:31%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex32 {width:32%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex33 {width:33%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex34 {width:34%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex35 {width:35%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex36 {width:36%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex37 {width:37%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex38 {width:38%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex39 {width:39%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex40 {width:40%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex41 {width:41%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex42 {width:42%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex43 {width:43%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex44 {width:44%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex45 {width:45%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex46 {width:46%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex47 {width:47%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex48 {width:48%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex49 {width:49%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex50 {width:50%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex51 {width:51%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex52 {width:52%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex53 {width:53%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex54 {width:54%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex55 {width:55%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex56 {width:56%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex57 {width:57%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex58 {width:58%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex59 {width:59%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex60 {width:60%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex61 {width:61%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex62 {width:62%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex63 {width:63%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex64 {width:64%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex65 {width:65%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex66 {width:66%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex67 {width:67%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex68 {width:68%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex69 {width:69%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex70 {width:70%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex71 {width:71%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex72 {width:72%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex73 {width:73%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex74 {width:74%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex75 {width:75%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex76 {width:76%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex77 {width:77%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex78 {width:78%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex79 {width:79%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex80 {width:80%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex81 {width:81%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex82 {width:82%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex83 {width:83%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex84 {width:84%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex85 {width:85%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex86 {width:86%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex87 {width:87%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex88 {width:88%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex89 {width:89%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex90 {width:90%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex91 {width:91%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex92 {width:92%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex93 {width:93%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex94 {width:94%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex95 {width:95%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex96 {width:96%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex97 {width:97%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex98 {width:98%; float:left; display:inline;}
+.fl-theme-uportal .fl-col-flex99 {width:99%; float:left; display:inline;}
 
 
 /* Removes padding and margin compensations for padding. */
-.fl-col-mixed .fl-col-flex-left {margin-left:200px;}
-.fl-col-mixed .fl-col-flex-right {margin-right:200px;}
-.fl-col-mixed-100 .fl-col-flex-left {margin-left:100px;}
-.fl-col-mixed-100 .fl-col-flex-right {margin-right:100px;}
-.fl-col-mixed-150 .fl-col-flex-left {margin-left:150px;}
-.fl-col-mixed-150 .fl-col-flex-right {margin-right:150px;}
-.fl-col-mixed-200 .fl-col-flex-left {margin-left:200px;}
-.fl-col-mixed-200 .fl-col-flex-right {margin-right:200px;}
-.fl-col-mixed-250 .fl-col-flex-left {margin-left:250px;}
-.fl-col-mixed-250 .fl-col-flex-right {margin-right:250px;}
-.fl-col-mixed-300 .fl-col-flex-left {margin-left:300px;}
-.fl-col-mixed-300 .fl-col-flex-right {margin-right:300px;}
+.fl-theme-uportal .fl-col-mixed .fl-col-flex-left {margin-left:200px;}
+.fl-theme-uportal .fl-col-mixed .fl-col-flex-right {margin-right:200px;}
+.fl-theme-uportal .fl-col-mixed-100 .fl-col-flex-left {margin-left:100px;}
+.fl-theme-uportal .fl-col-mixed-100 .fl-col-flex-right {margin-right:100px;}
+.fl-theme-uportal .fl-col-mixed-150 .fl-col-flex-left {margin-left:150px;}
+.fl-theme-uportal .fl-col-mixed-150 .fl-col-flex-right {margin-right:150px;}
+.fl-theme-uportal .fl-col-mixed-200 .fl-col-flex-left {margin-left:200px;}
+.fl-theme-uportal .fl-col-mixed-200 .fl-col-flex-right {margin-right:200px;}
+.fl-theme-uportal .fl-col-mixed-250 .fl-col-flex-left {margin-left:250px;}
+.fl-theme-uportal .fl-col-mixed-250 .fl-col-flex-right {margin-right:250px;}
+.fl-theme-uportal .fl-col-mixed-300 .fl-col-flex-left {margin-left:300px;}
+.fl-theme-uportal .fl-col-mixed-300 .fl-col-flex-right {margin-right:300px;}
 
 
 /* Prevent cascading margins of nested column layouts. */
-.layout-1-columns #portalPageBodyColumns.fl-col-flex,
-.layout-1-columns #portalPageBodyColumns .fl-col-flex {margin:0;}
+.fl-theme-uportal .layout-1-columns #portalPageBodyColumns.fl-col-flex,
+.fl-theme-uportal .layout-1-columns #portalPageBodyColumns .fl-col-flex {margin:0;}
 
 
-/* uPortal layout and structure
- * ============================
+/* 
+------------------------------------
+  uPortal Layout and Structure.
+------------------------------------ 
+ * uPortal is namespaced with "up", a class of the <body> tag.
  */
 
 /* forms */
@@ -248,17 +255,6 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Add Tab */
 #portalNavigation .add-tab {display:inline-block;}
 
-/*
- | The obsolete 3.0 - 3.0.2 rendering of the navigation as an absolutely positioned element.
- | 3.1 puts the navigation in its own container just below the header and renders the tabs inline with the Fluid Skinning System.
-.header #portalNavigationList {position:absolute; top:66px; left:192px;}
-.focused .header #portalNavigationList {top:47px;}
-#portalNavigation ul, 
-#portalNavigation li {margin:0; padding:0;}
-#portalNavigation #portalNavigationList a {display:block; padding:0.5em 1em;}
-#portalNavigation .header #portalNavigationList a {padding:0.5em 2em;}
-#portalNavigation #portalNavigationList .portal-subnav-container a {padding:0.5em 1em 0.5em 2.1em;}*/
-
 /* Customization Links */
 /* 
  | When rendered in the Title Row (with the Page Title).
@@ -278,6 +274,7 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* quicklinks */	
 #portalQuicklinks {}
+
 #portalQuicklinks ul, 
 #portalQuicklinks li {margin:0; padding:0;}
 
@@ -307,8 +304,11 @@ table.purpose-layout td {margin:0; padding:0;}
 #changeColumns img { vertical-align: middle; padding:3px; }
 
 
-/* uPortal specific channels and portlets
- * ======================================
+/* 
+------------------------------------
+  uPortal specific portlets.
+------------------------------------ 
+ * Portlets that only reside in uPortal.
  */
 
 /* CSyndFeed Channel - RSS */
