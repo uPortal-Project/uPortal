@@ -6,7 +6,7 @@
 
 package org.jasig.portal.portlet.registry;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -41,9 +41,9 @@ public class TransientPortletWindowRegistryImplTest extends TestCase {
         final IPortletDefinition portletDefinition = EasyMock.createMock(IPortletDefinition.class);
         final IPortletEntity portletEntity = EasyMock.createMock(IPortletEntity.class);
         
-        final HashMap<Object, Object> transientPortletWindowMap = new HashMap<Object, Object>();
+        final ConcurrentHashMap<Object, Object> transientPortletWindowMap = new ConcurrentHashMap<Object, Object>();
         
-        final HashMap<Object, Object> portletWindowMap = new HashMap<Object, Object>();
+        final ConcurrentHashMap<Object, Object> portletWindowMap = new ConcurrentHashMap<Object, Object>();
         portletWindowMap.put(sourcePortletWindowId, sourcePortletWindow);
         
         EasyMock.expect(sourcePortletWindowId.getStringId()).andReturn("pwid1");

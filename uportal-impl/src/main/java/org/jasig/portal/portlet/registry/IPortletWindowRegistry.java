@@ -66,7 +66,7 @@ public interface IPortletWindowRegistry {
      * and {@link #createPortletWindow(HttpServletRequest, String, IPortletEntityId)}
      * 
      * @param request The current request.
-     * @param windowInstanceIdThe identifier for the instance of the window, such as an id for an inline window and an id for a detached window.
+     * @param windowInstanceId The identifier for the instance of the window, such as an id for an inline window and an id for a detached window.
      * @param portletEntityId The parent entity id.
      * @return An existing window if exists or a new window if not.
      * @throws IllegalArgumentException If request, windowInstanceId or portletEntityId are null
@@ -98,6 +98,43 @@ public interface IPortletWindowRegistry {
      * @throws IllegalArgumentException If request, windowInstanceId or portletEntityId are null
      */
     public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId);
+    
+    /**
+     * Creates a delegating portlet window
+     * 
+     * @param portletEntityId The parent entity id for the window if it doesn't already exist
+     * @param delegationParentId The ID of the parent portlet window
+     * @return The IPortletWindow that is a delegate of the parent
+     * @throws IllegalArgumentException If any argument is null
+     */
+    public IPortletWindow createDelegatePortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId, IPortletWindowId delegationParentId);
+
+    /**
+     * Gets or Creates a delegating portlet window.
+     * 
+     * @param portletWindowId The ID of the delegate portlet window
+     * @param portletEntityId The parent entity id for the window if it doesn't already exist
+     * @param delegationParentId The ID of the parent portlet window
+     * @return The IPortletWindow that is a delegate of the parent
+     * @throws IllegalArgumentException If any argument is null
+     */
+    public IPortletWindow getOrCreateDelegatePortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, IPortletWindowId delegationParentId);
+
+    /**
+     * Creates an ID for a transient portlet window
+     * 
+     * @param portletWindowId The string represenation of the portlet window ID.
+     * @return The IPortletWindowId for the string
+     * @throws IllegalArgumentException If portletWindowId is null
+     */
+    public IPortletWindowId createTransientPortletWindowId(HttpServletRequest request, IPortletWindowId sourcePortletWindowId);
+    
+    /**
+     * @param request The current portal request
+     * @param portletWindowId The window ID to check
+     * @return true if the window id is for a transient window.
+     */
+    public boolean isTransient(HttpServletRequest request, IPortletWindowId portletWindowId);
     
     /**
      * Converts a Pluto {@link PortletWindow} object to a uPortal {@link IPortletWindow}.

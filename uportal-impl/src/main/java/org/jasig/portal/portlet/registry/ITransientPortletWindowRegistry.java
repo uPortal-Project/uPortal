@@ -16,7 +16,9 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @deprecated use {@link IPortletWindowRegistry} directly
  */
+@Deprecated
 public interface ITransientPortletWindowRegistry extends IPortletWindowRegistry {
 
     /**

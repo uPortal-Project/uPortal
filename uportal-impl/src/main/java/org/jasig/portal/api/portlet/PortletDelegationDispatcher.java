@@ -6,6 +6,7 @@
 
 package org.jasig.portal.api.portlet;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.portlet.ActionRequest;
@@ -35,5 +36,5 @@ public interface PortletDelegationDispatcher {
 
     public void doAction(ActionRequest actionRequest, ActionResponse actionResponse);
     
-    public void doRender(RenderRequest renderRequest, RenderResponse renderResponse);
+    public void doRender(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException;
 }

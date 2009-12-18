@@ -9,15 +9,12 @@ import java.io.PrintWriter;
 import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.io.output.NullOutputStream;
-import org.apache.pluto.PortletContainer;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.easymock.EasyMock;
-import org.easymock.IAnswer;
 import org.easymock.internal.matchers.InstanceOf;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
@@ -39,7 +36,7 @@ import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -73,7 +70,6 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         final IPerson person = EasyMock.createMock(IPerson.class);
         EasyMock.expect(person.getID()).andReturn(1);
-        EasyMock.expect(person.getAttribute("username")).andReturn("testuser");
         channelStaticData.setPerson(person);
 
         
@@ -81,7 +77,6 @@ public class SpringPortletChannelImplTest extends TestCase {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
         final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
-        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
         
         
         final IPortletDefinitionId portDef1 = new MockPortletDefinitionId("portDef1");
@@ -92,46 +87,30 @@ public class SpringPortletChannelImplTest extends TestCase {
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
         EasyMock.expect(portletDefinitionRegistry.getPortletDefinition(1)).andReturn(portletDefinition);
         
-        
-        final IPortletEntityId portletEntityId = new MockPortletEntityId("ent1");
-        
-        
         final IPortletEntity portletEntity = EasyMock.createMock(IPortletEntity.class);
-        EasyMock.expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
-
         
         final IPortletEntityRegistry portletEntityRegistry = EasyMock.createMock(IPortletEntityRegistry.class);
         EasyMock.expect(portletEntityRegistry.getOrCreatePortletEntity(portDef1, "sub1", 1)).andReturn(portletEntity);
-
         
         final IPortletWindowId portletWindowId = new MockPortletWindowId("win1");
 
-        
-        final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
-        EasyMock.expect(portletWindow.getPortletWindowId()).andReturn(portletWindowId);
-        EasyMock.expect(portletWindow.getContextPath()).andReturn("portApp1");
-        EasyMock.expect(portletWindow.getPortletName()).andReturn("port1");
-        
-
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getOrCreateDefaultPortletWindow(pcsRequest, portletEntityId)).andReturn(portletWindow);
         
-        final PrintWriter printWriter = new PrintWriter(new NullOutputStream());
-        final PortletContainer portletContainer = EasyMock.createMock(PortletContainer.class);
-        portletContainer.doLoad(EasyMock.eq(portletWindow), EasyMock.eq(pcsRequest), instanceOfMatcher(new ContentRedirectingHttpServletResponse(response, printWriter)));
-        EasyMock.expectLastCall();
+        final IPortletRenderer portletRenderer = EasyMock.createMock(IPortletRenderer.class);
+        EasyMock.expect(portletRenderer.doInit(EasyMock.eq(portletEntity), EasyMock.eq((IPortletWindowId)null), EasyMock.isA(AttributeScopingHttpServletRequestWrapper.class), EasyMock.eq(response)))
+            .andReturn(portletWindowId);
         
         
         this.springPortletChannel.setPortletDefinitionRegistry(portletDefinitionRegistry);
         this.springPortletChannel.setPortletEntityRegistry(portletEntityRegistry);
         this.springPortletChannel.setPortletWindowRegistry(portletWindowRegistry);
-        this.springPortletChannel.setPortletContainer(portletContainer);
+        this.springPortletChannel.setPortletRenderer(portletRenderer);
         
-        EasyMock.replay(portletDefinition, portletDefinitionRegistry, portletContainer, portletWindow, portletWindowRegistry, portletEntity, portletEntityRegistry, person);
+        EasyMock.replay(portletRenderer, portletDefinition, portletDefinitionRegistry, portletWindowRegistry, portletEntity, portletEntityRegistry, person);
         
         this.springPortletChannel.initSession(channelStaticData, portalControlStructures);
         
-        EasyMock.verify(portletDefinition, portletDefinitionRegistry, portletContainer, portletWindow, portletWindowRegistry, portletEntity, portletEntityRegistry, person);
+        EasyMock.verify(portletRenderer, portletDefinition, portletDefinitionRegistry, portletWindowRegistry, portletEntity, portletEntityRegistry, person);
     }
     
     public static <T> T instanceOfMatcher(final T arg) {
@@ -150,7 +129,6 @@ public class SpringPortletChannelImplTest extends TestCase {
 
     public void testAction() throws Exception {
         final IPerson person = EasyMock.createMock(IPerson.class);
-//        EasyMock.expect(person.getAttribute("username")).andReturn("testuser");
 
         
         final ChannelStaticData channelStaticData = new ChannelStaticData();
@@ -173,68 +151,35 @@ public class SpringPortletChannelImplTest extends TestCase {
         portletDD.setSecurityRoleRefs(Collections.EMPTY_LIST);
         
         
-        final IPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("def1");
-        
-        final IPortletDefinition portletDefinition = EasyMock.createMock(IPortletDefinition.class);
-        EasyMock.expect(portletDefinition.getPortletDefinitionId()).andReturn(portletDefinitionId);
-        
-        
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
-        EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDD);
-        
-        
-        final IPortletEntityId portletEntityId = new MockPortletEntityId("ent1");
-        
-        final IPortletEntity portletEntity = EasyMock.createMock(IPortletEntity.class);
-        EasyMock.expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
-        
-        
         final IPortletEntityRegistry portletEntityRegistry = EasyMock.createMock(IPortletEntityRegistry.class);
-        EasyMock.expect(portletEntityRegistry.getParentPortletDefinition(portletEntityId)).andReturn(portletDefinition);
 
-        
         final IPortletWindowId portletWindowId = new MockPortletWindowId("win1");
         this.springPortletChannel.setPortletWidnowId(channelStaticData, portletWindowId);
         
-        
-        final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
-//        EasyMock.expect(portletWindow.getContextPath()).andReturn("portApp1");
-//        EasyMock.expect(portletWindow.getPortletName()).andReturn("port1");
-        
-
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
-        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(pcsRequest, portletWindowId)).andReturn(portletEntity);
-        
-        
-        final PortletContainer portletContainer = EasyMock.createMock(PortletContainer.class);
-        portletContainer.doAction(portletWindow, new PortletHttpRequestWrapper(pcsRequest, Collections.EMPTY_MAP, person, Collections.EMPTY_LIST), response);
-        EasyMock.expectLastCall();
-        
         
         final PortletUrl portletUrl = new PortletUrl(portletWindowId);
         portletUrl.setRequestType(RequestType.RENDER);
         portletUrl.setParameters(Collections.EMPTY_MAP);
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(portletWindowId);
-        EasyMock.expect(portletRequestParameterManager.getPortletRequestInfo(pcsRequest, portletWindowId)).andReturn(portletUrl);
         
-        final IPersonManager personManager = EasyMock.createMock(IPersonManager.class);
-        EasyMock.expect(personManager.getPerson(pcsRequest)).andReturn(person);
+        final IPortletRenderer portletRenderer = EasyMock.createMock(IPortletRenderer.class);
+        portletRenderer.doAction(portletWindowId, pcsRequest, response);
+        EasyMock.expectLastCall();
         
-        this.springPortletChannel.setPersonManager(personManager);
         this.springPortletChannel.setPortletRequestParameterManager(portletRequestParameterManager);
         this.springPortletChannel.setPortletDefinitionRegistry(portletDefinitionRegistry);
         this.springPortletChannel.setPortletEntityRegistry(portletEntityRegistry);
         this.springPortletChannel.setPortletWindowRegistry(portletWindowRegistry);
-        this.springPortletChannel.setPortletContainer(portletContainer);
+        this.springPortletChannel.setPortletRenderer(portletRenderer);
         
-        EasyMock.replay(portletDefinitionRegistry, portletDefinition, portletEntityRegistry, portletEntity, personManager, portletRequestParameterManager, portletContainer, portletWindow, portletWindowRegistry, person);
+        EasyMock.replay(portletRenderer, portletDefinitionRegistry, portletEntityRegistry, portletRequestParameterManager, portletWindowRegistry, person);
         
         this.springPortletChannel.action(channelStaticData, portalControlStructures, channelRuntimeData);
         
-        EasyMock.verify(portletDefinitionRegistry, portletDefinition, portletEntityRegistry, portletEntity, personManager, portletRequestParameterManager, portletContainer, portletWindow, portletWindowRegistry, person);
+        EasyMock.verify(portletRenderer, portletDefinitionRegistry, portletEntityRegistry, portletRequestParameterManager, portletWindowRegistry, person);
     }
 
     public void testGenerateCacheKey() throws Exception {
@@ -827,8 +772,6 @@ public class SpringPortletChannelImplTest extends TestCase {
     
     public void testRender() throws Exception {
         final IPerson person = EasyMock.createMock(IPerson.class);
-        EasyMock.expect(person.getAttribute("username")).andReturn("testuser");
-
         
         final ChannelStaticData channelStaticData = new ChannelStaticData();
         channelStaticData.setChannelPublishId("pub1");
@@ -850,78 +793,37 @@ public class SpringPortletChannelImplTest extends TestCase {
         portletDD.setSecurityRoleRefs(Collections.EMPTY_LIST);
         
         
-        final IPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("def1");
-        
-        final IPortletDefinition portletDefinition = EasyMock.createMock(IPortletDefinition.class);
-        EasyMock.expect(portletDefinition.getPortletDefinitionId()).andReturn(portletDefinitionId);
-        
-        
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
-        EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDD);
-        
-        
-        final IPortletEntityId portletEntityId = new MockPortletEntityId("ent1");
-        
-        final IPortletEntity portletEntity = EasyMock.createMock(IPortletEntity.class);
-        EasyMock.expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
-        
-        
         final IPortletEntityRegistry portletEntityRegistry = EasyMock.createMock(IPortletEntityRegistry.class);
-        EasyMock.expect(portletEntityRegistry.getParentPortletDefinition(portletEntityId)).andReturn(portletDefinition);
-
         
         final IPortletWindowId portletWindowId = new MockPortletWindowId("win1");
         this.springPortletChannel.setPortletWidnowId(channelStaticData, portletWindowId);
 
         
-        final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
-        EasyMock.expect(portletWindow.getRequestParameters()).andReturn(null);
-        EasyMock.expect(portletWindow.getContextPath()).andReturn("portApp1");
-        EasyMock.expect(portletWindow.getPortletName()).andReturn("port1");
-        
-
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
-        EasyMock.expect(portletWindowRegistry.getPortletWindow(pcsRequest, portletWindowId)).andReturn(portletWindow);
-        EasyMock.expect(portletWindowRegistry.getParentPortletEntity(pcsRequest, portletWindowId)).andReturn(portletEntity);
         
         final PrintWriter printWriter = new PrintWriter(new NullOutputStream());
-        
-        final PortletContainer portletContainer = EasyMock.createMock(PortletContainer.class);
-        portletContainer.doRender(portletWindow, new PortletHttpRequestWrapper(pcsRequest, Collections.EMPTY_MAP, person, Collections.EMPTY_LIST), new ContentRedirectingHttpServletResponse(response, printWriter));
-        EasyMock.expectLastCall().andAnswer(new IAnswer<Object>() {
-            public Object answer() throws Throwable {
-                final Object[] currentArguments = EasyMock.getCurrentArguments();
-
-                final HttpServletResponse currentResponse = ((HttpServletResponse)currentArguments[2]);
-                currentResponse.getWriter();
-                
-                return null;
-            }
-        });
-        
         
         final PortletUrl portletUrl = new PortletUrl(portletWindowId);
         portletUrl.setRequestType(RequestType.RENDER);
         
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
-        EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(portletWindowId);
-        EasyMock.expect(portletRequestParameterManager.getPortletRequestInfo(pcsRequest, portletWindowId)).andReturn(portletUrl);
         
-        final IPersonManager personManager = EasyMock.createMock(IPersonManager.class);
-        EasyMock.expect(personManager.getPerson(pcsRequest)).andReturn(person);
+        final IPortletRenderer portletRenderer = EasyMock.createMock(IPortletRenderer.class);
+        portletRenderer.doRender(portletWindowId, pcsRequest, response, printWriter);
+        EasyMock.expectLastCall();
         
-        this.springPortletChannel.setPersonManager(personManager);
         this.springPortletChannel.setPortletRequestParameterManager(portletRequestParameterManager);
         this.springPortletChannel.setPortletDefinitionRegistry(portletDefinitionRegistry);
         this.springPortletChannel.setPortletEntityRegistry(portletEntityRegistry);
         this.springPortletChannel.setPortletWindowRegistry(portletWindowRegistry);
-        this.springPortletChannel.setPortletContainer(portletContainer);
+        this.springPortletChannel.setPortletRenderer(portletRenderer);
         
-        EasyMock.replay(portletDefinitionRegistry, portletDefinition, portletEntityRegistry, portletEntity, personManager, portletRequestParameterManager, portletContainer, portletWindow, portletWindowRegistry, person);
+        EasyMock.replay(portletRenderer, portletDefinitionRegistry, portletEntityRegistry, portletRequestParameterManager, portletWindowRegistry, person);
         
         this.springPortletChannel.render(channelStaticData, portalControlStructures, channelRuntimeData, printWriter);
         
-        EasyMock.verify(portletDefinitionRegistry, portletDefinition, portletEntityRegistry, portletEntity, personManager, portletRequestParameterManager, portletContainer, portletWindow, portletWindowRegistry, person);
+        EasyMock.verify(portletRenderer, portletDefinitionRegistry, portletEntityRegistry, portletRequestParameterManager, portletWindowRegistry, person);
     }
     
     public void testGetTitle() throws Exception {

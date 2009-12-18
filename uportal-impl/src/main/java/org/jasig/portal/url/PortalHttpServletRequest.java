@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
@@ -41,8 +42,13 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
      * will be available.
      */
     public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortalHttpServletRequest.class.getName() + ".PORTAL_HTTP_SERVLET_REQUEST";
+    /**
+     * {@link javax.servlet.http.HttpServletRequest} attribute that the {@link HttpServletResponse} object
+     * will be available.
+     */
+    public static final String ATTRIBUTE__HTTP_SERVLET_RESPONSE = PortalHttpServletRequest.class.getName() + ".PORTAL_HTTP_SERVLET_RESPONSE";
     
-    
+    private final HttpServletResponse httpServletResponse;
     private final IUserInstanceManager userInstanceManager;
     private final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
@@ -51,13 +57,15 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
      * @param this.request Request to wrap, can not be null.
      */
     @SuppressWarnings("unchecked")
-    public PortalHttpServletRequest(HttpServletRequest request, IUserInstanceManager userInstanceManager) {
+    public PortalHttpServletRequest(HttpServletRequest request, HttpServletResponse response, IUserInstanceManager userInstanceManager) {
         super(request);
+        Validate.notNull(response);
         Validate.notNull(userInstanceManager);
 
         // place all parameters into the map, saves run-time merging
         this.parameterMap.putAll(request.getParameterMap());
         
+        this.httpServletResponse = response;
         this.userInstanceManager = userInstanceManager;
     }
     
@@ -65,6 +73,9 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
     public Object getAttribute(String name) {
         if (ATTRIBUTE__HTTP_SERVLET_REQUEST.equals(name)) {
             return this;
+        }
+        if (ATTRIBUTE__HTTP_SERVLET_RESPONSE.equals(name)) {
+            return this.httpServletResponse;
         }
         
         return super.getAttribute(name);

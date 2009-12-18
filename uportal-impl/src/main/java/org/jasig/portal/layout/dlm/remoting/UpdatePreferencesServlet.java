@@ -521,7 +521,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		// instantiate the channel in the user's layout
 		final HttpSession session = request.getSession(false);
         ChannelManager cm = new ChannelManager(upm, session);
-		cm.instantiateChannel(new PortalHttpServletRequest(request, userInstanceManager), response, channel.getId());
+		cm.instantiateChannel(new PortalHttpServletRequest(request, response, userInstanceManager), response, channel.getId());
 
 		try {
 			// save the user's layout

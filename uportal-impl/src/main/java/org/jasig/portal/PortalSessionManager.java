@@ -174,7 +174,7 @@ public void init() throws ServletException {
     public void doGet(HttpServletRequest request, HttpServletResponse res) {
         final IUserInstanceManager userInstanceManager = UserInstanceManagerLocator.getUserInstanceManager();
         
-        final IWritableHttpServletRequest writableRequest = new PortalHttpServletRequest(request, userInstanceManager);
+        final IWritableHttpServletRequest writableRequest = new PortalHttpServletRequest(request, res, userInstanceManager);
         this.doGetInternal(writableRequest, res);
     }
     

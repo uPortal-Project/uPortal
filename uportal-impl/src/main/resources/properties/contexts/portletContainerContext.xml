@@ -162,17 +162,33 @@
         <property name="channelRegistryStore" ref="channelRegistryStore" /> 
     </bean>
     
+    <bean id="portletDelegationLocator" class="org.jasig.portal.api.portlet.PortletDelegationLocatorImpl">
+        <property name="channelRegistryStore" ref="channelRegistryStore" />
+        <property name="personManager" ref="personManager" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletRenderer" ref="portletRenderer" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+    </bean>
     
     <!--********** Portlet Rendering Channel ********** -->
     
     <bean id="portletChannel" class="org.jasig.portal.channels.portlet.SpringPortletChannelImpl">
-        <property name="personManager" ref="personManager" />
-        <property name="portletContainer" ref="portletContainer" />
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
         <property name="portletSessionActionManager" ref="portletSessionActionManager" />
         <property name="userInstanceManager" ref="userInstanceManager" />
+        <property name="portletRenderer" ref="portletRenderer" />
+    </bean>
+    
+    <bean id="portletRenderer" class="org.jasig.portal.channels.portlet.PortletRendererImpl">
+        <property name="personManager" ref="personManager" />
+        <property name="portletContainer" ref="portletContainer" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
+        <property name="portletEntityRegistry" ref="portletEntityRegistry" />
+        <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
     </bean>
 </beans>

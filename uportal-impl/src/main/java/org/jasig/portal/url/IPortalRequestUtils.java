@@ -28,21 +28,6 @@ public interface IPortalRequestUtils {
      */
     public HttpServletRequest getOriginalPortletAdaptorRequest(HttpServletRequest portletRequest);
     
-    /**
-     * Useful for container service callbacks that are provided with the portlet's request
-     * but need access to the HttpServletResponse passed into the portlet container. 
-     * 
-     * @param portletRequest The request targeted to the portlet
-     * @return The portlet scoped response passed to the portlet container
-     */
-    public HttpServletResponse getOriginalPortletAdaptorResponse(PortletRequest portletRequest);
-    
-    /**
-     * @see #getOriginalPortletAdaptorResponse(PortletRequest)
-     */
-    public HttpServletResponse getOriginalPortletAdaptorResponse(HttpServletRequest portletRequest);
-    
-    
     
     /**
      * Useful for container service callbacks and service portlets that are provided with

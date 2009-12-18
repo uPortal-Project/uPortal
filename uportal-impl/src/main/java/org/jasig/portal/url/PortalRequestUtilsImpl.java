@@ -46,17 +46,25 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         
         throw new IllegalArgumentException("The orginal portal HttpServletRequest is not available from the HttpServletRequest using attribute '" + PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
     }
-    
-    @Override
-    public HttpServletResponse getOriginalPortalResponse(HttpServletRequest portletRequest) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     @Override
     public HttpServletResponse getOriginalPortalResponse(PortletRequest portletRequest) {
-        // TODO Auto-generated method stub
-        return null;
+        final HttpServletResponse portalResponse = (HttpServletResponse)portletRequest.getAttribute(PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_RESPONSE);
+        if (portalResponse != null) {
+            return portalResponse;
+        }
+        
+        throw new IllegalArgumentException("The orginal portal HttpServletResponse is not available from the PortletRequest using attribute '" + PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_RESPONSE + "'");
+    }
+    
+    @Override
+    public HttpServletResponse getOriginalPortalResponse(HttpServletRequest portletRequest) {
+        final HttpServletResponse portalResponse = (HttpServletResponse)portletRequest.getAttribute(PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_RESPONSE);
+        if (portalResponse != null) {
+            return portalResponse;
+        }
+        
+        throw new IllegalArgumentException("The orginal portal HttpServletResponse is not available from the HttpServletRequest using attribute '" + PortalHttpServletRequest.ATTRIBUTE__HTTP_SERVLET_RESPONSE + "'");
     }
 
     /* (non-Javadoc)
@@ -106,17 +114,5 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         
         throw new IllegalArgumentException("The original portlet adaptor HttpServletRequest is not available from the HttpServletRequest using attribute '" + AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
 
-    }
-
-    @Override
-    public HttpServletResponse getOriginalPortletAdaptorResponse(HttpServletRequest portletRequest) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public HttpServletResponse getOriginalPortletAdaptorResponse(PortletRequest portletRequest) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

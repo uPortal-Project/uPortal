@@ -6,17 +6,42 @@
 
 package org.jasig.portal.api.portlet;
 
+import javax.portlet.PortletRequest;
+
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
+ * Creates {@link PortletDelegationDispatcher} instances that can be used to execute another portlet as a child. 
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface PortletDelegationLocator {
-    public PortletDelegationDispatcher createRequestDispatcher(String fName);
+    /**
+     * Creates a new portlet delegation dispatcher and corresponding portlet window
+     * 
+     * @param request The current request
+     * @param fName The functional name of the portlet to create a dispatcher for
+     * @return Null if no portlet exists for the specified fname
+     */
+    public PortletDelegationDispatcher createRequestDispatcher(PortletRequest request, String fName);
     
-    public PortletDelegationDispatcher createRequestDispatcher(IPortletDefinitionId portletDefinitionId);
+    /**
+     * Creates a new portlet delegation dispatcher and corresponding portlet window
+     * 
+     * @param request The current request
+     * @param portletDefinitionId The portlet definition id of the portlet to create a dispatcher for
+     * @return The dispatcher
+     */
+    public PortletDelegationDispatcher createRequestDispatcher(PortletRequest request, IPortletDefinitionId portletDefinitionId);
     
-    public PortletDelegationDispatcher getRequestDispatcher(IPortletWindowId iPortletWindowId);
+    /**
+     * Get an existing delegation dispatcher for an existing portlet window.
+     * 
+     * @param request 
+     * @param portletWindowId
+     * @return
+     */
+    public PortletDelegationDispatcher getRequestDispatcher(PortletRequest request, IPortletWindowId portletWindowId);
 }
