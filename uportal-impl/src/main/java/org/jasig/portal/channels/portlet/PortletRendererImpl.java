@@ -37,6 +37,7 @@ import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
 
 /**
  * Executes methods on portlets using Pluto
@@ -78,7 +79,9 @@ public class PortletRendererImpl implements IPortletRenderer {
         this.portletRequestParameterManager = portletRequestParameterManager;
     }
 
-    public IPortletWindowId doInit(final IPortletEntity portletEntity, final IPortletWindowId portletWindowId, final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) {
+    public IPortletWindowId doInit(IPortletEntity portletEntity, IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        httpServletRequest = new AttributeScopingHttpServletRequestWrapper(httpServletRequest);
+        
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
         final IPortletWindow portletWindow;
         if (portletWindowId != null) {
@@ -125,6 +128,8 @@ public class PortletRendererImpl implements IPortletRenderer {
      */
     @Override
     public void doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        httpServletRequest = new AttributeScopingHttpServletRequestWrapper(httpServletRequest);
+        
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Load the parameters to provide to the portlet with the request and update the state and mode
@@ -189,6 +194,8 @@ public class PortletRendererImpl implements IPortletRenderer {
      */
     @Override
     public void doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PrintWriter printWriter) {
+        httpServletRequest = new AttributeScopingHttpServletRequestWrapper(httpServletRequest);
+        
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Setup the response to capture the output

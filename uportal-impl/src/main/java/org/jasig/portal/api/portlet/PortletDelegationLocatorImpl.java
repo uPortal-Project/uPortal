@@ -8,7 +8,9 @@ package org.jasig.portal.api.portlet;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.pluto.core.ContainerInvocation;
 import org.apache.pluto.internal.InternalPortletRequest;
 import org.apache.pluto.internal.InternalPortletWindow;
 import org.jasig.portal.IChannelRegistryStore;
@@ -86,9 +88,10 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
     @Override
     public PortletDelegationDispatcher createRequestDispatcher(PortletRequest portletRequest, IPortletDefinitionId portletDefinitionId) {
         final HttpServletRequest request = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpServletResponse response = this.portalRequestUtils.getOriginalPortalResponse(portletRequest);
         final IPerson person = this.personManager.getPerson(request);
         
-        final String transientChannelSubscribeId = TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX + "." + portletDefinitionId;
+        final String transientChannelSubscribeId = "CONFIG_" + portletDefinitionId;
         final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinitionId, transientChannelSubscribeId, person.getID());
         
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
@@ -97,7 +100,17 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
         final IPortletWindow parentPortletWindow = this.portletWindowRegistry.convertPortletWindow(request, internalPortletWindow);
         final IPortletWindowId parentPortletWindowId = parentPortletWindow.getPortletWindowId();
         final IPortletWindow portletWindow = this.portletWindowRegistry.createDelegatePortletWindow(request, portletEntityId, parentPortletWindowId);
-        
+
+        //Initialize the window since we just created it
+        final ContainerInvocation invocation = ContainerInvocation.getInvocation();
+        try {
+            this.portletRenderer.doInit(portletEntity, portletWindow.getPortletWindowId(), request, response);
+        }
+        finally {
+            if (invocation != null) {
+                ContainerInvocation.setInvocation(invocation.getPortletContainer(), invocation.getPortletWindow());
+            }
+        }
         return new PortletDelegationDispatcherImpl(portletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer);
     }
 

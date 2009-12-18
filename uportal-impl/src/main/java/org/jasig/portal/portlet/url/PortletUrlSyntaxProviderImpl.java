@@ -42,7 +42,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
-import org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
@@ -72,7 +72,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     
     private String defaultEncoding = "UTF-8";
     private int bufferLength = 512;
-    private ITransientPortletWindowRegistry portletWindowRegistry;
+    private IPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
@@ -143,14 +143,14 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     /**
      * @return the portletWindowRegistry
      */
-    public ITransientPortletWindowRegistry getPortletWindowRegistry() {
+    public IPortletWindowRegistry getPortletWindowRegistry() {
         return portletWindowRegistry;
     }
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
     @Required
-    public void setPortletWindowRegistry(ITransientPortletWindowRegistry portletWindowRegistry) {
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
     }
@@ -309,11 +309,6 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         final String delegateWindowIdStr = request.getParameter(PARAM_DELEGATE_PREFIX + portletWindowIdStr);
         if (delegateWindowIdStr != null) {
             final IPortletWindowId delegateWindowId = this.portletWindowRegistry.getPortletWindowId(delegateWindowIdStr);
-            
-            //Delegate windows must be transient
-            if (!this.portletWindowRegistry.isTransient(request, delegateWindowId)) {
-                throw new IllegalArgumentException("Only transient windows can be delegated to. Window '" + delegateWindowId + "' is not transient.");
-            }
             
             //Verify delegation change
             final IPortletWindow delegateWindow = this.portletWindowRegistry.getPortletWindow(request, delegateWindowId);

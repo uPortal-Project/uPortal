@@ -97,7 +97,7 @@ public class SpringPortletChannelImplTest extends TestCase {
         final IPortletWindowRegistry portletWindowRegistry = EasyMock.createMock(IPortletWindowRegistry.class);
         
         final IPortletRenderer portletRenderer = EasyMock.createMock(IPortletRenderer.class);
-        EasyMock.expect(portletRenderer.doInit(EasyMock.eq(portletEntity), EasyMock.eq((IPortletWindowId)null), EasyMock.isA(AttributeScopingHttpServletRequestWrapper.class), EasyMock.eq(response)))
+        EasyMock.expect(portletRenderer.doInit(portletEntity, null, request, response))
             .andReturn(portletWindowId);
         
         

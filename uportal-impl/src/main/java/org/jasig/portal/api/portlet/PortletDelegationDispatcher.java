@@ -7,14 +7,11 @@
 package org.jasig.portal.api.portlet;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-import javax.portlet.WindowState;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
@@ -30,11 +27,13 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 public interface PortletDelegationDispatcher {
     public IPortletWindowId getPortletWindowId();
     
-    public PortletMode getPortletMode();
-    
-    public WindowState getWindowState();
+    public DelegateState getDelegateState();
 
-    public void doAction(ActionRequest actionRequest, ActionResponse actionResponse);
+    public DelegateState doAction(ActionRequest actionRequest, ActionResponse actionResponse);
+
+    public DelegateState doAction(ActionRequest actionRequest, ActionResponse actionResponse, DelegateState delegateState);
     
-    public void doRender(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException;
+    public DelegateState doRender(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException;
+    
+    public DelegateState doRender(RenderRequest renderRequest, RenderResponse renderResponse, DelegateState delegateState) throws IOException;
 }

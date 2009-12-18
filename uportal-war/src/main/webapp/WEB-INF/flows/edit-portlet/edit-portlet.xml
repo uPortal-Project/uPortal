@@ -215,9 +215,9 @@
         <transition on="cancel" to="cancelPortletEdit" bind="false"/>
     </view-state>
     
-    <view-state id="configMode" view="portletView">
+    <view-state id="configMode">
         <on-entry>
-            <set name="flashScope.CHANNEL_DEFINITION_ID" value="channel.getId()"/>
+            <set name="flashScope.CHANNEL_FNAME" value="channel.getFname()"/>
         </on-entry>
     </view-state>
 

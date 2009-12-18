@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
-
 /**
  * This object is passed to special channels.
  * 
@@ -25,13 +23,7 @@ public class PortalControlStructures {
     protected final ChannelManager cm;
 
     public PortalControlStructures(HttpServletRequest req, HttpServletResponse res, ChannelManager cm, IUserPreferencesManager ulm) {
-        if (req instanceof AttributeScopingHttpServletRequestWrapper) {
-            this.req = req;
-        }
-        else {
-            this.req = new AttributeScopingHttpServletRequestWrapper(req);
-        }
-
+        this.req = req;
         this.res = res;
         this.session = null;
         this.cm = cm;

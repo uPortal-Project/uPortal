@@ -19,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.pluto.core.ContainerInvocation;
 import org.jasig.portal.channels.portlet.IPortletRenderer;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -31,6 +34,8 @@ import org.jasig.portal.url.IPortalRequestUtils;
  * @version $Revision$
  */
 public class PortletDelegationDispatcherImpl implements PortletDelegationDispatcher {
+    protected final Log logger = LogFactory.getLog(this.getClass());
+    
     private final IPortletWindow portletWindow;
     private final int userId;
     
@@ -59,7 +64,13 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
      * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#doAction(javax.portlet.ActionRequest, javax.portlet.ActionResponse)
      */
     @Override
-    public void doAction(ActionRequest actionRequest, ActionResponse actionResponse) {
+    public DelegateState doAction(ActionRequest actionRequest, ActionResponse actionResponse) {
+        return this.doAction(actionRequest, actionResponse, null);
+    }
+    
+
+    @Override
+    public DelegateState doAction(ActionRequest actionRequest, ActionResponse actionResponse, DelegateState delegateState) {
         final HttpServletRequest request = this.portalRequestUtils.getOriginalPortalRequest(actionRequest);
         final HttpServletResponse response = this.portalRequestUtils.getOriginalPortalResponse(actionRequest);
 
@@ -69,15 +80,50 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
             throw new IllegalStateException("This dispatcher was created for userId " + this.userId + " but is being executed for userId " + person.getID());
         }
         
-        this.portletRenderer.doAction(this.portletWindow.getPortletWindowId(), request, response);
+        if (delegateState != null) {
+            //TODO this should probably interact with the portlet URL stuff so that this happens in the renderer
+            
+            final PortletMode mode = delegateState.getPortletMode();
+            if (mode != null) {
+                this.portletWindow.setPortletMode(mode);
+            }
+
+            final WindowState state = delegateState.getWindowState();
+            if (state != null) {
+                this.portletWindow.setWindowState(state);
+            }
+        }
+        
+        
+
+        final ContainerInvocation invocation = ContainerInvocation.getInvocation();
+        try {
+            this.portletRenderer.doAction(this.portletWindow.getPortletWindowId(), request, response);
+        }
+        catch (RuntimeException e) {
+            this.logger.error("Failed to execute action on delegate", e);
+            throw e;
+        }
+        finally {
+            if (invocation != null) {
+                ContainerInvocation.setInvocation(invocation.getPortletContainer(), invocation.getPortletWindow());
+            }
+        }
         //TODO response would be committed at this point ... will be interesting to see how pluto handles redirecting the same request twice :(
+        
+        return this.getDelegateState();
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#doRender(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
      */
     @Override
-    public void doRender(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException {
+    public DelegateState doRender(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException {
+        return this.doRender(renderRequest, renderResponse, null);
+    }
+    
+    @Override
+    public DelegateState doRender(RenderRequest renderRequest, RenderResponse renderResponse, DelegateState delegateState) throws IOException {
         final HttpServletRequest request = this.portalRequestUtils.getOriginalPortalRequest(renderRequest);
         final HttpServletResponse response = this.portalRequestUtils.getOriginalPortalResponse(renderRequest);
 
@@ -87,17 +133,45 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
             throw new IllegalStateException("This dispatcher was created for userId " + this.userId + " but is being executed for userId " + person.getID());
         }
         
+        if (delegateState != null) {
+            //TODO this should probably interact with the portlet URL stuff so that this happens in the renderer
+            
+            final PortletMode mode = delegateState.getPortletMode();
+            if (mode != null) {
+                this.portletWindow.setPortletMode(mode);
+            }
+
+            final WindowState state = delegateState.getWindowState();
+            if (state != null) {
+                this.portletWindow.setWindowState(state);
+            }
+        }
+        
         final PrintWriter writer = renderResponse.getWriter();
-        this.portletRenderer.doRender(this.portletWindow.getPortletWindowId(), request, response, writer);
-        writer.flush();
+        final ContainerInvocation invocation = ContainerInvocation.getInvocation();
+        try {
+            this.portletRenderer.doRender(this.portletWindow.getPortletWindowId(), request, response, writer);
+        }
+        catch (RuntimeException e) {
+            this.logger.error("Failed to render delegate", e);
+            throw e;
+        }
+        finally {
+            if (invocation != null) {
+                ContainerInvocation.setInvocation(invocation.getPortletContainer(), invocation.getPortletWindow());
+            }
+            writer.flush();
+        }
+        
+        return this.getDelegateState();
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#getPortletMode()
+     * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#getDelegateState()
      */
     @Override
-    public PortletMode getPortletMode() {
-        return this.portletWindow.getPortletMode();
+    public DelegateState getDelegateState() {
+        return new DelegateState(this.portletWindow.getPortletMode(), this.portletWindow.getWindowState());
     }
 
     /* (non-Javadoc)
@@ -106,13 +180,5 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
     @Override
     public IPortletWindowId getPortletWindowId() {
         return this.portletWindow.getPortletWindowId();
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#getWindowState()
-     */
-    @Override
-    public WindowState getWindowState() {
-        return this.portletWindow.getWindowState();
     }
 }
