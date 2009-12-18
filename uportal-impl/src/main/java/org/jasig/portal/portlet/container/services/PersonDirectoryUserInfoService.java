@@ -21,6 +21,7 @@ import org.apache.pluto.descriptors.portlet.UserAttributeDD;
 import org.apache.pluto.internal.InternalPortletRequest;
 import org.apache.pluto.internal.InternalPortletWindow;
 import org.apache.pluto.spi.optional.UserInfoService;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -120,7 +121,6 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest)
      */
-    @SuppressWarnings("deprecation")
     @Deprecated
     public Map<String, String> getUserInfo(final PortletRequest request) throws PortletContainerException {
         if (!(request instanceof InternalPortletRequest)) {
@@ -165,7 +165,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
         }
         final List<UserAttributeDD> expectedUserAttributes = this.getExpectedUserAttributes(httpServletRequest, portletWindow);
         
-        final Map<String, String> portletUserAttributes = this.generateUserInfo(personAttributes, expectedUserAttributes);
+        final Map<String, String> portletUserAttributes = this.generateUserInfo(personAttributes, expectedUserAttributes, httpServletRequest);
         return portletUserAttributes;
     }
 
@@ -176,8 +176,9 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      * @param expectedUserAttributes The attributes the portlet expects to get
      * @return The Map to use for the USER_INFO attribute
      */
-    protected Map<String, String> generateUserInfo(final IPersonAttributes personAttributes, final List<UserAttributeDD> expectedUserAttributes) {
+    protected Map<String, String> generateUserInfo(final IPersonAttributes personAttributes, final List<UserAttributeDD> expectedUserAttributes,HttpServletRequest httpServletRequest) {
         final Map<String, String> portletUserAttributes = new HashMap<String, String>(expectedUserAttributes.size());
+		final Map<String, List<Object>> portletMultivaluedAttributes = new HashMap<String, List<Object>>(expectedUserAttributes.size());
         
         //Copy expected attributes to the USER_INFO Map
         for (final UserAttributeDD userAttributeDD : expectedUserAttributes) {
@@ -185,12 +186,21 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
             
             //TODO a personAttributes.hasAttribute(String) API is needed here, if hasAttribute and null then put the key with no value in the returned map
             final Object valueObj = personAttributes.getAttributeValue(attributeName);
+			final List<Object> list_valueObjs = personAttributes.getAttributeValues(attributeName);
             
-            if (valueObj != null) {
-                final String value = String.valueOf(valueObj);
-                portletUserAttributes.put(attributeName, value);
+            if (valueObj != null) {				
+				final String value = String.valueOf(valueObj);
+				portletUserAttributes.put(attributeName, value);				
             }
+			
+			// just put in the straight list returned from persondir		
+			if(list_valueObjs != null) {
+				portletMultivaluedAttributes.put(attributeName, list_valueObjs);			
+			}
+			
         }
+		
+		httpServletRequest.setAttribute(IPortletAdaptor.MULTIVALUED_USERINFO_MAP_ATTRIBUTE,portletMultivaluedAttributes);
         
         return portletUserAttributes;
     }
