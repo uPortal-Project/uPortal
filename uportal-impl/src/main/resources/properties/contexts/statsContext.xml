@@ -49,9 +49,9 @@
         <property name="handlers">
             <list>
                 <ref bean="loggingEventHandler"/>
-                <!-- UNCOMMENT FOR PORTAL STATS
+                <!-- UNCOMMENT FOR DATABASE STORAGE OF PORTAL STATS
                 <ref bean="queueingEventHandler"/>
-                -->
+                 -->
             </list>
         </property>
     </bean>
@@ -69,36 +69,46 @@
     </bean>
     
     <!--
-     | To enable database stats logging uncomment the block below and the reference to the 'queueingEventHandler' in the
-     | 'portalEventMulticaster' bean above.
-     | 
-     | Be sure to update all occurances of - - by removing the space to enable those comments.
-     |
-     | Also in schedulerContext.xml the statsQueueFlushingTask bean needs to be uncommented along with the reference
-     | to it in the timerFactory at the top of the file.
+     | Uncomment the <ref bean="queueingEventHandler"/> line above to enable database persistence of portal stats
      |
      | If you want to monitor the corresponding Hibernate SessionFactory via JMX uncomment the 'portalStatsHibernateStatisticsMBean'
      | bean in jmxContext.xml
      +-->
-    <!-- UNCOMMENT FOR PORTAL STATS
-    <!- - Queueing handler used to reduce database IO - ->
+    <!-- Queueing handler used to reduce database IO -->
     <bean id="queueingEventHandler" class="org.jasig.portal.events.handlers.QueueingEventHandler">
-        <property name="supportGuest" value="false" />
+        <property name="supportGuest" value="true" />
         <property name="batchingEventHandler" ref="portalEventStore" />
-        
-        <property name="explicitMatching" value="true" />
+        <property name="explicitMatching" value="false" />
         <property name="supportedEvents">
             <set value-type="java.lang.Class">
+                <!-- Explicitly list channel events to exclude ChannelInstanciatedInLayoutPortalEvent -->
+                <value>org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent</value>
+                <value>org.jasig.portal.events.support.ChannelMovedInLayoutPortalEvent</value>
+                <value>org.jasig.portal.events.support.ChannelRemovedFromLayoutPortalEvent</value>
+                <value>org.jasig.portal.events.support.ChannelTargetedInLayoutPortalEvent</value>
+                <value>org.jasig.portal.events.support.ChannelUpdatedInLayoutPortalEvent</value>
+                
+                <!-- All timed channel events events -->
+                <value>org.jasig.portal.events.support.TimedChannelLayoutPortalEvent</value>
+                
+                <!-- All channel definition events -->
+                <value>org.jasig.portal.events.support.ChannelPortalEvent</value>
+                
+                <!-- All layout node related events -->
+                <value>org.jasig.portal.events.support.LayoutPortalEvent</value>
+                
+                <!-- Explicitly list top level events -->
                 <value>org.jasig.portal.events.support.UserLoggedInPortalEvent</value>
                 <value>org.jasig.portal.events.support.UserLoggedOutPortalEvent</value>
-                <value>org.jasig.portal.events.support.PageRenderTimePortalEvent</value>
+                <value>org.jasig.portal.events.support.UserSessionCreatedPortalEvent</value>
+                <value>org.jasig.portal.events.support.UserSessionDestroyedPortalEvent</value>
             </set>
         </property>
     </bean>
     
     <bean id="portalEventStore" class="org.jasig.portal.events.handlers.db.JpaPortalEventStore" />
 
-    <!- - Stats specific JPA peristence configurtion below - -> 
+    <!-- Stats specific JPA peristence configurtion below --> 
     <aop:config>
         <aop:pointcut id="statsJpaDaoExecution" 
             expression="execution(* org.jasig.portal.events.handlers.db.*Jpa*.*(..))"/>
@@ -123,7 +133,7 @@
         <property name="persistenceUnitName" value="uPortalStatsPersistence" />
     </bean>
 
-    <!- - Adapater that can inject a cacheProvider into the hibernate entity manager - ->
+    <!-- Adapater that can inject a cacheProvider into the hibernate entity manager -->
     <bean id="statsJpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
         <property name="databasePlatform" value="${hibernate.dialect}" />
         <property name="cacheProvider" ref="cacheProvider" />
@@ -138,7 +148,6 @@
             <tx:method name="*"/>
         </tx:attributes>
     </tx:advice>
-    -->
     <!-- ********** Database Utilities ********** -->
     
     <bean name="statsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
