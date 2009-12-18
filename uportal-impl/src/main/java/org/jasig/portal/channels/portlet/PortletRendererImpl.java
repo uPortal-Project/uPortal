@@ -274,6 +274,14 @@ public class PortletRendererImpl implements IPortletRenderer {
         catch (IOException ioe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing render.", portletWindow, ioe);
         }
+        
+        
+
+        final String title = (String)parameterRequestWrapper.getAttribute(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE);
+        
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Retrieved title '" + title + "' from request for: " + portletWindow);
+        }
     }
 
     protected PortletDD getPortletDD(final HttpServletRequest httpServletRequest, final IPortletWindowId portletWindowId) throws PortletContainerException {
