@@ -15,9 +15,6 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">           
 
-    <bean name="groupListHelper"
-        class="org.jasig.portal.layout.dlm.remoting.GroupListHelperImpl"/>
-    
     <!-- 
      | Search entities for multiple results by a search string
      +-->
