@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2000-2009, Jasig, Inc.
+    See license distributed with this file and available online at
+    https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <subflow-state id="personLookup" subflow="person-lookup">
+        <input name="showCancelButton" value="'false'" />
+        <input name="personSearchResults_selectAndGoButtonTextKey" value="'personSearchResults.resetUserLayoutButton'" />
+        <input name="personDetails_selectAndGoButtonTextKey" value="'personDetails.resetUserLayoutButton'" />
+        
+        <output name="person" />
+
+        <transition to="personLookup" on="cancelPersonLookup" />
+        <transition to="reset-confirm" on="returnSelectedPerson" />
+    </subflow-state>
+    
+    <view-state id="reset-confirm">
+        <transition on="confirm" to="reset-result">
+            <evaluate expression="userLayoutHelper.resetUserLayout(person)"/>
+        </transition>
+        <transition on="cancel" to="personLookup"/>
+    </view-state>
+    
+    <view-state id="reset-result">
+        <transition on="continue" to="reset-complete">
+            <evaluate expression="userLayoutHelper.resetUserLayout(person)"/>
+        </transition>
+        
+    </view-state>
+    
+    <end-state id="reset-complete"/>
+</flow>

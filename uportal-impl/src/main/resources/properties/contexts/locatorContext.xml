@@ -134,4 +134,9 @@
         class="org.jasig.portal.spring.locator.PasswordEncryptionServiceLocator">
         <constructor-arg index="0" ref="stringEncryptionService" />
     </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.UserIdentityStoreLocator" 
+        class="org.jasig.portal.spring.locator.UserIdentityStoreLocator">
+        <constructor-arg index="0" ref="userIdentityStore" />
+    </bean>
 </beans>

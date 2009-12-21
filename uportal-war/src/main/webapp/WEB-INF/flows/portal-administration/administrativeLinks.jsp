@@ -32,6 +32,9 @@
             <li>
                 <a href="render.userLayoutRootNode.uP?uP_fname=passwordmgr">Manage passwords</a>
             </li>
+            <li>
+                <a href="render.userLayoutRootNode.uP?uP_fname=reset-user-layout">Reset a user's layout</a>
+            </li>
         </ul>
 	  </div>
 	</div>
@@ -48,6 +51,17 @@
             </li>
             <li>
                 <a href="render.userLayoutRootNode.uP?uP_fname=permissionsmanager">Manage permissions</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="portlet-section" role="region">
+      <h3 class="portlet-section-header" role="heading">Portal Administration</h3>
+      <div class="portlet-section-body">
+        <ul>
+            <li>
+                <a href="render.userLayoutRootNode.uP?uP_fname=cache-manager">Manage Cache instances</a>
             </li>
         </ul>
       </div>

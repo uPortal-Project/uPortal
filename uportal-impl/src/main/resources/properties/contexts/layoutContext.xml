@@ -97,4 +97,5 @@
         </property>
     </bean>
 
+    <bean id="userIdentityStore" class="org.jasig.portal.RDBMUserIdentityStore"/>
 </beans>

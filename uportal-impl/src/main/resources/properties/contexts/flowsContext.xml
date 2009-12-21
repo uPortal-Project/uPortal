@@ -108,6 +108,12 @@
     <bean id="cacheManagementHelper" class="org.jasig.portal.utils.cache.CacheManagementHelper">
         <property name="cacheManager" ref="cacheManager"/>
     </bean>
+    <!-- bean for reset-user-layout flow -->
+    <bean id="userLayoutHelper" class="org.jasig.portal.layout.UserLayoutHelperImpl">
+        <property name="dataSource" ref="PortalDb"/>
+        <property name="userIdentityStore" ref="userIdentityStore"/>        
+    </bean>   
+    
     
     <!-- Executes flows: the central entry point into the Spring Web Flow system -->
     <webflow:flow-executor id="flowExecutor">

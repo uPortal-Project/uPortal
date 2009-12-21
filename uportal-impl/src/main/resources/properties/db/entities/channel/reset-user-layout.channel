@@ -1,0 +1,36 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
+  <title>Reset User Layout</title>
+  <name>Reset User Layout</name>
+  <fname>reset-user-layout</fname>
+  <desc>Provides a means reset a user's layout.</desc>
+  <type>Portlet</type>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+  <timeout>30000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Administration</category>
+  </categories>
+  <groups>
+    <group>Portal Administrators</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>portletApplicationId</name>  
+      <value>/uPortal</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>portletName</name>  
+      <value>ResetUserLayout</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+  <portletPreferences/>
+</channel-definition>
