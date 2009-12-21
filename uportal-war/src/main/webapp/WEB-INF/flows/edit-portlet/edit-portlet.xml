@@ -215,10 +215,17 @@
         <transition on="cancel" to="cancelPortletEdit" bind="false"/>
     </view-state>
     
+    <action-state id="configModeAction">
+        <evaluate expression="portletAdministrationHelper.configModeAction(externalContext)" />
+        <!-- TODO check result of action delegation to determine transition dest -->
+        <transition to="configMode" />
+    </action-state>
+    
     <view-state id="configMode">
         <on-entry>
             <set name="flashScope.CHANNEL_FNAME" value="channel.getFname()"/>
         </on-entry>
+        <transition on="configModeAction" to="configModeAction" />
     </view-state>
 
     <decision-state id="cancelEditScreen">

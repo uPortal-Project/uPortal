@@ -16,10 +16,6 @@ import javax.portlet.RenderResponse;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
- * 
- * TODO  does the delegate see parent's parameters?
- * TODO  how does the parent change its parameters for URLs rendered by the child?
- * TODO  can the parent modify the state/mode/parameters of the child?
  *  
  * @author Eric Dalquist
  * @version $Revision$
@@ -28,12 +24,12 @@ public interface PortletDelegationDispatcher {
     public IPortletWindowId getPortletWindowId();
     
     public DelegateState getDelegateState();
+    
+    public DelegateState doAction(ActionRequest actionRequest, ActionResponse actionResponse) throws IOException;
 
-    public DelegateState doAction(ActionRequest actionRequest, ActionResponse actionResponse);
-
-    public DelegateState doAction(ActionRequest actionRequest, ActionResponse actionResponse, DelegateState delegateState);
+    public DelegateState doAction(ActionRequest actionRequest, ActionResponse actionResponse, DelegationRequest delegationRequest) throws IOException;
     
     public DelegateState doRender(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException;
     
-    public DelegateState doRender(RenderRequest renderRequest, RenderResponse renderResponse, DelegateState delegateState) throws IOException;
+    public DelegateState doRender(RenderRequest renderRequest, RenderResponse renderResponse, DelegationRequest delegationRequest) throws IOException;
 }

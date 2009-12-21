@@ -48,4 +48,14 @@ public interface IPortletRequestParameterManager {
      * @throws org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException If this request doesn't have the necessary information associated with it yet to return a request type
      */
     public PortletUrl getPortletRequestInfo(HttpServletRequest request, IPortletWindowId portletWindowId);
+    
+    /**
+     * Gets the request information for all portlets involved with this request, returns null if no portlets were targeted.
+     * 
+     * @param request The current request.
+     * @return The List of PortletUrls for the targeted portlets, null if no portlets were targeted
+     * @throws IllegalArgumentException If request is null
+     * @throws org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException If this request doesn't have the necessary information associated with it yet to return a request type
+     */
+    public List<PortletUrl> getAllRequestInfo(HttpServletRequest request);
 }

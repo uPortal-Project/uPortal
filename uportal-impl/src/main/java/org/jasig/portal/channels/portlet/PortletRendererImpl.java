@@ -133,10 +133,9 @@ public class PortletRendererImpl implements IPortletRenderer {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Load the parameters to provide to the portlet with the request and update the state and mode
-        Map<String, List<String>> parameters = Collections.emptyMap();
-        final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
-        if (portletWindowId.equals(targetedPortletWindowId)) {
-            final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, targetedPortletWindowId);
+        Map<String, List<String>> parameters = null;
+        final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
+        if (portletUrl != null) {
             parameters = portletUrl.getParameters();
             
             final PortletMode portletMode = portletUrl.getPortletMode();
@@ -148,6 +147,9 @@ public class PortletRendererImpl implements IPortletRenderer {
             if (windowState != null) {
                 portletWindow.setWindowState(windowState);
             }
+        }
+        if (parameters == null) {
+            parameters = Collections.emptyMap();
         }
         
         //Load the person the request is for
@@ -202,28 +204,19 @@ public class PortletRendererImpl implements IPortletRenderer {
         final ContentRedirectingHttpServletResponse contentRedirectingHttpServletResponse = new ContentRedirectingHttpServletResponse(httpServletResponse, printWriter); 
             
         //Load the parameters to provide with the request
-        final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
+        final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
         
-        final PortletUrl portletUrl;
-        if (targetedPortletWindowId != null) {
-            portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, targetedPortletWindowId);
-        }
-        else {
-            portletUrl = null;
-        }
-        
-        Map<String, List<String>> parameters;
         //Current portlet isn't targeted, use parameters from previous request
-        if (!portletWindowId.equals(targetedPortletWindowId) || portletUrl == null || (parameters = portletUrl.getParameters()) == null) {
+        Map<String, List<String>> parameters;
+        if (portletUrl == null) {
             parameters = portletWindow.getRequestParameters();
-            
-            if (parameters == null) {
-                parameters = Collections.emptyMap();
-            }
         }
         //Current portlet is targeted, set parameters and update state/mode
         else {
-            portletWindow.setRequestParameters(parameters);
+            parameters = portletUrl.getParameters();
+            if (parameters != null) {
+                portletWindow.setRequestParameters(parameters);
+            }
             
             final PortletMode portletMode = portletUrl.getPortletMode();
             if (portletMode != null) {
@@ -234,6 +227,9 @@ public class PortletRendererImpl implements IPortletRenderer {
             if (windowState != null) {
                 portletWindow.setWindowState(windowState);
             }
+        }
+        if (parameters == null) {
+            parameters = Collections.emptyMap();
         }
         
         //Load the person the request is for

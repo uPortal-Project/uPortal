@@ -18,8 +18,11 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -33,6 +36,9 @@ import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.ResourceMissingException;
+import org.jasig.portal.api.portlet.DelegateState;
+import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
+import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelPublishingService;
@@ -47,6 +53,7 @@ import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
@@ -60,6 +67,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.ResourceLoader;
+import org.springframework.webflow.context.ExternalContext;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -74,15 +82,23 @@ public class PortletAdministrationHelper {
 	private static final String CUSTOM_CPD_PATH = "org/jasig/portal/portlets/portletadmin/CustomChannel.cpd";
 	private static final String SHARED_PARAMETERS_PATH = "org/jasig/portal/channels/SharedParameters.cpd";
 
-	private Log log = LogFactory.getLog(PortletAdministrationHelper.class);
+	protected final Log logger = LogFactory.getLog(PortletAdministrationHelper.class);
 	
 	private IGroupListHelper groupListHelper;
+    private IChannelRegistryStore channelRegistryStore;
+    private OptionalContainerServices optionalContainerServices;
+    private IChannelPublishingService channelPublishingService; 
+    private Map<Serializable, ChannelPublishingDefinition> cpdCache;
+    private PortletDelegationLocator portletDelegationLocator;
+    
 
-	public void setGroupListHelper(IGroupListHelper groupListHelper) {
+	public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
+        this.portletDelegationLocator = portletDelegationLocator;
+    }
+
+    public void setGroupListHelper(IGroupListHelper groupListHelper) {
 		this.groupListHelper = groupListHelper;
 	}
-	
-	private IChannelRegistryStore channelRegistryStore;
 	
 	/**
 	 * Set the channel registry store
@@ -93,22 +109,16 @@ public class PortletAdministrationHelper {
 		this.channelRegistryStore = channelRegistryStore;
 	}
 
-	private OptionalContainerServices optionalContainerServices;
-
 	public void setOptionalContainerServices(
 			OptionalContainerServices optionalContainerServices) {
 		this.optionalContainerServices = optionalContainerServices;
 	}
 	
-	private IChannelPublishingService channelPublishingService;	
-
 	public void setChannelPublishingService(
 			IChannelPublishingService channelPublishingService) {
 		this.channelPublishingService = channelPublishingService;
 	}
 	
-    private Map<Serializable, ChannelPublishingDefinition> cpdCache;
-
     /**
      * Cache to use for parsed CPDs.
      * 
@@ -414,9 +424,9 @@ public class PortletAdministrationHelper {
 		try {
 			inputStream = ResourceLoader.getResourceAsStream(PortletAdministrationHelper.class, cpdUri);
 		} catch (ResourceMissingException e) {
-			log.error("Failed to locate CPD for channel type " + channelTypeId, e);
+			logger.error("Failed to locate CPD for channel type " + channelTypeId, e);
 		} catch (IOException e) {
-			log.error("Failed to load CPD for channel type " + channelTypeId, e);
+			logger.error("Failed to load CPD for channel type " + channelTypeId, e);
 		}
 		
 		// parse the CPD
@@ -428,9 +438,9 @@ public class PortletAdministrationHelper {
 		try {
 			inputStream = ResourceLoader.getResourceAsStream(PortletAdministrationHelper.class, SHARED_PARAMETERS_PATH);
 		} catch (ResourceMissingException e) {
-			log.error("Failed to locate shared parameters CPD for channel type " + channelTypeId, e);
+			logger.error("Failed to locate shared parameters CPD for channel type " + channelTypeId, e);
 		} catch (IOException e) {
-			log.error("Failed to load shared parameters CPD for channel type " + channelTypeId, e);
+			logger.error("Failed to load shared parameters CPD for channel type " + channelTypeId, e);
 		}
 		
 		// parse the shared CPD and add its steps to the end of the type-specific
@@ -509,7 +519,7 @@ public class PortletAdministrationHelper {
             portletDescriptor = portletRegistryService.getPortletDescriptor(portletAppId, portletName);
         }
         catch (PortletContainerException e) {
-            this.log.warn("Failed to load portlet descriptor for appId='" + portletAppId + "', portletName='" + portletName + "'", e);
+            this.logger.warn("Failed to load portlet descriptor for appId='" + portletAppId + "', portletName='" + portletName + "'", e);
             return false;
         }
         
@@ -642,7 +652,7 @@ public class PortletAdministrationHelper {
 		    portletDD = portletRegistryService.getPortletDescriptor(application, portlet);
         }
 		catch (PortletContainerException e) {
-		    this.log.warn("Failed to load portlet descriptor for appId='" + application + "', portletName='" + portlet + "'", e);
+		    this.logger.warn("Failed to load portlet descriptor for appId='" + application + "', portletName='" + portlet + "'", e);
             return;
         }
 		    
@@ -666,4 +676,23 @@ public class PortletAdministrationHelper {
 		return ChannelLifecycleState.values();
 	}
 		
+	
+	public void configModeAction(ExternalContext externalContext) throws IOException {
+	    final ActionRequest actionRequest = (ActionRequest)externalContext.getNativeRequest();
+	    final ActionResponse actionResponse = (ActionResponse)externalContext.getNativeResponse();
+	    
+	    final PortletSession portletSession = actionRequest.getPortletSession();
+	    final IPortletWindowId portletWindowId = (IPortletWindowId)portletSession.getAttribute("DELEGATE_WINDOW_ID");
+	    if (portletWindowId == null) {
+	        throw new IllegalStateException("Cannot execute configModeAciton without a 'DELEGATE_WINDOW_ID' in the session");
+	    }
+	    
+	    final PortletDelegationDispatcher requestDispatcher = this.portletDelegationLocator.getRequestDispatcher(actionRequest, portletWindowId);
+	    
+	    final DelegateState delegateState = requestDispatcher.doAction(actionRequest, actionResponse);
+	    
+	    if (!IPortletAdaptor.CONFIG.equals(delegateState.getPortletMode())) {
+	        this.logger.debug("DELEGATION COMPLETE ... DO SOMETHING ELSE HERE");
+	    }
+	}
 }

@@ -16,7 +16,6 @@ import org.apache.pluto.internal.InternalPortletWindow;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channels.portlet.IPortletRenderer;
-import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -25,6 +24,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -40,6 +40,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletRenderer portletRenderer;
+    private IPortletRequestParameterManager portletRequestParameterManager;
     
 
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
@@ -64,6 +65,10 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
 
     public void setPortletRenderer(IPortletRenderer portletRenderer) {
         this.portletRenderer = portletRenderer;
+    }
+    
+    public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
+        this.portletRequestParameterManager = portletRequestParameterManager;
     }
 
     /* (non-Javadoc)
@@ -111,7 +116,8 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
                 ContainerInvocation.setInvocation(invocation.getPortletContainer(), invocation.getPortletWindow());
             }
         }
-        return new PortletDelegationDispatcherImpl(portletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer);
+        
+        return new PortletDelegationDispatcherImpl(portletWindow, parentPortletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer, this.portletRequestParameterManager);
     }
 
     /* (non-Javadoc)
@@ -124,6 +130,13 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
         
-        return new PortletDelegationDispatcherImpl(portletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer);
+        final IPortletWindowId delegationParentId = portletWindow.getDelegationParent();
+        if (delegationParentId == null) {
+            throw new IllegalArgumentException("Portlet window '" + portletWindow + "' is not a delegate window and cannot be delgated to.");
+        }
+        
+        final IPortletWindow parentPortletWindow = this.portletWindowRegistry.getPortletWindow(request, delegationParentId);
+        
+        return new PortletDelegationDispatcherImpl(portletWindow, parentPortletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer, this.portletRequestParameterManager);
     }
 }

@@ -87,6 +87,21 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
     }
     
     @Override
+    public List<PortletUrl> getAllRequestInfo(HttpServletRequest request) {
+        Validate.notNull(request, "request can not be null");
+        
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
+
+        final List<PortletUrl> portletUrls = this.getAndCheckRequestInfoMap(request);
+        if (portletUrls == null) {
+            return null;
+        }
+        
+        return portletUrls;
+    }
+    
+    
+    @Override
     public void setRequestInfo(HttpServletRequest request, List<PortletUrl> portletUrls) {
         Validate.notNull(request, "request can not be null");
         

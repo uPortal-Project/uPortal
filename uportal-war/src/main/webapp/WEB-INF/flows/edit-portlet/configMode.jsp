@@ -18,7 +18,16 @@
 <%@page import="org.jasig.portal.portlet.om.IPortletWindowId"%>
 <%@page import="org.jasig.portal.api.portlet.PortletDelegationDispatcher"%>
 <%@page import="org.jasig.portal.api.portlet.DelegateState"%>
-<%@page import="org.jasig.portal.channels.portlet.IPortletAdaptor"%><portlet:actionURL var="navigationUrl">
+<%@page import="org.jasig.portal.channels.portlet.IPortletAdaptor"%>
+<%@page import="org.jasig.portal.api.portlet.DelegationRequest"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.LinkedHashMap"%>
+<%@page import="java.util.Arrays"%>
+
+
+
+<portlet:actionURL var="navigationUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
@@ -54,7 +63,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
   <c:set var="channelFname" value="${CHANNEL_FNAME}"/>
+  <c:set var="flowKey" value="${flowExecutionKey}"/>
 <%
+out.flush();
 final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
 final PortletDelegationLocator portletDelegationLocator = (PortletDelegationLocator)applicationContext.getBean("portletDelegationLocator", PortletDelegationLocator.class);
 
@@ -76,7 +87,15 @@ else {
     delegateState = null;
 }
 
-portletDelegationDispatcher.doRender(renderRequest, renderResponse, delegateState);
+final Map parameters = new LinkedHashMap();
+parameters.put("execution", Arrays.asList(new String[] { (String)pageContext.getAttribute("flowKey") } ));
+parameters.put("_eventId", Arrays.asList(new String[] { "configModeAction" } ));
+
+final DelegationRequest delegationRequest = new DelegationRequest();
+delegationRequest.setDelegateState(delegateState);
+delegationRequest.setParentParameters(parameters);
+
+portletDelegationDispatcher.doRender(renderRequest, renderResponse, delegationRequest);
 %>
 
     <form action="${navigationUrl}" method="POST">

@@ -60,6 +60,7 @@
                 <property name="cacheName" value="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE" />
             </bean>
         </property>
+        <property name="portletDelegationLocator" ref="portletDelegationLocator" />
     </bean>
     
     <bean id="userLocaleHelper" class="org.jasig.portal.portlets.localization.UserLocaleHelper">

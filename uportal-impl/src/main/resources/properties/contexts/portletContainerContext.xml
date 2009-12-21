@@ -169,6 +169,7 @@
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletRenderer" ref="portletRenderer" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
+        <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
     </bean>
     
     <!--********** Portlet Rendering Channel ********** -->
