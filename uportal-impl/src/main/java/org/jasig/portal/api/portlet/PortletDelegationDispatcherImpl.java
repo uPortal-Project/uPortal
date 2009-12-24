@@ -8,9 +8,7 @@ package org.jasig.portal.api.portlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
@@ -111,10 +109,12 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
             }
         }
         
-        //TODO how does this work with webflow? It needs to add a render parameter to the URL AFTER this happens ... crap
-        
         final String redirectLocation = capturingResponse.getRedirectLocation();
-        actionResponse.sendRedirect(redirectLocation);
+        
+        //If the delegate portlet sent a redirect use the parent action response to send it
+        if (!PortletDelegationManager.DELEGATE_ACTION_REDIRECT_TOKEN.equals(redirectLocation)) {
+            actionResponse.sendRedirect(redirectLocation);
+        }
         
         return this.getDelegateState();
     }
@@ -184,43 +184,48 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         if (delegateState != null) {
             final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
             
-            PortletUrl delegateRequestInfo = this.portletRequestParameterManager.getPortletRequestInfo(request, portletWindowId);
+            PortletUrl delegatePortletUrl = this.portletRequestParameterManager.getPortletRequestInfo(request, portletWindowId);
             
             //If the delegate URL doesn't exist in the parameter manager add it and insert it in the correct location
-            if (delegateRequestInfo == null) {
-                delegateRequestInfo = new PortletUrl(portletWindowId);
-                List<PortletUrl> targetedPortletUrls = this.portletRequestParameterManager.getAllRequestInfo(request);
+            if (delegatePortletUrl == null) {
+                delegatePortletUrl = new PortletUrl(portletWindowId);
                 
-                if (targetedPortletUrls == null) {
-                    targetedPortletUrls = new ArrayList<PortletUrl>(1);
-                    targetedPortletUrls.add(delegateRequestInfo);
-                    
-                    //TODO do I need the parent URL in there or even all the way up the parent tree?
-                    this.portletRequestParameterManager.setRequestInfo(request, targetedPortletUrls);
+                final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(request);
+                PortletUrl targetedPortletUrl = this.portletRequestParameterManager.getPortletRequestInfo(request, targetedPortletWindowId);
+                
+                //If there is no targeted portlet just set the delegate as the URL
+                if (targetedPortletUrl == null) {
+                    this.portletRequestParameterManager.setRequestInfo(request, delegatePortletUrl);
                 }
+                //Otherwise find the correct place in the URL chain to put the delegate URL
                 else {
                     boolean added = false;
-                    for (final ListIterator<PortletUrl> portletUrlItr = targetedPortletUrls.listIterator(); portletUrlItr.hasNext(); ) {
-                        final PortletUrl portletUrl = portletUrlItr.next();
-                        if (portletUrl.getTargetWindowId().equals(this.portletWindow.getDelegationParent())) {
-                            final int nextIndex = portletUrlItr.nextIndex();
-                            targetedPortletUrls.add(nextIndex, delegateRequestInfo);
+                    
+                    while (targetedPortletUrl != null) {
+                        final PortletUrl oldDelegatePortletUrl = targetedPortletUrl.getDelegatePortletUrl();
+                        
+                        if (targetedPortletUrl.getTargetWindowId().equals(this.portletWindow.getDelegationParent())) {
+                            targetedPortletUrl.setDelegatePortletUrl(delegatePortletUrl);
+                            delegatePortletUrl.setDelegatePortletUrl(oldDelegatePortletUrl);
+                            
                             added = true;
                             break;
                         }
+                        
+                        targetedPortletUrl = oldDelegatePortletUrl;
                     }
                     
                     if (!added) {
-                        targetedPortletUrls.add(delegateRequestInfo);
+                        targetedPortletUrl.setDelegatePortletUrl(delegatePortletUrl);
                     }
                 }
             }
 
             final PortletMode mode = delegateState.getPortletMode();
-            delegateRequestInfo.setPortletMode(mode);
+            delegatePortletUrl.setPortletMode(mode);
 
             final WindowState state = delegateState.getWindowState();
-            delegateRequestInfo.setWindowState(state);
+            delegatePortletUrl.setWindowState(state);
         }
         
         final WindowState parentWindowState = delegationRequest.getParentWindowState();

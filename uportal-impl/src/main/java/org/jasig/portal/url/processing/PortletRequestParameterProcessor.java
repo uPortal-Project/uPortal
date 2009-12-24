@@ -5,8 +5,6 @@
  */
 package org.jasig.portal.url.processing;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.Validate;
@@ -86,46 +84,8 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
      * @see org.jasig.portal.url.processing.IRequestParameterProcessor#processParameters(org.jasig.portal.url.IWritableHttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
-        final List<PortletUrl> portletUrlInfo = this.portletUrlSyntaxProvider.parsePortletParameters(request);
-        this.portletRequestParameterManager.setRequestInfo(request, portletUrlInfo);
+        final PortletUrl portletUrl = this.portletUrlSyntaxProvider.parsePortletUrl(request);
+        this.portletRequestParameterManager.setRequestInfo(request, portletUrl);
         return true;
-        
-//        //If no PortletUrls then no targeted portlets
-//        if (portletUrlInfo == null || portletUrlInfo.size() == 0) {
-//            this.portletRequestParameterManager.setNoPortletRequest(request);
-//            return true;
-//        }
-//
-//        //Iterate over each PortletUrl, updating the IPortletWindow it is for and notifying the IPorltetRequestParameterManager
-//        //that a request for that portlet has been made
-//        for (final PortletUrl portletUrl : portletUrlInfo) {
-//            final IPortletWindowId portletWindowId = portletUrl.getTargetWindowId();
-//            
-//            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-//            if (portletWindow == null) {
-//                this.logger.warn("No IPortletWindow exists for IPortletWindowId='" + portletWindowId
-//                        + "'. Request parameters for this IPortletWindowId will be ignored. Ignored parameters: "
-//                        + portletUrl);
-//            }
-//            else {
-//                final PortletMode portletMode = portletUrl.getPortletMode();
-//                if (portletMode != null) {
-//                    portletWindow.setPortletMode(portletMode);
-//                }
-//        
-//                final WindowState windowState = portletUrl.getWindowState();
-//                if (windowState != null) {
-//                    portletWindow.setWindowState(windowState);
-//                }
-//            }
-//    
-//            final Map<String, List<String>> parameters = portletUrl.getParameters();
-//            final RequestType requestType = portletUrl.getRequestType();
-//            final PortletRequestInfo portletRequestInfo = new PortletRequestInfo(requestType, parameters);
-//    
-//            this.portletRequestParameterManager.setRequestInfo(request, portletWindowId, portletRequestInfo);
-//        }
-//
-//        return true;
     }
 }

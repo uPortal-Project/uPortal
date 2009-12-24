@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,9 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pluto.Constants;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.UPFileSpec;
+import org.jasig.portal.api.portlet.PortletDelegationManager;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -77,6 +78,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IUserInstanceManager userInstanceManager;
+    private PortletDelegationManager portletDelegationManager;
     private boolean useAnchors = true;
     private Set<WindowState> transientWindowStates = new HashSet<WindowState>(Arrays.asList(IPortletAdaptor.EXCLUSIVE, IPortletAdaptor.DETACHED));
     private Set<WindowState> anchoringWindowStates = new HashSet<WindowState>(Arrays.asList(WindowState.MINIMIZED, WindowState.NORMAL));
@@ -220,11 +222,18 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         }
     }
     
+    public PortletDelegationManager getPortletDelegationManager() {
+        return this.portletDelegationManager;
+    }
+    public void setPortletDelegationManager(PortletDelegationManager portletDelegationManager) {
+        this.portletDelegationManager = portletDelegationManager;
+    }
+    
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider#parsePortletParameters(javax.servlet.http.HttpServletRequest)
      */
-    public List<PortletUrl> parsePortletParameters(HttpServletRequest request) {
+    public PortletUrl parsePortletUrl(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
         
         final IPortletWindowId targetedPortletWindowId = resolveTargetWindowId(request);
@@ -232,18 +241,17 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             return null;
         }
         
-        final List<PortletUrl> parsedUrls = new LinkedList<PortletUrl>();
+        final PortletUrl portletUrl = new PortletUrl(targetedPortletWindowId);
         
-        this.parsePortletParameters(request, targetedPortletWindowId, parsedUrls);
+        this.parsePortletParameters(request, portletUrl);
     
-        return parsedUrls;
+        return portletUrl;
     }
     
     @SuppressWarnings("unchecked")
-    protected void parsePortletParameters(HttpServletRequest request, IPortletWindowId portletWindowId, List<PortletUrl> parsedUrls) {
+    protected void parsePortletParameters(HttpServletRequest request, PortletUrl portletUrl) {
+        final IPortletWindowId portletWindowId = portletUrl.getTargetWindowId();
         final String portletWindowIdStr = portletWindowId.toString();
-        
-        final PortletUrl portletUrl = new PortletUrl(portletWindowId);
         
         final String requestTypeStr = request.getParameter(PARAM_REQUEST_TYPE_PREFIX + portletWindowIdStr);
         if (requestTypeStr != null) {
@@ -303,8 +311,6 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         
         portletUrl.setSecure(request.isSecure());
 
-        parsedUrls.add(portletUrl);
-        
         //If delegating recurse
         final String delegateWindowIdStr = request.getParameter(PARAM_DELEGATE_PREFIX + portletWindowIdStr);
         if (delegateWindowIdStr != null) {
@@ -320,7 +326,10 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                 throw new IllegalArgumentException("Parent '" + delegationParentId + "' of delegate window '" + delegateWindowId + "' is not the parent specified in the URL: '" + portletWindowId + "'");
             }
             
-            this.parsePortletParameters(request, delegateWindowId, parsedUrls);
+            final PortletUrl delegatePortletUrl = new PortletUrl(delegateWindowId);
+            portletUrl.setDelegatePortletUrl(delegatePortletUrl);
+            
+            this.parsePortletParameters(request, delegatePortletUrl);
         }
     }
     
@@ -416,6 +425,19 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         //Convert the callback request to the portal request
         request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
         
+        //If this portlet is a delegate and this is an action request it must be for the redirect URL
+        //Store the PortletUrl as a request attribute so the dispatcher can get to it
+        //Return a marker redirect URL string so the delegate dispatcher knows to ignore the redirect
+        if (Constants.METHOD_ACTION.equals(request.getAttribute(Constants.METHOD_ID))) {
+            if (portletWindow.getDelegationParent() != null) {
+                this.portletDelegationManager.setDelegatePortletActionRedirectUrl(request, portletUrl);
+                return PortletDelegationManager.DELEGATE_ACTION_REDIRECT_TOKEN;
+            }
+
+            final PortletUrl delegatePortletUrl = this.portletDelegationManager.getDelegatePortletActionRedirectUrl(request);
+            portletUrl.setDelegatePortletUrl(delegatePortletUrl);
+        }
+        
         //Build the base of the URL with the context path
         final StringBuilder url = new StringBuilder(this.bufferLength);
         final String contextPath = request.getContextPath();
@@ -434,12 +456,20 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         //Get the encoding to use for the URL
         final String encoding = this.getEncoding(request);
         
+        //Look to see if the window is being delegated to, if so recurse to the parent for URL generation first
         final IPortletWindowId delegationParentId = portletWindow.getDelegationParent();
         if (delegationParentId != null) {
             final IPortletWindow delegateParent = this.portletWindowRegistry.getPortletWindow(request, delegationParentId);
             
-            final PortletUrl parentUrl = new PortletUrl(delegationParentId);
-            parentUrl.setParameters(delegateParent.getRequestParameters());
+            PortletUrl parentUrl = this.portletDelegationManager.getParentPortletUrl(request, delegationParentId);
+            if (parentUrl == null) {
+                parentUrl = new PortletUrl(delegationParentId);
+                parentUrl.setWindowState(delegateParent.getWindowState());
+                parentUrl.setPortletMode(delegateParent.getPortletMode());
+                parentUrl.setParameters(delegateParent.getRequestParameters());
+            }
+            
+            //Parent URLs MUST be in the same type as the child
             parentUrl.setRequestType(portletUrl.getRequestType());
             
             this.generatePortletUrl(request, delegateParent, portletWindow.getPortletWindowId(), parentUrl, url);

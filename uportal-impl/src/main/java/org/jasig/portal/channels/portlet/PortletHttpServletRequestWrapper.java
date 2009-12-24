@@ -7,12 +7,13 @@ package org.jasig.portal.channels.portlet;
 
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -25,21 +26,29 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.url.AbstractHttpServletRequestWrapper;
 
 /**
- * Portlet specific request wrapper. Provides a specific set of parameters to the portlet, adds isUserInRole
- * logic that understands portlet role-refs and calls back into {@link GroupService}
+ * Scopes set request attributes to just this request. Attribute retrieval methods fall through
+ * to the parent request on a miss. Only the scoped attribute names are enumerated by {@link #getAttributeNames()}
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletHttpRequestWrapper extends HttpServletRequestWrapper {
+public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
+    /**
+     * {@link javax.servlet.http.HttpServletRequest} attribute that this {@link HttpServletRequest} object
+     * will be available.
+     */
+    public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortletHttpServletRequestWrapper.class.getName() + ".PORTLET_HTTP_SERVLET_REQUEST";
+    
+    private final Map<String, Object> attributes = new HashMap<String, Object>();
     private final Map<String, String[]> parameters;
     private final IPerson person;
     private final List<SecurityRoleRefDD> securityRoleRefs;
     
-    public PortletHttpRequestWrapper(HttpServletRequest request, Map<String, List<String>> parameters, IPerson person, List<SecurityRoleRefDD> securityRoleRefs) {
-        super(request);
+    public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest, Map<String, List<String>> parameters, IPerson person, List<SecurityRoleRefDD> securityRoleRefs) {
+        super(httpServletRequest);
         Validate.notNull(parameters, "parameters can not be null");
         Validate.notNull(person, "person can not be null");
         Validate.notNull(securityRoleRefs, "securityRoleRefs can not be null");
@@ -59,6 +68,36 @@ public class PortletHttpRequestWrapper extends HttpServletRequestWrapper {
         
         this.person = person;
         this.securityRoleRefs = securityRoleRefs;
+    }
+
+    @Override
+    public Object getAttribute(String name) {
+        if (ATTRIBUTE__HTTP_SERVLET_REQUEST.equals(name)) {
+            return this;
+        }
+        
+        final Object attribute = this.attributes.get(name);
+        if (attribute != null) {
+            return attribute;
+        }
+        
+        return super.getAttribute(name);
+    }
+
+    @Override
+    public Enumeration<String> getAttributeNames() {
+        final Set<String> attributeNames = this.attributes.keySet();
+        return Collections.enumeration(attributeNames);
+    }
+
+    @Override
+    public void removeAttribute(String name) {
+        this.attributes.remove(name);
+    }
+
+    @Override
+    public void setAttribute(String name, Object o) {
+        this.attributes.put(name, o);
     }
 
     /* (non-Javadoc)
@@ -164,13 +203,14 @@ public class PortletHttpRequestWrapper extends HttpServletRequestWrapper {
         if (object == this) {
             return true;
         }
-        if (!(object instanceof PortletHttpRequestWrapper)) {
+        if (!(object instanceof PortletHttpServletRequestWrapper)) {
             return false;
         }
-        PortletHttpRequestWrapper rhs = (PortletHttpRequestWrapper) object;
+        PortletHttpServletRequestWrapper rhs = (PortletHttpServletRequestWrapper) object;
         return new EqualsBuilder()
-            .append(this.getRequest(), rhs.getRequest())
+            .append(this.getWrappedRequest(), rhs.getWrappedRequest())
             .append(this.parameters, rhs.parameters)
+            .append(this.attributes, rhs.attributes)
             .isEquals();
     }
 
@@ -180,8 +220,9 @@ public class PortletHttpRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(500546767, -122181035)
-            .append(this.getRequest())
+            .append(this.getWrappedRequest())
             .append(this.parameters)
+            .append(this.attributes)
             .toHashCode();
     }
 
@@ -191,8 +232,9 @@ public class PortletHttpRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("wrappedRequest", this.getRequest())
+            .append("wrappedRequest", this.getWrappedRequest())
             .append("parameters", this.parameters)
+            .append("attributes", this.attributes)
             .toString();
     }
 }

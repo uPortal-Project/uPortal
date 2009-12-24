@@ -19,6 +19,11 @@ public class PortletDispatchException extends PortalException {
     
     private final IPortletWindow portletWindow; 
 
+    public PortletDispatchException(String msg, IPortletWindow portletWindow) {
+        super(msg, true, true);
+        this.portletWindow = portletWindow;
+    }
+    
     public PortletDispatchException(String msg, IPortletWindow portletWindow, Throwable cause) {
         super(msg, cause, true, true);
         this.portletWindow = portletWindow;

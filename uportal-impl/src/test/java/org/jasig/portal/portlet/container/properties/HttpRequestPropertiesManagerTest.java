@@ -10,8 +10,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.easymock.EasyMock;
+import org.jasig.portal.channels.portlet.PortletHttpServletRequestWrapper;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -42,7 +42,7 @@ public class HttpRequestPropertiesManagerTest extends TestCase {
 
     public void testGetRequestProperties() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
+        request.setAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         request.setRemoteAddr("1.2.3.4");
         request.setMethod("POST");
         

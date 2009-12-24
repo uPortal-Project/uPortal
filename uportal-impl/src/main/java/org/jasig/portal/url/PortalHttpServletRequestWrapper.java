@@ -36,17 +36,17 @@ import org.jasig.portal.utils.ArrayEnumerator;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision: 11911 $
  */
-public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper implements IWritableHttpServletRequest {
+public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper implements IWritableHttpServletRequest {
     /**
      * {@link javax.servlet.http.HttpServletRequest} attribute that this {@link HttpServletRequest} object
      * will be available.
      */
-    public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortalHttpServletRequest.class.getName() + ".PORTAL_HTTP_SERVLET_REQUEST";
+    public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortalHttpServletRequestWrapper.class.getName() + ".PORTAL_HTTP_SERVLET_REQUEST";
     /**
      * {@link javax.servlet.http.HttpServletRequest} attribute that the {@link HttpServletResponse} object
      * will be available.
      */
-    public static final String ATTRIBUTE__HTTP_SERVLET_RESPONSE = PortalHttpServletRequest.class.getName() + ".PORTAL_HTTP_SERVLET_RESPONSE";
+    public static final String ATTRIBUTE__HTTP_SERVLET_RESPONSE = PortalHttpServletRequestWrapper.class.getName() + ".PORTAL_HTTP_SERVLET_RESPONSE";
     
     private final HttpServletResponse httpServletResponse;
     private final IUserInstanceManager userInstanceManager;
@@ -57,7 +57,7 @@ public class PortalHttpServletRequest extends AbstractHttpServletRequestWrapper 
      * @param this.request Request to wrap, can not be null.
      */
     @SuppressWarnings("unchecked")
-    public PortalHttpServletRequest(HttpServletRequest request, HttpServletResponse response, IUserInstanceManager userInstanceManager) {
+    public PortalHttpServletRequestWrapper(HttpServletRequest request, HttpServletResponse response, IUserInstanceManager userInstanceManager) {
         super(request);
         Validate.notNull(response);
         Validate.notNull(userInstanceManager);

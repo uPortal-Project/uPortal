@@ -129,11 +129,12 @@
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portalRequestUtils" ref="portalRequestUtils" />
+        <property name="portletDelegationManager" ref="portletDelegationManager"/>
         <property name="useAnchors" value="${org.jasig.portal.ChannelManager.use_anchors}"/>
     </bean>
     
-    <bean id="portletSessionActionManager" class="org.jasig.portal.portlet.session.PortletSessionActionManagerImpl">
-        <property name="portletContainer" ref="portletContainer" />
+    <bean id="portletDelegationManager" class="org.jasig.portal.api.portlet.PortletDelegationManagerImpl">
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
     </bean>
     
     <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager">
@@ -179,8 +180,6 @@
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
-        <property name="portletSessionActionManager" ref="portletSessionActionManager" />
-        <property name="userInstanceManager" ref="userInstanceManager" />
         <property name="portletRenderer" ref="portletRenderer" />
     </bean>
     

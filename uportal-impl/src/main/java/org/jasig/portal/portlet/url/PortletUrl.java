@@ -19,7 +19,8 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
- * Simple bean that describes a Portlet URL, all properties are null by default
+ * Simple bean that describes a Portlet URL, all properties are null by default except targetWindowId
+ * which will never be null
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -31,6 +32,7 @@ public class PortletUrl {
     private WindowState windowState = null;
     private PortletMode portletMode = null;
     private Boolean secure = null;
+    private PortletUrl delegatePortletUrl = null;
     
     
     public PortletUrl(IPortletWindowId targetWindowId) {
@@ -44,68 +46,52 @@ public class PortletUrl {
     public IPortletWindowId getTargetWindowId() {
         return this.targetWindowId;
     }
-    /**
-     * @return the requestType
-     */
+
     public RequestType getRequestType() {
         return requestType;
     }
-    /**
-     * @param requestType the requestType to set
-     */
     public void setRequestType(RequestType requestType) {
         this.requestType = requestType;
     }
-    /**
-     * @return the parameters
-     */
+
     public Map<String, List<String>> getParameters() {
         return parameters;
     }
-    /**
-     * @param parameters the parameters to set
-     */
     public void setParameters(Map<String, List<String>> parameters) {
         this.parameters = parameters;
     }
-    /**
-     * @return the windowState
-     */
+
     public WindowState getWindowState() {
         return windowState;
     }
-    /**
-     * @param windowState the windowState to set
-     */
     public void setWindowState(WindowState windowState) {
         this.windowState = windowState;
     }
-    /**
-     * @return the portletMode
-     */
+
     public PortletMode getPortletMode() {
         return portletMode;
     }
-    /**
-     * @param portletMode the portletMode to set
-     */
     public void setPortletMode(PortletMode portletMode) {
         this.portletMode = portletMode;
     }
-    /**
-     * @return the secure
-     */
+
     public Boolean getSecure() {
         return secure;
     }
-    /**
-     * @param secure the secure to set
-     */
     public void setSecure(Boolean secure) {
         this.secure = secure;
     }
     
-    
+    public PortletUrl getDelegatePortletUrl() {
+        return this.delegatePortletUrl;
+    }
+    /**
+     * @param delegatePortletUrl URL data for a delegate portlet involved with rendering the url
+     */
+    public void setDelegatePortletUrl(PortletUrl delegatePortletUrl) {
+        this.delegatePortletUrl = delegatePortletUrl;
+    }
+
     /**
      * @see java.lang.Object#equals(Object)
      */
@@ -125,6 +111,7 @@ public class PortletUrl {
             .append(this.windowState, rhs.windowState)
             .append(this.portletMode, rhs.portletMode)
             .append(this.parameters, rhs.parameters)
+            .append(this.delegatePortletUrl, rhs.delegatePortletUrl)
             .isEquals();
     }
     /**
@@ -139,6 +126,7 @@ public class PortletUrl {
             .append(this.windowState)
             .append(this.parameters)
             .append(this.portletMode)
+            .append(this.delegatePortletUrl)
             .toHashCode();
     }
     /**
@@ -153,6 +141,7 @@ public class PortletUrl {
         .append("windowState", this.windowState)
         .append("parameters", this.parameters)
         .append("portletMode", this.portletMode)
+        .append("delegatePortletUrl", this.delegatePortletUrl)
         .toString();
     }
 }

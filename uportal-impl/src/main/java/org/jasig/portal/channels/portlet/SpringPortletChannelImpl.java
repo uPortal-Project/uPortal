@@ -5,12 +5,8 @@
  */
 package org.jasig.portal.channels.portlet;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
 
-import javax.portlet.PortletException;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
@@ -35,13 +31,11 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlet.session.IPortletSessionActionManager;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
-import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -61,8 +55,6 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletRequestParameterManager portletRequestParameterManager;
-    private IPortletSessionActionManager portletSessionActionManager;
-    private IUserInstanceManager userInstanceManager;
     private IPortletRenderer portletRenderer;
     
     public IPortletRenderer getPortletRenderer() {
@@ -127,36 +119,6 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
         Validate.notNull(portletRequestParameterManager);
         this.portletRequestParameterManager = portletRequestParameterManager;
-    }
-    
-    /**
-     * @return the portletSessionActionManager
-     */
-    public IPortletSessionActionManager getPortletSessionActionManager() {
-        return this.portletSessionActionManager;
-    }
-    /**
-     * @param portletSessionActionManager the portletSessionActionManager to set
-     */
-    @Required
-    public void setPortletSessionActionManager(IPortletSessionActionManager portletSessionActionManager) {
-        Validate.notNull(portletSessionActionManager);
-        this.portletSessionActionManager = portletSessionActionManager;
-    }
-
-    /**
-     * @return the userInstanceManager
-     */
-    public IUserInstanceManager getUserInstanceManager() {
-        return userInstanceManager;
-    }
-    /**
-     * @param userInstanceManager the userInstanceManager to set
-     */
-    @Required
-    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        Validate.notNull(userInstanceManager);
-        this.userInstanceManager = userInstanceManager;
     }
     
     //***** Helper methods for the class *****//
@@ -426,7 +388,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                     final PortletUrl portletUrl = new PortletUrl(portletWindowId);
                     portletUrl.setRequestType(RequestType.RENDER);
                     
-                    this.portletRequestParameterManager.setRequestInfo(httpServletRequest, Arrays.asList(portletUrl));
+                    this.portletRequestParameterManager.setRequestInfo(httpServletRequest, portletUrl);
                 }
                 else if (!portletWindowId.equals(targetedPortletWindowId)) {
                     this.logger.warn("A PortalEvent targeting portlet window id '" + portletWindowId + "' was made but this request already targets portlet window id '" + targetedPortletWindowId + "'. The event will be handled but the portlet may not re-render due to caching.");
@@ -493,33 +455,15 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      */
     public void prepareForReset(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
-        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
-        
-        portletWindow.setPortletMode(PortletMode.VIEW);
-        portletWindow.setRequestParameters(null);
-        portletWindow.setExpirationCache(null);
-        
         final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
-        final StringWriter initResultsOutput = new StringWriter();
-        final ContentRedirectingHttpServletResponse contentRedirectingHttpServletResponse = new ContentRedirectingHttpServletResponse(httpServletResponse, new PrintWriter(initResultsOutput));
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
         
         try {
-            this.portletSessionActionManager.clear(portletWindow, httpServletRequest, contentRedirectingHttpServletResponse);
+            this.portletRenderer.doReset(portletWindowId, httpServletRequest, httpServletResponse);
         }
-        catch (PortletException pe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, pe);
-        }
-        catch (PortletContainerException pce) {
-            throw new PortletDispatchException("The portlet container threw an exception while executing admin command to clear session on portlet window '" + portletWindow + "'. " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, pce);
-        }
-        catch (IOException ioe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session. " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, ioe);
-        }
-        
-        final StringBuffer initResults = initResultsOutput.getBuffer();
-        if (initResults.length() > 0) {
-            throw new PortletLoadFailureException("Content was written to response during reset of portlet window '" + portletWindow + "' with " + this.getChannelLogInfo(channelStaticData, portletWindow) + ". Response Content: " + initResults, portletWindow);
+        catch (PortletDispatchException e) {
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+            throw new PortletDispatchException("Exception executing portlet reset: " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, e);
         }
     }
     

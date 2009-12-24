@@ -5,9 +5,6 @@
  */
 package org.jasig.portal.portlet.url;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
@@ -26,7 +23,8 @@ import org.springframework.beans.factory.annotation.Required;
  * @version $Revision$
  */
 public class PortletRequestParameterManager implements IPortletRequestParameterManager {
-    protected static final String PORTLET_URLS_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".PORTLET_REQUEST_MAP";
+    protected static final String NO_PORTLET_URL_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".NO_PORTLET_URL";
+    protected static final String PORTLET_URL_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".PORTLET_URL";
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -56,13 +54,12 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
         
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
 
-        final List<PortletUrl> portletUrls = this.getAndCheckRequestInfoMap(request);
-        if (portletUrls == null) {
+        final PortletUrl portletUrl = this.getAndCheckRequestInfoMap(request);
+        if (portletUrl == null) {
             return null;
         }
         
-        final PortletUrl targetedPortletUrl = portletUrls.get(0);
-        return targetedPortletUrl.getTargetWindowId();
+        return portletUrl.getTargetWindowId();
     }
     
     @Override
@@ -72,51 +69,39 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
         
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
 
-        final List<PortletUrl> portletUrls = this.getAndCheckRequestInfoMap(request);
-        if (portletUrls == null) {
+        PortletUrl portletUrl = this.getAndCheckRequestInfoMap(request);
+        if (portletUrl == null) {
             return null;
         }
         
-        for (final PortletUrl portletUrl : portletUrls) {
+        while (portletUrl != null) {
             if (portletWindowId.equals(portletUrl.getTargetWindowId())) {
                 return portletUrl;
             }
+            
+            portletUrl = portletUrl.getDelegatePortletUrl();
         }
         
         return null;
     }
     
     @Override
-    public List<PortletUrl> getAllRequestInfo(HttpServletRequest request) {
-        Validate.notNull(request, "request can not be null");
-        
-        request = this.portalRequestUtils.getOriginalPortalRequest(request);
-
-        final List<PortletUrl> portletUrls = this.getAndCheckRequestInfoMap(request);
-        if (portletUrls == null) {
-            return null;
-        }
-        
-        return portletUrls;
-    }
-    
-    
-    @Override
-    public void setRequestInfo(HttpServletRequest request, List<PortletUrl> portletUrls) {
+    public void setRequestInfo(HttpServletRequest request, PortletUrl portletUrl) {
         Validate.notNull(request, "request can not be null");
         
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         
-        final List<PortletUrl> existingPortletUrls = (List<PortletUrl>)request.getAttribute(PORTLET_URLS_ATTRIBUTE);
-        if (existingPortletUrls != null && existingPortletUrls.size() > 0) {
+        final PortletUrl existingPortletUrl = (PortletUrl)request.getAttribute(PORTLET_URL_ATTRIBUTE);
+        if (existingPortletUrl != null) {
             throw new IllegalStateException("Portlet request info can only be set once per request");
         }
         
-        if (portletUrls == null) {
-            portletUrls = Collections.emptyList();
+        if (portletUrl != null) {
+            request.setAttribute(PORTLET_URL_ATTRIBUTE, portletUrl);
         }
-        
-        request.setAttribute(PORTLET_URLS_ATTRIBUTE, portletUrls);
+        else {
+            request.setAttribute(NO_PORTLET_URL_ATTRIBUTE, NO_PORTLET_URL_ATTRIBUTE);
+        }
     }
     
     /**
@@ -127,18 +112,13 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
      * @return List of PortletUrls, null if the List is empty
      * @throws RequestParameterProcessingIncompleteException if no portlet parameter processing has happened for the request yet.
      */
-    protected List<PortletUrl> getAndCheckRequestInfoMap(HttpServletRequest request) {
-        final List<PortletUrl> portletUrls = (List<PortletUrl>)request.getAttribute(PORTLET_URLS_ATTRIBUTE);
+    protected PortletUrl getAndCheckRequestInfoMap(HttpServletRequest request) {
+        final PortletUrl portletUrl = (PortletUrl)request.getAttribute(PORTLET_URL_ATTRIBUTE);
         
-        if (portletUrls == null) {
+        if (portletUrl == null && request.getAttribute(NO_PORTLET_URL_ATTRIBUTE) == null) {
             throw new RequestParameterProcessingIncompleteException("No portlet parameter processing has been completed on this request");
         }
         
-        //Do a reference equality check against no parameters Map
-        if (portletUrls.size() == 0) {
-            return null;
-        }
-        
-        return portletUrls;
+        return portletUrl;
     }
 }

@@ -13,13 +13,13 @@ import junit.framework.TestCase;
 
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.easymock.EasyMock;
+import org.jasig.portal.channels.portlet.PortletHttpServletRequestWrapper;
 import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindow;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
-import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -51,7 +51,7 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
      */
     public void testGetUnsetCache() throws Exception {
         final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.setAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, httpServletRequest);
+        httpServletRequest.setAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, httpServletRequest);
         
         final MockPortletWindow portletWindow = new MockPortletWindow();
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("1");
@@ -93,7 +93,7 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
      */
     public void testGetCacheFromDD() throws Exception {
         final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.setAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, httpServletRequest);
+        httpServletRequest.setAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, httpServletRequest);
         
         final MockPortletWindow portletWindow = new MockPortletWindow();
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("1");
@@ -139,7 +139,7 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
      */
     public void testGetCacheFromWindow() throws Exception {
         final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.setAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, httpServletRequest);
+        httpServletRequest.setAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, httpServletRequest);
         
         final MockPortletWindow portletWindow = new MockPortletWindow();
         portletWindow.setExpirationCache(-1);
@@ -174,7 +174,7 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
      */
     public void testSetCacheWithDDCache() throws Exception  {
         final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.setAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, httpServletRequest);
+        httpServletRequest.setAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, httpServletRequest);
         
         final MockPortletWindow portletWindow = new MockPortletWindow();
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("1");
@@ -217,7 +217,7 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
      */
     public void testSetCacheWithNoDDCache() throws Exception  {
         final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.setAttribute(AttributeScopingHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, httpServletRequest);
+        httpServletRequest.setAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, httpServletRequest);
         
         final MockPortletWindow portletWindow = new MockPortletWindow();
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("1");

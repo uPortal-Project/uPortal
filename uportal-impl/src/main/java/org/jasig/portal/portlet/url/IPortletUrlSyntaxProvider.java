@@ -5,8 +5,6 @@
  */
 package org.jasig.portal.portlet.url;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -32,12 +30,11 @@ public interface IPortletUrlSyntaxProvider {
     public String generatePortletUrl(HttpServletRequest request, IPortletWindow portletWindow, PortletUrl portletUrl);
     
     /**
-     * Parses the parameters on the request, providing a List of PortletUrls that were targeted with parameters. 
-     * All PortletUrl objects returned will have their {@link RequestType} set.
+     * Parses out PortletUrl data from the request.
      * 
      * @param request The request to parse parameters from
-     * @return A list of PortletUrls in order. The first item is the primary portlet, subsequent items are delegated portlets. Empty if no portlets are targeted
+     * @return The PortletUrl data for the request, null if no portlet is targeted by this request
      * @throws IllegalArgumentException if request is null.
      */
-    public List<PortletUrl> parsePortletParameters(HttpServletRequest request);
+    public PortletUrl parsePortletUrl(HttpServletRequest request);
 }

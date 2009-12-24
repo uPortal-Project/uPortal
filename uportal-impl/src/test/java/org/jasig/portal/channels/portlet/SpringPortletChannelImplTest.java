@@ -36,7 +36,6 @@ import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.url.AttributeScopingHttpServletRequestWrapper;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 

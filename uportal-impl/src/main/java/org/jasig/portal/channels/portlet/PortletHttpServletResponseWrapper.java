@@ -12,6 +12,8 @@ package org.jasig.portal.channels.portlet;
 
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +29,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * 
  * @version $Revision: 11911 $
  */
-public class ContentRedirectingHttpServletResponse extends HttpServletResponseWrapper {
+public class PortletHttpServletResponseWrapper extends HttpServletResponseWrapper {
+    private final Object urlEncodingMutex;
     private final PrintWriter wrappedWriter;
     
     private PrintWriter writer;
@@ -36,8 +39,10 @@ public class ContentRedirectingHttpServletResponse extends HttpServletResponseWr
     /**
      * @param servlet response
      */
-    public ContentRedirectingHttpServletResponse(HttpServletResponse res, PrintWriter printWriter) {
+    public PortletHttpServletResponseWrapper(HttpServletResponse res, PrintWriter printWriter) {
         super(res);
+        
+        this.urlEncodingMutex = this.getRootResponse();
         
         Validate.notNull(printWriter, "printWriter cannot be null");
         this.wrappedWriter = printWriter;
@@ -91,11 +96,11 @@ public class ContentRedirectingHttpServletResponse extends HttpServletResponseWr
      */
     @Override
     public void flushBuffer() {
+        this.committed = true;
+        
         if (this.writer != null) {
             this.writer.flush();
         }
-        
-        this.committed = true;
     }
 
     /* (non-Javadoc)
@@ -116,11 +121,11 @@ public class ContentRedirectingHttpServletResponse extends HttpServletResponseWr
      */
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ContentRedirectingHttpServletResponse)) {
+        if (!(obj instanceof PortletHttpServletResponseWrapper)) {
             return false;
         }
         
-        final ContentRedirectingHttpServletResponse rhs = (ContentRedirectingHttpServletResponse)obj;
+        final PortletHttpServletResponseWrapper rhs = (PortletHttpServletResponseWrapper)obj;
         
         return new EqualsBuilder()
             .append(this.getResponse(), rhs.getResponse())
@@ -147,33 +152,43 @@ public class ContentRedirectingHttpServletResponse extends HttpServletResponseWr
 
     @Override
     public String encodeRedirectUrl(String url) {
-        synchronized (super.getResponse()) {
+        synchronized (this.urlEncodingMutex) {
             return super.encodeRedirectUrl(url);
         }
     }
 
     @Override
     public String encodeRedirectURL(String url) {
-        synchronized (super.getResponse()) {
+        synchronized (this.urlEncodingMutex) {
             return super.encodeRedirectURL(url);
         }
     }
 
     @Override
     public String encodeUrl(String url) {
-        synchronized (super.getResponse()) {
+        synchronized (this.urlEncodingMutex) {
             return super.encodeUrl(url);
         }
     }
 
     @Override
     public String encodeURL(String url) {
-        synchronized (super.getResponse()) {
+        synchronized (this.urlEncodingMutex) {
             return super.encodeURL(url);
         }
     }
 
-
+    protected HttpServletResponse getRootResponse() {
+        HttpServletResponse response = this;
+        
+        final Set<HttpServletResponse> loopDetector = new HashSet<HttpServletResponse>();
+        
+        while (response instanceof HttpServletResponseWrapper && loopDetector.add(response)) {
+            response = (HttpServletResponse)super.getResponse();
+        }
+        
+        return response;
+    }
 
 
     /**
@@ -190,7 +205,7 @@ public class ContentRedirectingHttpServletResponse extends HttpServletResponseWr
         @Override
         public void flush() {
             super.flush();
-            ContentRedirectingHttpServletResponse.this.setCommitted(true);
+            PortletHttpServletResponseWrapper.this.setCommitted(true);
         }
     }
 }

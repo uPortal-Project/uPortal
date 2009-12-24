@@ -37,7 +37,7 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.url.PortalHttpServletRequest;
+import org.jasig.portal.url.PortalHttpServletRequestWrapper;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.web.context.WebApplicationContext;
@@ -521,7 +521,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		// instantiate the channel in the user's layout
 		final HttpSession session = request.getSession(false);
         ChannelManager cm = new ChannelManager(upm, session);
-		cm.instantiateChannel(new PortalHttpServletRequest(request, response, userInstanceManager), response, channel.getId());
+		cm.instantiateChannel(new PortalHttpServletRequestWrapper(request, response, userInstanceManager), response, channel.getId());
 
 		try {
 			// save the user's layout
