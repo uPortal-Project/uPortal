@@ -24,6 +24,7 @@ import org.apache.pluto.descriptors.portlet.PortletPreferenceDD;
 import org.apache.pluto.descriptors.portlet.PortletPreferencesDD;
 import org.apache.pluto.internal.InternalPortletPreference;
 import org.apache.pluto.spi.optional.PortletPreferencesService;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -222,22 +223,24 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         //Determine if the user is a guest
         final boolean isGuest = isGuestUser(httpServletRequest);
         
-        //If not guest or storing shared guest prefs get the prefs from the portlet entity
-        if (this.isLoadFromEntity(portletRequest)) {
-            //Add entity preferences
-            final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
-            final List<IPortletPreference> entityPreferencesList = entityPreferences.getPortletPreferences();
-            this.addPreferencesToMap(entityPreferencesList, preferencesMap);
-
-            if (!this.isLoadFromMemory(portletRequest) && !this.isStoreInEntity(portletRequest) && this.isStoreInMemory(portletRequest)) {
-                store(plutoPortletWindow, portletRequest, preferencesMap.values().toArray(new InternalPortletPreference[preferencesMap.size()]));
+        if (!IPortletAdaptor.CONFIG.equals(portletWindow.getPortletMode())) {
+            //If not guest or storing shared guest prefs get the prefs from the portlet entity
+            if (this.isLoadFromEntity(portletRequest)) {
+                //Add entity preferences
+                final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
+                final List<IPortletPreference> entityPreferencesList = entityPreferences.getPortletPreferences();
+                this.addPreferencesToMap(entityPreferencesList, preferencesMap);
+    
+                if (!this.isLoadFromMemory(portletRequest) && !this.isStoreInEntity(portletRequest) && this.isStoreInMemory(portletRequest)) {
+                    store(plutoPortletWindow, portletRequest, preferencesMap.values().toArray(new InternalPortletPreference[preferencesMap.size()]));
+                }
             }
-        }
-        //If a guest and storing non-shared guest prefs get the prefs from the session
-        if (this.isLoadFromMemory(portletRequest)) {
-            //Add memory preferences
-            final List<IPortletPreference> entityPreferencesList = this.getSessionPreferences(portletEntity.getPortletEntityId(), httpServletRequest);
-            this.addPreferencesToMap(entityPreferencesList, preferencesMap);
+            //If a guest and storing non-shared guest prefs get the prefs from the session
+            if (this.isLoadFromMemory(portletRequest)) {
+                //Add memory preferences
+                final List<IPortletPreference> entityPreferencesList = this.getSessionPreferences(portletEntity.getPortletEntityId(), httpServletRequest);
+                this.addPreferencesToMap(entityPreferencesList, preferencesMap);
+            }
         }
 
         return preferencesMap.values().toArray(new InternalPortletPreference[preferencesMap.size()]);
@@ -296,8 +299,11 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             portletPreferences.add(preference);
         }
 
+        if (IPortletAdaptor.CONFIG.equals(portletWindow.getPortletMode())) {
+            definitionPreferences.setPortletPreferences(portletPreferences);
+        }
         //If not a guest or if guest prefs are shared store them on the entity
-        if (this.isStoreInEntity(portletRequest)) {
+        else if (this.isStoreInEntity(portletRequest)) {
             //Update the portlet entity with the new preferences
             final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
             entityPreferences.setPortletPreferences(portletPreferences);
