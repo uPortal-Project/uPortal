@@ -7,6 +7,6 @@
   </principal>
   <activity>PUBLISH</activity>
   <target permission-type="GRANT"> 
-    <literal>CHAN_ID.*</literal> 
+    <literal>ALL_CHANNELS</literal> 
   </target>
 </permission-set>
