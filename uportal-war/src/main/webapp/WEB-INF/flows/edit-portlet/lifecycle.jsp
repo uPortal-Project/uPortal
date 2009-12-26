@@ -6,6 +6,7 @@
 
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
+<%@ page import="org.jasig.portal.channel.ChannelLifecycleState,java.util.Set" %>
 
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
 <portlet:actionURL var="queryUrl">
@@ -82,6 +83,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </table>
       </div>
        
+      <c:set var="lStates" value="${ lifecycleStates }"/>
+      <% Set states = (Set) pageContext.getAttribute("lStates"); %>
+      <c:if test="<%= states.contains(ChannelLifecycleState.PUBLISHED) %>">
       <div id="${n}publishingDateSection" style="${ channel.lifecycleState == 'PUBLISHED' || channel.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
 	      <h3 class="portlet-section-header" role="heading"><spring:message code="lifecycle.publishDateHeading"/></h3>
 	      <div class="portlet-section-body"> 
@@ -122,7 +126,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	 
 	      </div>
       </div>
+      </c:if>
 
+      <c:if test="<%= states.contains(ChannelLifecycleState.EXPIRED) %>">
       <div id="${n}expirationDateSection" style="${ channel.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
 	      <h3 class="portlet-section-header" role="heading"><spring:message code="lifecycle.expirationDateHeading"/></h3>
 	      <div class="portlet-section-body"> 
@@ -163,6 +169,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	 
 	      </div>
       </div>
+      </c:if>
       
     </div> <!-- end: portlet-section -->
 

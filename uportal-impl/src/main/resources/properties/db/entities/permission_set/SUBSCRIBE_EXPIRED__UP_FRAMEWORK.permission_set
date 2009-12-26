@@ -8,6 +8,6 @@
   </principal>
   <activity>SUBSCRIBE_EXPIRED</activity>
   <target permission-type="GRANT"> 
-    <group>All categories</group> 
+    <literal>ALL_CHANNELS</literal> 
   </target>
 </permission-set>

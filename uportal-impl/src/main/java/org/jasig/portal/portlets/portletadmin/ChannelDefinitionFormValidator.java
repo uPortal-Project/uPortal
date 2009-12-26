@@ -17,6 +17,7 @@ import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.binding.validation.ValidationContext;
 
 public class ChannelDefinitionFormValidator {
 	
@@ -162,43 +163,44 @@ public class ChannelDefinitionFormValidator {
 		}
 	}
 	
-	public void validateLifecycle(ChannelDefinitionForm def, MessageContext context) {
+	public void validateLifecycle(ChannelDefinitionForm def, ValidationContext context) {
+		MessageContext messageContext = context.getMessageContext();
 		
 		if (def.getLifecycleState() == null) {
-			context.addMessage(new MessageBuilder().error().source("lifecycle")
+			messageContext.addMessage(new MessageBuilder().error().source("lifecycle")
 					.code("lifecycle.error.selectLifecycle")
 					.defaultText("Please select a lifecycle stage").build());
 		}
 		Date now = new Date();
 		if (def.getPublishDate() != null) {
 			if (def.getPublishDateTime().before(now)) {
-				context.addMessage(new MessageBuilder().error().source("publishDate")
+				messageContext.addMessage(new MessageBuilder().error().source("publishDate")
 						.code("lifecycle.error.invalidPublishDate")
 						.defaultText("The auto-publishing date must be in the future").build());
 			}
 		}
 		if (def.getExpirationDate() != null) {
 			if (def.getExpirationDateTime().before(now)) {
-				context.addMessage(new MessageBuilder().error().source("expirationDate")
+				messageContext.addMessage(new MessageBuilder().error().source("expirationDate")
 						.code("lifecycle.error.invalidExpirationDate")
 						.defaultText("The auto-expiration date must be in the future").build());
 			}
 		}
 		if (def.getPublishDate() != null && def.getExpirationDate() != null) {
 			if (def.getExpirationDateTime().before(def.getPublishDateTime())) {
-				context.addMessage(new MessageBuilder().error().source("expirationDate")
+				messageContext.addMessage(new MessageBuilder().error().source("expirationDate")
 						.code("lifecycle.error.invalidPublishAndExpirationDate")
 						.defaultText("The auto-expiration date must be after the auto-publish date").build());
 			}
 		}
 	}
 	
-	public void checkSave(ChannelDefinitionForm def, MessageContext context) {
-		validateBasicInfo(def, context);
-		validateChooseType(def, context);
-		validateSetParameters(def, context);
-		validateChooseCategory(def, context);
-		validateChooseGroup(def, context);
+	public void checkSave(ChannelDefinitionForm def, ValidationContext context) {
+		validateBasicInfo(def, context.getMessageContext());
+		validateChooseType(def, context.getMessageContext());
+		validateSetParameters(def, context.getMessageContext());
+//		validateChooseCategories(def, context);
+		validateChooseGroup(def, context.getMessageContext());
 	}
 
 }

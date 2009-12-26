@@ -38,6 +38,13 @@ public interface IPermission {
   public static final String CHANNEL_RENDERER_EXPIRED_ACTIVITY = "RENDER_EXPIRED";
     
   /*
+   * Channel management permissions by lifecycle state.
+   */
+  public static final String CHANNEL_MANAGER_CREATED_ACTIVITY = "MANAGE_CREATED";
+  public static final String CHANNEL_MANAGER_APPROVED_ACTIVITY = "MANAGE_APPROVED";
+  public static final String CHANNEL_MANAGER_EXPIRED_ACTIVITY = "MANAGE_EXPIRED";
+    
+  /*
     Permission types.  At present only 2, but that could change.
   */
   public String PERMISSION_TYPE_GRANT = "GRANT";
@@ -52,7 +59,11 @@ public interface IPermission {
     channel.  Used, for example, for Permission.target when the portal framework
     grants a Permission to perform some activity on a channel.
   */
-  public String CHANNEL_PREFIX = "CHAN_ID.";    /**
+  public String CHANNEL_PREFIX = "CHAN_ID.";    
+  
+  public String ALL_CHANNELS_TARGET = "ALL_CHANNELS";
+  
+  /**
    * Gets the activity associated with this <code>IPermission</code>.
    * @return String
    */

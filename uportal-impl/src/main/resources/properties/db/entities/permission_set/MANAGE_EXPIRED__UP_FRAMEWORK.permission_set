@@ -3,10 +3,12 @@
   <owner>UP_FRAMEWORK</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
-    <group>Fragment Owners</group>
     <group>Portal System</group> 
   </principal>
-  <activity>SUBSCRIBE_CREATED</activity>
+  <activity>MANAGE_EXPIRED</activity>
+  <target permission-type="GRANT"> 
+    <group>All Categories</group> 
+  </target>
   <target permission-type="GRANT"> 
     <literal>ALL_CHANNELS</literal> 
   </target>

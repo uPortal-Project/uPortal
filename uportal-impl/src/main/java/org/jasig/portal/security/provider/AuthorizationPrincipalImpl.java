@@ -6,6 +6,7 @@
 package org.jasig.portal.security.provider;
 
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
@@ -52,8 +53,8 @@ public boolean canManage(int channelPublishId) throws org.jasig.portal.Authoriza
  * @return boolean
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-public boolean canPublish() throws org.jasig.portal.AuthorizationException {
-    return getAuthorizationService().canPrincipalPublish(this);
+public boolean canManage(ChannelLifecycleState state, String categoryId) throws AuthorizationException {
+	return getAuthorizationService().canPrincipalManage(this, state, categoryId);
 }
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to render this channel.

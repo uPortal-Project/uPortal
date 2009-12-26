@@ -35,6 +35,7 @@ import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPermissionPolicy;
 import org.jasig.portal.security.IPermissionSet;
 import org.jasig.portal.security.IPermissionStore;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
@@ -69,6 +70,9 @@ public class AuthorizationImpl implements IAuthorizationService {
 
     /** The cache to hold the list of principals. */
     private Map<String, IAuthorizationPrincipal> principalCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.PRINCIPAL_CACHE);
+
+    /** The cache to hold the list of principals. */
+    private Map<String, Set<String>> entityParentsCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.ENTITY_PARENTS_CACHE);
 
     /** The class representing the permission set type. */
     private Class PERMISSION_SET_TYPE;
@@ -167,8 +171,67 @@ throws AuthorizationException
 {
     String owner = IPermission.PORTAL_FRAMEWORK;
     String target = IPermission.CHANNEL_PREFIX + channelPublishId;
-    return doesPrincipalHavePermission
-      (principal, owner, IPermission.CHANNEL_MANAGER_ACTIVITY, target);
+    
+    // retrieve the indicated channel from the channel registry store and 
+    // determine its current lifecycle state
+	IChannelDefinition channel = this.channelRegistryStore
+				.getChannelDefinition(channelPublishId);
+    if (channel == null){
+    	return doesPrincipalHavePermission(principal, owner,
+				IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY, target);
+//    	throw new AuthorizationException("Unable to locate channel " + channelPublishId);
+    }    
+    ChannelLifecycleState state = channel.getLifecycleState();
+    int order = state.getOrder();
+    
+    /*
+     * The following code assumes that later lifecycle states imply permission
+     * for earlier lifecycle states.  For example, if a user has permission to 
+     * manage an expired channel, we assume s/he also has permission to 
+     * create, approve, and publish channels.  The following code counts 
+     * channels with auto-publish or auto-expiration dates set as requiring
+     * publish or expiration permissions for management, even though the channel 
+     * may not yet be published or expired.
+     */
+    
+    String all = IPermission.ALL_CHANNELS_TARGET;
+    String activity = IPermission.CHANNEL_MANAGER_EXPIRED_ACTIVITY;
+	if ((order <= ChannelLifecycleState.EXPIRED.getOrder() 
+			|| channel.getExpirationDate() != null)
+			&& (doesPrincipalHavePermission(principal, owner, activity, all)
+				|| doesPrincipalHavePermission(principal, owner,
+						activity, target))) {
+		return true;
+    } 
+	
+	activity = IPermission.CHANNEL_MANAGER_ACTIVITY;
+	if ((order <= ChannelLifecycleState.PUBLISHED.getOrder() 
+    		|| channel.getPublishDate() != null)
+			&& (doesPrincipalHavePermission(principal, owner, activity, all)
+				|| doesPrincipalHavePermission(principal, owner, 
+						activity, target))) {
+    	return true;
+    } 
+	
+	activity = IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY;
+	log.debug("order: " + order + ", approved order: " + ChannelLifecycleState.APPROVED.getOrder());
+	if (order <= ChannelLifecycleState.APPROVED.getOrder()
+			&& (doesPrincipalHavePermission(principal, owner, activity, all)
+				|| doesPrincipalHavePermission(principal, owner,
+						activity, target))) {
+    	return true;
+    } 
+	
+	activity = IPermission.CHANNEL_MANAGER_CREATED_ACTIVITY;
+	if (order <= ChannelLifecycleState.CREATED.getOrder()
+			&& (doesPrincipalHavePermission(principal, owner, activity, all)
+				|| doesPrincipalHavePermission(principal, owner,
+						activity, target))) {
+    	return true;
+    }
+    	
+	// if no permissions were found, return false
+	return false;
 }
 
 /**
@@ -176,10 +239,57 @@ throws AuthorizationException
  * @param principal IAuthorizationPrincipal
  * @return boolean
  */
-public boolean canPrincipalPublish (IAuthorizationPrincipal principal) throws AuthorizationException
+public boolean canPrincipalManage(IAuthorizationPrincipal principal, ChannelLifecycleState state, String categoryId) throws AuthorizationException
 {
-    return doesPrincipalHavePermission
-      (principal, IPermission.PORTAL_FRAMEWORK, IPermission.CHANNEL_PUBLISHER_ACTIVITY, null);
+//    return doesPrincipalHavePermission
+//      (principal, IPermission.PORTAL_FRAMEWORK, IPermission.CHANNEL_PUBLISHER_ACTIVITY, null);
+    String owner = IPermission.PORTAL_FRAMEWORK;
+    
+    // retrieve the indicated channel from the channel registry store and 
+    // determine its current lifecycle state
+    ChannelCategory category = this.channelRegistryStore.getChannelCategory(categoryId);
+    if (category == null){
+//    	return doesPrincipalHavePermission(principal, owner,
+//				IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY, target);
+    	throw new AuthorizationException("Unable to locate category " + categoryId);
+    }    
+    int order = state.getOrder();
+    
+    String all = IPermission.ALL_CHANNELS_TARGET;
+    String activity = IPermission.CHANNEL_MANAGER_EXPIRED_ACTIVITY;
+	if (order <= ChannelLifecycleState.EXPIRED.getOrder()
+			&& (doesPrincipalHavePermission(principal, owner, activity, all)
+				|| doesPrincipalHavePermission(principal, owner, 
+					activity, categoryId))) {
+		return true;
+    }
+	
+    activity = IPermission.CHANNEL_MANAGER_ACTIVITY;
+	if (order <= ChannelLifecycleState.PUBLISHED.getOrder()
+			&& (doesPrincipalHavePermission(principal, owner, activity, all)
+					|| doesPrincipalHavePermission(principal, owner,
+							activity, categoryId))) {
+    	return true;
+    }
+	
+    activity = IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY;
+	if (order <= ChannelLifecycleState.APPROVED.getOrder()
+			&& (doesPrincipalHavePermission(principal, owner, activity, all)
+					|| doesPrincipalHavePermission(principal, owner,
+							activity, categoryId))) {
+    	return true;
+    }
+	
+    activity = IPermission.CHANNEL_MANAGER_CREATED_ACTIVITY;
+	if (order <= ChannelLifecycleState.CREATED.getOrder()
+			&& (doesPrincipalHavePermission(principal, owner, activity, all)
+					|| doesPrincipalHavePermission(principal, owner,
+							activity, categoryId))) {
+    	return true;
+    }
+    	
+	return false;
+
 }
 
 /**
@@ -242,7 +352,8 @@ throws AuthorizationException
     }
 
     // test the appropriate permission
-    return doesPrincipalHavePermission(principal, owner, permission, target);
+    return (doesPrincipalHavePermission(principal, owner, permission, IPermission.ALL_CHANNELS_TARGET)
+    		|| doesPrincipalHavePermission(principal, owner, permission, target));
 
 }
 
@@ -776,79 +887,67 @@ private IPermission[] primGetPermissionsForPrincipal
 throws AuthorizationException
 {
 
-    final IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-
     /*
      * Get a list of all permissions for the specified principle, then iterate
      * through them to build a list of the permissions matching the specified
      * criteria.
      */
-    
+
     IPermission[] perms = primGetPermissionsForPrincipal(principal);
     if ( owner == null && activity == null && target == null )
         { return perms; }
-    
+
+	Set<String> containingGroups;
+	
+	if (target != null) {
+		
+        containingGroups = (Set<String>) this.entityParentsCache.get(target);
+
+        if (containingGroups == null) {
+
+        	containingGroups = new HashSet<String>();
+        	IGroupMember targetEntity = GroupService.findGroup(target);
+    		if (targetEntity == null) {
+    			if (target.startsWith(IPermission.CHANNEL_PREFIX)) {
+    				targetEntity = GroupService.getGroupMember(target.replace(IPermission.CHANNEL_PREFIX, ""), IChannelDefinition.class);
+    			} else {
+    				targetEntity = GroupService.getGroupMember(target, IPerson.class);
+    			}
+    		}
+    		
+    		if (targetEntity != null) {
+    			for (Iterator containing = targetEntity.getAllContainingGroups(); containing.hasNext();) {
+    				containingGroups.add(((IEntityGroup)containing.next()).getKey());
+    			}
+    		}
+    		
+    		this.entityParentsCache.put(target, containingGroups);
+        	
+        }
+
+		
+	} else {
+		containingGroups = new HashSet<String>();
+	}
+
     List<IPermission> al = new ArrayList<IPermission>(perms.length);
     
     for ( int i=0; i<perms.length; i++ ) {
         String permissionTarget = perms[i].getTarget();
         
-        /*
-         * If the original permission target is a channel, we want to check the
-         * current target as a regex, then try all target channel's parent categories.
-         * This will allow us to do things like set a permission that matches
-         * all channels using the .* regex, or set permissions on a category
-         * which are inherited by all member channels.
-         */
-        if (    (target != null) &&
-                (target.startsWith(IPermission.CHANNEL_PREFIX))    ) {            
-            if (    (owner == null || owner.equals(perms[i].getOwner())) &&
-                    (activity == null || activity.equals(perms[i].getActivity()))    ) {
-                if (permissionTarget.startsWith(IPermission.CHANNEL_PREFIX)) {
-                    // perform a regex comparision against the channel
-                    if (target == null || target.matches(permissionTarget)) {
-                        al.add(perms[i]);
-                    }
-                }
-                else {
-                    try {
-                        boolean bFound = false;
-
-                        ChannelCategory category = crs.getChannelCategory(permissionTarget);
-                        if (category != null) {
-                            // determine if the target channel is a deepMemberOf the returned categories
-                            for (IChannelDefinition channel : crs.getAllChildChannels(category)) {
-                                if (target.equals(IPermission.CHANNEL_PREFIX + channel.getId())) {
-                                    al.add(perms[i]);
-                                    bFound = true;
-                                    break;
-                                }
-                                if (bFound) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex) {
-                        throw new AuthorizationException(ex);
-                    }
-                }
-            }
-        }
+        if (
+        		// owner matches
+        		(owner == null || owner.equals(perms[i].getOwner())) &&
+        		// activity matches
+                (activity == null || activity.equals(perms[i].getActivity())) &&
+                // target matches or is a member of the current permission target
+                (target == null || target.equals(permissionTarget) 
+                		|| containingGroups.contains(permissionTarget))    
+            ) {
+        	
+            al.add(perms[i]);
+        } 
         
-        /*
-         * If the target is not a channel, just test to see if the permission 
-         * matches.  Eventually this logic should be updated to allow permissions
-         * targeted to groups to cascade to their members.
-         */
-        
-        else {
-            if (    (owner == null || owner.equals(perms[i].getOwner())) &&
-                    (activity == null || activity.equals(perms[i].getActivity())) &&
-                    (target == null || target.equals(permissionTarget))    ) {
-                al.add(perms[i]);
-            }
-        }
     }
 
 

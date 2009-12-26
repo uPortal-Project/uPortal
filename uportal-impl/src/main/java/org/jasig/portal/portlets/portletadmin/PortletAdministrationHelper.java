@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -34,6 +35,7 @@ import org.apache.pluto.descriptors.portlet.SupportsDD;
 import org.apache.pluto.internal.impl.PortletContextImpl;
 import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.jasig.portal.ChannelCategory;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.api.portlet.DelegateState;
@@ -675,7 +677,40 @@ public class PortletAdministrationHelper {
 	public ChannelLifecycleState[] getLifecycleStates() {
 		return ChannelLifecycleState.values();
 	}
-		
+
+	public Set<ChannelLifecycleState> getAllowedLifecycleStates(IPerson person, List<JsonEntityBean> categories) {
+		Set<ChannelLifecycleState> states = new TreeSet<ChannelLifecycleState>();
+		if (hasLifecyclePermission(person, ChannelLifecycleState.EXPIRED, categories)) {
+			states.add(ChannelLifecycleState.CREATED);
+			states.add(ChannelLifecycleState.APPROVED);
+			states.add(ChannelLifecycleState.EXPIRED);
+			states.add(ChannelLifecycleState.PUBLISHED);
+		} else if (hasLifecyclePermission(person, ChannelLifecycleState.PUBLISHED, categories)) {
+			states.add(ChannelLifecycleState.CREATED);
+			states.add(ChannelLifecycleState.APPROVED);
+			states.add(ChannelLifecycleState.PUBLISHED);
+		} else if (hasLifecyclePermission(person, ChannelLifecycleState.APPROVED, categories)) {
+			states.add(ChannelLifecycleState.CREATED);
+			states.add(ChannelLifecycleState.APPROVED);
+		} else if (hasLifecyclePermission(person, ChannelLifecycleState.CREATED, categories)) {
+			states.add(ChannelLifecycleState.CREATED);
+		}
+		return states;
+	}
+	
+	public boolean hasLifecyclePermission(IPerson person, ChannelLifecycleState state, List<JsonEntityBean> categories) {
+		EntityIdentifier ei = person.getEntityIdentifier();
+	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+		for (JsonEntityBean category : categories) {
+			if (ap.canManage(state, category.getId())) {
+				logger.debug("Found permission for category " + category.getName() + " and lifecycle state " + state.toString());
+				return true;
+			}
+		}
+		logger.debug("No permission for lifecycle state " + state.toString());
+		return false;
+	}
+	
 	
 	public void configModeAction(ExternalContext externalContext) throws IOException {
 	    final ActionRequest actionRequest = (ActionRequest)externalContext.getNativeRequest();

@@ -27,6 +27,10 @@
         eternal="false" maxElementsInMemory="150" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
     
+    <cache name="org.jasig.portal.security.provider.AuthorizationImpl.ENTITY_PARENTS_CACHE"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" />
+    
     <cache name="org.jasig.portal.groups.CompositeEntityIdentifier.NAME_PARSE_CACHE"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />

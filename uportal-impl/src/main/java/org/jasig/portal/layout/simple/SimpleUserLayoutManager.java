@@ -776,14 +776,6 @@ public class SimpleUserLayoutManager implements IUserLayoutManager {
              String userName = person.getFullName();
              if (userName != null && userName.trim().length() > 0)
                  themePrefs.putParameterValue("userName", userName);
-             try {
-                 if (ChannelStaticData.getAuthorizationPrincipal(person).canPublish()) {
-                     themePrefs.putParameterValue("authorizedFragmentPublisher", "true");
-                     themePrefs.putParameterValue("authorizedChannelPublisher", "true");
-                 }
-             } catch (Exception e) {
-                 log.error("Exception determining publish rights for " + person, e);
-             }
 
              String[] values;
 

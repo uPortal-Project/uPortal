@@ -8,6 +8,7 @@ package org.jasig.portal.security;
 import java.util.Vector;
 
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.channel.ChannelLifecycleState;
 
 /**
  * An <code>IAuthorizationPrincipal</code> represents a portal entity to which
@@ -30,7 +31,7 @@ public interface IAuthorizationPrincipal {
  * @return boolean
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-    boolean canPublish() throws AuthorizationException;
+    public boolean canManage(ChannelLifecycleState state, String categoryId) throws AuthorizationException;
 /**
  * Answers if this <code>IAuthoriztionPrincipal</code> has permission to render this channel.
  * @return boolean

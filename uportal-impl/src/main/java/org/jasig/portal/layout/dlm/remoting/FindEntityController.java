@@ -7,9 +7,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.security.AdminEvaluator;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.services.AuthorizationService;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -30,11 +32,7 @@ public class FindEntityController  extends AbstractController {
 		HttpServletResponse response) throws Exception {
 		
 		/* Make sure the user is an admin. */
-		IPerson user = personManager.getPerson(request);
-		if(!AdminEvaluator.isAdmin(user)) {
-			throw new AuthorizationException("User " + user.getUserName() + 
-					" not an administrator.");
-		}
+		IPerson person = personManager.getPerson(request);
 		
 		String entityType = request.getParameter("entityType");
 		String entityId = request.getParameter("entityId");
@@ -46,6 +44,14 @@ public class FindEntityController  extends AbstractController {
 		if (StringUtils.isBlank(entityId)) {
 			return new ModelAndView("jsonView", "error", "No entityId specified.");
 		}
+
+		EntityIdentifier ei = person.getEntityIdentifier();
+	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+	    if (!ap.hasPermission("org.jasig.portal.channels.groupsmanager.CGroupsManager", "VIEW", entityId)) {
+			throw new AuthorizationException("User " + person.getUserName() + 
+					" does not have view permissions on entity " + entityId);
+		}
+
 
 		JsonEntityBean result = groupListHelper.getEntity(entityType, entityId, true);
 

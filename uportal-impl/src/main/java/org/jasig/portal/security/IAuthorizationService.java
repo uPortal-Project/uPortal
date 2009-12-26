@@ -8,6 +8,7 @@ package org.jasig.portal.security;
 import java.util.Vector;
 
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
 
@@ -43,7 +44,7 @@ public interface IAuthorizationService
  * @return boolean
  * @exception AuthorizationException
  */
-    public boolean canPrincipalPublish(IAuthorizationPrincipal principal)
+    public boolean canPrincipalManage(IAuthorizationPrincipal principal, ChannelLifecycleState state, String categoryId)
     throws AuthorizationException;
 /**
  * Answers if the principal has permission to render this Channel.

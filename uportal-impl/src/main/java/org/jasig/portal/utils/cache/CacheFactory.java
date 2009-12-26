@@ -20,6 +20,8 @@ public interface CacheFactory {
 
     /** The cache to be used to hold principals. */
     public static final String PRINCIPAL_CACHE = "org.jasig.portal.security.provider.AuthorizationImpl.AUTH_PRINCIPAL_CACHE";
+    
+    public static final String ENTITY_PARENTS_CACHE = "org.jasig.portal.security.provider.AuthorizationImpl.ENTITY_PARENTS_CACHE";
 
 	/** The cache to be used to hold names. */
     public static final String NAME_CACHE = "org.jasig.portal.groups.CompositeEntityIdentifier.NAME_PARSE_CACHE";
