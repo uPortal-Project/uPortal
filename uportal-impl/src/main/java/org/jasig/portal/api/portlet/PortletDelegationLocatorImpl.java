@@ -41,6 +41,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletRenderer portletRenderer;
     private IPortletRequestParameterManager portletRequestParameterManager;
+    private PortletDelegationManager portletDelegationManager;
     
 
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
@@ -69,6 +70,10 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
     
     public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
         this.portletRequestParameterManager = portletRequestParameterManager;
+    }
+    
+    public void setPortletDelegationManager(PortletDelegationManager portletDelegationManager) {
+        this.portletDelegationManager = portletDelegationManager;
     }
 
     /* (non-Javadoc)
@@ -117,7 +122,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
             }
         }
         
-        return new PortletDelegationDispatcherImpl(portletWindow, parentPortletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer, this.portletRequestParameterManager);
+        return new PortletDelegationDispatcherImpl(portletWindow, parentPortletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer, this.portletRequestParameterManager, this.portletDelegationManager);
     }
 
     /* (non-Javadoc)
@@ -137,6 +142,6 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
         
         final IPortletWindow parentPortletWindow = this.portletWindowRegistry.getPortletWindow(request, delegationParentId);
         
-        return new PortletDelegationDispatcherImpl(portletWindow, parentPortletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer, this.portletRequestParameterManager);
+        return new PortletDelegationDispatcherImpl(portletWindow, parentPortletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer, this.portletRequestParameterManager, this.portletDelegationManager);
     }
 }

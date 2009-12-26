@@ -17,6 +17,7 @@ import org.jasig.portal.url.IPortalRequestUtils;
  * @version $Revision$
  */
 public class PortletDelegationManagerImpl implements PortletDelegationManager {
+    private static final String DELEGATE_PARENT_PORTLET_URL_PREFIX = "DELEGATE_PARENT_PORTLET_URL_";
     private static final String DELEGATE_PORTLET_ACTION_REDIRECT_URL = "DELEGATE_PORTLET_ACTION_REDIRECT_URL";
 
     private IPortalRequestUtils portalRequestUtils;
@@ -28,13 +29,20 @@ public class PortletDelegationManagerImpl implements PortletDelegationManager {
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
+    
+
+    @Override
+    public void setParentPortletUrl(HttpServletRequest request, PortletUrl parentPortletUrl) {
+        final IPortletWindowId parentPortletWindowId = parentPortletUrl.getTargetWindowId();
+        request.setAttribute(DELEGATE_PARENT_PORTLET_URL_PREFIX + parentPortletWindowId.getStringId(), parentPortletUrl);
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.api.portlet.PortletDelegationManager#getParentPortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
      */
     @Override
     public PortletUrl getParentPortletUrl(HttpServletRequest request, IPortletWindowId parentPortletWindowId) {
-        return (PortletUrl)request.getAttribute("DELEGATE_PARENT_PORTLET_URL_" + parentPortletWindowId.getStringId());
+        return (PortletUrl)request.getAttribute(DELEGATE_PARENT_PORTLET_URL_PREFIX + parentPortletWindowId.getStringId());
     }
 
     @Override

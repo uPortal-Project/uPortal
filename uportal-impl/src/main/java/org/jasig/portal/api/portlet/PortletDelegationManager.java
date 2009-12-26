@@ -21,6 +21,13 @@ public interface PortletDelegationManager {
     public static final String DELEGATE_ACTION_REDIRECT_TOKEN = "DELEGATE_ACTION_REDIRECT";
     
     /**
+     * Set the URL to use as parent data when generating delegate portlet URLs
+     * 
+     * @param parentPortletUrl The parent URL data
+     */
+    public void setParentPortletUrl(HttpServletRequest request, PortletUrl parentPortletUrl);
+    
+    /**
      * Get the URL data to use for the delegation parent window
      * 
      * @param parentPortletWindowId The ID of the portlet window to get the PortletUrl for

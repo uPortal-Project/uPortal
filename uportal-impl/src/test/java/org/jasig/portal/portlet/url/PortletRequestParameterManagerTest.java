@@ -30,12 +30,12 @@ public class PortletRequestParameterManagerTest extends TestCase {
         request.setAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         
         final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
-        EasyMock.expect(portalRequestUtils.getOriginalPortalRequest(request)).andReturn(request).times(3);
+        EasyMock.expect(portalRequestUtils.getOriginalPortalRequest(request)).andReturn(request).times(2);
         
         EasyMock.replay(portalRequestUtils);
         
         parameterManager.setPortalRequestUtils(portalRequestUtils);
-        parameterManager.setRequestInfo(request, null);
+        parameterManager.setTargetedPortletUrl(request, null);
         
         final IPortletWindowId targetedPortletWindowId = parameterManager.getTargetedPortletWindowId(request);
         assertNull(targetedPortletWindowId);
@@ -65,7 +65,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("id");
         final PortletUrl portletUrl = new PortletUrl(portletWindowId);
         portletUrl.setRequestType(RequestType.RENDER);
-        parameterManager.setRequestInfo(request, portletUrl);
+        parameterManager.setTargetedPortletUrl(request, portletUrl);
         
         final IPortletWindowId targetedPortletWindowId = parameterManager.getTargetedPortletWindowId(request);
         assertEquals(portletWindowId, targetedPortletWindowId);
@@ -83,7 +83,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         request.setAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         
         final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
-        EasyMock.expect(portalRequestUtils.getOriginalPortalRequest(request)).andReturn(request).times(2);
+        EasyMock.expect(portalRequestUtils.getOriginalPortalRequest(request)).andReturn(request).times(1);
         
         EasyMock.replay(portalRequestUtils);
         

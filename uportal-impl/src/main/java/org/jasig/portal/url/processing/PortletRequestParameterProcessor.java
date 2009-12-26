@@ -85,7 +85,7 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
      */
     public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
         final PortletUrl portletUrl = this.portletUrlSyntaxProvider.parsePortletUrl(request);
-        this.portletRequestParameterManager.setRequestInfo(request, portletUrl);
+        this.portletRequestParameterManager.setTargetedPortletUrl(request, portletUrl);
         return true;
     }
 }

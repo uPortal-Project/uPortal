@@ -384,43 +384,50 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                     //OK, processing isn't complete yet so just assume it isn't targeted
                 }
                 
-                if (targetedPortletWindowId == null) {
-                    final PortletUrl portletUrl = new PortletUrl(portletWindowId);
+                PortletUrl portletUrl;
+                //Event targeting a portlet that isn't the targeted portlet, use an additional PortletUrl
+                if (targetedPortletWindowId == null || !portletWindowId.equals(targetedPortletWindowId)) {
+                    portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
+                    if (portletUrl == null) {
+                        portletUrl = new PortletUrl(portletWindowId);
+                    }
+                    
                     portletUrl.setRequestType(RequestType.RENDER);
                     
-                    this.portletRequestParameterManager.setRequestInfo(httpServletRequest, portletUrl);
+                    this.portletRequestParameterManager.setAdditionalPortletUrl(httpServletRequest, portletUrl);
                 }
-                else if (!portletWindowId.equals(targetedPortletWindowId)) {
-                    this.logger.warn("A PortalEvent targeting portlet window id '" + portletWindowId + "' was made but this request already targets portlet window id '" + targetedPortletWindowId + "'. The event will be handled but the portlet may not re-render due to caching.");
+                //Event targeting the currently targeted portlet, use the existing PortletUrl
+                else {
+                    portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, targetedPortletWindowId);
                 }
 
                 switch (portalEvent.getEventNumber()) {
                     case PortalEvent.DETACH_BUTTON_EVENT: {
-                        portletWindow.setWindowState(IPortletAdaptor.DETACHED);
+                        portletUrl.setWindowState(IPortletAdaptor.DETACHED);
                     }
                     break;
                     case PortalEvent.MINIMIZE_EVENT: {
-                        portletWindow.setWindowState(WindowState.MINIMIZED);
+                        portletUrl.setWindowState(WindowState.MINIMIZED);
                     }
                     break;
                     case PortalEvent.NORMAL_EVENT: {
-                        portletWindow.setWindowState(WindowState.NORMAL);
+                        portletUrl.setWindowState(WindowState.NORMAL);
                     }
                     break;
                     case PortalEvent.MAXIMIZE_EVENT: {
-                        portletWindow.setWindowState(WindowState.MAXIMIZED);
+                        portletUrl.setWindowState(WindowState.MAXIMIZED);
                     }
                     break;
                     case PortalEvent.EDIT_BUTTON_EVENT: {
-                        portletWindow.setPortletMode(PortletMode.EDIT);
+                        portletUrl.setPortletMode(PortletMode.EDIT);
                     }
                     break;
                     case PortalEvent.HELP_BUTTON_EVENT: {
-                        portletWindow.setPortletMode(PortletMode.HELP);
+                        portletUrl.setPortletMode(PortletMode.HELP);
                     }
                     break;
                     case PortalEvent.ABOUT_BUTTON_EVENT: {
-                        portletWindow.setPortletMode(IPortletAdaptor.ABOUT);
+                        portletUrl.setPortletMode(IPortletAdaptor.ABOUT);
                     }
                     break;
                 }

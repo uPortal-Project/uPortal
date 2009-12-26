@@ -5,6 +5,9 @@
  */
 package org.jasig.portal.portlet.url;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
@@ -24,7 +27,8 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class PortletRequestParameterManager implements IPortletRequestParameterManager {
     protected static final String NO_PORTLET_URL_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".NO_PORTLET_URL";
-    protected static final String PORTLET_URL_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".PORTLET_URL";
+    protected static final String TARGETED_PORTLET_URL_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".TARGETED_PORTLET_URL";
+    protected static final String PORTLET_URL_MAP_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".PORTLET_URL_MAP    ";
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -67,41 +71,54 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
         Validate.notNull(request, "request can not be null");
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
         
-        request = this.portalRequestUtils.getOriginalPortalRequest(request);
-
-        PortletUrl portletUrl = this.getAndCheckRequestInfoMap(request);
-        if (portletUrl == null) {
+        //Do this just to check that processing is complete
+        this.getAndCheckRequestInfoMap(request);
+        
+        final Map<IPortletWindowId, PortletUrl> portletUrlMap = (Map<IPortletWindowId, PortletUrl>)request.getAttribute(PORTLET_URL_MAP_ATTRIBUTE);
+        if (portletUrlMap == null) {
             return null;
         }
         
-        while (portletUrl != null) {
-            if (portletWindowId.equals(portletUrl.getTargetWindowId())) {
-                return portletUrl;
-            }
-            
-            portletUrl = portletUrl.getDelegatePortletUrl();
-        }
-        
-        return null;
+        return portletUrlMap.get(portletWindowId);
     }
     
     @Override
-    public void setRequestInfo(HttpServletRequest request, PortletUrl portletUrl) {
+    public void setTargetedPortletUrl(HttpServletRequest request, PortletUrl portletUrl) {
         Validate.notNull(request, "request can not be null");
         
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         
-        final PortletUrl existingPortletUrl = (PortletUrl)request.getAttribute(PORTLET_URL_ATTRIBUTE);
+        final PortletUrl existingPortletUrl = (PortletUrl)request.getAttribute(TARGETED_PORTLET_URL_ATTRIBUTE);
         if (existingPortletUrl != null) {
             throw new IllegalStateException("Portlet request info can only be set once per request");
         }
         
         if (portletUrl != null) {
-            request.setAttribute(PORTLET_URL_ATTRIBUTE, portletUrl);
+            request.setAttribute(TARGETED_PORTLET_URL_ATTRIBUTE, portletUrl);
+            this.setAdditionalPortletUrl(request, portletUrl);
         }
         else {
             request.setAttribute(NO_PORTLET_URL_ATTRIBUTE, NO_PORTLET_URL_ATTRIBUTE);
         }
+    }
+    
+    @Override
+    public void setAdditionalPortletUrl(HttpServletRequest request, PortletUrl portletUrl) {
+        Validate.notNull(request, "request can not be null");
+        Validate.notNull(portletUrl, "portletUrl can not be null");
+        
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
+        
+        Map<IPortletWindowId, PortletUrl> portletUrlMap = (Map<IPortletWindowId, PortletUrl>)request.getAttribute(PORTLET_URL_MAP_ATTRIBUTE);
+        if (portletUrlMap == null) {
+            portletUrlMap = new ConcurrentHashMap<IPortletWindowId, PortletUrl>();
+            request.setAttribute(PORTLET_URL_MAP_ATTRIBUTE, portletUrlMap);
+        }
+        
+        do {
+            portletUrlMap.put(portletUrl.getTargetWindowId(), portletUrl);
+            portletUrl = portletUrl.getDelegatePortletUrl();
+        } while (portletUrl != null);
     }
     
     /**
@@ -113,7 +130,7 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
      * @throws RequestParameterProcessingIncompleteException if no portlet parameter processing has happened for the request yet.
      */
     protected PortletUrl getAndCheckRequestInfoMap(HttpServletRequest request) {
-        final PortletUrl portletUrl = (PortletUrl)request.getAttribute(PORTLET_URL_ATTRIBUTE);
+        final PortletUrl portletUrl = (PortletUrl)request.getAttribute(TARGETED_PORTLET_URL_ATTRIBUTE);
         
         if (portletUrl == null && request.getAttribute(NO_PORTLET_URL_ATTRIBUTE) == null) {
             throw new RequestParameterProcessingIncompleteException("No portlet parameter processing has been completed on this request");

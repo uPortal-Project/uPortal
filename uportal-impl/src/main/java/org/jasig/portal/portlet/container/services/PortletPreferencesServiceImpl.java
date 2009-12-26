@@ -273,11 +273,12 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final List<IPortletPreference> descriptorPreferencesList = this.getDescriptorPreferences(portletDescriptor);
         this.addPreferencesToMap(descriptorPreferencesList, preferencesMap);
         
-        //Add definition preferences
+        //Add definition preferences if not config mode
         final IPortletPreferences definitionPreferences = portletDefinition.getPortletPreferences();
-        final List<IPortletPreference> definitionPreferencesList = definitionPreferences.getPortletPreferences();
-        this.addPreferencesToMap(definitionPreferencesList, preferencesMap);
-
+        if (!IPortletAdaptor.CONFIG.equals(portletWindow.getPortletMode())) {
+            final List<IPortletPreference> definitionPreferencesList = definitionPreferences.getPortletPreferences();
+            this.addPreferencesToMap(definitionPreferencesList, preferencesMap);
+        }
         
         final List<IPortletPreference> portletPreferences = new LinkedList<IPortletPreference>();
         
@@ -301,21 +302,20 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
 
         if (IPortletAdaptor.CONFIG.equals(portletWindow.getPortletMode())) {
             definitionPreferences.setPortletPreferences(portletPreferences);
+            this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
         }
         //If not a guest or if guest prefs are shared store them on the entity
         else if (this.isStoreInEntity(portletRequest)) {
             //Update the portlet entity with the new preferences
             final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
             entityPreferences.setPortletPreferences(portletPreferences);
+            this.portletEntityRegistry.storePortletEntity(portletEntity);
         }
         //Must be a guest and share must be off so store the prefs on the session
         else {
             //Store memory preferences
             this.storeSessionPreferences(portletEntity.getPortletEntityId(), httpServletRequest, portletPreferences);
         }
-
-        
-        this.portletEntityRegistry.storePortletEntity(portletEntity);
     }
     
     /**

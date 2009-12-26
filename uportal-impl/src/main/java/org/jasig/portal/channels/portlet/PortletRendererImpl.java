@@ -181,8 +181,8 @@ public class PortletRendererImpl implements IPortletRenderer {
         //Load the parameters to provide with the request
         final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
         
-        //Current portlet isn't targeted, use parameters from previous request
         Map<String, List<String>> parameters;
+        //Current portlet isn't targeted, use parameters from previous request
         if (portletUrl == null) {
             parameters = portletWindow.getRequestParameters();
         }

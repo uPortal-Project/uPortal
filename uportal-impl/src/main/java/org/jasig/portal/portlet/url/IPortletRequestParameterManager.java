@@ -5,8 +5,6 @@
  */
 package org.jasig.portal.portlet.url;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -19,13 +17,22 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  */
 public interface IPortletRequestParameterManager {
     /**
-     * Set the PortletUrls for this request
+     * Set the PortletUrl for the portlet that is targeted by the request
      * 
      * @param request The current request.
-     * @param portletUrls List of PortletUrls parsed from the request. The first item in the list is assumed to be the targeted portlet, subsequent items are assumed to be delegate portlets in delegation order.
-     * @throws IllegalArgumentException If request, portletId, or portletRequest are null.
+     * @param portletUrl The PortletUrl for the targeted portlet, null if no portlet was targeted for the request
+     * @throws IllegalArgumentException If request or is null.
      */
-    public void setRequestInfo(HttpServletRequest request, PortletUrl portletUrl);
+    public void setTargetedPortletUrl(HttpServletRequest request, PortletUrl portletUrl);
+    
+    /**
+     * Set the PortletUrl for portlets that have data in this request but are not targeted
+     * 
+     * @param request The current request
+     * @param portletUrl The PortletUrl for the additional portlet
+     * @throws IllegalArgumentException If request or portletUrl are null.
+     */
+    public void setAdditionalPortletUrl(HttpServletRequest request, PortletUrl portletUrl);
     
     /**
      * Gets the portlet window ID targeted by the request, returns null if no portlet was targeted.
