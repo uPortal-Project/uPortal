@@ -28,7 +28,15 @@ public interface IAuthorizationService
  * @exception AuthorizationException
  */
     public void addPermissions(IPermission[] permissions) throws AuthorizationException;
-
+/**
+ * Answers if the principal has permission to use the CONFIG PortletMode on this Channel.
+ * @return boolean
+ * @param principal IAuthorizationPrincipal
+ * @param channelPublishId int
+ * @exception AuthorizationException indicates authorization information could not be retrieved.
+ */
+    public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, int channelPublishId)
+    throws AuthorizationException;
 /**
  * Answers if the principal has permission to manage this Channel.
  * @return boolean

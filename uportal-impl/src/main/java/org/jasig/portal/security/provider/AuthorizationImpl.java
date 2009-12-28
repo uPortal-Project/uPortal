@@ -159,6 +159,22 @@ protected void cacheUpdate(IPermissionSet ps) throws AuthorizationException
         { throw new AuthorizationException("Problem updating permissions for " + ps + " in cache", ce); }
 }
 
+@Override
+public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, int channelPublishId) throws AuthorizationException {
+    String owner = IPermission.PORTAL_FRAMEWORK;
+    String target = IPermission.CHANNEL_PREFIX + channelPublishId;
+    
+    // retrieve the indicated channel from the channel registry store and 
+    // determine its current lifecycle state
+    IChannelDefinition channel = this.channelRegistryStore.getChannelDefinition(channelPublishId);
+    if (channel == null){
+        throw new AuthorizationException("Unable to locate channel " + channelPublishId);
+    }
+    
+    final String activity = IPermission.PORTLET_MODE_CONFIG;
+    return doesPrincipalHavePermission(principal, owner, activity, IPermission.ALL_CHANNELS_TARGET) || 
+        doesPrincipalHavePermission(principal, owner, activity, target);
+}
 /**
  * Answers if the principal has permission to MANAGE this Channel.
  * @return boolean

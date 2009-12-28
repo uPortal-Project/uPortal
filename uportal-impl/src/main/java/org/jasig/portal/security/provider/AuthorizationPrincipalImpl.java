@@ -56,6 +56,10 @@ public boolean canManage(int channelPublishId) throws org.jasig.portal.Authoriza
 public boolean canManage(ChannelLifecycleState state, String categoryId) throws AuthorizationException {
 	return getAuthorizationService().canPrincipalManage(this, state, categoryId);
 }
+@Override
+public boolean canConfigure(int channelPublishId) throws AuthorizationException {
+    return getAuthorizationService().canPrincipalConfigure(this, channelPublishId);
+}
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to render this channel.
  * @return boolean

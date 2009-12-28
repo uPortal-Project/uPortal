@@ -33,6 +33,13 @@ public interface IAuthorizationPrincipal {
  */
     public boolean canManage(ChannelLifecycleState state, String categoryId) throws AuthorizationException;
 /**
+ * Answers if this <code>IAuthorizationPrincipal</code> has permission to use the CONFIG PortletMode on the specified channel
+ * @param channelPublishId
+ * @return
+ * @throws AuthorizationException
+ */
+    public boolean canConfigure(int channelPublishId) throws AuthorizationException;
+/**
  * Answers if this <code>IAuthoriztionPrincipal</code> has permission to render this channel.
  * @return boolean
  * @param channelPublishId int - the Channel publish Id

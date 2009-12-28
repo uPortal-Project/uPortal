@@ -1,0 +1,15 @@
+
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+  <owner>UP_FRAMEWORK</owner>
+  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+  <principal> 
+    <group>Portal System</group> 
+  </principal>
+  <activity>PORTLET_MODE_CONFIG</activity>
+  <target permission-type="GRANT"> 
+    <group>All Categories</group> 
+  </target>
+  <target permission-type="GRANT"> 
+    <literal>ALL_CHANNELS</literal> 
+  </target>
+</permission-set>

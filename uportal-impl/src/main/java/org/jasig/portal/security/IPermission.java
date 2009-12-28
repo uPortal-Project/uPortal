@@ -43,6 +43,11 @@ public interface IPermission {
   public static final String CHANNEL_MANAGER_CREATED_ACTIVITY = "MANAGE_CREATED";
   public static final String CHANNEL_MANAGER_APPROVED_ACTIVITY = "MANAGE_APPROVED";
   public static final String CHANNEL_MANAGER_EXPIRED_ACTIVITY = "MANAGE_EXPIRED";
+  
+  /*
+   * PortletMode permissions
+   */
+  public static final String PORTLET_MODE_CONFIG = "PORTLET_MODE_CONFIG";
     
   /*
     Permission types.  At present only 2, but that could change.

@@ -26,6 +26,9 @@ import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.common.SecurityRoleRefDD;
 import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -38,8 +41,10 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.PortletUrl;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.services.AuthorizationService;
 
 /**
  * Executes methods on portlets using Pluto
@@ -139,7 +144,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         if (portletUrl != null) {
             parameters = portletUrl.getParameters();
             
-            this.setupPortletWindow(portletWindow, portletUrl);
+            this.setupPortletWindow(httpServletRequest, portletWindow, portletUrl);
         }
         
         httpServletRequest = this.setupPortletRequest(httpServletRequest, portletWindow, parameters);
@@ -185,7 +190,7 @@ public class PortletRendererImpl implements IPortletRenderer {
                 portletWindow.setRequestParameters(parameters);
             }
             
-            this.setupPortletWindow(portletWindow, portletUrl);
+            this.setupPortletWindow(httpServletRequest, portletWindow, portletUrl);
         }
         
         //Setup the request and response
@@ -288,9 +293,24 @@ public class PortletRendererImpl implements IPortletRenderer {
         return new PortletHttpServletRequestWrapper(httpServletRequest, parameters, person, securityRoleRefs);
     }
 
-    protected void setupPortletWindow(IPortletWindow portletWindow, PortletUrl portletUrl) {
+    protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, PortletUrl portletUrl) {
         final PortletMode portletMode = portletUrl.getPortletMode();
         if (portletMode != null) {
+            if (IPortletAdaptor.CONFIG.equals(portletMode)) {
+                final IPerson person = this.personManager.getPerson(httpServletRequest);
+                
+                final EntityIdentifier ei = person.getEntityIdentifier();
+                final AuthorizationService authorizationService = AuthorizationService.instance();
+                final IAuthorizationPrincipal ap = authorizationService.newPrincipal(ei.getKey(), ei.getType());
+                
+                final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletWindow.getPortletEntityId());
+                final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
+                
+                if (!ap.canConfigure(channelDefinition.getId())) {
+                    throw new AuthorizationException(person.getUserName() + " does not have permission to render '" + channelDefinition.getFName() + "' in " + portletMode + " PortletMode");
+                }
+            }
+            
             portletWindow.setPortletMode(portletMode);
         }
    
