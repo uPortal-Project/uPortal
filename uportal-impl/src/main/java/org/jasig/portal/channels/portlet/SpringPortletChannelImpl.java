@@ -326,27 +326,29 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
         
+        final PortletRenderResult renderResult;
         try {
-            this.portletRenderer.doRender(portletWindowId, httpServletRequest, httpServletResponse, printWriter);
+            renderResult = this.portletRenderer.doRender(portletWindowId, httpServletRequest, httpServletResponse, printWriter);
         }
         catch (PortletDispatchException e) {
             final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
             throw new PortletDispatchException("Exception executing portlet RenderRequest: " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, e);
         }
+        
+        channelRuntimeData.put(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE, renderResult);
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#getTitle(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures, org.jasig.portal.ChannelRuntimeData)
      */
     public String getTitle(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
-        final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
-        final String title = (String)httpServletRequest.getAttribute(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE);
+        final PortletRenderResult renderResult = (PortletRenderResult)channelRuntimeData.get(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE);
         
-        if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Retrieved title '" + title + "' from request for: " + channelStaticData);
+        if (renderResult != null) {
+            return renderResult.getTitle();
         }
         
-        return title;
+        return null;
     }
 
     /* (non-Javadoc)

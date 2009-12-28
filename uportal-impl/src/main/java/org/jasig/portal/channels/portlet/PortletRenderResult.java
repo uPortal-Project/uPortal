@@ -21,7 +21,7 @@ import org.jasig.portal.api.portlet.DelegateState;
 public class PortletRenderResult {
     private final String title;
 
-    public PortletRenderResult(String title) {
+    PortletRenderResult(String title) {
         this.title = title;
     }
 

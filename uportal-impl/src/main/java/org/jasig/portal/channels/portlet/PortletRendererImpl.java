@@ -139,15 +139,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         if (portletUrl != null) {
             parameters = portletUrl.getParameters();
             
-            final PortletMode portletMode = portletUrl.getPortletMode();
-            if (portletMode != null) {
-                portletWindow.setPortletMode(portletMode);
-            }
-    
-            final WindowState windowState = portletUrl.getWindowState();
-            if (windowState != null) {
-                portletWindow.setWindowState(windowState);
-            }
+            this.setupPortletWindow(portletWindow, portletUrl);
         }
         
         httpServletRequest = this.setupPortletRequest(httpServletRequest, portletWindow, parameters);
@@ -175,7 +167,7 @@ public class PortletRendererImpl implements IPortletRenderer {
      * @see org.jasig.portal.channels.portlet.IPortletRenderer#doRender(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintWriter)
      */
     @Override
-    public void doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PrintWriter printWriter) {
+    public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PrintWriter printWriter) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Load the parameters to provide with the request
@@ -193,15 +185,7 @@ public class PortletRendererImpl implements IPortletRenderer {
                 portletWindow.setRequestParameters(parameters);
             }
             
-            final PortletMode portletMode = portletUrl.getPortletMode();
-            if (portletMode != null) {
-                portletWindow.setPortletMode(portletMode);
-            }
-    
-            final WindowState windowState = portletUrl.getWindowState();
-            if (windowState != null) {
-                portletWindow.setWindowState(windowState);
-            }
+            this.setupPortletWindow(portletWindow, portletUrl);
         }
         
         //Setup the request and response
@@ -231,14 +215,12 @@ public class PortletRendererImpl implements IPortletRenderer {
         }
         
         
-
         final String title = (String)httpServletRequest.getAttribute(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE);
-        
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Retrieved title '" + title + "' from request for: " + portletWindow);
         }
         
-        //TODO return render result bean
+        return new PortletRenderResult(title);
     }
     
     @Override
@@ -306,4 +288,15 @@ public class PortletRendererImpl implements IPortletRenderer {
         return new PortletHttpServletRequestWrapper(httpServletRequest, parameters, person, securityRoleRefs);
     }
 
+    protected void setupPortletWindow(IPortletWindow portletWindow, PortletUrl portletUrl) {
+        final PortletMode portletMode = portletUrl.getPortletMode();
+        if (portletMode != null) {
+            portletWindow.setPortletMode(portletMode);
+        }
+   
+        final WindowState windowState = portletUrl.getWindowState();
+        if (windowState != null) {
+            portletWindow.setWindowState(windowState);
+        }
+    }
 }

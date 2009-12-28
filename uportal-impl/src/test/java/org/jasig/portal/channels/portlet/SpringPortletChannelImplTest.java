@@ -809,8 +809,8 @@ public class SpringPortletChannelImplTest extends TestCase {
         final IPortletRequestParameterManager portletRequestParameterManager = EasyMock.createMock(IPortletRequestParameterManager.class);
         
         final IPortletRenderer portletRenderer = EasyMock.createMock(IPortletRenderer.class);
-        portletRenderer.doRender(portletWindowId, pcsRequest, response, printWriter);
-        EasyMock.expectLastCall();
+        EasyMock.expect(portletRenderer.doRender(portletWindowId, pcsRequest, response, printWriter))
+            .andReturn(new PortletRenderResult("theTitle"));
         
         this.springPortletChannel.setPortletRequestParameterManager(portletRequestParameterManager);
         this.springPortletChannel.setPortletDefinitionRegistry(portletDefinitionRegistry);
@@ -822,22 +822,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         
         this.springPortletChannel.render(channelStaticData, portalControlStructures, channelRuntimeData, printWriter);
         
-        EasyMock.verify(portletRenderer, portletDefinitionRegistry, portletEntityRegistry, portletRequestParameterManager, portletWindowRegistry, person);
-    }
-    
-    public void testGetTitle() throws Exception {
-        final ChannelStaticData channelStaticData = new ChannelStaticData();
-        
-        final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.setAttribute(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE, "theTitle");
-
-        final PortalControlStructures portalControlStructures = new PortalControlStructures(httpServletRequest, null);
-        
-        final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
-        
-        
         final String title = this.springPortletChannel.getTitle(channelStaticData, portalControlStructures, channelRuntimeData);
-        
         assertEquals("theTitle", title);
+        
+        EasyMock.verify(portletRenderer, portletDefinitionRegistry, portletEntityRegistry, portletRequestParameterManager, portletWindowRegistry, person);
     }
 }

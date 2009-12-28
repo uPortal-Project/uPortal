@@ -49,7 +49,7 @@ public interface IPortletRenderer {
      * @param httpServletResponse The portal's response (nothing will be written to the response)
      * @param printWriter The writer to write the portlet's output to
      */
-    public void doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PrintWriter printWriter);
+    public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PrintWriter printWriter);
     
     /**
      * Resets a portlet's window data to the defaults and clears all portlet scoped session data
