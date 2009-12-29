@@ -31,11 +31,11 @@ import org.apache.pluto.Constants;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.UPFileSpec;
-import org.jasig.portal.api.portlet.PortletDelegationManager;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.portlet.delegation.IPortletDelegationManager;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -78,7 +78,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IUserInstanceManager userInstanceManager;
-    private PortletDelegationManager portletDelegationManager;
+    private IPortletDelegationManager portletDelegationManager;
     private boolean useAnchors = true;
     private Set<WindowState> transientWindowStates = new HashSet<WindowState>(Arrays.asList(IPortletAdaptor.EXCLUSIVE, IPortletAdaptor.DETACHED));
     private Set<WindowState> anchoringWindowStates = new HashSet<WindowState>(Arrays.asList(WindowState.MINIMIZED, WindowState.NORMAL));
@@ -222,10 +222,10 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         }
     }
     
-    public PortletDelegationManager getPortletDelegationManager() {
+    public IPortletDelegationManager getPortletDelegationManager() {
         return this.portletDelegationManager;
     }
-    public void setPortletDelegationManager(PortletDelegationManager portletDelegationManager) {
+    public void setPortletDelegationManager(IPortletDelegationManager portletDelegationManager) {
         this.portletDelegationManager = portletDelegationManager;
     }
     
@@ -431,7 +431,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         if (Constants.METHOD_ACTION.equals(request.getAttribute(Constants.METHOD_ID))) {
             if (portletWindow.getDelegationParent() != null) {
                 this.portletDelegationManager.setDelegatePortletActionRedirectUrl(request, portletUrl);
-                return PortletDelegationManager.DELEGATE_ACTION_REDIRECT_TOKEN;
+                return IPortletDelegationManager.DELEGATE_ACTION_REDIRECT_TOKEN;
             }
 
             final PortletUrl delegatePortletUrl = this.portletDelegationManager.getDelegatePortletActionRedirectUrl(request);

@@ -39,9 +39,9 @@ public interface PortletDelegationLocator {
     /**
      * Get an existing delegation dispatcher for an existing portlet window.
      * 
-     * @param request 
-     * @param portletWindowId
-     * @return
+     * @param request The current request
+     * @param portletWindowId The IPortletWindowId from the previously created dispatcher
+     * @return The previously created dispatcher, null if no dispatcher exists for the ID
      */
     public PortletDelegationDispatcher getRequestDispatcher(PortletRequest request, IPortletWindowId portletWindowId);
 }

@@ -4,8 +4,9 @@
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
 
-package org.jasig.portal.api.portlet;
+package org.jasig.portal.portlet.delegation;
 
+import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -17,7 +18,7 @@ import org.jasig.portal.portlet.url.PortletUrl;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface PortletDelegationManager {
+public interface IPortletDelegationManager {
     public static final String DELEGATE_ACTION_REDIRECT_TOKEN = "DELEGATE_ACTION_REDIRECT";
     
     /**
@@ -48,4 +49,10 @@ public interface PortletDelegationManager {
      * @return The URL generated after the delegates processAction completes
      */
     public PortletUrl getDelegatePortletActionRedirectUrl(HttpServletRequest request);
+    
+    /**
+     * @param request The portlet adapter request for the delgate parent
+     * @return The URL generated after the delegates processAction completes
+     */
+    public PortletUrl getDelegatePortletActionRedirectUrl(PortletRequest request);
 }

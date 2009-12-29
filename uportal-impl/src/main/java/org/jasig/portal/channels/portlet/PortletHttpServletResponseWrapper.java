@@ -12,6 +12,7 @@ package org.jasig.portal.channels.portlet;
 
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class PortletHttpServletResponseWrapper extends HttpServletResponseWrapper {
     private final Object urlEncodingMutex;
-    private final PrintWriter wrappedWriter;
+    private final Writer wrappedWriter;
     
     private PrintWriter writer;
     private boolean committed;
@@ -39,13 +40,13 @@ public class PortletHttpServletResponseWrapper extends HttpServletResponseWrappe
     /**
      * @param servlet response
      */
-    public PortletHttpServletResponseWrapper(HttpServletResponse res, PrintWriter printWriter) {
+    public PortletHttpServletResponseWrapper(HttpServletResponse res, Writer writer) {
         super(res);
         
         this.urlEncodingMutex = this.getRootResponse();
         
-        Validate.notNull(printWriter, "printWriter cannot be null");
-        this.wrappedWriter = printWriter;
+        Validate.notNull(writer, "writer cannot be null");
+        this.wrappedWriter = writer;
     }
 
     /**
@@ -195,8 +196,8 @@ public class PortletHttpServletResponseWrapper extends HttpServletResponseWrappe
      * Wrapper to watch for {@link #flush()} calls and to mark the response committed when that happens
      */
     private class PrintWriterWrapper extends PrintWriter {
-        public PrintWriterWrapper(PrintWriter pw) {
-            super(pw);
+        public PrintWriterWrapper(Writer w) {
+            super(w);
         }
 
         /* (non-Javadoc)

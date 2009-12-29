@@ -145,7 +145,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: portlet-section -->
     
     
-    <div>supportsConfig=${supportsConfig}, channel.id=${channel.id}</div>
     <c:if test="${supportsConfig and channel.id >= 0}">
     <!-- Portlet Section -->
       <div class="portlet-section" role="region">

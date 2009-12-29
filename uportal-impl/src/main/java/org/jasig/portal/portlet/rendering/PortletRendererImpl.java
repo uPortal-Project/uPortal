@@ -4,11 +4,12 @@
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
 
-package org.jasig.portal.channels.portlet;
+package org.jasig.portal.portlet.rendering;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,12 @@ import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.jasig.portal.channels.portlet.InconsistentPortletModelException;
+import org.jasig.portal.channels.portlet.PortletDispatchException;
+import org.jasig.portal.channels.portlet.PortletHttpServletRequestWrapper;
+import org.jasig.portal.channels.portlet.PortletHttpServletResponseWrapper;
+import org.jasig.portal.channels.portlet.PortletLoadFailureException;
 import org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -168,11 +175,8 @@ public class PortletRendererImpl implements IPortletRenderer {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.channels.portlet.IPortletRenderer#doRender(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.PrintWriter)
-     */
     @Override
-    public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PrintWriter printWriter) {
+    public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer printWriter) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Load the parameters to provide with the request

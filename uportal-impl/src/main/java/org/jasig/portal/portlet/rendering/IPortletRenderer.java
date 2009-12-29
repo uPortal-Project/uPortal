@@ -4,9 +4,9 @@
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
 
-package org.jasig.portal.channels.portlet;
+package org.jasig.portal.portlet.rendering;
 
-import java.io.PrintWriter;
+import java.io.Writer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,9 +47,9 @@ public interface IPortletRenderer {
      * @param portletWindowId Portlet to target with the render
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
-     * @param printWriter The writer to write the portlet's output to
+     * @param writer The writer to write the portlet's output to
      */
-    public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PrintWriter printWriter);
+    public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer);
     
     /**
      * Resets a portlet's window data to the defaults and clears all portlet scoped session data

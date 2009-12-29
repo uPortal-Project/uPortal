@@ -218,9 +218,11 @@
     </view-state>
     
     <action-state id="configModeAction">
-        <evaluate expression="portletAdministrationHelper.configModeAction(externalContext)" />
-        <!-- TODO check result of action delegation to determine transition dest -->
-        <transition to="configMode" />
+        <set name="flashScope.configComplete" value="portletAdministrationHelper.configModeAction(externalContext)" />
+        <transition to="configMode" on="${!flashScope.configComplete}" />
+        <transition to="reviewPortlet" on="${flashScope.configComplete}">
+            <set name="flowScope.channel" value="portletAdministrationHelper.getChannelDefinitionForm(channel.id)"/>
+        </transition>
     </action-state>
     
     <view-state id="configMode">

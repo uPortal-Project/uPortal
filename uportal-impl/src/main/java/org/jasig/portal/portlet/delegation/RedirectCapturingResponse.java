@@ -4,7 +4,7 @@
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
 
-package org.jasig.portal.api.portlet;
+package org.jasig.portal.portlet.delegation;
 
 import java.io.IOException;
 

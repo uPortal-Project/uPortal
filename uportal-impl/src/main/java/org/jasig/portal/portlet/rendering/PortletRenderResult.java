@@ -4,7 +4,7 @@
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
 
-package org.jasig.portal.channels.portlet;
+package org.jasig.portal.portlet.rendering;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -21,7 +21,7 @@ import org.jasig.portal.api.portlet.DelegateState;
 public class PortletRenderResult {
     private final String title;
 
-    PortletRenderResult(String title) {
+    public PortletRenderResult(String title) {
         this.title = title;
     }
 

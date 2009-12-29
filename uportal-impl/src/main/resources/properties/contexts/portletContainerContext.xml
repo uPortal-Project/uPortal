@@ -129,12 +129,8 @@
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portalRequestUtils" ref="portalRequestUtils" />
-        <property name="portletDelegationManager" ref="portletDelegationManager"/>
+        <property name="portletDelegationManager" ref="portletDelegationLocator"/>
         <property name="useAnchors" value="${org.jasig.portal.ChannelManager.use_anchors}"/>
-    </bean>
-    
-    <bean id="portletDelegationManager" class="org.jasig.portal.api.portlet.PortletDelegationManagerImpl">
-        <property name="portalRequestUtils" ref="portalRequestUtils" />
     </bean>
     
     <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager">
@@ -163,7 +159,7 @@
         <property name="channelRegistryStore" ref="channelRegistryStore" /> 
     </bean>
     
-    <bean id="portletDelegationLocator" class="org.jasig.portal.api.portlet.PortletDelegationLocatorImpl">
+    <bean id="portletDelegationLocator" class="org.jasig.portal.portlet.delegation.PortletDelegationLocatorImpl">
         <property name="channelRegistryStore" ref="channelRegistryStore" />
         <property name="personManager" ref="personManager" />
         <property name="portalRequestUtils" ref="portalRequestUtils" />
@@ -171,7 +167,6 @@
         <property name="portletRenderer" ref="portletRenderer" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
-        <property name="portletDelegationManager" ref="portletDelegationManager" />
     </bean>
     
     <!--********** Portlet Rendering Channel ********** -->
@@ -184,7 +179,7 @@
         <property name="portletRenderer" ref="portletRenderer" />
     </bean>
     
-    <bean id="portletRenderer" class="org.jasig.portal.channels.portlet.PortletRendererImpl">
+    <bean id="portletRenderer" class="org.jasig.portal.portlet.rendering.PortletRendererImpl">
         <property name="personManager" ref="personManager" />
         <property name="portletContainer" ref="portletContainer" />
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />

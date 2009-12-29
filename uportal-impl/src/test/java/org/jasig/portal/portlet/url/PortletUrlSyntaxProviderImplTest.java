@@ -19,13 +19,13 @@ import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 import org.jasig.portal.ChannelRuntimeData;
-import org.jasig.portal.api.portlet.PortletDelegationManager;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.channels.portlet.PortletHttpServletRequestWrapper;
 import org.jasig.portal.mock.portlet.om.MockPortletEntity;
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindow;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
+import org.jasig.portal.portlet.delegation.IPortletDelegationManager;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -202,7 +202,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
             .andReturn(portletWindow1)
             .anyTimes();
 
-        final PortletDelegationManager portletDelegationManager = EasyMock.createMock(PortletDelegationManager.class);
+        final IPortletDelegationManager portletDelegationManager = EasyMock.createMock(IPortletDelegationManager.class);
         
         
         EasyMock.expect(portletDelegationManager.getParentPortletUrl(request, portletWindowId1))
@@ -321,7 +321,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
             .andReturn(portletWindow1)
             .anyTimes();
 
-        final PortletDelegationManager portletDelegationManager = EasyMock.createMock(PortletDelegationManager.class);
+        final IPortletDelegationManager portletDelegationManager = EasyMock.createMock(IPortletDelegationManager.class);
         
         
         final PortletUrl portletUrl1 = new PortletUrl(portletWindowId1);
@@ -465,7 +465,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
             .andReturn(portletWindow2)
             .anyTimes();
         
-        final PortletDelegationManager portletDelegationManager = EasyMock.createMock(PortletDelegationManager.class);
+        final IPortletDelegationManager portletDelegationManager = EasyMock.createMock(IPortletDelegationManager.class);
         
         EasyMock.expect(portletDelegationManager.getParentPortletUrl(request, portletWindowId1))
             .andReturn(null);
@@ -616,7 +616,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
             .andReturn(portletWindow2)
             .anyTimes();
         
-        final PortletDelegationManager portletDelegationManager = EasyMock.createMock(PortletDelegationManager.class);
+        final IPortletDelegationManager portletDelegationManager = EasyMock.createMock(IPortletDelegationManager.class);
         
         
         final PortletUrl portletUrl1 = new PortletUrl(portletWindowId1);

@@ -39,6 +39,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.api.portlet.DelegateState;
+import org.jasig.portal.api.portlet.DelegationActionResponse;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.channel.ChannelLifecycleState;
@@ -56,6 +57,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
@@ -712,7 +714,7 @@ public class PortletAdministrationHelper {
 	}
 	
 	
-	public void configModeAction(ExternalContext externalContext) throws IOException {
+	public boolean configModeAction(ExternalContext externalContext) throws IOException {
 	    final ActionRequest actionRequest = (ActionRequest)externalContext.getNativeRequest();
 	    final ActionResponse actionResponse = (ActionResponse)externalContext.getNativeResponse();
 	    
@@ -724,10 +726,13 @@ public class PortletAdministrationHelper {
 	    
 	    final PortletDelegationDispatcher requestDispatcher = this.portletDelegationLocator.getRequestDispatcher(actionRequest, portletWindowId);
 	    
-	    final DelegateState delegateState = requestDispatcher.doAction(actionRequest, actionResponse);
-	    
-	    if (!IPortletAdaptor.CONFIG.equals(delegateState.getPortletMode())) {
-	        this.logger.debug("DELEGATION COMPLETE ... DO SOMETHING ELSE HERE");
+	    final DelegationActionResponse delegationResponse = requestDispatcher.doAction(actionRequest, actionResponse);
+	    final PortletUrl renderUrl = delegationResponse.getRenderUrl();
+	    if (renderUrl == null || (renderUrl.getPortletMode() != null && !IPortletAdaptor.CONFIG.equals(renderUrl.getPortletMode()))) {
+	        //The portlet changed it's mode away from config, assume it is done
+	        return true;
 	    }
+	    
+	    return false;
 	}
 }
