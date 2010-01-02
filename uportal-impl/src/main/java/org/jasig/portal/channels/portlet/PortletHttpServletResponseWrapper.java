@@ -13,8 +13,6 @@ package org.jasig.portal.channels.portlet;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +29,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @version $Revision: 11911 $
  */
 public class PortletHttpServletResponseWrapper extends HttpServletResponseWrapper {
-    private final Object urlEncodingMutex;
     private final Writer wrappedWriter;
     
     private PrintWriter writer;
@@ -42,8 +39,6 @@ public class PortletHttpServletResponseWrapper extends HttpServletResponseWrappe
      */
     public PortletHttpServletResponseWrapper(HttpServletResponse res, Writer writer) {
         super(res);
-        
-        this.urlEncodingMutex = this.getRootResponse();
         
         Validate.notNull(writer, "writer cannot be null");
         this.wrappedWriter = writer;
@@ -145,50 +140,6 @@ public class PortletHttpServletResponseWrapper extends HttpServletResponseWrappe
             .append(this.committed)
             .append(this.wrappedWriter)
             .toHashCode();
-    }
-
-    /*
-     * encoding URLs is not thread-safe in Tomcat, sync around url encoding
-     */
-
-    @Override
-    public String encodeRedirectUrl(String url) {
-        synchronized (this.urlEncodingMutex) {
-            return super.encodeRedirectUrl(url);
-        }
-    }
-
-    @Override
-    public String encodeRedirectURL(String url) {
-        synchronized (this.urlEncodingMutex) {
-            return super.encodeRedirectURL(url);
-        }
-    }
-
-    @Override
-    public String encodeUrl(String url) {
-        synchronized (this.urlEncodingMutex) {
-            return super.encodeUrl(url);
-        }
-    }
-
-    @Override
-    public String encodeURL(String url) {
-        synchronized (this.urlEncodingMutex) {
-            return super.encodeURL(url);
-        }
-    }
-
-    protected HttpServletResponse getRootResponse() {
-        HttpServletResponse response = this;
-        
-        final Set<HttpServletResponse> loopDetector = new HashSet<HttpServletResponse>();
-        
-        while (response instanceof HttpServletResponseWrapper && loopDetector.add(response)) {
-            response = (HttpServletResponse)super.getResponse();
-        }
-        
-        return response;
     }
 
 

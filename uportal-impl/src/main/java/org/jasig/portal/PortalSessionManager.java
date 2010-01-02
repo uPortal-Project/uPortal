@@ -37,6 +37,7 @@ import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.url.PortalHttpServletRequestWrapper;
+import org.jasig.portal.url.PortalHttpServletResponseWrapper;
 import org.jasig.portal.url.processing.IRequestParameterProcessorController;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -174,7 +175,10 @@ public void init() throws ServletException {
     public void doGet(HttpServletRequest request, HttpServletResponse res) {
         final IUserInstanceManager userInstanceManager = UserInstanceManagerLocator.getUserInstanceManager();
         
+        //Add request and response wrappers
+        res = new PortalHttpServletResponseWrapper(res);
         final IWritableHttpServletRequest writableRequest = new PortalHttpServletRequestWrapper(request, res, userInstanceManager);
+        
         this.doGetInternal(writableRequest, res);
     }
     
