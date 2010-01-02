@@ -218,7 +218,7 @@
     </view-state>
     
     <action-state id="configModeAction">
-        <set name="flashScope.configComplete" value="portletAdministrationHelper.configModeAction(externalContext)" />
+        <set name="flashScope.configComplete" value="portletAdministrationHelper.configModeAction(externalContext, channel.getFname())" />
         <transition to="configMode" on="${!flashScope.configComplete}" />
         <transition to="reviewPortlet" on="${flashScope.configComplete}">
             <set name="flowScope.channel" value="portletAdministrationHelper.getChannelDefinitionForm(channel.id)"/>

@@ -166,6 +166,7 @@
         <jasypt.version>1.5</jasypt.version> 
         <jdom.version>1.0</jdom.version>
         <json-lib-ext-spring.version>1.0</json-lib-ext-spring.version>
+        <jsp-api.version>2.1</jsp-api.version>
         <jstl.version>1.1.2</jstl.version>
         <jtidy.version>4aug2000r7-dev</jtidy.version>
         <junit.version>4.4</junit.version>
@@ -322,6 +323,11 @@
                 <artifactId>portlet-api</artifactId>
                 <version>${portlet-api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>javax.servlet.jsp</groupId>
+                <artifactId>jsp-api</artifactId>
+                <version>${jsp-api.version}</version>
+            </dependency> 
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>jstl</artifactId>

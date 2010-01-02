@@ -186,5 +186,6 @@
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
+        <property name="portletDelegationLocator" ref="portletDelegationLocator" />
     </bean>
 </beans>

@@ -29,6 +29,7 @@ import org.apache.pluto.descriptors.common.SecurityRoleRefDD;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.channels.portlet.InconsistentPortletModelException;
@@ -68,6 +69,7 @@ public class PortletRendererImpl implements IPortletRenderer {
     private IPortletWindowRegistry portletWindowRegistry;
     private PortletContainer portletContainer;
     private IPortletRequestParameterManager portletRequestParameterManager;
+    private PortletDelegationLocator portletDelegationLocator;
     
 
     public void setPersonManager(IPersonManager personManager) {
@@ -92,6 +94,10 @@ public class PortletRendererImpl implements IPortletRenderer {
 
     public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
         this.portletRequestParameterManager = portletRequestParameterManager;
+    }
+    
+    public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
+        this.portletDelegationLocator = portletDelegationLocator;
     }
 
     public IPortletWindowId doInit(IPortletEntity portletEntity, IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
@@ -294,7 +300,11 @@ public class PortletRendererImpl implements IPortletRenderer {
             throw new InconsistentPortletModelException("Could not retrieve PortletDD for portlet window '" + portletWindowId + "' to provide the required SecurityRoleRefDD List to the PortletHttpRequestWrapper.", portletWindowId, pce);
         }
         
-        return new PortletHttpServletRequestWrapper(httpServletRequest, parameters, person, securityRoleRefs);
+        final PortletHttpServletRequestWrapper portletHttpServletRequestWrapper = new PortletHttpServletRequestWrapper(httpServletRequest, parameters, person, securityRoleRefs);
+        
+        portletHttpServletRequestWrapper.setAttribute(PortletDelegationLocator.PORTLET_DELECATION_LOCATOR_ATTR, this.portletDelegationLocator);
+        
+        return portletHttpServletRequestWrapper;
     }
 
     protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, PortletUrl portletUrl) {

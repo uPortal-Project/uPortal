@@ -13,7 +13,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<%@ taglib prefix="uwfn" uri="http://www.uportal.org/jsp/jstl/functions/1.1" %>
+<%@ taglib prefix="up" uri="http://www.uportal.org/jsp/jstl/uportal/1.0" %>
 
 <portlet:defineObjects/>
 

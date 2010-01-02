@@ -19,6 +19,11 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  */
 public interface PortletDelegationLocator {
     /**
+     * The PortletDelegationLocator instance will be available in the request under this key
+     */
+    public static final String PORTLET_DELECATION_LOCATOR_ATTR = PortletDelegationLocator.class.getName();
+    
+    /**
      * Creates a new portlet delegation dispatcher and corresponding portlet window
      * 
      * @param request The current request

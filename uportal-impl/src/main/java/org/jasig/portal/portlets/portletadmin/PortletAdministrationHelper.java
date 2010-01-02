@@ -53,6 +53,7 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
+import org.jasig.portal.portlet.delegation.jsp.RenderPortletTag;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
@@ -714,22 +715,26 @@ public class PortletAdministrationHelper {
 	}
 	
 	
-	public boolean configModeAction(ExternalContext externalContext) throws IOException {
+	public boolean configModeAction(ExternalContext externalContext, String fname) throws IOException {
 	    final ActionRequest actionRequest = (ActionRequest)externalContext.getNativeRequest();
 	    final ActionResponse actionResponse = (ActionResponse)externalContext.getNativeResponse();
 	    
 	    final PortletSession portletSession = actionRequest.getPortletSession();
-	    final IPortletWindowId portletWindowId = (IPortletWindowId)portletSession.getAttribute("DELEGATE_WINDOW_ID");
+	    final IPortletWindowId portletWindowId = (IPortletWindowId)portletSession.getAttribute(RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
 	    if (portletWindowId == null) {
-	        throw new IllegalStateException("Cannot execute configModeAciton without a 'DELEGATE_WINDOW_ID' in the session");
+	        throw new IllegalStateException("Cannot execute configModeAciton without a delegate window ID in the session for key: " + RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
 	    }
 	    
 	    final PortletDelegationDispatcher requestDispatcher = this.portletDelegationLocator.getRequestDispatcher(actionRequest, portletWindowId);
 	    
 	    final DelegationActionResponse delegationResponse = requestDispatcher.doAction(actionRequest, actionResponse);
 	    final PortletUrl renderUrl = delegationResponse.getRenderUrl();
-	    if (renderUrl == null || (renderUrl.getPortletMode() != null && !IPortletAdaptor.CONFIG.equals(renderUrl.getPortletMode()))) {
-	        //The portlet changed it's mode away from config, assume it is done
+	    final DelegateState delegateState = delegationResponse.getDelegateState();
+        if (renderUrl == null || 
+	            (renderUrl.getPortletMode() != null && !IPortletAdaptor.CONFIG.equals(renderUrl.getPortletMode())) ||
+	            !IPortletAdaptor.CONFIG.equals(delegateState.getPortletMode())) {
+	        
+	        //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
 	        return true;
 	    }
 	    

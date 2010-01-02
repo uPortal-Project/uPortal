@@ -49,53 +49,18 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Title -->
   <div class="fl-widget-titlebar portlet-title" role="sectionhead">
     <h2 role="heading">
-      <c:choose>
-        <c:when test="${ completed }">
-          <spring:message code="edit-portlet.editPortletHeading"/>
-        </c:when>
-        <c:otherwise>
-          <spring:message code="edit-portlet.newPortletHeading"/>
-        </c:otherwise>
-      </c:choose>
+      <spring:message code="edit-portlet.configMode"/>
     </h2>
   </div> <!-- end: portlet-title -->
   
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
-  <c:set var="channelFname" value="${CHANNEL_FNAME}"/>
-  <c:set var="flowKey" value="${flowExecutionKey}"/>
-<%
-final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-final PortletDelegationLocator portletDelegationLocator = (PortletDelegationLocator)applicationContext.getBean("portletDelegationLocator", PortletDelegationLocator.class);
-
-final PortletSession portletSession = renderRequest.getPortletSession();
-IPortletWindowId portletWindowId = (IPortletWindowId)portletSession.getAttribute("DELEGATE_WINDOW_ID");
-
-final PortletDelegationDispatcher portletDelegationDispatcher;
-final DelegateState delegateState;
-if (portletWindowId == null) {
-    String channelFname = (String)pageContext.getAttribute("channelFname");
-    portletDelegationDispatcher = portletDelegationLocator.createRequestDispatcher(renderRequest, channelFname);
-    portletWindowId = portletDelegationDispatcher.getPortletWindowId();
-    portletSession.setAttribute("DELEGATE_WINDOW_ID", portletWindowId);
-    
-    delegateState = new DelegateState(IPortletAdaptor.CONFIG, null);
-}
-else {
-    portletDelegationDispatcher = portletDelegationLocator.getRequestDispatcher(renderRequest, portletWindowId);
-    delegateState = null;
-}
-
-final Map parameters = new LinkedHashMap();
-parameters.put("execution", Arrays.asList(new String[] { (String)pageContext.getAttribute("flowKey") } ));
-parameters.put("_eventId", Arrays.asList(new String[] { "configModeAction" } ));
-
-final DelegationRequest delegationRequest = new DelegationRequest();
-delegationRequest.setDelegateState(delegateState);
-delegationRequest.setParentParameters(parameters);
-
-portletDelegationDispatcher.doRender(renderRequest, renderResponse, delegationRequest, out);
-%>
+    <up:render-delegate fname="${CHANNEL_FNAME}" portletMode="CONFIG">
+        <up:parent-url>
+            <up:param name="execution" value="${flowExecutionKey}"/>
+            <up:param name="_eventId" value="configModeAction"/>
+        </up:parent-url>
+    </up:render-delegate>
     
   </div> <!-- end: portlet-body -->
   

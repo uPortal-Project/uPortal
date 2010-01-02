@@ -32,7 +32,7 @@ public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleChecked
     }
     
     /**
-     * @param cache The Map to store created isntances in
+     * @param cache The Map to store created instances in
      */
     public MapCachingDoubleCheckedCreator(Map<K, T> cache) {
         Validate.notNull(cache, "cache can not be null");
@@ -40,7 +40,7 @@ public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleChecked
     }
     
     /**
-     * @param cache The Map to store created isntances in
+     * @param cache The Map to store created instances in
      * @param readWriteLock the ReadWriteLock to use for the double checked locking
      */
     public MapCachingDoubleCheckedCreator(Map<K, T> cache, ReadWriteLock readWriteLock) {
