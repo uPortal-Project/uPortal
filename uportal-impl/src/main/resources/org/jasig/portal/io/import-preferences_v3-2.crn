@@ -40,7 +40,6 @@
 	            }
 	        </script>
 	        <subtasks>
-                <echo-ln>Finding preferences</echo-ln>
 	            <node-iterator xpath="entry">
 	                <with-attribute key="DLM_PATHREF" value="${valueOf(@entity)}">
 	                    <with>

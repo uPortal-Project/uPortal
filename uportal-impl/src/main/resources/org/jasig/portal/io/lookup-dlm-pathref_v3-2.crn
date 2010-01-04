@@ -26,7 +26,6 @@
                 <subtasks>
                     <with-attribute key="Attributes.NODE" value="${crn(load-layout.crn)}">
                         <with-attribute key="Attributes.NODE" value="${singleNode(${LAYOUT_PATH})}">
-                            <crn location="debug-print_node.crn"/>
                             <with-attribute key="FOUND_FNAME" value="${valueOf(@fname)}">
                                 <!--
                                  | We're ready to go, but let's do a sanity check
