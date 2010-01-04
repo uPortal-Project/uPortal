@@ -76,10 +76,6 @@
         timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
 
     <!-- uPortal IBasicEntity Caches -->
-
-    <cache name="org.jasig.portal.ChannelDefinition"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
         
     <cache name="org.jasig.portal.groups.IEntityGroup"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
@@ -98,6 +94,14 @@
     <cache name="org.jasig.portal.layout.dlm.Evaluator"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="1800" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
 
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
