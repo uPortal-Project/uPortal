@@ -74,8 +74,8 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
 
                     instanceHolder.instance = objectFactory.getObject();
                 }
-                else if (this.logger.isInfoEnabled()) {
-                    this.logger.info("Using existing singleton instance for bean '" + name + "'");
+                else if (this.logger.isDebugEnabled()) {
+                    this.logger.debug("Using existing singleton instance for bean '" + name + "'");
                 }
 
                 return instanceHolder.instance;

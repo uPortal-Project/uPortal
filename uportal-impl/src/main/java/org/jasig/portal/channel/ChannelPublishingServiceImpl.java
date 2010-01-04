@@ -106,8 +106,8 @@ public class ChannelPublishingServiceImpl implements IChannelPublishingService, 
 	    }
 	    upm.addPermissions(permissions);
 
-	    if (log.isInfoEnabled()) {
-	        log.info( "Channel " + definition.getId() + " has been " + 
+	    if (log.isDebugEnabled()) {
+	        log.debug( "Channel " + definition.getId() + " has been " + 
 	                (newChannel ? "published" : "modified") + ".");
 	    }
 

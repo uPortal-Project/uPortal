@@ -107,7 +107,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
                     bfr.append( fragmentDefinition.getPrecedence() );
                     bfr.append( "],\n" );
                 }
-                logger.debug("\n\nFragments Sorted by Precedence and then index {\n" +
+                logger.debug("Fragments Sorted by Precedence and then index {\n" +
                     bfr.toString() + " }" );
             }
             this.fragments = Collections.unmodifiableList(localFragments);
@@ -187,15 +187,15 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
         this.fragments = new ArrayList<FragmentDefinition>(fragmentCount);
         for( int i=0; i<fragmentCount; i++ )
         {
+            final Element fragmentElement = (Element) frags.item(i);
             try
             {
-                final Element fragmentElement = (Element) frags.item(i);
                 FragmentDefinition fragment = new FragmentDefinition( fragmentElement );
                 fragment.setIndex(i);
                 this.fragments.add(fragment);
 
                 if (logger.isInfoEnabled()) {
-                    logger.info("\n\nDLM loaded fragment definition '" + fragment.getName() +
+                    logger.info("DLM loaded fragment definition '" + fragment.getName() +
                             "' owned by '" + fragment.getOwnerId() +
                             "' with precedence " + fragment.getPrecedence() + 
                             ( fragment.isNoAudienceIncluded() ? " and no specified audience" +
@@ -211,12 +211,13 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
             }
             catch( Exception e ) 
             {
-                logger.error("\n\n---------- Warning ---------\nUnable to load " +
-                      "distributed layout fragment " +
-                      "definition from configuration file\n" +
-                      this.configurationFile.toString() +
-                      "\n Details: " + e.getMessage() +
-                      "  \n----------------------------\n", e );
+                final String msg = "Unable to load distributed layout fragment definition. Content from this fragment will not be avilable.";
+                if (this.logger.isDebugEnabled()) {
+                    logger.debug(msg + XML.serializeNode(fragmentElement), e );
+                }
+                else {
+                    logger.warn(msg + " Enable DEBUG logging for stack trace.\n\tCaused By: " + e.getMessage() + XML.serializeNode(fragmentElement));
+                }
             }
         }   
         
@@ -228,12 +229,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
             InputStream is = null;
             try {
                 is = this.configurationFile.getInputStream();
-                logger.info("\n" + 
-                        "---- Distributed Layout Management ----\n" + 
-                        "    config file: " + this.configurationFile + "\n" + 
-                        "---- CONTENTS ----\n" + 
-                        IOUtils.toString(is) + "\n" + 
-                        "------------------\n");
+                logger.info("DLM config file: " + this.configurationFile);
             }
             catch (Exception IOException) {
                 // ignore. if we can't open here runtime will be thrown soon

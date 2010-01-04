@@ -5,10 +5,6 @@
  */
 package org.jasig.portal.layout.dlm;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -146,16 +142,13 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             }
             catch( Exception e )
             {
-                // problem loading so none of it should be used
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter( sw );
-                e.printStackTrace( pw );
-                pw.flush();
-                LOG.error("\n\n------ Problem occurred activating " +
-                        fd.getName() + "------\n" +
-                        (e.getMessage() != null ?
-                         e.getMessage() + "\n\n" : "" ) +
-                        sw.toString() );
+                final String msg = "Problem activating DLM fragment '" + fd.getName() + "' no content for this fragment will be included in user layouts.";
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(msg, e);
+                }
+                else {
+                    LOG.warn(msg + " Enable DEBUG logging for the full stack trace.");
+                }
             }
         }
 

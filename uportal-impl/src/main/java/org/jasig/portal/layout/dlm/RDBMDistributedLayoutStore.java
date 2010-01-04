@@ -5,10 +5,8 @@
  */
 package org.jasig.portal.layout.dlm;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -889,8 +887,8 @@ public class RDBMDistributedLayoutStore
         
         int idAfterThisOne = nextId;  // default...
         if (e.selectSingleNode("@ID | @dlm:plfID") == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("No ID or dlm:plfID attribute for the following node "
+            if (log.isDebugEnabled()) {
+                log.debug("No ID or dlm:plfID attribute for the following node "
                 		    + "(one will be generated and added):  element" 
                             + e.getName() + ", name=" + e.valueOf("@name") 
                             + ", fname=" + e.valueOf("@fname"));
@@ -1251,9 +1249,11 @@ public class RDBMDistributedLayoutStore
         {
             for (final FragmentDefinition fragmentDefinition : definitions) {
                 final UserView userView = activator.getUserView(fragmentDefinition);
-                int fdId = userView.getUserId();
-                if ( fdId == userId ) {
-                    return fragmentDefinition;
+                if (userView != null) {
+                    int fdId = userView.getUserId();
+                    if ( fdId == userId ) {
+                        return fragmentDefinition;
+                    }
                 }
             }
         }

@@ -1504,7 +1504,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
               if (rs.next()) {
                 firstStructId = rs.getInt(1);
               } else {
-                throw new Exception("RDBMUserLayoutStore::getUserLayout(): No INIT_STRUCT_ID in UP_USER_LAYOUT for " + userId + " and LAYOUT_ID " + layoutId);
+                throw new Exception("RDBMUserLayoutStore::getUserLayout(): No INIT_STRUCT_ID in UP_USER_LAYOUT for USER_ID: " + userId + " and LAYOUT_ID: " + layoutId);
               }
             } finally {
               rs.close();

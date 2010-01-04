@@ -160,7 +160,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
     private File getWellKnownDir() {
 
         if (this.servletContext == null) {
-            log.error("Channel Archives will not be  loaded. Unable to aquire the real path to '"
+            log.warn("Channel Archives will not be  loaded. Unable to aquire the real path to '"
                     + WELL_KNOWN_DIR + "' due to no ServletCotnext being available. Alternatively, "
                     + "you can specify a fully qualified path as the value of a '"
                     + CAR_DIR_PROP_NAME + "' property in portal.properties.");
@@ -170,7 +170,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
         final String carDirRealPath = this.servletContext.getRealPath(WELL_KNOWN_DIR);
         
         if (carDirRealPath == null) {
-            log.error("Channel Archives will not be  loaded. Unable to aquire the real path to '"
+            log.warn("Channel Archives will not be  loaded. Unable to aquire the real path to '"
                     + WELL_KNOWN_DIR + "'. This can occur if the portal is deployed "
                     + "as a WAR and directories can not be created within its directory "
                     + "structure. Alternatively, you can specify a fully qualified path as the value of a '"
@@ -181,8 +181,8 @@ public class CarResources implements ServletContextAware, InitializingBean {
         final File carDir = new File(carDirRealPath);
 
         if (!carDir.exists()) {
-            if (log.isInfoEnabled()) {
-                log.info("Channel Archives can not be  loaded. CAR directory '" + carDirRealPath
+            if (log.isWarnEnabled()) {
+                log.warn("Channel Archives can not be  loaded. CAR directory '" + carDirRealPath
                         + "' does not exist.");
             }
             return null;
