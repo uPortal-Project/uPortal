@@ -172,6 +172,13 @@ public void init() throws ServletException {
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse res) {
+        // Call to setCharacterEncoding method should be done before any other access to the request
+        try {
+            request.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            log.error("Unable to set UTF-8 character encoding!", uee);
+        }
+        
         final IUserInstanceManager userInstanceManager = UserInstanceManagerLocator.getUserInstanceManager();
         
         final IWritableHttpServletRequest writableRequest = new PortalHttpServletRequest(request, userInstanceManager);
@@ -210,13 +217,6 @@ public void init() throws ServletException {
                 ExceptionHelper.genericTopHandler(Errors.bug,e);
             }
             return;
-        }
-
-        // Call to setCharacterEncoding method should be done before any call to req.getParameter() method.
-        try {
-            writableRequest.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException uee) {
-            log.error("Unable to set UTF-8 character encoding!", uee);
         }
 
         //Get the user's session
