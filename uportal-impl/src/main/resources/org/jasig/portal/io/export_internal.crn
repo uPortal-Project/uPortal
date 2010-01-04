@@ -102,8 +102,9 @@
         <sql-query>
             <sql>
                 SELECT upup.profile_fname, upu.user_name
-                FROM up_user_profile upup, up_user upu 
-                WHERE upup.user_id = upu.user_id AND upu.user_name = ?
+                FROM up_user_profile upup
+                    LEFT JOIN up_user upu ON upu.user_id = upup.user_id 
+                WHERE upu.user_name = ?
             </sql>
             <parameter value="${SYSID}"/>
             <subtasks>
