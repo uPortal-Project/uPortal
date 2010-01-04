@@ -50,7 +50,7 @@
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.AllUsersEvaluatorFactory'/>
   </dlm:fragment>
   
-  <dlm:fragment name='Faculty' ownerID='developer-lo' precedence='50'>
+  <dlm:fragment name='Faculty' ownerID='faculty-lo' precedence='50'>
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
       <paren mode="OR">     
         <attribute mode='memberOf' name='Faculty'/>
