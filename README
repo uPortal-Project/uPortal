@@ -7,12 +7,12 @@ the uPortal Confluence site http://www.ja-sig.org/wiki/display/UPC/Home
 +------------------------------------------------------------------------------+
 | Requirements                                                                 |
 +------------------------------------------------------------------------------+
-JDK 1.5 - Just a JRE is not sufficent, a full JDK is required
+JDK 1.6 - Just a JRE is not sufficent, a full JDK is required
 Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration
     changes that must be made for Tomcat 6.0 which are documented in the uPortal
-    manual. http://jasig.org/wiki/display/UPM30/01+Tomcat
+    manual. http://jasig.org/wiki/display/UPM31/01+Tomcat
 Maven 2.0.8 or later
-Ant 1.7.1 or 1.6.5 - Ant 1.7.0 has a SERIOUS bug and will NOT work with uPortal
+Ant 1.7.1 or later
     
     
 +------------------------------------------------------------------------------+
