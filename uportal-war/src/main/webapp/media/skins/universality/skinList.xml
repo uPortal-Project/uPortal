@@ -24,6 +24,14 @@
       Light blue and white.
     </skin-description>
   </skin>
+	
+	<skin>
+    <skin-key>coal</skin-key>
+    <skin-name>Coal</skin-name>
+    <skin-description>
+      Dark charcoal and gray.
+    </skin-description>
+  </skin>
   
 </skins>
 

@@ -254,8 +254,8 @@
         <token name="PORTLET_MOVE_LEFT_DISABLED_TITLE">Move portlet left is disabled</token>
         <token name="PORTLET_MOVE_RIGHT_DISABLED_TITLE">Move portlet right is disabled</token>
         <token name="PORTLET_MOVE_DOWN_DISABLED_TITLE">Move portlet down is disabled</token>
-        <token name="PORTLET_RETURN_LABEL">Return</token>
-        <token name="PORTLET_RETURN_LONG_LABEL">To return to the main view</token>
+        <token name="PORTLET_RETURN_LABEL">Return to dashboard</token>
+        <token name="PORTLET_RETURN_LONG_LABEL">To return to the dashboard view</token>
         <token name="PORTLET_HELP_LABEL">Help</token>
         <token name="PORTLET_HELP_LONG_LABEL">To view the help for this portlet</token>
         <token name="PORTLET_EDIT_LABEL">Edit</token>

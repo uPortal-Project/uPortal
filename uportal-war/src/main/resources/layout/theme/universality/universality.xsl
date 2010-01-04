@@ -90,10 +90,17 @@
   -->
   <xsl:param name="skin">uportal3</xsl:param>
   <xsl:variable name="SKIN" select="$skin"/>
-  <xsl:param name="FLUID_THEME_CLASS">fl-theme-uportal</xsl:param>
   <xsl:variable name="MEDIA_PATH">media/skins/universality</xsl:variable>
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
   <xsl:variable name="PORTAL_SHORTCUT_ICON">favicon.ico</xsl:variable>
+  <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$SKIN_PATH,'/skin.xml')"/>
+  <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/s:resources/css[@type='fss-theme']/@name"/>
+  <xsl:variable name="FLUID_THEME_CLASS">
+    <xsl:choose>
+      <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>
+      <xsl:otherwise>fl-theme-uportal</xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
   
   <!-- 
    | The unofficial "theme-switcher".
@@ -104,7 +111,8 @@
   -->
   <xsl:variable name="INSTITUTION">
     <xsl:choose>
-        <xsl:when test="$SKIN='university' or $SKIN='university-div1' or $SKIN='university-div2'">university</xsl:when> <!-- Set all institution skins to a specific theme configuration  -->
+      <xsl:when test="$SKIN='university' or $SKIN='university-div1' or $SKIN='university-div2'">university</xsl:when> <!-- Set all institution skins to a specific theme configuration  -->
+      <xsl:when test="$SKIN='coal'">coal</xsl:when>
       <xsl:when test="$SKIN='ivy'">ivy</xsl:when>
       <xsl:otherwise>uportal</xsl:otherwise>
     </xsl:choose>
@@ -176,6 +184,7 @@
    | Navigation Settings can be used to change the navigation.
   -->
   <xsl:param name="USE_FLYOUT_MENUS" select="'true'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
+  <xsl:param name="USE_ADD_TAB" select="'false'" /> <!-- UNDER DEVELOPMENT, not yet functional (leave false). Sets the use of a "+" button at the end of the tab list for adding a new tab.  Values are 'true' or 'false'. -->
   
   <!-- USE_SUBNAVIGATION_ROW
    | Sets the use of the sub navigation row, which lists out links to the portlets on the active tab.
@@ -270,6 +279,7 @@
       <xsl:otherwise>250</xsl:otherwise>
     </xsl:choose>
   </xsl:param>
+  
   <!-- ============================================ -->
   
   <!-- Debug Template
@@ -352,7 +362,7 @@
     <!-- Welcome -->
     
     <!-- Web Search -->
-    <xsl:if test="$INSTITUTION='uportal'">
+    <xsl:if test="$INSTITUTION != 'ivy'">
     	<xsl:call-template name="web.search"/>
     </xsl:if>
     <!-- Web Search -->
@@ -626,8 +636,8 @@
     <xsl:call-template name="breadcrumb"/>
     <!-- BREADCRUMB -->
     
-    <!-- PAGE TITLE -->
-    <xsl:call-template name="page.title"/>
+    <!-- PAGE TITLE
+    <xsl:call-template name="page.title"/> -->
     <!-- PAGE TITLE -->
   </xsl:template>
   <!-- =========================================================== -->
@@ -782,7 +792,7 @@
   -->
   <xsl:template name="footer.block">
 
-    <xsl:if test="$INSTITUTION='uportal'">
+    <xsl:if test="$INSTITUTION='uportal' or $INSTITUTION='coal'">
       <!-- Footer Links -->
       <div id="portalPageFooterLinks">
         <a href="http://www.jasig.org/" target="_blank" title="{$TOKEN[@name='JASIG_LONG_LABEL']}">
@@ -831,8 +841,8 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="portlet.top.block">
-    <div class="up-portlet-top">
-      <div class="up-portlet-top-inner">
+    <div class="up-portlet-wrapper-top">
+      <div class="up-portlet-wrapper-top-inner">
       </div>
     </div>
   </xsl:template>
@@ -847,8 +857,8 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="portlet.bottom.block">
-    <div class="up-portlet-bottom">
-      <div class="up-portlet-bottom-inner">
+    <div class="up-portlet-wrapper-bottom">
+      <div class="up-portlet-wrapper-bottom-inner">
       </div>
     </div>
   </xsl:template>

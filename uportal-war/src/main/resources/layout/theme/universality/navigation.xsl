@@ -35,7 +35,9 @@
               <xsl:apply-templates select="tab">
                 <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
               </xsl:apply-templates>
+              <xsl:call-template name="add.tab"/>
             </ul>
+            
           	<xsl:if test="$USE_SUBNAVIGATION_ROW='true'">
               <div id="portalNavigationSubrow" class="fl-tab-content">
                 <xsl:call-template name="subnavigation">
@@ -94,7 +96,7 @@
     </xsl:variable>
     <xsl:variable name="NAV_ACTIVE"> <!-- Determine which navigation option is the active (current selection) and add a css hook. -->
       <xsl:choose>
-        <xsl:when test="@activeTab='true' and $CONTEXT='header'">active fl-activeTab</xsl:when>
+        <xsl:when test="@activeTab='true' and $CONTEXT='header'">active fl-tabs-active</xsl:when>
         <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">active fl-activemenu</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
@@ -210,6 +212,12 @@
             <xsl:otherwise>portalSubnavigationInner_<xsl:value-of select="@ID"/></xsl:otherwise>
           </xsl:choose>
         </xsl:attribute>
+        <xsl:attribute name="class">
+          <xsl:choose>
+            <xsl:when test="$CONTEXT='flyout'">portal-flyout-container-inner</xsl:when>
+            <xsl:otherwise>portal-subnav-container-inner</xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
         <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
         	<xsl:choose>
           	<xsl:when test="$CONTEXT='flyout'">
@@ -256,9 +264,30 @@
     </div>
     
   </xsl:template>
+  <!-- ================================================== -->
   
   
-  <!-- ========== TEMPLATE: PREFERENCES EDIT PAGE ========== -->
+  <!-- ================ TEMPLATE: ADD TAB ================ -->
+  <!-- =================================================== -->
+  <!--
+   | This template renders the add tab "+" link at the end of the tab list.
+  -->
+  <xsl:template name="add.tab">  
+    <xsl:if test="$USE_ADD_TAB='true'">
+      <xsl:if test="$AUTHENTICATED='true' and $USE_AJAX='true'">
+      	<li id="addTabLink" class="portal-navigation">
+          <a class="portal-navigation-link add-tab" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LONG_LABEL']}">
+            <span class="portal-navigation-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LABEL']"/></span>
+          </a>
+        </li>
+      </xsl:if>
+    </xsl:if>
+  </xsl:template>
+  <!-- ================================================== -->
+  
+  
+  
+  <!-- ========= TEMPLATE: PREFERENCES EDIT PAGE ========= -->
   <!-- =================================================== -->
   <!--
    | This template renders the tab preferences menu for the active tab when flyout menus are used.
@@ -266,7 +295,7 @@
   <xsl:template name="preferences.editpage">
       <div id="portalFlyoutNavigation_{@ID}" class="portal-flyout-container" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
         
-        <div id="portalFlyoutNavigationInner_{@ID}">  <!-- Inner div for additional presentation/formatting options. -->
+        <div id="portalFlyoutNavigationInner_{@ID}" class="portal-flyout-container-inner">  <!-- Inner div for additional presentation/formatting options. -->
           <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
             <li id="editPageLink" class="portal-subnav">
               <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">

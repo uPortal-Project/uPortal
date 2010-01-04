@@ -113,7 +113,7 @@
  */
 .portlet-form-label {}
 .portlet-form-input-field {}
-.portlet-form-button {padding:0.2em 1em; background:#336699 url(images/button_bkd_flat.png) top left repeat-x; border:1px solid #000; color:#fff; font-size:85%; font-weight:bold;}
+.portlet-form-button {padding:0.3em 2em; background:#336699 url(../common/images/button_bkd_flat.png) top left repeat-x; border:1px solid #000; color:#fff; font-weight:bold;}
 .portlet-form-button:hover {background-color:#7a9e0d; cursor:pointer;}
 .portlet a.portlet-form-button,
 .portlet a.portlet-form-button:hover,
@@ -259,7 +259,7 @@
 
 
 /* Buttons */
-.portlet .portlet-button {margin:0 5px; padding:0.3em 2em; border-width:1px; border-style:solid; background:#336699 url(images/button_bkd_flat.png) top left repeat-x; border-color:#000; color:#fff; font-weight:bold;}
+.portlet .portlet-button {margin:0 5px; padding:0.3em 2em; border-width:1px; border-style:solid; background:#336699 url(../common/images/button_bkd_flat.png) top left repeat-x; border-color:#000; color:#fff; font-weight:bold;}
 .portlet a.portlet-button {display:block; float:left; color:#fff; text-decoration:none;}
 .portlet .portlet-button-group {padding:1em 0; border-top:0.2em solid #ccc;}
 .portlet .portlet-button-group .portlet-button {background-color:#F0F0F0; border-color:#000; color:#000;}
