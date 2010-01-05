@@ -5,8 +5,8 @@
   <css>/ResourceServingWebapp/rs/fluid/1.1.2/css/fss-framework-1.1.2.min.css</css>
   
   <!-- Default jQuery UI theme.  Comment this out if you are using your own custom jQuery UI theme. -->
-  <css>/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css</css>
-
+  <css>/ResourceServingWebapp/rs/jqueryui/1.7.2/theme/smoothness/jquery-ui-1.7.2-smoothness.min.css</css>
+    
   <!-- For printing of portal pages. Common to all skins using the universality theme -->
   <css>../common/css/print.css</css>
   

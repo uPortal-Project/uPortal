@@ -320,6 +320,7 @@ html { background-color:#E6EEFB; }
 .ui-widget select, 
 .ui-widget textarea, 
 .ui-widget button { font-size:1em; }
+.ui-tabs .ui-tabs-nav li { list-style-image:none; list-style-position:outside;list-style-type:none; }
 
 /* jQuery tooltip */
 #tooltip { background-color:#fffbbf; color:#344461; border:thin solid #b1c6f2; }

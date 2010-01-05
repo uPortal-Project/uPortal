@@ -271,6 +271,7 @@
 
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button, 
 .ui-widget {font-size: 1em; font-family:arial,helvetica,clean,sans-serif;}
+.ui-tabs .ui-tabs-nav li { list-style-image:none; list-style-position:outside;list-style-type:none; }
 
 /* jQuery tooltip */
 #tooltip {background-color: #fffbbf; color: #344461; border: thin solid #b1c6f2;}
