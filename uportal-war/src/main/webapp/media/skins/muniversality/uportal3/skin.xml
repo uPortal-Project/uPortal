@@ -11,12 +11,12 @@
   <!-- Visual style for the portal. Built and formatted as a Fluid Mobile Skinning System theme. -->
   <css>portal.css</css>
     
-  <!-- Visual style for portlet content. An extension of the uportal3 skin. -->
-  <css>../../universality/uportal3/portlet.css</css>
-    
   <!-- Support for legacy uPortal css classes. -->
   <css>legacy.css</css>
-    
+
+  <!-- Visual style for portlet content. An extension of the uportal3 skin. -->
+  <css>../../universality/uportal3/portlet.css</css>
+      
 
   <js>/ResourceServingWebapp/rs/jquery/1.3.2/jquery-1.3.2.min.js</js>
   <js>/ResourceServingWebapp/rs/jqueryui/1.7.2/jquery-ui-1.7.2.min.js</js>
