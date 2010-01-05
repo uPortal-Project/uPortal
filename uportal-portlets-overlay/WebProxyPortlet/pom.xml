@@ -24,10 +24,35 @@
             <version>${WebProxyPortlet.version}</version>
             <type>war</type>
         </dependency>
+        
+        <dependency>
+            <groupId>${jdbc.groupId}</groupId>
+            <artifactId>${jdbc.artifactId}</artifactId>
+            <version>${jdbc.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
+    
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1-alpha-2</version>
+                <configuration>
+                    <filters>
+                        <filter>${basedir}/../../uportal-impl/src/main/resources/properties/rdbm.properties</filter>
+                    </filters>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
            <plugin>
                 <groupId>org.apache.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
