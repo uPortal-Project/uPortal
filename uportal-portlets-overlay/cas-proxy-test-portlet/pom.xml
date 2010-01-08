@@ -19,7 +19,7 @@
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
-            <groupId>org.jasig.portal</groupId>
+            <groupId>org.jasig.portlet</groupId>
             <artifactId>cas-proxy-test-portlet</artifactId>
             <version>${cas-proxy-test-portlet.version}</version>
             <type>war</type>
