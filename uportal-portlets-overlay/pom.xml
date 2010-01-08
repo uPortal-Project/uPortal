@@ -31,6 +31,12 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.pluto</groupId>
                     <artifactId>maven-pluto-plugin</artifactId>
                     <version>${pluto.version}</version>
