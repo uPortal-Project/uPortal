@@ -23,7 +23,7 @@
             <map>
                 <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
                 <entry key="uPortal:section=Persistence,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
-                <!-- <entry key="uPortal:section=Persistence,name=PortalStatsHibernateStatistics" value-ref="portalStatsHibernateStatisticsMBean"/> -->
+                <entry key="uPortal:section=Persistence,name=PortalStatsHibernateStatistics" value-ref="portalStatsHibernateStatisticsMBean"/>
                 <entry key="uPortal:section=Persistence,name=PortalDB" value-ref="PortalDb"/>
             </map>
         </property>
