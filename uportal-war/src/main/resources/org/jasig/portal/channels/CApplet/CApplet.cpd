@@ -51,6 +51,8 @@ Version $Revision$
   </description>
 
   <class>org.jasig.portal.channels.CApplet</class>
+  
+  <deprecated>true</deprecated>
 
   <params>
     <step>

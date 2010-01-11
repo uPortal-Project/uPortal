@@ -10,6 +10,7 @@
 
 <channelDef>
   <class>org.jasig.portal.channels.jsp.Channel</class>
+  <deprecated>true</deprecated>
   <description>This is a channel for presenting content generated using Java Server Pages.</description>
 
   <params>

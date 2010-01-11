@@ -13,6 +13,7 @@
   </description>
 
   <class>net.unicon.portal.channels.version.CVersion</class>
+  <deprecated>true</deprecated>
 
   <params>
     <step>

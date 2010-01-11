@@ -52,6 +52,7 @@ Version $Revision$
   </description>
 
   <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
+  <deprecated>true</deprecated>
 
   <params>
     <step>

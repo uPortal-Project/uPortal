@@ -18,6 +18,16 @@
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry"/>
     </bean>
     
+    <bean id="channelPublishingDefinitionDao" class="org.jasig.portal.portlets.portletadmin.xmlsupport.XmlChannelPublishingDefinitionDao">
+        <property name="channelRegistryStore" ref="channelRegistryStore" />
+        <property name="cpdCache">
+            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE" />
+            </bean>
+        </property>
+    </bean>
+    
     <bean id="channelPublishingService" class="org.jasig.portal.channel.ChannelPublishingServiceImpl">
         <property name="channelRegistryStore" ref="channelRegistryStore"/>
     </bean>

@@ -68,14 +68,46 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </thead>
           <tfoot></tfoot>
           <tbody>
-            <c:forEach items="${ channelTypes }" var="chanType">
-              <tr>
-                <td align="center">
-                  <form:radiobutton path="typeId" value="${ chanType.id  }" cssClass="portlet-form-input-field"/>
-                </td>
-                <td><c:out value="${ chanType.name }"/></td>
-                <td><c:out value="${ chanType.description }"/></td>
-              </tr>
+            <c:forEach items="${ channelTypes }" var="chanTypeEntry">
+              <c:if test="${!chanTypeEntry.value.deprecated}">
+                <tr>
+                  <td align="center">
+                    <form:radiobutton path="typeId" value="${ chanTypeEntry.key.id  }" cssClass="portlet-form-input-field"/>
+                  </td>
+                  <td><c:out value="${ chanTypeEntry.key.name }"/></td>
+                  <td><c:out value="${ chanTypeEntry.key.description }"/></td>
+                </tr>
+              </c:if>
+            </c:forEach>
+          </tbody>
+        </table>
+        
+      </div>
+      
+      
+      <h3 class="portlet-section-header" role="heading"><spring:message code="chooseType.selectDeprecatedTypeHeading"/></h3>
+      <div class="portlet-section-body">
+      
+        <table summary="<spring:message code="chooseType.deprecatedTypesTableSummary"/>">
+          <thead>
+            <tr>
+              <th><spring:message code="chooseType.optionHeading"/></th>
+              <th><spring:message code="chooseType.typeHeading"/></th>
+              <th><spring:message code="chooseType.descriptionHeading"/></th>
+            </tr>
+          </thead>
+          <tfoot></tfoot>
+          <tbody>
+            <c:forEach items="${ channelTypes }" var="chanTypeEntry">
+              <c:if test="${chanTypeEntry.value.deprecated}">
+                <tr>
+                  <td align="center">
+                    <form:radiobutton path="typeId" value="${ chanTypeEntry.key.id  }" cssClass="portlet-form-input-field"/>
+                  </td>
+                  <td><c:out value="${ chanTypeEntry.key.name }"/></td>
+                  <td><c:out value="${ chanTypeEntry.key.description }"/></td>
+                </tr>
+              </c:if>
             </c:forEach>
           </tbody>
         </table>

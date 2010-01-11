@@ -24,7 +24,7 @@
      -->
     <on-start>
         <set name="flowScope.channelTypes" 
-            value="channelRegistryStore.getChannelTypes()"/>
+            value="channelPublishingDefinitionDao.getChannelPublishingDefinitions()"/>
         <set name="flowScope.completed" value="channel.id > 0"/>
     </on-start>
     
@@ -39,7 +39,7 @@
         <transition on="next" to="afterChooseType">
             <!-- Set default parameters based on channel type -->
             <set name="flowScope.cpd" 
-                value="portletAdministrationHelper.getChannelType(channel.typeId)"/>
+                value="channelPublishingDefinitionDao.getChannelType(channel.typeId)"/>
             <evaluate expression="channel.setChannelPublishingDefinition(cpd)"/>
         </transition>
     </view-state>

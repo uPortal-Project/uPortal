@@ -52,6 +52,7 @@ Version $Revision$
   </description>
 
   <class>org.jasig.portal.channels.CGenericXSLT</class>
+  <deprecated>true</deprecated>
 
   <params>
     <step>

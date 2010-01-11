@@ -11,11 +11,15 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("channelDef")
 public class ChannelPublishingDefinition implements Serializable {
+    private static final long serialVersionUID = 5480102681300403689L;
 
-	private String description;
+    private String description;
 
    	@XStreamAlias("class")
 	private String className;
+   	
+   	@XStreamAlias("deprecated")
+   	private boolean deprecated;
    	
    	@XStreamAlias("params")
    	private CPDParameterList params;
@@ -31,8 +35,16 @@ public class ChannelPublishingDefinition implements Serializable {
    		this.params = params;
    		this.controls = controls;
    	}
+   	
+	public boolean isDeprecated() {
+        return this.deprecated;
+    }
 
-	public String getDescription() {
+    public void setDeprecated(boolean deprecated) {
+        this.deprecated = deprecated;
+    }
+
+    public String getDescription() {
 		return description;
 	}
 

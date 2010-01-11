@@ -47,8 +47,10 @@ Version $Revision$
 <channelDef>
 
   <description>
-    This is a custom channel.
+    Custom IChannel
   </description>
+  
+  <deprecated>true</deprecated>
 
   <class></class>
 

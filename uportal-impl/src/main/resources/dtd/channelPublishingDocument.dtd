@@ -5,9 +5,10 @@
     https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
 
 -->
-<!ELEMENT channelDef (description,class,params,controls)>
+<!ELEMENT channelDef (description,class,deprecated?,params,controls)>
 <!ELEMENT description (#PCDATA)*>
 <!ELEMENT class (#PCDATA)*>
+<!ELEMENT deprecated (#PCDATA)*>
 <!ELEMENT params (step)+>
 <!ELEMENT step (ID,name,description,(parameter)*,arbitrary-parameters*,(preference)*, arbitrary-preferences?)>
 <!ELEMENT ID (#PCDATA)*>

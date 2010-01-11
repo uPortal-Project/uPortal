@@ -15,21 +15,22 @@ import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameterTypeRestriction;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
+import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
 
 public class ChannelDefinitionFormValidator {
 	
-	private PortletAdministrationHelper portletAdministrationHelper;
-	
-	public void setPortletAdministrationHelper(PortletAdministrationHelper portletAdministrationHelper) {
-		this.portletAdministrationHelper = portletAdministrationHelper;
-	}
-
+	private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
 	private IChannelRegistryStore channelStore;
+
 	
-	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
+	public void setChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao channelPublishingDefinitionDao) {
+        this.channelPublishingDefinitionDao = channelPublishingDefinitionDao;
+    }
+
+    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
 		this.channelStore = channelRegistryStore;
 	}
 	
@@ -83,7 +84,7 @@ public class ChannelDefinitionFormValidator {
 	}
 	
 	public void validateSetParameters(ChannelDefinitionForm def, MessageContext context) {
-		ChannelPublishingDefinition cpd = portletAdministrationHelper.getChannelType(def.getTypeId());
+		ChannelPublishingDefinition cpd = channelPublishingDefinitionDao.getChannelPublishingDefinition(def.getTypeId());
 		for (CPDStep step : cpd.getParams().getSteps()) {
 			if (step.getParameters() != null) {
 				for (CPDParameter param : step.getParameters()) {

@@ -6,8 +6,6 @@
 package org.jasig.portal.portlets.portletadmin;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -37,7 +35,6 @@ import org.apache.pluto.spi.optional.PortletRegistryService;
 import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.api.portlet.DelegateState;
 import org.jasig.portal.api.portlet.DelegationActionResponse;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
@@ -62,19 +59,16 @@ import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameterList;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
+import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.webflow.context.ExternalContext;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * Helper methods for the portlet administration workflow.
@@ -83,20 +77,16 @@ import com.thoughtworks.xstream.XStream;
  * @revision $Revision$
  */
 public class PortletAdministrationHelper {
-	
-	private static final String CUSTOM_CPD_PATH = "org/jasig/portal/portlets/portletadmin/CustomChannel.cpd";
-	private static final String SHARED_PARAMETERS_PATH = "org/jasig/portal/channels/SharedParameters.cpd";
-
 	protected final Log logger = LogFactory.getLog(PortletAdministrationHelper.class);
 	
 	private IGroupListHelper groupListHelper;
     private IChannelRegistryStore channelRegistryStore;
     private OptionalContainerServices optionalContainerServices;
     private IChannelPublishingService channelPublishingService; 
-    private Map<Serializable, ChannelPublishingDefinition> cpdCache;
     private PortletDelegationLocator portletDelegationLocator;
+    private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
     
-
+    
 	public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
         this.portletDelegationLocator = portletDelegationLocator;
     }
@@ -123,17 +113,12 @@ public class PortletAdministrationHelper {
 			IChannelPublishingService channelPublishingService) {
 		this.channelPublishingService = channelPublishingService;
 	}
-	
-    /**
-     * Cache to use for parsed CPDs.
-     * 
-     * @param cpdCache
-     */
-	public void setCpdCache(Map<Serializable, ChannelPublishingDefinition> cpdCache) {
-		this.cpdCache = cpdCache;
-	}
 
-	/**
+	public void setChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao channelPublishingDefinitionDao) {
+        this.channelPublishingDefinitionDao = channelPublishingDefinitionDao;
+    }
+
+    /**
 	 * Construct a new ChannelDefinitionForm for the given IChannelDefinition id.
 	 * If a ChannelDefinition matching this ID already exists, the form will
 	 * be pre-populated with the ChannelDefinition's current configuration.  If
@@ -403,70 +388,6 @@ public class PortletAdministrationHelper {
 	}
 	
 	/**
-	 * Return a ChannelPublishingDocument for a specified channel type id.
-	 * 
-	 * @param channelTypeId
-	 * @return
-	 */
-	public ChannelPublishingDefinition getChannelType(int channelTypeId) {
-		
-		// attempt to retrieve the CPD from the cache
-		if (this.cpdCache.containsKey(channelTypeId)) {
-			return this.cpdCache.get(channelTypeId);
-		}
-		
-		// if the CPD is not already in the cache, determine the CPD URI
-		String cpdUri;
-		if (channelTypeId >= 0) {
-			IChannelType type = channelRegistryStore.getChannelType(channelTypeId);
-			cpdUri = type.getCpdUri();
-		} else {
-			cpdUri = CUSTOM_CPD_PATH;
-		}
-		
-		// read in the CPD
-		InputStream inputStream = null;
-		try {
-			inputStream = ResourceLoader.getResourceAsStream(PortletAdministrationHelper.class, cpdUri);
-		} catch (ResourceMissingException e) {
-			logger.error("Failed to locate CPD for channel type " + channelTypeId, e);
-		} catch (IOException e) {
-			logger.error("Failed to load CPD for channel type " + channelTypeId, e);
-		}
-		
-		// parse the CPD
-		XStream stream = new XStream();
-		stream.processAnnotations(ChannelPublishingDefinition.class);
-		ChannelPublishingDefinition def = (ChannelPublishingDefinition) stream.fromXML(inputStream);
-		
-		// read in the shared CPD
-		try {
-			inputStream = ResourceLoader.getResourceAsStream(PortletAdministrationHelper.class, SHARED_PARAMETERS_PATH);
-		} catch (ResourceMissingException e) {
-			logger.error("Failed to locate shared parameters CPD for channel type " + channelTypeId, e);
-		} catch (IOException e) {
-			logger.error("Failed to load shared parameters CPD for channel type " + channelTypeId, e);
-		}
-		
-		// parse the shared CPD and add its steps to the end of the type-specific
-		// CPD
-		stream = new XStream();
-		stream.processAnnotations(CPDParameterList.class);
-		CPDParameterList paramList = (CPDParameterList) stream.fromXML(inputStream);
-		int stepId = def.getParams().getSteps().size();
-		for (CPDStep step : paramList.getSteps()) {
-			stepId = stepId++;
-			step.setId(String.valueOf(stepId));
-		}
-		
-		def.getParams().getSteps().addAll(paramList.getSteps());
-		
-		// add the CPD to the cache and return it
-		this.cpdCache.put(channelTypeId, def);
-		return def;
-	}
-	
-	/**
 	 * Get a list of the key names of the currently-set arbitrary portlet
 	 * preferences.
 	 * 
@@ -476,7 +397,7 @@ public class PortletAdministrationHelper {
 	 */
 	public Set<String> getArbitraryPortletPreferenceNames(ChannelDefinitionForm form) {
 		// set default values for all channel parameters
-		ChannelPublishingDefinition cpd = getChannelType(form.getTypeId());
+		ChannelPublishingDefinition cpd = this.channelPublishingDefinitionDao.getChannelPublishingDefinition(form.getTypeId());
 		Set<String> currentPrefs = new HashSet<String>();
 		currentPrefs.addAll(form.getPortletPreferences().keySet());
 		for (CPDStep step : cpd.getParams().getSteps()) {

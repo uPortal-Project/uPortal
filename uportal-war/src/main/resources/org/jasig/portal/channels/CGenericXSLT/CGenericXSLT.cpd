@@ -50,6 +50,7 @@ Version $Revision$
     XSLT stylesheets described in a stylesheet list (.ssl) file
   </description>
   <class>org.jasig.portal.channels.CGenericXSLT</class>
+  <deprecated>true</deprecated>
   <params>
     <step>
       <ID>1</ID>

@@ -49,6 +49,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
   </description>
 
   <class>org.jasig.portal.channels.CSyndFeed</class>
+  <deprecated>true</deprecated>
 
   <params>
     <step>

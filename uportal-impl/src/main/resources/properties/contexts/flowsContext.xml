@@ -54,13 +54,8 @@
         <property name="channelPublishingService" ref="channelPublishingService"/>
         <property name="optionalContainerServices" ref="optionalContainerServices"/>
         <property name="groupListHelper" ref="groupListHelper"/>
-        <property name="cpdCache">
-            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheFactory" ref="cacheFactory" />
-                <property name="cacheName" value="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE" />
-            </bean>
-        </property>
         <property name="portletDelegationLocator" ref="portletDelegationLocator" />
+        <property name="channelPublishingDefinitionDao" ref="channelPublishingDefinitionDao" />
     </bean>
     
     <bean id="userLocaleHelper" class="org.jasig.portal.portlets.localization.UserLocaleHelper">
@@ -70,7 +65,7 @@
     
     <bean id="channelValidator"
         class="org.jasig.portal.portlets.portletadmin.ChannelDefinitionFormValidator">
-        <property name="portletAdministrationHelper" ref="portletAdministrationHelper"/>
+        <property name="channelPublishingDefinitionDao" ref="channelPublishingDefinitionDao"/>
         <property name="channelRegistryStore" ref="channelRegistryStore"/>
     </bean>
     
