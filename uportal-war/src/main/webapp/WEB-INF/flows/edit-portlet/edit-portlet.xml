@@ -39,7 +39,7 @@
         <transition on="next" to="afterChooseType">
             <!-- Set default parameters based on channel type -->
             <set name="flowScope.cpd" 
-                value="channelPublishingDefinitionDao.getChannelType(channel.typeId)"/>
+                value="channelPublishingDefinitionDao.getChannelPublishingDefinition(channel.typeId)"/>
             <evaluate expression="channel.setChannelPublishingDefinition(cpd)"/>
         </transition>
     </view-state>
@@ -182,7 +182,7 @@
     <view-state id="reviewPortlet">
         <on-entry>
             <set name="flowScope.cpd" 
-                value="portletAdministrationHelper.getChannelType(channel.typeId)"/>
+                value="channelPublishingDefinitionDao.getChannelPublishingDefinition(channel.typeId)"/>
             <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(channel)"/>
         </on-entry>
         
