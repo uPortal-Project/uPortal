@@ -19,8 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
@@ -47,6 +48,8 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
      * will be available.
      */
     public static final String ATTRIBUTE__HTTP_SERVLET_RESPONSE = PortalHttpServletRequestWrapper.class.getName() + ".PORTAL_HTTP_SERVLET_RESPONSE";
+    
+    protected final Log logger = LogFactory.getLog(this.getClass());
     
     private final HttpServletResponse httpServletResponse;
     private final IUserInstanceManager userInstanceManager;
@@ -212,9 +215,18 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         }
         
         //Find the group for the role, if not found return false
-        final IGroupMember groupForRole = GroupService.getGroupMember(role, IEntityGroup.class);
+        IGroupMember groupForRole = GroupService.findGroup(role);
         if (groupForRole == null) {
-            return false;
+            final EntityIdentifier[] results = GroupService.searchForGroups(role, GroupService.IS, IPerson.class);
+            if (results == null || results.length == 0) {
+                return false;
+            }
+            
+            if (results.length > 1) {
+                this.logger.warn(results.length + " groups were found for role '" + role + "'. The first result will be used.");
+            }
+            
+            groupForRole = GroupService.getGroupMember(results[0]);
         }
 
         //Load the group information about the current user
