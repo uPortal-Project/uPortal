@@ -224,15 +224,17 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
             
             if (RequestType.ACTION.equals(portletRequestInfo.getRequestType())) {
                 final IPortletEntity targetedPortletEntity = this.portletWindowRegistry.getParentPortletEntity(req, targetedPortletWindowId);
-                final String channelSubscribeId = targetedPortletEntity.getChannelSubscribeId();
-                final boolean actionExecuted = channelManager.doChannelAction(req, res, channelSubscribeId, false);
-                
-                if (actionExecuted) {
-                    // The action completed, return immediately
-                    return;
+                if (targetedPortletEntity != null) {
+                    final String channelSubscribeId = targetedPortletEntity.getChannelSubscribeId();
+                    final boolean actionExecuted = channelManager.doChannelAction(req, res, channelSubscribeId, false);
+                    
+                    if (actionExecuted) {
+                        // The action completed, return immediately
+                        return;
+                    }
+    
+                    // The action didn't execute, continue and try to render normally
                 }
-
-                // The action didn't execute, continue and try to render normally
             }
         }
         

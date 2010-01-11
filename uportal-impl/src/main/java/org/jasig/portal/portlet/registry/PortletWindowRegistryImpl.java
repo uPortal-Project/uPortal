@@ -202,6 +202,10 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
         
         final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
+        if (portletWindow == null) {
+            return null;
+        }
+        
         final IPortletEntityId parentPortletEntityId = portletWindow.getPortletEntityId();
         final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(parentPortletEntityId);
         return portletEntity;
