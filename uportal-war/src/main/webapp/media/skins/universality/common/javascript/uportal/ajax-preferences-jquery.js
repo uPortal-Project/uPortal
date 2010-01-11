@@ -46,7 +46,7 @@
 		    var options = {
 		         selectors: {
 			        columns: ".portal-page-column-inner",
-			        modules: ".up-portlet-container",
+			        modules: ".up-portlet-wrapper",
 			        lockedModules: ".locked",
 			        dropWarning: $("#portalDropWarning"),
 			        grabHandle: "[id*=toolbar_]"
