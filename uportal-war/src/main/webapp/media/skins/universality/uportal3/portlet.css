@@ -292,23 +292,14 @@
 .portlet-form-box form .portlet-button-group .portlet-button {padding:0.3em 1em; font-size:11px; font-family:"lucida grande",tahoma,verdana,arial,sans-serif;}
 
 /* Tables */
-/* Normal data table styles
-td {border-color:#999;} */
-td {border:none;}
+/* Normal data table styles */
+.up td {border:none;}
 th {padding:0.1em 1em; border-color:#336699; background-color:#e2e8e7; color:#666;}
 .portlet .portlet-body td {border:1px solid #999;}
 /* Add the "purpose-layout" class to any table you are using for layout purposes. */
 .portlet table.purpose-layout,
 .portlet table.purpose-layout th,
 .portlet table.purpose-layout td {border:none; background-color:transparent;}
-/* Also for the Google Search table */
-.portlet table.gsc-search-box,
-.portlet table.gsc-search-box th,
-.portlet table.gsc-search-box td {border:none; background-color:transparent;}
-/* Also for Gateway portlet tables */
-.GatewayPortlet table,
-.GatewayPortlet th,
-.GatewayPortlet td {border:none; background-color:transparent;}
 
 /* Overflow box */
 .portlet .fl-overflow {width: 185px; height: 300px; border: 2px solid #dfdfdf; margin: 0 1em 1em 0; padding: 0.31em; overflow-x:auto; overflow-y:scroll;}
