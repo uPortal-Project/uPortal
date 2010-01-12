@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
-  <title>Portlet Administration</title>
-  <name>Portlet Administration</name>
-  <fname>portlet-admin</fname>
-  <desc>Portlet for Portlet Administration</desc>
+  <title>Groups Administration</title>
+  <name>Groups Administration</name>
+  <fname>groups-administration</fname>
+  <desc>Groups adminsitration</desc>
   <type>Portlet</type>
   <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>50000</timeout>
@@ -14,14 +14,12 @@
   <locale>en_US</locale>
   <categories>
     <category>uPortal</category>
+    <category>Administration</category>
   </categories>
   <groups>
     <group>Portal Administrators</group>
     <group>Portal Developers</group>
   </groups>
-  <users>
-    <user>studentadmin</user>
-  </users>
   <parameters>
     <parameter> 
       <name>isFrameworkPortlet</name>  
@@ -31,7 +29,7 @@
     </parameter>
     <parameter> 
       <name>portletName</name>  
-      <value>PortletAdministration</value>  
+      <value>GroupsAdministration</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

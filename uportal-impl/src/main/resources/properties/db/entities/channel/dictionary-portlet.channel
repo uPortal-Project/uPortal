@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
-  <title>Google Search</title>
-  <name>Google Search</name>
-  <fname>google-portlet</fname>
-  <desc>Google Portlet from http://code.google.com/p/googleportlet/</desc>
+  <title>Dictionary</title>
+  <name>Dictionary</name>
+  <fname>dictionary-portlet</fname>
+  <desc>Dictionary portlet</desc>
   <type>Portlet</type>
   <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>60000</timeout>
@@ -27,17 +27,10 @@
     </parameter>
     <parameter> 
       <name>portletName</name>  
-      <value>google-search</value>  
+      <value>dictionary</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
   </parameters>
-  <portletPreferences>
-    <portletPreference> 
-      <name>googleApiKey</name>  
-      <values>
-        <value>ABQIAAAA1LMBgN_YMQm8gHtNDD0PHBT8V3EeC0kvvMKhUfRICeG0j5XTvxR7twPk2H016LpKy1O2yngKoCTt6g</value>
-      </values> 
-    </portletPreference>    
-  </portletPreferences>
+  <portletPreferences/>
 </channel-definition>

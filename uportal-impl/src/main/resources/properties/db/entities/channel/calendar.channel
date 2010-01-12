@@ -4,9 +4,9 @@
   <name>Calendar</name>
   <fname>calendar</fname>
   <desc>Small monthly calendar.</desc>
-  <type>Web Proxy</type>
-  <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
-  <timeout>10000</timeout>
+  <type>Portlet</type>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+  <timeout>60000</timeout>
   <hasedit>N</hasedit>
   <hashelp>N</hashelp>
   <hasabout>N</hasabout>
@@ -20,44 +20,14 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>cw_edit</name>  
-      <value></value>  
+      <name>portletApplicationId</name>  
+      <value>/jasig-widget-portlets</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_help</name>  
-      <value></value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_info</name>  
-      <value></value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_passThrough</name>  
-      <value>none</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_ssl</name>  
-      <value>XHTML.ssl</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_tidy</name>  
-      <value>off</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_xml</name>  
-      <value>calendar.html</value>  
+      <name>portletName</name>  
+      <value>calendar</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
