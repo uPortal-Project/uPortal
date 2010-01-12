@@ -814,9 +814,9 @@ public IAuthorizationPrincipal newPrincipal(String key, Class type) {
     IAuthorizationPrincipal principal = null;
 
     synchronized (this.principalCache) {
-        if (this.principalCache.containsKey(principalKey)) {
-            principal = this.principalCache.get(principalKey);
-        } else {
+        principal = this.principalCache.get(principalKey);
+        
+        if (principal == null) {
             principal = primNewPrincipal(key, type);
             this.principalCache.put(principalKey, principal);
         }
