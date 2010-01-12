@@ -41,9 +41,14 @@ public class DbLoaderRunner {
         
         final DbLoaderConfiguration configuration = new DbLoaderConfiguration(commandLine);
         
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final IDbLoader dbLoader = (IDbLoader) applicationContext.getBean("dbLoader", IDbLoader.class);
-        dbLoader.process(configuration);
+        try {
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            final IDbLoader dbLoader = (IDbLoader) applicationContext.getBean("dbLoader", IDbLoader.class);
+            dbLoader.process(configuration);
+        }
+        finally {
+            PortalApplicationContextLocator.shutdown();
+        }
     }
 
     protected static void printHelp(final Options options) {

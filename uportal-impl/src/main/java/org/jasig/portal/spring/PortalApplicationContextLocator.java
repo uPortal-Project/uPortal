@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -38,7 +39,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class PortalApplicationContextLocator implements ServletContextListener {
     private static Log LOGGER = LogFactory.getLog(PortalApplicationContextLocator.class);
     
-    private static final SingletonDoubleCheckedCreator<ApplicationContext> applicationContextCreator = new PortalApplicationContextCreator();
+    private static final SingletonDoubleCheckedCreator<ConfigurableApplicationContext> applicationContextCreator = new PortalApplicationContextCreator();
     private static Throwable directCreatorThrowable;
     private static ServletContext servletContext;
 
@@ -127,12 +128,30 @@ public class PortalApplicationContextLocator implements ServletContextListener {
     }
     
     /**
+     * If the ApplicationContext returned by {@link #getApplicationContext()} is 'portal managed' the shutdown hook
+     * for the context is called, closing and cleaning up all spring managed resources.
+     *
+     * If the ApplicationContext returned by {@link #getApplicationContext()} is actually a WebApplicationContext
+     * this method does nothing but log an error message.
+     */
+    public static void shutdown() {
+        if (applicationContextCreator.isCreated()) {
+            final ConfigurableApplicationContext applicationContext = applicationContextCreator.get();
+            applicationContext.close();
+        }
+        else {
+            final IllegalStateException createException = new IllegalStateException("No portal managed ApplicationContext has been created, there is nothing to shutdown.");
+            LOGGER.error(createException, createException);
+        }
+    }
+    
+    /**
      * Creator class that knows how to instantiate the lazily initialized portal application context if needed
      */
-    private static class PortalApplicationContextCreator extends SingletonDoubleCheckedCreator<ApplicationContext> {
+    private static class PortalApplicationContextCreator extends SingletonDoubleCheckedCreator<ConfigurableApplicationContext> {
         
         @Override
-        protected ApplicationContext createSingleton(Object... args) {
+        protected ConfigurableApplicationContext createSingleton(Object... args) {
             LOGGER.info("Creating new lazily initialized GenericApplicationContext for the portal");
 
             final long startTime = System.currentTimeMillis();
@@ -143,6 +162,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
             reader.loadBeanDefinitions("/properties/contexts/*.xml");
 
             genericApplicationContext.refresh();
+            genericApplicationContext.registerShutdownHook();
 
             directCreatorThrowable = new Throwable();
             directCreatorThrowable.fillInStackTrace();

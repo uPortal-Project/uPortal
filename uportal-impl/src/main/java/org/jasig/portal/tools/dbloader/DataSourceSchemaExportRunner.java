@@ -70,20 +70,25 @@ public class DataSourceSchemaExportRunner {
         final boolean ignoreNotFound = commandLine.hasOption(ignoreNotFoundOpt.getOpt());
         
         
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final ISchemaExport schemaExport;
         try {
-            schemaExport = (ISchemaExport) applicationContext.getBean(beanName, ISchemaExport.class);
-        }
-        catch (NoSuchBeanDefinitionException e) {
-            if (ignoreNotFound) {
-                return;
+            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+            final ISchemaExport schemaExport;
+            try {
+                schemaExport = (ISchemaExport) applicationContext.getBean(beanName, ISchemaExport.class);
             }
-
-            throw new IllegalArgumentException("Could not find ISchemaExport bean named '" + beanName + "'", e);
+            catch (NoSuchBeanDefinitionException e) {
+                if (ignoreNotFound) {
+                    return;
+                }
+    
+                throw new IllegalArgumentException("Could not find ISchemaExport bean named '" + beanName + "'", e);
+            }
+            
+            schemaExport.hbm2ddl(export, create, drop, outputFile);
         }
-        
-        schemaExport.hbm2ddl(export, create, drop, outputFile);
+        finally {
+            PortalApplicationContextLocator.shutdown();
+        }
     }
 
     protected static void printHelp(final Options options) {
