@@ -181,8 +181,8 @@ public class CarResources implements ServletContextAware, InitializingBean {
         final File carDir = new File(carDirRealPath);
 
         if (!carDir.exists()) {
-            if (log.isWarnEnabled()) {
-                log.warn("Channel Archives can not be  loaded. CAR directory '" + carDirRealPath
+            if (log.isInfoEnabled()) {
+                log.info("Channel Archives can not be  loaded. CAR directory '" + carDirRealPath
                         + "' does not exist.");
             }
             return null;
