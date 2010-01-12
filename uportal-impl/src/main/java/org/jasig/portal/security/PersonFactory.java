@@ -5,10 +5,12 @@
  */
 package org.jasig.portal.security;
 
+import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.security.provider.RestrictedPerson;
+import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
  * Creates a person.
@@ -34,6 +36,23 @@ public class PersonFactory {
      */
     public static final String GUEST_USERNAME = 
         PropertiesManager.getProperty("org.jasig.portal.security.PersonFactory.guest_user_name", "guest");
+    
+    private static final SingletonDoubleCheckedCreator<Integer> GUEST_USER_ID_LOADER = new SingletonDoubleCheckedCreator<Integer>() {
+        /* (non-Javadoc)
+         * @see org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator#createSingleton(java.lang.Object[])
+         */
+        @Override
+        protected Integer createSingleton(Object... args) {
+            final IPerson person = (IPerson)args[0];
+            final IUserIdentityStore userIdentityStore = UserIdentityStoreFactory.getUserIdentityStoreImpl();
+            try {
+                return userIdentityStore.getPortalUID(person);
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Error while finding user id for person: "  + person, e);
+            }
+        }
+    };
 
     /**
      * Creates an empty <code>IPerson</code> implementation. 
@@ -62,7 +81,8 @@ public class PersonFactory {
     public static IPerson createGuestPerson() throws Exception {
         IPerson person = createPerson();
         person.setAttribute(IPerson.USERNAME, GUEST_USERNAME);
-        person.setID(UserIdentityStoreFactory.getUserIdentityStoreImpl().getPortalUID(person));
+        final int guestUserId = GUEST_USER_ID_LOADER.get(person);
+        person.setID(guestUserId);
         person.setSecurityContext(InitialSecurityContextFactory.getInitialContext("root"));
         return person;
     }
