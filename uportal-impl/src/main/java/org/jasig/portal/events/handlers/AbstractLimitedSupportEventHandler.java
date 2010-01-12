@@ -38,6 +38,7 @@ public abstract class AbstractLimitedSupportEventHandler implements EventHandler
 	/** The list of supported classes. */
 	private boolean supportGuest = true;
 	private Set<String> supportedUserNames;
+	private Set<String> ignoredUserNames;
     private Set<Class<? extends PortalEvent>> supportedEvents;
 	private boolean explicitMatching = false;
     private boolean requireAll = true;
@@ -60,6 +61,18 @@ public abstract class AbstractLimitedSupportEventHandler implements EventHandler
         //userName check
         final String userName = person.getUserName();
         if (this.supportedUserNames == null || this.supportedUserNames.contains(userName)) {
+            if (!this.requireAll) {
+                return true;
+            }
+        }
+        else {
+            if (this.requireAll) {
+                return false;
+            }
+        }
+        
+        //ignored userName check
+        if (this.ignoredUserNames == null || !this.ignoredUserNames.contains(userName)) {
             if (!this.requireAll) {
                 return true;
             }
@@ -148,6 +161,25 @@ public abstract class AbstractLimitedSupportEventHandler implements EventHandler
         }
         else {
             this.supportedUserNames = new HashSet<String>(supportedUserNames);
+        }
+    }
+    
+    public Collection<String> getIgnoredUserNames() {
+        return ignoredUserNames;
+    }
+    /**
+     * If no <code>ignoredUserNames</code> {@link Collection} is configured all user-names are supported otherwise
+     * exact String equality matching is done to determine ignored userNames. The property defaults to null (all user
+     * names)
+     * 
+     * @param ignoredUserNames the ignoredUserNames to set
+     */
+    public void setIgnoredUserNames(Collection<String> ignoredUserNames) {
+        if (ignoredUserNames == null) {
+            this.ignoredUserNames = null;
+        }
+        else {
+            this.ignoredUserNames = new HashSet<String>(ignoredUserNames);
         }
     }
 
