@@ -5,9 +5,10 @@
  */
 package org.jasig.portal.rendering;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -246,6 +247,25 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         final ChannelManager channelManager = userInstance.getChannelManager();
         final Object renderingLock = userInstance.getRenderingLock();
         
+        UPFileSpec upfs = new UPFileSpec(req);
+        String rootNodeId = upfs.getMethodNodeId();
+        if (rootNodeId == null) {
+            rootNodeId = UPFileSpec.USER_LAYOUT_ROOT_NODE;
+        }
+        
+        // see if a new root target has been specified
+        String newRootNodeId = req.getParameter("uP_detach_target");
+
+        // set optimistic uPElement value
+        UPFileSpec uPElement = new UPFileSpec(UPFileSpec.RENDER_METHOD, rootNodeId, null, null);
+
+        if (newRootNodeId != null) {
+            // set a new root
+            uPElement.setMethodNodeId(newRootNodeId);
+        }
+        
+        channelManager.setUPElement(uPElement);
+
         // proccess possible portlet action
         final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(req);
         if (targetedPortletWindowId != null) {
@@ -312,25 +332,8 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                 IUserLayoutNodeDescription rElement = null;
                 // see if an old detach target exists in the servlet path
 
-                UPFileSpec upfs = new UPFileSpec(req);
-                String rootNodeId = upfs.getMethodNodeId();
-                if (rootNodeId == null) {
-                    rootNodeId = UPFileSpec.USER_LAYOUT_ROOT_NODE;
-                }
-
                 // give channels the current locale manager
                 channelManager.setLocaleManager(localeManager);
-
-                // see if a new root target has been specified
-                String newRootNodeId = req.getParameter("uP_detach_target");
-
-                // set optimistic uPElement value
-                UPFileSpec uPElement = new UPFileSpec(UPFileSpec.RENDER_METHOD, rootNodeId, null, null);
-
-                if (newRootNodeId != null) {
-                    // set a new root
-                    uPElement.setMethodNodeId(newRootNodeId);
-                }
 
                 IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
 
@@ -397,6 +400,9 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                 // inform channel manager about the new uPElement value
                 channelManager.setUPElement(uPElement);
                 // verify upElement and determine rendering root --begin
+                
+                // Increase output buffer size, buffer will be flushed before and after every <channel>
+                res.setBufferSize(16 * 1024);
 
                 // Disable page caching
                 res.setHeader("pragma", "no-cache");
@@ -405,7 +411,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                 // set the response mime type
                 res.setContentType(tsd.getMimeType() + "; charset=" + CHARACTER_SET);
                 // obtain the writer - res.getWriter() must occur after res.setContentType()
-                PrintWriter out = res.getWriter();
+                Writer out = new BufferedWriter(res.getWriter(), 1024);
                 // get a serializer appropriate for the target media
                 BaseMarkupSerializer markupSerializer =
                     MEDIA_MANAGER.getSerializerByName(tsd.getSerializerName(),
