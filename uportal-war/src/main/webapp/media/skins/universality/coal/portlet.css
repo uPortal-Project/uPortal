@@ -294,7 +294,7 @@
 /* Tables */
 /* Normal data table styles
 td {border-color:#999;} */
-.up td {border:none;}
+.up td {border:none !important;}
 .up th {padding:0.2em 1em; border-color:#000 !important; background-color:#808080 !important; color:#ccc;}
 .up th a {color:#ccc !important; text-decoration:underline !important;}
 .up th a:hover {color:#fff !important;}
