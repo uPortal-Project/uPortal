@@ -44,6 +44,12 @@
                     <td><spring:message code="cache-statistics.cacheMisses"/></td><td>${statistics.cacheMisses}</td>
                 </tr>
                 <tr>
+                    <td><spring:message code="cache-statistics.memoryStoreObjectCount"/></td><td>${statistics.memoryStoreObjectCount}</td>
+                </tr>
+                <tr>
+                    <td><spring:message code="cache-statistics.inMemoryHits"/></td><td>${statistics.inMemoryHits}</td>
+                </tr>
+                <tr>
                     <td><spring:message code="cache-statistics.diskStoreObjectCount"/></td><td>${statistics.diskStoreObjectCount}</td>
                 </tr>
                 <tr>
@@ -51,12 +57,6 @@
                 </tr>
                 <tr>
                     <td><spring:message code="cache-statistics.evictionCount"/></td><td>${statistics.evictionCount}</td>
-                </tr>
-                <tr>
-                    <td><spring:message code="cache-statistics.inMemoryHits"/></td><td>${statistics.inMemoryHits}</td>
-                </tr>
-                <tr>
-                    <td><spring:message code="cache-statistics.memoryStoreObjectCount"/></td><td>${statistics.memoryStoreObjectCount}</td>
                 </tr>
                 <tr>
                     <td><spring:message code="cache-statistics.statisticsAccuracy"/></td><td>${statistics.statisticsAccuracyDescription}</td>

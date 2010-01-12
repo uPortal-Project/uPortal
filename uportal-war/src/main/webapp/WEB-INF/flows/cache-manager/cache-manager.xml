@@ -10,22 +10,21 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
     http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
     
-    <on-start>
-       <set name="flowScope.cacheNames" 
-            value="cacheManagementHelper.getCacheNames()"/>
-    </on-start>
-    
     <view-state id="home">
+        <on-render>
+            <set name="requestScope.statisticsMap" value="cacheManagementHelper.getAllCacheStatistics()"/>
+        </on-render>
         <transition on="view-statistics" to="cache-statistics">
-            <set name="flowScope.cacheName"
-                value="requestParameters.cacheName"/>
-            <set name="flowScope.statistics" 
-                value="cacheManagementHelper.getCacheStatistics(flowScope.cacheName)"/>
+            <set name="flowScope.cacheName" value="requestParameters.cacheName"/>
         </transition>
+        <transition to="confirm-flush" on="flush"/>
         <transition on="flush-all" to="confirm-flush-all"/>
     </view-state>
     
     <view-state id="cache-statistics">
+        <on-render>
+            <set name="requestScope.statistics" value="cacheManagementHelper.getCacheStatistics(flowScope.cacheName)"/>
+        </on-render>
         <transition to="confirm-flush" on="flush"/>
         <transition to="home" on="home"/>
     </view-state>

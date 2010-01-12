@@ -48,16 +48,44 @@
       <div class="portlet-section-body">
         <p class="portlet-section-note" role="note"><spring:message code="home.listDescription"/></p>
       
-        <ul class="cache-member">
-        <c:forEach items="${cacheNames}" var="cacheName">
-        <portlet:actionURL var="viewStatsUrl">
-            <portlet:param name="cacheName" value="${cacheName}"/>
-            <portlet:param name="execution" value="${flowExecutionKey}" />
-            <portlet:param name="_eventId" value="view-statistics"/>
-        </portlet:actionURL>
-        <li><a href="${viewStatsUrl}"><c:out value="${cacheName}"/></a></li>
-        </c:forEach>
-        </ul>
+        <table>
+            <thead>
+                <tr>
+                    <!-- size, max size, hits, misses -->
+                    <td>Name</td>
+                    <td>Percent Used</td>
+                    <td>Effectiveness</td>
+                    <td>Flush</td>
+                </tr>
+            </thead>
+            <c:forEach items="${statisticsMap}" var="statisticsEntry">
+                <tr>
+                    <td>
+                        <portlet:actionURL var="viewStatsUrl">
+                            <portlet:param name="cacheName" value="${statisticsEntry.key}"/>
+                            <portlet:param name="execution" value="${flowExecutionKey}" />
+                            <portlet:param name="_eventId" value="view-statistics"/>
+                        </portlet:actionURL>
+                        <a href="${viewStatsUrl}">${statisticsEntry.key}</a>
+                    </td>
+                    <td>
+                        <span><fmt:formatNumber value="${statisticsEntry.value.usage}" pattern="00%" /> </span> 
+                        <small>(${statisticsEntry.value.size} / ${statisticsEntry.value.maxSize})</small>
+                    </td>
+                    <td>
+                        <span><fmt:formatNumber value="${statisticsEntry.value.effectiveness}" pattern="00%" /> </span>
+                        <small>(${statisticsEntry.value.hits} hits, ${statisticsEntry.value.misses} misses)</small>
+                    </td>
+                    <td>
+                        <portlet:actionURL var="flushUrl">
+                          <portlet:param name="_eventId" value="flush"/>
+                          <portlet:param name="execution" value="${flowExecutionKey}" />
+                        </portlet:actionURL>
+                        <a href="${flushUrl}">Flush</a>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
       </div>
     </div>
   </div>

@@ -3,15 +3,15 @@
  */
 package org.jasig.portal.utils.cache;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Statistics;
 import net.sf.ehcache.Status;
+import net.sf.ehcache.config.CacheConfiguration;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,8 +27,16 @@ import org.springframework.beans.factory.annotation.Required;
  *
  */
 public class CacheManagementHelper {
+    private static final class CaseInsenstivieStringComparator implements Comparator<String> {
+        public static final CaseInsenstivieStringComparator INSTANCE = new CaseInsenstivieStringComparator();
+        
+        @Override
+        public int compare(String o1, String o2) {
+            return o1.compareToIgnoreCase(o2);
+        }
+    }
 
-	protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Log logger = LogFactory.getLog(this.getClass());
 	
 	private CacheManager cacheManager;
 
@@ -40,16 +48,28 @@ public class CacheManagementHelper {
 		this.cacheManager = cacheManager;
 	}
 	
-	/**
-	 * 
-	 * @see CacheManager#getCacheNames()
-	 * @return a {@link List} of cache names
-	 */
-	public List<String> getCacheNames() {
-		List<String> result = new ArrayList<String>();
-		result.addAll(Arrays.asList(this.cacheManager.getCacheNames()));
-		Collections.sort(result);
-		return result;
+	public Map<String, CacheStatistics> getAllCacheStatistics() {
+	    final Map<String, CacheStatistics> allCacheStatistics = new TreeMap<String, CacheStatistics>(CaseInsenstivieStringComparator.INSTANCE);
+	    
+	    for (final String cacheName : this.cacheManager.getCacheNames()) {
+	        final Cache cache = this.cacheManager.getCache(cacheName);
+	        
+	        if (null != cache && Status.STATUS_ALIVE.equals(cache.getStatus())) {
+	            final CacheConfiguration cacheConfiguration = cache.getCacheConfiguration();
+    	        final Statistics statistics = cache.getStatistics();
+    	        
+    	        final CacheStatistics cacheStatistics = new CacheStatistics();
+    	        
+    	        cacheStatistics.hits = statistics.getCacheHits();
+    	        cacheStatistics.misses = statistics.getCacheMisses();
+    	        cacheStatistics.size = statistics.getObjectCount();
+    	        cacheStatistics.maxSize = cacheConfiguration.getMaxElementsInMemory() + cacheConfiguration.getMaxElementsOnDisk();
+    	        
+    	        allCacheStatistics.put(cacheName, cacheStatistics);
+	        }
+	    }
+	    
+	    return allCacheStatistics;
 	}
 	
 	/**
@@ -65,9 +85,9 @@ public class CacheManagementHelper {
 		if(null != cache && Status.STATUS_ALIVE.equals(cache.getStatus())) {
 			Statistics result = cache.getStatistics();
 			return result;
-		} else {
-			return null;
 		}
+
+		return null;
 	}
 	
 	/**
@@ -91,9 +111,47 @@ public class CacheManagementHelper {
 	 */
 	public void clearAllCaches() {
 		logger.warn("beginning request to clear all caches");
-		for(String cacheName: getCacheNames()) {
+		for (final String cacheName: this.cacheManager.getCacheNames()) {
 			clearCache(cacheName);
 		}
 		logger.warn("completed request to clear all caches");
+	}
+	
+	public static class CacheStatistics {
+	    public long hits;
+	    public long misses;
+	    public long size;
+	    public long maxSize;
+	    
+        public long getHits() {
+            return hits;
+        }
+        public long getMisses() {
+            return misses;
+        }
+        public long getSize() {
+            return size;
+        }
+        public long getMaxSize() {
+            return maxSize;
+        }
+        
+        public double getUsage() {
+            if (this.maxSize == 0) {
+                return 0;
+            }
+            
+            return (double)this.size / (double)this.maxSize;
+        }
+        
+        public double getEffectiveness() {
+            final double requests = this.hits + this.misses;
+            
+            if (requests == 0) {
+                return 0;
+            }
+            
+            return (double)this.hits / requests;
+        }
 	}
 }
