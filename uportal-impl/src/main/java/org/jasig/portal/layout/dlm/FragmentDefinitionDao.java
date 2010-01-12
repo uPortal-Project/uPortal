@@ -22,6 +22,9 @@ public class FragmentDefinitionDao implements IFragmentDefinitionDao {
     // Static Members
     private static final String GET_ALL_FRAGMENTS = "SELECT x FROM FragmentDefinition x ORDER BY x.precedence DESC";
     private static final String FIND_FRAGMENT_BY_NAME = "SELECT x FROM FragmentDefinition x WHERE x.name = :name";
+    
+    private static final String GET_ALL_FRAGMENTS_CACHE_REGION = FragmentDefinition.class.getName() + ".query.GET_ALL_FRAGMENTS";
+    private static final String FIND_FRAGMENT_BY_NAME_CACHE_REGION = FragmentDefinition.class.getName() + ".query.FIND_FRAGMENT_BY_NAME";
 
     // Instance Members.
     private EntityManager entityManager;
@@ -46,6 +49,7 @@ public class FragmentDefinitionDao implements IFragmentDefinitionDao {
 
         final Query query = this.entityManager.createQuery(GET_ALL_FRAGMENTS);
         query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", GET_ALL_FRAGMENTS_CACHE_REGION);
         final List<FragmentDefinition> rslt = query.getResultList();
         return rslt;
         
@@ -57,6 +61,7 @@ public class FragmentDefinitionDao implements IFragmentDefinitionDao {
         final Query query = this.entityManager.createQuery(FIND_FRAGMENT_BY_NAME);
         query.setParameter("name", name);
         query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", FIND_FRAGMENT_BY_NAME_CACHE_REGION);
         query.setMaxResults(1);
         
         final List<FragmentDefinition> list = query.getResultList();

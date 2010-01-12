@@ -27,6 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class JpaChannelTypeDao implements IChannelTypeDao {
 
+    private static final String FIND_ALL_CHAN_TYPE = "from ChannelTypeImpl channel";
+    private static final String FIND_CHAN_TYPE_BY_NAME = "from ChannelTypeImpl type where type.name = :name";
+    
+    private static final String FIND_CHAN_TYPE_BY_NAME_CACHE_REGION = ChannelTypeImpl.class.getName() + ".query.FIND_CHAN_TYPE_BY_NAME";
+    private static final String FIND_ALL_CHAN_TYPE_CACHE_REGION = ChannelTypeImpl.class.getName() + ".query.FIND_ALL_CHAN_TYPE";
+    
+    
     private EntityManager entityManager;
     
     /**
@@ -88,9 +95,10 @@ public class JpaChannelTypeDao implements IChannelTypeDao {
 	 */
     @SuppressWarnings("unchecked")
 	public IChannelType getChannelType(String name) {
-        final Query query = this.entityManager.createQuery("from ChannelTypeImpl type where type.name = :name");
+        final Query query = this.entityManager.createQuery(FIND_CHAN_TYPE_BY_NAME);
         query.setParameter("name", name);
         query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", FIND_CHAN_TYPE_BY_NAME_CACHE_REGION);
         query.setMaxResults(1);
         
         final List<IChannelType> channelTypes = query.getResultList();
@@ -104,8 +112,9 @@ public class JpaChannelTypeDao implements IChannelTypeDao {
 	 */
     @SuppressWarnings("unchecked")
 	public List<IChannelType> getChannelTypes() {
-        final Query query = this.entityManager.createQuery("from ChannelTypeImpl channel");
+        final Query query = this.entityManager.createQuery(FIND_ALL_CHAN_TYPE);
         query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", FIND_ALL_CHAN_TYPE_CACHE_REGION);
         final List<IChannelType> channelTypes = query.getResultList();
 		return channelTypes;
 	}

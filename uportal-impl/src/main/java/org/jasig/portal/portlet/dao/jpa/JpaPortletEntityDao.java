@@ -43,6 +43,10 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     private static final String FIND_PORTLET_ENTS_BY_USER_ID = 
         "from PortletEntityImpl portEnt " +
         "where portEnt.userId = :userId";
+    
+    private static final String FIND_PORTLET_ENTS_BY_USER_ID_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENTS_BY_USER_ID";
+    private static final String FIND_PORTLET_ENTS_BY_PORTLET_DEF_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENTS_BY_PORTLET_DEF";
+    private static final String FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER";
 
     private EntityManager entityManager;
     private IPortletDefinitionDao portletDefinitionDao;
@@ -133,6 +137,7 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
         query.setParameter("channelSubscribeId", channelSubscribeId);
         query.setParameter("userId", userId);
         query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER_CACHE_REGION);
         query.setMaxResults(1);
         
         final List<IPortletEntity> portletEntities = query.getResultList();
@@ -151,6 +156,7 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
         
         final Query query = this.entityManager.createQuery(FIND_PORTLET_ENTS_BY_PORTLET_DEF);
         query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", FIND_PORTLET_ENTS_BY_PORTLET_DEF_CACHE_REGION);
         query.setParameter("portletDefinition", portletDefinition);
         
         final List<IPortletEntity> portletEntities = query.getResultList();
@@ -164,6 +170,7 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
         final Query query = this.entityManager.createQuery(FIND_PORTLET_ENTS_BY_USER_ID);
         query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", FIND_PORTLET_ENTS_BY_USER_ID_CACHE_REGION);
         query.setParameter("userId", userId);
         
         final List<IPortletEntity> portletEntities = query.getResultList();

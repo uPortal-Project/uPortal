@@ -12,9 +12,11 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.ObjectUtils;
 import org.springmodules.cache.CacheException;
@@ -40,6 +42,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheModelValidator;
 public class EhCacheFacade extends AbstractCacheProviderFacade {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
+    private final MapCachingDoubleCheckedCreator<String, Cache> cacheLoader = new MapCachingCacheLoader();
     private final CacheModelValidator cacheModelValidator;
     private CacheManager cacheManager;
     private boolean createMissingCaches = false;
@@ -54,8 +57,7 @@ public class EhCacheFacade extends AbstractCacheProviderFacade {
      * @return the createMissingCaches
      */
     public boolean isCreateMissingCaches() {
-        return createMissingCaches;
-    }
+        return createMissingCaches;    }
     /**
      * @param createMissingCaches the createMissingCaches to set
      */
@@ -139,41 +141,7 @@ public class EhCacheFacade extends AbstractCacheProviderFacade {
      *           wrapping any unexpected exception thrown by the cache
      */
     protected Cache getCache(String name) throws CacheNotFoundException, CacheAccessException {
-        final Cache cache;
-
-        try {
-            if (this.cacheManager.cacheExists(name)) {
-                cache = this.cacheManager.getCache(name);
-                
-                if (this.logger.isDebugEnabled()) {
-                    this.logger.debug("Using existing EhCache for '" + name + "'");
-                }
-            }
-            else if (this.createMissingCaches) {
-                this.cacheManager.addCache(name);
-                cache = this.cacheManager.getCache(name);
-                
-                if (this.logger.isInfoEnabled()) {
-                    this.logger.info("Created new EhCache for '" + name + "'");
-                }
-            }
-            else {
-                cache = null;
-                
-                if (this.logger.isDebugEnabled()) {
-                    this.logger.debug("No EhCache exists for '" + name + "' and createMissingCaches is false");
-                }
-            }
-        }
-        catch (Exception exception) {
-            throw new CacheAccessException(exception);
-        }
-
-        if (cache == null) {
-            throw new CacheNotFoundException(name);
-        }
-
-        return cache;
+        return this.cacheLoader.get(name);
     }
 
     /**
@@ -337,4 +305,68 @@ public class EhCacheFacade extends AbstractCacheProviderFacade {
         this.assertCacheManagerIsNotNull(this.cacheManager);
     }
 
+    
+    /**
+     * Loads {@link Cache} instances once then tracks them via a WEAK reference avoiding re-loading the
+     * Cache objects for each request
+     */
+    private final class MapCachingCacheLoader extends MapCachingDoubleCheckedCreator<String, Cache> {
+        @SuppressWarnings("unchecked")
+        private MapCachingCacheLoader() {
+            super(new ReferenceMap(ReferenceMap.HARD, ReferenceMap.WEAK));
+        }
+
+        /* (non-Javadoc)
+         * @see org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator#createInternal(java.lang.Object, java.lang.Object[])
+         */
+        @Override
+        protected Cache createInternal(String name, Object... args) {
+            final Cache cache;
+            
+            final CacheManager cacheManager = EhCacheFacade.this.cacheManager;
+            final Log logger = EhCacheFacade.this.logger;
+
+            try {
+                if (cacheManager.cacheExists(name)) {
+                    cache = cacheManager.getCache(name);
+                    
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Using existing EhCache for '" + name + "'");
+                    }
+                }
+                else if (EhCacheFacade.this.createMissingCaches) {
+                    cacheManager.addCache(name);
+                    cache = cacheManager.getCache(name);
+                    
+                    if (logger.isWarnEnabled()) {
+                        logger.warn("Created new default EhCache for '" + name + "'");
+                    }
+                }
+                else {
+                    cache = null;
+                    
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("No EhCache exists for '" + name + "' and createMissingCaches is false");
+                    }
+                }
+            }
+            catch (Exception exception) {
+                throw new CacheAccessException(exception);
+            }
+
+            if (cache == null) {
+                throw new CacheNotFoundException(name);
+            }
+
+            return cache;
+        }
+
+        /* (non-Javadoc)
+         * @see org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator#getKey(java.lang.Object[])
+         */
+        @Override
+        protected String getKey(Object... args) {
+            return (String)args[0];
+        }
+    }
 }

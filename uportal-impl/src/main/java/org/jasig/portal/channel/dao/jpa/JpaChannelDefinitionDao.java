@@ -29,16 +29,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
 
-    /**
-     * 
-     */
     private static final String FIND_ALL_CHANNEL_DEFS = "from ChannelDefinitionImpl channel";
-
     private static final String FIND_CHANNEL_DEF_BY_FNAME = 
         "from ChannelDefinitionImpl channel where channel.fname = :fname";
-
     private static final String FIND_CHANNEL_DEF_BY_NAME = 
         "from ChannelDefinitionImpl channel where channel.name = :name";
+
+    private static final String FIND_ALL_CHANNEL_DEFS_CACHE_REGION = ChannelDefinitionImpl.class.getName() + ".query.FIND_ALL_CHANNEL_DEFS";
+    private static final String FIND_CHANNEL_DEF_BY_FNAME_CACHE_REGION = ChannelDefinitionImpl.class.getName() + ".query.FIND_CHANNEL_DEF_BY_FNAME";
+    private static final String FIND_CHANNEL_DEF_BY_NAME_CACHE_REGION = ChannelDefinitionImpl.class.getName() + ".query.FIND_CHANNEL_DEF_BY_NAME";
 
     private EntityManager entityManager;
     
@@ -100,6 +99,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
 	public List<IChannelDefinition> getChannelDefinitions() {
         final Query query = this.entityManager.createQuery(FIND_ALL_CHANNEL_DEFS);
         query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", FIND_ALL_CHANNEL_DEFS_CACHE_REGION);
         final List<IChannelDefinition> channelDefinitions = query.getResultList();
 		return channelDefinitions;
 	}
@@ -121,6 +121,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
         final Query query = this.entityManager.createQuery(FIND_CHANNEL_DEF_BY_FNAME);
         query.setParameter("fname", fname);
         query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", FIND_CHANNEL_DEF_BY_FNAME_CACHE_REGION);
         query.setMaxResults(1);
         
         final List<IChannelDefinition> channelDefinitions = query.getResultList();
@@ -136,6 +137,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
         final Query query = this.entityManager.createQuery(FIND_CHANNEL_DEF_BY_NAME);
         query.setParameter("name", name);
         query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", FIND_CHANNEL_DEF_BY_NAME_CACHE_REGION);
         query.setMaxResults(1);
         
         final List<IChannelDefinition> channelDefinitions = query.getResultList();
