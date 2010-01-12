@@ -845,11 +845,14 @@ public class ChannelManager implements LayoutEventListener {
                 log.warn("Failed to load IUserLayoutChannelDescription and parent IUserLayoutNodeDescription for channel with subscribe id: " + channelTarget, pe);
             }
 
-            // Tell StatsRecorder that a user has interacted with the channel
-            final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
             final IPerson person = userPreferencesManager.getPerson();
-            final UserProfile currentProfile = userPreferencesManager.getCurrentProfile();
-            applicationEventPublisher.publishEvent(new ChannelTargetedInLayoutPortalEvent(this, person, currentProfile, channelDesc, parentNode));
+            
+            // Tell StatsRecorder that a user has interacted with the channel
+            if (channelDesc != null) {
+                final ApplicationEventPublisher applicationEventPublisher = EventPublisherLocator.getApplicationEventPublisher();
+                final UserProfile currentProfile = userPreferencesManager.getCurrentProfile();
+                applicationEventPublisher.publishEvent(new ChannelTargetedInLayoutPortalEvent(this, person, currentProfile, channelDesc, parentNode));
+            }
 
             
             final Map<String, Object[]> channelParameters = channelParameterManager.getChannelParameters(request, channelTarget);
