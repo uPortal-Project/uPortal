@@ -11,8 +11,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +28,9 @@ import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.CounterStoreFactory;
+import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**
  * SQL implementation for managing creation and removal of User Portal Data
@@ -283,7 +289,26 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
        }
        return uid;
    }
+
+   /* (non-javadoc)
+    * @see org.jasig.portal.IUserIdentityStore#getPortalUserName(int)
+    */
+   public String getPortalUserName(final int uPortalUID) {
+       final DataSource dataSource = RDBMServices.getDataSource();
+       final SimpleJdbcTemplate simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+
+       final List<String> results = simpleJdbcTemplate.query("SELECT USER_NAME FROM UP_USER WHERE USER_ID=?", this.userNameRowMapper, uPortalUID);
+       final String userName = (String)DataAccessUtils.singleResult(results);
+       return userName;
+   }
    
+   private final UserNameRowMapper userNameRowMapper = new UserNameRowMapper();
+   private class UserNameRowMapper implements ParameterizedRowMapper<String> {
+       public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+           return rs.getString("USER_NAME");
+       }
+   }
+
    private int __getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
        PortalUser portalUser = null;
 

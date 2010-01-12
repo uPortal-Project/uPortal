@@ -40,5 +40,16 @@ public interface IUserIdentityStore {
    * @return usernmae
    */
   public String getUsername(IPerson person);
+  
+  /**
+   * Gets a portal user name that is associated with the specified portal
+   * ID.
+   * 
+   * @param uPortalUID The portal ID to find a user name for.
+   * @return The user name associated with the specified portal id, null if one isn't found.
+   * @throws Exception If there are any problems retrieving the user name.
+   */
+  public String getPortalUserName(int uPortalUID);
+
 
 }
