@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -19,11 +20,16 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletWindow;
 import org.apache.pluto.PortletWindowID;
 import org.apache.pluto.internal.InternalPortletWindow;
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.ThemeStylesheetUserPreferences;
+import org.jasig.portal.UserPreferences;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.springframework.beans.factory.annotation.Required;
@@ -45,7 +51,22 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IUserInstanceManager userInstanceManager;
     
+    /**
+     * @return the userInstanceManager
+     */
+    public IUserInstanceManager getUserInstanceManager() {
+        return this.userInstanceManager;
+    }
+    /**
+     * @param userInstanceManager the userInstanceManager to set
+     */
+    @Required
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        Validate.notNull(userInstanceManager);
+        this.userInstanceManager = userInstanceManager;
+    }
 
     /**
      * @return the portletEntityRegistry
@@ -127,7 +148,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         //Create the window
         final IPortletWindowId portletWindowId = this.createPortletWindowId(windowInstanceId, portletEntityId);
-        final IPortletWindow portletWindow = this.createPortletWindow(portletWindowId, portletEntityId);
+        final IPortletWindow portletWindow = this.createPortletWindow(request, portletWindowId, portletEntityId);
         
         //Store it in the request
         this.storePortletWindow(request, portletWindow);
@@ -236,7 +257,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         //Create the window
         final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(portletEntityId);
-        final IPortletWindow portletWindow = this.createPortletWindow(portletWindowId, portletEntityId);
+        final IPortletWindow portletWindow = this.createPortletWindow(request, portletWindowId, portletEntityId);
         
         //Store it in the request
         this.storePortletWindow(request, portletWindow);
@@ -268,7 +289,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         //Create the window
         final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(portletEntityId);
-        final IPortletWindow portletWindow = this.createPortletWindow(portletWindowId, portletEntityId, delegationParentId);
+        final IPortletWindow portletWindow = this.createPortletWindow(request, portletWindowId, portletEntityId, delegationParentId);
         
         //Store it in the request
         this.storePortletWindow(request, portletWindow);
@@ -325,8 +346,8 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     /**
      * @see #createPortletWindow(IPortletWindowId, IPortletEntityId, IPortletWindowId)
      */
-    protected IPortletWindow createPortletWindow(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId) {
-        return this.createPortletWindow(portletWindowId, portletEntityId, null);
+    protected IPortletWindow createPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId, IPortletEntityId portletEntityId) {
+        return this.createPortletWindow(request, portletWindowId, portletEntityId, null);
     }
     
     /**
@@ -337,19 +358,48 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
      * @param delegateParent The id of the parent window delegating to this window, optional.
      * @return A new portlet window
      */
-    protected IPortletWindow createPortletWindow(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, IPortletWindowId delegateParent) {
+    protected IPortletWindow createPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, IPortletWindowId delegateParent) {
         //Get the parent definition to determine the descriptor data
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
         final Tuple<String, String> portletDescriptorKeys = this.portletDefinitionRegistry.getPortletDescriptorKeys(portletDefinition);
 
         final String portletApplicationId = portletDescriptorKeys.first;
         final String portletName = portletDescriptorKeys.second;
-        
+
+        final PortletWindowImpl portletWindow;
         if (delegateParent == null) {
-            return new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName);
+            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName);
+        }
+        else {
+            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName, delegateParent);
         }
         
-        return new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName, delegateParent);
+        this.initializePortletWindow(request, portletEntityId, portletWindow);
+        
+        return portletWindow;
+    }
+
+    /**
+     * Initializes a newly created {@link PortletWindow}, the default implementation sets up the appropriate
+     * {@link WindowState} and {@link javax.portlet.PortletMode}
+     */
+    protected void initializePortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId, PortletWindowImpl portletWindow) {
+        if (this.isTransient(request, portletWindow.getPortletWindowId())) {
+            return;
+        }
+        
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final UserPreferences userPreferences = preferencesManager.getUserPreferences();
+        final ThemeStylesheetUserPreferences themeStylesheetUserPreferences = userPreferences.getThemeStylesheetUserPreferences();
+        
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(portletEntityId);
+        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+        final String minimized = themeStylesheetUserPreferences.getChannelAttributeValue(channelSubscribeId, "minimized");
+        
+        if (Boolean.parseBoolean(minimized)) {
+            portletWindow.setWindowState(WindowState.MINIMIZED);
+        }
     }
     
     /**
@@ -434,7 +484,8 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             transientPortletWindow = transientPortletWindowMap.get(portletEntityId);
             if (transientPortletWindow == null) {
                 final PortletWindowIdImpl portletWindowId = new PortletWindowIdImpl(windowInstanceId);
-                transientPortletWindow = this.createPortletWindow(portletWindowId, portletEntityId);
+                transientPortletWindow = this.createPortletWindow(request, portletWindowId, portletEntityId);
+                transientPortletWindow.setWindowState(WindowState.NORMAL);
                 transientPortletWindowMap.put(portletEntityId, transientPortletWindow);
                 
                 if (this.logger.isDebugEnabled()) {
