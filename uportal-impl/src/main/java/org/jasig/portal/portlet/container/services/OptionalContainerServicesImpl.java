@@ -11,6 +11,7 @@ import org.apache.pluto.core.DefaultPortalAdministrationService;
 import org.apache.pluto.spi.optional.PortalAdministrationService;
 import org.apache.pluto.spi.optional.PortletEnvironmentService;
 import org.apache.pluto.spi.optional.PortletPreferencesService;
+import org.apache.pluto.spi.optional.RequestAttributeService;
 import org.apache.pluto.spi.optional.UserInfoService;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -23,6 +24,7 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     private PortalAdministrationService portalAdministrationService = new DefaultPortalAdministrationService();
     private PortletPreferencesService portletPreferencesService;
     private PortletEnvironmentService portletEnvironmentService;
+    private RequestAttributeService requestAttributeService;
     
     /**
      * @param userInfoService the userInfoService to set
@@ -58,6 +60,15 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
         Validate.notNull(portletEnvironmentService);
         this.portletEnvironmentService = portletEnvironmentService;
     }
+    
+    /**
+     * @param requestAttributeService the requestAttributeService to set
+     */
+    @Required
+    public void setRequestAttributeService(RequestAttributeService requestAttributeService) {
+        Validate.notNull(requestAttributeService);
+        this.requestAttributeService = requestAttributeService;
+    }
 
     /* (non-Javadoc)
      * @see org.apache.pluto.core.DefaultOptionalContainerServices#getPortalAdministrationService()
@@ -89,6 +100,14 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     @Override
     public PortletEnvironmentService getPortletEnvironmentService() {
         return this.portletEnvironmentService;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.pluto.core.DefaultOptionalContainerServices#getRequestAttributeService()
+     */
+    @Override
+    public RequestAttributeService getRequestAttributeService() {
+        return this.requestAttributeService;
     }
 
 }

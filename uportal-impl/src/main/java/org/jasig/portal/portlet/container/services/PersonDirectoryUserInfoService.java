@@ -21,7 +21,6 @@ import org.apache.pluto.descriptors.portlet.UserAttributeDD;
 import org.apache.pluto.internal.InternalPortletRequest;
 import org.apache.pluto.internal.InternalPortletWindow;
 import org.apache.pluto.spi.optional.UserInfoService;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -178,30 +177,20 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      */
     protected Map<String, String> generateUserInfo(final IPersonAttributes personAttributes, final List<UserAttributeDD> expectedUserAttributes,HttpServletRequest httpServletRequest) {
         final Map<String, String> portletUserAttributes = new HashMap<String, String>(expectedUserAttributes.size());
-		final Map<String, List<Object>> portletMultivaluedAttributes = new HashMap<String, List<Object>>(expectedUserAttributes.size());
         
         //Copy expected attributes to the USER_INFO Map
+        final Map<String, List<Object>> attributes = personAttributes.getAttributes();
         for (final UserAttributeDD userAttributeDD : expectedUserAttributes) {
             final String attributeName = userAttributeDD.getName();
             
             //TODO a personAttributes.hasAttribute(String) API is needed here, if hasAttribute and null then put the key with no value in the returned map
-            final Object valueObj = personAttributes.getAttributeValue(attributeName);
-			final List<Object> list_valueObjs = personAttributes.getAttributeValues(attributeName);
-            
-            if (valueObj != null) {				
-				final String value = String.valueOf(valueObj);
+            if (attributes.containsKey(attributeName)) {
+                final Object valueObj = personAttributes.getAttributeValue(attributeName);
+				final String value = valueObj == null ? null : String.valueOf(valueObj);
 				portletUserAttributes.put(attributeName, value);				
             }
-			
-			// just put in the straight list returned from persondir		
-			if(list_valueObjs != null) {
-				portletMultivaluedAttributes.put(attributeName, list_valueObjs);			
-			}
-			
         }
 		
-		httpServletRequest.setAttribute(IPortletAdaptor.MULTIVALUED_USERINFO_MAP_ATTRIBUTE,portletMultivaluedAttributes);
-        
         return portletUserAttributes;
     }
     
