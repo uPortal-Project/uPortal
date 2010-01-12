@@ -75,6 +75,13 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry key="request">
+                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                        <constructor-arg>
+                            <bean class="org.springframework.web.context.request.RequestScope" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>
@@ -84,6 +91,7 @@
             <list>
                 <value>classpath:/properties/rdbm.properties</value>
                 <value>classpath:/properties/portal.properties</value>
+                <value>classpath:/properties/security.properties</value>
             </list>
         </property>
     </bean>
