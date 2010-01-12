@@ -117,9 +117,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <td class="fl-text-align-right"><spring:message code="reviewPortlet.channelType"/></td>
               <td>
                 <c:forEach items="${ channelTypes }" var="type">
-                  <c:if test="${ type.id == channel.typeId }">
-                    <a href="${ chooseTypeUrl }" title="${ channel.typeId }" class="pa-edit"><c:out value="${ type.name }"/></a>
-                    <c:if test="${ type.id == -1 }">
+                  <c:if test="${ type.key.id == channel.typeId }">
+                    <a href="${ chooseTypeUrl }" title="${ channel.typeId }" class="pa-edit"><c:out value="${ type.key.name }"/></a>
+                    <c:if test="${ type.key.id == -1 }">
                       <a href="${ chooseTypeUrl }" title="${ channel.typeId }" class="pa-edit">(<c:out value="${ channel.javaClass }"/>)</a>
                     </c:if>
                   </c:if>
