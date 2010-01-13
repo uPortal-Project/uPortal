@@ -20,7 +20,7 @@
 		    
 		        <link type="text/css" rel="stylesheet" media="screen" href="/ResourceServingWebapp/rs/fluid/1.1.2/css/fss-framework-1.1.2.min.css"/>
 		        <link type="text/css" rel="stylesheet" href="/uPortal/media/skins/muniversality/common/fss-mobile-iphone-layout.min.css" />    
-		        <link type="text/css" rel="stylesheet" href="/uPortal/media/skins/muniversality/uportal3/fss-mobile-iphone-theme.min.css" />
+		        <link type="text/css" rel="stylesheet" href="/uPortal/media/skins/muniversality/uportal3/portal.min.css" />
 	       </c:when>
 	       <c:otherwise>
 		        <style type="text/css" media="screen">@import 'css/cas.css'/**/;</style>
