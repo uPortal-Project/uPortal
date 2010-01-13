@@ -32,12 +32,5 @@
       <ovrd>N</ovrd> 
     </parameter>
   </parameters>
-  <portletPreferences>
-    <portletPreference> 
-      <name>googleApiKey</name>  
-      <values>
-        <value>ABQIAAAA1LMBgN_YMQm8gHtNDD0PHBT8V3EeC0kvvMKhUfRICeG0j5XTvxR7twPk2H016LpKy1O2yngKoCTt6g</value>
-      </values> 
-    </portletPreference>    
-  </portletPreferences>
+  <portletPreferences/>
 </channel-definition>
