@@ -132,7 +132,7 @@
         <googleportlet.version>0.4</googleportlet.version>
         <jasig-widget-portlets.version>1.0.0-SNAPSHOT</jasig-widget-portlets.version>
         <RssPortlet.version>1.0.0</RssPortlet.version>
-        <WebProxyPortlet.version>1.0.1-SNAPSHOT</WebProxyPortlet.version>
+        <WebProxyPortlet.version>1.1.0-RC1</WebProxyPortlet.version>
 
         <!-- Project Dependency Version Properties -->
         <activation.version>1.1</activation.version>
