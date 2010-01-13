@@ -7,6 +7,13 @@
     <bean id="sqlController"
         class="org.jasig.portal.portlets.sqlquery.SqlQueryPortletController"/>
     
+    <bean id="sqlConfigController"
+        class="org.jasig.portal.portlets.sqlquery.SqlQueryConfigurationController">
+        <property name="formView" value="jsp/SqlQuery/config"/>
+        <property name="commandClass" value="org.jasig.portal.portlets.sqlquery.SqlQueryConfigForm"/>
+        <property name="commandName" value="form"/>
+    </bean>
+    
     <!-- Handler Mapping -->
     
     <bean id="portletModeHandlerMapping"
@@ -14,6 +21,7 @@
         <property name="portletModeMap">
             <map>
                 <entry key="view" value-ref="sqlController"/>
+                <entry key="config" value-ref="sqlConfigController"/>
             </map>
         </property>
     </bean>

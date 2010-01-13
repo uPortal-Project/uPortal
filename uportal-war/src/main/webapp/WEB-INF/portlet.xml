@@ -338,6 +338,7 @@
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>CONFIG</portlet-mode>
         </supports>
         <supported-locale>en</supported-locale>
         <portlet-info>
@@ -440,4 +441,9 @@
         </portlet-info>
     </portlet>
         
+    <custom-portlet-mode>
+        <description>Allows the portlet to render a preferences edit UI during publishing</description>
+        <portlet-mode>config</portlet-mode>
+    </custom-portlet-mode>    
+    
 </portlet-app>
