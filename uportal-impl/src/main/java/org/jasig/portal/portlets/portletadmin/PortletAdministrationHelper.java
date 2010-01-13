@@ -211,7 +211,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * @param form
 	 * @param publisher
 	 */
-	public void savePortletRegistration(ChannelDefinitionForm form,
+	public ChannelDefinitionForm savePortletRegistration(ChannelDefinitionForm form,
 			IPerson publisher) throws Exception {
 		
 		// create the group array from the form's group list
@@ -382,6 +382,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    
 	    channelPublishingService.saveChannelDefinition(channelDef, publisher, categories, groupMembers);
 
+	    return this.getChannelDefinitionForm(channelDef.getId());
 	}
 	
 	/**

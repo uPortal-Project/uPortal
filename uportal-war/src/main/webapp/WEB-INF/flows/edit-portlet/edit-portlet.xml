@@ -19,9 +19,7 @@
      +-->
     <input name="channel"/>
     
-    <!-- Initialize a list of available channel types
-        TODO: This list should probably be cached
-     -->
+    <!-- Initialize a list of available channel types -->
     <on-start>
         <set name="flowScope.channelTypes" 
             value="channelPublishingDefinitionDao.getChannelPublishingDefinitions()"/>
@@ -210,7 +208,7 @@
                 value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person" 
                 value="personManager.getPerson(servletRequest)"/>
-            <evaluate expression="portletAdministrationHelper.savePortletRegistration(channel, person)"></evaluate>
+            <set name="flowScope.channel" value="portletAdministrationHelper.savePortletRegistration(channel, person)" />
         </transition>
         
         <!-- cancel our portlet edit and exit the sub-flow -->
