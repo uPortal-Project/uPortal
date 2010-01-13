@@ -132,31 +132,31 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               </tbody>
             </table>        
           </c:if> <!-- End Portlet Preferences -->
+          
+          <h4>Portlet.xml Preferences</h4>
+          <div>
+              <table summary="This table lists a portlet's preferences.">
+                <thead>
+                  <tr>
+                    <th>Parameters</th>
+                    <th>Values</th>
+                    <th>User editable</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
+                    <tr>
+                      <td>${ pref.name }</td>
+                      <td>${ pref.values }</td>
+                      <td>${ !pref.readOnly }</td>
+                    </tr>
+                  </c:forEach>
+                </tbody>
+              </table>
+          </div>
 
           <c:if test="${ channel.portlet }">
              <c:if test="${ fn:length(step.preferences) > 0 }">
-                <h4>Portlet.xml Preferences</h4>
-                <div>
-                    <table summary="This table lists a portlet's preferences.">
-                      <thead>
-                        <tr>
-                          <th>Parameters</th>
-                          <th>Values</th>
-                          <th>User editable</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
-                          <tr>
-                            <td>${ pref.name }</td>
-                            <td>${ pref.values }</td>
-                            <td>${ !pref.readOnly }</td>
-                          </tr>
-                        </c:forEach>
-                      </tbody>
-                    </table>
-                </div>
-                
                <div class="preference-options-section">
 	            <table summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
 	              <thead>
