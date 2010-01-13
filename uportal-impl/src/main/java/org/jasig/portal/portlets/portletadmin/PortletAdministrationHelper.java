@@ -661,4 +661,18 @@ public class PortletAdministrationHelper {
 	    
 	    return false;
 	}
+	
+	public boolean offerPortletSelection(ChannelDefinitionForm form) {
+		if ("org.jasig.portal.channels.portlet.CSpringPortletAdaptor".equals(form.getJavaClass())) {
+			return false;
+		}
+		
+		Map<String, Attribute> parameters = form.getParameters();
+		if (parameters.get("portletName") != null
+				&& !StringUtils.isBlank(parameters.get("portletName").getValue())){
+			return false;
+		}
+		
+		return true;
+	}
 }

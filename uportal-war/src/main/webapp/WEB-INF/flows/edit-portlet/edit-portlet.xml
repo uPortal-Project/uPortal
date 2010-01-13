@@ -45,7 +45,7 @@
     </view-state>
     
     <decision-state id="afterChooseType">
-        <if test="channel.javaClass == 'org.jasig.portal.channels.portlet.CSpringPortletAdaptor' and (channel.getParameters().get('portletApplicationId') == null or channel.getParameters().get('portletApplicationId').getValue() == '')" 
+        <if test="portletAdministrationHelper.offerPortletSelection(channel)" 
             then="choosePortlet" else="basicInfo"/>
     </decision-state>
     
