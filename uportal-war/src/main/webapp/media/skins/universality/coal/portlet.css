@@ -298,7 +298,7 @@ td {border-color:#999;} */
 .up th {padding:0.2em 1em; border-color:#000 !important; background-color:#808080 !important; color:#ccc;}
 .up th a {color:#ccc !important; text-decoration:underline !important;}
 .up th a:hover {color:#fff !important;}
-.portlet .portlet-body td {border:1px solid #999;}
+.portlet .portlet-body td {border:1px solid #999 !important;}
 /* Add the "purpose-layout" class to any table you are using for layout purposes. */
 .portlet table.purpose-layout,
 .portlet table.purpose-layout th,
