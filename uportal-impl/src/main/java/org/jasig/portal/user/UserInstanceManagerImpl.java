@@ -24,6 +24,7 @@ import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.spring.web.context.support.HttpSessionDestroyedEvent;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -40,6 +41,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
     private Map<Integer, GuestUserPreferencesManager> guestUserPreferencesManagers = new HashMap<Integer, GuestUserPreferencesManager>();
     
     private IPersonManager personManager;
+    private IPortalRequestUtils portalRequestUtils;
     
     /**
      * @return the personManager
@@ -55,13 +57,32 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
         Validate.notNull(personManager);
         this.personManager = personManager;
     }
-
+    
+    public IPortalRequestUtils getPortalRequestUtils() {
+        return portalRequestUtils;
+    }
+    /**
+     * @param portalRequestUtils 
+     */
+    @Required
+    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        this.portalRequestUtils = portalRequestUtils;
+    }
+    
+    
     /**
      * Returns the UserInstance object that is associated with the given request.
      * @param request Incoming HttpServletRequest
      * @return UserInstance object associated with the given request
      */
     public IUserInstance getUserInstance(HttpServletRequest request) throws PortalException {
+        try {
+            request = this.portalRequestUtils.getOriginalPortalRequest(request);
+        }
+        catch (IllegalArgumentException iae) {
+            //ignore, just means that this isn't a wrapped request
+        }
+        
         final IPerson person;
         try {
             // Retrieve the person object that is associated with the request
