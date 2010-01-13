@@ -65,7 +65,7 @@
                     </td>
                     <td class="cache-effectiveness">
                         <span><fmt:formatNumber value="${statisticsEntry.value.effectiveness}" pattern="00%" /> </span>
-                        <small>(${statisticsEntry.value.hits} <spring:message code="cache-list.hits"/>, ${statisticsEntry.value.misses} <spring:message code="cache-list.misses"/>)</small>
+                        <small>(<c:out value="${statisticsEntry.value.hits}"/> <spring:message code="cache-list.hits"/>, <c:out value="${statisticsEntry.value.misses}"/> <spring:message code="cache-list.misses"/>)</small>
                     </td>
                     <td class="cache-flush">
                         <portlet:actionURL var="flushUrl">
