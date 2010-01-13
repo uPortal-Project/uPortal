@@ -57,9 +57,6 @@
             <evaluate expression="portletAdministrationHelper.prepopulatePortlet(requestParameters.application, requestParameters.portlet, channel)"/>
         </transition>
         <transition on="back" to="chooseType" validate="false"/>
-        <on-exit>
-            <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(channel)"/>
-        </on-exit>
     </view-state>
     
     <!-- BASIC INFO view (title, fname, etc.) -->
@@ -70,6 +67,9 @@
     
     <!-- CHANNEL PARAMETERS view -->
     <view-state id="setParameters" model="channel">
+        <on-entry>
+            <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(channel)"/>
+        </on-entry>
         <on-render>
             <set name="flashScope.portlet" value="portletAdministrationHelper.getPortletDescriptor(channel)"/>
             <set name="flashScope.arb" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(channel)"/>
