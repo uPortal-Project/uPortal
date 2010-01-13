@@ -680,7 +680,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	public boolean offerPortletSelection(ChannelDefinitionForm form) {
-		if (CSpringPortletAdaptor.class.getName().equals(form.getJavaClass())) {
+		if (!CSpringPortletAdaptor.class.getName().equals(form.getJavaClass())) {
 			return false;
 		}
 		
