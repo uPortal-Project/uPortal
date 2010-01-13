@@ -12,27 +12,19 @@
     <portlet:param name="_eventId" value="flush-all"/>
 </portlet:actionURL>
 
-<style type="text/css">
-.portlet ul.cache-member {margin:0;}
-.portlet .cache-member li {list-style:none;}
-.portlet .cache-member a {display:block; padding:0.2em 0 0.2em 20px; background-position:0 50%; background-repeat:no-repeat;}
-.portlet .cache-member a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/drive.png)}
-.portlet .cache-member a:hover {background-color:#FFFFCC; color:#336699;}
-</style>
-
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet cache-manager" role="section">
 
   <!-- Portlet Title -->
   <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading"><spring:message code="home.title"/></h2>
+    <h2 role="heading"><spring:message code="cache-list.title"/></h2>
   </div> <!-- end: portlet-title -->
   
   <!-- Portlet Toolbar -->
   <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
     <div class="fl-col">
         <ul>
-            <li><a href="${flushAllUrl}"><span><spring:message code="home.emptyAllButton" /></span></a></li>
+            <li><a href="${flushAllUrl}"><span><spring:message code="cache-list.emptyAllButton" /></span></a></li>
       </ul>
     </div>
   </div> <!-- end: portlet-toolbar -->
@@ -42,25 +34,24 @@
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <h3 class="portlet-section-header" role="heading">
-       <spring:message code="home.listHeading"/>
+       <spring:message code="cache-list.listHeading"/>
       </h3>
       
       <div class="portlet-section-body">
-        <p class="portlet-section-note" role="note"><spring:message code="home.listDescription"/></p>
+        <p class="portlet-section-note" role="note"><spring:message code="cache-list.listDescription"/></p>
       
-        <table>
+        <table class="cache-table">
             <thead>
                 <tr>
-                    <!-- size, max size, hits, misses -->
-                    <td>Name</td>
-                    <td>Percent Used</td>
-                    <td>Effectiveness</td>
-                    <td>Flush</td>
+                    <th><spring:message code="cache-list.table-header.name"/></th>
+                    <th><spring:message code="cache-list.table-header.used"/></th>
+                    <th><spring:message code="cache-list.table-header.effectiveness"/></th>
+                    <th><spring:message code="cache-list.table-header.flush"/></th>
                 </tr>
             </thead>
             <c:forEach items="${statisticsMap}" var="statisticsEntry">
-                <tr>
-                    <td>
+                <tr class="cache-member">
+                    <td class="cache-name">
                         <portlet:actionURL var="viewStatsUrl">
                             <portlet:param name="cacheName" value="${statisticsEntry.key}"/>
                             <portlet:param name="execution" value="${flowExecutionKey}" />
@@ -68,20 +59,20 @@
                         </portlet:actionURL>
                         <a href="${viewStatsUrl}">${statisticsEntry.key}</a>
                     </td>
-                    <td>
+                    <td class="cache-used">
                         <span><fmt:formatNumber value="${statisticsEntry.value.usage}" pattern="00%" /> </span> 
                         <small>(${statisticsEntry.value.size} / ${statisticsEntry.value.maxSize})</small>
                     </td>
-                    <td>
+                    <td class="cache-effectiveness">
                         <span><fmt:formatNumber value="${statisticsEntry.value.effectiveness}" pattern="00%" /> </span>
-                        <small>(${statisticsEntry.value.hits} hits, ${statisticsEntry.value.misses} misses)</small>
+                        <small>(${statisticsEntry.value.hits} <spring:message code="cache-list.hits"/>, ${statisticsEntry.value.misses} <spring:message code="cache-list.misses"/>)</small>
                     </td>
-                    <td>
+                    <td class="cache-flush">
                         <portlet:actionURL var="flushUrl">
                           <portlet:param name="_eventId" value="flush"/>
                           <portlet:param name="execution" value="${flowExecutionKey}" />
                         </portlet:actionURL>
-                        <a href="${flushUrl}">Flush</a>
+                        <a href="${flushUrl}"><spring:message code="cache-list.flush-link"/></a>
                     </td>
                 </tr>
             </c:forEach>

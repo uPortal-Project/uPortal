@@ -10,7 +10,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
     http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
     
-    <view-state id="home">
+    <view-state id="cache-list">
         <on-render>
             <set name="requestScope.statisticsMap" value="cacheManagementHelper.getAllCacheStatistics()"/>
         </on-render>
@@ -26,7 +26,7 @@
             <set name="requestScope.statistics" value="cacheManagementHelper.getCacheStatistics(flowScope.cacheName)"/>
         </on-render>
         <transition to="confirm-flush" on="flush"/>
-        <transition to="home" on="home"/>
+        <transition to="cache-list" on="cache-list"/>
     </view-state>
     
     <view-state id="confirm-flush">
@@ -40,7 +40,7 @@
         <transition to="finishCacheManager" on="confirm">
             <evaluate expression="cacheManagementHelper.clearAllCaches()"/>
         </transition>
-        <transition to="home" on="cancel"/>
+        <transition to="cache-list" on="cancel"/>
     </view-state>
     
     <end-state id="finishCacheManager" />

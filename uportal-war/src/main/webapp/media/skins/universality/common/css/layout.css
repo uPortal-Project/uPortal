@@ -360,3 +360,18 @@ table.purpose-layout td {margin:0; padding:0;}
 .groupmgr-hide-info {text-decoration:none;}
 .groupmgr-right-pane td label {display:block; text-align:right;}
 .groupmgr-right-pane input {margin-right:0.5em;}
+
+/* Cache Manager Portlet */
+.cache-manager .cache-member a {
+    font-weight: normal; 
+}
+.cache-manager .cache-member .cache-name a {
+    padding:0.2em 0 0.2em 20px;
+    background-position:0 50%;
+    background-repeat:no-repeat;
+    background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/drive.png)
+}
+.cache-manager .cache-member:hover {
+    background-color:#FFFFCC;
+    color:#336699;
+}

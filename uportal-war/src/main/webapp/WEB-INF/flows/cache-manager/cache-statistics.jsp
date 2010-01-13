@@ -11,7 +11,7 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
 <portlet:actionURL var="homeUrl">
-  <portlet:param name="_eventId" value="home"/>
+  <portlet:param name="_eventId" value="cache-list"/>
   <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
         
