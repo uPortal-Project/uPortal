@@ -99,6 +99,9 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
         final String cpdUri;
         if (channelTypeId >= 0) {
             final IChannelType type = this.channelRegistryStore.getChannelType(channelTypeId);
+            if (type == null) {
+                throw new IllegalArgumentException("No ChannelType registered with id: " + channelTypeId);
+            }
             cpdUri = type.getCpdUri();
         }
         else {
