@@ -23,6 +23,13 @@
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>BookmarksPortlet</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
@@ -40,14 +47,7 @@
         
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>BookmarksPortlet</artifactId>
-            <version>${pom.parent.version}</version>
-            <type>war</type>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>googleportlet</artifactId>
+            <artifactId>FunctionalTestsPortlet</artifactId>
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
@@ -55,6 +55,13 @@
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>jasig-widget-portlets</artifactId>
+            <version>${pom.parent.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>pluto-testsuite</artifactId>
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
@@ -75,14 +82,7 @@
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>pluto-testsuite</artifactId>
-            <version>${pom.parent.version}</version>
-            <type>war</type>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>FunctionalTestsPortlet</artifactId>
+            <artifactId>WeatherPortlet</artifactId>
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
@@ -93,7 +93,8 @@
             <version>${pom.parent.version}</version>
             <type>war</type>
         </dependency>
-
+        
+        
         <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
@@ -159,6 +160,12 @@
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>BookmarksPortlet</artifactId>
+                            <bundleFileName>BookmarksPortlet.war</bundleFileName>
+                            <contextRoot>/BookmarksPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
                             <artifactId>cas</artifactId>
                             <bundleFileName>cas.war</bundleFileName>
                             <contextRoot>/cas</contextRoot>
@@ -171,21 +178,21 @@
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>BookmarksPortlet</artifactId>
-                            <bundleFileName>BookmarksPortlet.war</bundleFileName>
-                            <contextRoot>/BookmarksPortlet</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>googleportlet</artifactId>
-                            <bundleFileName>googleportlet.war</bundleFileName>
-                            <contextRoot>/googleportlet</contextRoot>
+                            <artifactId>FunctionalTestsPortlet</artifactId>
+                            <bundleFileName>FunctionalTestsPortlet.war</bundleFileName>
+                            <contextRoot>/FunctionalTestsPortlet</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
                             <artifactId>jasig-widget-portlets</artifactId>
                             <bundleFileName>jasig-widget-portlets.war</bundleFileName>
                             <contextRoot>/jasig-widget-portlets</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>pluto-testsuite</artifactId>
+                            <bundleFileName>pluto-testsuite.war</bundleFileName>
+                            <contextRoot>/pluto-testsuite</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.resourceserver</groupId>
@@ -201,15 +208,9 @@
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>pluto-testsuite</artifactId>
-                            <bundleFileName>pluto-testsuite.war</bundleFileName>
-                            <contextRoot>/pluto-testsuite</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>FunctionalTestsPortlet</artifactId>
-                            <bundleFileName>FunctionalTestsPortlet.war</bundleFileName>
-                            <contextRoot>/FunctionalTestsPortlet</contextRoot>
+                            <artifactId>WeatherPortlet</artifactId>
+                            <bundleFileName>WeatherPortlet.war</bundleFileName>
+                            <contextRoot>/WeatherPortlet</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>

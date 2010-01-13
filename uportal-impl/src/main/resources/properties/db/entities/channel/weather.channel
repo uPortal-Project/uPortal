@@ -1,12 +1,12 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn"> 
   <title>My Weather</title>
   <name>My Weather</name>
   <fname>weather</fname>
-  <desc>JA-SIG Weather portlet</desc>
-  <type>Web Proxy</type>
-  <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
-  <timeout>10000</timeout>
+  <desc>The Weather Module allows you to access the latest weather conditions and 5-day forecasts for the cities you select.</desc>  
+  <type>Portlet</type>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>  
+  <timeout>15000</timeout>
   <hasedit>N</hasedit>
   <hashelp>N</hashelp>
   <hasabout>N</hasabout>
@@ -20,47 +20,54 @@
   </groups>
   <parameters>
     <parameter> 
-      <name>cw_edit</name>  
-      <value></value>  
+      <name>disableDynamicTitle</name>  
+      <value>true</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_help</name>  
-      <value></value>  
+      <name>portletApplicationId</name>  
+      <value>/WeatherPortlet</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
     <parameter> 
-      <name>cw_info</name>  
-      <value></value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_passThrough</name>  
-      <value>none</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_ssl</name>  
-      <value>XHTML.ssl</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_tidy</name>  
-      <value>off</value>  
-      <description/>  
-      <ovrd>N</ovrd> 
-    </parameter>
-    <parameter> 
-      <name>cw_xml</name>  
-      <value>weather.html</value>  
+      <name>portletName</name>  
+      <value>Weather</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
   </parameters>
-  <portletPreferences/>
+  <portletPreferences>
+    <portletPreference>
+      <name>locationCodes</name>
+      <read-only>FALSE</read-only>
+      <values>
+        <value>90001</value>
+        <value>10002</value>
+        <value>EUR|FR|FR012|PARIS</value>
+        <value>ASI|JP|JA041|TOKYO</value>
+      </values>
+    </portletPreference>
+    <portletPreference>
+      <name>locations</name>
+      <read-only>FALSE</read-only>
+      <values>
+		<value>Los Angeles, CA</value>
+        <value>New York, NY</value>
+        <value>Paris, France(Ile-De-France)</value>
+        <value>Tokyo, Japan(Tokyo)</value>
+      </values>
+    </portletPreference>
+    <portletPreference>
+      <name>units</name>
+      <read-only>FALSE</read-only>
+      <values>
+        <value>F</value>
+        <value>F</value>
+        <value>C</value>
+        <value>C</value>
+      </values>
+    </portletPreference>
+  </portletPreferences> 
 </channel-definition>
