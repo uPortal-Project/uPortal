@@ -22,6 +22,7 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -43,6 +44,7 @@ import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelPublishingService;
 import org.jasig.portal.channel.IChannelType;
+import org.jasig.portal.channels.portlet.CSpringPortletAdaptor;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
@@ -68,6 +70,7 @@ import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
@@ -76,7 +79,7 @@ import org.springframework.webflow.context.ExternalContext;
  * @author Jen Bourey, jbourey@unicon.net
  * @revision $Revision$
  */
-public class PortletAdministrationHelper {
+public class PortletAdministrationHelper implements ServletContextAware {
 	protected final Log logger = LogFactory.getLog(PortletAdministrationHelper.class);
 	
 	private IGroupListHelper groupListHelper;
@@ -85,9 +88,14 @@ public class PortletAdministrationHelper {
     private IChannelPublishingService channelPublishingService; 
     private PortletDelegationLocator portletDelegationLocator;
     private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
+    private ServletContext servletContext;
     
-    
-	public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
+	@Override
+    public void setServletContext(ServletContext servletContext) {
+	    this.servletContext = servletContext;
+    }
+
+    public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
         this.portletDelegationLocator = portletDelegationLocator;
     }
 
@@ -427,13 +435,21 @@ public class PortletAdministrationHelper {
 	    
 	    final Map<String, Attribute> parameters = form.getParameters();
 	    
+	    final Attribute frameworkPortletAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
 	    final Attribute portletAppIdAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
 	    final Attribute portletNameAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
-	    if (portletAppIdAttribute == null || portletNameAttribute == null) {
+	    if ((portletAppIdAttribute == null && frameworkPortletAttribute == null) || portletNameAttribute == null) {
 	        return false;
 	    }
 	    
-	    final String portletAppId = portletAppIdAttribute.getValue();
+	    final String portletAppId;
+        if (frameworkPortletAttribute != null && Boolean.valueOf(frameworkPortletAttribute.getValue())) {
+            portletAppId = this.servletContext.getContextPath();
+        }
+        else {
+            portletAppId = portletAppIdAttribute.getValue();
+        }
+	    
 	    final String portletName = portletNameAttribute.getValue();
         if (portletAppId == null || portletName == null) {
             return false;
@@ -663,7 +679,7 @@ public class PortletAdministrationHelper {
 	}
 	
 	public boolean offerPortletSelection(ChannelDefinitionForm form) {
-		if ("org.jasig.portal.channels.portlet.CSpringPortletAdaptor".equals(form.getJavaClass())) {
+		if (CSpringPortletAdaptor.class.getName().equals(form.getJavaClass())) {
 			return false;
 		}
 		
