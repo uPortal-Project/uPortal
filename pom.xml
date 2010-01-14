@@ -128,7 +128,7 @@
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
         <cas-server.version>3.3.1</cas-server.version>
-        <cas-proxy-test-portlet.version>0.1-SNAPSHOT</cas-proxy-test-portlet.version>
+        <cas-proxy-test-portlet.version>1.0.0-RC1</cas-proxy-test-portlet.version>
         <FunctionalTestsPortlet.version>1.0.2-SNAPSHOT</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.0-RC1</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
