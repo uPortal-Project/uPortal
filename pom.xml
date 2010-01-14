@@ -119,7 +119,7 @@
         <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
         <cas-server.version>3.3.5</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC1</cas-proxy-test-portlet.version>
-        <FunctionalTestsPortlet.version>1.0.2-SNAPSHOT</FunctionalTestsPortlet.version>
+        <FunctionalTestsPortlet.version>1.0.2</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.0-RC1</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
         <RssPortlet.version>1.0.0</RssPortlet.version>
