@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jasig</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>12</version>
+        <version>13</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -869,9 +869,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.google.code.maven-license-plugin</groupId>
+                <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
-                <version>1.4.0</version>
                 <configuration>
                     <basedir>${basedir}</basedir>  
                     <header>${jasig-short-license-url}</header>
