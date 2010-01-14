@@ -33,11 +33,6 @@
     <property name="jasig.tmpdir" value="${java.io.tmpdir}/jasig" />
     <mkdir dir="${jasig.tmpdir}" />
     <chmod type="dir" dir="${jasig.tmpdir}" perm="ugo+rxws" />
-    <chmod perm="ugo+rw">
-        <fileset dir="${jasig.tmpdir}">
-            <include name="**/*"/>
-        </fileset>
-    </chmod>
     
     <tempfile property="parentPomInstallMarker.file" destdir="${jasig.tmpdir}" prefix="uportal-parent.pom-" suffix="-marker" deleteonexit="true"/>
     
