@@ -13,8 +13,9 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
  * permissions policies to reflect the needs of the master channel.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public interface IGroupsManagerPermissions {
 
    /**

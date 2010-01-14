@@ -13,7 +13,9 @@ import java.util.Map;
  * An interface that a channel that wants to download MIME files must implement.
  * @author Shridar Venkatesh, svenkatesh@interactivebusiness.com
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IMimeResponse {
 
     /**

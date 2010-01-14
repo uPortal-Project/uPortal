@@ -14,7 +14,9 @@ import org.xml.sax.helpers.AttributesImpl;
  * Rewrites URLs for CWebProxy in a WML document.
  * @author Sarah Arnott, sarnott@mun.ca
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CWebProxyWMLURLFilter extends CWebProxyURLFilter
 {
 

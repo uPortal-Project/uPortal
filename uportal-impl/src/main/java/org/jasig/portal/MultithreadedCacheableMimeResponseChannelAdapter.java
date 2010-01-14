@@ -16,8 +16,9 @@ import java.util.Map;
  * @author Alex Vigdor
  * @version $Revision$
  * @see MultithreadedCacheableChannelAdapter
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class MultithreadedCacheableMimeResponseChannelAdapter extends MultithreadedCacheableChannelAdapter
         implements IMimeResponse {
 

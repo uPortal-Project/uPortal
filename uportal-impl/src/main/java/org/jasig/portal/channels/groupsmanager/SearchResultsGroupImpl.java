@@ -20,8 +20,9 @@ import org.jasig.portal.groups.IIndividualGroupService;
  * SearchResultsGroupImp summary description sentence goes here.
  * 
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class SearchResultsGroupImpl implements IEntityGroup{
   protected ArrayList members = new ArrayList();
   protected String name;

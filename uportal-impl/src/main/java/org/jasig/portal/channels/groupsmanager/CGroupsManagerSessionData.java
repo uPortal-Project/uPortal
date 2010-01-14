@@ -16,7 +16,9 @@ import org.jasig.portal.groups.ILockableEntityGroup;
  * Session data for a cached thread stored in a Map in CGroupsManager
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CGroupsManagerSessionData extends CGroupsManagerUnrestrictedSessionData
       implements GroupsManagerConstants {
    public ChannelRuntimeData runtimeData;

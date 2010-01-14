@@ -46,7 +46,9 @@ import org.jasig.portal.PortalSessionManager;
  * </pre>
  * 
  * @author Mark Boyd
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class DeploymentSpec
 {
     private static final SimpleDateFormat cFormatter =

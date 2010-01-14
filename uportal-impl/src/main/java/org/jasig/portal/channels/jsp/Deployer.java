@@ -36,7 +36,9 @@ import org.jasig.portal.properties.PropertiesManager;
  * included in the CAR upon which they depend.
  * 
  * @author Mark Boyd
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class Deployer
 {
     private static final Log LOG = LogFactory.getLog(Deployer.class);

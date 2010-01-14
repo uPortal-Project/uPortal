@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net </a>
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class MultithreadedPrivilegedCacheableDirectResponseCharacterChannelAdapter extends
         MultithreadedPrivilegedCacheableCharacterChannelAdapter implements IDirectResponse {
 

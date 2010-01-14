@@ -15,7 +15,9 @@ import org.w3c.dom.Document;
  * 
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CGroupsManagerUnrestrictedSessionData
       implements GroupsManagerConstants {
    public Document model;

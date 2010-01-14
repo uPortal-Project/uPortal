@@ -62,7 +62,9 @@ public class UserLayoutChannelDescriptionTest extends TestCase {
 	/**
 	 * Test class used to test recognition of non-CPortletAdaptor 
 	 * IPortletAdaptors.
-	 */
+	 * @deprecated All IChannel implementations should be migrated to portlets
+     */
+    @Deprecated
 	private class AnotherPortletAdaptor 
 		extends BaseChannel 
 		implements IPortletAdaptor {

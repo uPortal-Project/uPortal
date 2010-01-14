@@ -27,7 +27,9 @@ import org.jasig.portal.services.GroupService;
  * <p>Abstract channel registry store.  Be aware that calls to methods within
  * this class may be cached.  The cache is configured in
  * /uportal-impl/src/main/resources/properties/contexts/channelContainerContext.xml</p>
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public abstract class AbstractChannelRegistryStore implements IChannelRegistryStore {
     
     /**

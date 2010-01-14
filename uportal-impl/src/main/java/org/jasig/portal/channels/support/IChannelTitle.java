@@ -23,7 +23,9 @@ package org.jasig.portal.channels.support;
  * </p>
  * @since uPortal 2.5.1
  * @version $Revision$ $Date$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IChannelTitle {
 
     /**

@@ -20,7 +20,9 @@ import org.w3c.dom.Element;
  * Returns an xml element for an IGroupMember.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public abstract class GroupMemberWrapper
       implements IGroupsManagerWrapper, GroupsManagerConstants {
    protected String ELEMENT_TAGNAME ;

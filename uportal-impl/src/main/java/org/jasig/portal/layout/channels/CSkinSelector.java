@@ -36,7 +36,9 @@ import org.xml.sax.ContentHandler;
  *
  * @author Michael Ivanov, mvi@immagic.com
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
   public class CSkinSelector extends BaseChannel implements IPrivileged {
 
       private static final Log log = LogFactory.getLog(CSkinSelector.class);

@@ -19,9 +19,9 @@ import org.w3c.dom.NodeList;
  * for CPermissionsManager
  *
  * @author Alex Vigdor
- * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class SelectOwners implements IPermissionCommand {
     private static final Log log = LogFactory.getLog(SelectOwners.class);
     

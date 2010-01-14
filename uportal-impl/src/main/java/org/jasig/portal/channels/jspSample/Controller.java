@@ -21,7 +21,9 @@ import org.jasig.portal.channels.jsp.*;
  * Channel that portrays usage of the JSP channel type.
  * 
  * @author Mark Boyd
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class Controller implements IController
 {
     public static final String RCS_ID = "@(#) $Header$";

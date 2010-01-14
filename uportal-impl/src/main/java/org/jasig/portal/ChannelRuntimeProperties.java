@@ -64,7 +64,9 @@ import org.apache.commons.logging.LogFactory;
  * </ul>
  * @version $Revision$ $Date$ 
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class ChannelRuntimeProperties
 {
     protected final Log log = LogFactory.getLog(getClass());

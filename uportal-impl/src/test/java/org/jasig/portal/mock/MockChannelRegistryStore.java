@@ -21,7 +21,9 @@ import org.jasig.portal.security.IPerson;
 /**
  * @author Eric Dalquist
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class MockChannelRegistryStore implements IChannelRegistryStore {
     private Map<Integer, IChannelDefinition> channelDefinitionsById = Collections.emptyMap();
 

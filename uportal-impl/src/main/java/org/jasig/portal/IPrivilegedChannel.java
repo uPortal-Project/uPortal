@@ -28,6 +28,8 @@ package org.jasig.portal;
  * @version $Revision$
  * @see IChannel
  * @see PortalControlStructures
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IPrivilegedChannel extends IChannel, IPrivileged {}
 

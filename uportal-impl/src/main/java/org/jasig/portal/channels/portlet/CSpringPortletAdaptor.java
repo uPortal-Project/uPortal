@@ -36,7 +36,9 @@ import org.xml.sax.ContentHandler;
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CSpringPortletAdaptor implements IPortletAdaptor {
     public static final String SPRING_BEAN_NAME_PARAM = "springBeanName";
     public static final String DEFAULT_SPRING_BEAN_NAME = "portletChannel";

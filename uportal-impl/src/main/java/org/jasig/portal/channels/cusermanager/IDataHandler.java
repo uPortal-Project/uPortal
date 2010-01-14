@@ -16,8 +16,9 @@ import org.jasig.portal.security.IPerson;
  * 
  * @author smb1@cornell.edu
  * @version $Revision$ $Date$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public interface IDataHandler {
 
   public IPerson[] getAllUsers() throws Exception;

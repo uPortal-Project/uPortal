@@ -49,7 +49,9 @@ import org.jasig.portal.properties.PropertiesManager;
 /**
  * @author Mark Boyd
  *
- **/
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
 public class Channel
     extends BaseChannel
     implements ICacheable, ICharacterChannel, IPrivilegedChannel, 

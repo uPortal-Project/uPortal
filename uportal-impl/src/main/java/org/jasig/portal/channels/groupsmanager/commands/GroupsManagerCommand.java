@@ -23,7 +23,9 @@ import org.w3c.dom.NodeList;
  * This class is the parent class of all other command classes.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public abstract class GroupsManagerCommand
       implements IGroupsManagerCommand, GroupsManagerConstants {
 

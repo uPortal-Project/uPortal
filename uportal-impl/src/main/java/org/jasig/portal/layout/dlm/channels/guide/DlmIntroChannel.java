@@ -29,7 +29,9 @@ import org.w3c.dom.Document;
  * channel's source.
  * 
  * @author mboyd@sungardsct.com
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class DlmIntroChannel extends CAbstractXslt implements ICacheable
 {
     private Map cacheKeys = new HashMap();

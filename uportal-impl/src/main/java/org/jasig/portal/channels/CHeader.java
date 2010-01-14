@@ -31,7 +31,9 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CHeader extends BaseChannel implements ICacheable {
     private static final Log log = LogFactory.getLog(CHeader.class);
   private static final String sslLocation = "CHeader/CHeader.ssl";

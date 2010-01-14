@@ -27,7 +27,9 @@ import org.jasig.portal.services.AuthorizationService;
  * 
  * @author Jen Bourey, jbourey@unicon.net
  * @revision $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore {
     
     private IChannelDefinitionDao channelDao;

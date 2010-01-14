@@ -13,7 +13,9 @@ import org.jasig.portal.security.provider.PersonImpl;
  * This is a utility class for extracting parameters from ChannelRuntimeData and populating them into an IPerson.
  * @author apetro
  *
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class ChannelRuntimeDataToPersonConverter {
 
 	  public IPerson channelRuntimeDataToPerson( ChannelRuntimeData channelRuntimeData ) {

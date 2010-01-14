@@ -25,7 +25,9 @@ import org.jasig.portal.utils.threading.PriorityThreadFactory;
  * @author <a href="mailto:jnielsen@sct.com">Jan Nielsen</a>
  *
  * @version $Revision$
- **/
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
+ */
+@Deprecated
 public final class ChannelRendererFactoryImpl
     implements IChannelRendererFactory
 {

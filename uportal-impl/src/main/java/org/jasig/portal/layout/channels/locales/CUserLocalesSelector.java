@@ -24,7 +24,9 @@ import org.xml.sax.ContentHandler;
  * this channel can be enhanced to allow the user to sort a list of locales.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CUserLocalesSelector extends BaseChannel implements IPrivileged {
 
     private IUserPreferencesManager upm = null;

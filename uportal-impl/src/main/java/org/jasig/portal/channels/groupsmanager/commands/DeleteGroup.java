@@ -23,7 +23,9 @@ import org.w3c.dom.NodeList;
  * nodes for the parent group and removes the child node of the removed member.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class DeleteGroup extends GroupsManagerCommand {
 
    public DeleteGroup () {

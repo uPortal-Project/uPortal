@@ -35,7 +35,9 @@ import org.xml.sax.ContentHandler;
  * @author smb1@cornell.edu
  * @author apetro@unicon.net
  * @version $Revision$ $Date$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CUserManager extends CUserManagerPermissions implements IChannel, IPermissible {
 
   private IDataHandler dataHandler;

@@ -9,7 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.serialize.CachingSerializer;
-
+/**
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
 public class ChannelContentCacheEntry extends BaseChannelCacheEntry {
     
     public ChannelContentCacheEntry(String channelId) {

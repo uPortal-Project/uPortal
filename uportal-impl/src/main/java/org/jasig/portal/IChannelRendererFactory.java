@@ -20,7 +20,9 @@ package org.jasig.portal;
  * @author <a href="mailto:jnielsen@sct.com">Jan Nielsen</a>
  *
  * @version $Revision$
- **/
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
+ */
+@Deprecated
 public interface IChannelRendererFactory
 {
     /** <p> Class version identifier.</p> */

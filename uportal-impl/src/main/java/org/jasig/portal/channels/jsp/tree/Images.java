@@ -49,7 +49,9 @@ import org.jasig.portal.PortalException;
  * </pre>
  * 
  * @author Mark Boyd
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class Images
 {
     private static final Properties cCfg = loadConfiguration();

@@ -17,7 +17,9 @@ import org.xml.sax.XMLReader;
  * prior to passing channel content to the ChannelIncorporationFilter.
  * @author Peter Kharchenko
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class ChannelSAXStreamFilter extends SAX2FilterImpl
 {
     // downward

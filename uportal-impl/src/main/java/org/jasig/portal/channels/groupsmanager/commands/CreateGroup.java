@@ -27,7 +27,9 @@ import org.w3c.dom.Element;
  * expanded, the new child node will be added.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
  public class CreateGroup extends GroupsManagerCommand {
 
    /** Creates new CreateGroup */

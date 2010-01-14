@@ -10,7 +10,9 @@ package org.jasig.portal;
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class PortalEvent {
     
   

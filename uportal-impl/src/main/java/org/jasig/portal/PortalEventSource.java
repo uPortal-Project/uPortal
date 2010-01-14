@@ -10,7 +10,9 @@ package org.jasig.portal;
  * 
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class PortalEventSource {
 
     /**

@@ -15,7 +15,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
+/**
+* @deprecated All IChannel implementations should be migrated to portlets
+*/
+@Deprecated
 public class XmlRowMapper implements RowMapper {
 
     protected final Log log = LogFactory.getLog(getClass());

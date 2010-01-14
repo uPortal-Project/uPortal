@@ -17,7 +17,9 @@ package org.jasig.portal.channels.jsp.tree;
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IDomainActionSet
 {
     /**

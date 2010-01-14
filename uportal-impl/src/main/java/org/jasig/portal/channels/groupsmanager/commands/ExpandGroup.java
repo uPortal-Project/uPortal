@@ -19,8 +19,9 @@ import org.w3c.dom.Element;
  * handle the tree expansion display.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class ExpandGroup extends org.jasig.portal.channels.groupsmanager.commands.GroupsManagerCommand {
 
    /** Creates new ExpandGroup */

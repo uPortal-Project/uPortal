@@ -12,7 +12,9 @@ package  org.jasig.portal;
  * @author  <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
  * @version $Revision$
  * @see MultithreadedPrivilegedCacheableChannelAdapter
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class MultithreadedPrivilegedCacheableMimeResponseChannelAdapter
 extends MultithreadedCacheableMimeResponseChannelAdapter
 implements IPrivilegedChannel {

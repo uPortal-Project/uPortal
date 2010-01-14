@@ -11,7 +11,9 @@ package org.jasig.portal.channels.jsp.tree;
  * identical methods to conform to the ISurrogate interface.
  * 
  * @author Mark Boyd
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public abstract class BaseSurrogateImpl implements ISurrogate
 {
 

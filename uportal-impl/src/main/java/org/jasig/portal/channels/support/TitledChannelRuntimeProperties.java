@@ -13,7 +13,9 @@ import org.jasig.portal.ChannelRuntimeProperties;
  * framework code should be written to expect this concrete implementation -
  * the framework should only detect whether the ChannelRuntimeProperties it
  * encounters implements {@link IChannelTitle}.
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public final class TitledChannelRuntimeProperties
 	extends ChannelRuntimeProperties
 	implements IChannelTitle {

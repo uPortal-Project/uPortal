@@ -10,7 +10,9 @@ package org.jasig.portal.channels.error;
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  * @since uPortal 2.5
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class ErrorCode {
 
     /** Generic error code */

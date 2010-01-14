@@ -26,7 +26,9 @@ import org.w3c.dom.Element;
  * 
  * @version $Revision$ $Date$
  * @since uPortal 2.5
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class DelegatingThrowableToElement 
     implements IThrowableToElement{
 

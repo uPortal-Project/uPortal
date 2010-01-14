@@ -24,7 +24,9 @@ import org.w3c.dom.Element;
  * of some component the version of which the channel will display.
  * CVersion accepts the optional parameter "xsltUri", specifying the URI to
  * the XSLT to use for rendering the version information.
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CVersion extends CAbstractXslt {
 
     private final VersionsManager versionsManager = VersionsManager

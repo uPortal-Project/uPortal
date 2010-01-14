@@ -17,7 +17,9 @@ import java.util.LinkedList;
  *
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class HistoryRecord {
     LinkedList history=new LinkedList();
     int maxRecords=10;

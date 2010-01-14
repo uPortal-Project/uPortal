@@ -33,7 +33,9 @@ import org.jasig.portal.utils.XSLT;
  *
  * @author Alex Vigdor
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CPermissionsManagerServant extends CPermissionsManager
         implements IServant {
     private static final Log log = LogFactory.getLog(CPermissionsManagerServant.class);

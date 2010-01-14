@@ -11,7 +11,9 @@ package org.jasig.portal.channels.jsp.tree;
  * toString() for label data.
  * 
  * @author Mark Boyd
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class DefaultSurrogate extends BaseSurrogateImpl
 {
     /**

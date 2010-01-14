@@ -79,7 +79,9 @@ import org.xml.sax.ContentHandler;
  * on the tab-column structure.
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class TabColumnPrefsState extends BaseState
 {
     private static final Log log = LogFactory.getLog(TabColumnPrefsState.class);
@@ -800,7 +802,9 @@ public class TabColumnPrefsState extends BaseState
   /**
    * A sub-state of TabColumnPrefsState for visualizing the user layout
    * in tab-column form.
-   */
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
   protected class DefaultState extends BaseState
   {
     private static final boolean printXMLToLog = false;
@@ -1242,7 +1246,9 @@ public class TabColumnPrefsState extends BaseState
 
   /**
    * A sub-state of TabColumnPrefsState for resetting layout
-   */
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
   protected class ResetLayoutState extends BaseState
   {
     protected TabColumnPrefsState context;
@@ -1271,7 +1277,9 @@ public class TabColumnPrefsState extends BaseState
 
   /**
    * A sub-state of TabColumnPrefsState for selecting skins
-   */
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
   protected class SelectSkinsState extends BaseState
   {
     protected TabColumnPrefsState context;
@@ -1343,7 +1351,9 @@ public class TabColumnPrefsState extends BaseState
 
   /**
    * A sub-state of TabColumnPrefsState for choosing a new channel (formerly subscribe)
-   */
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
   protected class NewChannelState extends BaseState
   {
     protected TabColumnPrefsState context;
@@ -1447,7 +1457,9 @@ public class TabColumnPrefsState extends BaseState
 
   /**
    * A sub-state of TabColumnPrefsState for setting channel parameters
-   */
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
   protected class ParametersState extends BaseState
   {
     protected TabColumnPrefsState context;

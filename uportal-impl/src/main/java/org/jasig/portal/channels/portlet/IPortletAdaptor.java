@@ -23,7 +23,9 @@ import org.jasig.portal.PortalException;
  * Action support
  * 
  * @since uPortal 2.5
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, ICharacterChannel, ICacheable, IDirectResponse {
     public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
     public static final WindowState DETACHED = new WindowState("DETACHED");

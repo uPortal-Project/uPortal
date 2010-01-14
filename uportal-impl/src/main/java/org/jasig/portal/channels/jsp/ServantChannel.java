@@ -18,7 +18,9 @@ import org.jasig.portal.PortalException;
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class ServantChannel extends Channel implements IServantController
 {
     /**

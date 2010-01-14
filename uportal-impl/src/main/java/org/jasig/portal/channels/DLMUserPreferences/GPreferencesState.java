@@ -51,7 +51,9 @@ import org.apache.xml.serialize.XMLSerializer;
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 class GPreferencesState extends BaseState {
     private static final Log log = LogFactory.getLog(GPreferencesState.class);
     private UserProfile profile;
@@ -262,7 +264,10 @@ class GPreferencesState extends BaseState {
           log.error( "CUserPreferences.GPreferencesState::renderXML() : no internal state !");
       }
   }
-
+/**
+  * @deprecated All IChannel implementations should be migrated to portlets
+  */
+ @Deprecated
   protected class GEditLayoutItemState extends BaseState {
     protected GPreferencesState context;
     private String editElementID;
@@ -470,7 +475,10 @@ class GPreferencesState extends BaseState {
       }
     }
   }
-
+ /**
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
   protected class GGlobalPrefsState extends BaseState {
     ChannelRuntimeData runtimeData;
     protected GPreferencesState context;
@@ -616,7 +624,10 @@ class GPreferencesState extends BaseState {
       context.setState(bstate);
     }
   }
-
+  /**
+  * @deprecated All IChannel implementations should be migrated to portlets
+  */
+ @Deprecated
   protected class GBrowseState extends BaseState {
     ChannelRuntimeData runtimeData;
     protected GPreferencesState context;
@@ -726,7 +737,10 @@ class GPreferencesState extends BaseState {
       context.setModified(true);
     }
   }
-
+ /**
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
   protected class GMoveToState extends BaseState {
     private String[] moveIDs = null;            // contains the IDs of channels/folders to be moved
     protected ChannelRuntimeData runtimeData;

@@ -58,7 +58,9 @@ import org.w3c.dom.Text;
  * (maybe these should be managed by another class  -Ken)
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class ChannelRegistryManager {
     
     private static final Log log = LogFactory.getLog(ChannelRegistryManager.class);

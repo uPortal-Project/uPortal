@@ -47,7 +47,9 @@ import org.springframework.beans.factory.annotation.Required;
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class SpringPortletChannelImpl implements ISpringPortletChannel {
     protected static final String PORTLET_WINDOW_ID_PARAM = SpringPortletChannelImpl.class.getName() + ".portletWindowId";
     

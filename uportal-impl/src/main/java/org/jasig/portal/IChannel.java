@@ -16,7 +16,9 @@ import org.xml.sax.ContentHandler;
  * 
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IChannel
 {
   /**

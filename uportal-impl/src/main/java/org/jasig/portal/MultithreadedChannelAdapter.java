@@ -12,8 +12,9 @@ import org.xml.sax.ContentHandler;
  * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  * @see IMultithreadedChannel
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class MultithreadedChannelAdapter implements IChannel {
     final String uid;
     final IMultithreadedChannel channel;

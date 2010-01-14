@@ -14,7 +14,9 @@ import org.jasig.portal.IPermissible;
  * 
  * @author Mark Boyd, mboyd@sungardsct.com
  * @since uPortal 2.6.
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class SupportedPermissions implements IPermissible
 {
 

@@ -85,8 +85,9 @@ import com.sun.syndication.io.XmlReader;
  * empty document or another XML file from the classpath or from the filesystem,
  * you will need to allow a prefix to or the full path of that resource.
  * </p>
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class CSyndFeed extends BaseChannel implements ICacheable{
 
 	

@@ -13,7 +13,9 @@ package org.jasig.portal.channels.jsp;
  * 
  * @author Mark Boyd
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IServantController 
 {
 

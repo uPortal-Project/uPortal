@@ -11,7 +11,9 @@ package org.jasig.portal;
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IResetableChannel extends IChannel {
     /**
      * Prepare to be refereshed after an error. Information about the last

@@ -26,7 +26,9 @@ import org.w3c.dom.NodeList;
  * node of the removed member.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class RemoveMember extends GroupsManagerCommand {
 
    /** Creates new RemoveMember */

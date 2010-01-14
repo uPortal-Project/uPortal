@@ -11,7 +11,9 @@ package org.jasig.portal.channels.jsp.tree;
  * tree view.
  * 
  * @author Mark Boyd
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface ISurrogate
 {
     /**

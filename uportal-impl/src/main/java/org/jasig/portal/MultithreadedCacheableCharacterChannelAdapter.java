@@ -11,7 +11,9 @@ package org.jasig.portal;
  * @author <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
  * @version $Revision$
  * @see MultithreadedCharacterChannelAdapter
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class MultithreadedCacheableCharacterChannelAdapter extends MultithreadedCharacterChannelAdapter implements ICacheable {
     public MultithreadedCacheableCharacterChannelAdapter(IMultithreadedCharacterChannel channel, String uid) {
         super(channel, uid);

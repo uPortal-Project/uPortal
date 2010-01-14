@@ -10,7 +10,9 @@ package  org.jasig.portal;
  * A general channel cache key class. The class includes the key iteslf, as well as key properties.
  * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class ChannelCacheKey {
     /**
      * Specifies that the cache is specific to the instance of the channel that generated it.

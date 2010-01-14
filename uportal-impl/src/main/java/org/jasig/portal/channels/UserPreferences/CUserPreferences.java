@@ -30,7 +30,9 @@ import org.xml.sax.ContentHandler;
  * @author Peter Kharchenko, pkharchenko@unicon.net
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CUserPreferences implements IPrivilegedChannel {
   private static final Log log = LogFactory.getLog(CUserPreferences.class);
   IUserPreferencesManager upm;

@@ -27,7 +27,9 @@ import org.apache.commons.logging.LogFactory;
  * @author Ken Weiner, Peter Kharchenko
  * @version $Revision$
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class ChannelStaticData extends Hashtable<Object, Object> {
     private static final long serialVersionUID = 1L;
 

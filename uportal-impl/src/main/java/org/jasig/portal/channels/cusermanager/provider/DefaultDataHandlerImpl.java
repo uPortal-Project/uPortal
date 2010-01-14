@@ -30,7 +30,9 @@ import org.jasig.portal.tools.DeleteUser;
 /**
  * @author smb1@cornell.edu
  * @version $Revision$ $Date$ 
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class DefaultDataHandlerImpl implements IDataHandler {
   private static final Log LOG = LogFactory.getLog(DefaultDataHandlerImpl.class);
 

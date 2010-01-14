@@ -14,7 +14,9 @@ package org.jasig.portal;
  *
  * @version $Revision$
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public interface IWorkerRequestProcessor {
 
     /**

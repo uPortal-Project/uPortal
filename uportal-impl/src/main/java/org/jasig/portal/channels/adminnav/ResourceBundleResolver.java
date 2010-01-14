@@ -24,7 +24,9 @@ import org.jasig.portal.car.CarResources;
  * "/properties/adminNav.properties".
  * 
  * @author mboyd@sungardsct.com
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class ResourceBundleResolver implements ILabelResolver
 {
     private static Log LOG = LogFactory.getLog(AdminNavChannel.class);

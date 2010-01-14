@@ -13,7 +13,9 @@ import java.util.Set;
  * class responsible for the action.  Also centralizes authorization for commands.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class GroupsManagerCommandFactory
       implements GroupsManagerConstants {
    protected static HashMap BINDINGS = new java.util.HashMap(16);

@@ -20,7 +20,9 @@ import org.w3c.dom.Element;
  * An example channel that includes the current time in its dynamically generated title.
  * @since uPortal 2.5.1
  * @version $Revision$ $Date$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public final class CTimeTitle 
 	extends CAbstractXslt {
 

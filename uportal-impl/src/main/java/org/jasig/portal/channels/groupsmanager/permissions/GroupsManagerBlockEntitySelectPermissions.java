@@ -16,7 +16,9 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
  * perform specific actions on the target Group Member.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class GroupsManagerBlockEntitySelectPermissions 
         implements IGroupsManagerPermissions, GroupsManagerConstants {
     

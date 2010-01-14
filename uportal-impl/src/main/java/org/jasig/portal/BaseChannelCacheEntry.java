@@ -4,7 +4,10 @@
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
 package org.jasig.portal;
-
+/**
+* @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
+*/
+@Deprecated
 public abstract class BaseChannelCacheEntry implements CacheEntry {
     
     private String channelId;

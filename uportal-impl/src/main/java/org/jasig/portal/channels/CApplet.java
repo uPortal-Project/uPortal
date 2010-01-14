@@ -29,7 +29,9 @@ import org.xml.sax.ContentHandler;
  * <code>org.jasig.portal.channels.CApplet</code></i></p>
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class CApplet extends BaseChannel implements ICacheable {
   private static final String sslLocation = "CApplet/CApplet.ssl";
 

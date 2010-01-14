@@ -19,7 +19,9 @@ import org.xml.sax.ContentHandler;
  * Site map that shows you, at a glance, what channels are in your layout.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CSiteMap extends BaseChannel implements IPrivileged {
 
     Document userLayoutDoc = null;

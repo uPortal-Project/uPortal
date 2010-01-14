@@ -22,7 +22,9 @@ import org.w3c.dom.NodeList;
  * Returns an xml element for a given IEntityGroup or IEntityGroup key.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class GroupWrapper extends GroupMemberWrapper {
    private boolean limitRetrievals;
    private int retrievalLimit;

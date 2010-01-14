@@ -13,7 +13,9 @@ import java.util.Set;
  * from the class requestor class.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class GroupsManagerWrapperFactory
       implements GroupsManagerConstants {
    protected static HashMap BINDINGS = new java.util.HashMap(2);

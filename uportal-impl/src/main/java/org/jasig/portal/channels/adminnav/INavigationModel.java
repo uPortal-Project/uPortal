@@ -14,7 +14,9 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
  * channel's functionality.
  *
  * @author mboyd@sungardsct.com
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface INavigationModel extends ICacheable, IChannel, ILinkRegistrar
 {
     /**

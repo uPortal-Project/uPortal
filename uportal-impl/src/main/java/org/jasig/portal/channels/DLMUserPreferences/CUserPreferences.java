@@ -21,7 +21,9 @@ import org.apache.commons.logging.LogFactory;
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @author Ken Weiner, kweiner@interactivebusiness.com
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CUserPreferences implements IPrivilegedChannel {
   private static final Log log = LogFactory.getLog(CUserPreferences.class);
   IUserPreferencesManager upm;

@@ -16,8 +16,9 @@ import org.w3c.dom.Element;
  *
  * @author Alex Vigdor
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class UnlockGroup extends GroupsManagerCommand{
 
   public UnlockGroup() {

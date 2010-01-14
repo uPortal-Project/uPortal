@@ -20,7 +20,9 @@ import org.xml.sax.ContentHandler;
  * Use this only if you are familiar with IChannel interface.
  * @author Peter Kharchenko
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public abstract class BaseChannel implements IChannel {
     protected ChannelStaticData staticData;
     protected ChannelRuntimeData runtimeData;

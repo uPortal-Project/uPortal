@@ -32,7 +32,9 @@ import org.jasig.portal.properties.PropertiesManager;
  * that method.
  * 
  * @author Mark Boyd
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IController extends ICacheable
 {
     public static String JSP_DEPLOY_PATH = PropertiesManager.getProperty(

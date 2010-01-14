@@ -16,7 +16,9 @@ import org.xml.sax.helpers.AttributesImpl;
  * Rewrites URLs for CWebProxy.
  * @author Sarah Arnott, sarnott@mun.ca
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public abstract class CWebProxyURLFilter extends SAX2FilterImpl
 {
 

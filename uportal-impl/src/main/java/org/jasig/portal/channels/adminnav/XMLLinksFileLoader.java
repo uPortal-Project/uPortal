@@ -21,7 +21,9 @@ import org.xml.sax.helpers.XMLReaderFactory;
  *
  * @author mboyd@sungardsct.com
  * @since 2.6
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class XMLLinksFileLoader
 {
     private static Log LOG = LogFactory.getLog(XMLLinksFileLoader.class);

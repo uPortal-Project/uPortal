@@ -17,7 +17,9 @@ import org.w3c.dom.Element;
  * the transformation handle the tree collapse display.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CollapseGroup extends GroupsManagerCommand {
 
    /** Creates new CollapseGroup */

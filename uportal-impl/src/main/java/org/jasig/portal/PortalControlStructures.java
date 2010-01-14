@@ -14,7 +14,9 @@ import javax.servlet.http.HttpSession;
  * 
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class PortalControlStructures {
     protected final IUserPreferencesManager ulm;
     protected final HttpServletRequest req;

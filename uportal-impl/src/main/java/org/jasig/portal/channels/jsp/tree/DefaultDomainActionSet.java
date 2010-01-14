@@ -11,7 +11,9 @@ package org.jasig.portal.channels.jsp.tree;
  * no supported actions for the tree.
  *  
  * @author Mark Boyd
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class DefaultDomainActionSet implements IDomainActionSet
 {
 

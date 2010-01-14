@@ -10,8 +10,9 @@ package org.jasig.portal;
  * @author Peter Kharchenko {@link <a href="mailto:pkharchenko@interactivebusiness.com">pkharchenko@interactivebusiness.com</a>}
  * @version $Revision$
  * @see MultithreadedChannelAdapter
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class MultithreadedPrivilegedChannelAdapter extends MultithreadedChannelAdapter implements IPrivilegedChannel {
     public MultithreadedPrivilegedChannelAdapter(IMultithreadedChannel channel, String uid) {
         super(channel,uid);

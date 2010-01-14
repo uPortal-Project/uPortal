@@ -16,7 +16,9 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
  * user is always true.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class GroupsManagerAdminPermissions extends GroupsManagerDefaultPermissions {
 
    /**

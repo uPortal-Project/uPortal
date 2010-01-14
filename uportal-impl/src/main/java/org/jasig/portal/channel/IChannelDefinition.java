@@ -17,6 +17,10 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+* @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
+*/
+@Deprecated
 public interface IChannelDefinition extends IBasicEntity {
 
     public ChannelLifecycleState getLifecycleState();

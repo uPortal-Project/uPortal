@@ -36,8 +36,9 @@ import org.w3c.dom.Element;
  *
  * @author Alex Vigdor
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class CGroupsManagerServantFactory implements GroupsManagerConstants{
     private static CGroupsManagerServantFactory _instance;
     private static int UID = 0;

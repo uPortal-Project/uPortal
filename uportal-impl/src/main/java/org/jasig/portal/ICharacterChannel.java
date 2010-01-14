@@ -15,7 +15,9 @@ import java.io.PrintWriter;
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @author <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface ICharacterChannel extends IChannel {
     /**
      * Asks the channel to render its content as characters.

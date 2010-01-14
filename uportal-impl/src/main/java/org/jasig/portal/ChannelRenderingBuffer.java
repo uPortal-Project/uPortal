@@ -29,7 +29,9 @@ import org.xml.sax.XMLReader;
  *
  * @author Peter Kharchenko
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class ChannelRenderingBuffer extends SAX2BufferImpl
 {
     

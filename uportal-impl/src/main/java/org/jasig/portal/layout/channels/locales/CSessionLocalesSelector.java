@@ -22,7 +22,9 @@ import org.xml.sax.ContentHandler;
  * @author Shoji Kajita <a href="mailto:">kajita@itc.nagoya-u.ac.jp</a>
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CSessionLocalesSelector extends BaseChannel {
     
     protected final String sslUri = "sessionLocales.ssl";

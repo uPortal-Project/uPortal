@@ -10,7 +10,9 @@ package  org.jasig.portal.channels.permissionsmanager;
  *
  * @author Alex Vigdor
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IPermissionCommand {
     public void execute (PermissionsSessionData session) throws Exception;
 }

@@ -11,7 +11,9 @@ package org.jasig.portal.channels.iccdemo;
  *
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class ViewerURL {
     private CViewer viewerChannel;
     public ViewerURL(CViewer channel) {

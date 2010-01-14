@@ -75,7 +75,9 @@ import tyrex.naming.MemoryContext;
  *
  * @author Peter Kharchenko, pkharchenko@unicon.net
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class ChannelManager implements LayoutEventListener {
     private static final String PORTAL_CONTROL_STRUCTURES_MAP_ATTR = ChannelManager.class.getName() + ".PortalControlStructuresMap";
 

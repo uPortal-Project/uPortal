@@ -14,7 +14,9 @@ import java.util.HashMap;
  * 
  * @author Mark Boyd
  *
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 final class UrlResolver extends HashMap
 {
     private ITreeActionUrlResolver resolver = null;

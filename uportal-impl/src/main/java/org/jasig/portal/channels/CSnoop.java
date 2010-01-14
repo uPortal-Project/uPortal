@@ -32,7 +32,9 @@ import org.xml.sax.ContentHandler;
  * as an exercise.</p>
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CSnoop implements IPrivilegedChannel {
   private PortalControlStructures pcs;
   private ChannelRuntimeData runtimeData;

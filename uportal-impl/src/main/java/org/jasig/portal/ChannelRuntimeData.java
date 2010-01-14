@@ -20,7 +20,9 @@ import org.jasig.portal.portlet.url.RequestType;
  *
  * @author <a href="mailto:pkharchenko@unicon.net">Peter Kharchenko</a>
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class ChannelRuntimeData extends Hashtable<String, Object> implements Cloneable {
     
     private static final Log log = LogFactory.getLog(ChannelRuntimeData.class);

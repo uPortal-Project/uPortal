@@ -9,7 +9,9 @@ package  org.jasig.portal;
  * An interface that a cacheable channel must implement.
  * @author Peter Kharchenko pkharchenko@unicon.net
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface ICacheable {
 
     /**

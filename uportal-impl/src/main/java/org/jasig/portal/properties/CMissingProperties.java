@@ -21,7 +21,9 @@ import org.w3c.dom.Element;
  * An IChannel for viewing the missing properties.
  * @version $Revision$ $Date$
  * @since uPortal 2.5
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CMissingProperties 
     extends CAbstractXslt {
 

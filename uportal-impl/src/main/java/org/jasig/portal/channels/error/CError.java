@@ -60,7 +60,9 @@ import org.xml.sax.ContentHandler;
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  * @since uPortal 2.5.  Prior to 2.5, CError existed only as org.jasig.portal.channels.CError.
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public final class CError extends BaseChannel implements IPrivilegedChannel, ICacheable, ICharacterChannel {
 
     private static final Log log = LogFactory.getLog(CError.class);

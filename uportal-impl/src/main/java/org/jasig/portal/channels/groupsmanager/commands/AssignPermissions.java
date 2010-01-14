@@ -19,7 +19,9 @@ import org.jasig.portal.groups.IEntityGroup;
  *
  * @author Alex Vigdor
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class AssignPermissions extends GroupsManagerCommand implements GroupsManagerConstants{
 
   public AssignPermissions() {

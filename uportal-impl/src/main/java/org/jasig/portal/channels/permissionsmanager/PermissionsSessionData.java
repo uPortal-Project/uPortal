@@ -20,8 +20,9 @@ import org.w3c.dom.Document;
  *
  * @author Alex Vigdor
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class PermissionsSessionData {
   public ChannelStaticData staticData;
   public ChannelRuntimeData runtimeData;

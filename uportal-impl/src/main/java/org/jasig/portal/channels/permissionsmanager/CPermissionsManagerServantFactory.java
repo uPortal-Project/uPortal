@@ -27,7 +27,9 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author Alex Vigdor
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CPermissionsManagerServantFactory {
     private static final Log log = LogFactory.getLog(CPermissionsManagerServantFactory.class);
     private static CPermissionsManagerServantFactory _instance;

@@ -59,7 +59,9 @@ import org.xml.sax.ContentHandler;
  * 
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class CChannelManager extends BaseChannel {
     
     protected static final String sslLocation = "CChannelManager/CChannelManager.ssl";

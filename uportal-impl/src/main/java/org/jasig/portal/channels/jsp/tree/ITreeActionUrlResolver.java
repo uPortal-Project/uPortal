@@ -19,7 +19,9 @@ package org.jasig.portal.channels.jsp.tree;
  * nodes to be called.
  * 
  * @author Mark Boyd
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface ITreeActionUrlResolver
 {
     public static final int SHOW_CHILDREN = 0;

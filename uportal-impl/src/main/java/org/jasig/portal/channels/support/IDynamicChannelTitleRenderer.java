@@ -15,7 +15,9 @@ package org.jasig.portal.channels.support;
  * IChannelRenderers not changed to implement this interface will continue to
  * behave exactly as before dynamic channel title capabilities were introduced.
  * @since uPortal 2.5.1
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IDynamicChannelTitleRenderer {
 
     /**

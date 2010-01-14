@@ -12,7 +12,9 @@ package org.jasig.portal;
  *
  * @author Alex Vigdor - av317@columbia.edu
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface IServant extends IChannel{
 
     /** Allows the Master Channel to ascertain if the Servant has accomplished the requested task 

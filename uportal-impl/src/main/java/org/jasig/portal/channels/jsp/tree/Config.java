@@ -20,7 +20,9 @@ import org.jasig.portal.properties.PropertiesManager;
  * 
  * @author Mark Boyd
  *
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class Config
 {
     private static final Log LOG = LogFactory.getLog(Config.class);

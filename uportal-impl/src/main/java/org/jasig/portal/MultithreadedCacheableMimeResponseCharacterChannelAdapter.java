@@ -16,7 +16,9 @@ import java.util.Map;
  * @author <a href="mailto:nbolton@unicon.net">Nick Bolton</a>
  * @version $Revision$
  * @see MultithreadedCacheableChannelAdapter
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class MultithreadedCacheableMimeResponseCharacterChannelAdapter extends MultithreadedCacheableCharacterChannelAdapter
 implements IMimeResponse {
     public MultithreadedCacheableMimeResponseCharacterChannelAdapter (IMultithreadedCharacterChannel channel,

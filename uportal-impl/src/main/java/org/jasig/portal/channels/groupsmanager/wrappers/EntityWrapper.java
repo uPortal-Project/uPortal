@@ -19,7 +19,9 @@ import org.w3c.dom.Element;
  * Returns an xml element for a given IEntity or IEntity key.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class EntityWrapper extends GroupMemberWrapper {
 
    /** Creates new EntityWrapper */

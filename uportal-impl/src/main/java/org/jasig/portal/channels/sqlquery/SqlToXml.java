@@ -16,7 +16,9 @@ import org.w3c.dom.Element;
 
 /**
  * Executes a SQL query and builds from it a DOM.
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class SqlToXml {
 
     JdbcTemplate template;

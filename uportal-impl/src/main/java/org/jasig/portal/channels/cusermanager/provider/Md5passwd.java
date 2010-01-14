@@ -21,7 +21,9 @@ import org.jasig.portal.security.provider.AccountStoreFactory;
  * @author smb1@cornell.edu
  * @author Andrew Newman, newman@yale.edu (heavily modified by smb1@cornell.edu)
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 class Md5passwd {
 
   public static final String ACCOUNTLOCK = "*LCK*";

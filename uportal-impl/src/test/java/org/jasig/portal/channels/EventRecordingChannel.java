@@ -20,7 +20,9 @@ import org.xml.sax.ContentHandler;
  * Mock channel implementation which exists to record
  * the events it receives.  Useful for testcases.
  * @author andrew.petro@yale.edu
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class EventRecordingChannel implements IChannel {
 
 	private List eventsReceived = new ArrayList();

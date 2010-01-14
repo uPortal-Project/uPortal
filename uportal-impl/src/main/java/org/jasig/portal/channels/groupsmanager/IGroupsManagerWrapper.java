@@ -12,8 +12,9 @@ import org.w3c.dom.Element;
  * Defines the interface for a wrapper object to be used by CGroupssManager
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public interface IGroupsManagerWrapper {
 
    /**

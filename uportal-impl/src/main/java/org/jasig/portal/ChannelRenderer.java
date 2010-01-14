@@ -47,7 +47,9 @@ import org.xml.sax.SAXException;
  * rendering results and status.
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class ChannelRenderer
     implements IChannelRenderer, IDynamicChannelTitleRenderer
 {

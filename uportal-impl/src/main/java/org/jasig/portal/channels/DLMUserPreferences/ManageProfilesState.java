@@ -40,7 +40,9 @@ import org.apache.xml.serialize.XMLSerializer;
  * <p>CUserPreferences state for managing profiles</p>
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 class ManageProfilesState extends BaseState {
   private static final Log log = LogFactory.getLog(ManageProfilesState.class);
   
@@ -361,9 +363,11 @@ class ManageProfilesState extends BaseState {
     }
   }
 
-  /*
+  /**
    * This state corresponds to an "edit profile" screen.
-   */
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
   protected class CEditProfile extends BaseState {
     ChannelRuntimeData runtimeData;
     protected ManageProfilesState context;

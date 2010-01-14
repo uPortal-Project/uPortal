@@ -8,7 +8,9 @@ package org.jasig.portal.channels.cusermanager;
 /**
  * @author smb1@cornell.edu
  * @version $Revision$ $Date$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface Constants {
 
   /** Value = "3.0" */

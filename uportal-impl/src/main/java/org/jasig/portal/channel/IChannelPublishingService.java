@@ -11,6 +11,10 @@ import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
 
+/**
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
+ */
+@Deprecated
 public interface IChannelPublishingService {
 
 	public static final String FRAMEWORK_OWNER = "UP_FRAMEWORK";

@@ -30,7 +30,9 @@ import org.w3c.dom.Document;
  * 
  * Potentially useful future enhancements of this channel might include an
  * an ability to bind user attributes to parameters of the query.
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CSqlQuery extends CAbstractXslt {
 
     /**

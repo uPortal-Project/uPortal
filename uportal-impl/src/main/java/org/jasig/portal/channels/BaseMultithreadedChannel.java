@@ -26,7 +26,9 @@ import org.xml.sax.ContentHandler;
  * and should not contain any non-static member variables.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public abstract class BaseMultithreadedChannel implements IMultithreadedChannel {
   protected static Map channelStateMap;
 

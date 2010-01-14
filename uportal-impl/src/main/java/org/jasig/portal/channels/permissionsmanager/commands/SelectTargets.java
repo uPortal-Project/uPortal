@@ -21,8 +21,9 @@ import org.w3c.dom.NodeList;
  *
  * @author Alex Vigdor
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class SelectTargets implements IPermissionCommand {
     private static final Log log = LogFactory.getLog(SelectTargets.class);
     

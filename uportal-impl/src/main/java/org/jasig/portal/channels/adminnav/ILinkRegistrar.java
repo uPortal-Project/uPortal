@@ -13,7 +13,9 @@ import java.util.Map;
  * 
  * @author mboyd@sungardsct.com
  *
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface ILinkRegistrar
 {
     /**

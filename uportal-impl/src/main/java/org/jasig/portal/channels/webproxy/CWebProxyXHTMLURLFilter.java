@@ -18,7 +18,9 @@ import org.xml.sax.helpers.AttributesImpl;
  * Rewrites URLs for CWebProxy in an XHTML document.
  * @author Sarah Arnott, sarnott@mun.ca
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CWebProxyXHTMLURLFilter extends CWebProxyURLFilter
 {
     private static final Log log = LogFactory.getLog(CWebProxyXHTMLURLFilter.class);

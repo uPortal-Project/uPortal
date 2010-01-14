@@ -22,7 +22,9 @@ import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
  *
  * @author <a href="mailto:pkharchenko@unicon.net">Peter Kharchenko</a>
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class ChannelFactory {
 
     private static final Log log = LogFactory.getLog(ChannelFactory.class);

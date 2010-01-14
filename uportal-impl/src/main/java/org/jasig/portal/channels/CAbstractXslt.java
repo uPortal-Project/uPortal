@@ -28,7 +28,9 @@ import org.xml.sax.ContentHandler;
  * 
  * @version $Revision$ $Date$
  * @since uPortal 2.5
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public abstract class CAbstractXslt implements IChannel {
 
     /**

@@ -11,7 +11,9 @@ package org.jasig.portal;
  * rendering results and status.  It is used by ChannelRenderer.
  * @author <a href="mailto:pkharchenko@unicon.net">Peter Kharchenko</a>
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class ChannelCacheEntry {
     protected Object buffer;
     protected String title;

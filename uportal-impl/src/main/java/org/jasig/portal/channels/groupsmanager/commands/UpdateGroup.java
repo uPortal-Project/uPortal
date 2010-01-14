@@ -18,7 +18,9 @@ import org.w3c.dom.Element;
  * all of the xml elements with the new name.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class UpdateGroup extends GroupsManagerCommand {
 
    public UpdateGroup () {

@@ -19,7 +19,9 @@ import org.w3c.dom.Element;
  *  by the user.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class EditGroup extends GroupsManagerCommand {
 
    /**

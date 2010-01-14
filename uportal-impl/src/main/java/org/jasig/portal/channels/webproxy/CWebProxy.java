@@ -194,7 +194,9 @@ import org.xml.sax.ContentHandler;
  * @author Andrew Draskoy, andrew@mun.ca
  * @author Sarah Arnott, sarnott@mun.ca
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CWebProxy implements IChannel, ICacheable, IMimeResponse
 
 {

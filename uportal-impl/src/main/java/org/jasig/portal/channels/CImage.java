@@ -36,6 +36,7 @@ import org.xml.sax.ContentHandler;
  *   </table>
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
 @Deprecated
 public class CImage extends BaseChannel implements ICacheable, IChannel

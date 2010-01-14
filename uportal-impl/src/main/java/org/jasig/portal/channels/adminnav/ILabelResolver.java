@@ -13,7 +13,9 @@ import java.util.Locale;
  *
  * @author mboyd@sungardsct.com
  *
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface ILabelResolver
 {
     /**

@@ -27,7 +27,9 @@ import org.jasig.portal.url.support.IChannelRequestParameterManager;
  *
  * @author <a href="mailto:svenkatesh@interactivebusiness.com">Sridhar Venkatesh</a>
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public class DownloadDispatchWorker implements IWorkerRequestProcessor {
     
     private static final Log log = LogFactory.getLog(DownloadDispatchWorker.class);

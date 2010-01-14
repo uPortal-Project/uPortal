@@ -19,7 +19,9 @@ import java.util.List;
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class Node
 {
     private static final Node[] TREE_NODE_ARRAY = new Node[] {};

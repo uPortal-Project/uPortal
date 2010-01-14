@@ -13,7 +13,9 @@ package org.jasig.portal.channel;
  * @author <a href="mailto:mvi@immagic.com">Michael Ivanov</a>
  * @author Jen Bourey, jbourey@unicon.net
  * @revision $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public interface IChannelParameter {
     
     // Getter methods

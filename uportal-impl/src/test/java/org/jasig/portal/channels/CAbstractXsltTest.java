@@ -170,7 +170,9 @@ public class CAbstractXsltTest extends TestCase {
     /**
      * A Mock implementation of CAbstractXSLT that provides configuration points
      * for scripting the template method return values or exception throw behavior.
+     * @deprecated All IChannel implementations should be migrated to portlets
      */
+    @Deprecated
     private class MockXSLTChannel extends CAbstractXslt {
 
         /**

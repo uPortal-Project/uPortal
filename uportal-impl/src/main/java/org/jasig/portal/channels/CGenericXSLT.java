@@ -125,8 +125,9 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @author Peter Kharchenko pkharchenko@unicon.net
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class CGenericXSLT
     extends BaseChannel
     implements IChannel, ICacheable {

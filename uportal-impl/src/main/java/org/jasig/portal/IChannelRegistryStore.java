@@ -17,7 +17,9 @@ import org.jasig.portal.security.IPerson;
  * definitions, and categories.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated IChannel rendering code will be replaced with portlet specific rendering code in a future release
  */
+@Deprecated
 public interface IChannelRegistryStore {
 
   /**

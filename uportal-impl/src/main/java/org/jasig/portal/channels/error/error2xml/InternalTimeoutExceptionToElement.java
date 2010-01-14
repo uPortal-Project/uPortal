@@ -15,7 +15,9 @@ import org.jasig.portal.InternalTimeoutException;
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  * @since uPortal 2.5
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class InternalTimeoutExceptionToElement 
     implements IThrowableToElement{
 

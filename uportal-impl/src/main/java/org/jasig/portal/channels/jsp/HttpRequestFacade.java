@@ -34,7 +34,9 @@ import javax.servlet.http.HttpServletRequestWrapper;
  * 
  * @author Mark Boyd
  * @since 2.6
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class HttpRequestFacade extends HttpServletRequestWrapper
 {
     /**

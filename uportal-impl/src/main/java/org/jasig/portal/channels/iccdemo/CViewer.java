@@ -27,7 +27,9 @@ import org.xml.sax.ContentHandler;
  * @author Peter Kharchenko
  * @author Susan Bramhall
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CViewer extends BaseChannel {
     private static final Log log = LogFactory.getLog(CViewer.class);
     private static final String sslLocation = "CInlineFrame/CInlineFrame.ssl";

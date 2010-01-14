@@ -15,7 +15,9 @@ import org.jasig.portal.AuthorizationException;
  * @author andrew.petro@yale.edu
  * @version $Revision$ $Date$
  * @since uPortal 2.5
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public final class AuthorizationExceptionToElement 
     implements IThrowableToElement{
 

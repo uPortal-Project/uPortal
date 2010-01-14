@@ -16,7 +16,9 @@ import org.jasig.portal.channels.permissionsmanager.RDBMPermissibleRegistry;
 /**
  * @author smb1@cornell.edu
  * @version $Revision$ $Date$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 class CUserManagerPermissions implements IPermissible {
 	
 	protected final Log log = LogFactory.getLog(getClass());

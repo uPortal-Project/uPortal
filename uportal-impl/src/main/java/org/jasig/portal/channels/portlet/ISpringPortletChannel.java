@@ -19,7 +19,9 @@ import org.jasig.portal.PortalEvent;
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface ISpringPortletChannel {
     /**
      * Called when a session is created for a user of the channel described by the ChannelStaticData argument. 

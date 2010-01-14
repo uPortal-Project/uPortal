@@ -28,7 +28,9 @@ import org.apache.commons.logging.LogFactory;
  *
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class HttpResponseFacade extends HttpServletResponseWrapper
 {
     private static final Log LOG = LogFactory

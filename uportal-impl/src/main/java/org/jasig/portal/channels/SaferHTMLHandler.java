@@ -24,8 +24,9 @@ import org.xml.sax.SAXException;
  * HTML that is considered to be safe from cross-site scripting
  * attacks is passed on to the document. 
  *
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class SaferHTMLHandler implements ContentHandler{
 
 	Node currentNode;

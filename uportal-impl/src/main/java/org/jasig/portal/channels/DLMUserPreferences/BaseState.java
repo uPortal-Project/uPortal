@@ -17,9 +17,9 @@ import org.xml.sax.ContentHandler;
 /** <p>A base class for a CUserPreferences state.</p>
  * @author Peter Kharchenko, peterk@interactivebusiness.com
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
-
+@Deprecated
 class BaseState implements IPrivilegedChannel {
     protected CUserPreferences context;
     protected IPrivilegedChannel internalState;

@@ -34,7 +34,9 @@ import org.xml.sax.ContentHandler;
  * user has administrtaive permissions.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CGroupsManager
       implements IChannel, GroupsManagerConstants, IPermissible, ICacheable {
    // Location of the stylesheet list file

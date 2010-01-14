@@ -26,7 +26,9 @@ import org.w3c.dom.Element;
  *  view control parameters.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class AddMembers extends GroupsManagerCommand {
 
    /**

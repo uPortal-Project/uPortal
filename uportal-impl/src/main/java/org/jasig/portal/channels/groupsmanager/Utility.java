@@ -23,7 +23,9 @@ import org.apache.xml.serialize.XMLSerializer;
  * A class holding utility functions used by the Groups Manager channel.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class Utility
       implements GroupsManagerConstants {
 

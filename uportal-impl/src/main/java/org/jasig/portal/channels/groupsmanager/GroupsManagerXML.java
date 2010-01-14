@@ -41,7 +41,9 @@ import org.w3c.dom.NodeList;
  * retrieval of xml elements for groups and entities.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class GroupsManagerXML
       implements GroupsManagerConstants {
     private static final Log log = LogFactory.getLog(GroupsManagerXML.class);

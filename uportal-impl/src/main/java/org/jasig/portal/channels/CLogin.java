@@ -36,7 +36,9 @@ import org.xml.sax.ContentHandler;
  * password (the username of the previous attempt is preserved).</p>
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CLogin implements IPrivilegedChannel, ICacheable
 {
   private ChannelStaticData staticData;

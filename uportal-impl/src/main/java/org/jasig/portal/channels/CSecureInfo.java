@@ -32,7 +32,9 @@ import org.apache.xml.serialize.XMLSerializer;
  * 
  * @author Keith Stacks, kstacks@sct.com
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CSecureInfo extends BaseChannel implements IPrivilegedChannel, ICacheable {
 
     protected String str_channelSubscribeId=null;

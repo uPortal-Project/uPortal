@@ -12,7 +12,9 @@ package org.jasig.portal;
  * @author <a href="mailto:pkharchenko@interactivebusiness.com">Peter Kharchenk
 </a>
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class ICCRegistry {
     private ChannelManager cm;
     private String currentChannelSubscribeId;

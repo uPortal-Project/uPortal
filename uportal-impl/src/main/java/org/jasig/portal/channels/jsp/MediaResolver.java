@@ -23,7 +23,9 @@ import org.jasig.portal.UPFileSpec;
  * 
  * @author Mark Boyd
  *
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class MediaResolver extends ChannelRuntimeData
 {
     private ChannelRuntimeData runtimedata;

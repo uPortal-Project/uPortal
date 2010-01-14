@@ -15,8 +15,9 @@ import org.jasig.portal.groups.IGroupMember;
  * This will allow other channels to delegate to CGroupsManager at runtime
  * @author Alex Vigdor, av317@columbia.edu
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
-
+@Deprecated
 public class CGroupsManagerServant extends CGroupsManager
       implements IServant {
 

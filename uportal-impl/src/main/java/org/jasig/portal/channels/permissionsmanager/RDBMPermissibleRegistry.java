@@ -25,7 +25,9 @@ import org.apache.commons.logging.LogFactory;
  *
  * It also include hard coded references to 3 known IPermissibles, but will gracefully
  * ignore them if they are not found
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class RDBMPermissibleRegistry {
     private static final Log log = LogFactory.getLog(RDBMPermissibleRegistry.class);
     private static RDBMPermissibleRegistry _instance;

@@ -11,7 +11,9 @@ package  org.jasig.portal.channels.groupsmanager;
  * the classes that use them.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public interface GroupsManagerConstants {
    // some of these constants might be in the properties files
    String BASE_PACKAGE = "org.jasig.portal.channels.groupsmanager";

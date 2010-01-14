@@ -42,7 +42,9 @@ import org.xml.sax.ContentHandler;
  * 
  * @author Keith Stacks, kstacks@sungardsct.com
  * @author Mark Boyd, mboyd@sungardsct.com
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class AdminNavChannel extends BaseChannel implements ICacheable
 {
     // Used for informational, error, and debug logging

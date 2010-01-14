@@ -33,6 +33,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * @deprecated All IChannel implementations should be migrated to portlets
+ */
+@Deprecated
 public class MultipartDataSource implements DataSource {
     private static final Log log = LogFactory.getLog(MultipartDataSource.class);
 

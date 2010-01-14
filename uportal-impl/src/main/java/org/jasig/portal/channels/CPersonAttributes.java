@@ -37,7 +37,9 @@ import org.xml.sax.ContentHandler;
  * @author Ken Weiner, kweiner@unicon.net
  * @author Yuji Shinozaki, ys2n@virginia.edu
  * @version $Revision$ $Date$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CPersonAttributes extends BaseChannel implements IMimeResponse {
 
   private static final String sslLocation = "CPersonAttributes/CPersonAttributes.ssl";

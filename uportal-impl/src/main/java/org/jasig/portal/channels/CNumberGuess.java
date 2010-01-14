@@ -25,7 +25,9 @@ import org.xml.sax.ContentHandler;
  * a certain range as determined by this channel's parameters.</p>
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class CNumberGuess implements IChannel
 {
     private static final Log log = LogFactory.getLog(CNumberGuess.class);

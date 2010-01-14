@@ -34,7 +34,9 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @author mboyd@sungardsct.com
  * @since 2.6
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class XMLLinksHandler extends DefaultHandler
 {
     private String labelId = null;

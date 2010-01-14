@@ -31,7 +31,9 @@ import org.w3c.dom.NodeList;
  *  cancel the selection process and reset the mode and view control parameters.
  * @author Don Fracapane
  * @version $Revision$
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class DoneWithSelection extends GroupsManagerCommand {
 
    /** Creates new AddMember */

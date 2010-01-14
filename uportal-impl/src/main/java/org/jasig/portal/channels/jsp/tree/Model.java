@@ -24,7 +24,9 @@ import org.apache.commons.logging.LogFactory;
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
+ * @deprecated All IChannel implementations should be migrated to portlets
  */
+@Deprecated
 public class Model
 {
     private static final Log LOG = LogFactory.getLog(Model.class);
