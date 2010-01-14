@@ -375,3 +375,12 @@ table.purpose-layout td {margin:0; padding:0;}
     background-color:#FFFFCC;
     color:#336699;
 }
+
+/* Portlet Manager */
+.override-preference td {
+	color: graytext;
+    text-decoration: line-through;
+}
+.preference-name {
+    vertical-align: top;
+}

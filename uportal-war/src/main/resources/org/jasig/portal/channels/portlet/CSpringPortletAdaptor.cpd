@@ -68,8 +68,8 @@ Version $Revision: 1.1 $
         <type base="string" input="single-choice" display="drop-down">
             <restriction>
                 <defaultValue>false</defaultValue>
-                <value>true</value>
                 <value>false</value>
+                <value>true</value>
             </restriction>
         </type>
         <example>false</example>
@@ -117,7 +117,7 @@ Version $Revision: 1.1 $
         be zero or more preferences.
       </description>
 
-      <arbitrary-preferences/>
+      <arbitrary-preferences>true</arbitrary-preferences>
 
     </step>
 

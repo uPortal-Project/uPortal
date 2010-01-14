@@ -65,6 +65,37 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <spring:message code="setParameters.portletSupportsConfig"/>
       </div>
     </c:if>
+    
+    <c:if test="${ channel.portlet }">
+      <div class="portlet-section" role="region">
+        <h3 class="portlet-section-header" role="heading"><spring:message code="setParameters.xmlPreferencesHeader"/></h3>
+        <div class="portlet-section-body">
+          <p class="portlet-section-note" role="note"><spring:message code="setParameters.xmlPreferencesSummary"/></p>
+          <table>
+            <thead>
+              <tr>
+                <th><spring:message code="setParameters.preferencesHeading"/></th>
+                <th><spring:message code="setParameters.valuesHeading"/></th>
+                <th><spring:message code="setParameters.userEditableHeading"/></th>
+              </tr>
+            </thead>
+            <tbody>
+              <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
+                <tr>
+                  <td class="preference-name">${ pref.name }</td>
+                  <td>
+                    <c:forEach var="value" items="${ pref.values }">
+                        <div>${ value }</div>
+                    </c:forEach>
+                  </td>
+                  <td>${ !pref.readOnly }</td>
+                </tr>
+              </c:forEach>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </c:if>
 
     <!-- Step Loop -->
     <c:forEach items="${ cpd.params.steps }" var="step">
@@ -75,7 +106,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <div class="portlet-section-body">
           <p class="portlet-section-note" role="note">${ step.description }</p>
           
-          <!-- Portlet Parameters -->
+          <!-- Channel Parameters -->
           <c:if test="${ fn:length(step.parameters) > 0 }">
             <table summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
               <thead>
@@ -131,29 +162,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </c:forEach>
               </tbody>
             </table>        
-          </c:if> <!-- End Portlet Preferences -->
-          
-          <h4>Portlet.xml Preferences</h4>
-          <div>
-              <table summary="This table lists a portlet's preferences.">
-                <thead>
-                  <tr>
-                    <th>Parameters</th>
-                    <th>Values</th>
-                    <th>User editable</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
-                    <tr>
-                      <td>${ pref.name }</td>
-                      <td>${ pref.values }</td>
-                      <td>${ !pref.readOnly }</td>
-                    </tr>
-                  </c:forEach>
-                </tbody>
-              </table>
-          </div>
+          </c:if> <!-- End Channel Parameters -->
 
           <c:if test="${ channel.portlet }">
              <c:if test="${ fn:length(step.preferences) > 0 }">
@@ -162,7 +171,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	              <thead>
 	                <tr>
 	                  <th><spring:message code="setParameters.parametersHeading"/></th>
-	                  <th><spring:message code="setParameters.valueHeading"/></th>
+	                  <th><spring:message code="setParameters.valuesHeading"/></th>
 	                  <th><spring:message code="setParameters.userEditableHeading"/></th>
 	                </tr>
 	              </thead>
@@ -178,7 +187,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	                      </c:when>
 	                      <c:otherwise>
 	                        <tr>
-	                          <td><span class="uportal-label">${ parameter.label }:</span></td>
+	                          <td class="preference-name"><span class="uportal-label">${ parameter.label }:</span></td>
 	                          <td>
                                   <editPortlet:parameterInput parameterType="${ parameter.type }" 
                                     parameterPath="${ paramPath }" parameterName="${ parameter.name }" 
@@ -206,12 +215,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
             
              <div class="parameter-options-section" prefix="${ prefix }">
-              <table summary="This table lists a portlet's parameter settings.">
+              <table>
                 <thead>
                   <tr>
-                    <th>Parameters</th>
-                    <th>Value</th>
-                    <th>User editable</th>
+                    <th><spring:message code="setParameters.preferencesHeading"/></th>
+                    <th><spring:message code="setParameters.valuesHeading"/></th>
+                    <th><spring:message code="setParameters.userEditableHeading"/></th>
                     <th></th>
                   </tr>
                 </thead>
@@ -223,9 +232,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                       <tr>
                         <td>${ fn:substringAfter(channelParam.key, prefix) }</td>
                         <td><form:input path="${ paramPath }"/></td>
-                      <td>
-                      <form:checkbox path="${overrideParamPath}" value="true"/>
-                      </td>
+                        <td>
+                            <form:checkbox path="${overrideParamPath}" value="true"/>
+                        </td>
                         <td><a class="delete-parameter-link" href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
                       </tr>
                     </c:if>
@@ -241,24 +250,24 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </c:forEach>
           </c:forEach> <!-- End Other Parameters Loop -->
       
-          <!-- Other Preferences Loop -->
-          <c:forEach items="${ step.arbitraryPreferences }" var="arbitraryParam">
+          <!-- Other Preferences -->
+          <c:if test="${ step.arbitraryPreferences }">
             <div class="preference-options-section">
-              <table summary="This table lists a portlet's parameter settings.">
+              <table>
                 <thead>
                   <tr>
-                    <th>Parameters</th>
-                    <th>Value</th>
-                    <th>User editable</th>
+                    <th><spring:message code="setParameters.preferencesHeading"/></th>
+                    <th><spring:message code="setParameters.valueHeading"/></th>
+                    <th><spring:message code="setParameters.userEditableHeading"/></th>
                     <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <c:forEach items="${ arb }" var="name">
+                  <c:forEach items="${ arbitraryPreferenceNames }" var="name">
                     <c:set var="paramPath" value="portletPreferences['${ name }'].value"/>
                     <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ name }'].value"/>
                       <tr>
-                        <td>${ name }</td>
+                        <td class="preference-name">${ name }</td>
                         <td>
                             <c:forEach items="${ channel.portletPreferences[name].value }" var="val">
                              <div>
@@ -282,7 +291,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </div>
               </div>
               </div>
-          </c:forEach> <!-- End Other Preferences Loop -->
+          </c:if> <!-- End Other Preferences -->
       
         </div> <!-- End Pane -->
         

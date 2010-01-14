@@ -70,7 +70,7 @@
         </on-entry>
         <on-render>
             <set name="flashScope.portlet" value="portletAdministrationHelper.getPortletDescriptor(channel)"/>
-            <set name="flashScope.arb" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(channel)"/>
+            <set name="flashScope.arbitraryPreferenceNames" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(channel)"/>
         </on-render>
         <transition on="back" to="basicInfo" validate="false">
             <evaluate expression="portletAdministrationHelper.cleanOptions(channel, externalContext.getNativeRequest())"/>
@@ -183,6 +183,12 @@
                 value="channelPublishingDefinitionDao.getChannelPublishingDefinition(channel.typeId)"/>
             <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(channel)"/>
         </on-entry>
+        <!-- done in flash scope since portlet preference objects are not serializable -->
+        <on-render>
+            <set name="flashScope.portlet" value="portletAdministrationHelper.getPortletDescriptor(channel)"/>
+            <set name="flashScope.arbitraryPreferenceNames" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(channel)"/>
+        </on-render>
+        
         
         <!-- edit transitions -->
         <transition on="basicInfo" to="basicInfo"/>

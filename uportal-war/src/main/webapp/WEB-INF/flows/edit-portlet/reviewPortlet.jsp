@@ -72,7 +72,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
   
-  	<!-- Portlet Section -->
+  	<!-- General Configuration Section -->
     <div class="portlet-section" role="region">
       <h3 class="portlet-section-header" role="heading"><spring:message code="reviewPortlet.heading"/></h3>
       <div class="portlet-section-options">
@@ -142,23 +142,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </table>
         
       </div>
-    </div> <!-- end: portlet-section -->
+    </div>
+    <!-- END: General Configuration Section -->
     
     
-    <c:if test="${supportsConfig and channel.id >= 0}">
-    <!-- Portlet Section -->
-      <div class="portlet-section" role="region">
-        <h3 class="portlet-section-header" role="heading"><spring:message code="reviewPortlet.configModeHeading"/></h3>
-        <div class="portlet-section-options">
-          <a href="${ configModeUrl }"><span><spring:message code="reviewPortlet.enterConfigModeButton"/></span></a>
-        </div>
-        <div class="portlet-section-body">
-          <spring:message code="reviewPortlet.portletSupportsConfig"/>
-        </div>
-      </div>
-    </c:if>
-    
-    <!-- Portlet Section -->
+    <!-- Channel Parameters Section -->
     <div class="portlet-section" role="region">
       <h3 class="portlet-section-header" role="heading"><spring:message code="setParameters.parametersHeading"/></h3>
       <div class="portlet-section-options">
@@ -172,7 +160,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <th><spring:message code="reviewPortlet.configurationHeading"/></th>
               <th><spring:message code="setParameters.valueHeading"/></th>
               <th><spring:message code="setParameters.userEditableHeading"/></th>
-            <tr>
+            </tr>
           </thead>
           <tfoot></tfoot>
           <tbody>
@@ -220,27 +208,90 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   </c:forEach>
                 </c:forEach>
               </c:forEach>
-              <c:forEach items="${ step.preferences }" var="parameter">
-                <c:if test="${ parameter.modify != 'subscribeOnly' && parameter.type.display != 'hidden' && channel.portletPreferences[parameter.name].value != null && fn:length(channel.portletPreferences[parameter.name].value) > 0 }">
-                  <tr>
-                    <td class="fl-text-align-right"><c:out value="${ parameter.label }"/>:</td>
-                    <td>
-                        <a href="${ setParametersUrl }" class="pa-edit">
-                            <c:forEach items="${ channel.portletPreferences[parameter.name].value }" var="val" varStatus="status">
-                                <c:out value="${ val }"/>${ !status.last ? '<br/>' : '' }
-                            </c:forEach>
-                        </a>
-                    </td>
-                    <td>${ channel.portletPreferencesOverrides[parameter.name].value ? 'X' : '' }</td>
-                  </tr>
-                </c:if>
-              </c:forEach>
             </c:forEach>
           </tbody>
         </table>
         
       </div>
-    </div> <!-- end: portlet-section -->
+    </div>
+    <!-- END: Channel Parameters Section -->
+    
+    <c:if test="${ channel.portlet }">
+      <!-- Portlet.xml Preferences Section -->
+      <div class="portlet-section" role="region">
+        <h3 class="portlet-section-header" role="heading"><spring:message code="setParameters.xmlPreferencesHeader"/></h3>
+        <div class="portlet-section-body">
+          <table>
+            <thead>
+              <tr>
+                <th><spring:message code="setParameters.preferencesHeading"/></th>
+                <th><spring:message code="setParameters.valuesHeading"/></th>
+                <th><spring:message code="setParameters.userEditableHeading"/></th>
+              </tr>
+            </thead>
+            <tbody>
+              <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
+                <tr class="${ up:containsKey(channel.portletPreferences, pref.name) ? 'override-preference' : '' }">
+                  <td class="preference-name">${ pref.name }</td>
+                  <td>
+                    <c:forEach var="value" items="${ pref.values }">
+                        <div>${ value }</div>
+                    </c:forEach>
+                  </td>
+                  <td>${ !pref.readOnly }</td>
+                </tr>
+              </c:forEach>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- END: Portlet.xml Preferences Section -->
+    
+      <!-- Portlet Preferences Section -->
+      <div class="portlet-section" role="region">
+        <h3 class="portlet-section-header" role="heading"><spring:message code="setParameters.preferencesHeader"/></h3>
+        <div class="portlet-section-options">
+          <c:choose>
+            <c:when test="${supportsConfig and channel.id >= 0}">
+              <a href="${ configModeUrl }"><span><spring:message code="reviewPortlet.enterConfigModeButton"/></span></a>
+            </c:when>
+            <c:otherwise>
+              <a href="${ setParametersUrl }"><span>Edit Preferences</span></a>
+            </c:otherwise>
+          </c:choose>
+        </div>
+        <div class="portlet-section-body">
+        
+          <table summary="<spring:message code="reviewPortlet.configurationTableSummary"/>">
+            <thead>
+              <tr>
+                <th><spring:message code="setParameters.preferencesHeading"/></th>
+                <th><spring:message code="setParameters.valuesHeading"/></th>
+                <th><spring:message code="setParameters.userEditableHeading"/></th>
+              </tr>
+            </thead>
+            <tfoot></tfoot>
+            <tbody>
+              <c:forEach items="${ arbitraryPreferenceNames }" var="name">
+                <c:set var="paramPath" value="portletPreferences['${ name }'].value"/>
+                <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ name }'].value"/>
+                  <tr>
+                    <td class="preference-name">${ name }</td>
+                    <td>
+                        <c:forEach items="${ channel.portletPreferences[name].value }" var="val">
+                         <div>${ val }</div>
+                        </c:forEach>
+                    </td>
+                    <td>${ channel.portletPreferencesOverrides[name].value }</td>
+                  </tr>
+              </c:forEach>
+            </tbody>
+          </table>
+          
+        </div>
+      </div>
+      <!-- END: Portlet Preferences Section -->
+    </c:if>
   	
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">

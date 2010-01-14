@@ -1,16 +1,14 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-<!DOCTYPE taglib PUBLIC
-  "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
-  "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
-<taglib>
-    <tlibversion>1.0</tlibversion>
-    <jspversion>1.2</jspversion>
-    <shortname>portlet</shortname>
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+  version="2.1">
+    <tlib-version>1.0</tlib-version>
+    <short-name>up</short-name>
     <uri>http://www.uportal.org/jsp/jstl/uportal/1.0</uri>
     <tag>
         <name>param</name>
-        <tagclass>org.jasig.portal.portlet.delegation.jsp.ParamTag</tagclass>
-        <bodycontent>empty</bodycontent>
+        <tag-class>org.jasig.portal.portlet.delegation.jsp.ParamTag</tag-class>
+        <body-content>empty</body-content>
         <attribute>
             <name>name</name>
             <required>true</required>
@@ -24,9 +22,9 @@
     </tag>
     <tag>
         <name>render-delegate</name>
-        <tagclass>org.jasig.portal.portlet.delegation.jsp.RenderPortletTag</tagclass>
-        <teiclass>org.jasig.portal.portlet.delegation.jsp.RenderPortletTag$TEI</teiclass>
-        <bodycontent>JSP</bodycontent>
+        <tag-class>org.jasig.portal.portlet.delegation.jsp.RenderPortletTag</tag-class>
+        <tei-class>org.jasig.portal.portlet.delegation.jsp.RenderPortletTag$TEI</tei-class>
+        <body-content>JSP</body-content>
         <attribute>
             <name>fname</name>
             <required>true</required>
@@ -50,8 +48,8 @@
     </tag>
     <tag>
         <name>parent-url</name>
-        <tagclass>org.jasig.portal.portlet.delegation.jsp.ParentUrlTag</tagclass>
-        <bodycontent>JSP</bodycontent>
+        <tag-class>org.jasig.portal.portlet.delegation.jsp.ParentUrlTag</tag-class>
+        <body-content>JSP</body-content>
         <attribute>
             <name>windowState</name>
             <required>false</required>
@@ -63,4 +61,19 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    <function>
+        <name>contains</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>boolean contains(java.util.Collection, java.lang.Object)</function-signature>
+    </function>
+    <function>
+        <name>containsKey</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>boolean containsKey(java.util.Map, java.lang.Object)</function-signature>
+    </function>
+    <function>
+        <name>containsValue</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>boolean containsValue(java.util.Map, java.lang.Object)</function-signature>
+    </function>
 </taglib>

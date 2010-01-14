@@ -70,6 +70,7 @@ import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.utils.Tuple;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.webflow.context.ExternalContext;
 
@@ -434,27 +435,12 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	        return false;
 	    }
 	    
-	    final Map<String, Attribute> parameters = form.getParameters();
-	    
-	    final Attribute frameworkPortletAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
-	    final Attribute portletAppIdAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
-	    final Attribute portletNameAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
-	    if ((portletAppIdAttribute == null && frameworkPortletAttribute == null) || portletNameAttribute == null) {
+	    final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(form);
+	    if (portletDescriptorKeys == null) {
 	        return false;
 	    }
-	    
-	    final String portletAppId;
-        if (frameworkPortletAttribute != null && Boolean.valueOf(frameworkPortletAttribute.getValue())) {
-            portletAppId = this.servletContext.getContextPath();
-        }
-        else {
-            portletAppId = portletAppIdAttribute.getValue();
-        }
-	    
-	    final String portletName = portletNameAttribute.getValue();
-        if (portletAppId == null || portletName == null) {
-            return false;
-        }
+	    final String portletAppId = portletDescriptorKeys.first;
+	    final String portletName = portletDescriptorKeys.second;
 	    
         final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
         final PortletDD portletDescriptor;
@@ -560,19 +546,17 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * @return
 	 */
 	public PortletDD getPortletDescriptor(ChannelDefinitionForm form) {
-		if (!form.isPortlet() || !form.getParameters().containsKey("portletApplicationId") || !form.getParameters().containsKey("portletName")) {
-			return null;
+		final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(form);
+		if (portletDescriptorKeys == null) {
+		    return null;
 		}
-		
-		final String application = form.getParameters().get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID).getValue();
-		final String portlet = form.getParameters().get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME).getValue();
-		if (StringUtils.isBlank(application) || StringUtils.isBlank(portlet)) {
-			return null;
-		}
+        final String portletAppId = portletDescriptorKeys.first;
+        final String portletName = portletDescriptorKeys.second;
+
 		
 		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
 		try {
-			PortletDD portletDD = portletRegistryService.getPortletDescriptor(application, portlet);
+			PortletDD portletDD = portletRegistryService.getPortletDescriptor(portletAppId, portletName);
 			return portletDD;
 		} catch (PortletContainerException e) {
 			e.printStackTrace();
@@ -691,5 +675,28 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		}
 		
 		return true;
+	}
+	
+	protected Tuple<String, String> getPortletDescriptorKeys(ChannelDefinitionForm form) {
+	    final Map<String, Attribute> parameters = form.getParameters();
+	    
+	    final Attribute frameworkPortletAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
+        final Attribute portletAppIdAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+        final Attribute portletNameAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
+        if ((portletAppIdAttribute == null && frameworkPortletAttribute == null) || portletNameAttribute == null) {
+            return null;
+        }
+        
+        final String portletAppId;
+        if (frameworkPortletAttribute != null && Boolean.valueOf(frameworkPortletAttribute.getValue())) {
+            portletAppId = this.servletContext.getContextPath();
+        }
+        else {
+            portletAppId = portletAppIdAttribute.getValue();
+        }
+        
+        final String portletName = portletNameAttribute.getValue();
+        
+        return new Tuple<String, String>(portletAppId, portletName);
 	}
 }
