@@ -58,6 +58,12 @@
             <artifactId>pluto-taglib</artifactId>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.service</groupId>
+            <artifactId>person-directory-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
     
