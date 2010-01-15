@@ -81,7 +81,6 @@ public class ResourcesXalanElementsTest {
 		
 		final String result = resultWriter.getBuffer().toString();
         final String expected = IOUtils.toString(new ClassPathResource("org/jasig/portal/web/skin/resources1-result.xml").getInputStream());
-        System.out.println("|" + result + "|");
         
         XMLUnit.setIgnoreWhitespace(true);
         Diff d = new Diff(expected, result);
