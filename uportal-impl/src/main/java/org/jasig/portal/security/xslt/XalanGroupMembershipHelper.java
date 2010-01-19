@@ -49,4 +49,8 @@ public class XalanGroupMembershipHelper implements IXalanGroupMembershipHelper {
         return this.groupMembershipHelper.isUserDeepMemberOf(userName, groupKey);
     }
 
+    @Override
+    public boolean isUserDeepMemberOfGroupName(String userName, String groupName) {
+        return this.groupMembershipHelper.isUserDeepMemberOfGroupName(userName, groupName);
+    }
 }

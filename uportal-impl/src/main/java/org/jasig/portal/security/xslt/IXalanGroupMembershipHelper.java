@@ -36,6 +36,15 @@ public interface IXalanGroupMembershipHelper {
     public boolean isUserDeepMemberOf(String userName, String groupKey);
     
     /**
+     * Checks if the user is a deep member of the specified group
+     * 
+     * @param userName Name of the user to check
+     * @param groupName Name to find a group via search
+     * @return true if the user is a deep member, false otherwise
+     */
+    public boolean isUserDeepMemberOfGroupName(String userName, String groupName);
+    
+    /**
      * Checks if the channel is a deep member of the specified group
      * 
      * @param fname FName of the channel

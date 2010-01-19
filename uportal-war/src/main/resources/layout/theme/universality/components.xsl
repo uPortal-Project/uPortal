@@ -30,7 +30,8 @@
 <xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-    exclude-result-prefixes="upAuth">
+    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    exclude-result-prefixes="upAuth upGroup">
 	
   
   <!-- ========== TEMPLATE: PORTAL PIPE ========== -->
@@ -338,7 +339,7 @@
    | This template renders the administration links navigation component, a prominent, short list of links to administrative functions.
   -->
   <xsl:template name="administration.links">
-  	<xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin')">
+  	<xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin') or upGroup:isUserDeepMemberOfGroupName($USER_ID, 'Fragment Owners')">
       <div id="portalAdminLinks" class="fl-widget">
         <div class="fl-widget-inner">
         	<div class="fl-widget-titlebar">

@@ -21,10 +21,12 @@ package org.jasig.portal.security.xslt;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Required;
@@ -117,5 +119,30 @@ public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelp
         }
         
         return distinguishedGroup.deepContains(entity);
+    }
+    
+    @Override
+    public boolean isUserDeepMemberOfGroupName(String userName, String groupName) {
+        final EntityIdentifier[] results = GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
+        if (results == null || results.length == 0) {
+            return false;
+        }
+        
+        if (results.length > 1) {
+            this.logger.warn(results.length + " groups were found for '" + groupName + "'. The first result will be used.");
+        }
+            
+        final IGroupMember group = GroupService.getGroupMember(results[0]);
+        
+        final IEntity entity = GroupService.getEntity(userName, IPerson.class);
+        if (entity == null) {
+            if (this.logger.isDebugEnabled()) {
+                this.logger.debug("No user found for key '" + userName + "'");
+            }
+            
+            return false;
+        }
+        
+        return group.deepContains(entity);
     }
 }
