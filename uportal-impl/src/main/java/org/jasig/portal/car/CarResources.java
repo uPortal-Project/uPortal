@@ -98,7 +98,6 @@ public class CarResources implements ServletContextAware, InitializingBean {
      */
     public void afterPropertiesSet() throws Exception {
         loader = new CarClassLoader(this);
-        this.processDescriptors();
         
         try {
             this.loadCars();
@@ -108,6 +107,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
                     + "deployed via CARs will not be " + "available.", e);
         }
         
+        this.processDescriptors();
         synchronized (CarResources.class) {
             instance = this;
             CarResources.class.notifyAll();
