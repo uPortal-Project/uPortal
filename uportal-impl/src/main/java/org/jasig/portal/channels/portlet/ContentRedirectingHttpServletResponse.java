@@ -141,38 +141,6 @@ public class ContentRedirectingHttpServletResponse extends HttpServletResponseWr
             .toHashCode();
     }
 
-    /*
-     * encoding URLs is not thread-safe in Tomcat, sync around url encoding
-     */
-
-    @Override
-    public String encodeRedirectUrl(String url) {
-        synchronized (super.getResponse()) {
-            return super.encodeRedirectUrl(url);
-        }
-    }
-
-    @Override
-    public String encodeRedirectURL(String url) {
-        synchronized (super.getResponse()) {
-            return super.encodeRedirectURL(url);
-        }
-    }
-
-    @Override
-    public String encodeUrl(String url) {
-        synchronized (super.getResponse()) {
-            return super.encodeUrl(url);
-        }
-    }
-
-    @Override
-    public String encodeURL(String url) {
-        synchronized (super.getResponse()) {
-            return super.encodeURL(url);
-        }
-    }
-
 
 
 
