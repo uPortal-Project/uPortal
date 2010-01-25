@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
  * @author Mark Boyd  {@link <a href="mailto:mark.boyd@engineer.com">mark.boyd@engineer.com</a>}
  * @version $Revision$
  */
-public class CarResources implements ServletContextAware, InitializingBean {
+public class CarResources implements ServletContextAware {
 
     // static, class variables
     private static final Log log = LogFactory.getLog(CarResources.class);
@@ -94,7 +94,7 @@ public class CarResources implements ServletContextAware, InitializingBean {
        Instantiate a CarResources object and load information about all CARs
        and their contained resources.
      */
-    public void afterPropertiesSet() throws Exception {
+    public void initialize() throws Exception {
         loader = new CarClassLoader(this);
         
         try {
