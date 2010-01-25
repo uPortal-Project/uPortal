@@ -397,3 +397,14 @@ table.purpose-layout td {margin:0; padding:0;}
 .preference-name {
     vertical-align: top;
 }
+
+
+/**
+ * Class used by script to fix old IE ZIndex issues. The JavaScript that goes with this class
+ * is defined here:
+ *  uportal-war/src/main/webapp/media/skins/universality/common/javascript/uportal/flyout-nav.js
+ */
+.ieZindex-fix_on-top
+{
+  z-index: 10000;
+}

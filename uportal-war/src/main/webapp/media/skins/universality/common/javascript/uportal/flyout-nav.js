@@ -100,14 +100,15 @@ var uportal = uportal || {};
                 // If it's positioned,
                 if(pos == "relative" || pos == "absolute" || pos == "fixed") {
                     /*
-                     * Add the "on-top" class name when the mouse is hovering over it, and remove
-                     * it when the mouse leaves.
+                     * Add the "ieZindex-fix_on-top" class name when the mouse is hovering over it, and remove
+                     * it when the mouse leaves. This class is defined in:
+                     *  uportal-war/src/main/webapp/media/skins/universality/common/css/layout.css 
                      */
                     p.hover(function() {
-                            $(this).addClass("on-top");
+                            $(this).addClass("ieZindex-fix_on-top");
                         },
                         function() {
-                            $(this).removeClass("on-top");
+                            $(this).removeClass("ieZindex-fix_on-top");
                         }
                     );
                 }
