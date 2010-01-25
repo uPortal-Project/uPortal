@@ -7,6 +7,7 @@
         <property name="scheduledTimerTasks">
             <list>
                 <ref bean="cacheMaintenanceTask" />
+                <ref bean="org.springframework.scheduling.timer.ScheduledTimerTask" />
             </list>
         </property>
     </bean>
@@ -21,4 +22,16 @@
         <property name="delay" value="300000" />
         <property name="period" value="300000" />
     </bean>
+    
+    <bean id="carFilesLoadingTrigger" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <property name="timerTask">
+            <bean class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">
+                <property name="targetMethod" value="initialize" />
+                <property name="targetObject" ref="carResources"/>
+            </bean>
+        </property>        
+        <property name="delay" value="0" />
+    </bean>
+    
+    
 </beans>
