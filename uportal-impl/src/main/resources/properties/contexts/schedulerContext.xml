@@ -31,15 +31,28 @@
                 <prop key="org.quartz.threadPool.makeThreadsDaemons">true</prop>
             </props>
         </property>
-        <property name="startupDelay" value="30" />
+        <property name="startupDelay" value="5" />
         <property name="triggers">
             <list>
+            	<ref bean="carFilesLoadingTrigger" />
                 <ref bean="cacheMaintenanceTrigger" />
                 <ref bean="dlmFragmentCleanerTrigger" />
                 <ref bean="statsQueueFlushingTrigger" />
             </list>
         </property>
     </bean>
+    
+    <bean id="carFilesLoadingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetMethod" value="initialize" />
+                <property name="targetObject" ref="carResources"/>
+            </bean>
+        </property>        
+        <property name="startDelay" value="0" />
+        <property name="repeatCount" value="0"/>
+    </bean>
+    
     
     <bean id="cacheMaintenanceTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail">
