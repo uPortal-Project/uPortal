@@ -31,7 +31,9 @@
         <transition on="view-statistics" to="cache-statistics">
             <set name="flowScope.cacheName" value="requestParameters.cacheName"/>
         </transition>
-        <transition to="confirm-flush" on="flush"/>
+        <transition to="confirm-flush" on="flush">
+        	 <set name="flowScope.cacheName" value="requestParameters.cacheName"/>
+        </transition>
         <transition on="flush-all" to="confirm-flush-all"/>
     </view-state>
     
