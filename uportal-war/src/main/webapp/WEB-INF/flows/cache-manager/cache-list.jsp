@@ -83,6 +83,7 @@
                     </td>
                     <td class="cache-flush">
                         <portlet:actionURL var="flushUrl">
+                          <portlet:param name="cacheName" value="${statisticsEntry.key}"/>
                           <portlet:param name="_eventId" value="flush"/>
                           <portlet:param name="execution" value="${flowExecutionKey}" />
                         </portlet:actionURL>
