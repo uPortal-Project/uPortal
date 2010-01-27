@@ -56,7 +56,9 @@ class CUserManagerPermissions implements IPermissible {
                              Constants.PERMISSION_MNGRRIGHTDESC );
         activities.put( Constants.PERMISSION_PWDCHNGRIGHT,
                              Constants.PERMISSION_PWDCHNGRIGHTDESC );
-
+    }
+    
+    CUserManagerPermissions() {
         RDBMPermissibleRegistry.registerPermissible( Constants.PERMISSION_OWNERTOKEN );
     }// static
 
