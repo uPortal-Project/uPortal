@@ -348,7 +348,6 @@ throws AuthorizationException
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
 public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelPublishId)
-throws AuthorizationException
 {
     String owner = IPermission.PORTAL_FRAMEWORK;
     String target = IPermission.CHANNEL_PREFIX + channelPublishId;
@@ -358,7 +357,7 @@ throws AuthorizationException
 	IChannelDefinition channel = this.channelRegistryStore
 				.getChannelDefinition(channelPublishId);
     if (channel == null){
-    	throw new AuthorizationException("Unable to locate channel " + channelPublishId);
+    	return false;
     }    
     ChannelLifecycleState state = channel.getLifecycleState();
     
