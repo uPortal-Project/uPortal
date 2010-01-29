@@ -519,6 +519,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             else if (IPortletAdaptor.DETACHED.equals(windowState) || (windowState == null && IPortletAdaptor.DETACHED.equals(previousWindowState))) {
                 final UPFileSpec upFileSpec = new UPFileSpec(channelRuntimeData.getUPFile());
                 upFileSpec.setMethodNodeId(channelSubscribeId);
+                upFileSpec.setTargetNodeId(channelSubscribeId);
                 final String urlBase = upFileSpec.getUPFile();
                 url.append(urlBase);
             }
