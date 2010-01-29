@@ -221,6 +221,7 @@
                         RuntimeRequestResponse tr = new RuntimeRequestResponse();
                         tr.setAttribute(Attributes.RETURN_VALUE, rslt);
                         tr.setAttribute('FNAME', FNAME);
+                        tr.setAttribute('included_users_file', included_users_file);
                         
                         PORTAL_CONTEXT.getBean('export-channel').perform(tr, new RuntimeRequestResponse());
                         def exportedChannelDoc = rslt.getValue();
