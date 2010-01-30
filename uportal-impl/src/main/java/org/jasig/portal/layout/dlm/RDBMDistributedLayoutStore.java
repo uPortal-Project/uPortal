@@ -963,7 +963,6 @@ public class RDBMDistributedLayoutStore
         
         String[] rslt = null;  // This will be the response if we can't make a match...
         
-        
         final Matcher m = USER_NODE_PATTERN.matcher(dlmNoderef);
         if (m.find()) {
             // We need a pathref based on the new style of layout b/c on 
@@ -988,6 +987,15 @@ public class RDBMDistributedLayoutStore
             tr.setAttribute(Attributes.RETURN_VALUE, rvi);
             tr.setAttribute("USER_NAME", layoutOwnerUsername);
             tr.setAttribute("DLM_NODEREF", dlmNoderef);
+            // The 'layoutStoreProvider' attribute could use some rework;  
+            // adding it like this to avoid circular dependency issues
+            final RDBMDistributedLayoutStore layoutStore = this;
+            tr.setAttribute("layoutStoreProvider", new LayoutStoreProvider() {
+                @Override
+                public RDBMDistributedLayoutStore getLayoutStore() {
+                    return layoutStore;
+                }
+            });
             this.lookupNoderefTask.perform(tr, new RuntimeRequestResponse());
             
             rslt = (String[]) rvi.getValue();
@@ -1043,6 +1051,15 @@ public class RDBMDistributedLayoutStore
             if (isStructRef) {
                 tr.setAttribute("IS_STRUCT_REF", Boolean.TRUE);
             }
+            // The 'layoutStoreProvider' attribute could use some rework;  
+            // adding it like this to avoid circular dependency issues
+            final RDBMDistributedLayoutStore layoutStore = this;
+            tr.setAttribute("layoutStoreProvider", new LayoutStoreProvider() {
+                @Override
+                public RDBMDistributedLayoutStore getLayoutStore() {
+                    return layoutStore;
+                }
+            });
             this.lookupPathrefTask.perform(tr, new RuntimeRequestResponse());
             
             String val = (String) rvi.getValue();
