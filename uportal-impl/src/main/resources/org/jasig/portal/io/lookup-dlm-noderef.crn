@@ -50,24 +50,23 @@
              +-->
             <script>
                 def parseUriTokens(descId) {
-                    def userNodeRef = ~/n[0-9]+/
-                    def dlmNodeRef = ~/u([0-9])+l[0-9]+n|s[0-9]+/
+                    def userNodeRef = ~/n\d+/
+                    def dlmNodeRef = ~/u(\d+)l\d+[n|s]\d+/
                     
-                    rslt = new String[3];
+                    String[] rslt = null;  // signals unable to match...
                     
                     matcher = userNodeRef.matcher(descId)
                     if (matcher.matches()) {
-                        rslt[0] = null; // signals that we don't need to query for the username...
-                        return rslt;
+                        rslt = new String[3]; // signals that we don't need to query for the username...
                     }
                     
                     matcher = dlmNodeRef.matcher(descId)
                     if (matcher.matches()) {
+                        rslt = new String[3];
                         rslt[0] = String.valueOf(matcher[0][1]);
-                        return rslt;
                     }
                     
-                    return null;
+                    return rslt;
                 }
             </script>
             <subtasks>

@@ -23,7 +23,7 @@ import org.danann.cernunnos.Task;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.springframework.beans.factory.annotation.Required;
 
-public final class LayoutStoreProvider {
+public class LayoutStoreProvider {
 
     private Task lookupNoderefTask;
     private Task lookupPathrefTask;

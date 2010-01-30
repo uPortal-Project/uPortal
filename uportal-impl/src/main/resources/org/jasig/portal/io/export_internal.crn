@@ -31,37 +31,20 @@
             <parameter value="${SYSID}"/>
             <subtasks>
                 <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
-                    <!-- This entire groovy task is essentially a long-winded with-attribute -->
-                    <groovy>
-                        <script>
-                            import org.danann.cernunnos.Attributes;
-                            import org.danann.cernunnos.ReturnValueImpl;
-                            import org.danann.cernunnos.runtime.RuntimeRequestResponse;
-                            
-                            ReturnValueImpl rslt = new ReturnValueImpl();
-                            RuntimeRequestResponse tr = new RuntimeRequestResponse();
-                            tr.setAttribute(Attributes.RETURN_VALUE, rslt);
-                            tr.setAttribute('USER_NAME', USER_NAME);
-                            
-                            PORTAL_CONTEXT.getBean('export-layout').perform(tr, new RuntimeRequestResponse());
-                            def exportedLayoutDoc = rslt.getValue();
-                            ScriptAttributes.RESPONSE.setAttribute('exportedLayoutDoc', exportedLayoutDoc);
-                        </script>
-                        <subtasks>
-                            <if test="${jexl(exportedLayoutDoc ne null)}">
-			                    <choose>
-			                        <when test="${crn(is-fragment-owner.crn)}">
-			                            <!-- This is a DLM fragment owner layout... -->
-			                            <write-document node="${exportedLayoutDoc}" file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
-			                        </when>
-			                        <otherwise>
-			                            <!-- This is a normal layout... -->
-			                            <write-document node="${exportedLayoutDoc}" file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
-			                        </otherwise>
-			                    </choose>
-			                </if>
-                        </subtasks>
-                    </groovy>
+                    <with-attribute key="exportedLayoutDoc" value="${crn(${groovy(PORTAL_CONTEXT.getBean('export-layout'))})}">
+                        <if test="${jexl(exportedLayoutDoc ne null)}">
+                            <choose>
+                                <when test="${crn(is-fragment-owner.crn)}">
+                                    <!-- This is a DLM fragment owner layout... -->
+                                    <write-document node="${exportedLayoutDoc}" file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
+                                </when>
+                                <otherwise>
+                                    <!-- This is a normal layout... -->
+                                    <write-document node="${exportedLayoutDoc}" file="${EXPORT_DIR}/layout/${SAFE_USER_NAME}.layout"/>
+                                </otherwise>
+                            </choose>
+                        </if>
+                    </with-attribute>
                 </with-attribute>
             </subtasks>
             <empty-result>
@@ -124,27 +107,7 @@
             <subtasks>
                 <with-attribute key="SAFE_USER_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
                     <with-attribute key="SAFE_PROFILE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${PROFILE_FNAME})}">
-                        <!-- This entire groovy task is essentially a long-winded with-attribute -->
-                        <groovy>
-                            <script>
-                                import org.danann.cernunnos.Attributes;
-                                import org.danann.cernunnos.ReturnValueImpl;
-                                import org.danann.cernunnos.runtime.RuntimeRequestResponse;
-                            
-                                ReturnValueImpl rslt = new ReturnValueImpl();
-                                RuntimeRequestResponse tr = new RuntimeRequestResponse();
-                                tr.setAttribute(Attributes.RETURN_VALUE, rslt);
-                                tr.setAttribute('USER_NAME', USER_NAME);
-                                tr.setAttribute('PROFILE_FNAME', PROFILE_FNAME);
-                            
-                                PORTAL_CONTEXT.getBean('export-profile').perform(tr, new RuntimeRequestResponse());
-                                def exportedProfileDoc = rslt.getValue();
-                                ScriptAttributes.RESPONSE.setAttribute('exportedProfileDoc', exportedProfileDoc);
-                            </script>
-                            <subtasks>
-	                           <write-document node="${exportedProfileDoc}" file="${EXPORT_DIR}/profile/${SAFE_USER_NAME}-${SAFE_PROFILE_FNAME}.profile"/>
-                            </subtasks>
-                        </groovy>
+                        <write-document node="${crn(${groovy(PORTAL_CONTEXT.getBean('export-profile'))})}" file="${EXPORT_DIR}/profile/${SAFE_USER_NAME}-${SAFE_PROFILE_FNAME}.profile"/>
                     </with-attribute>
                 </with-attribute>
             </subtasks>
@@ -210,26 +173,7 @@
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
         <with-attribute key="FNAME" value="${SYSID}">
             <with-attribute key="SAFE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${FNAME})}">
-                <!-- This entire groovy task is essentially a long-winded with-attribute -->
-                <groovy>
-                    <script>
-                        import org.danann.cernunnos.Attributes;
-                        import org.danann.cernunnos.ReturnValueImpl;
-                        import org.danann.cernunnos.runtime.RuntimeRequestResponse;
-                        
-                        ReturnValueImpl rslt = new ReturnValueImpl();
-                        RuntimeRequestResponse tr = new RuntimeRequestResponse();
-                        tr.setAttribute(Attributes.RETURN_VALUE, rslt);
-                        tr.setAttribute('FNAME', FNAME);
-                        
-                        PORTAL_CONTEXT.getBean('export-channel').perform(tr, new RuntimeRequestResponse());
-                        def exportedChannelDoc = rslt.getValue();
-                        ScriptAttributes.RESPONSE.setAttribute('exportedChannelDoc', exportedChannelDoc);
-                    </script>
-                    <subtasks>
-                      <write-document node="${exportedChannelDoc}" file="${EXPORT_DIR}/channel/${SAFE_FNAME}.channel"/>
-                    </subtasks>
-                </groovy>
+                <write-document node="${crn(${groovy(PORTAL_CONTEXT.getBean('export-channel'))})}" file="${EXPORT_DIR}/channel/${SAFE_FNAME}.channel"/>
             </with-attribute>
         </with-attribute>
     </when>
@@ -243,13 +187,13 @@
                     <concurrent>
                         <handle-error> 
                             <try>
-	                            <with>
-	                                <attribute key="SYSID">${CHAN_FNAME}</attribute>
+                                <with>
+                                    <attribute key="SYSID">${CHAN_FNAME}</attribute>
                                     <attribute key="ENTITY_TYPE">channel</attribute>
-	                                <subtasks>
-	                                    <crn location="export_internal.crn"/>
-	                                </subtasks>
-	                            </with>
+                                    <subtasks>
+                                        <crn location="export_internal.crn"/>
+                                    </subtasks>
+                                </with>
                             </try>
                             <catch>
                                 <echo-ln>ERROR Failed to export channel ${CHAN_FNAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -307,29 +251,9 @@
             </sql>
             <parameter value="${SYSID}"/>
             <subtasks>
-    			    <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME}-${GROUP_ID})}">
-                <!-- This entire groovy task is essentially a long-winded with-attribute -->
-                <groovy>
-                    <script>
-                        import org.danann.cernunnos.Attributes;
-                        import org.danann.cernunnos.ReturnValueImpl;
-                        import org.danann.cernunnos.runtime.RuntimeRequestResponse;
-                        
-                        ReturnValueImpl rslt = new ReturnValueImpl();
-                        RuntimeRequestResponse tr = new RuntimeRequestResponse();
-                        tr.setAttribute(Attributes.RETURN_VALUE, rslt);
-                        tr.setAttribute('GROUP_NAME', SYSID);
-                        
-                        PORTAL_CONTEXT.getBean('export-group').perform(tr, new RuntimeRequestResponse());
-                        def exportedGroupDoc = rslt.getValue();
-                        ScriptAttributes.RESPONSE.setAttribute('exportedGroupDoc', exportedGroupDoc);
-                    </script>
-                    <subtasks>
-                      <write-document node="${exportedGroupDoc}" file="${EXPORT_DIR}/group/${SAFE_NAME}.group"/>
-                    </subtasks>
-                </groovy>
-<!--			        <write-document node="${crn(export-group.crn)}" file="${EXPORT_DIR}/group/${SAFE_NAME}.group"/>-->
-			        </with-attribute>
+                <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME}-${GROUP_ID})}">
+                    <write-document node="${crn(${groovy(PORTAL_CONTEXT.getBean('export-group'))})}" file="${EXPORT_DIR}/group/${SAFE_NAME}.group"/>
+                </with-attribute>
             </subtasks>
             <empty-result>
                 <echo-ln>No group '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
@@ -380,32 +304,9 @@
             </sql>
             <parameter value="${SYSID}"/>
             <subtasks>
-				<with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME})}">
-          <!-- This entire groovy task is essentially a long-winded with-attribute -->
-          <groovy>
-              <script>
-                  import org.danann.cernunnos.Attributes;
-                  import org.danann.cernunnos.ReturnValueImpl;
-                  import org.danann.cernunnos.runtime.RuntimeRequestResponse;
-                  
-                  ReturnValueImpl rslt = new ReturnValueImpl();
-                  RuntimeRequestResponse tr = new RuntimeRequestResponse();
-                  tr.setAttribute(Attributes.RETURN_VALUE, rslt);
-                  tr.setAttribute('GROUP_ID', GROUP_ID);
-                  tr.setAttribute('GROUP_NAME', GROUP_NAME);
-                  tr.setAttribute('ENTITY_TYPE_NAME', ENTITY_TYPE_NAME);
-                  tr.setAttribute('CREATOR_ID', CREATOR_ID);
-                  tr.setAttribute('DESCRIPTION', DESCRIPTION);
-                  
-                  PORTAL_CONTEXT.getBean('export-group_membership').perform(tr, new RuntimeRequestResponse());
-                  def exportedGroupMembershipDoc = rslt.getValue();
-                  ScriptAttributes.RESPONSE.setAttribute('exportedGroupMembershipDoc', exportedGroupMembershipDoc);
-              </script>
-              <subtasks>
-                <write-document node="${exportedGroupMembershipDoc}" file="${EXPORT_DIR}/group_membership/${SAFE_NAME}.group_membership"/>
-              </subtasks>
-          </groovy>
-				</with-attribute>
+                <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${GROUP_NAME})}">
+                    <write-document node="${crn(${groovy(PORTAL_CONTEXT.getBean('export-group_membership'))})}" file="${EXPORT_DIR}/group_membership/${SAFE_NAME}.group_membership"/>
+                </with-attribute>
             </subtasks>
             <empty-result>
                 <echo-ln>No group '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
@@ -451,22 +352,22 @@
             <sql>SELECT user_id, user_name, user_dflt_usr_id FROM up_user WHERE user_name=?</sql>
             <parameter value="${SYSID}"/>
             <subtasks>
-				<with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
-				    <sql-query>
-				        <sql>SELECT COUNT(USER_ID) AS DEFAULT_USER_COUNT FROM UP_USER WHERE USER_DFLT_USR_ID = ?</sql>
-				        <parameter value="${USER_ID}"/>
-				        <subtasks>
-				            <choose>
-				                <when test="${groovy(DEFAULT_USER_COUNT > 0)}">
-				                    <write-document node="${crn(export-user.crn)}" file="${EXPORT_DIR}/user/${SAFE_NAME}.template-user"/>
-				                </when>
-				                <otherwise>
-				                    <write-document node="${crn(export-user.crn)}" file="${EXPORT_DIR}/user/${SAFE_NAME}.user"/>
-				                </otherwise>
-				            </choose>
-				        </subtasks>
-				    </sql-query>
-				</with-attribute>
+                <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${USER_NAME})}">
+                    <sql-query>
+                        <sql>SELECT COUNT(USER_ID) AS DEFAULT_USER_COUNT FROM UP_USER WHERE USER_DFLT_USR_ID = ?</sql>
+                        <parameter value="${USER_ID}"/>
+                        <subtasks>
+                            <choose>
+                                <when test="${groovy(DEFAULT_USER_COUNT > 0)}">
+                                    <write-document node="${crn(export-user.crn)}" file="${EXPORT_DIR}/user/${SAFE_NAME}.template-user"/>
+                                </when>
+                                <otherwise>
+                                    <write-document node="${crn(export-user.crn)}" file="${EXPORT_DIR}/user/${SAFE_NAME}.user"/>
+                                </otherwise>
+                            </choose>
+                        </subtasks>
+                    </sql-query>
+                </with-attribute>
             </subtasks>
             <empty-result>
                 <echo-ln>No user '${SYSID}' found to export ${ENTITY_TYPE} for.</echo-ln>
@@ -485,13 +386,13 @@
                             <concurrent>
                                 <handle-error>
                                     <try>
-		                                <with>
-		                                    <attribute key="SYSID">${USER_NAME}</attribute>
-		                                    <attribute key="ENTITY_TYPE">user</attribute>
-		                                    <subtasks>
-		                                        <crn location="export_internal.crn"/>
-		                                    </subtasks>
-		                                </with>
+                                        <with>
+                                            <attribute key="SYSID">${USER_NAME}</attribute>
+                                            <attribute key="ENTITY_TYPE">user</attribute>
+                                            <subtasks>
+                                                <crn location="export_internal.crn"/>
+                                            </subtasks>
+                                        </with>
                                     </try>
                                     <catch>
                                         <echo-ln>ERROR Failed to export user ${USER_NAME} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -513,26 +414,7 @@
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('theme'))}">
         <with-attribute key="NAME" value="${SYSID}">
             <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
-                <!-- This entire groovy task is essentially a long-winded with-attribute -->
-                <groovy>
-                    <script>
-                        import org.danann.cernunnos.Attributes;
-                        import org.danann.cernunnos.ReturnValueImpl;
-                        import org.danann.cernunnos.runtime.RuntimeRequestResponse;
-                        
-                        ReturnValueImpl rslt = new ReturnValueImpl();
-                        RuntimeRequestResponse tr = new RuntimeRequestResponse();
-                        tr.setAttribute(Attributes.RETURN_VALUE, rslt);
-                        tr.setAttribute('NAME', NAME);
-                        
-                        PORTAL_CONTEXT.getBean('export-theme').perform(tr, new RuntimeRequestResponse());
-                        def exportedThemeDoc = rslt.getValue();
-                        ScriptAttributes.RESPONSE.setAttribute('exportedThemeDoc', exportedThemeDoc);
-                    </script>
-                    <subtasks>
-                      <write-document node="${exportedThemeDoc}" file="${EXPORT_DIR}/theme/${SAFE_NAME}.theme"/>
-                    </subtasks>
-                </groovy>
+                <write-document node="${crn(${groovy(PORTAL_CONTEXT.getBean('export-theme'))})}" file="${EXPORT_DIR}/theme/${SAFE_NAME}.theme"/>
             </with-attribute>
         </with-attribute>
     </when>
@@ -569,26 +451,7 @@
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('structure'))}">
         <with-attribute key="NAME" value="${SYSID}">
             <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
-                <!-- This entire groovy task is essentially a long-winded with-attribute -->
-                <groovy>
-                    <script>
-                        import org.danann.cernunnos.Attributes;
-                        import org.danann.cernunnos.ReturnValueImpl;
-                        import org.danann.cernunnos.runtime.RuntimeRequestResponse;
-                        
-                        ReturnValueImpl rslt = new ReturnValueImpl();
-                        RuntimeRequestResponse tr = new RuntimeRequestResponse();
-                        tr.setAttribute(Attributes.RETURN_VALUE, rslt);
-                        tr.setAttribute('NAME', NAME);
-                        
-                        PORTAL_CONTEXT.getBean('export-structure').perform(tr, new RuntimeRequestResponse());
-                        def exportedStructureDoc = rslt.getValue();
-                        ScriptAttributes.RESPONSE.setAttribute('exportedStructureDoc', exportedStructureDoc);
-                    </script>
-                    <subtasks>
-                      <write-document node="${exportedStructureDoc}" file="${EXPORT_DIR}/structure/${SAFE_NAME}.structure"/>
-                    </subtasks>
-                </groovy>
+                <write-document node="${crn(${groovy(PORTAL_CONTEXT.getBean('export-structure'))})}" file="${EXPORT_DIR}/structure/${SAFE_NAME}.structure"/>
             </with-attribute>
         </with-attribute>
     </when>
