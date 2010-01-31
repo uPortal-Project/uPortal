@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.GuestUserInstance;
@@ -39,9 +38,10 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.spring.web.context.support.HttpSessionDestroyedEvent;
 import org.jasig.portal.url.IPortalRequestUtils;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Service;
 
 /**
  * Determines which user instance object to use for a given user.
@@ -49,6 +49,7 @@ import org.springframework.context.ApplicationListener;
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version $Revision 1.1$
  */
+@Service("userInstanceManager")
 public class UserInstanceManagerImpl implements IUserInstanceManager, ApplicationListener {
     protected final Log logger = LogFactory.getLog(UserInstanceManagerImpl.class);
     
@@ -66,9 +67,8 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
     /**
      * @param personManager the personManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPersonManager(IPersonManager personManager) {
-        Validate.notNull(personManager);
         this.personManager = personManager;
     }
     
@@ -78,7 +78,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
     /**
      * @param portalRequestUtils 
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }

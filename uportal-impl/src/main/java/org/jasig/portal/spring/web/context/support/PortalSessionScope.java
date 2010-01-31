@@ -30,8 +30,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.Scope;
+import org.springframework.web.context.request.SessionScope;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -51,7 +52,7 @@ public class PortalSessionScope implements Scope {
     public IPortalRequestUtils getPortalRequestUtils() {
         return this.portalRequestUtils;
     }
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }

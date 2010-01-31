@@ -29,7 +29,6 @@
     <bean id="channelRegistryStore" class="org.jasig.portal.channel.JpaChannelRegistryStore">
         <property name="channelDao" ref="channelDefinitionDao"/>
         <property name="channelTypeDao" ref="channelTypeDao"/>
-        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry"/>
     </bean>
     
     <bean id="channelPublishingDefinitionDao" class="org.jasig.portal.portlets.portletadmin.xmlsupport.XmlChannelPublishingDefinitionDao">

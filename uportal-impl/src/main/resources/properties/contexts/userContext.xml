@@ -26,11 +26,6 @@
     <!-- 
      | The concrete IPersonManager implementation to be used
      +-->
-    <bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
-    
-    <bean id="userInstanceManager" class="org.jasig.portal.user.UserInstanceManagerImpl" >
-        <property name="personManager" ref="personManager" />
-        <property name="portalRequestUtils" ref="portalRequestUtils" />
-    </bean>
+   	<bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
     
 </beans>

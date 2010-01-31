@@ -30,6 +30,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -43,6 +44,7 @@ import org.springframework.web.context.ServletContextAware;
  * @author Nicholas Blair, npblair@wisc.edu
  *
  */
+@Service
 public class ResourcesDaoImpl implements ResourcesDao, ServletContextAware {
 
 	private static final String LEADING_SLASH = "/";

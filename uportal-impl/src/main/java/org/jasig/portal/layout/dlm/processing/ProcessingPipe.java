@@ -27,10 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.layout.dlm.DistributedLayoutManager;
 import org.jasig.portal.security.IPerson;
+import org.springframework.context.annotation.Scope;
 import org.xml.sax.ContentHandler;
 
 /**
@@ -97,6 +97,7 @@ import org.xml.sax.ContentHandler;
  *
  * @author Mark Boyd
  */
+@Scope("prototype")
 public class ProcessingPipe implements IParameterProcessor
 {
     /**

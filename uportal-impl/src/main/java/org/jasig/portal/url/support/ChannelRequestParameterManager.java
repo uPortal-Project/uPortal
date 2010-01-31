@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
+import org.springframework.stereotype.Service;
 
 /**
  * Manages access to channel request parameters using a request attribute.
@@ -35,6 +36,7 @@ import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteExcep
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class ChannelRequestParameterManager implements IChannelRequestParameterManager {
     protected static final String CHANNEL_PARAMETER_MAP_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".CHANNEL_PARAMETER_MAP";
     protected static final Map<String, Map<String, Object[]>> NO_PARAMETERS = Collections.emptyMap();

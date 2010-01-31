@@ -24,10 +24,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestUtils;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.stereotype.Service;
 
 /**
  * Provides some extra information from the {@link HttpServletRequest} to the portlet as properties.
@@ -35,6 +36,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("httpRequestPropertiesManager")
 public class HttpRequestPropertiesManager extends BaseRequestPropertiesManager {
     private IPortalRequestUtils portalRequestUtils;
     
@@ -48,9 +50,8 @@ public class HttpRequestPropertiesManager extends BaseRequestPropertiesManager {
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
     }
 
@@ -68,4 +69,16 @@ public class HttpRequestPropertiesManager extends BaseRequestPropertiesManager {
 
         return properties;
     }
+    
+    /**
+     * Returns {@link Ordered#HIGHEST_PRECEDENCE}.
+     * 
+     * @see org.springframework.core.Ordered#getOrder()
+     */
+	@Override
+	public int getOrder() {
+		return Ordered.HIGHEST_PRECEDENCE;
+	}
+    
+    
 }

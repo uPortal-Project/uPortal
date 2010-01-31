@@ -32,7 +32,7 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.services.persondir.IPersonAttributes;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
 /**
@@ -54,7 +54,7 @@ public class UserLayoutHelperImpl extends SimpleJdbcDaoSupport implements IUserL
 	/**
 	 * @param userIdentityStore the userIdentityStore to set
 	 */
-	@Required
+	@Autowired(required=true)
 	public void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
 		this.userIdentityStore = userIdentityStore;
 	}

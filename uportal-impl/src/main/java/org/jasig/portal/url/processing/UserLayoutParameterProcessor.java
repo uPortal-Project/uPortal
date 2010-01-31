@@ -23,7 +23,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelManager;
@@ -46,7 +45,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * This helper class processes HttpServletRequests for parameters relating to
@@ -56,6 +56,7 @@ import org.springframework.beans.factory.annotation.Required;
  * This class results from factoring the processUserLayoutParameters method out
  * of UserInstance in an effort to make UserInstance smaller and more literate.
  */
+@Service("userLayoutRequestParameterProcessor")
 public class UserLayoutParameterProcessor implements IRequestParameterProcessor {
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -70,9 +71,8 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
     /**
      * @param userInstanceManager the userInstanceManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        Validate.notNull(userInstanceManager);
         this.userInstanceManager = userInstanceManager;
     }
 

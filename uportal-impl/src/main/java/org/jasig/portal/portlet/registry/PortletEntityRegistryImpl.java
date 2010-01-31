@@ -30,7 +30,9 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 /**
  * Provides access to IPortletEntity objects and convenience methods for creating
@@ -41,6 +43,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -57,8 +60,8 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     /**
      * @param portletEntityDao the portletEntityDao to set
      */
-    @Required
-    public void setPortletEntityDao(IPortletEntityDao portletEntityDao) {
+    @Autowired(required=true)
+    public void setPortletEntityDao(@Qualifier("main") IPortletEntityDao portletEntityDao) {
         this.portletEntityDao = portletEntityDao;
     }
 
@@ -71,7 +74,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }

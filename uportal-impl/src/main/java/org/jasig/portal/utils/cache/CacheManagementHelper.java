@@ -34,7 +34,8 @@ import net.sf.ehcache.config.CacheConfiguration;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 
 
@@ -45,6 +46,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Nicholas Blair, npblair@wisc.edu
  *
  */
+@Service
 public class CacheManagementHelper {
     private static final class CaseInsenstivieStringComparator implements Comparator<String> {
         public static final CaseInsenstivieStringComparator INSTANCE = new CaseInsenstivieStringComparator();
@@ -62,7 +64,7 @@ public class CacheManagementHelper {
 	/**
 	 * @param cacheManager the cacheManager to set
 	 */
-	@Required
+	@Autowired(required=true)
 	public void setCacheManager(CacheManager cacheManager) {
 		this.cacheManager = cacheManager;
 	}

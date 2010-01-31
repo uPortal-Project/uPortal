@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.Validate;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
@@ -39,9 +38,11 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
 
 /**
  * Import/Export helper bean for dealing with portlet entity preferences
@@ -49,6 +50,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("portletEntityPreferenceHandler")
 public class PortletEntityPreferenceHandler {
     private IChannelRegistryStore channelRegistryStore;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -64,9 +66,8 @@ public class PortletEntityPreferenceHandler {
     /**
      * @param channelRegistryStore the channelRegistryStore to set
      */
-    @Required
+    @Autowired(required=true)
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-        Validate.notNull(channelRegistryStore, "channelRegistryStore can not be null");
         this.channelRegistryStore = channelRegistryStore;
     }
     /**
@@ -78,9 +79,8 @@ public class PortletEntityPreferenceHandler {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-        Validate.notNull(portletDefinitionRegistry, "portletDefinitionRegistry can not be null");
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
     /**
@@ -92,9 +92,8 @@ public class PortletEntityPreferenceHandler {
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
-        Validate.notNull(portletEntityRegistry, "portletEntityRegistry can not be null");
         this.portletEntityRegistry = portletEntityRegistry;
     }
     /**
@@ -106,9 +105,8 @@ public class PortletEntityPreferenceHandler {
     /**
      * @param dataSource the dataSource to set
      */
-    @Required
-    public void setDataSource(DataSource dataSource) {
-        Validate.notNull(dataSource, "dataSource can not be null");
+    @Autowired(required=true)
+    public void setDataSource(@Qualifier("PortalDb") DataSource dataSource) {
         this.dataSource = dataSource;
     }
     

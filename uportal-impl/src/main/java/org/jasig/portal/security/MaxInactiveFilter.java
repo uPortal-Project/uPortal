@@ -33,7 +33,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.provider.AuthorizationImpl;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 /**
@@ -61,9 +61,8 @@ public class MaxInactiveFilter implements Filter {
     /**
      * @param personManager the personManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPersonManager(IPersonManager personManager) {
-        Assert.notNull(personManager);
         this.personManager = personManager;
     }
 

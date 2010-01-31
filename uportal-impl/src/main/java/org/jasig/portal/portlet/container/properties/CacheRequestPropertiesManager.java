@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.Validate;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.jasig.portal.PortalException;
@@ -34,7 +33,9 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.url.IPortalRequestUtils;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.stereotype.Service;
 
 /**
  * Deals with seting and retrieving the {@link RenderResponse#EXPIRATION_CACHE} property.
@@ -42,7 +43,9 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("cacheRequestPropertiesManager")
 public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager {
+
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
@@ -57,9 +60,8 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
     }
     
@@ -72,9 +74,8 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
-        Validate.notNull(portletEntityRegistry);
         this.portletEntityRegistry = portletEntityRegistry;
     }
 
@@ -87,9 +88,8 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-        Validate.notNull(portletDefinitionRegistry);
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
@@ -143,8 +143,17 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
             }
         }
     }
-
+    
     /**
+     * Returns {@link Ordered#LOWEST_PRECEDENCE}.
+     *  
+     * @see org.springframework.core.Ordered#getOrder()
+     */
+	@Override
+	public int getOrder() {
+		return Ordered.LOWEST_PRECEDENCE;
+	}
+	/**
      * Gets the Portlet Deployment for a IPortletWindow object
      * 
      * @param httpServletRequest The portal's request (not the portlet context request)

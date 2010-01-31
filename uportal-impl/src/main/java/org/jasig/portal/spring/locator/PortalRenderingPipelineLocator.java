@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.rendering.IPortalRenderingPipeline;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -54,6 +55,7 @@ public class PortalRenderingPipelineLocator extends AbstractBeanLocator<IPortalR
         return locator.getInstance();
     }
 
+    @Autowired(required=true)
     public PortalRenderingPipelineLocator(IPortalRenderingPipeline instance) {
         super(instance, IPortalRenderingPipeline.class);
     }

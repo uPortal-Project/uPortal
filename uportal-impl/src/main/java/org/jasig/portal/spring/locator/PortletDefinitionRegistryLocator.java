@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -54,6 +55,7 @@ public class PortletDefinitionRegistryLocator extends AbstractBeanLocator<IPortl
         return locator.getInstance();
     }
 
+    @Autowired(required=true)
     public PortletDefinitionRegistryLocator(IPortletDefinitionRegistry instance) {
         super(instance, IPortletDefinitionRegistry.class);
     }

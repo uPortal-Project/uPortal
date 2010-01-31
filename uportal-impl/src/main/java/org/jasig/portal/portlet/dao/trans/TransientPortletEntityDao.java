@@ -40,10 +40,13 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.stereotype.Repository;
 
 /**
- * Handles entity management for transient portlets, portlets that aren't permanant parts of the user's layout. Portlet
+ * Handles entity management for transient portlets, defined as portlets that aren't permanent parts of the user's layout. Portlet
  * preferences are still persisted but are associated with a transient rendering of the portlet. Transient portlets are
  * detected by checking the channel subscribe ID against the {@link TransientUserLayoutManagerWrapper#SUBSCRIBE_PREFIX}
  * prefix.
@@ -51,6 +54,8 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Repository
+@Qualifier("main")
 public class TransientPortletEntityDao implements IPortletEntityDao {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -66,8 +71,8 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /**
      * The IPortletEntityDao to delegate calls to for actualy persistence
      */
-    @Required
-    public void setDelegatePortletEntityDao(IPortletEntityDao delegatePortletEntityDao) {
+    @Autowired(required=true)
+    public void setDelegatePortletEntityDao(@Qualifier("persistence") IPortletEntityDao delegatePortletEntityDao) {
         this.delegatePortletEntityDao = delegatePortletEntityDao;
     }
     
@@ -77,7 +82,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /**
      * Registry for looking up data related to portlet definitions
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
@@ -88,7 +93,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /**
      * Used to get access to the user's layout manager
      */
-    @Required
+    @Autowired(required=true)
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
@@ -99,7 +104,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /**
      * Used to get access to the current portal request
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }

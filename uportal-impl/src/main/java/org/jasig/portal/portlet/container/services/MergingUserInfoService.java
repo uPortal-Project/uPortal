@@ -19,16 +19,19 @@
 
 package org.jasig.portal.portlet.container.services;
 
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.PortletRequest;
 
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.PortletWindow;
 import org.apache.pluto.spi.optional.UserInfoService;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 /**
  * Merges together the results of multiple instances of UserInfoService.
@@ -36,22 +39,24 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Jen Bourey
  * @version $Revision$
  */
+@Service
+@Qualifier("main")
 public class MergingUserInfoService implements UserInfoService {
 
-	private List<UserInfoService> userInfoServices;
+	private Set<UserInfoService> userInfoServices = Collections.emptySet();
 
 	/**
 	 * @param userInfoServices the list of UserInfoServices to be merged
 	 */
-	@Required
-	public void setUserInfoServices(List<UserInfoService> userInfoServices) {
+	@Autowired
+	public void setUserInfoServices(Set<UserInfoService> userInfoServices) {
 		this.userInfoServices = userInfoServices;
 	}
 	
 	/**
 	 * @return list of UserInfoServices
 	 */
-	public List<UserInfoService> getUserInfoServices() {
+	public Set<UserInfoService> getUserInfoServices() {
 		return this.userInfoServices;
 	}
 	

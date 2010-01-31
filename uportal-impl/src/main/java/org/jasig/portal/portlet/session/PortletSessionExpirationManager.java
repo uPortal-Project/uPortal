@@ -30,7 +30,6 @@ import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletWindow;
@@ -38,7 +37,7 @@ import org.apache.pluto.spi.optional.PortletInvocationEvent;
 import org.apache.pluto.spi.optional.PortletInvocationListener;
 import org.jasig.portal.spring.web.context.support.HttpSessionDestroyedEvent;
 import org.jasig.portal.url.IPortalRequestUtils;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.web.util.WebUtils;
@@ -69,9 +68,8 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
     }
 

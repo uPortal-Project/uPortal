@@ -24,7 +24,6 @@ import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.Validate;
 import org.apache.pluto.PortletContainer;
 import org.apache.pluto.core.DefaultPortletEnvironmentService;
 import org.apache.pluto.internal.InternalPortletWindow;
@@ -33,7 +32,8 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.session.ScopingPortletSessionImpl;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Provides custom portlet session instance to use a different scoping attribute value
@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("portletEnvironmentService")
 public class PortletEnvironmentServiceImpl extends DefaultPortletEnvironmentService implements PortletEnvironmentService {
     private IPortletWindowRegistry portletWindowRegistry;
     
@@ -53,9 +54,8 @@ public class PortletEnvironmentServiceImpl extends DefaultPortletEnvironmentServ
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
-        Validate.notNull(portletWindowRegistry);
         this.portletWindowRegistry = portletWindowRegistry;
     }
 

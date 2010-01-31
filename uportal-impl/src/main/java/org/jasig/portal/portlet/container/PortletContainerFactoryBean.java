@@ -21,15 +21,15 @@ package org.jasig.portal.portlet.container;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.lang.Validate;
 import org.apache.pluto.OptionalContainerServices;
 import org.apache.pluto.PortletContainer;
 import org.apache.pluto.RequiredContainerServices;
 import org.apache.pluto.core.PortletContainerImpl;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -41,6 +41,7 @@ import org.springframework.web.context.ServletContextAware;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("portletContainer")
 public class PortletContainerFactoryBean extends AbstractFactoryBean implements ServletContextAware, InitializingBean, DisposableBean {
     private PortletContainerImpl portletContainer;
     
@@ -72,9 +73,8 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean implements 
     /**
      * @param requiredContainerServices the requiredContainerServices to set
      */
-    @Required
+    @Autowired(required=true)
     public void setRequiredContainerServices(RequiredContainerServices requiredContainerServices) {
-        Validate.notNull(requiredContainerServices, "requiredContainerServices can not be null");
         this.requiredContainerServices = requiredContainerServices;
     }
 
@@ -87,9 +87,8 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean implements 
     /**
      * @param optionalContainerServices the optionalContainerServices to set
      */
-    @Required
+    @Autowired(required=true)
     public void setOptionalContainerServices(OptionalContainerServices optionalContainerServices) {
-        Validate.notNull(optionalContainerServices, "optionalContainerServices can not be null");
         this.optionalContainerServices = optionalContainerServices;
     }
 

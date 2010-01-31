@@ -41,7 +41,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.TransformerHandler;
 
 import org.apache.commons.collections.map.ReferenceMap;
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.CacheEntry;
@@ -99,9 +98,10 @@ import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.web.skin.ResourcesDao;
 import org.jasig.portal.web.skin.ResourcesXalanElements;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.stereotype.Service;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.XMLReader;
 
@@ -111,6 +111,7 @@ import org.xml.sax.XMLReader;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("portalRenderingPipeline")
 public class StaticRenderingPipeline implements IPortalRenderingPipeline, ApplicationEventPublisherAware, InitializingBean {
     // Metric counters
     private static final MovingAverage renderTimes = new MovingAverage();
@@ -167,7 +168,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
 			externalLoginUrl = securityProps.getProperty(CAS_LOGIN_URL_PROPERTY);
         }
         catch (IOException ioe) {
-            throw new PortalException("Unable to load worker.properties file. ", ioe);
+            throw new PortalException("Unable to load security.properties file. ", ioe);
         }
     }
     
@@ -192,9 +193,8 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     /**
      * @param portletRequestParameterManager the portletRequestParameterManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
-        Validate.notNull(portletRequestParameterManager, "portletRequestParameterManager can not be null");
         this.portletRequestParameterManager = portletRequestParameterManager;
     }
     
@@ -207,9 +207,8 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
-        Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
     }
     
@@ -219,7 +218,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     /**
      * @param carResources the carResources to set
      */
-    @Required
+    @Autowired(required=true)
     public void setCarResources(CarResources carResources) {
         this.carResources = carResources;
     }
@@ -232,7 +231,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
 	/**
 	 * @param resourcesDao the resourcesDao to set
 	 */
-	@Required
+	@Autowired(required=true)
 	public void setResourcesDao(ResourcesDao resourcesDao) {
 		this.resourcesDao = resourcesDao;
 	}

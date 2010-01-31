@@ -26,10 +26,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 
 /**
@@ -44,9 +46,10 @@ import org.jasig.portal.portlet.om.IPortletWindow;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("requestPropertiesManager")
+@Qualifier("main")
 public class RequestPropertiesManagerBroker implements IRequestPropertiesManager {
     protected final Log logger = LogFactory.getLog(this.getClass());
-    
     private List<IRequestPropertiesManager> propertiesManagers = Collections.emptyList();
     
     /**
@@ -59,8 +62,8 @@ public class RequestPropertiesManagerBroker implements IRequestPropertiesManager
     /**
      * @param propertiesManagers the propertiesManagers to set
      */
+	@Autowired(required=true)
     public void setPropertiesManagers(List<IRequestPropertiesManager> propertiesManagers) {
-        Validate.notNull(propertiesManagers, "propertiesManagers can not be null");
         this.propertiesManagers = propertiesManagers;
     }
 
@@ -104,4 +107,5 @@ public class RequestPropertiesManagerBroker implements IRequestPropertiesManager
         
         return properties;
     }
+    
 }

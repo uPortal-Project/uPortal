@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 
 /**
- * Manages execution of {@link IDynamicRequestParameterProcessor}s and {@link IStaticRequestParameterProcessor}s.
+ * Manages execution of {@link IRequestParameterProcessor}s.
  * 
  * @author Eric Dalquist
  * @version $Revision: 11918 $

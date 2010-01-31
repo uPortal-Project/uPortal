@@ -23,7 +23,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.Validate;
 import org.apache.pluto.PortletWindow;
 import org.apache.pluto.spi.PortalCallbackService;
 import org.apache.pluto.spi.PortletURLProvider;
@@ -35,7 +34,9 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider;
 import org.jasig.portal.portlet.url.PortletURLProviderImpl;
 import org.jasig.portal.portlet.url.ResourceUrlProviderImpl;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 /**
  * Main callback service Pluto uses when servicing portlet requests. Delegates to {@link IRequestPropertiesManager}
@@ -45,6 +46,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class PortalCallbackServiceImpl implements PortalCallbackService {
     private IRequestPropertiesManager requestPropertiesManager;
     private IPortletWindowRegistry portletWindowRegistry;
@@ -59,9 +61,8 @@ public class PortalCallbackServiceImpl implements PortalCallbackService {
     /**
      * @param requestPropertiesManager the requestPropertiesManager to set
      */
-    @Required
-    public void setRequestPropertiesManager(IRequestPropertiesManager requestPropertiesManager) {
-        Validate.notNull(requestPropertiesManager, "requestPropertiesManager can not be null");
+    @Autowired(required=true)
+    public void setRequestPropertiesManager(@Qualifier("main") IRequestPropertiesManager requestPropertiesManager) {
         this.requestPropertiesManager = requestPropertiesManager;
     }
 
@@ -74,9 +75,8 @@ public class PortalCallbackServiceImpl implements PortalCallbackService {
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
-        Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
     }
     
@@ -89,9 +89,8 @@ public class PortalCallbackServiceImpl implements PortalCallbackService {
     /**
      * @param portletUrlSyntaxProvider the portletUrlSyntaxProvider to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletUrlSyntaxProvider(IPortletUrlSyntaxProvider portletUrlSyntaxProvider) {
-        Validate.notNull(portletUrlSyntaxProvider, "portletUrlSyntaxProvider can not be null");
         this.portletUrlSyntaxProvider = portletUrlSyntaxProvider;
     }
     

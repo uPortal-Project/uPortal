@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlet.container.services;
 
-import org.apache.commons.lang.Validate;
 import org.apache.pluto.core.DefaultOptionalContainerServices;
 import org.apache.pluto.core.DefaultPortalAdministrationService;
 import org.apache.pluto.spi.optional.PortalAdministrationService;
@@ -27,12 +26,15 @@ import org.apache.pluto.spi.optional.PortletEnvironmentService;
 import org.apache.pluto.spi.optional.PortletPreferencesService;
 import org.apache.pluto.spi.optional.RequestAttributeService;
 import org.apache.pluto.spi.optional.UserInfoService;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("optionalContainerServices")
 public class OptionalContainerServicesImpl extends DefaultOptionalContainerServices {
     private UserInfoService userInfoService;
     private PortalAdministrationService portalAdministrationService = new DefaultPortalAdministrationService();
@@ -43,44 +45,40 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     /**
      * @param userInfoService the userInfoService to set
      */
-    @Required
-    public void setUserInfoService(UserInfoService userInfoService) {
-        Validate.notNull(userInfoService);
+    @Autowired(required=true)
+    public void setUserInfoService(@Qualifier("main") UserInfoService userInfoService) {
         this.userInfoService = userInfoService;
     }
     
     /**
      * @param portalAdministrationService the portalAdministrationService to set
      */
+    @Autowired(required=true)
     public void setPortalAdministrationService(PortalAdministrationService portalAdministrationService) {
-        Validate.notNull(portalAdministrationService);
         this.portalAdministrationService = portalAdministrationService;
     }
     
     /**
      * @param portletPreferencesService the portletPreferencesService to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletPreferencesService(PortletPreferencesService portletPreferencesService) {
-        Validate.notNull(portletPreferencesService);
         this.portletPreferencesService = portletPreferencesService;
     }
 
     /**
      * @param portletEnvironmentService the portletEnvironmentService to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletEnvironmentService(PortletEnvironmentService portletEnvironmentService) {
-        Validate.notNull(portletEnvironmentService);
         this.portletEnvironmentService = portletEnvironmentService;
     }
     
     /**
      * @param requestAttributeService the requestAttributeService to set
      */
-    @Required
+    @Autowired(required=true)
     public void setRequestAttributeService(RequestAttributeService requestAttributeService) {
-        Validate.notNull(requestAttributeService);
         this.requestAttributeService = requestAttributeService;
     }
 

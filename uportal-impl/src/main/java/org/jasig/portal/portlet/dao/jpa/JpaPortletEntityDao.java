@@ -34,7 +34,8 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
@@ -45,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$
  */
 @Repository
+@Qualifier("persistence")
 public class JpaPortletEntityDao  implements IPortletEntityDao {
     private static final String FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER = 
         "from PortletEntityImpl portEnt " +
@@ -88,7 +90,7 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     /**
      * @param portletDefinitionDao the portletDefinitionDao to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
         this.portletDefinitionDao = portletDefinitionDao;
     }

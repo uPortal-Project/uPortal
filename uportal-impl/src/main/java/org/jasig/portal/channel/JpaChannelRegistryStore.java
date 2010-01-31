@@ -32,6 +32,7 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * JpaChannelRegistryStore is a JPA/Hibernate implementation of the 
@@ -75,6 +76,7 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
 	 * 
 	 * @param portletDefinitionRegistry
 	 */
+	@Autowired(required=true)
 	public void setPortletDefinitionRegistry(
 			IPortletDefinitionRegistry portletDefinitionRegistry) {
 		this.portletDefinitionRegistry = portletDefinitionRegistry;

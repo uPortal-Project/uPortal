@@ -38,11 +38,8 @@
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
     
-    <bean id="personQueryValidator" class="org.jasig.portal.portlets.lookup.PersonQueryValidator">
-        <property name="personLookupHelper" ref="personLookupHelper" />
-    </bean>
+    <bean id="personQueryValidator" class="org.jasig.portal.portlets.lookup.PersonQueryValidator" />
     
-
     <!--  Beans for the group-selector flow -->
     <bean name="groupListHelper"
         class="org.jasig.portal.layout.dlm.remoting.GroupListHelperImpl"/>
@@ -51,32 +48,13 @@
     <!-- Beans for the attribute-swapper flow -->       
     <bean id="attributeSwapperHelper" class="org.jasig.portal.portlets.swapper.AttributeSwapperHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
-        <property name="portalRequestUtils" ref="portalRequestUtils" />
-        <property name="personManager" ref="personManager" />
-    </bean>
-    
+    </bean>   
     <bean id="attributeSwapRequestValidator" class="org.jasig.portal.portlets.swapper.AttributeSwapRequestValidator">
         <property name="attributeSwapperHelper" ref="attributeSwapperHelper" />
     </bean>
-    
     <!-- Beans for the identity-swapper flow -->
     <bean id="identitySwapperHelper" class="org.jasig.portal.portlets.swapper.IdentitySwapperHelperImpl" />
-    
-    <!-- Beans for the edit-portlet flow -->
-    <bean id="portletAdministrationHelper" class="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper">
-        <property name="channelRegistryStore" ref="channelRegistryStore"/>
-        <property name="channelPublishingService" ref="channelPublishingService"/>
-        <property name="optionalContainerServices" ref="optionalContainerServices"/>
-        <property name="groupListHelper" ref="groupListHelper"/>
-        <property name="portletDelegationLocator" ref="portletDelegationLocator" />
-        <property name="channelPublishingDefinitionDao" ref="channelPublishingDefinitionDao" />
-    </bean>
-    
-    <bean id="userLocaleHelper" class="org.jasig.portal.portlets.localization.UserLocaleHelper">
-        <property name="userInstanceManager" ref="userInstanceManager"/>
-    </bean>
-    
-    
+     
     <bean id="channelValidator"
         class="org.jasig.portal.portlets.portletadmin.ChannelDefinitionFormValidator">
         <property name="channelPublishingDefinitionDao" ref="channelPublishingDefinitionDao"/>
@@ -108,19 +86,10 @@
     <bean id="portalDataSubmitter" class="org.jasig.portal.portlets.registerportal.CommonsHttpPortalDataSubmitter">
         <property name="submitUrl" value="http://developer.ja-sig.org/PortalRegistration/dataCollector/v1" />
     </bean>
-    
-    <!-- bean for toggle-resources-aggregation flow -->
-    <bean id="resourcesAggregationHelper" class="org.jasig.portal.web.skin.ResourcesAggregationHelper">
-        <property name="portalRenderingPipeline" ref="portalRenderingPipeline"/>
-    </bean>
-    <!-- bean for cache-manager flow -->
-    <bean id="cacheManagementHelper" class="org.jasig.portal.utils.cache.CacheManagementHelper">
-        <property name="cacheManager" ref="cacheManager"/>
-    </bean>
+
     <!-- bean for reset-user-layout flow -->
     <bean id="userLayoutHelper" class="org.jasig.portal.layout.UserLayoutHelperImpl">
         <property name="dataSource" ref="PortalDb"/>
-        <property name="userIdentityStore" ref="userIdentityStore"/>        
     </bean>   
     
     

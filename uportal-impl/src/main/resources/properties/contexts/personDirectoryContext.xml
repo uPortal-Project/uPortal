@@ -31,10 +31,7 @@
     <!--
      | Provides user name for the current portal user if the thread is handling a request
      +-->
-    <bean id="currentUserProvider" class="org.jasig.portal.persondir.support.PersonManagerCurrentUserProvider">
-        <property name="personManager" ref="personManager" />
-        <property name="portalRequestUtils" ref="portalRequestUtils" />
-    </bean>
+    <bean id="currentUserProvider" class="org.jasig.portal.persondir.support.PersonManagerCurrentUserProvider" />
     
     <!--
      | Provides the default username attribute to use to the rest of the DAOs

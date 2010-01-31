@@ -27,6 +27,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.support.ICurrentUserProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Provides the username of the current portal user
@@ -47,6 +48,7 @@ public class PersonManagerCurrentUserProvider implements ICurrentUserProvider {
     /**
      * @param personManager the personManager to set
      */
+    @Autowired(required=true)
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
@@ -57,6 +59,7 @@ public class PersonManagerCurrentUserProvider implements ICurrentUserProvider {
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }

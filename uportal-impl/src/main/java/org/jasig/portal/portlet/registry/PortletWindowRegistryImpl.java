@@ -46,7 +46,7 @@ import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.web.PortalWebUtils;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -76,9 +76,8 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     /**
      * @param userInstanceManager the userInstanceManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        Validate.notNull(userInstanceManager);
         this.userInstanceManager = userInstanceManager;
     }
 
@@ -91,9 +90,8 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
-        Validate.notNull(portletEntityRegistry);
         this.portletEntityRegistry = portletEntityRegistry;
     }
     
@@ -106,9 +104,8 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-        Validate.notNull(portletDefinitionRegistry);
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
     

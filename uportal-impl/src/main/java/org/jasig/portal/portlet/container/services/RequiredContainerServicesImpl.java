@@ -24,7 +24,8 @@ import javax.portlet.PortalContext;
 import org.apache.commons.lang.Validate;
 import org.apache.pluto.RequiredContainerServices;
 import org.apache.pluto.spi.PortalCallbackService;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Required service locator bean which is provided to Pluto for access to the
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("requiredContainerServices")
 public class RequiredContainerServicesImpl implements RequiredContainerServices {
     private PortalCallbackService portalCallbackService;
     private PortalContext portalContext;
@@ -40,7 +42,7 @@ public class RequiredContainerServicesImpl implements RequiredContainerServices 
     /**
      * @param portalCallbackService the portalCallbackService to set
      */
-    @Required
+    @Autowired
     public void setPortalCallbackService(PortalCallbackService portalCallbackService) {
         Validate.notNull(portalCallbackService, "portalCallbackService can not be null");
         this.portalCallbackService = portalCallbackService;
@@ -49,7 +51,7 @@ public class RequiredContainerServicesImpl implements RequiredContainerServices 
     /**
      * @param portalContext the portalContext to set
      */
-    @Required
+    @Autowired
     public void setPortalContext(PortalContext portalContext) {
         Validate.notNull(portalContext, "portalContext can not be null");
         this.portalContext = portalContext;

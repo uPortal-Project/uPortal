@@ -30,7 +30,6 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.Validate;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.PortletWindow;
 import org.apache.pluto.descriptors.portlet.PortletDD;
@@ -52,7 +51,8 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Hooks into uPortal portlet preferences object model
@@ -60,6 +60,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("portletPreferencesService")
 public class PortletPreferencesServiceImpl implements PortletPreferencesService {
     protected static final String PORTLET_PREFERENCES_MAP_ATTRIBUTE = PortletPreferencesServiceImpl.class.getName() + ".PORTLET_PREFERENCES_MAP";
     
@@ -83,9 +84,8 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
     }
     
@@ -98,9 +98,8 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
-        Validate.notNull(portletWindowRegistry);
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
@@ -113,9 +112,8 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
-        Validate.notNull(portletEntityRegistry);
         this.portletEntityRegistry = portletEntityRegistry;
     }
 
@@ -128,9 +126,8 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-        Validate.notNull(portletDefinitionRegistry);
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
     
@@ -143,9 +140,8 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * @param personManager the personManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPersonManager(IPersonManager personManager) {
-        Validate.notNull(personManager);
         this.personManager = personManager;
     }
 

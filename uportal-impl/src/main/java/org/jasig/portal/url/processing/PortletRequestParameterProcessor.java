@@ -21,7 +21,6 @@ package org.jasig.portal.url.processing;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -30,7 +29,8 @@ import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider;
 import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.url.IWritableHttpServletRequest;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Uses the {@link IPortletUrlSyntaxProvider} to parse the portlet parameters from the request into {@link PortletUrl}s.
@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("portletRequestParameterProcessor")
 public class PortletRequestParameterProcessor implements IRequestParameterProcessor {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
@@ -57,9 +58,8 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
     /**
      * @param portletUrlSyntaxProvider the portletUrlSyntaxProvider to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletUrlSyntaxProvider(IPortletUrlSyntaxProvider portletUrlSyntaxProvider) {
-        Validate.notNull(portletUrlSyntaxProvider, "portletUrlSyntaxProvider can not be null");
         this.portletUrlSyntaxProvider = portletUrlSyntaxProvider;
     }
 
@@ -72,9 +72,8 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
     /**
      * @param portletRequestParameterManager the portletRequestParameterManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
-        Validate.notNull(portletRequestParameterManager, "portletRequestParameterManager can not be null");
         this.portletRequestParameterManager = portletRequestParameterManager;
     }
 
@@ -87,9 +86,8 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
-        Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
     }
 

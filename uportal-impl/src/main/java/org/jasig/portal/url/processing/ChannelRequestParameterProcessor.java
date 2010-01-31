@@ -35,7 +35,6 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.commons.io.FileCleaner;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.Constants;
@@ -53,7 +52,8 @@ import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsFileUploadSupport;
 
@@ -65,6 +65,7 @@ import org.springframework.web.multipart.commons.CommonsFileUploadSupport;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("channelRequestParameterProcessor")
 public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport implements IRequestParameterProcessor, DisposableBean {
     public static final String UPLOAD_STATUS = "up_upload_status";
     
@@ -83,9 +84,8 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
     /**
      * @param userInstanceManager the userInstanceManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        Validate.notNull(userInstanceManager);
         this.userInstanceManager = userInstanceManager;
     }
     
@@ -98,9 +98,8 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
     /**
      * @param portletRequestParameterManager the portletRequestParameterManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
-        Validate.notNull(portletRequestParameterManager, "IPortletRequestParameterManager can not be null");
         this.portletRequestParameterManager = portletRequestParameterManager;
     }
     /**
@@ -112,9 +111,8 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
     /**
      * @param channelRequestParameterManager the channelRequestParameterManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setChannelRequestParameterManager(IChannelRequestParameterManager channelRequestParameterManager) {
-        Validate.notNull(channelRequestParameterManager, "IChannelRequestParameterManager can not be null");
         this.channelRequestParameterManager = channelRequestParameterManager;
     }
 

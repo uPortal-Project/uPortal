@@ -30,6 +30,8 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * UserLocaleHelper contains helper methods for the user locales webflow.
@@ -37,6 +39,7 @@ import org.jasig.portal.user.IUserInstanceManager;
  * @author Jen Bourey
  * @version $Revision$
  */
+@Service
 public class UserLocaleHelper {
 
 	private IUserInstanceManager userInstanceManager;
@@ -46,6 +49,7 @@ public class UserLocaleHelper {
 	 * 
 	 * @param userInstanceManager
 	 */
+	@Autowired(required=true)
 	public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
 		this.userInstanceManager = userInstanceManager;
 	}

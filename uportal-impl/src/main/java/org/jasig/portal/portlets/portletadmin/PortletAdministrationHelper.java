@@ -85,6 +85,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.Tuple;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.webflow.context.ExternalContext;
 
@@ -94,6 +96,7 @@ import org.springframework.webflow.context.ExternalContext;
  * @author Jen Bourey, jbourey@unicon.net
  * @revision $Revision$
  */
+@Service
 public class PortletAdministrationHelper implements ServletContextAware {
 	protected final Log logger = LogFactory.getLog(PortletAdministrationHelper.class);
 	
@@ -109,11 +112,11 @@ public class PortletAdministrationHelper implements ServletContextAware {
     public void setServletContext(ServletContext servletContext) {
 	    this.servletContext = servletContext;
     }
-
+	@Autowired(required=true)
     public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
         this.portletDelegationLocator = portletDelegationLocator;
     }
-
+	@Autowired(required=true)
     public void setGroupListHelper(IGroupListHelper groupListHelper) {
 		this.groupListHelper = groupListHelper;
 	}
@@ -123,20 +126,21 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * 
 	 * @param channelRegistryStore
 	 */
+	@Autowired(required=true)
 	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
 		this.channelRegistryStore = channelRegistryStore;
 	}
-
+	@Autowired(required=true)
 	public void setOptionalContainerServices(
 			OptionalContainerServices optionalContainerServices) {
 		this.optionalContainerServices = optionalContainerServices;
 	}
-	
+	@Autowired(required=true)
 	public void setChannelPublishingService(
 			IChannelPublishingService channelPublishingService) {
 		this.channelPublishingService = channelPublishingService;
 	}
-
+	@Autowired(required=true)
 	public void setChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao channelPublishingDefinitionDao) {
         this.channelPublishingDefinitionDao = channelPublishingDefinitionDao;
     }

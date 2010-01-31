@@ -45,6 +45,7 @@ import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.MultivaluedPersonAttributeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.webflow.context.ExternalContext;
 
@@ -78,7 +79,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     /**
      * The {@link IPersonManager} to use to access the current IPerson
      */
-    @Required
+    @Autowired(required=true)
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
@@ -89,7 +90,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     /**
      * Utility class to access the original portal request
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }

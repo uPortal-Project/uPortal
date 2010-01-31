@@ -62,7 +62,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Contains the logic and string constants for generating and parsing portlet URL parameters.
@@ -119,9 +119,8 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
     }
     
@@ -165,9 +164,8 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
-        Validate.notNull(portletWindowRegistry, "portletWindowRegistry can not be null");
         this.portletWindowRegistry = portletWindowRegistry;
     }
     
@@ -177,7 +175,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
@@ -188,7 +186,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
@@ -199,7 +197,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     /**
      * @param userInstanceManager the userInstanceManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
@@ -239,6 +237,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     public IPortletDelegationManager getPortletDelegationManager() {
         return this.portletDelegationManager;
     }
+    @Autowired(required=true)
     public void setPortletDelegationManager(IPortletDelegationManager portletDelegationManager) {
         this.portletDelegationManager = portletDelegationManager;
     }

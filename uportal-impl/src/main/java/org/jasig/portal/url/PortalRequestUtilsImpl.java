@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.channels.portlet.PortletHttpServletRequestWrapper;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -36,6 +37,7 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("portalRequestUtils")
 public class PortalRequestUtilsImpl implements IPortalRequestUtils {
 
     /* (non-Javadoc)

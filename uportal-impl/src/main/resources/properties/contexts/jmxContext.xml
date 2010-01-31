@@ -51,7 +51,7 @@
         </property>
     </bean>
 
-    <!-- Hibernate perstentce statistics -->
+    <!-- Hibernate persistence statistics -->
     <bean id="hibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
         <property name="statisticsEnabled" value="true"/>
         <property name="sessionFactory">
@@ -62,7 +62,7 @@
         </property>
     </bean>
 
-    <!-- Hibernate Stats perstentce statistics -->
+    <!-- Hibernate Stats persistence statistics -->
     <bean id="portalStatsHibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
         <property name="statisticsEnabled" value="true"/>
         <property name="sessionFactory">

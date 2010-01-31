@@ -52,7 +52,7 @@ import org.jasig.portal.security.provider.cas.ICasSecurityContext;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Requests a CAS Proxy ticket for the current portlet and adds it
@@ -80,9 +80,8 @@ public class CasTicketUserInfoService implements UserInfoService  {
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
     }
     
@@ -101,7 +100,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
 	/**
 	 * @param userInstanceManager the UserInstanceManager
 	 */
-	@Required
+	@Autowired(required=true)
 	public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
 		this.userInstanceManager = userInstanceManager;
 	}
@@ -115,7 +114,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
@@ -129,7 +128,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
@@ -143,7 +142,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }

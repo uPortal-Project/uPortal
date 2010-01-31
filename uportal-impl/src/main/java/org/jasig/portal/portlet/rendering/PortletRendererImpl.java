@@ -66,6 +66,8 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Executes methods on portlets using Pluto
@@ -73,6 +75,7 @@ import org.jasig.portal.services.AuthorizationService;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class PortletRendererImpl implements IPortletRenderer {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -84,31 +87,31 @@ public class PortletRendererImpl implements IPortletRenderer {
     private IPortletRequestParameterManager portletRequestParameterManager;
     private PortletDelegationLocator portletDelegationLocator;
     
-
+    @Autowired(required=true)
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-
+    @Autowired(required=true)
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
-
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-
+    @Autowired(required=true)
     public void setPortletContainer(PortletContainer portletContainer) {
         this.portletContainer = portletContainer;
     }
-
+    @Autowired(required=true)
     public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
         this.portletRequestParameterManager = portletRequestParameterManager;
     }
-    
+    @Autowired(required=true)
     public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
         this.portletDelegationLocator = portletDelegationLocator;
     }

@@ -31,7 +31,8 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
 import org.jasig.portal.url.support.ChannelRequestParameterManager;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Manages access to portlet request parameters using a request attribute.
@@ -39,6 +40,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class PortletRequestParameterManager implements IPortletRequestParameterManager {
     protected static final String NO_PORTLET_URL_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".NO_PORTLET_URL";
     protected static final String TARGETED_PORTLET_URL_ATTRIBUTE = ChannelRequestParameterManager.class.getName() + ".TARGETED_PORTLET_URL";
@@ -58,9 +60,8 @@ public class PortletRequestParameterManager implements IPortletRequestParameterM
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
     }
 

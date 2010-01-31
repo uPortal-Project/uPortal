@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.cache.CacheFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -58,7 +59,7 @@ public class UserIdentityStoreLocator extends
         
         return locator.getInstance();
     }
-    
+    @Autowired(required=true)
 	public UserIdentityStoreLocator(IUserIdentityStore instance) {
 		super(instance, IUserIdentityStore.class);
 	}

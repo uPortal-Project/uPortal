@@ -44,11 +44,14 @@ import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class PortletDelegationLocatorImpl implements PortletDelegationLocator, IPortletDelegationManager {
     private static final String DELEGATE_PARENT_PORTLET_URL_PREFIX = "DELEGATE_PARENT_PORTLET_URL_";
     private static final String DELEGATE_PORTLET_ACTION_REDIRECT_URL = "DELEGATE_PORTLET_ACTION_REDIRECT_URL";
@@ -62,31 +65,31 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
     private IPortletRenderer portletRenderer;
     private IPortletRequestParameterManager portletRequestParameterManager;
     
-
+    @Autowired(required=true)
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
         this.channelRegistryStore = channelRegistryStore;
     }
-
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
-
+    @Autowired(required=true)
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-
+    @Autowired(required=true)
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
-
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-
+    @Autowired(required=true)
     public void setPortletRenderer(IPortletRenderer portletRenderer) {
         this.portletRenderer = portletRenderer;
     }
-    
+    @Autowired(required=true)
     public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
         this.portletRequestParameterManager = portletRequestParameterManager;
     }

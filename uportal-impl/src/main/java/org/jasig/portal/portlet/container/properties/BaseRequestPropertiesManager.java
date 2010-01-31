@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.springframework.core.Ordered;
 
 /**
  * Do nothing base class for IRequestPropertiesManager impls. {@link #getRequestProperties(HttpServletRequest, IPortletWindow)}
@@ -35,7 +36,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class BaseRequestPropertiesManager implements IRequestPropertiesManager {
+public abstract class BaseRequestPropertiesManager implements IRequestPropertiesManager, Ordered {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     /* (non-Javadoc)

@@ -71,12 +71,12 @@
     
     <bean id="org.jasig.portal.spring.locator.PersonManagerLocator" 
             class="org.jasig.portal.spring.locator.PersonManagerLocator">
-        <constructor-arg index="0" ref="personManager" />
+        <!--  autowired -->
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.PortalRenderingPipelineLocator" 
             class="org.jasig.portal.spring.locator.PortalRenderingPipelineLocator">
-        <constructor-arg index="0" ref="portalRenderingPipeline" />
+        <!--  autowired -->
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.PortalDbLocator" 
@@ -106,7 +106,7 @@
     
     <bean id="org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator" 
             class="org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator">
-        <constructor-arg index="0" ref="portletDefinitionRegistry" />
+        <!--  autowired -->
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.ThrowableToElementLocator" 
@@ -151,6 +151,6 @@
     
     <bean id="org.jasig.portal.spring.locator.UserIdentityStoreLocator" 
         class="org.jasig.portal.spring.locator.UserIdentityStoreLocator">
-        <constructor-arg index="0" ref="userIdentityStore" />
+        <!--  autowired -->
     </bean>
 </beans>

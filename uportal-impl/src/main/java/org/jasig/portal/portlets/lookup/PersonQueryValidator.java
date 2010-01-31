@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jasig.portal.portlets.Attribute;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.message.MessageResolver;
@@ -45,6 +46,7 @@ public class PersonQueryValidator {
     /**
      * {@link IPersonLookupHelper} to use for getting configuration and query information from for validation.
      */
+    @Autowired(required=true)
     public void setPersonLookupHelper(IPersonLookupHelper personLookupHelper) {
         this.personLookupHelper = personLookupHelper;
     }

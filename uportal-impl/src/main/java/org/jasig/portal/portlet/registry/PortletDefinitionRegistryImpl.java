@@ -37,8 +37,9 @@ import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.utils.Tuple;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 
 /**
@@ -50,6 +51,7 @@ import org.springframework.web.context.ServletContextAware;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("portletDefinitionRegistry")
 public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry, ServletContextAware {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -67,9 +69,8 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /**
      * @param portletDefinitionDao the portletDefinitionDao to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
-        Validate.notNull(portletDefinitionDao);
         this.portletDefinitionDao = portletDefinitionDao;
     }
     
@@ -82,9 +83,8 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /**
      * @param optionalContainerServices the optionalContainerServices to set
      */
-    @Required
+    @Autowired(required=true)
     public void setOptionalContainerServices(OptionalContainerServices optionalContainerServices) {
-        Validate.notNull(optionalContainerServices);
         this.optionalContainerServices = optionalContainerServices;
     }
     
@@ -97,9 +97,8 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /**
      * @param channelRegistryStore the channelRegistryStore to set
      */
-    @Required
+    @Autowired(required=true)
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-        Validate.notNull(channelRegistryStore);
         this.channelRegistryStore = channelRegistryStore;
     }
     

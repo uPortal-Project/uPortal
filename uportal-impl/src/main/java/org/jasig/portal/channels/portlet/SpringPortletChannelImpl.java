@@ -52,6 +52,7 @@ import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -78,6 +79,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     public IPortletRenderer getPortletRenderer() {
         return this.portletRenderer;
     }
+    @Autowired(required=true)
     public void setPortletRenderer(IPortletRenderer portletRenderer) {
         this.portletRenderer = portletRenderer;
     }
@@ -90,9 +92,8 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-        Validate.notNull(portletDefinitionRegistry);
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
     /**
@@ -104,7 +105,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
@@ -118,9 +119,8 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
-        Validate.notNull(portletWindowRegistry);
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
@@ -133,9 +133,8 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     /**
      * @param portletRequestParameterManager the portletRequestParameterManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
-        Validate.notNull(portletRequestParameterManager);
         this.portletRequestParameterManager = portletRequestParameterManager;
     }
     

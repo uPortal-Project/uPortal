@@ -25,7 +25,8 @@ package org.jasig.portal.web.skin;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.rendering.IPortalRenderingPipeline;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Class to facilitate enabling/disabling Resources aggregation.
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Nicholas Blair, npblair@wisc.edu
  *
  */
+@Service
 public class ResourcesAggregationHelper {
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
@@ -42,7 +44,7 @@ public class ResourcesAggregationHelper {
 	/**
 	 * @param portalRenderingPipeline the portalRenderingPipeline to set
 	 */
-	@Required
+	@Autowired(required=true)
 	public void setPortalRenderingPipeline(
 			IPortalRenderingPipeline portalRenderingPipeline) {
 		this.portalRenderingPipeline = portalRenderingPipeline;
