@@ -51,7 +51,7 @@
             <script>
                 def parseUriTokens(descId) {
                     def userNodeRef = ~/n\d+/
-                    def dlmNodeRef = ~/u(\d+)l\d+[n|s]\d+/
+                    def dlmNodeRef = ~/u(\d+)l\d+[ns]\d+/
                     
                     String[] rslt = null;  // signals unable to match...
                     
