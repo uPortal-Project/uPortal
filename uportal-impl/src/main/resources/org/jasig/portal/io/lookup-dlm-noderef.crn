@@ -51,19 +51,21 @@
             <script>
                 def parseUriTokens(descId) {
                     def userNodeRef = ~/n\d+/
-                    def dlmNodeRef = ~/u(\d+)l\d+[ns]\d+/
+                    def dlmNodeRef = ~/u(\d+)l\d+([ns]\d+)/
                     
                     String[] rslt = null;  // signals unable to match...
                     
                     matcher = userNodeRef.matcher(descId)
                     if (matcher.matches()) {
                         rslt = new String[3]; // signals that we don't need to query for the username...
+                        rslt[1] = descId;
                     }
                     
                     matcher = dlmNodeRef.matcher(descId)
                     if (matcher.matches()) {
                         rslt = new String[3];
                         rslt[0] = String.valueOf(matcher[0][1]);
+                        rslt[1] = String.valueOf(matcher[0][2]);
                     }
                     
                     return rslt;
@@ -99,10 +101,11 @@
                                 <cache key="LAYOUT_NODE_INFO" cache-key="${groovy('LAYOUT_USER_NAME.' + LAYOUT_USER_NAME + ',DLM_NODEREF.' + DLM_NODEREF)}">
                                     <factory>
                                         <with>
+                                            <attribute key="LAYOUT_STRUCT_ID">${jexl(NODEREF_DATA[1])}</attribute>
                                             <attribute key="LAYOUT_NODE_INFO">${groovy(new String[2])}</attribute>
                                             <attribute key="Attributes.NODE">${crn(load-layout.crn)}</attribute>
                                             <subtasks>
-                                                <with-attribute key="Attributes.NODE" value="${singleNode(//*[@ID = $DLM_NODEREF])}">
+                                                <with-attribute key="Attributes.NODE" value="${singleNode(//*[@ID = $LAYOUT_STRUCT_ID])}">
                                                     <with>
                                                         <attribute key="CHANNEL_PATH">${jexl(Attributes.NODE.getUniquePath())}</attribute>
                                                         <attribute key="CHANNEL_FNAME">${valueOf(@fname)}</attribute>
