@@ -641,7 +641,7 @@ public class RDBMDistributedLayoutStore
                 if (log.isWarnEnabled()) {
                     log.warn("Layout element '" + org.getUniquePath() 
                             + "' from user '" + person.getAttribute(IPerson.USERNAME) 
-                            + "' failured to match noderef '" + org.getValue() + "'");
+                            + "' failed to match noderef '" + org.getValue() + "'");
                 }
             }
         }
@@ -655,12 +655,18 @@ public class RDBMDistributedLayoutStore
                 if (log.isWarnEnabled()) {
                     log.warn("Layout element '" + target.getUniquePath() 
                             + "' from user '" + person.getAttribute(IPerson.USERNAME) 
-                            + "' failured to match noderef '" + target.getValue() + "'");
+                            + "' failed to match noderef '" + target.getValue() + "'");
                 }
             }
         }
         for (Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//dlm:*/@name").iterator(); names.hasNext();) {
             org.dom4j.Attribute n = names.next();
+            if (n.getValue() == null || n.getValue().trim().length() == 0) {
+                // Outer <dlm:positionSet> elements don't seem to use the name 
+                // attribute, though their childern do.  Just skip these so we 
+                // don't send a false WARNING.
+                continue;
+            }
             String[] pathTokens = getDlmPathref((String) person.getAttribute(IPerson.USERNAME), person.getID(), n.getValue(), layoutDoc.getRootElement());
             if (pathTokens != null) {
                 // Change the value only if we have a valid pathref...
@@ -668,12 +674,12 @@ public class RDBMDistributedLayoutStore
                 // These *may* have fnames...
                 if (pathTokens[2] != null && pathTokens[2].trim().length() != 0) {
                     n.getParent().addAttribute("fname", pathTokens[2]);                
-                } else {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Layout element '" + n.getUniquePath() 
-                                + "' from user '" + person.getAttribute(IPerson.USERNAME) 
-                                + "' failured to match noderef '" + n.getValue() + "'");
-                    }
+                } 
+            } else {
+                if (log.isWarnEnabled()) {
+                    log.warn("Layout element '" + n.getUniquePath() 
+                            + "' from user '" + person.getAttribute(IPerson.USERNAME) 
+                            + "' failed to match noderef '" + n.getValue() + "'");
                 }
             }
         }
