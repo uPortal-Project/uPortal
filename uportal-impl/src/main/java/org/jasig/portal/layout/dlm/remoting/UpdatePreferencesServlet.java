@@ -166,7 +166,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			}
 
 		} catch (PortalException e) {
-			log.error(e);
+			log.error(e, e);
 		}
 
 	}
@@ -407,7 +407,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
             // This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
             ulStore.setStructureStylesheetUserPreferences(per, profileID, ssup);
 		} catch (Exception e) {
-			log.error(e);
+			log.error(e, e);
 		}
 
 		ulm.saveUserLayout();
