@@ -28,7 +28,7 @@
     </parameter>
     <parameter> 
       <name>xmlUri</name>  
-      <value>http://chronicle.com/wiredcampus/rss/</value>  
+      <value>http://chronicle.com/blog/Wired-Campus/5/rss</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
