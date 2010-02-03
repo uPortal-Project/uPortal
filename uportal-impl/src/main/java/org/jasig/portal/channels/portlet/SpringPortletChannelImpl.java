@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -391,9 +393,23 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel, Applicat
      * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#generateKey(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures, org.jasig.portal.ChannelRuntimeData)
      */
     public ChannelCacheKey generateKey(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
+        //Get the portlet windowId
+        final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
+        
+        //Build the cache key
+        final Map<String, Object> key = new LinkedHashMap<String, Object>();
+        key.put(IPortletWindowId.class.getName(), portletWindowId.getStringId());
+        key.put("remoteUser", httpServletRequest.getRemoteUser());
+        
+        final HttpSession session = httpServletRequest.getSession(false);
+        if (session != null) {
+            key.put("HttpSession.id", session.getId());
+        }
+
         final ChannelCacheKey cacheKey = new ChannelCacheKey();
         cacheKey.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
-        cacheKey.setKey("INSTANCE_EXPIRATION_CACHE_KEY");
+        cacheKey.setKey(key.toString());
         cacheKey.setKeyValidity(System.currentTimeMillis());
         
         return cacheKey;
