@@ -20,6 +20,22 @@
 
 -->
 
+<xsl:stylesheet version="1.0" xmlns:dlm="http://www.uportal.org/layout/dlm" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output indent="no" method="html"/>
+  <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
+  <xsl:param name="activeTab">1</xsl:param>
+  <xsl:param name="action">no parameter passed</xsl:param>
+  <xsl:param name="position">no parameter passed</xsl:param>
+  <xsl:param name="elementID">no parameter passed</xsl:param>
+  <xsl:param name="errorMessage">no parameter passed</xsl:param>
+  <xsl:param name="showLockUnlock">false</xsl:param>
+  <xsl:param name="locale">en_US</xsl:param>
+  <xsl:param name="cpSetTimeout"/>
+  <xsl:param name="cpSetPassword"/>
+  <xsl:param name="protocolHostPrefixSecure"/>
+
+  <xsl:variable name="activeTabIdx">
+    <!-- if the activeTab is a number then it is the active tab index -->
     <!-- otherwise it is the ID of the active tab. If it is the ID -->
     <!-- then check to see if that tab is still in the layout and -->
     <!-- if so use its index. if not then default to an index of 1. -->
