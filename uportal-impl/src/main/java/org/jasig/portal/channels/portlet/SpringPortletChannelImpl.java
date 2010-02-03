@@ -20,16 +20,17 @@
 package org.jasig.portal.channels.portlet;
 
 import java.io.PrintWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.jasig.portal.ChannelCacheKey;
@@ -53,7 +54,6 @@ import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Implementation of ISpringPortletChannel that delegates rendering a portlet to the injected {@link PortletContainer}.
@@ -255,9 +255,23 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#generateKey(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures, org.jasig.portal.ChannelRuntimeData)
      */
     public ChannelCacheKey generateKey(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
+        //Get the portlet windowId
+        final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
+        final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
+        
+        //Build the cache key
+        final Map<String, Object> key = new LinkedHashMap<String, Object>();
+        key.put(IPortletWindowId.class.getName(), portletWindowId.getStringId());
+        key.put("remoteUser", httpServletRequest.getRemoteUser());
+        
+        final HttpSession session = httpServletRequest.getSession(false);
+        if (session != null) {
+            key.put("HttpSession.id", session.getId());
+        }
+
         final ChannelCacheKey cacheKey = new ChannelCacheKey();
         cacheKey.setKeyScope(ChannelCacheKey.INSTANCE_KEY_SCOPE);
-        cacheKey.setKey("INSTANCE_EXPIRATION_CACHE_KEY");
+        cacheKey.setKey(key.toString());
         cacheKey.setKeyValidity(System.currentTimeMillis());
         
         return cacheKey;

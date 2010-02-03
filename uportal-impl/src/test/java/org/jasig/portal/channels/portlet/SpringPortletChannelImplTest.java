@@ -199,16 +199,41 @@ public class SpringPortletChannelImplTest extends TestCase {
 
     public void testGenerateCacheKey() throws Exception {
         final ChannelStaticData channelStaticData = new ChannelStaticData();
+        channelStaticData.setChannelPublishId("pub1");
+        channelStaticData.setChannelSubscribeId("sub1");
+        
+        final IPerson person = EasyMock.createMock(IPerson.class);
+        channelStaticData.setPerson(person);
 
-        final PortalControlStructures portalControlStructures = new PortalControlStructures(new MockHttpServletRequest(), null);
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        final PortalControlStructures portalControlStructures = new PortalControlStructures(request, response);
+        final HttpServletRequest pcsRequest = portalControlStructures.getHttpServletRequest();
+        
         
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
         
         
+        final IPortletWindowId portletWindowId = new MockPortletWindowId("win1");
+        this.springPortletChannel.setPortletWidnowId(channelStaticData, portletWindowId);
+
+        
+        final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
+        
+
+        //Test targeted portlet
+        EasyMock.replay(portletWindow, person);
+        
+        
         final ChannelCacheKey key = this.springPortletChannel.generateKey(channelStaticData, portalControlStructures, channelRuntimeData);
         
+        //Test targeted portlet
+        EasyMock.verify(portletWindow, person);
+        
         assertEquals(ChannelCacheKey.INSTANCE_KEY_SCOPE, key.getKeyScope());
-        assertEquals("INSTANCE_EXPIRATION_CACHE_KEY", key.getKey());
+        assertEquals("{org.jasig.portal.portlet.om.IPortletWindowId=win1, remoteUser=null}", key.getKey());
         assertTrue("Expected validity object to be of type Long", key.getKeyValidity() instanceof Long);
     }
 
