@@ -162,6 +162,7 @@
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="optionalContainerServices" ref="optionalContainerServices" />
         <property name="personAttributeDao" ref="personAttributeDao" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
     </bean>
     
     <!--********** Portlet Registries ********** -->

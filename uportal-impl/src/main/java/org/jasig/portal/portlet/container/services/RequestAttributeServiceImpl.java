@@ -42,6 +42,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 
@@ -54,6 +55,7 @@ public class RequestAttributeServiceImpl extends DefaultRequestAttributeService 
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IPortalRequestUtils portalRequestUtils;
     
     public void setPersonAttributeDao(IPersonAttributeDao personAttributeDao) {
         this.personAttributeDao = personAttributeDao;
@@ -67,11 +69,16 @@ public class RequestAttributeServiceImpl extends DefaultRequestAttributeService 
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-
+    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        this.portalRequestUtils = portalRequestUtils;
+    }
+    
     @Override
     public Object getAttribute(PortletRequest portletRequest, HttpServletRequest httpServletRequest, PortletWindow plutoPortletWindow, String name) {
         if (IPortletAdaptor.MULTIVALUED_USERINFO_MAP_ATTRIBUTE.equals(name)) {
-          //Get the list of user attributes the portal knows about the user
+            httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
+            
+            //Get the list of user attributes the portal knows about the user
             final String remoteUser = portletRequest.getRemoteUser();
             if (remoteUser == null) {
                 return null;
