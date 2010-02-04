@@ -77,6 +77,9 @@
             <li>
                 <a href="render.userLayoutRootNode.uP?uP_fname=cache-manager">Manage Cache instances</a>
             </li>
+            <li>
+                <a href="render.userLayoutRootNode.uP?uP_fname=toggle-resources-aggregation">Toggle JS/CSS Aggregation</a>
+            </li>
         </ul>
       </div>
     </div>
