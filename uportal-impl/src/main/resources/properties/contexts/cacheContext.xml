@@ -20,8 +20,13 @@
 
 -->
 
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
+
     
     <!-- 
      | The per-cache settings are configured in /uportal-impl/src/main/resources/properties/ehcache.xml
@@ -39,14 +44,14 @@
      | Factory used by portal code to retrieve caches.
      +-->
     <bean id="cacheFactory" class="org.jasig.portal.utils.cache.CacheProviderFactory">
-        <property name="cacheProviderFacade" ref="cacheProviderFacade" />
+        <property name="cacheProviderFacade" ref="cacheProvider" />
         <property name="cacheModelFactory" ref="cacheModelFactory" />
     </bean>
     
     <!-- 
      | Cache Provider used by the persistence code
      +-->
-     <bean id="cacheProvider" class="org.jasig.portal.utils.cache.hibernate.EhCacheProvider">
+     <bean id="hibernateCacheProvider" class="org.jasig.portal.utils.cache.hibernate.EhCacheProvider">
         <property name="cacheManager" ref="cacheManager" />
      </bean>
     
@@ -55,7 +60,7 @@
 
     <bean id="cacheModelFactory" class="org.jasig.portal.utils.cache.EhCacheModelFactory" />
 
-    <bean id="cacheProviderFacade" class="org.jasig.portal.utils.cache.EhCacheFacade">
+    <bean id="cacheProvider" class="org.jasig.portal.utils.cache.EhCacheFacade">
         <property name="cacheManager" ref="cacheManager" />
         <property name="createMissingCaches" value="true" />
     </bean>
@@ -66,7 +71,7 @@
     </bean>
     
     <bean id="baseCachingInterceptor" abstract="true" class="org.springmodules.cache.interceptor.caching.NameMatchCachingInterceptor">
-        <property name="cacheProviderFacade" ref="cacheProviderFacade" />
+        <property name="cacheProviderFacade" ref="cacheProvider" />
         <property name="cacheKeyGenerator">
             <bean class="org.springmodules.cache.key.HashCodeCacheKeyGenerator">
                 <property name="generateArgumentHashCode" value="true" />
@@ -75,8 +80,16 @@
     </bean>
     
     <bean id="baseFlushingInterceptor" abstract="true" class="org.springmodules.cache.interceptor.flush.NameMatchFlushingInterceptor">
-        <property name="cacheProviderFacade" ref="cacheProviderFacade" />
+        <property name="cacheProviderFacade" ref="cacheProvider" />
     </bean>
+    
+    <!-- 
+     | Annotation based caching support
+     +-->
+    <ehcache:annotations>
+        <ehcache:caching id="org.jasig.portal.web.skin.Resources" cacheName="org.jasig.portal.web.skin.Resources" />
+        <ehcache:caching id="org.jasig.portal.web.skin.Resources_DocumentFragment" cacheName="org.jasig.portal.web.skin.Resources_DocumentFragment" />
+    </ehcache:annotations>
 
     <!--
      | Service used by DLM to cache Layouts.

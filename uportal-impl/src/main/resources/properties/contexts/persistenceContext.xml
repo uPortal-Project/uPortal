@@ -71,7 +71,7 @@
     <!-- Adapater that can inject a cacheProvider into the hibernate entity manager -->
     <bean id="jpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
         <property name="databasePlatform" value="${hibernate.dialect}" />
-        <property name="cacheProvider" ref="cacheProvider" />
+        <property name="cacheProvider" ref="hibernateCacheProvider" />
     </bean>
     
     <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">

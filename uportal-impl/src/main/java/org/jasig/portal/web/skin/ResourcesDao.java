@@ -22,6 +22,12 @@
  */
 package org.jasig.portal.web.skin;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.springmodules.cache.annotations.Cacheable;
+import org.w3c.dom.DocumentFragment;
+
+
 /**
  * Interface to locate {@link Resources} (skin configuration).
  * 
@@ -39,5 +45,19 @@ public interface ResourcesDao {
 	 * @param pathToSkinXml
 	 * @return
 	 */
+    @Cacheable(modelId="org.jasig.portal.web.skin.Resources")
 	Resources getResources(String pathToSkinXml);
+
+    /**
+     * Load a DocumentFragment of HTML tags that represent the {@link Resources} for
+     * the specified {@link String} path.
+     * Implementations will likely need to resolve the path against the
+     * ServletContext, as implementation at time of writing locates the resources
+     * configuration in the same directory as the javascript/css it documents.
+     * 
+     * @param pathToSkinXml
+     * @return
+     */
+    @Cacheable(modelId="org.jasig.portal.web.skin.Resources_DocumentFragment")
+    DocumentFragment getResourcesFragment(String pathToSkinXml, String relativeRoot) throws ParserConfigurationException;
 }
