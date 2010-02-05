@@ -23,6 +23,8 @@
 package org.jasig.portal.web.skin;
 
 import java.io.InputStream;
+import java.io.Serializable;
+import java.util.HashMap;
 
 import javax.servlet.ServletContext;
 
@@ -31,6 +33,7 @@ import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.w3c.dom.DocumentFragment;
 
 /**
  * Tests for {@link ResourcesDaoImpl}.
@@ -53,6 +56,8 @@ public class ResourcesDaoImplTest {
 		
 		ResourcesDaoImpl resourcesDao = new ResourcesDaoImpl();
 		resourcesDao.setServletContext(mockContext);
+		resourcesDao.setResourcesCache(new HashMap<Serializable, Resources>());
+		resourcesDao.setResourcesFragmentCache(new HashMap<Serializable, DocumentFragment>());
 		Resources result = resourcesDao.getResources("media/path/to/skin.xml");
 		Assert.assertNotNull(result);
 		Assert.assertEquals(7, result.getCss().size());
@@ -72,6 +77,8 @@ public class ResourcesDaoImplTest {
 		EasyMock.replay(mockContext);
 		
 		ResourcesDaoImpl resourcesDao = new ResourcesDaoImpl();
+        resourcesDao.setResourcesCache(new HashMap<Serializable, Resources>());
+        resourcesDao.setResourcesFragmentCache(new HashMap<Serializable, DocumentFragment>());
 		resourcesDao.setServletContext(mockContext);
 		Assert.assertNull(resourcesDao.getResources("media/path/to/skin.xml"));
 	}

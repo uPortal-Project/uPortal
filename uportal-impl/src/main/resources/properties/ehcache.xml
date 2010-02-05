@@ -37,6 +37,24 @@
     <!-- ******************** uPortal Framework Caches ******************** -->
     
     <!-- 
+     | Caches Skin Resource instances
+     | - 1 x skin
+     | - not replicated - represents local file system data
+     +-->
+    <cache name="org.jasig.portal.web.skin.Resources"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        
+    <!-- 
+     | Caches Skin Resource DocumentFragment instances, the XML chunk added to the <head>
+     | - 1 x skin
+     | - not replicated - represents local file system data
+     +-->
+    <cache name="org.jasig.portal.web.skin.Resources_DocumentFragment"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+    
+    <!-- 
      | Caches AuthorizationPrincipalImpl instances
      | - 1 x user
      | - 1 x channel
