@@ -40,6 +40,7 @@ import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -52,6 +53,7 @@ import org.springframework.web.util.WebUtils;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("portletSessionExpirationManager")
 public class PortletSessionExpirationManager implements PortletInvocationListener, ApplicationListener {
     public static final String PORTLET_SESSIONS_MAP = PortletSessionExpirationManager.class.getName() + ".PORTLET_SESSIONS";
     

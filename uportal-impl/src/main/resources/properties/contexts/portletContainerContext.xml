@@ -73,7 +73,7 @@
     <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
         <property name="useAnchors" value="${org.jasig.portal.ChannelManager.use_anchors}"/>
     </bean>
-    <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager" />
+    <!--  <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager" /> -->
     
     <bean id="requestAttributeService" class="org.jasig.portal.portlet.container.services.RequestAttributeServiceImpl">
     	<property name="personAttributeDao" ref="personAttributeDao" />
