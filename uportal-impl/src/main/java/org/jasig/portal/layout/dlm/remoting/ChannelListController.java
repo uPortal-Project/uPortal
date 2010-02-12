@@ -22,7 +22,6 @@ package org.jasig.portal.layout.dlm.remoting;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.EntityIdentifier;
@@ -36,8 +35,12 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -58,22 +61,28 @@ import com.thoughtworks.xstream.XStream;
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revsion$
  */
-public class ChannelListController extends AbstractController {
+@Controller
+@RequestMapping("/channelList")
+public class ChannelListController {
 
 	private IChannelRegistryStore channelRegistryStore;
 	private IPersonManager personManager;
 	private static final String TYPE_SUBSCRIBE = "subscribe";
 	private static final String TYPE_MANAGE = "manage";
 	private static final String TYPE_ALL = "all";
-
-	public ModelAndView handleRequestInternal(HttpServletRequest request,
-		HttpServletResponse response) throws Exception {
-		
-		String type = request.getParameter("type");
+	
+	/**
+	 * 
+	 * @param request
+	 * @param type
+	 * @param asXml
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView listChannels(HttpServletRequest request,  @RequestParam("xml") boolean asXml, @RequestParam(value="type",required=false) String type) {
 		if(type == null || (!type.equals(TYPE_MANAGE) && !type.equals(TYPE_ALL))) {
 			type = TYPE_SUBSCRIBE;
 		}
-		
 		IPerson user = personManager.getPerson(request);
 		if(type.equals(TYPE_ALL) && !AdminEvaluator.isAdmin(user)) {
 			/* Don't let non-admins list all channels. */
@@ -82,7 +91,7 @@ public class ChannelListController extends AbstractController {
 
 		ChannelRegistryBean registry = getRegistry(user, type);
 
-		if("true".equals(request.getParameter("xml"))) {
+		if(asXml) {
 			XStream stream = new XStream();
 			stream.processAnnotations(ChannelRegistryBean.class);
 			String xml = stream.toXML(registry);
@@ -162,6 +171,10 @@ public class ChannelListController extends AbstractController {
 		
 	}
 	
+	/**
+	 * @param channelRegistryStore
+	 */
+	@Autowired(required=true)
 	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
 		this.channelRegistryStore = channelRegistryStore;
 	}
@@ -170,6 +183,7 @@ public class ChannelListController extends AbstractController {
 	 * <p>For injection of the person manager.  Used for authorization.</p>
 	 * @param personManager IPersonManager instance
 	 */
+	@Autowired(required=true)
 	public void setPersonManager(IPersonManager personManager) {
 		this.personManager = personManager;
 	}

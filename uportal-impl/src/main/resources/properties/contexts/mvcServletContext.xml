@@ -22,34 +22,15 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">           
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">           
 
-    <!-- 
-     | Search entities for multiple results by a search string
-     +-->
-    <bean name="/searchEntities"
-        class="org.jasig.portal.layout.dlm.remoting.SearchEntitiesController">
-        <property name="groupListHelper" ref="groupListHelper"/>
-        <property name="personManager" ref="personManager"/>
-    </bean>
-
-    <!-- 
-     | Find a single entity by ID and type
-     +-->
-    <bean name="/findEntity"
-        class="org.jasig.portal.layout.dlm.remoting.FindEntityController">
-        <property name="groupListHelper" ref="groupListHelper"/>
-        <property name="personManager" ref="personManager"/>
-    </bean>
-    
-    <!-- 
-     | Channel registry list
-     +-->
-    <bean name="/channelList"
-        class="org.jasig.portal.layout.dlm.remoting.ChannelListController">
-        <property name="channelRegistryStore" ref="channelRegistryStore"/>
-        <property name="personManager" ref="personManager"/>
-    </bean>
-
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+	<!-- even though context:component-scan is defined in applicationContext, we need an additional reference
+	for this context as it's unique to the DispatcherServlet -->
+	<context:component-scan base-package="org.jasig.portal.layout.dlm.remoting"/>
+	
 </beans>
