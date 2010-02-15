@@ -70,7 +70,60 @@ public class RDBMPermissionImpl implements IPermissionStore {
     private static String selectPermissionSql;
     private static String updatePermissionSql;
 
-    private static String PRINCIPAL_SEPARATOR = ".";
+    public static String PRINCIPAL_SEPARATOR = ".";
+    
+    /**
+     * Signifies that the principal is an {@see IEntityGroup}.  The 
+     * {@see IPermission} contract does not define a method like 
+     * <code>setPrincipalType()</code>, but {@see RDBMPermissionImpl} (this 
+     * class) <i>does</i> have a notion of principal type.  Specify 
+     * <code>(PRINCIPAL_TYPE_GROUP|PRINCIPAL_TYPE_USER)PRINCIPAL_SEPARATOR&lt;principal.key&gt;</code> 
+     * to {@see IPermission.setPrincipal} for use with {@see RDBMPermissionImpl}.
+     */
+    public static int PRINCIPAL_TYPE_GROUP = 1; 
+
+    /**
+     * Signifies that the principal is an {@see IPerson}.  The 
+     * {@see IPermission} contract does not define a method like 
+     * <code>setPrincipalType()</code>, but {@see RDBMPermissionImpl} (this 
+     * class) <i>does</i> have a notion of principal type.  Specify 
+     * <code>(PRINCIPAL_TYPE_GROUP|PRINCIPAL_TYPE_USER)PRINCIPAL_SEPARATOR&lt;principal.key&gt;</code> 
+     * to {@see IPermission.setPrincipal} for use with {@see RDBMPermissionImpl}.
+     */
+    public static int PRINCIPAL_TYPE_PERSON = 2; 
+
+    public enum PrincipalType {
+        
+        GROUP(PRINCIPAL_TYPE_GROUP),
+        
+        PERSON(PRINCIPAL_TYPE_PERSON);
+        
+        // Instance Members.
+        private final int intValue;
+        
+        public static PrincipalType byEntityTypeName(String name) {
+            PrincipalType rslt = null;
+            for (PrincipalType y : values()) {
+                if (y.name().toLowerCase().equals(name)) {
+                    rslt = y;
+                }
+            }
+            if (rslt == null && log.isWarnEnabled()) {
+                log.warn("Unrecognized PrincipalType:  " + name);
+            }
+            return rslt;
+        }
+
+        public int toInt() {
+            return intValue;
+        }
+        
+        PrincipalType(int intValue) {
+            this.intValue = intValue;
+        }
+
+    }
+    
 /**
  * RDBMReferencePermission constructor comment.
  */

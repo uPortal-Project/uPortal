@@ -43,6 +43,9 @@
   <!-- Support for legacy uPortal css classes. -->
   <css>legacy.css</css>
     
+  <!-- Styles for the tokeninput jQuery plugin. -->
+  <css>../common/css/token-input.css</css>
+
   <!-- Optional overrides specific to IE6.  This file needs to be created if you want IE6 specific CSS.
   <css conditional="if IE 6">ie6.css</css> -->
   
@@ -56,4 +59,5 @@
   <js>../common/javascript/uportal/up-channel-browser.js</js>
   <js>../common/javascript/uportal/up-group-browser.js</js>
   <js>../common/javascript/uportal/flyout-nav.js</js>
+  <js>../common/javascript/jquery.tokeninput.js</js>
 </s:resources>

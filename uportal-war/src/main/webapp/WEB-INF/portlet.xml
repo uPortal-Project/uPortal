@@ -341,6 +341,25 @@
     </portlet>
         
     <portlet>
+        <portlet-name>PermissionsAdministration</portlet-name>
+        <display-name xml:lang="en">Permissions Administration Portlet</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/PermissionsAdministration-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Permissions Administration Portlet</title>
+        </portlet-info>
+    </portlet>
+
+    <portlet>
         <portlet-name>SqlQuery</portlet-name>
         <display-name xml:lang="en">Sql Query</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
