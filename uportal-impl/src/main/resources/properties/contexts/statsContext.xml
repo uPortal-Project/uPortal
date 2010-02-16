@@ -155,6 +155,7 @@
 
     <bean id="statsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="statsEntityManagerFactory" />
+        <qualifier value="stats"/>
     </bean>
     
     <tx:advice id="statsTransactionAdvice" transaction-manager="statsTransactionManager">
