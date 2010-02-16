@@ -32,14 +32,7 @@
      | The per-cache settings are configured in /uportal-impl/src/main/resources/properties/ehcache.xml
      | This file is specified by the cacheManager bean at the bottom of this document
      +-->
-    
-    <!-- 
-     | IBasicEntity caching service
-     +-->
-    <bean id="entityCachingService" class="org.jasig.portal.concurrency.caching.CacheFactoryEntityCachingService">
-        <property name="cacheFactory" ref="cacheFactory" />
-    </bean>
-
+	
     <!--
      | Factory used by portal code to retrieve caches.
      +-->
@@ -48,21 +41,14 @@
         <property name="cacheModelFactory" ref="cacheModelFactory" />
     </bean>
     
-    <!-- 
-     | Cache Provider used by the persistence code
-     +-->
-     <bean id="hibernateCacheProvider" class="org.jasig.portal.utils.cache.hibernate.EhCacheProvider">
-        <property name="cacheManager" ref="cacheManager" />
-     </bean>
-    
 
     <!-- Support classes for the cacheFactory and cacheProvider -->    
 
     <bean id="cacheModelFactory" class="org.jasig.portal.utils.cache.EhCacheModelFactory" />
 
+	<!-- springmodules requires " An implementation of CacheProviderFacade should be registered under the name 'cacheProvider'"-->
     <bean id="cacheProvider" class="org.jasig.portal.utils.cache.EhCacheFacade">
-        <property name="cacheManager" ref="cacheManager" />
-        <property name="createMissingCaches" value="true" />
+    	<!-- dependencies are autowired -->
     </bean>
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">

@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cache.CacheProvider;
 import org.hibernate.cfg.Environment;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Extension of the Spring {@link org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter} class that can provide a
@@ -61,6 +62,7 @@ public class HibernateJpaVendorAdapter extends org.springframework.orm.jpa.vendo
     /**
      * @param cacheProvider the cacheProvider to set
      */
+    @Autowired(required=true)
     public void setCacheProvider(CacheProvider cacheProvider) {
         this.cacheProvider = cacheProvider;
     }

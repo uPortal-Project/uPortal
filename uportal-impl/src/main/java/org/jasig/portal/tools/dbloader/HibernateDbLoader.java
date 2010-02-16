@@ -43,10 +43,13 @@ import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
 import org.hibernate.mapping.UniqueKey;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.xml.sax.InputSource;
@@ -61,6 +64,7 @@ import org.xml.sax.SAXException;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Repository("dbLoader")
 public class HibernateDbLoader implements IDbLoader {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -71,14 +75,16 @@ public class HibernateDbLoader implements IDbLoader {
     /**
      * @param jdbcTemplate the jdbcTemplate to set
      */
-    public void setDataSource(DataSource dataSource) {
+    @Autowired(required=true)
+    public void setDataSource(@Qualifier("PortalDb") DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     /**
      * @param transactionTemplate the transactionTemplate to set
      */
-    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+    @Autowired(required=true)
+    public void setTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager transactionManager) {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
@@ -91,6 +97,7 @@ public class HibernateDbLoader implements IDbLoader {
     /**
      * @param dialect the dialect to set
      */
+    @Autowired(required=true)
     public void setDialect(Dialect dialect) {
         this.dialect = dialect;
     }

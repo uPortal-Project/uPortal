@@ -27,11 +27,11 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.collections.map.ReferenceMap;
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
@@ -41,6 +41,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.CacheNotFoundException;
+import org.springmodules.cache.provider.ObjectCannotBeCachedException;
 import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.provider.ehcache.EhCacheCachingModel;
 import org.springmodules.cache.provider.ehcache.EhCacheFlushingModel;
@@ -53,13 +54,14 @@ import org.springmodules.cache.provider.ehcache.EhCacheModelValidator;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("ehCacheFacade")
 public class EhCacheFacade extends AbstractCacheProviderFacade {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private final MapCachingDoubleCheckedCreator<String, Cache> cacheLoader = new MapCachingCacheLoader();
     private final CacheModelValidator cacheModelValidator;
     private CacheManager cacheManager;
-    private boolean createMissingCaches = false;
+    private boolean createMissingCaches = true;
 
     
     public EhCacheFacade() {
@@ -91,9 +93,8 @@ public class EhCacheFacade extends AbstractCacheProviderFacade {
      * @param newCacheManager
      *          the new cache manager
      */
-    @Required
+    @Autowired(required=true)
     public void setCacheManager(CacheManager newCacheManager) {
-        Validate.notNull(newCacheManager, "cacheManager can not be null");
         this.cacheManager = newCacheManager;
     }
 
@@ -159,7 +160,7 @@ public class EhCacheFacade extends AbstractCacheProviderFacade {
     }
 
     /**
-     * @return <code>true</code>. EHCache can only store Serializable objects
+     * @return <code>false</code>. EHCache can only store Serializable objects
      * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
      */
     @Override

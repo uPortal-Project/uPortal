@@ -23,13 +23,13 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.collections.map.ReferenceMap;
-import org.apache.commons.lang.Validate;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCache;
 import org.jasig.portal.utils.cache.CacheFactory;
 import org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Creates {@link MapBackedEntityCache} instances that wrap {@link Map} caches retrieved from the {@link CacheFactory}
@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("entityCachingService")
 public class CacheFactoryEntityCachingService extends AbstractEntityCachingService {
     private final EntityCacheCreator entityCacheCreator = new EntityCacheCreator();
     private CacheFactory cacheFactory;
@@ -51,9 +52,8 @@ public class CacheFactoryEntityCachingService extends AbstractEntityCachingServi
     /**
      * @param cacheFactory the cacheFactory to set
      */
-    @Required
+    @Autowired(required=true)
     public void setCacheFactory(CacheFactory cacheFactory) {
-        Validate.notNull(cacheFactory, "cacheFactory can not be null");
         this.cacheFactory = cacheFactory;
     }
     

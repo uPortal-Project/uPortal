@@ -24,14 +24,14 @@ import java.util.Properties;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cache.Cache;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.CacheProvider;
 import org.hibernate.cache.Timestamper;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Provides EhCache instances to hibernate using an injected {@link CacheManager}
@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("hibernateCacheProvider")
 public class EhCacheProvider implements CacheProvider {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
@@ -53,9 +54,8 @@ public class EhCacheProvider implements CacheProvider {
     /**
      * @param cacheManager the cacheManager to set
      */
-    @Required
+    @Autowired(required=true)
     public void setCacheManager(CacheManager cacheManager) {
-        Validate.notNull(cacheManager, "cacheManager can not be null");
         this.cacheManager = cacheManager;
     }
 
