@@ -96,7 +96,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <td class="fl-text-align-right"><spring:message code="editPermission.principalsLabel"/></td>
               <td>
                 <ul>
-                    <c:forEach var="principal" items="${permissionDefinition.principalsMap}"><li><c:out value="${principal.key.name}"/> <c:out value="${principal.value}"/></li></c:forEach>
+                    <c:forEach var="principal" items="${permissionDefinition.principalsMap}">
+                        <li>
+                            <c:out value="${principal.key.name}"/>
+                            <select name="<c:out value="${principal.key.id}"/>_type">
+                                <option value="INHERIT"<c:if test="${principal.value == 'INHERIT'}"> selected="selected"</c:if>>INHERIT</option>
+                                <option value="GRANT"<c:if test="${principal.value == 'GRANT'}"> selected="selected"</c:if>>GRANT</option>
+                                <option value="DENY"<c:if test="${principal.value == 'DENY'}"> selected="selected"</c:if>>DENY</option>
+                            </select>
+                        </li>
+                    </c:forEach>
                 </ul>
                 <a id="${n}principal" href="javascript: void(0);"><spring:message code="editPermission.clickToAdd"/></a>
               </td>

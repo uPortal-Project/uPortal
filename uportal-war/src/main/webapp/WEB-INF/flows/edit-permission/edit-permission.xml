@@ -40,6 +40,7 @@
         <transition on="submit" to="validate"/>
         <on-exit>
             <set name="permissionDefinition.owner" value="requestParameters.owner != null ? requestParameters.owner.split(',')[0] : null"/>
+            <set name="permissionDefinition.types" value="requestParameters"/>
             <set name="permissionDefinition.activity" value="requestParameters.activity != null ? requestParameters.activity.split(',')[0] : null"/>
             <set name="permissionDefinition.targetAsStringIfDifferent" value="requestParameters.target != null ? requestParameters.target.split(',')[0] : null"/>
         </on-exit>

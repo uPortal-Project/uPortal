@@ -35,6 +35,7 @@ import org.jasig.portal.security.provider.RDBMPermissionImpl;
 import org.jasig.portal.security.provider.RDBMPermissionImpl.PrincipalType;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.webflow.core.collection.ParameterMap;
 
 public class PermissionDefinitionForm implements Serializable {
     
@@ -54,6 +55,8 @@ public class PermissionDefinitionForm implements Serializable {
      */
     
     public enum Type {
+        
+        INHERIT,
         
         GRANT,
         
@@ -141,6 +144,30 @@ public class PermissionDefinitionForm implements Serializable {
 
     }
     
+    public void setTypes(ParameterMap requestParameters) {
+        
+        // Assertions.
+        if (requestParameters == null) {
+            String msg = "Argument 'requestParameters' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        for (Map.Entry<JsonEntityBean,Type> y : principalsMap.entrySet()) {
+            JsonEntityBean principal = y.getKey();
+            String val = requestParameters.get(principal.getId() + "_type");
+            if (val != null) {
+                Type type = Type.valueOf(val);
+                y.setValue(type);
+            } else {
+                if (log.isWarnEnabled()) {
+                    log.warn("No type parameter specified for the following principal:  name=" 
+                                    + principal.getName() + ", Id=" + principal.getId());
+                }
+            }
+        }
+
+    }
+    
     public boolean validateEditPermission(MessageContext msgs) {
         
         /*
@@ -179,12 +206,17 @@ public class PermissionDefinitionForm implements Serializable {
 
         List<IPermission> list = new ArrayList<IPermission>();
         for (Map.Entry<JsonEntityBean,Type> y : principalsMap.entrySet()) {
+            Type type = y.getValue();
+            if (Type.INHERIT.equals(type)) {
+                // We don't persist INHERIT records (it's the default)
+                continue;
+            }
             JsonEntityBean principal = y.getKey();
             IPermission permission = store.newInstance(owner);
             permission.setPrincipal(PrincipalType.byEntityTypeName(principal.getEntityType()).toInt() 
                                         + RDBMPermissionImpl.PRINCIPAL_SEPARATOR 
                                         + principal.getId());
-            permission.setType(y.getValue().name());
+            permission.setType(type.name());
             permission.setActivity(activity);
             permission.setTarget(target.getId());
             list.add(permission);
@@ -229,7 +261,7 @@ public class PermissionDefinitionForm implements Serializable {
             rslt.put(principal, y);
         }
         
-        return Collections.unmodifiableMap(rslt);
+        return rslt;
 
     }
 
