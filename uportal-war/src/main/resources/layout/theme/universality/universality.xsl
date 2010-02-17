@@ -177,7 +177,13 @@
    | GREEN
    | Navigation Settings can be used to change the navigation.
   -->
-  <xsl:param name="USE_FLYOUT_MENUS" select="'true'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
+  <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
+  <xsl:param name="USE_FLYOUT_MENUS">
+  	<xsl:choose>
+      <xsl:when test="$SKIN='hc'">false</xsl:when>
+      <xsl:otherwise>true</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
   
   <!-- USE_SUBNAVIGATION_ROW
    | Sets the use of the sub navigation row, which lists out links to the portlets on the active tab.
@@ -374,10 +380,10 @@
     
     <!-- Skip Navigation -->
     <div id="portalSkipNav">
-      <a href="#mainNavigation" title="{$TOKEN[@name='SKIP_TO_NAV_TITLE']}" id="skipToNav">
+      <a href="#mainNavigation" title="{$TOKEN[@name='SKIP_TO_NAV_TITLE']}" id="skipToNav" accesskey="N">
         <xsl:value-of select="$TOKEN[@name='SKIP_TO_NAV']"/>
       </a>
-      <a href="#startContent" title="{$TOKEN[@name='SKIP_TO_CONTENT_TITLE']}" id="skipToContent">
+      <a href="#pageContent" title="{$TOKEN[@name='SKIP_TO_CONTENT_TITLE']}" id="skipToContent" accesskey="C">
         <xsl:value-of select="$TOKEN[@name='SKIP_TO_CONTENT']"/>
       </a>
     </div>
@@ -512,10 +518,10 @@
     
     <!-- Skip Navigation -->
     <div id="portalSkipNav">
-      <a href="#mainNavigation" title="{$TOKEN[@name='SKIP_TO_NAV_TITLE']}" id="skipToNav">
+      <a href="#mainNavigation" title="{$TOKEN[@name='SKIP_TO_NAV_TITLE']}" id="skipToNav" accesskey="N">
         <xsl:value-of select="$TOKEN[@name='SKIP_TO_NAV']"/>
       </a>
-      <a href="#startContent" title="{$TOKEN[@name='SKIP_TO_CONTENT_TITLE']}" id="skipToContent">
+      <a href="#pageContent" title="{$TOKEN[@name='SKIP_TO_CONTENT_TITLE']}" id="skipToContent" accesskey="C">
         <xsl:value-of select="$TOKEN[@name='SKIP_TO_CONTENT']"/>
       </a>
     </div>
