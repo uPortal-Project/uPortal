@@ -338,10 +338,10 @@
     
     <!-- Skip Navigation -->
     <div id="portalSkipNav">
-      <a href="#mainNavigation" title="{$TOKEN[@name='SKIP_TO_NAV_TITLE']}" id="skipToNav">
+      <a href="#mainNavigation" title="{$TOKEN[@name='SKIP_TO_NAV_TITLE']}" id="skipToNav" accesskey="N">
         <xsl:value-of select="$TOKEN[@name='SKIP_TO_NAV']"/>
       </a>
-      <a href="#startContent" title="{$TOKEN[@name='SKIP_TO_CONTENT_TITLE']}" id="skipToContent">
+      <a href="#pageContent" title="{$TOKEN[@name='SKIP_TO_CONTENT_TITLE']}" id="skipToContent" accesskey="C">
         <xsl:value-of select="$TOKEN[@name='SKIP_TO_CONTENT']"/>
       </a>
     </div>
@@ -806,7 +806,7 @@
   -->
   <xsl:template name="footer.block">
 
-    <xsl:if test="$INSTITUTION='uportal' or $INSTITUTION='coal'">
+    <xsl:if test="$INSTITUTION != 'ivy'">
       <!-- Footer Links -->
       <div id="portalPageFooterLinks">
         <a href="http://www.jasig.org/" target="_blank" title="{$TOKEN[@name='JASIG_LONG_LABEL']}">
