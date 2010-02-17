@@ -44,7 +44,7 @@
       	
         <div id="portalNavigation">
         	<div id="portalNavigationInner" class="{$CONTEXT}">
-          	<a name="mainNavigation" title="Reference anchor: main nagivation"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
+          	<a name="mainNavigation" class="skip-link" title="Reference anchor: main nagivation"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
             <ul id="portalNavigationList" class="fl-tabs">
               <xsl:apply-templates select="tab">
                 <xsl:with-param name="CONTEXT" select="$CONTEXT"/>

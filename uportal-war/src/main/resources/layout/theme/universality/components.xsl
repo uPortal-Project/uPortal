@@ -483,7 +483,7 @@
    | This template renders the page title.
   -->
   <xsl:template name="page.title">
-  	<a name="startContent" title="Reference anchor: the starting point of the page content"> <!-- Skip navigation target. -->
+  	<a name="pageContent" class="skip-link" title="Reference anchor: the starting point of the page content"> <!-- Skip navigation target. -->
       <h1 id="portalPageBodyTitle">
         <xsl:choose>
           <xsl:when test="//focused"> <!-- When focused, include the focused portlet title -->
