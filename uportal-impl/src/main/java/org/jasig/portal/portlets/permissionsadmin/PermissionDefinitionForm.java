@@ -23,16 +23,21 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
+import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.security.provider.RDBMPermissionImpl;
 import org.jasig.portal.security.provider.RDBMPermissionImpl.PrincipalType;
+import org.jasig.portal.services.GroupService;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.core.collection.ParameterMap;
@@ -45,7 +50,7 @@ public class PermissionDefinitionForm implements Serializable {
 
     // Instance Members.
     private String owner;
-    private Map<JsonEntityBean,Type> principalsMap = Collections.emptyMap();
+    private List<Assignment> assignments = Collections.emptyList();
     private String activity;
     private JsonEntityBean target;
     private static final Log log = LogFactory.getLog(RDBMPermissionImpl.class);
@@ -53,16 +58,6 @@ public class PermissionDefinitionForm implements Serializable {
     /*
      * Public API.
      */
-    
-    public enum Type {
-        
-        INHERIT,
-        
-        GRANT,
-        
-        DENY
-        
-    }
     
     public String getOwner() {
         return owner;
@@ -78,17 +73,21 @@ public class PermissionDefinitionForm implements Serializable {
         this.owner = owner;
 
     }
+    
+    public List<Assignment> getAssignments() {
+        return new ArrayList<Assignment>(assignments);
+    }
 
     public List<JsonEntityBean> getPrincipals() {
-        return new ArrayList<JsonEntityBean>(principalsMap.keySet());
+        Map<JsonEntityBean,Assignment.Type> rslt = new HashMap<JsonEntityBean,Assignment.Type>();
+        for (Assignment a : assignments) {
+            aggregatePrincipalMap(a, rslt);
+        }
+        return new ArrayList<JsonEntityBean>(rslt.keySet());
     }
 
     public void setPrincipals(List<JsonEntityBean> principals) {
-        this.principalsMap = mergePrincipalsMap(this.principalsMap, principals);
-    }
-    
-    public Map<JsonEntityBean,Type> getPrincipalsMap() {
-        return new HashMap<JsonEntityBean,Type>(principalsMap);
+        assignments = updateAssignments(assignments, principals);
     }
 
     public String getActivity() {
@@ -152,26 +151,16 @@ public class PermissionDefinitionForm implements Serializable {
             throw new IllegalArgumentException(msg);
         }
         
-        for (Map.Entry<JsonEntityBean,Type> y : principalsMap.entrySet()) {
-            JsonEntityBean principal = y.getKey();
-            String val = requestParameters.get(principal.getId() + "_type");
-            if (val != null) {
-                Type type = Type.valueOf(val);
-                y.setValue(type);
-            } else {
-                if (log.isWarnEnabled()) {
-                    log.warn("No type parameter specified for the following principal:  name=" 
-                                    + principal.getName() + ", Id=" + principal.getId());
-                }
-            }
+        for (Assignment a : assignments) {
+            updateTypes(a, requestParameters);
         }
-
+        
     }
-    
+
     public boolean validateEditPermission(MessageContext msgs) {
         
         /*
-         * All fields must be entered.
+         * All fields must be completed.
          */
 
         // owner
@@ -181,7 +170,7 @@ public class PermissionDefinitionForm implements Serializable {
         }
         
         // principals
-        if (principalsMap.isEmpty()) {
+        if (assignments.isEmpty()) {
             msgs.addMessage(new MessageBuilder().error().source("principal")
                 .defaultText("Specify one or more principals").build());
         }
@@ -205,21 +194,8 @@ public class PermissionDefinitionForm implements Serializable {
     public boolean save(IPermissionStore store, MessageContext msgs) {
 
         List<IPermission> list = new ArrayList<IPermission>();
-        for (Map.Entry<JsonEntityBean,Type> y : principalsMap.entrySet()) {
-            Type type = y.getValue();
-            if (Type.INHERIT.equals(type)) {
-                // We don't persist INHERIT records (it's the default)
-                continue;
-            }
-            JsonEntityBean principal = y.getKey();
-            IPermission permission = store.newInstance(owner);
-            permission.setPrincipal(PrincipalType.byEntityTypeName(principal.getEntityType()).toInt() 
-                                        + RDBMPermissionImpl.PRINCIPAL_SEPARATOR 
-                                        + principal.getId());
-            permission.setType(type.name());
-            permission.setActivity(activity);
-            permission.setTarget(target.getId());
-            list.add(permission);
+        for (Assignment a : assignments) {
+            aggregatePermissions(a, list, store);
         }
         
         boolean rslt = true;  // default
@@ -240,11 +216,31 @@ public class PermissionDefinitionForm implements Serializable {
      * Private Stuff.
      */
     
-    private Map<JsonEntityBean, Type> mergePrincipalsMap(Map<JsonEntityBean, Type> currentMap, List<JsonEntityBean> selections) {
+    private void updateTypes(Assignment a, ParameterMap requestParameters) {
+
+        JsonEntityBean principal = a.getPrincipal();
+        String val = requestParameters.get(principal.getId() + "_type");
+        if (val != null) {
+            Assignment.Type type = Assignment.Type.valueOf(val);
+            a.setType(type);
+        } else {
+            if (log.isWarnEnabled()) {
+                log.warn("No type parameter specified for the following principal:  name=" 
+                                + principal.getName() + ", Id=" + principal.getId());
+            }
+        }
+        
+        for (Assignment child : a.getChildren()) {
+            updateTypes(child, requestParameters);
+        }
+
+    }
+
+    private List<Assignment> updateAssignments(List<Assignment> currentList, List<JsonEntityBean> selections) {
 
         // Assertions.
-        if (currentMap == null) {
-            String msg = "Argument 'currentMap' cannot be null";
+        if (currentList == null) {
+            String msg = "Argument 'currentList' cannot be null";
             throw new IllegalArgumentException(msg);
         }
         if (selections == null) {
@@ -252,16 +248,163 @@ public class PermissionDefinitionForm implements Serializable {
             throw new IllegalArgumentException(msg);
         }
         
-        final Map<JsonEntityBean, Type> rslt = new HashMap<JsonEntityBean, Type>();
+        final List<Assignment> rslt = new ArrayList<Assignment>();
         
-        for (JsonEntityBean principal : selections) {
-            Type y = currentMap.containsKey(principal) 
-                                    ? currentMap.get(principal) 
-                                    : Type.GRANT;  // assume GRANT until told otherwise...
-            rslt.put(principal, y);
+        final Map<JsonEntityBean,Assignment.Type> grantOrDenyMap = new HashMap<JsonEntityBean,Assignment.Type>();
+        for (Assignment root : currentList) {
+            aggregatePrincipalMap(root, grantOrDenyMap);
+        }
+        
+        // We always rebuild assignments from scratch;  we only take 
+        // Assignment.Type from the existing data structure.
+        for (JsonEntityBean bean : selections) {
+            
+            // default Type for newly selected principal is GRANT
+            // But that will be overridden by an existing, non-INHERIT entry
+            Assignment.Type y = grantOrDenyMap.containsKey(bean) 
+                                        ? grantOrDenyMap.get(bean) 
+                                        : Assignment.Type.GRANT;
+            
+            Assignment a = new Assignment(bean, y);
+            placeInHierarchy(a, rslt, grantOrDenyMap);
+
         }
         
         return rslt;
+
+    }
+    
+    private void aggregatePrincipalMap(Assignment a, Map<JsonEntityBean,Assignment.Type> grantOrDenyMap) {
+        
+        // Assertions.
+        if (a == null) {
+            String msg = "Argument 'a' [Assignment] cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        if (grantOrDenyMap == null) {
+            String msg = "Argument 'grantOrDenyMap' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        if (!Assignment.Type.INHERIT.equals(a.getType())) {
+            grantOrDenyMap.put(a.getPrincipal(), a.getType());
+        }
+        
+        for (Assignment child : a.getChildren()) {
+            aggregatePrincipalMap(child, grantOrDenyMap);
+        }
+
+    }
+    
+    private void aggregatePermissions(Assignment a, List<IPermission> list, IPermissionStore store) {
+
+        // Assertions.
+        if (a == null) {
+            String msg = "Argument 'a' [Assignment] cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        if (list == null) {
+            String msg = "Argument 'list' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        if (store == null) {
+            String msg = "Argument 'store' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+
+        // We don't persist INHERIT records (it's the default)
+        Assignment.Type type = a.getType();
+        if (!Assignment.Type.INHERIT.equals(type)) {
+            JsonEntityBean principal = a.getPrincipal();
+            IPermission permission = store.newInstance(owner);
+            permission.setPrincipal(PrincipalType.byEntityTypeName(principal.getEntityType()).toInt() 
+                                        + RDBMPermissionImpl.PRINCIPAL_SEPARATOR 
+                                        + principal.getId());
+            permission.setType(type.name());
+            permission.setActivity(activity);
+            permission.setTarget(target.getId());
+            list.add(permission);
+        }
+        
+        for (Assignment child : a.getChildren()) {
+            aggregatePermissions(child, list, store);
+        }
+
+    }
+
+    private void placeInHierarchy(Assignment a, List<Assignment> hierarchy, Map<JsonEntityBean,Assignment.Type> grantOrDenyMap) {
+
+        // Assertions.
+        if (a == null) {
+            String msg = "Argument 'a' [Assignment] cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        if (hierarchy == null) {
+            String msg = "Argument 'hierarchy' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+
+        // Don't add another node if the specified Assignment 
+        // is already in the hierarchy somewhere...
+        for (Assignment root : hierarchy) {
+            Assignment duplicate = root.findDecendentOrSelfIfExists(a.getPrincipal());
+            if (duplicate != null) {
+                // We don't add, but *do* override INHERIT with anything else in 
+                // this circumstance;  we don't add nodes to the selection 
+                // basket for the sake of setting INHERIT permissions. 
+                if (duplicate.getType().equals(Assignment.Type.INHERIT)) {
+                    duplicate.setType(a.getType());
+                }
+                return;
+            }
+        }
+        
+        // To proceed, we need to know about the containing 
+        // groups (if any) for this principal...
+        IGroupMember member = null;
+        EntityEnum entityEnum = EntityEnum.getEntityEnum(a.getPrincipal().getEntityType());
+        if (entityEnum.isGroup()) {
+            member = GroupService.findGroup(a.getPrincipal().getId());
+        } else {
+            member = GroupService.getGroupMember(a.getPrincipal().getId(), entityEnum.getClazz());
+        }
+
+        Iterator<?> it = GroupService.getCompositeGroupService().findContainingGroups(member);
+        if (it.hasNext()) {
+            // This member must be nested within its parent(s)...
+            while (it.hasNext()) {
+                IEntityGroup group = (IEntityGroup) it.next();
+
+                String beanType = EntityEnum.getEntityEnum(group.getEntityType(), true).toString();
+
+                JsonEntityBean bean = new JsonEntityBean(group, beanType);
+                Assignment parent = null;
+                for (Assignment root : hierarchy) {
+                    parent = root.findDecendentOrSelfIfExists(bean);
+                    if (parent != null) {
+                        // We found one...
+                        parent.addChild(a);
+                        break;
+                    }
+                }
+                if (parent == null) {
+                    // We weren't able to integrate this node into the existing 
+                    // hierarchy;  we have to dig deeper, until we either (1) 
+                    // find a match, or (2) reach a root;  type is INHERIT, 
+                    // unless (by chance) there's something specified in an 
+                    // entry on grantOrDenyMap.
+                    Assignment.Type assignmentType = grantOrDenyMap.containsKey(bean) 
+                                                        ? grantOrDenyMap.get(bean) 
+                                                        : Assignment.Type.INHERIT;  // default...
+                    parent = new Assignment(bean, assignmentType);
+                    parent.addChild(a);
+                    placeInHierarchy(parent, hierarchy, grantOrDenyMap);
+                }
+            }
+        } else {
+            // This member is a root...
+            hierarchy.add(a);
+        }
 
     }
 

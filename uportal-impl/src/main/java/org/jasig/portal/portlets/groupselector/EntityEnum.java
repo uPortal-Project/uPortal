@@ -66,6 +66,17 @@ public enum EntityEnum {
 		return null;
 	}
 	
+	public static EntityEnum getEntityEnum(Class<?> entityTypeClazz, boolean isGroup) {
+	    EntityEnum rslt = null;
+	    for (EntityEnum val : EntityEnum.values()) {
+	        if (val.getClazz().equals(entityTypeClazz) && val.isGroup() == isGroup) {
+	            rslt = val;
+	            break;
+	        }
+	    }
+	    return rslt;
+	}
+	
 	/**
 	 * Get the Class associated with this entity type.
 	 * 
