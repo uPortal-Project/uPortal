@@ -29,12 +29,12 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.apache.pluto.OptionalContainerServices;
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.descriptors.portlet.PortletDD;
-import org.apache.pluto.descriptors.portlet.PortletPreferenceDD;
-import org.apache.pluto.descriptors.portlet.PortletPreferencesDD;
-import org.apache.pluto.spi.optional.PortletRegistryService;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.PortletPreference;
+import org.apache.pluto.container.driver.PortalDriverContainerServices;
+import org.apache.pluto.container.driver.PortletRegistryService;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.apache.pluto.container.om.portlet.Preferences;
 import org.jasig.portal.ChannelRegistryManager;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
@@ -57,7 +57,7 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.jasig.portal.spring.locator.OptionalContainerServicesLocator;
+import org.jasig.portal.spring.locator.PortalDriverContainerServicesLocator;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XSLT;
@@ -1378,22 +1378,22 @@ public class CChannelManager extends BaseChannel {
             final String portletName = portletNameParam.getValue();
             
             if (portletApplicationId != null && portletName != null) {
-                final OptionalContainerServices optionalContainerServices = OptionalContainerServicesLocator.getOptionalContainerServices();
-                final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
+                final PortalDriverContainerServices portalDriverContainerServices = PortalDriverContainerServicesLocator.getPortalDriverContainerServices();
+                final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
                 try {
-                    final PortletDD portletDescriptor = portletRegistryService.getPortletDescriptor(portletApplicationId, portletName);
+                    final PortletDefinition portletDescriptor = portletRegistryService.getPortlet(portletApplicationId, portletName);
                     if (portletDescriptor == null) {
                         log.warn("Could not load PortletDD for portletApplicationId-'" + portletApplicationId + "', portletName='" + portletName + "'. No portletXmlPreferences will be displayed in CChannelManager UI");
                     }
                     else {
                         final Map<String, Preference> portletXmlPreferences = new LinkedHashMap<String, Preference>();
-                        final PortletPreferencesDD portletPreferences = portletDescriptor.getPortletPreferences();
-                        for (final PortletPreferenceDD portletPreference : (List<PortletPreferenceDD>)portletPreferences.getPortletPreferences()) {
+                        final Preferences portletPreferences = portletDescriptor.getPortletPreferences();
+                        for (final PortletPreference portletPreference : (List<PortletPreference>)portletPreferences.getPortletPreferences()) {
                             final String name = portletPreference.getName();
                             final boolean readOnly = portletPreference.isReadOnly();
-                            final List<String> values = portletPreference.getValues();
+                            final String[] values = portletPreference.getValues();
                             
-                            final Preference preference = new Preference(name, values != null ? new ArrayList<String>(values): null, readOnly);
+                            final Preference preference = new Preference(name, values != null ? Arrays.asList(values): null, readOnly);
                             portletXmlPreferences.put(preference.getName(), preference);
                         }
                         
