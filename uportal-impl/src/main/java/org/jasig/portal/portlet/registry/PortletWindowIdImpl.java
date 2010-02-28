@@ -22,7 +22,7 @@ package org.jasig.portal.portlet.registry;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.pluto.PortletWindowID;
+import org.apache.pluto.container.PortletWindowID;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
