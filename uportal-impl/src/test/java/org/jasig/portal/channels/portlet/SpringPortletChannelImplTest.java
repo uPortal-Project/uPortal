@@ -20,6 +20,7 @@
 package org.jasig.portal.channels.portlet;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.output.NullOutputStream;
-import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.apache.pluto.container.om.portlet.impl.SecurityRoleRefType;
 import org.easymock.EasyMock;
 import org.easymock.internal.matchers.InstanceOf;
 import org.jasig.portal.ChannelCacheKey;
@@ -162,8 +164,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
         
         
-        final PortletDD portletDD = new PortletDD();
-        portletDD.setSecurityRoleRefs(Collections.EMPTY_LIST);
+        final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
+        EasyMock.expect(portletDD.getSecurityRoleRefs()).andReturn(Collections.EMPTY_LIST);
+        EasyMock.replay(portletDD);
         
         
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
@@ -335,8 +338,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
-        final PortletDD portletDD = new PortletDD();
-        
+        final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
+        EasyMock.expect(portletDD.getExpirationCache()).andReturn(Integer.MIN_VALUE);
+        EasyMock.replay(portletDD);
         
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
         EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDD);
@@ -409,8 +413,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
-        final PortletDD portletDD = new PortletDD();
-        portletDD.setExpirationCache(0);
+        final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
+        EasyMock.expect(portletDD.getExpirationCache()).andReturn(0);
+        EasyMock.replay(portletDD);
         
         
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
@@ -484,8 +489,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
-        final PortletDD portletDD = new PortletDD();
-        portletDD.setExpirationCache(-1);
+        final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
+        EasyMock.expect(portletDD.getExpirationCache()).andReturn(-1);
+        EasyMock.replay(portletDD);
         
         
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
@@ -558,8 +564,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
-        final PortletDD portletDD = new PortletDD();
-        portletDD.setExpirationCache(10);
+        final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
+        EasyMock.expect(portletDD.getExpirationCache()).andReturn(10);
+        EasyMock.replay(portletDD);
         
         
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
@@ -633,8 +640,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
-        final PortletDD portletDD = new PortletDD();
-        portletDD.setExpirationCache(10);
+        final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
+        EasyMock.expect(portletDD.getExpirationCache()).andReturn(10);
+        EasyMock.replay(portletDD);
         
         
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
@@ -710,8 +718,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
-        final PortletDD portletDD = new PortletDD();
-        portletDD.setExpirationCache(10);
+        final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
+        EasyMock.expect(portletDD.getExpirationCache()).andReturn(10);
+        EasyMock.replay(portletDD);
         
         
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
@@ -787,8 +796,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         EasyMock.expect(portletRequestParameterManager.getTargetedPortletWindowId(pcsRequest)).andReturn(null);
         
         
-        final PortletDD portletDD = new PortletDD();
-        portletDD.setExpirationCache(10);
+        final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
+        EasyMock.expect(portletDD.getExpirationCache()).andReturn(10);
+        EasyMock.replay(portletDD);
         
         
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
@@ -829,8 +839,9 @@ public class SpringPortletChannelImplTest extends TestCase {
         final ChannelRuntimeData channelRuntimeData = new ChannelRuntimeData();
         
         
-        final PortletDD portletDD = new PortletDD();
-        portletDD.setSecurityRoleRefs(Collections.EMPTY_LIST);
+        final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
+        EasyMock.expect(portletDD.getSecurityRoleRefs()).andReturn(Collections.EMPTY_LIST);
+        EasyMock.replay(portletDD);
         
         
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
