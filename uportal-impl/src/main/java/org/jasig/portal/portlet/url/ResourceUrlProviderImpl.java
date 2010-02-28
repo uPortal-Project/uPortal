@@ -19,7 +19,7 @@
 
 package org.jasig.portal.portlet.url;
 
-import org.apache.pluto.spi.ResourceURLProvider;
+import org.apache.pluto.container.ResourceURLProvider;
 
 /**
  * Simple handling for resource URL generation
@@ -33,22 +33,27 @@ public class ResourceUrlProviderImpl implements ResourceURLProvider {
     public ResourceUrlProviderImpl() {
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.ResourceURLProvider#setAbsoluteURL(java.lang.String)
-     */
+   /*
+    * (non-Javadoc)
+    * @see org.apache.pluto.container.ResourceURLProvider#setAbsoluteURL(java.lang.String)
+    */
+    @Override
     public void setAbsoluteURL(String path) {
         this.path = path;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.ResourceURLProvider#setFullPath(java.lang.String)
-     */
+   /*
+    * (non-Javadoc)
+    * @see org.apache.pluto.container.ResourceURLProvider#setFullPath(java.lang.String)
+    */
+    @Override
     public void setFullPath(String path) {
         this.path = path;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.ResourceURLProvider#toString()
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
