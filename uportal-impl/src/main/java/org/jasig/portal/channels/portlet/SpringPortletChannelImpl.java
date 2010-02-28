@@ -31,8 +31,9 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.apache.pluto.container.PortletContainer;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.ChannelStaticData;
@@ -292,9 +293,9 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             return false;
         }
         
-        final PortletDD portletDescriptor;
+        final PortletDefinition portletDescriptor;
         try {
-            portletDescriptor = this.getPortletDD(httpServletRequest, portletWindowId);
+            portletDescriptor = this.getPortletDefinition(httpServletRequest, portletWindowId);
         }
         catch (PortletContainerException pce) {
             this.logger.warn("Could not retrieve PortletDD for portlet window '" + portletWindowId + "' to determine caching configuration. Marking content cache invalid and continuing.", pce);
@@ -307,8 +308,10 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         }
         
         //If the descriptor value is unset return immediately
+        // PortletDD in pluto 1.1.7 had a public static final field name EXPIRATION_CACHE_UNSET
+        // no longer exists; the value in pluto.1.1.7 for this field is Integer.MIN_VALUE
         final int descriptorExpirationCache = portletDescriptor.getExpirationCache();
-        if (descriptorExpirationCache == PortletDD.EXPIRATION_CACHE_UNSET) {
+        if (descriptorExpirationCache == Integer.MIN_VALUE) {
             return false;
         }
         
@@ -342,7 +345,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         return lastRenderTime + (expirationCache * 1000) >= now;
     }
 
-    protected PortletDD getPortletDD(final HttpServletRequest httpServletRequest, final IPortletWindowId portletWindowId) throws PortletContainerException {
+    protected PortletDefinition getPortletDefinition(final HttpServletRequest httpServletRequest, final IPortletWindowId portletWindowId) throws PortletContainerException {
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindowId);
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
         return this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
@@ -509,13 +512,16 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
     
     /**
      * Build a 'nice' summary string of relavent ChannelStaticData information
+     * TODO: contextPath now only available on PortletRequest, not sure where to get portletName
      */
     protected String getChannelLogInfo(ChannelStaticData channelStaticData, IPortletWindow portletWindow) {
         final IPerson person = channelStaticData.getPerson();
         return  "[channelPublishId=" + channelStaticData.getChannelPublishId() + ", " +
                 "channelSubscribeId=" + channelStaticData.getChannelSubscribeId() + ", " +
+                /*
                 "portletApplicationId=" + portletWindow.getContextPath() + ", " +
                 "portletName=" + portletWindow.getPortletName() + ", " +
+                */
                 "user=" + person.getAttribute(IPerson.USERNAME) + "]";
     }
 }
