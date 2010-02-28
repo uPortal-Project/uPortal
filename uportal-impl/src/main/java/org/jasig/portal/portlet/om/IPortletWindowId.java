@@ -21,7 +21,7 @@ package org.jasig.portal.portlet.om;
 
 import java.io.Serializable;
 
-import org.apache.pluto.PortletWindowID;
+import org.apache.pluto.container.PortletWindowID;
 
 /**
  * uPortal extensions to the Pluto {@link PortletWindowID} interface.

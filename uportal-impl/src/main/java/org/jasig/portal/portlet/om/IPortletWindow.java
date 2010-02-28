@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
-import org.apache.pluto.PortletWindow;
+import org.apache.pluto.container.PortletWindow;
 
 /**
  * uPortal extensions to the Pluto {@link PortletWindow} interface. A portlet window
