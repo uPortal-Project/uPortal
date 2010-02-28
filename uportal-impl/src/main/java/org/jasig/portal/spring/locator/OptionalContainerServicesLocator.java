@@ -21,7 +21,7 @@ package org.jasig.portal.spring.locator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.OptionalContainerServices;
+import org.apache.pluto.container.driver.OptionalContainerServices;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.springframework.context.ApplicationContext;
 
