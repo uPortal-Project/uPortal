@@ -35,7 +35,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.pluto.PortletWindowID;
+import org.apache.pluto.container.PortletWindowID;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -55,6 +56,7 @@ public class MockPortletWindow implements IPortletWindow {
     private String contextPath;
     private String portletName;
     private IPortletWindowId delegationParent;
+    private PortletDefinition portletDefinition;
     
     private Map<String, List<String>> requestParameters = new HashMap<String, List<String>>();
     private transient PortletMode portletMode = PortletMode.VIEW;
@@ -69,6 +71,17 @@ public class MockPortletWindow implements IPortletWindow {
         this.delegationParent = null;
     }
     
+    /**
+     * Creates a new PortletWindow with the default settings
+     */
+    public MockPortletWindow(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, String contextPath, String portletName, IPortletWindowId delegateParent, PortletDefinition portletDefinition) {
+        this.portletWindowId = portletWindowId;
+        this.portletEntityId = portletEntityId;
+        this.contextPath = contextPath;
+        this.portletName = portletName;
+        this.delegationParent = delegateParent;
+        this.portletDefinition = portletDefinition;
+    }
     /**
      * Creates a new PortletWindow with the default settings
      */
@@ -93,8 +106,8 @@ public class MockPortletWindow implements IPortletWindow {
     public MockPortletWindow(IPortletWindowId portletWindowId, IPortletWindow portletWindow) {
         this.portletWindowId = portletWindowId;
         this.portletEntityId = portletWindow.getPortletEntityId();
-        this.contextPath = portletWindow.getContextPath();
-        this.portletName = portletWindow.getPortletName();
+        //this.contextPath = portletWindow.getContextPath();
+        //this.portletName = portletWindow.getPortletName();
         this.portletMode = portletWindow.getPortletMode();
         this.windowState = portletWindow.getWindowState();
     }
@@ -290,7 +303,7 @@ public class MockPortletWindow implements IPortletWindow {
         if (!(object instanceof IPortletWindow)) {
             return false;
         }
-        IPortletWindow rhs = (IPortletWindow) object;
+        MockPortletWindow rhs = (MockPortletWindow) object;
         return new EqualsBuilder()
             .append(this.portletWindowId, rhs.getId())
             .append(this.contextPath, rhs.getContextPath())
@@ -336,4 +349,13 @@ public class MockPortletWindow implements IPortletWindow {
             .append("delegationParent", this.delegationParent)
             .toString();
     }
+
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletWindow#getPortletDefinition()
+     */
+	@Override
+	public PortletDefinition getPortletDefinition() {
+		return this.portletDefinition;
+	}
 }
