@@ -25,7 +25,7 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletSession;
 
-import org.apache.pluto.spi.optional.AdministrativeRequestListener;
+import org.apache.pluto.container.driver.AdministrativeRequestListener;
 
 /**
  * Provides access to actions involving the PortletSession. Refer to {@link SessionAction} for supported
@@ -70,7 +70,6 @@ public class PortletSessionAdministrativeRequestListener implements Administrati
     /**
      * @see org.apache.pluto.spi.optional.AdministrativeRequestListener#administer(javax.portlet.PortletRequest, javax.portlet.PortletResponse)
      */
-    @SuppressWarnings("unchecked")
     public void administer(PortletRequest request, PortletResponse response) {
         final SessionAction action = this.getAction(request);
         final Object[] arguments = this.getArguments(request);
