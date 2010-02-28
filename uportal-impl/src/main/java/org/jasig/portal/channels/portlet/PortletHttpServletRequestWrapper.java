@@ -34,7 +34,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.pluto.descriptors.common.SecurityRoleRefDD;
+import org.apache.pluto.container.om.portlet.SecurityRoleRef;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -59,9 +59,9 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
     private final Map<String, Object> attributes = new HashMap<String, Object>();
     private final Map<String, String[]> parameters;
     private final IPerson person;
-    private final List<SecurityRoleRefDD> securityRoleRefs;
+    private final List<? extends SecurityRoleRef> securityRoleRefs;
     
-    public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest, Map<String, List<String>> parameters, IPerson person, List<SecurityRoleRefDD> securityRoleRefs) {
+    public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest, Map<String, List<String>> parameters, IPerson person, List<? extends SecurityRoleRef> securityRoleRefs) {
         super(httpServletRequest);
         Validate.notNull(parameters, "parameters can not be null");
         Validate.notNull(person, "person can not be null");
@@ -179,7 +179,7 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
         final IGroupMember personGroupMember = GroupService.getGroupMember(personEntityId);
 
         //Find the role link for the role
-        final SecurityRoleRefDD securityRoleRef = getSecurityRoleRef(role);
+        final SecurityRoleRef securityRoleRef = getSecurityRoleRef(role);
         if (securityRoleRef == null) {
             return false;
         }
@@ -198,8 +198,8 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
     /**
      * Gets a SecurityRoleRefDD for the specified role name;
      */
-    private SecurityRoleRefDD getSecurityRoleRef(String role) {
-        for (final SecurityRoleRefDD securityRoleRef : this.securityRoleRefs) {
+    private SecurityRoleRef getSecurityRoleRef(String role) {
+        for (final SecurityRoleRef securityRoleRef : this.securityRoleRefs) {
             final String roleRefName = securityRoleRef.getRoleName();
             if (role.equals(roleRefName)) {
                 return securityRoleRef;
