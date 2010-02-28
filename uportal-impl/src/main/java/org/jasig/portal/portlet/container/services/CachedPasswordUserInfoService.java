@@ -30,13 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.PortletWindow;
-import org.apache.pluto.descriptors.portlet.PortletAppDD;
-import org.apache.pluto.descriptors.portlet.UserAttributeDD;
-import org.apache.pluto.internal.InternalPortletRequest;
-import org.apache.pluto.internal.InternalPortletWindow;
-import org.apache.pluto.spi.optional.UserInfoService;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.PortletWindow;
+import org.apache.pluto.container.UserInfoService;
+import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
+import org.apache.pluto.container.om.portlet.UserAttribute;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -170,27 +168,12 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 	public void setPasswordKey(String passwordKey) {
 		this.passwordKey = passwordKey;
 	}
-	
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest)
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.UserInfoService#getUserInfo(javax.portlet.PortletRequest, org.apache.pluto.container.PortletWindow)
      */
-    @Deprecated
-	public Map getUserInfo(PortletRequest request)
-			throws PortletContainerException {
-        if (!(request instanceof InternalPortletRequest)) {
-            throw new IllegalArgumentException("The CasTicketUserInfoServices requires the PortletRequest parameter to implement the '" + InternalPortletRequest.class.getName() + "' interface.");
-        }
-        final InternalPortletRequest internalRequest = (InternalPortletRequest)request;
-        final InternalPortletWindow internalPortletWindow = internalRequest.getInternalPortletWindow();
-
-        return this.getUserInfo(request, internalPortletWindow);
-	}
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest, org.apache.pluto.PortletWindow)
-     */
-	public Map getUserInfo(PortletRequest request, PortletWindow portletWindow)
+	public Map<String, String> getUserInfo(PortletRequest request, PortletWindow portletWindow)
 			throws PortletContainerException {
 		
 		Map<String, String> userInfo = new HashMap<String, String>();
@@ -226,7 +209,6 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 	 *         otherwise
 	 * @throws PortletContainerException if expeced attributes cannot be determined
 	 */
-    @SuppressWarnings("unchecked")
 	public boolean isPasswordRequested(PortletRequest request, PortletWindow plutoPortletWindow) throws PortletContainerException {
 
     	// get the list of requested user attributes
@@ -234,11 +216,11 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
-        final PortletAppDD portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
+        final PortletApplicationDefinition portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
         
         // check to see if the proxy ticket key is one of the requested user attributes
-        List<UserAttributeDD> requestedUserAttributes = portletApplicationDescriptor.getUserAttributes();
-        for (final UserAttributeDD userAttributeDD : requestedUserAttributes) {
+        List<? extends UserAttribute> requestedUserAttributes = portletApplicationDescriptor.getUserAttributes();
+        for (final UserAttribute userAttributeDD : requestedUserAttributes) {
             final String attributeName = userAttributeDD.getName();
             if (attributeName.equals(this.passwordKey))
             	return true;
@@ -257,7 +239,8 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
      * @param baseContext The security context to start looking for a password from.
      * @return the users password
      */
-    private String getPassword(ISecurityContext baseContext) {
+    @SuppressWarnings("unchecked")
+	private String getPassword(ISecurityContext baseContext) {
         String password = null;
         IOpaqueCredentials oc = baseContext.getOpaqueCredentials();
 
