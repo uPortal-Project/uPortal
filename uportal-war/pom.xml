@@ -54,7 +54,7 @@
         
         <!-- Needed for taglib reference for JSPC -->
         <dependency>
-            <groupId>org.apache.pluto</groupId>
+            <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-taglib</artifactId>
             <scope>provided</scope>
         </dependency>

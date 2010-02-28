@@ -364,27 +364,39 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.pluto</groupId>
+		<dependency>
+            <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-container</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto-descriptor-api</artifactId>
+		<dependency>
+            <groupId>org.apache.portals.pluto</groupId>
+            <artifactId>pluto-container-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto-descriptor-impl</artifactId>
+            <groupId>org.apache.portals.pluto</groupId>
+            <artifactId>pluto-container-driver-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.apache.pluto</groupId>
+            <groupId>org.apache.portals.pluto</groupId>
+            <artifactId>pluto-portal-driver</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.portals.pluto</groupId>
+            <artifactId>pluto-portal-driver-impl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-taglib</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.portals.pluto</groupId>
+            <artifactId>pluto-util</artifactId>
             <scope>provided</scope>
         </dependency>
 

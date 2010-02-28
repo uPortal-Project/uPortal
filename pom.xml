@@ -173,8 +173,8 @@
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
         <person-directory.version>1.5.0-RC6</person-directory.version>
-        <pluto.version>1.1.7</pluto.version>
-        <portlet-api.version>1.0</portlet-api.version>
+        <pluto.version>2.0.0</pluto.version>
+        <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.6.1</quartz.version>
         <resource-server.version>1.0.6</resource-server.version>
         <rome.version>0.9</rome.version>
@@ -432,43 +432,44 @@
                 <artifactId>ant-launcher</artifactId>
                 <version>${ant.version}</version>
             </dependency>
+            <!-- BEGIN pluto -->
             <dependency>
-                <groupId>org.apache.pluto</groupId>
+                <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>pluto-ant-tasks</artifactId>
                 <version>${pluto.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.pluto</groupId>
+             <dependency>
+                <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>pluto-container</artifactId>
                 <version>${pluto.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.pluto</groupId>
-                <artifactId>pluto-descriptor-api</artifactId>
+                <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>pluto-container-api</artifactId>
                 <version>${pluto.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.pluto</groupId>
-                <artifactId>pluto-descriptor-impl</artifactId>
+                <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>pluto-container-driver-api</artifactId>
                 <version>${pluto.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xmlParserAPIs</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>cglib</groupId>
-                        <artifactId>cglib-full</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.apache.pluto</groupId>
+                <groupId>org.apache.portals.pluto</groupId>
+                 <artifactId>pluto-portal-driver</artifactId>
+                <version>${pluto.version}</version>
+            </dependency>
+             <dependency>
+                <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>pluto-portal-driver-impl</artifactId>
+                <version>${pluto.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>pluto-taglib</artifactId>
                 <version>${pluto.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.pluto</groupId>
+                <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>pluto-util</artifactId>
                 <version>${pluto.version}</version>
             </dependency>

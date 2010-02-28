@@ -102,34 +102,30 @@
         </dependency>
         
         <dependency>
-            <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto-container</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        
+               <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>pluto-container</artifactId>
+                <version>${pluto.version}</version>
+            </dependency>
         <dependency>
-            <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto-descriptor-api</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto-descriptor-impl</artifactId>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.pluto</groupId>
-            <artifactId>pluto-taglib</artifactId>
-            <scope>compile</scope>
-        </dependency>
+               <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>pluto-container-api</artifactId>
+                <version>${pluto.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>pluto-container-driver-api</artifactId>
+                <version>${pluto.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>pluto-taglib</artifactId>
+                <version>${pluto.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>pluto-util</artifactId>
+                <version>${pluto.version}</version>
+            </dependency>
         
         <dependency>
             <groupId>org.jasig.service</groupId>
