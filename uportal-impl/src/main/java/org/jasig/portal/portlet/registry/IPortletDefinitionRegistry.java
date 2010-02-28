@@ -19,9 +19,10 @@
 
 package org.jasig.portal.portlet.registry;
 
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.descriptors.portlet.PortletAppDD;
-import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.utils.Tuple;
@@ -96,7 +97,7 @@ public interface IPortletDefinitionRegistry {
      * @return The parent portlet descriptor for the definition, null if no definition exists for the id. 
      * @throws IllegalArgumentException if portletDefinitionId is null
      */
-    public PortletDD getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException;
+    public PortletDefinition getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException;
 
     /**
      * Gets the parent portlet application descriptor for the entity specified by the definition id.
@@ -105,7 +106,7 @@ public interface IPortletDefinitionRegistry {
      * @return The parent portlet descriptor for the application definition, null if no definition exists for the id. 
      * @throws IllegalArgumentException if portletDefinitionId is null
      */
-    public PortletAppDD getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException;
+    public PortletApplicationDefinition getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException;
     
     /**
      * Get the portletApplicationId and portletName for the specified portlet definition. The portletApplicationId

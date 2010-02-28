@@ -21,7 +21,7 @@ package org.jasig.portal.portlet.registry;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.PortletWindow;
+import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
