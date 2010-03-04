@@ -252,7 +252,9 @@
 
 <!--=====START: CHANNEL TEMPLATE RULE=====-->
     <xsl:template match="channel">
-        <xsl:copy-of select="."/>
+        <xsl:if test="not(parameter[@name='hideFromMobile']/@value = 'true')">
+            <xsl:copy-of select="."/>
+        </xsl:if>
     </xsl:template>
 <!--=====END: CHANNEL TEMPLATE RULE=====-->
 
