@@ -21,10 +21,11 @@ package org.jasig.portal.portlet.container;
 
 import javax.servlet.ServletContext;
 
-import org.apache.pluto.OptionalContainerServices;
-import org.apache.pluto.PortletContainer;
-import org.apache.pluto.RequiredContainerServices;
-import org.apache.pluto.core.PortletContainerImpl;
+import org.apache.pluto.container.ContainerServices;
+import org.apache.pluto.container.PortletContainer;
+import org.apache.pluto.container.driver.OptionalContainerServices;
+import org.apache.pluto.container.driver.RequiredContainerServices;
+import org.apache.pluto.container.impl.PortletContainerImpl;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,13 +44,13 @@ import org.springframework.web.context.ServletContextAware;
  */
 @Service("portletContainer")
 public class PortletContainerFactoryBean extends AbstractFactoryBean implements ServletContextAware, InitializingBean, DisposableBean {
-    private PortletContainerImpl portletContainer;
     
+	private org.apache.pluto.container.impl.PortletContainerImpl portletContainer;
     private ServletContext servletContext;
     private RequiredContainerServices requiredContainerServices;
     private OptionalContainerServices optionalContainerServices;
     private String portletContainerName = null;
-    
+    private ContainerServices containerServices;
 
     /**
      * @return the portletContainerName
@@ -65,34 +66,63 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean implements 
     }
     
     /**
-     * @return the requiredContainerServices
+	 * @return the portletContainer
+	 */
+	public org.apache.pluto.container.impl.PortletContainerImpl getPortletContainer() {
+		return portletContainer;
+	}
+	/**
+	 * @param portletContainer the portletContainer to set
+	 */
+	@Autowired(required=true)
+	public void setPortletContainer(
+			org.apache.pluto.container.impl.PortletContainerImpl portletContainer) {
+		this.portletContainer = portletContainer;
+	}
+	/**
+	 * @return the requiredContainerServices
+	 */
+	public RequiredContainerServices getRequiredContainerServices() {
+		return requiredContainerServices;
+	}
+	/**
+	 * @param requiredContainerServices the requiredContainerServices to set
+	 */
+	@Autowired(required=true)
+	public void setRequiredContainerServices(
+			RequiredContainerServices requiredContainerServices) {
+		this.requiredContainerServices = requiredContainerServices;
+	}
+	/**
+	 * @return the optionalContainerServices
+	 */
+	public OptionalContainerServices getOptionalContainerServices() {
+		return optionalContainerServices;
+	}
+	/**
+	 * @param optionalContainerServices the optionalContainerServices to set
+	 */
+	@Autowired(required=true)
+	public void setOptionalContainerServices(
+			OptionalContainerServices optionalContainerServices) {
+		this.optionalContainerServices = optionalContainerServices;
+	}
+	/**
+     * 
+     * @return
      */
-    public RequiredContainerServices getRequiredContainerServices() {
-        return this.requiredContainerServices;
-    }
+    public ContainerServices getContainerServices() {
+		return containerServices;
+	}
     /**
-     * @param requiredContainerServices the requiredContainerServices to set
+     * 
+     * @param containerServices
      */
     @Autowired(required=true)
-    public void setRequiredContainerServices(RequiredContainerServices requiredContainerServices) {
-        this.requiredContainerServices = requiredContainerServices;
-    }
-
-    /**
-     * @return the optionalContainerServices
-     */
-    public OptionalContainerServices getOptionalContainerServices() {
-        return this.optionalContainerServices;
-    }
-    /**
-     * @param optionalContainerServices the optionalContainerServices to set
-     */
-    @Autowired(required=true)
-    public void setOptionalContainerServices(OptionalContainerServices optionalContainerServices) {
-        this.optionalContainerServices = optionalContainerServices;
-    }
-
-    /**
+	public void setContainerServices(ContainerServices containerServices) {
+		this.containerServices = containerServices;
+	}
+	/**
      * @return the servletContext
      */
     public ServletContext getServletContext() {
@@ -111,9 +141,9 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean implements 
     @Override
     protected Object createInstance() throws Exception {
         final String containerName = this.getContainerName();
+        this.portletContainer = new PortletContainerImpl(containerName, this.containerServices);
         
-        this.portletContainer = new PortletContainerImpl(containerName, this.requiredContainerServices, this.optionalContainerServices);
-        this.portletContainer.init(this.servletContext);
+        this.portletContainer.init();
         
         return this.portletContainer;
     }

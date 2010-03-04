@@ -31,9 +31,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.PortletWindow;
-import org.apache.pluto.PortletWindowID;
-import org.apache.pluto.internal.InternalPortletWindow;
+import org.apache.pluto.container.PortletWindow;
+import org.apache.pluto.container.PortletWindowID;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
@@ -42,6 +42,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.Tuple;
@@ -66,6 +67,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IUserInstanceManager userInstanceManager;
+    private IPortalRequestUtils portalRequestUtils;
     
     /**
      * @return the userInstanceManager
@@ -108,19 +110,29 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-    
-    
-    /* (non-Javadoc)
+    /**
+     * 
+     * @return
+     */
+    public IPortalRequestUtils getPortalRequestUtils() {
+		return portalRequestUtils;
+	}
+    /**
+     * 
+     * @param portalRequestUtils
+     */
+    @Autowired(required=true)
+	public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+		this.portalRequestUtils = portalRequestUtils;
+	}
+	/* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#convertPortletWindow(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)
      */
     public IPortletWindow convertPortletWindow(HttpServletRequest request, PortletWindow plutoPortletWindow) {
         Validate.notNull(request, "request can not be null");
         Validate.notNull(plutoPortletWindow, "portletWindow can not be null");
         
-        //If a pluto InternalPortletWindow, unwrap to the original PorteltWindow
-        if (plutoPortletWindow instanceof InternalPortletWindow) {
-            plutoPortletWindow = ((InternalPortletWindow)plutoPortletWindow).getOriginalPortletWindow();
-        }
+        
         
         //Try a direct cast to IPortletWindow
         if (plutoPortletWindow instanceof IPortletWindow) {
@@ -138,7 +150,8 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         }
         
         //Use the converted ID to see if a IPortletWindow exists for it
-        final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
+        HttpServletRequest internalRequest = this.portalRequestUtils.getCurrentPortalRequest();
+        final IPortletWindow portletWindow = this.getPortletWindow(internalRequest, portletWindowId);
         
         //If null no window exists, throw an exception since somehow Pluto has a PortletWindow object that this container doesn't know about
         if (portletWindow == null) {
@@ -377,12 +390,13 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         final String portletApplicationId = portletDescriptorKeys.first;
         final String portletName = portletDescriptorKeys.second;
 
+        final PortletDefinition portletDef = null;
         final PortletWindowImpl portletWindow;
         if (delegateParent == null) {
-            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName);
+            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName, portletDef);
         }
         else {
-            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName, delegateParent);
+            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName, delegateParent, portletDef);
         }
         
         this.initializePortletWindow(request, portletEntityId, portletWindow);

@@ -48,36 +48,36 @@
     </bean>
     
     <bean id="casTicketUserInfoService" class="org.jasig.portal.portlet.container.services.CasTicketUserInfoService" />
-    
-    <bean id="portalAdministrationService" class="org.apache.pluto.core.DefaultPortalAdministrationService">
-        <property name="administrativeRequestListeners">
-            <list>
-                <bean class="org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController">
+    <bean id="portalAdministrationService" class="org.apache.pluto.driver.container.DefaultPortalAdministrationService">
+    	<property name="administrativeRequestListeners">
+    		<list>
+    			<bean class="org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController">
                     <property name="listeners">
                         <map>
                             <entry key="sessionActionListener">
-                                <bean class="org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener" />
+                            	<bean class="org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener" />
                             </entry>
                         </map>
                     </property>
                 </bean>
-            </list>
-        </property>
-        <property name="portletInvocationListeners">
-            <list>
+    		</list>
+    	</property>
+    	<property name="portletInvocationListeners">
+    		 <list>
                 <ref bean="portletSessionExpirationManager" />
             </list>
-        </property>
+    	</property>
     </bean>
     
     <bean id="portletUrlSyntaxProvider" class="org.jasig.portal.portlet.url.PortletUrlSyntaxProviderImpl">
         <property name="useAnchors" value="${org.jasig.portal.ChannelManager.use_anchors}"/>
     </bean>
     <!--  <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager" /> -->
-    
+    <!--  
     <bean id="requestAttributeService" class="org.jasig.portal.portlet.container.services.RequestAttributeServiceImpl">
     	<property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
+    -->
     
     <!--********** Portlet Registries ********** -->
     <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.TransientPortletWindowRegistryImpl" />

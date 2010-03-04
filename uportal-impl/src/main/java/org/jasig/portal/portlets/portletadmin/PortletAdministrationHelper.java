@@ -41,12 +41,13 @@ import javax.servlet.ServletContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.OptionalContainerServices;
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.descriptors.portlet.PortletDD;
-import org.apache.pluto.descriptors.portlet.SupportsDD;
-import org.apache.pluto.internal.impl.PortletContextImpl;
-import org.apache.pluto.spi.optional.PortletRegistryService;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.driver.PortalDriverContainerServices;
+import org.apache.pluto.container.driver.PortletRegistryService;
+import org.apache.pluto.container.impl.PortletContextImpl;
+import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.apache.pluto.container.om.portlet.Supports;
 import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
@@ -102,7 +103,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	
 	private IGroupListHelper groupListHelper;
     private IChannelRegistryStore channelRegistryStore;
-    private OptionalContainerServices optionalContainerServices;
+    private PortalDriverContainerServices portalDriverContainerServices;
     private IChannelPublishingService channelPublishingService; 
     private PortletDelegationLocator portletDelegationLocator;
     private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
@@ -131,9 +132,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		this.channelRegistryStore = channelRegistryStore;
 	}
 	@Autowired(required=true)
-	public void setOptionalContainerServices(
-			OptionalContainerServices optionalContainerServices) {
-		this.optionalContainerServices = optionalContainerServices;
+	public void setPortalDriverContainerServices(
+			PortalDriverContainerServices portalDriverContainerServices) {
+		this.portalDriverContainerServices = portalDriverContainerServices;
 	}
 	@Autowired(required=true)
 	public void setChannelPublishingService(
@@ -460,10 +461,10 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    final String portletAppId = portletDescriptorKeys.first;
 	    final String portletName = portletDescriptorKeys.second;
 	    
-        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
-        final PortletDD portletDescriptor;
+        final PortletRegistryService portletRegistryService = this.portalDriverContainerServices.getPortletRegistryService();
+        final PortletDefinition portletDescriptor;
         try {
-            portletDescriptor = portletRegistryService.getPortletDescriptor(portletAppId, portletName);
+            portletDescriptor = portletRegistryService.getPortlet(portletAppId, portletName);
         }
         catch (PortletContainerException e) {
             this.logger.warn("Failed to load portlet descriptor for appId='" + portletAppId + "', portletName='" + portletName + "'", e);
@@ -475,8 +476,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
         }
         
         //Iterate over supported portlet modes, this ignores the content types for now
-        final List<SupportsDD> supports = portletDescriptor.getSupports();
-        for (final SupportsDD support : supports) {
+        final List<? extends Supports> supports = portletDescriptor.getSupports();
+        for (final Supports support : supports) {
             final List<String> portletModes = support.getPortletModes();
             for (final String portletMode : portletModes) {
                 if (IPortletAdaptor.CONFIG.equals(new PortletMode(portletMode))) {
@@ -543,13 +544,19 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * 
 	 * @return list of portlet context
 	 */
-	@SuppressWarnings("unchecked")
 	public List<PortletContextImpl> getPortletApplications() {
-		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
+		final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
 		List<PortletContextImpl> contexts = new ArrayList<PortletContextImpl>();
-		for (Iterator iter = portletRegistryService.getRegisteredPortletApplications(); iter.hasNext();) {
+		portletRegistryService.getRegisteredPortletApplicationNames();
+		for (Iterator<String> iter = portletRegistryService.getRegisteredPortletApplicationNames(); iter.hasNext();) {
+			String applicationName = iter.next();
+			//PortletApplicationDefinition applicationDefninition = portletRegistryService.getPortletApplication(applicationName);
+			
+			//TODO need way to implement getPortletApplications()
+			/*
 			PortletContextImpl context = (PortletContextImpl) iter.next();
 			contexts.add(context);
+			*/
 		}
 		return contexts;
 	}
@@ -563,7 +570,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * @param form
 	 * @return
 	 */
-	public PortletDD getPortletDescriptor(ChannelDefinitionForm form) {
+	public PortletDefinition getPortletDescriptor(ChannelDefinitionForm form) {
 		final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(form);
 		if (portletDescriptorKeys == null) {
 		    return null;
@@ -572,9 +579,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
         final String portletName = portletDescriptorKeys.second;
 
 		
-		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
+		final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
 		try {
-			PortletDD portletDD = portletRegistryService.getPortletDescriptor(portletAppId, portletName);
+			PortletDefinition portletDD = portletRegistryService.getPortlet(portletAppId, portletName);
 			return portletDD;
 		} catch (PortletContainerException e) {
 			e.printStackTrace();
@@ -591,10 +598,10 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * @param form
 	 */
 	public void prepopulatePortlet(String application, String portlet, ChannelDefinitionForm form) {
-		final PortletRegistryService portletRegistryService = optionalContainerServices.getPortletRegistryService();
-		final PortletDD portletDD;
+		final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
+		final PortletDefinition portletDD;
 		try {
-		    portletDD = portletRegistryService.getPortletDescriptor(application, portlet);
+		    portletDD = portletRegistryService.getPortlet(application, portlet);
         }
 		catch (PortletContainerException e) {
 		    this.logger.warn("Failed to load portlet descriptor for appId='" + application + "', portletName='" + portlet + "'", e);
@@ -605,9 +612,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		form.setName(portletDD.getPortletName());
 		form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID, new Attribute(application));
 		form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME, new Attribute(portletDD.getPortletName()));
-		for (Object obj : portletDD.getSupports()) {
-			SupportsDD supports = (SupportsDD) obj;
-			for (Object mode : supports.getPortletModes()) {
+		for (Supports supports : portletDD.getSupports()) {
+			for (String mode : supports.getPortletModes()) {
 				if ("edit".equals(mode)) {
 					form.setEditable(true);
 				} else if ("help".equals(mode)) {

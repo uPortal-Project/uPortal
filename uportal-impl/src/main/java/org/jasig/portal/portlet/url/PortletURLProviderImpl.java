@@ -19,6 +19,8 @@
 
 package org.jasig.portal.portlet.url;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -33,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.spi.PortletURLProvider;
+import org.apache.pluto.container.PortletURLProvider;
 import org.jasig.portal.portlet.om.IPortletWindow;
 
 /**
@@ -150,4 +152,104 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     public String toString() {
         return this.portletUrlSyntaxProvider.generatePortletUrl(this.httpServletRequest, this.portletWindow, this.portletUrl);
     }
+
+
+	@Override
+	public String getCacheability() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public PortletMode getPortletMode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Map<String, List<String>> getProperties() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Map<String, String[]> getPublicRenderParameters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Map<String, String[]> getRenderParameters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String getResourceID() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public TYPE getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public WindowState getWindowState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public boolean isSecure() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	@Override
+	public void setCacheability(String cacheLevel) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void setResourceID(String resourceID) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void setSecure(boolean secure) throws PortletSecurityException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public String toURL() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void write(Writer out, boolean escapeXML) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+    
+    
 }

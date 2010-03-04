@@ -20,6 +20,7 @@
 package org.jasig.portal.api.portlet;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletWindowId;

@@ -1388,10 +1388,10 @@ public class CChannelManager extends BaseChannel {
                     else {
                         final Map<String, Preference> portletXmlPreferences = new LinkedHashMap<String, Preference>();
                         final Preferences portletPreferences = portletDescriptor.getPortletPreferences();
-                        for (final PortletPreference portletPreference : (List<PortletPreference>)portletPreferences.getPortletPreferences()) {
+                        for (final org.apache.pluto.container.om.portlet.Preference portletPreference : portletPreferences.getPortletPreferences()) {
                             final String name = portletPreference.getName();
                             final boolean readOnly = portletPreference.isReadOnly();
-                            final String[] values = portletPreference.getValues();
+                            final String[] values = portletPreference.getValues().toArray(new String[] {});
                             
                             final Preference preference = new Preference(name, values != null ? Arrays.asList(values): null, readOnly);
                             portletXmlPreferences.put(preference.getName(), preference);

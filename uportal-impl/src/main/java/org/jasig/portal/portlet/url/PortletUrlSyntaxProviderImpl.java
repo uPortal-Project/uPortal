@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.Constants;
 import org.jasig.portal.ChannelRuntimeData;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.UPFileSpec;
@@ -441,6 +440,8 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         //If this portlet is a delegate and this is an action request it must be for the redirect URL
         //Store the PortletUrl as a request attribute so the dispatcher can get to it
         //Return a marker redirect URL string so the delegate dispatcher knows to ignore the redirect
+        //TODO refactor
+        /*
         if (Constants.METHOD_ACTION.equals(request.getAttribute(Constants.METHOD_ID))) {
             if (portletWindow.getDelegationParent() != null) {
                 this.portletDelegationManager.setDelegatePortletActionRedirectUrl(request, portletUrl);
@@ -450,6 +451,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             final PortletUrl delegatePortletUrl = this.portletDelegationManager.getDelegatePortletActionRedirectUrl(request);
             portletUrl.setDelegatePortletUrl(delegatePortletUrl);
         }
+        */
         
         //Build the base of the URL with the context path
         final StringBuilder url = new StringBuilder(this.bufferLength);

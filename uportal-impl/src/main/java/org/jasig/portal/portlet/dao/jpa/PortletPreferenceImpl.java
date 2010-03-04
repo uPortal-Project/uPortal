@@ -36,8 +36,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.pluto.descriptors.portlet.PortletPreferenceDD;
-import org.apache.pluto.internal.InternalPortletPreference;
+import org.apache.pluto.container.PortletPreference;
+import org.apache.pluto.container.om.portlet.Preference;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.GenericGenerator;
@@ -62,7 +62,7 @@ import org.jasig.portal.portlet.om.IPortletPreference;
         }
     )
 public class PortletPreferenceImpl implements IPortletPreference {
-    @SuppressWarnings("unused")
+
     @Id
     @GeneratedValue(generator = "UP_PORTLET_PREF_GEN")
     @Column(name = "PORTLET_PREF_ID")
@@ -91,22 +91,27 @@ public class PortletPreferenceImpl implements IPortletPreference {
         this.portletPreferenceId = -1;
     }
     
-    public PortletPreferenceImpl(InternalPortletPreference portletPreference) {
+    public PortletPreferenceImpl(PortletPreferenceImpl portletPreference) {
         this.portletPreferenceId = -1;
         this.name = portletPreference.getName();
         this.readOnly = portletPreference.isReadOnly();
         this.setValues(portletPreference.getValues());
     }
     
-    public PortletPreferenceImpl(PortletPreferenceDD portletPreference) {
+    public PortletPreferenceImpl(PortletPreference portletPreference) {
         this.portletPreferenceId = -1;
         this.name = portletPreference.getName();
         this.readOnly = portletPreference.isReadOnly();
 
-        final List<String> values = portletPreference.getValues();
-        if (values != null) {
-            this.setValues(values.toArray(new String[values.size()]));
-        }
+        final String[] values = portletPreference.getValues();
+        this.setValues(values);
+    }
+    public PortletPreferenceImpl(Preference preference) {
+    	this.portletPreferenceId = -1;
+    	this.name = preference.getName();
+    	this.readOnly = preference.isReadOnly();
+    	
+    	this.setValues(preference.getValues().toArray(new String[]{}));
     }
     
     public PortletPreferenceImpl(String name, boolean readOnly, String... values) {
@@ -117,15 +122,17 @@ public class PortletPreferenceImpl implements IPortletPreference {
     }
 
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.prefs.InternalPortletPreference#getName()
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreference#getName()
      */
     public String getName() {
         return this.name;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.prefs.InternalPortletPreference#getValues()
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreference#getValues()
      */
     public String[] getValues() {
         if (this.values == null) {
@@ -135,15 +142,17 @@ public class PortletPreferenceImpl implements IPortletPreference {
         return this.values.toArray(new String[this.values.size()]);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.prefs.InternalPortletPreference#isReadOnly()
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreference#isReadOnly()
      */
     public boolean isReadOnly() {
         return this.readOnly;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.prefs.InternalPortletPreference#setValues(java.lang.String[])
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreference#setValues(java.lang.String[])
      */
     public void setValues(String[] values) {
         if (values == null) {
@@ -158,11 +167,11 @@ public class PortletPreferenceImpl implements IPortletPreference {
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreference#clone()
      */
-    @Override
-    public Object clone() {
+    public PortletPreference clone() {
         return new PortletPreferenceImpl(this);
     }
 
@@ -177,7 +186,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
         if (!(object instanceof IPortletPreference)) {
             return false;
         }
-        IPortletPreference rhs = (IPortletPreference) object;
+        PortletPreferenceImpl rhs = (PortletPreferenceImpl) object;
         return new EqualsBuilder()
             .append(this.name, rhs.getName())
             .append(this.readOnly, rhs.isReadOnly())

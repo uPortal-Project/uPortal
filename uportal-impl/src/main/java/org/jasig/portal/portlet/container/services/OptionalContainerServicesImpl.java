@@ -19,13 +19,12 @@
 
 package org.jasig.portal.portlet.container.services;
 
-import org.apache.pluto.core.DefaultOptionalContainerServices;
-import org.apache.pluto.core.DefaultPortalAdministrationService;
-import org.apache.pluto.spi.optional.PortalAdministrationService;
-import org.apache.pluto.spi.optional.PortletEnvironmentService;
-import org.apache.pluto.spi.optional.PortletPreferencesService;
-import org.apache.pluto.spi.optional.RequestAttributeService;
-import org.apache.pluto.spi.optional.UserInfoService;
+import org.apache.pluto.container.PortletEnvironmentService;
+import org.apache.pluto.container.PortletPreferencesService;
+import org.apache.pluto.container.UserInfoService;
+import org.apache.pluto.container.driver.PortalAdministrationService;
+import org.apache.pluto.driver.container.DefaultOptionalContainerServices;
+import org.apache.pluto.driver.container.DefaultPortalAdministrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,7 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     private PortalAdministrationService portalAdministrationService = new DefaultPortalAdministrationService();
     private PortletPreferencesService portletPreferencesService;
     private PortletEnvironmentService portletEnvironmentService;
-    private RequestAttributeService requestAttributeService;
+    private RequestAttributeServiceImpl requestAttributeService;
     
     /**
      * @param userInfoService the userInfoService to set
@@ -73,53 +72,56 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     public void setPortletEnvironmentService(PortletEnvironmentService portletEnvironmentService) {
         this.portletEnvironmentService = portletEnvironmentService;
     }
-    
-    /**
-     * @param requestAttributeService the requestAttributeService to set
-     */
-    @Autowired(required=true)
-    public void setRequestAttributeService(RequestAttributeService requestAttributeService) {
-        this.requestAttributeService = requestAttributeService;
-    }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.core.DefaultOptionalContainerServices#getPortalAdministrationService()
+	/**
+	 * @param requestAttributeService the requestAttributeService to set
+	 */
+	@Autowired(required=true)
+	public void setRequestAttributeService(
+			RequestAttributeServiceImpl requestAttributeService) {
+		this.requestAttributeService = requestAttributeService;
+	}
+
+	/*
+     * (non-Javadoc)
+     * @see org.apache.pluto.driver.container.DefaultOptionalContainerServices#getPortalAdministrationService()
      */
     @Override
     public PortalAdministrationService getPortalAdministrationService() {
         return this.portalAdministrationService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.core.DefaultOptionalContainerServices#getPortletPreferencesService()
-     */
+   /*
+    * (non-Javadoc)
+    * @see org.apache.pluto.driver.container.DefaultOptionalContainerServices#getPortletPreferencesService()
+    */
     @Override
     public PortletPreferencesService getPortletPreferencesService() {
         return this.portletPreferencesService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.core.DefaultOptionalContainerServices#getUserInfoService()
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.driver.container.DefaultOptionalContainerServices#getUserInfoService()
      */
     @Override
     public UserInfoService getUserInfoService() {
         return this.userInfoService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.core.DefaultOptionalContainerServices#getPortletEnvironmentService()
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.driver.container.DefaultOptionalContainerServices#getPortletEnvironmentService()
      */
     @Override
     public PortletEnvironmentService getPortletEnvironmentService() {
         return this.portletEnvironmentService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.core.DefaultOptionalContainerServices#getRequestAttributeService()
-     */
-    @Override
-    public RequestAttributeService getRequestAttributeService() {
-        return this.requestAttributeService;
-    }
-
+    /**
+	 * @return the requestAttributeService
+	 */
+	public RequestAttributeServiceImpl getRequestAttributeService() {
+		return requestAttributeService;
+	}
 }

@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.container.services;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -27,16 +28,18 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.portlet.PortletRequest;
+import javax.portlet.PreferencesValidator;
+import javax.portlet.ValidatorException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.PortletWindow;
-import org.apache.pluto.descriptors.portlet.PortletDD;
-import org.apache.pluto.descriptors.portlet.PortletPreferenceDD;
-import org.apache.pluto.descriptors.portlet.PortletPreferencesDD;
-import org.apache.pluto.internal.InternalPortletPreference;
-import org.apache.pluto.spi.optional.PortletPreferencesService;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.PortletPreference;
+import org.apache.pluto.container.PortletPreferencesService;
+import org.apache.pluto.container.PortletWindow;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.apache.pluto.container.om.portlet.Preference;
+import org.apache.pluto.container.om.portlet.Preferences;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -144,9 +147,9 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-
     
-    public boolean isLoadGuestPreferencesFromMemory() {
+	
+	public boolean isLoadGuestPreferencesFromMemory() {
 		return loadGuestPreferencesFromMemory;
 	}
 	public void setLoadGuestPreferencesFromMemory(
@@ -206,20 +209,44 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     		return false; 
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.optional.PortletPreferencesService#getStoredPreferences(org.apache.pluto.PortletWindow, javax.portlet.PortletRequest)
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreferencesService#getDefaultPreferences(org.apache.pluto.container.PortletWindow, javax.portlet.PortletRequest)
      */
-    public InternalPortletPreference[] getStoredPreferences(PortletWindow plutoPortletWindow, PortletRequest portletRequest) throws PortletContainerException {
+    @Override
+	public Map<String, PortletPreference> getDefaultPreferences(
+			PortletWindow portletWindow, PortletRequest request)
+			throws PortletContainerException {
+    	//TODO unimplemented
+		return Collections.emptyMap();
+	}
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreferencesService#getPreferencesValidator(org.apache.pluto.container.om.portlet.PortletDefinition)
+     */
+	@Override
+	public PreferencesValidator getPreferencesValidator(
+			PortletDefinition portletDefinition) throws ValidatorException {
+		// TODO unimplemented
+		return null;
+	}
+	
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreferencesService#getStoredPreferences(org.apache.pluto.container.PortletWindow, javax.portlet.PortletRequest)
+     */
+	@Override
+    public Map<String,PortletPreference> getStoredPreferences(PortletWindow plutoPortletWindow, PortletRequest portletRequest) throws PortletContainerException {
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
-        final PortletDD portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
+        final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
 
         
         //Linked hash map used to add preferences in order loaded from the descriptor, definition and entity
-        final LinkedHashMap<String, InternalPortletPreference> preferencesMap = new LinkedHashMap<String, InternalPortletPreference>();
+        final LinkedHashMap<String, PortletPreference> preferencesMap = new LinkedHashMap<String, PortletPreference>();
         
         //Add descriptor preferences
         final List<IPortletPreference> descriptorPreferencesList = this.getDescriptorPreferences(portletDescriptor);
@@ -242,7 +269,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
                 this.addPreferencesToMap(entityPreferencesList, preferencesMap);
     
                 if (!this.isLoadFromMemory(portletRequest) && !this.isStoreInEntity(portletRequest) && this.isStoreInMemory(portletRequest)) {
-                    store(plutoPortletWindow, portletRequest, preferencesMap.values().toArray(new InternalPortletPreference[preferencesMap.size()]));
+                    store(plutoPortletWindow, portletRequest, preferencesMap);
                 }
             }
             //If a guest and storing non-shared guest prefs get the prefs from the session
@@ -253,13 +280,16 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             }
         }
 
-        return preferencesMap.values().toArray(new InternalPortletPreference[preferencesMap.size()]);
+        
+        return preferencesMap;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.optional.PortletPreferencesService#store(org.apache.pluto.PortletWindow, javax.portlet.PortletRequest, org.apache.pluto.internal.InternalPortletPreference[])
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreferencesService#store(org.apache.pluto.container.PortletWindow, javax.portlet.PortletRequest, java.util.Map)
      */
-    public void store(PortletWindow plutoPortletWindow, PortletRequest portletRequest, InternalPortletPreference[] internalPreferences) throws PortletContainerException {
+	@Override
+    public void store(PortletWindow plutoPortletWindow, PortletRequest portletRequest, Map<String,PortletPreference> internalPreferences) throws PortletContainerException {
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
         
         //Determine if the user is a guest
@@ -273,11 +303,11 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
-        final PortletDD portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
+        final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
 
         
         //Get Map of descriptor and definition preferences to check new preferences against
-        final Map<String, InternalPortletPreference> preferencesMap = new HashMap<String, InternalPortletPreference>();
+        final Map<String, PortletPreference> preferencesMap = new HashMap<String, PortletPreference>();
         
         //Add deploy preferences
         final List<IPortletPreference> descriptorPreferencesList = this.getDescriptorPreferences(portletDescriptor);
@@ -292,7 +322,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         
         final List<IPortletPreference> portletPreferences = new LinkedList<IPortletPreference>();
         
-        for (InternalPortletPreference internalPreference : internalPreferences) {
+        for (PortletPreference internalPreference : portletPreferences) {
             //Convert to a uPortal preference class to ensure quality check and persistence works
             final IPortletPreference preference = new PortletPreferenceImpl(internalPreference);
             
@@ -300,7 +330,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             final String name = preference.getName();
             if (name != null) {
 
-                final InternalPortletPreference existingPreference = preferencesMap.get(name);
+                final PortletPreference existingPreference = preferencesMap.get(name);
                 if (preference.equals(existingPreference)) {
                     continue;
                 }
@@ -332,13 +362,13 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * Gets the preferences for a portlet descriptor converted to the uPortal IPortletPreference
      * interface.
      */
-    protected List<IPortletPreference> getDescriptorPreferences(PortletDD portletDescriptor) {
+    protected List<IPortletPreference> getDescriptorPreferences(PortletDefinition portletDescriptor) {
         final List<IPortletPreference> preferences = new LinkedList<IPortletPreference>();
         
-        final PortletPreferencesDD descriptorPreferences = portletDescriptor.getPortletPreferences();
+        final Preferences descriptorPreferences = portletDescriptor.getPortletPreferences();
         if (descriptorPreferences != null) {
-            final List<PortletPreferenceDD> descriptorPreferencesList = descriptorPreferences.getPortletPreferences();
-            for (final PortletPreferenceDD descriptorPreference : descriptorPreferencesList) {
+            final List<? extends Preference> descriptorPreferencesList = descriptorPreferences.getPortletPreferences();
+            for (final Preference descriptorPreference : descriptorPreferencesList) {
                 final IPortletPreference internaldescriptorPreference = new PortletPreferenceImpl(descriptorPreference);
                 preferences.add(internaldescriptorPreference);
             }
@@ -350,7 +380,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * Add all of the preferences in the List to the Map using the preference name as the key
      */
-    protected void addPreferencesToMap(List<IPortletPreference> preferencesList, Map<String, InternalPortletPreference> preferencesMap) {
+    protected void addPreferencesToMap(List<IPortletPreference> preferencesList, Map<String, PortletPreference> preferencesMap) {
         if (preferencesList == null) {
             return;
         }
@@ -409,4 +439,6 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         
         portletPreferences.put(portletEntityId, preferences);
     }
+	
+	
 }

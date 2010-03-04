@@ -23,17 +23,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.PortletWindow;
-import org.apache.pluto.spi.PortalCallbackService;
-import org.apache.pluto.spi.PortletURLProvider;
-import org.apache.pluto.spi.ResourceURLProvider;
+import org.apache.pluto.container.PortletURLProvider;
+import org.apache.pluto.container.PortletWindow;
+import org.apache.pluto.container.ResourceURLProvider;
+import org.apache.pluto.driver.core.ResourceURLProviderImpl;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider;
 import org.jasig.portal.portlet.url.PortletURLProviderImpl;
-import org.jasig.portal.portlet.url.ResourceUrlProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -47,7 +46,7 @@ import org.springframework.stereotype.Service;
  * @version $Revision$
  */
 @Service
-public class PortalCallbackServiceImpl implements PortalCallbackService {
+public class PortalCallbackServiceImpl /* *implements PortalCallbackService */ {
     private IRequestPropertiesManager requestPropertiesManager;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletUrlSyntaxProvider portletUrlSyntaxProvider;
@@ -131,7 +130,7 @@ public class PortalCallbackServiceImpl implements PortalCallbackService {
      * @see org.apache.pluto.spi.PortalCallbackService#getResourceURLProvider(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)
      */
     public ResourceURLProvider getResourceURLProvider(HttpServletRequest request, PortletWindow plutoPortletWindow) {
-        return new ResourceUrlProviderImpl();
+        return new ResourceURLProviderImpl(request, plutoPortletWindow);
     }
 
     /* (non-Javadoc)

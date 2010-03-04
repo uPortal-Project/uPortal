@@ -21,9 +21,11 @@ package org.jasig.portal.portlet.container.services;
 
 import javax.portlet.PortalContext;
 
-import org.apache.commons.lang.Validate;
-import org.apache.pluto.RequiredContainerServices;
-import org.apache.pluto.spi.PortalCallbackService;
+import org.apache.pluto.container.EventCoordinationService;
+import org.apache.pluto.container.FilterManagerService;
+import org.apache.pluto.container.PortletRequestContextService;
+import org.apache.pluto.container.PortletURLListenerService;
+import org.apache.pluto.container.driver.RequiredContainerServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,34 +38,12 @@ import org.springframework.stereotype.Service;
  */
 @Service("requiredContainerServices")
 public class RequiredContainerServicesImpl implements RequiredContainerServices {
-    private PortalCallbackService portalCallbackService;
+	
     private PortalContext portalContext;
-    
-    /**
-     * @param portalCallbackService the portalCallbackService to set
-     */
-    @Autowired
-    public void setPortalCallbackService(PortalCallbackService portalCallbackService) {
-        Validate.notNull(portalCallbackService, "portalCallbackService can not be null");
-        this.portalCallbackService = portalCallbackService;
-    }
-
-    /**
-     * @param portalContext the portalContext to set
-     */
-    @Autowired
-    public void setPortalContext(PortalContext portalContext) {
-        Validate.notNull(portalContext, "portalContext can not be null");
-        this.portalContext = portalContext;
-    }
-
-    
-    /* (non-Javadoc)
-     * @see org.apache.pluto.RequiredContainerServices#getPortalCallbackService()
-     */
-    public PortalCallbackService getPortalCallbackService() {
-        return this.portalCallbackService;
-    }
+    private EventCoordinationService eventCoordinationService;
+    private FilterManagerService filterManagerService;
+    private PortletRequestContextService portletRequestContextService;
+    private PortletURLListenerService portletURLListenerService;
 
     /* (non-Javadoc)
      * @see org.apache.pluto.RequiredContainerServices#getPortalContext()
@@ -71,5 +51,79 @@ public class RequiredContainerServicesImpl implements RequiredContainerServices 
     public PortalContext getPortalContext() {
         return this.portalContext;
     }
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.driver.RequiredContainerServices#getEventCoordinationService()
+     */
+	@Override
+	public EventCoordinationService getEventCoordinationService() {
+		return this.eventCoordinationService;
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.pluto.container.driver.RequiredContainerServices#getFilterManagerService()
+	 */
+	@Override
+	public FilterManagerService getFilterManagerService() {
+		return this.filterManagerService;
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.pluto.container.driver.RequiredContainerServices#getPortletRequestContextService()
+	 */
+	@Override
+	public PortletRequestContextService getPortletRequestContextService() {
+		return this.portletRequestContextService;
+	}
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.pluto.container.driver.RequiredContainerServices#getPortletURLListenerService()
+	 */
+	@Override
+	public PortletURLListenerService getPortletURLListenerService() {
+		return this.portletURLListenerService;
+	}
 
+	 /**
+     * @param portalContext the portalContext to set
+     */
+    @Autowired(required=true)
+    public void setPortalContext(PortalContext portalContext) {
+        this.portalContext = portalContext;
+    }
+    /**
+     * 
+     * @param eventCoordinationService
+     */
+    @Autowired(required=true)
+	public void setEventCoordinationService(
+			EventCoordinationService eventCoordinationService) {
+		this.eventCoordinationService = eventCoordinationService;
+	}
+    /**
+     * 
+     * @param filterManagerService
+     */
+    @Autowired(required=true)
+	public void setFilterManagerService(FilterManagerService filterManagerService) {
+		this.filterManagerService = filterManagerService;
+	}
+    /**
+     * 
+     * @param portletRequestContextService
+     */
+    @Autowired(required=true)
+	public void setPortletRequestContextService(
+			PortletRequestContextService portletRequestContextService) {
+		this.portletRequestContextService = portletRequestContextService;
+	}
+    /**
+     * 
+     * @param portletURLListenerService
+     */
+    @Autowired(required=true)
+	public void setPortletURLListenerService(
+			PortletURLListenerService portletURLListenerService) {
+		this.portletURLListenerService = portletURLListenerService;
+	}
 }

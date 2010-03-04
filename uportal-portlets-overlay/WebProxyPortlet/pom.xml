@@ -54,7 +54,7 @@
                 </configuration>
             </plugin>
            <plugin>
-                <groupId>org.apache.pluto</groupId>
+                <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
             </plugin>
         </plugins>

@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.core.ContainerInvocation;
 import org.jasig.portal.api.portlet.DelegateState;
 import org.jasig.portal.api.portlet.DelegationActionResponse;
 import org.jasig.portal.api.portlet.DelegationRequest;
@@ -115,7 +114,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         
         final RedirectCapturingResponse capturingResponse = new RedirectCapturingResponse(response);
         
-        final ContainerInvocation invocation = ContainerInvocation.getInvocation();
+        //final ContainerInvocation invocation = ContainerInvocation.getInvocation();
         try {
             
             //TODO canRender permission checks!
@@ -126,11 +125,13 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
             this.logger.error("Failed to execute action on delegate", e);
             throw e;
         }
-        finally {
+        /*finally {
+        	
             if (invocation != null) {
                 ContainerInvocation.setInvocation(invocation.getPortletContainer(), invocation.getPortletWindow());
             }
-        }
+            
+        } */
         
         final String redirectLocation = capturingResponse.getRedirectLocation();
         
@@ -172,7 +173,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
 
         this.setupDelegateRequestInfo(request, delegationRequest);
         
-        final ContainerInvocation invocation = ContainerInvocation.getInvocation();
+        //final ContainerInvocation invocation = ContainerInvocation.getInvocation();
         try {
             
             //TODO canRender permission checks!
@@ -183,9 +184,11 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
             throw e;
         }
         finally {
+        	/*
             if (invocation != null) {
                 ContainerInvocation.setInvocation(invocation.getPortletContainer(), invocation.getPortletWindow());
             }
+            */
             writer.flush();
         }
         
