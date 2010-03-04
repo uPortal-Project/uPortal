@@ -61,6 +61,18 @@
             </type>
             <defaultValue>false</defaultValue>
         </parameter>
+
+        <parameter modify="publish-only">
+            <name>hideFromMobile</name>
+            <label>Hide in mobile theme</label>
+            <type base="string" input="single-choice" display="drop-down">
+                <restriction type="enumeration">
+                    <value>false</value>
+                    <value>true</value>
+                </restriction>
+            </type>
+            <defaultValue>false</defaultValue>
+        </parameter>
     
         <parameter modify="publish-only">
             <name>quicklink</name>
