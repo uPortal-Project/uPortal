@@ -537,7 +537,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             }
             
             if (this.logger.isTraceEnabled()) {
-                this.logger.trace("Using root url base '" + url + "'");
+                this.logger.trace("Using root url base '" + url + "' for " + portletUrl);
             }
         }
         

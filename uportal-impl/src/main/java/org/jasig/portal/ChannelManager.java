@@ -409,12 +409,19 @@ public class ChannelManager implements LayoutEventListener {
         if (cr == null) {
             // channel rendering wasn't started ?
             try {
+                if (log.isDebugEnabled()) {
+                    log.debug("Getting output - no channel renderer for subscribe id: " + channelSubscribeId + ", starting rendering");
+                }
                 cr = startChannelRendering(request, response, channelSubscribeId);
             }
             catch (PortalException pe) {
                 // record, and go on
                 log.error("Encountered a portal exception while trying to start channel rendering! :", pe);
             }
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Getting output - Retrieved channel renderer " + cr.toString() + " for subscribe id: " + channelSubscribeId);
         }
 
         // complete rendering and check status
@@ -478,6 +485,9 @@ public class ChannelManager implements LayoutEventListener {
                 } else { // non-null characterContent case
                     // output character content
                     try {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Getting output - Writing " + characterContent.length() + " characters for " + cr.toString() + " for subscribe id: " + channelSubscribeId);
+                        }
                         cs.printRawCharacters(characterContent);
                     } catch (IOException ioe) {
                         if (log.isDebugEnabled())
@@ -1227,6 +1237,10 @@ public class ChannelManager implements LayoutEventListener {
                 runtimeData.setKeywords(queryString);
             }
             
+            if (log.isDebugEnabled()) {
+                log.debug("Marking channel " + channelSubscribeId + " as targeted. targetedId=" + this.channelTarget + ", requestType=" + requestType);
+            }
+            
             runtimeData.setTargeted(true);
         }
         
@@ -1355,6 +1369,10 @@ public class ChannelManager implements LayoutEventListener {
 
 		// obtain IChannelRenderer
 		IChannelRenderer channelRenderer = rendererTable.get(channelSubscribeId);
+		
+		if (log.isDebugEnabled()) {
+		    log.debug("Getting Title - Retrieved channel renderer " + (channelRenderer != null ? channelRenderer.toString() : null) + " for subscribe id: " + channelSubscribeId);
+		}
 
         // default to null (no dynamic channel title.
         String channelTitle = null;
@@ -1366,8 +1384,8 @@ public class ChannelManager implements LayoutEventListener {
             final IDynamicChannelTitleRenderer channelTitleRenderer = (IDynamicChannelTitleRenderer) channelRenderer;
             channelTitle = channelTitleRenderer.getChannelTitle();
 
-            if (log.isTraceEnabled()) {
-            	log.trace("Dynamic title for channel with subscribe id=" + channelSubscribeId + " is [" + channelTitle + "].");
+            if (log.isDebugEnabled()) {
+            	log.debug("Dynamic title for channel with subscribe id=" + channelSubscribeId + " is [" + channelTitle + "].");
             }
         }
 

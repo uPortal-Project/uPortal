@@ -21,11 +21,9 @@ package org.jasig.portal.channels.portlet;
 
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -56,7 +54,6 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
      */
     public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortletHttpServletRequestWrapper.class.getName() + ".PORTLET_HTTP_SERVLET_REQUEST";
     
-    private final Map<String, Object> attributes = new HashMap<String, Object>();
     private final Map<String, String[]> parameters;
     private final IPerson person;
     private final List<SecurityRoleRefDD> securityRoleRefs;
@@ -90,28 +87,7 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
             return this;
         }
         
-        final Object attribute = this.attributes.get(name);
-        if (attribute != null) {
-            return attribute;
-        }
-        
         return super.getAttribute(name);
-    }
-
-    @Override
-    public Enumeration<String> getAttributeNames() {
-        final Set<String> attributeNames = this.attributes.keySet();
-        return Collections.enumeration(attributeNames);
-    }
-
-    @Override
-    public void removeAttribute(String name) {
-        this.attributes.remove(name);
-    }
-
-    @Override
-    public void setAttribute(String name, Object o) {
-        this.attributes.put(name, o);
     }
 
     /* (non-Javadoc)
@@ -224,7 +200,6 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
         return new EqualsBuilder()
             .append(this.getWrappedRequest(), rhs.getWrappedRequest())
             .append(this.parameters, rhs.parameters)
-            .append(this.attributes, rhs.attributes)
             .isEquals();
     }
 
@@ -236,7 +211,6 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
         return new HashCodeBuilder(500546767, -122181035)
             .append(this.getWrappedRequest())
             .append(this.parameters)
-            .append(this.attributes)
             .toHashCode();
     }
 
@@ -248,7 +222,6 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             .append("wrappedRequest", this.getWrappedRequest())
             .append("parameters", this.parameters)
-            .append("attributes", this.attributes)
             .toString();
     }
 }

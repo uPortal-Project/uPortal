@@ -194,7 +194,18 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             final HttpServletRequest httpServletRequest = pcs.getHttpServletRequest();
             final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
             if (targetedPortletWindowId != null) {
-                return targetedPortletWindowId;
+                final String channelSubscribeId = channelStaticData.getChannelSubscribeId();
+                final IPerson person = channelStaticData.getPerson();
+                final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(channelSubscribeId, person.getID());
+                
+                final IPortletEntity targetParentPortletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, targetedPortletWindowId);
+                
+               
+                if (portletEntity.getPortletEntityId().equals(targetParentPortletEntity.getPortletEntityId())) {
+                    return targetedPortletWindowId;
+                }
+
+                this.logger.warn("Portlet window " + targetedPortletWindowId + " as target but window ID is not for the correct entity " + portletEntity);
             }
         }
         

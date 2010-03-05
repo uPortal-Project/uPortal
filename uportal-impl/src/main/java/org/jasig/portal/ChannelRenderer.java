@@ -39,6 +39,7 @@ import org.jasig.portal.channels.support.IChannelTitle;
 import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.spring.locator.CacheFactoryLocator;
 import org.jasig.portal.spring.locator.JpaInterceptorLocator;
 import org.jasig.portal.utils.SAX2BufferImpl;
@@ -243,11 +244,11 @@ public class ChannelRenderer
                     return RENDERING_SUCCESSFUL;
                 } catch (SAXException e) {
                     // worst case scenario: partial content output :(
-                    log.error( "ChannelRenderer::outputRendering() : following SAX exception occured : "+e);
+                    log.error( "outputRendering() : following SAX exception occured : "+e);
                     throw e;
                 }
             } else {
-                log.error( "ChannelRenderer::outputRendering() : output buffer is null even though rendering was a success?! trying to rendering for ccaching ?");
+                log.error( "outputRendering() : output buffer is null even though rendering was a success?! trying to rendering for ccaching ?");
                 throw new PortalException("unable to obtain rendering buffer");
             }
         }
@@ -285,7 +286,7 @@ public class ChannelRenderer
                 this.workTracker.cancel(true);
                 abandoned=true;
                 if (log.isDebugEnabled())
-                    log.debug("ChannelRenderer::outputRendering() : killed. " +
+                    log.debug("outputRendering() : killed. " +
                             "(key="+this.groupRenderingKey.toString()+")");
             } else {
                 this.groupSemaphore.waitOn();
@@ -299,7 +300,7 @@ public class ChannelRenderer
                 this.workTracker.get(this.timeOut, TimeUnit.MILLISECONDS);
             } catch (TimeoutException te) {
                 if (log.isDebugEnabled()) {
-                    log.debug("ChannelRenderer::outputRendering() : channel [" + this.channel + "] timed out", te);
+                    log.debug("outputRendering() : channel [" + this.channel + "] timed out", te);
                 }
             } catch (CancellationException ce) {
 
@@ -312,7 +313,7 @@ public class ChannelRenderer
                     } catch (Exception e) {
                         // ignore problem in getting the exception to report.
                     }
-                    log.debug("ChannelRenderer::outputRendering() : channel [" + this.channel + "] threw an exception [" + t + "] and so its task was cancelled.");
+                    log.debug("outputRendering() : channel [" + this.channel + "] threw an exception [" + t + "] and so its task was cancelled.");
                 }
 
             } catch (Exception e) {
@@ -326,7 +327,7 @@ public class ChannelRenderer
                 this.workTracker.cancel(true);
                 abandoned=true;
                 if (log.isDebugEnabled())
-                    log.debug("ChannelRenderer::outputRendering() : killed.");
+                    log.debug("outputRendering() : killed.");
             } else {
                 boolean successful = this.workTracker.isDone() && !this.workTracker.isCancelled() && this.worker.getException() == null;
                 abandoned=!successful;
@@ -379,7 +380,7 @@ public class ChannelRenderer
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("ChannelRenderer::getCharacters() : worker is null already !");
+            log.debug("getCharacters() : worker is null already !");
         }
 
         return null;
@@ -420,17 +421,13 @@ public class ChannelRenderer
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer();
 
-        sb.append("ChannelRenderer ");
-        sb.append("channel = [").append(this.channel).append("] ");
-        sb.append("rd = [").append(this.rd).append("] ");
-        sb.append("rendering=").append(this.rendering).append(" ");
-        sb.append("donerendering=").append(this.donerendering).append(" ");
-        sb.append("startTime=").append(this.startTime).append(" ");
-        sb.append("timeOut=").append(this.timeOut).append(" ");
-
-        return sb.toString();
+        return this.getClass().getSimpleName() + " [" +
+                "channel=" + this.channel + ", " +
+                "rendering=" + this.rendering + ", " +
+                "doneRendering=" + this.donerendering + ", " +
+                "startTime=" + this.startTime + ", " +
+                "timeOut=" + this.timeOut + "]";
     }
 
     public String getChannelTitle() {
@@ -493,6 +490,10 @@ public class ChannelRenderer
             buffer = null;
             cbuffer = null;
             currentData = TrackingThreadLocal.getCurrentData();
+            
+            if (log.isTraceEnabled()) {
+                log.trace("Created " + this.toString());
+            }
         }
 
         public boolean isSetRuntimeDataComplete() {
@@ -501,6 +502,10 @@ public class ChannelRenderer
 
         //TODO review this for clarity
         public void execute () throws Exception {
+            if (log.isTraceEnabled()) {
+                log.trace("Started execution " + this.toString());
+            }
+            
             final long startTime = System.currentTimeMillis();
             try {
                 TrackingThreadLocal.setCurrentData(this.currentData);
@@ -545,6 +550,9 @@ public class ChannelRenderer
                         final Map<Serializable, ChannelCacheEntry> systemCache = cacheFactory.getCache(SYSTEM_WIDE_CHANNEL_CACHE);
                         
                         ChannelCacheKey key=((ICacheable)channel).generateKey();
+                        if (log.isTraceEnabled()) {
+                            log.trace("Generated cache key " + (key != null ? key.getKey() : null) + " for worker " + this.toString());
+                        }
                         if(key!=null) {
                             if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
                                 ChannelCacheEntry entry=systemCache.get(key.getKey());
@@ -556,12 +564,12 @@ public class ChannelRenderer
                                         if(ccacheable && (entry.buffer instanceof String)) {
                                             cbuffer=(String)entry.buffer;
                                             if (log.isDebugEnabled()) {
-                                                log.debug("ChannelRenderer.Worker::run() : retrieved system-wide cached character content based on a key \""+key.getKey()+"\"");
+                                                log.debug("retrieved system-wide cached character content based on a key \""+key.getKey()+"\"");
                                             }
                                         } else if(entry.buffer instanceof SAX2BufferImpl) {
                                             buffer=(SAX2BufferImpl) entry.buffer;
                                             if (log.isDebugEnabled()) {
-                                                log.debug("ChannelRenderer.Worker::run() : retrieved system-wide cached content based on a key \""+key.getKey()+"\"");
+                                                log.debug("retrieved system-wide cached content based on a key \""+key.getKey()+"\"");
                                             }
                                         }
                                         this.channelTitle = entry.title;
@@ -571,7 +579,7 @@ public class ChannelRenderer
                                         // remove it
                                         systemCache.remove(key.getKey());
                                         if (log.isDebugEnabled()) {
-                                            log.debug("ChannelRenderer.Worker::run() : removed system-wide unvalidated cache based on a key \""+key.getKey()+"\"");
+                                            log.debug("removed system-wide unvalidated cache based on a key \""+key.getKey()+"\"");
                                         }
                                     }
                                 }
@@ -586,13 +594,13 @@ public class ChannelRenderer
                                         if(ccacheable && (entry.buffer instanceof String)) {
                                             cbuffer=(String)entry.buffer;
                                             if (log.isDebugEnabled()) {
-                                                log.debug("ChannelRenderer.Worker::run() : retrieved instance-cached character content based on a key \""+key.getKey()+"\"");
+                                                log.debug("retrieved instance-cached character content based on a key \""+key.getKey()+"\" by " + this.toString());
                                             }
 
                                         } else if(entry.buffer instanceof SAX2BufferImpl) {
                                             buffer=(SAX2BufferImpl) entry.buffer;
                                             if (log.isDebugEnabled()) {
-                                                log.debug("ChannelRenderer.Worker::run() : retrieved instance-cached content based on a key \""+key.getKey()+"\"");
+                                                log.debug("retrieved instance-cached content based on a key \""+key.getKey()+"\" by " + this.toString());
                                             }
                                         }
                                         this.channelTitle = entry.title;
@@ -602,7 +610,7 @@ public class ChannelRenderer
                                         // remove it
                                         getChannelCache().remove(key.getKey());
                                         if (log.isDebugEnabled()) {
-                                            log.debug("ChannelRenderer.Worker::run() : removed unvalidated instance-cache based on a key \""+key.getKey()+"\"");
+                                            log.debug("removed unvalidated instance-cache based on a key \""+key.getKey()+"\" by " + this.toString());
                                         }
                                     }
                                 }
@@ -631,12 +639,12 @@ public class ChannelRenderer
                                     if (key.getKeyScope() == ChannelCacheKey.SYSTEM_KEY_SCOPE) {
                                         systemCache.put(key.getKey(), new ChannelCacheEntry(cbuffer, this.channelTitle, key.getKeyValidity()));
                                         if (log.isDebugEnabled()) {
-                                            log.debug("ChannelRenderer.Worker::run() : recorded system character cache based on a key \"" + key.getKey() + "\"");
+                                            log.debug("recorded system character cache based on a key \"" + key.getKey() + "\" by " + this.toString());
                                         }
                                     } else {
                                         getChannelCache().put(key.getKey(), new ChannelCacheEntry(cbuffer, this.channelTitle, key.getKeyValidity()));
                                         if (log.isDebugEnabled()) {
-                                            log.debug("ChannelRenderer.Worker::run() : recorded instance character cache based on a key \"" + key.getKey() + "\"");
+                                            log.debug("recorded instance character cache based on a key \"" + key.getKey() + "\" by " + this.toString());
                                         }
                                     }
                                 }
@@ -654,12 +662,12 @@ public class ChannelRenderer
                                     if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
                                         systemCache.put(key.getKey(),new ChannelCacheEntry(buffer, this.channelTitle, key.getKeyValidity()));
                                         if (log.isDebugEnabled()) {
-                                            log.debug("ChannelRenderer.Worker::run() : recorded system cache based on a key \""+key.getKey()+"\"");
+                                            log.debug("recorded system cache based on a key \""+key.getKey()+"\"");
                                         }
                                     } else {
                                         getChannelCache().put(key.getKey(),new ChannelCacheEntry(buffer, this.channelTitle, key.getKeyValidity()));
                                         if (log.isDebugEnabled()) {
-                                            log.debug("ChannelRenderer.Worker::run() : recorded instance cache based on a key \""+key.getKey()+"\"");
+                                            log.debug("recorded instance cache based on a key \""+key.getKey()+"\"");
                                         }
                                     }
                                 }
@@ -700,6 +708,10 @@ public class ChannelRenderer
             }
 
             done = true;
+            
+            if (log.isTraceEnabled()) {
+                log.trace("Completed execution " + this.toString());
+            }
         }
 
         /**
@@ -716,7 +728,7 @@ public class ChannelRenderer
 
                     this.channelTitle = ((IChannelTitle) channelProps).getChannelTitle();
                     if (log.isTraceEnabled()) {
-                        log.trace("Read title " + this.channelTitle + ".");
+                        log.trace("Read title [" + this.channelTitle + "] by " + this.toString());
                     }
                 } else {
                     if (log.isTraceEnabled()) {
@@ -746,6 +758,10 @@ public class ChannelRenderer
                 log.error("Attempting to obtain character data for '" + channel + "' while character caching is not enabled !", new Throwable());
                 return null;
             }
+
+            if (log.isTraceEnabled()) {
+                log.trace("Getting channel characters (" + (this.cbuffer != null ? this.cbuffer.length() : 0) + ") for " + this);
+            }
             
             return this.cbuffer;
         }
@@ -764,14 +780,14 @@ public class ChannelRenderer
                     ChannelCacheKey key=((ICacheable)channel).generateKey();
                     if(key!=null) {
                         if (log.isDebugEnabled()) {
-                            log.debug("ChannelRenderer::setCharacterCache() : called on a key \""+key.getKey()+"\"");
+                            log.debug("setCharacterCache() : called on a key \""+key.getKey()+"\"");
                         }
                         ChannelCacheEntry entry=null;
                         if(key.getKeyScope()==ChannelCacheKey.SYSTEM_KEY_SCOPE) {
                             entry=systemCache.get(key.getKey());
                             if(entry==null) {
                                 if (log.isDebugEnabled()) {
-                                    log.debug("ChannelRenderer::setCharacterCache() : setting character cache buffer based on a system key \""+key.getKey()+"\"");
+                                    log.debug("setCharacterCache() : setting character cache buffer based on a system key \""+key.getKey()+"\"");
                                 }
                                 entry=new ChannelCacheEntry(chars, this.channelTitle, key.getKeyValidity());
                             } else {
@@ -784,7 +800,7 @@ public class ChannelRenderer
                             entry=getChannelCache().get(key.getKey());
                             if(entry==null) {
                                 if (log.isDebugEnabled()) {
-                                    log.debug("ChannelRenderer::setCharacterCache() : no existing cache on a key \""+key.getKey()+"\"");
+                                    log.debug("setCharacterCache() : no existing cache on a key \""+key.getKey()+"\"");
                                 }
                                 entry=new ChannelCacheEntry(chars, this.channelTitle, key.getKeyValidity());
                             } else {
@@ -795,7 +811,7 @@ public class ChannelRenderer
                         }
                     } else {
                         if (log.isDebugEnabled()) {
-                            log.debug("ChannelRenderer::setCharacterCache() : channel cache key is null.");
+                            log.debug("setCharacterCache() : channel cache key is null.");
                         }
                     }
                 }
@@ -816,7 +832,7 @@ public class ChannelRenderer
         public String getChannelTitle() {
 
             if (log.isTraceEnabled()) {
-                log.trace("Getting channel title (" + this.channelTitle + "] for " + this);
+                log.trace("Getting channel title (" + this.channelTitle + ") for " + this);
             }
 
             // currently, just provides no dynamic title if not done rendering
@@ -839,6 +855,18 @@ public class ChannelRenderer
          */
         public boolean isRenderedFromCache() {
             return renderedFromCache;
+        }
+
+        @Override
+        public String toString() {
+            return this.getClass().getSimpleName() + " [" +
+                "channel=" + this.channel + ", " +
+                "done=" + this.done + ", " + 
+                "successful=" + this.successful + ", " + 
+                "renderTime=" + this.renderTime + ", " + 
+                "renderedFromCache=" + this.renderedFromCache + ", " + 
+                "cbuffer.length=" + (this.cbuffer != null ? this.cbuffer.length() : 0) + ", " +
+                "parent=" + ChannelRenderer.this + "]";
         }
     }
     
