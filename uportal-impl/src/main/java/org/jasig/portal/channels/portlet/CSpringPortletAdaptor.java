@@ -35,6 +35,7 @@ import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalEvent;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channels.support.TitledChannelRuntimeProperties;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.threading.TrackingThreadLocal;
 import org.springframework.web.context.WebApplicationContext;
 import org.xml.sax.ContentHandler;
@@ -129,6 +130,9 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
         //Attach the runtime data as an attribute on the request so it is accessible to other portlet rendering related classes  
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
         httpServletRequest.setAttribute(ATTRIBUTE__RUNTIME_DATA, rd);
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace("Set ChannelRuntimeData " + rd + " on " + httpServletRequest);
+        }
     }
     
     /* (non-Javadoc)
@@ -336,5 +340,14 @@ public class CSpringPortletAdaptor implements IPortletAdaptor {
      */
     public void renderXML(ContentHandler out) throws PortalException {
         throw new UnsupportedOperationException("renderXML is not valid to call for ICharacterChannel");
+    }
+
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " [" +
+        		"publishId=" + this.channelStaticData.getChannelPublishId() + ", " +
+				"subscribeId=" + this.channelStaticData.getChannelSubscribeId() + ", " + 
+				"person=" + this.channelStaticData.getPerson().getAttribute(IPerson.USERNAME) + "]";
     }
 }
