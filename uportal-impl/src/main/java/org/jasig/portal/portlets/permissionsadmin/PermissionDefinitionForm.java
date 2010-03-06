@@ -26,15 +26,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.RDBMPermissionImpl;
 import org.jasig.portal.security.provider.RDBMPermissionImpl.PrincipalType;
 import org.jasig.portal.services.GroupService;
@@ -46,6 +51,8 @@ public class PermissionDefinitionForm implements Serializable {
     
     // Static Members.
     private static final String ENTITY_OTHER = "other";
+    private static final Pattern PRINCIPAL_PARSING_PATTERN = Pattern.compile("(\\d)\\.(.*)\\z");
+
     private static final long serialVersionUID = 1L;
 
     // Instance Members.
@@ -58,7 +65,101 @@ public class PermissionDefinitionForm implements Serializable {
     /*
      * Public API.
      */
-    
+
+    public PermissionDefinitionForm init(String owner, String activity, String target, IPermissionStore store, IGroupListHelper helper) {
+        
+        // Assertions.
+        if (owner == null) {
+            String msg = "Argument 'owner' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        if (activity == null) {
+            String msg = "Argument 'activity' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        if (target == null) {
+            String msg = "Argument 'target' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        if (store == null) {
+            String msg = "Argument 'store' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        if (helper == null) {
+            String msg = "Argument 'helper' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        // Set up the response value
+        this.setOwner(owner);
+        this.setActivity(activity);
+        
+        // Find permissions that match the inputs from the IPermissionStore
+        IPermission[] permissions = store.select(owner, null, activity, target, null);
+        
+        // Build the set of existing assignments
+        List<Assignment> flatAssignmentsList = new ArrayList<Assignment>();
+        for (IPermission p : permissions) {
+            
+            String entityType = null;
+            JsonEntityBean bean = null;
+            
+            Matcher m = PRINCIPAL_PARSING_PATTERN.matcher(p.getPrincipal());
+            if (m.matches()) {
+                String firstGroup = m.group(1);
+                if (firstGroup != null) {
+                    switch (Integer.parseInt(firstGroup)) {
+                        case 1:
+                            entityType = "group";
+                            break;
+                        case 2:
+                            entityType = "person";
+                            break;
+                    }
+                }
+            }
+            
+            if (entityType != null) {
+                String secondGroup = m.group(2);
+                if (secondGroup != null) {
+                    bean = helper.getEntity(entityType, secondGroup, false);
+                }
+            }
+            
+            if (bean != null) {
+                Assignment.Type y = Assignment.Type.valueOf(p.getType().toUpperCase());
+                flatAssignmentsList.add(new Assignment(bean, y));
+            } else {
+                log.warn("Unable to resolve the following principal (will " +
+                        "be omitted from the list of assignments):  " + 
+                        p.getPrincipal());
+            }
+            
+        }
+        Map<JsonEntityBean,Assignment.Type> grantOrDenyMap = new HashMap<JsonEntityBean,Assignment.Type>();
+        for (Assignment a : flatAssignmentsList) {
+            grantOrDenyMap.put(a.getPrincipal(), a.getType());
+        }
+        this.assignments = new ArrayList<Assignment>();
+        for (Assignment a : flatAssignmentsList) {
+            placeInHierarchy(a, assignments, grantOrDenyMap);
+        }
+        
+        // Now get the target
+        JsonEntityBean targetBean = deduceJsonEntityBeanFromTargetString(target, helper);
+        if (targetBean != null) {
+            List<JsonEntityBean> list = new ArrayList<JsonEntityBean>();
+            list.add(targetBean);
+            this.setTarget(list);
+        } else {
+            this.setTargetAsStringIfDifferent(target);
+        }
+        
+        return this;
+        
+
+    }
+
     public String getOwner() {
         return owner;
     }
@@ -405,6 +506,114 @@ public class PermissionDefinitionForm implements Serializable {
             // This member is a root...
             hierarchy.add(a);
         }
+
+    }
+    
+    private enum TargetStringPattern {
+        
+        CHANNEL(
+                    Pattern.compile("CHAN_ID\\.\\d+"), 
+                    false,
+                    IChannelDefinition.class
+                ) {
+                    @Override
+                    public String parseKey(String target) {
+                        return target.substring("CHAN_ID.".length());
+                    }
+                },
+        
+        GROUP(
+                    Pattern.compile("local\\.\\d+"),
+                    true,
+                    null  // there are 2;  thankfully, not needed here 
+                ) {
+                    @Override
+                    public String parseKey(String target) {
+                        return target;
+                    }
+                },
+        
+        PERSON(
+                    Pattern.compile(".*"),
+                    false,
+                    IPerson.class
+                ) {
+                    @Override
+                    public String parseKey(String target) {
+                        return target;
+                    }
+                };
+        
+        // Instance Members.
+        private final Pattern pattern;
+        private final boolean group;
+        private final Class<?> clazz;
+        
+        TargetStringPattern(Pattern pattern, boolean group, Class<?> clazz) {
+            this.pattern = pattern;
+            this.group = group;
+            this.clazz = clazz;
+        }
+        
+        public boolean appliesTo(String target) {
+            
+            // Assertions.
+            if (target == null) {
+                String msg = "Argument 'target' cannot be null";
+                throw new IllegalArgumentException(msg);
+            }
+            
+            return pattern.matcher(target).matches();
+
+        }
+        
+        public boolean isGroup() {
+            return group;
+        }
+        
+        public Class<?> getClazz() {
+            return clazz;
+        }
+        
+        public abstract String parseKey(String target);
+        
+    }
+    
+    private JsonEntityBean deduceJsonEntityBeanFromTargetString(String target, IGroupListHelper helper) {
+        
+        // Assertions.
+        if (target == null) {
+            String msg = "Argument 'target' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+
+        JsonEntityBean rslt = null;  // default
+
+        TargetStringPattern matchingPattern = null;
+        for (TargetStringPattern p : TargetStringPattern.values()) {
+            if (p.appliesTo(target)) {
+                matchingPattern = p;
+                break;
+            }
+        }
+        
+        IGroupMember member = null;
+        if (matchingPattern != null) {
+            // We'll try to find something in GaP for this target
+            if (matchingPattern.isGroup()) {
+                member = GroupService.findGroup(target);
+            } else {
+                member = GroupService.getGroupMember(matchingPattern.parseKey(target), matchingPattern.getClazz());
+            }
+        }
+        
+        if (member != null) {
+            EntityEnum y = EntityEnum.getEntityEnum(member.getLeafType(), matchingPattern.isGroup());
+            rslt = new JsonEntityBean(member, y.toString());
+            rslt.setName(helper.lookupEntityName(rslt));
+        }
+        
+        return rslt;
 
     }
 

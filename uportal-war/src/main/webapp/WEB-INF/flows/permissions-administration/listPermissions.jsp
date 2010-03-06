@@ -27,6 +27,13 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="createPermission"/>
 </portlet:actionURL>
+<portlet:actionURL var="editUrl">
+  <portlet:param name="execution" value="${flowExecutionKey}" />
+  <portlet:param name="_eventId" value="editPermission"/>
+  <portlet:param name="owner" value="OWNER"/>
+  <portlet:param name="activity" value="ACTIVITY"/>
+  <portlet:param name="target" value="TARGET"/>
+</portlet:actionURL>
 <portlet:actionURL var="deleteUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="deletePermission"/>
@@ -125,6 +132,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <th id="${n}permissionActivity" class="flc-pager-sort-header"><a rsf:id="permissionActivity" title="Click to sort" href="javascript:;"><spring:message code="listPermissions.permissionActivityHeading"/></a></th>
               <th id="${n}permissionTarget" class="flc-pager-sort-header"><a rsf:id="permissionTarget" title="Click to sort" href="javascript:;"><spring:message code="listPermissions.permissionTargetHeading"/></a></th>
               <th id="${n}permissionType" class="flc-pager-sort-header"><a rsf:id="permissionType" title="Click to sort" href="javascript:;"><spring:message code="listPermissions.permissionTypeHeading"/></a></th>
+              <th id="${n}permissionEdit" rsf:id="permissionEdit"><spring:message code="listPermissions.permissionEditHeading"/></th>
               <th id="${n}permissionDelete" rsf:id="permissionDelete"><spring:message code="listPermissions.permissionDeleteHeading"/></th>
             </tr>
           </thead>
@@ -135,6 +143,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <td headers="${n}permissionActivity"><span rsf:id="permissionActivity"></span></td>
               <td headers="${n}permissionTarget"><span rsf:id="permissionTarget"></span></td>
               <td headers="${n}permissionType"><span rsf:id="permissionType"></span></td>
+              <td headers="${n}permissionEdit"><a href="" rsf:id="permissionEdit"></a></td>
               <td headers="${n}permissionDelete"><a href="" rsf:id="permissionDelete"></a></td>
             </tr>
           </tbody>
@@ -153,6 +162,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 up.jQuery(function() {
     var $ = up.jQuery;
     
+    var editUrl = "${editUrl}";
     var deleteUrl = "${deleteUrl}";
 
     var getPermissions = function() {
@@ -196,6 +206,14 @@ up.jQuery(function() {
             { key: "permissionActivity", valuebinding: "*.activity", sortable: true },
             { key: "permissionTarget", valuebinding: "*.target", sortable: true },
             { key: "permissionType", valuebinding: "*.permissionType", sortable: true },
+            { key: "permissionEdit", valuebinding: "*.owner",
+                components: {
+                    target: editUrl.replace("OWNER", '${"${*.owner}"}')
+                                    .replace("ACTIVITY", '${"${*.activity}"}')
+                                    .replace("TARGET", '${"${*.target}"}'),
+                    linktext: "<spring:message code="listPermissions.editLink"/>"
+                }
+            },
             { key: "permissionDelete", valuebinding: "*.owner",
                 components: {
                     target: deleteUrl.replace("OWNER", escape('${"${*.owner}"}'))
