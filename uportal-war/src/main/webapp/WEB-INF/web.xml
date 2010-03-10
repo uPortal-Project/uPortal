@@ -127,6 +127,10 @@
             <param-name>proxyReceptorUrl</param-name>
             <param-value>/CasProxyServlet</param-value>
         </init-param>
+        <init-param>
+            <param-name>acceptAnyProxy</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </filter>
     
     <filter>

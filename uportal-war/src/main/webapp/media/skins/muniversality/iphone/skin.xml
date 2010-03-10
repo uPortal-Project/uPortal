@@ -27,10 +27,9 @@
   <!-- Default jqueryui css -->
   <css>/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css</css>
     
-  <css>../common/fss-mobile-iphone-layout.css</css>
+  <css type="fss-theme" name="fl-theme-iphone">../common/fss-mobile-layout.css</css>
 
-  <!-- Visual style for the portal. Built and formatted as a Fluid Mobile Skinning System theme. -->
-  <css>portal.css</css>
+  <css>fss-mobile-theme-iphone.css</css>
     
   <!-- Support for legacy uPortal css classes. -->
   <css>legacy.css</css>
