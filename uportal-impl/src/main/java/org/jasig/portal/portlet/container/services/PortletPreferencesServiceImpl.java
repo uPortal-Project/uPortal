@@ -179,34 +179,38 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
 	}
 	public boolean isStoreInEntity(PortletRequest portletRequest) { 
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-    	if (!isGuestUser(httpServletRequest) || this.storeGuestPreferencesInEntity)
+    	if (!isGuestUser(httpServletRequest) || this.storeGuestPreferencesInEntity) {
     		return true;
-    	else
-    		return false; 
+    	}
+
+    	return false; 
     }
     
     public boolean isLoadFromEntity(PortletRequest portletRequest) { 
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-    	if (!isGuestUser(httpServletRequest) || this.loadGuestPreferencesFromEntity)
-    		return true;
-    	else
-    		return false; 
+    	if (!isGuestUser(httpServletRequest) || this.loadGuestPreferencesFromEntity){
+            return true;
+        }
+
+        return false; 
     }
     
     public boolean isStoreInMemory(PortletRequest portletRequest) { 
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-    	if (isGuestUser(httpServletRequest) && this.storeGuestPreferencesInMemory)
-    		return true;
-    	else
-    		return false; 
+    	if (isGuestUser(httpServletRequest) && this.storeGuestPreferencesInMemory){
+            return true;
+        }
+
+        return false; 
     }
 
     public boolean isLoadFromMemory(PortletRequest portletRequest) { 
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-    	if (isGuestUser(httpServletRequest) && this.loadGuestPreferencesFromMemory)
-    		return true;
-    	else
-    		return false; 
+    	if (isGuestUser(httpServletRequest) && this.loadGuestPreferencesFromMemory){
+            return true;
+        }
+
+        return false; 
     }
     
     /*
@@ -397,8 +401,6 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     protected boolean isGuestUser(final HttpServletRequest httpServletRequest) {
         final IPerson person = this.personManager.getPerson(httpServletRequest);
         return person.isGuest();
-//        final ISecurityContext securityContext = person.getSecurityContext();
-//        return !securityContext.isAuthenticated();
     }
     
     /**

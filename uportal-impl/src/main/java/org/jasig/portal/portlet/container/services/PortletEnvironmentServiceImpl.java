@@ -74,11 +74,9 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
      * @see org.apache.pluto.container.impl.PortletEnvironmentServiceImpl#createPortletSession(javax.portlet.PortletContext, org.apache.pluto.container.PortletWindow, javax.servlet.http.HttpSession)
      */
 	@Override
-	public PortletSession createPortletSession(PortletContext portletContext,
-			PortletWindow portletWindow, HttpSession session) {
-		
+	public PortletSession createPortletSession(PortletContext portletContext, PortletWindow portletWindow, HttpSession session) {
 		// TODO pluto 1.1 PortletEnvironmentService#createPortletSession passed in the request; now use IPortalRequestUtils#getCurrentPortalRequest()?
-		HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
+		final HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
 		final IPortletWindow internalPortletWindow = this.portletWindowRegistry.convertPortletWindow(request, portletWindow);
         final IPortletEntityId portletEntityId = internalPortletWindow.getPortletEntityId();
         
