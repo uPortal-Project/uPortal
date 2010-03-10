@@ -26,8 +26,6 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.driver.OptionalContainerServices;
 import org.apache.pluto.container.driver.RequiredContainerServices;
 import org.apache.pluto.container.impl.PortletContainerImpl;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Service;
@@ -43,9 +41,7 @@ import org.springframework.web.context.ServletContextAware;
  * @version $Revision$
  */
 @Service("portletContainer")
-public class PortletContainerFactoryBean extends AbstractFactoryBean implements ServletContextAware, InitializingBean, DisposableBean {
-    
-	private org.apache.pluto.container.impl.PortletContainerImpl portletContainer;
+public class PortletContainerFactoryBean extends AbstractFactoryBean implements ServletContextAware {
     private ServletContext servletContext;
     private RequiredContainerServices requiredContainerServices;
     private OptionalContainerServices optionalContainerServices;
@@ -65,20 +61,6 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean implements 
         this.portletContainerName = portletContainerName;
     }
     
-    /**
-	 * @return the portletContainer
-	 */
-	public org.apache.pluto.container.impl.PortletContainerImpl getPortletContainer() {
-		return portletContainer;
-	}
-	/**
-	 * @param portletContainer the portletContainer to set
-	 */
-	@Autowired(required=true)
-	public void setPortletContainer(
-			org.apache.pluto.container.impl.PortletContainerImpl portletContainer) {
-		this.portletContainer = portletContainer;
-	}
 	/**
 	 * @return the requiredContainerServices
 	 */
@@ -141,11 +123,11 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean implements 
     @Override
     protected Object createInstance() throws Exception {
         final String containerName = this.getContainerName();
-        this.portletContainer = new PortletContainerImpl(containerName, this.containerServices);
+        final PortletContainer portletContainer = new PortletContainerImpl(containerName, this.containerServices);
         
-        this.portletContainer.init();
+        portletContainer.init();
         
-        return this.portletContainer;
+        return portletContainer;
     }
 
     /* (non-Javadoc)
