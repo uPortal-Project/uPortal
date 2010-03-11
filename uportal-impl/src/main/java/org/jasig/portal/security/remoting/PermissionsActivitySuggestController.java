@@ -76,7 +76,7 @@ public class PermissionsActivitySuggestController extends AbstractPermissionsCon
     protected ModelAndView invokeSensative(HttpServletRequest req, HttpServletResponse res) throws Exception {
         
         List<Map<String,String>> rslt = new ArrayList<Map<String,String>>();
-
+        
         // Choose an entry in the activitiesByOwner Map based on owner 
         String ownerParam = req.getParameter(OWNER_PARAMETER);
         String ownerKey = ownerParam != null && ownerParam.trim().length() > 0 
@@ -90,6 +90,13 @@ public class PermissionsActivitySuggestController extends AbstractPermissionsCon
             String text = req.getParameter(TEXT_PARAMETER) != null
                                 ? req.getParameter(TEXT_PARAMETER).toUpperCase().trim()
                                 : null;
+            // Echo what the user typed (if anything) b/c the data model accepts arbitrary text
+            if (text != null) {
+                Map<String,String> map = new HashMap<String,String>();
+                map.put("name", text);
+                map.put("id", text);
+                rslt.add(map);
+            }
             for (Map.Entry<String,String> y : activities.entrySet()) {
                 if (text == null || y.getKey().contains(text)) {
                     Map<String,String> map = new HashMap<String,String>();

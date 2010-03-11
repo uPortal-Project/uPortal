@@ -80,6 +80,11 @@ public class PermissionsOwnerSuggestController extends AbstractPermissionsContro
         String text = req.getParameter(TEXT_PARAMETER);
         if (text != null && text.trim().length() > 0) {
             text = text.trim().toUpperCase();
+            // Echo what the user typed (if anything) b/c the data model accepts arbitrary text
+            Map<String,String> echo = new HashMap<String,String>();
+            echo.put("name", text);
+            echo.put("id", text);
+            rslt.add(echo);
             for (Map.Entry<String,String> y : getOwnersMap().entrySet()) {
                 if (y.getKey().contains(text)) {
                     Map<String,String> map = new HashMap<String,String>();
