@@ -145,6 +145,7 @@
         <property name="dataSource" ref="StatsDB" />
         <property name="jpaVendorAdapter" ref="statsJpaVendorAdapter" />
         <property name="persistenceUnitName" value="uPortalStatsPersistence" />
+        <qualifier value="stats"/>
     </bean>
 
     <!-- Adapater that can inject a cacheProvider into the hibernate entity manager -->
