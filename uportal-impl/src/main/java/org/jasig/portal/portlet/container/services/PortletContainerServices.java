@@ -20,7 +20,6 @@ import org.apache.pluto.container.PortletRequestContextService;
 import org.apache.pluto.container.PortletURLListenerService;
 import org.apache.pluto.container.RequestDispatcherService;
 import org.apache.pluto.container.UserInfoService;
-import org.apache.pluto.container.impl.RequestDispatcherServiceImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,9 +31,18 @@ import org.springframework.stereotype.Service;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
+@Service("containerServices")
 public class PortletContainerServices implements ContainerServices, InitializingBean {
-    private PortalContext portalContext;
+    
+	private CCPPProfileService cCPPProfileService;
+	private EventCoordinationService eventCoordinationService;
+	private FilterManagerService filterManagerService;
+	private NamespaceMapper namespaceMapper;
+	private PortletInvokerService portletInvokerService;
+	private PortletRequestContextService portletRequestContextService;
+	private PortletURLListenerService portletURLListenerService;
+	
+	private PortalContext portalContext;
     private PortletEnvironmentService portletEnvironmentService;
     private PortletPreferencesService portletPreferencesService;
     private RequestDispatcherService requestDispatcherService;
@@ -67,9 +75,11 @@ public class PortletContainerServices implements ContainerServices, Initializing
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (this.requestDispatcherService == null) {
+        /*
+    	if (this.requestDispatcherService == null) {
             this.requestDispatcherService = new RequestDispatcherServiceImpl();
         }
+        */
     }
 
     /* (non-Javadoc)
@@ -77,8 +87,7 @@ public class PortletContainerServices implements ContainerServices, Initializing
      */
     @Override
     public CCPPProfileService getCCPPProfileService() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.cCPPProfileService;
     }
 
     /* (non-Javadoc)
@@ -86,8 +95,7 @@ public class PortletContainerServices implements ContainerServices, Initializing
      */
     @Override
     public EventCoordinationService getEventCoordinationService() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.eventCoordinationService;
     }
 
     /* (non-Javadoc)
@@ -95,8 +103,7 @@ public class PortletContainerServices implements ContainerServices, Initializing
      */
     @Override
     public FilterManagerService getFilterManagerService() {
-        // TODO Auto-generated method stub
-        return null;
+       return this.filterManagerService;
     }
 
     /* (non-Javadoc)
@@ -104,8 +111,7 @@ public class PortletContainerServices implements ContainerServices, Initializing
      */
     @Override
     public NamespaceMapper getNamespaceMapper() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.namespaceMapper;
     }
 
     /* (non-Javadoc)
@@ -129,8 +135,7 @@ public class PortletContainerServices implements ContainerServices, Initializing
      */
     @Override
     public PortletInvokerService getPortletInvokerService() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.portletInvokerService;
     }
 
     /* (non-Javadoc)
@@ -146,8 +151,7 @@ public class PortletContainerServices implements ContainerServices, Initializing
      */
     @Override
     public PortletRequestContextService getPortletRequestContextService() {
-        // TODO Auto-generated method stub
-        return null;
+       return this.portletRequestContextService;
     }
 
     /* (non-Javadoc)
@@ -155,8 +159,7 @@ public class PortletContainerServices implements ContainerServices, Initializing
      */
     @Override
     public PortletURLListenerService getPortletURLListenerService() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.portletURLListenerService;
     }
 
     /* (non-Javadoc)
