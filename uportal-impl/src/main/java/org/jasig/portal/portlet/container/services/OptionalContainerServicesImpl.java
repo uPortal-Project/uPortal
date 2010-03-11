@@ -24,22 +24,27 @@ import org.apache.pluto.container.PortletPreferencesService;
 import org.apache.pluto.container.UserInfoService;
 import org.apache.pluto.container.driver.PortalAdministrationService;
 import org.apache.pluto.driver.container.DefaultOptionalContainerServices;
-import org.apache.pluto.driver.container.DefaultPortalAdministrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
+ * Basic subclass of {@link DefaultOptionalContainerServices}, annotated
+ * for participation in auto-wiring.
+ * 
+ * Implementations {@link UserInfoService}, {@link PortalAdministrationService}
+ * and {@link PortletPreferencesService} beans are required.
+ * If no {@link PortletEnvironmentService} is defined, defaults to {@link PortletEnvironmentServiceImpl}.
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 @Service("optionalContainerServices")
 public class OptionalContainerServicesImpl extends DefaultOptionalContainerServices {
     private UserInfoService userInfoService;
-    private PortalAdministrationService portalAdministrationService = new DefaultPortalAdministrationService();
+    private PortalAdministrationService portalAdministrationService;
     private PortletPreferencesService portletPreferencesService;
-    private PortletEnvironmentService portletEnvironmentService;
-    private RequestAttributeServiceImpl requestAttributeService;
+    private PortletEnvironmentService portletEnvironmentService = new PortletEnvironmentServiceImpl();
     
     /**
      * @param userInfoService the userInfoService to set
@@ -68,19 +73,10 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     /**
      * @param portletEnvironmentService the portletEnvironmentService to set
      */
-    @Autowired(required=true)
+    @Autowired(required=false)
     public void setPortletEnvironmentService(PortletEnvironmentService portletEnvironmentService) {
         this.portletEnvironmentService = portletEnvironmentService;
     }
-
-	/**
-	 * @param requestAttributeService the requestAttributeService to set
-	 */
-	/* @Autowired(required=true) */
-	public void setRequestAttributeService(
-			RequestAttributeServiceImpl requestAttributeService) {
-		this.requestAttributeService = requestAttributeService;
-	}
 
 	/*
      * (non-Javadoc)
@@ -117,11 +113,4 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     public PortletEnvironmentService getPortletEnvironmentService() {
         return this.portletEnvironmentService;
     }
-
-    /**
-	 * @return the requestAttributeService
-	 */
-	public RequestAttributeServiceImpl getRequestAttributeService() {
-		return requestAttributeService;
-	}
 }
