@@ -76,7 +76,7 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
 	/**
 	 * @param requestAttributeService the requestAttributeService to set
 	 */
-	@Autowired(required=true)
+	/* @Autowired(required=true) */
 	public void setRequestAttributeService(
 			RequestAttributeServiceImpl requestAttributeService) {
 		this.requestAttributeService = requestAttributeService;
