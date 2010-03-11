@@ -408,7 +408,8 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * 
      * @return List of IPortletPreferences for the entity and session, may be null if no preferences have been set.
      */
-    protected List<IPortletPreference> getSessionPreferences(IPortletEntityId portletEntityId, HttpServletRequest httpServletRequest) {
+    @SuppressWarnings("unchecked")
+	protected List<IPortletPreference> getSessionPreferences(IPortletEntityId portletEntityId, HttpServletRequest httpServletRequest) {
         final HttpSession session = httpServletRequest.getSession();
         
         final Map<IPortletEntityId, List<IPortletPreference>> portletPreferences;
@@ -425,7 +426,8 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         return portletPreferences.get(portletEntityId);
     }
     
-    protected void storeSessionPreferences(IPortletEntityId portletEntityId, HttpServletRequest httpServletRequest, List<IPortletPreference> preferences) {
+    @SuppressWarnings("unchecked")
+	protected void storeSessionPreferences(IPortletEntityId portletEntityId, HttpServletRequest httpServletRequest, List<IPortletPreference> preferences) {
         final HttpSession session = httpServletRequest.getSession();
         
         Map<IPortletEntityId, List<IPortletPreference>> portletPreferences;
