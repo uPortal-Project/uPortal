@@ -27,10 +27,9 @@
      | This file is here for supporting legacy unit tests,   |
      | no new configuration should be added to this file.    |
      +-  ************************************************* -->
-    <!-- 
+ 
     <bean id="org.jasig.portal.spring.locator.CacheFactoryLocator" 
             class="org.jasig.portal.spring.locator.CacheFactoryLocator">
         <constructor-arg index="0" ref="cacheFactory" />
     </bean>
-    -->
 </beans>
