@@ -35,13 +35,13 @@ import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.driver.OptionalContainerServices;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.UserAttribute;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -86,7 +86,7 @@ public class RequestAttributeServiceImpl  {
 	}
     
     public Object getAttribute(PortletRequest portletRequest, HttpServletRequest httpServletRequest, PortletWindow plutoPortletWindow, String name) {
-        if (IPortletAdaptor.MULTIVALUED_USERINFO_MAP_ATTRIBUTE.equals(name)) {
+        if (IPortletRenderer.MULTIVALUED_USERINFO_MAP_ATTRIBUTE.equals(name)) {
             httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
             
             //Get the list of user attributes the portal knows about the user
@@ -134,7 +134,7 @@ public class RequestAttributeServiceImpl  {
         }
         
         final List<String> attributeNames = EnumerationUtils.toList(attributeNamesEnum);
-        attributeNames.add(IPortletAdaptor.MULTIVALUED_USERINFO_MAP_ATTRIBUTE);
+        attributeNames.add(IPortletRenderer.MULTIVALUED_USERINFO_MAP_ATTRIBUTE);
         return new IteratorEnumeration(attributeNames.iterator());
     }
 

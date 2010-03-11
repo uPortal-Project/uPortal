@@ -74,12 +74,6 @@ public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, 
     public static final String CHANNEL_PARAM__IS_FRAMEWORK_PORTLET = "isFrameworkPortlet";
     
     /**
-     * Name of the {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor
-     * will store a Map of user info attributes that has support for multi-valued attributes.
-     */
-    public static final String MULTIVALUED_USERINFO_MAP_ATTRIBUTE = "org.jasig.portlet.USER_INFO_MULTIVALUED";
-    
-    /**
      * {@link org.jasig.portal.IChannel#setStaticData(org.jasig.portal.ChannelStaticData)},
      * {@link org.jasig.portal.IPrivileged#setPortalControlStructures(org.jasig.portal.PortalControlStructures)}, and 
      * {@link org.jasig.portal.IChannel#setRuntimeData(org.jasig.portal.ChannelRuntimeData)} will be called before

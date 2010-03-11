@@ -40,6 +40,11 @@ public interface IPortletRenderer {
 	public static final WindowState DETACHED = new WindowState("DETACHED");
 	public static final PortletMode ABOUT = new PortletMode("ABOUT");
 	public static final PortletMode CONFIG = new PortletMode("CONFIG");
+	/**
+	 * Name of the {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor
+	 * will store a Map of user info attributes that has support for multi-valued attributes.
+	 */
+	public static final String MULTIVALUED_USERINFO_MAP_ATTRIBUTE = "org.jasig.portlet.USER_INFO_MULTIVALUED";
 
 	/**
      * Initializes the portlet within the portlet container
