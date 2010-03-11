@@ -70,10 +70,9 @@ public class HibernateJpaVendorAdapter extends org.springframework.orm.jpa.vendo
     /* (non-Javadoc)
      * @see org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter#getJpaPropertyMap()
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public Map<String, String> getJpaPropertyMap() {
-        final Map<String, String> jpaPropertyMap = super.getJpaPropertyMap();
+    public Map<String, Object> getJpaPropertyMap() {
+        final Map<String, Object> jpaPropertyMap = super.getJpaPropertyMap();
         
         if (this.cacheProvider != null) {
             if (this.logger.isInfoEnabled()) {

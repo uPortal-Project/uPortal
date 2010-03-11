@@ -70,7 +70,7 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
     /**
      * @see org.springframework.web.context.request.SessionScope#get(java.lang.String, org.springframework.beans.factory.ObjectFactory)
      */
-    public Object get(String name, ObjectFactory objectFactory) {
+    public Object get(String name, ObjectFactory<?> objectFactory) {
         try {
             return this.delegateScope.get(name, objectFactory);
         }
@@ -212,4 +212,10 @@ public class FailsafeSingletonScope implements Scope, DisposableBean {
                 .toString();
         }
     }
+
+	@Override
+	public Object resolveContextualObject(String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

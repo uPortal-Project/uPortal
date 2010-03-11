@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,7 +54,9 @@ import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsFileUploadSupport;
 
@@ -300,12 +303,12 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
      * @return A Map of String parameter names to MultipartDataSource objects
      */
     protected Map<String, MultipartDataSource[]> getMultipartDataSources(final MultipartParsingResult parsingResult) {
-        final Map<String, MultipartFile> multipartFiles = parsingResult.getMultipartFiles();
+        final MultiValueMap<String, MultipartFile> multipartFiles = parsingResult.getMultipartFiles();
         
         final Map<String, MultipartDataSource[]> multipartDataSources = new HashMap<String, MultipartDataSource[]>(multipartFiles.size());
-        for (final Map.Entry<String, MultipartFile> multipartFileEntry : multipartFiles.entrySet()) {
-            final MultipartFile multipartFile = multipartFileEntry.getValue();
-            
+        for (final Entry<String, List<MultipartFile>> multipartFileEntry : multipartFiles.entrySet()) {
+            final List<MultipartFile> multipartFileList = multipartFileEntry.getValue();
+            MultipartFile multipartFile = DataAccessUtils.singleResult(multipartFileList);
             if (StringUtils.isNotEmpty(multipartFile.getOriginalFilename())) {
                 final MultipartDataSource multipartDataSource = new MultipartDataSource(multipartFile);
                 multipartDataSources.put(multipartFileEntry.getKey(), new MultipartDataSource[] { multipartDataSource });

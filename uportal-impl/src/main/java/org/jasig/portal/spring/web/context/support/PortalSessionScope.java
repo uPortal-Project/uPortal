@@ -57,10 +57,19 @@ public class PortalSessionScope implements Scope {
         this.portalRequestUtils = portalRequestUtils;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.springframework.beans.factory.config.Scope#resolveContextualObject(java.lang.String)
+     */
+    @Override
+	public Object resolveContextualObject(String arg0) {
+		//TODO implement me!
+		return null;
+	}
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.config.Scope#get(java.lang.String, org.springframework.beans.factory.ObjectFactory)
      */
-    public Object get(String name, ObjectFactory objectFactory) {
+    public Object get(String name, ObjectFactory<?> objectFactory) {
         final HttpSession session = this.getPortalSesion(true);
         
         final Object sessionMutex = WebUtils.getSessionMutex(session);
@@ -145,4 +154,7 @@ public class PortalSessionScope implements Scope {
             }
         }
     }
+
+
+	
 }
