@@ -157,6 +157,11 @@
             <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-container</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.portals.pluto</groupId>
+            <artifactId>pluto-portal-driver</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -236,6 +241,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
         </dependency>
 
         <dependency>
