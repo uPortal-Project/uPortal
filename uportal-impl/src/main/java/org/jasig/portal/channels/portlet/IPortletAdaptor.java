@@ -19,8 +19,6 @@
 
 package org.jasig.portal.channels.portlet;
 
-import javax.portlet.PortletMode;
-import javax.portlet.WindowState;
 
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.ICharacterChannel;
@@ -41,12 +39,6 @@ import org.jasig.portal.PortalException;
  */
 @Deprecated
 public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, ICharacterChannel, ICacheable, IDirectResponse {
-    public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
-    public static final WindowState DETACHED = new WindowState("DETACHED");
-    
-    public static final PortletMode ABOUT = new PortletMode("ABOUT");
-    public static final PortletMode CONFIG = new PortletMode("CONFIG");
-    
     /**
      * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the current
      * {@link org.jasig.portal.ChannelRuntimeData} under.

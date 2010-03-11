@@ -21,6 +21,8 @@ package org.jasig.portal.portlet.rendering;
 
 import java.io.Writer;
 
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,7 +36,12 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @version $Revision$
  */
 public interface IPortletRenderer {
-    /**
+    public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
+	public static final WindowState DETACHED = new WindowState("DETACHED");
+	public static final PortletMode ABOUT = new PortletMode("ABOUT");
+	public static final PortletMode CONFIG = new PortletMode("CONFIG");
+
+	/**
      * Initializes the portlet within the portlet container
      * 
      * @param portletEntity The portlet entity to base the window on

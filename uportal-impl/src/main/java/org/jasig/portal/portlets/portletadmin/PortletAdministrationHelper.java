@@ -72,6 +72,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
@@ -447,7 +448,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	/**
-	 * If the channel is a portlet and if one of the supported portlet modes is {@link IPortletAdaptor#CONFIG}
+	 * If the channel is a portlet and if one of the supported portlet modes is {@link IPortletRenderer#CONFIG}
 	 */
 	public boolean supportsConfigMode(ChannelDefinitionForm form) {
 	    if (!form.isPortlet()) {
@@ -480,7 +481,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
         for (final Supports support : supports) {
             final List<String> portletModes = support.getPortletModes();
             for (final String portletMode : portletModes) {
-                if (IPortletAdaptor.CONFIG.equals(new PortletMode(portletMode))) {
+                if (IPortletRenderer.CONFIG.equals(new PortletMode(portletMode))) {
                     return true;
                 }
             }
@@ -677,8 +678,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    final PortletUrl renderUrl = delegationResponse.getRenderUrl();
 	    final DelegateState delegateState = delegationResponse.getDelegateState();
         if (renderUrl == null || 
-	            (renderUrl.getPortletMode() != null && !IPortletAdaptor.CONFIG.equals(renderUrl.getPortletMode())) ||
-	            !IPortletAdaptor.CONFIG.equals(delegateState.getPortletMode())) {
+	            (renderUrl.getPortletMode() != null && !IPortletRenderer.CONFIG.equals(renderUrl.getPortletMode())) ||
+	            !IPortletRenderer.CONFIG.equals(delegateState.getPortletMode())) {
 	        
 	        //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
 	        return true;

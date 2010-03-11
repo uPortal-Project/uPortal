@@ -57,6 +57,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
@@ -93,7 +94,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private IUserInstanceManager userInstanceManager;
     private IPortletDelegationManager portletDelegationManager;
     private boolean useAnchors = true;
-    private Set<WindowState> transientWindowStates = new HashSet<WindowState>(Arrays.asList(IPortletAdaptor.EXCLUSIVE, IPortletAdaptor.DETACHED));
+    private Set<WindowState> transientWindowStates = new HashSet<WindowState>(Arrays.asList(IPortletRenderer.EXCLUSIVE, IPortletRenderer.DETACHED));
     private Set<WindowState> anchoringWindowStates = new HashSet<WindowState>(Arrays.asList(WindowState.MINIMIZED, WindowState.NORMAL));
     
     
@@ -512,12 +513,12 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             
             // Determine the base path for the URL
             // If the next state is EXCLUSIVE or there is no state change and the current state is EXCLUSIVE use the worker URL base
-            if (IPortletAdaptor.EXCLUSIVE.equals(windowState) || (windowState == null && IPortletAdaptor.EXCLUSIVE.equals(previousWindowState))) {
+            if (IPortletRenderer.EXCLUSIVE.equals(windowState) || (windowState == null && IPortletRenderer.EXCLUSIVE.equals(previousWindowState))) {
                 final String urlBase = channelRuntimeData.getBaseWorkerURL(UPFileSpec.FILE_DOWNLOAD_WORKER);
                 url.append(urlBase);
             }
             //In detached, need to make sure the URL is right
-            else if (IPortletAdaptor.DETACHED.equals(windowState) || (windowState == null && IPortletAdaptor.DETACHED.equals(previousWindowState))) {
+            else if (IPortletRenderer.DETACHED.equals(windowState) || (windowState == null && IPortletRenderer.DETACHED.equals(previousWindowState))) {
                 final UPFileSpec upFileSpec = new UPFileSpec(channelRuntimeData.getUPFile());
                 upFileSpec.setMethodNodeId(channelSubscribeId);
                 upFileSpec.setTargetNodeId(channelSubscribeId);
@@ -525,7 +526,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                 url.append(urlBase);
             }
             //Switching back from detached to a normal state
-            else if (IPortletAdaptor.DETACHED.equals(previousWindowState) && windowState != null && !previousWindowState.equals(windowState)) {
+            else if (IPortletRenderer.DETACHED.equals(previousWindowState) && windowState != null && !previousWindowState.equals(windowState)) {
                 final UPFileSpec upFileSpec = new UPFileSpec(channelRuntimeData.getUPFile());
                 upFileSpec.setMethodNodeId(UPFileSpec.USER_LAYOUT_ROOT_NODE);
                 final String urlBase = upFileSpec.getUPFile();
@@ -615,7 +616,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                     this.encodeAndAppend(url.append("&"), encoding, "minimized_channelId", channelSubscribeId);
                     this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "true");
                 }
-                else if (IPortletAdaptor.DETACHED.equals(windowState)) {
+                else if (IPortletRenderer.DETACHED.equals(windowState)) {
                     this.encodeAndAppend(url.append("&"), encoding, "uP_detach_target", channelSubscribeId);
                 }
             }

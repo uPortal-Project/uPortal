@@ -439,7 +439,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
 
                 switch (portalEvent.getEventNumber()) {
                     case PortalEvent.DETACH_BUTTON_EVENT: {
-                        portletUrl.setWindowState(IPortletAdaptor.DETACHED);
+                        portletUrl.setWindowState(IPortletRenderer.DETACHED);
                     }
                     break;
                     case PortalEvent.MINIMIZE_EVENT: {
@@ -463,7 +463,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                     }
                     break;
                     case PortalEvent.ABOUT_BUTTON_EVENT: {
-                        portletUrl.setPortletMode(IPortletAdaptor.ABOUT);
+                        portletUrl.setPortletMode(IPortletRenderer.ABOUT);
                     }
                     break;
                 }

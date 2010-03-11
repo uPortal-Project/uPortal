@@ -44,6 +44,7 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -250,7 +251,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         parameters2.put("keyB", Arrays.asList(new String[] { "valueB.A" }) );
         portletUrl.setParameters(parameters2);
         
-        portletUrl.setPortletMode(IPortletAdaptor.CONFIG);
+        portletUrl.setPortletMode(IPortletRenderer.CONFIG);
         portletUrl.setWindowState(WindowState.MAXIMIZED);
         
         String urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow2, portletUrl);
@@ -376,7 +377,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         parameters2.put("keyB", Arrays.asList(new String[] { "valueB.A" }) );
         portletUrl.setParameters(parameters2);
         
-        portletUrl.setPortletMode(IPortletAdaptor.CONFIG);
+        portletUrl.setPortletMode(IPortletRenderer.CONFIG);
         portletUrl.setWindowState(WindowState.MAXIMIZED);
         
         String urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow2, portletUrl);
@@ -503,7 +504,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         //Setup delegation (wId1 delegates to wId2)
         portletWindow2.setDelegationParent(portletWindowId1);
         portletWindow2.setWindowState(WindowState.MAXIMIZED);
-        portletWindow2.setPortletMode(IPortletAdaptor.CONFIG);
+        portletWindow2.setPortletMode(IPortletRenderer.CONFIG);
         final Map<String, List<String>> parameters2 = new LinkedHashMap<String, List<String>>();
         parameters2.put("keyA", Arrays.asList(new String[] { "valueA.A", "valueA.B" }) );
         parameters2.put("keyB", Arrays.asList(new String[] { "valueB.A" }) );
@@ -521,7 +522,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         parameters3.put("keyX", Arrays.asList(new String[] { "" }) );
         portletUrl.setParameters(parameters3);
         
-        portletUrl.setPortletMode(IPortletAdaptor.CONFIG);
+        portletUrl.setPortletMode(IPortletRenderer.CONFIG);
         portletUrl.setWindowState(WindowState.NORMAL);
         
         String urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow3, portletUrl);
@@ -669,7 +670,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         //Setup delegation (wId1 delegates to wId2)
         portletWindow2.setDelegationParent(portletWindowId1);
         portletWindow2.setWindowState(WindowState.MAXIMIZED);
-        portletWindow2.setPortletMode(IPortletAdaptor.CONFIG);
+        portletWindow2.setPortletMode(IPortletRenderer.CONFIG);
         final Map<String, List<String>> parameters2 = new LinkedHashMap<String, List<String>>();
         parameters2.put("keyA", Arrays.asList(new String[] { "valueA.A", "valueA.B" }) );
         parameters2.put("keyB", Arrays.asList(new String[] { "valueB.A" }) );
@@ -687,7 +688,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         parameters3.put("keyX", Arrays.asList(new String[] { "" }) );
         portletUrl.setParameters(parameters3);
         
-        portletUrl.setPortletMode(IPortletAdaptor.CONFIG);
+        portletUrl.setPortletMode(IPortletRenderer.CONFIG);
         portletUrl.setWindowState(WindowState.NORMAL);
         
         String urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow3, portletUrl);
@@ -872,7 +873,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         final PortletUrl portletUrl3 = new PortletUrl(wId3);
         portletUrl3.setRequestType(RequestType.RENDER);
         portletUrl3.setSecure(false);
-        portletUrl3.setPortletMode(IPortletAdaptor.CONFIG);
+        portletUrl3.setPortletMode(IPortletRenderer.CONFIG);
         final Map<String, List<String>> parameters3 = new LinkedHashMap<String, List<String>>();
         parameters3.put("key3", Arrays.asList(new String[] { "value3.1", "value3.2" }) );
         parameters3.put("key3", Arrays.asList(new String[] { "value3.1" }) );

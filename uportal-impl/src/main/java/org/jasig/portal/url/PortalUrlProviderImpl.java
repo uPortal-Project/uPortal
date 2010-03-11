@@ -43,7 +43,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -57,6 +56,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -496,10 +496,10 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         if (WindowState.MAXIMIZED.equals(urlWindowState)) {
             windowStateString = UrlState.MAX.toString().toLowerCase();
         }
-        else if (IPortletAdaptor.DETACHED.equals(urlWindowState)) {
+        else if (IPortletRenderer.DETACHED.equals(urlWindowState)) {
             windowStateString = UrlState.DETACHED.toString().toLowerCase();
         }
-        else if (IPortletAdaptor.EXCLUSIVE.equals(urlWindowState)) {
+        else if (IPortletRenderer.EXCLUSIVE.equals(urlWindowState)) {
             windowStateString = UrlState.EXCLUSIVE.toString().toLowerCase();
         }
         else {

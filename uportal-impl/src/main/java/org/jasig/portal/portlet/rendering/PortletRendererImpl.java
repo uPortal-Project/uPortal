@@ -326,7 +326,7 @@ public class PortletRendererImpl implements IPortletRenderer {
     protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, PortletUrl portletUrl) {
         final PortletMode portletMode = portletUrl.getPortletMode();
         if (portletMode != null) {
-            if (IPortletAdaptor.CONFIG.equals(portletMode)) {
+            if (IPortletRenderer.CONFIG.equals(portletMode)) {
                 final IPerson person = this.personManager.getPerson(httpServletRequest);
                 
                 final EntityIdentifier ei = person.getEntityIdentifier();

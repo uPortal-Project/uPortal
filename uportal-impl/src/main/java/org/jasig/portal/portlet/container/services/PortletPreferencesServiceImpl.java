@@ -40,7 +40,6 @@ import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Preference;
 import org.apache.pluto.container.om.portlet.Preferences;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -51,6 +50,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -264,7 +264,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         //Determine if the user is a guest
         final boolean isGuest = isGuestUser(httpServletRequest);
         
-        if (!IPortletAdaptor.CONFIG.equals(portletWindow.getPortletMode())) {
+        if (!IPortletRenderer.CONFIG.equals(portletWindow.getPortletMode())) {
             //If not guest or storing shared guest prefs get the prefs from the portlet entity
             if (this.isLoadFromEntity(portletRequest)) {
                 //Add entity preferences
@@ -319,7 +319,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         
         //Add definition preferences if not config mode
         final IPortletPreferences definitionPreferences = portletDefinition.getPortletPreferences();
-        if (!IPortletAdaptor.CONFIG.equals(portletWindow.getPortletMode())) {
+        if (!IPortletRenderer.CONFIG.equals(portletWindow.getPortletMode())) {
             final List<IPortletPreference> definitionPreferencesList = definitionPreferences.getPortletPreferences();
             this.addPreferencesToMap(definitionPreferencesList, preferencesMap);
         }
@@ -344,7 +344,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             portletPreferences.add(preference);
         }
 
-        if (IPortletAdaptor.CONFIG.equals(portletWindow.getPortletMode())) {
+        if (IPortletRenderer.CONFIG.equals(portletWindow.getPortletMode())) {
             definitionPreferences.setPortletPreferences(portletPreferences);
             this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
         }
