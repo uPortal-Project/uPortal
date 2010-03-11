@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
@@ -33,7 +33,7 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class MapCacheFactoryBean extends AbstractFactoryBean {
+public class MapCacheFactoryBean extends AbstractFactoryBean<Map> {
     private CacheFactory cacheFactory;
     private String cacheName;
     
@@ -46,9 +46,8 @@ public class MapCacheFactoryBean extends AbstractFactoryBean {
     /**
      * @param cacheFactory the cacheFactory to set
      */
-    @Required
+    @Autowired(required=true)
     public void setCacheFactory(CacheFactory cacheFactory) {
-        Validate.notNull(cacheFactory, "cacheFactory can not be null");
         this.cacheFactory = cacheFactory;
     }
 
@@ -69,7 +68,7 @@ public class MapCacheFactoryBean extends AbstractFactoryBean {
      * @see org.springframework.beans.factory.config.AbstractFactoryBean#createInstance()
      */
     @Override
-    protected Object createInstance() throws Exception {
+    protected Map<Serializable, Object> createInstance() throws Exception {
         final Map<Serializable, Object> cache;
         if (this.cacheName != null) {
             cache = this.cacheFactory.getCache(this.cacheName);
@@ -85,7 +84,7 @@ public class MapCacheFactoryBean extends AbstractFactoryBean {
      * @see org.springframework.beans.factory.config.AbstractFactoryBean#getObjectType()
      */
     @Override
-    public Class<?> getObjectType() {
+    public Class<Map> getObjectType() {
         return Map.class;
     }
 }

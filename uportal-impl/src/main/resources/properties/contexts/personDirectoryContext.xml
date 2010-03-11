@@ -118,7 +118,6 @@
         <property name="cacheNullResults" value="true" />
         <property name="userInfoCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.merged" />
             </bean>
         </property>
@@ -148,7 +147,6 @@
         <property name="cacheNullResults" value="true" />
         <property name="userInfoCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.up_user" />
             </bean>
         </property>
@@ -193,7 +191,6 @@
         <property name="cacheNullResults" value="true" />
         <property name="userInfoCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.up_person_dir" />
             </bean>
         </property>

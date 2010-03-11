@@ -25,14 +25,10 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.springmodules.cache.CachingModel;
-import org.springmodules.cache.FlushingModel;
-import org.springmodules.cache.provider.CacheProviderFacade;
 
 /**
  * Hides a {@link CacheProviderFacade} behind a the {@link Map} interface. Only the following methods
@@ -53,30 +49,24 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * @version $Revision$
  */
 public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
-    private final CacheProviderFacade cacheProviderFacade;
-    private final CachingModel cachingModel;
-    private final FlushingModel flushModel;
+    private final Ehcache cache;
     
     /**
      * @param cacheProviderFacade The facade to expose as a Map.
      * @param cachingModel The cache model to use for storing and retrieving data
      * @param flushModel The flushing model to use when clearing the cache
      */
-    public MapCacheProvider(CacheProviderFacade cacheProviderFacade, CachingModel cachingModel, FlushingModel flushModel) {
-        Validate.notNull(cacheProviderFacade, "cacheProviderFacade can not be null");
-        Validate.notNull(cachingModel, "cachingModel can not be null");
-        Validate.notNull(flushModel, "flushModel can not be null");
+    public MapCacheProvider(Ehcache cache) {
+        Validate.notNull(cache, "cache can not be null");
         
-        this.cacheProviderFacade = cacheProviderFacade;
-        this.cachingModel = cachingModel;
-        this.flushModel = flushModel;
+        this.cache = cache;
     }
 
     /* (non-Javadoc)
      * @see java.util.Map#clear()
      */
     public void clear() {
-        this.cacheProviderFacade.flushCache(this.flushModel);
+        this.cache.removeAll();
     }
     
     /**
@@ -85,7 +75,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
      * @see java.util.Map#containsKey(java.lang.Object)
      */
     public boolean containsKey(Object key) {
-        return this.get(key) != null;
+        return this.cache.isKeyInCache(key);
     }
     
     /* (non-Javadoc)
@@ -93,7 +83,12 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
      */
     @SuppressWarnings("unchecked")
     public V get(Object key) {
-        return (V)this.cacheProviderFacade.getFromCache((Serializable)key, this.cachingModel);
+        final Element element = this.cache.get((Serializable)key);
+        if (element == null) {
+            return null;
+        }
+        
+        return (V)element.getObjectValue();
     }
     
     /* (non-Javadoc)
@@ -101,7 +96,7 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
      */
     public V put(K key, V value) {
         final V old = this.get(key);
-        this.cacheProviderFacade.putInCache(key, this.cachingModel, value);
+        this.cache.put(new Element(key, value));
         return old;
     }
     
@@ -112,7 +107,8 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
         for (final Map.Entry<? extends K, ? extends V> e : t.entrySet()) {
             final K key = e.getKey();
             final V value = e.getValue();
-            this.cacheProviderFacade.putInCache(key, this.cachingModel, value);
+            
+            this.cache.put(new Element(key, value));
         }
     }
     
@@ -121,62 +117,69 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
      */
     public V remove(Object key) {
         final V old = this.get(key);
-        this.cacheProviderFacade.removeFromCache((Serializable)key, this.cachingModel);
+        this.cache.remove((Serializable)key);
         return old;
     }
 
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof MapCacheProvider)) {
-            return false;
-        }
-        MapCacheProvider<?,?> rhs = (MapCacheProvider<?,?>) object;
-        return new EqualsBuilder()
-            .append(this.cacheProviderFacade, rhs.cacheProviderFacade)
-            .append(this.cachingModel, rhs.cachingModel)
-            .append(this.flushModel, rhs.flushModel)
-            .isEquals();
-    }
-
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(-1916800777, 1589715735)
-            .append(this.cacheProviderFacade)
-            .append(this.cachingModel)
-            .append(this.flushModel)
-            .toHashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((cache == null) ? 0 : cache.hashCode());
+        return result;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof MapCacheProvider<?, ?>)) {
+            return false;
+        }
+        MapCacheProvider<?, ?> other = (MapCacheProvider<?, ?>) obj;
+        if (cache == null) {
+            if (other.cache != null) {
+                return false;
+            }
+        }
+        else if (!cache.equals(other.cache)) {
+            return false;
+        }
+        return true;
+    }
+    
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-           .append("cacheProviderFacade", this.cacheProviderFacade)
-           .append("cachingModel", this.cachingModel)
-           .append("flushModel", this.flushModel)
-           .toString();
+        return "MapCacheProvider [" + cache + "]";
     }
 
-    
-    //********** Unsupported Map methods **********//
-    
     /* (non-Javadoc)
      * @see java.util.Map#containsValue(java.lang.Object)
      */
     public boolean containsValue(Object value) {
-        return false;
+        return this.cache.isValueInCache(value);
     }
+
+    /* (non-Javadoc)
+     * @see java.util.Map#isEmpty()
+     */
+    public boolean isEmpty() {
+        return this.cache.getSize() > 0;
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.Map#size()
+     */
+    public int size() {
+        return this.cache.getSize();
+    }
+
+    
+    //********** Unsupported Map methods **********//
 
     /* (non-Javadoc)
      * @see java.util.Map#entrySet()
@@ -186,25 +189,10 @@ public class MapCacheProvider<K extends Serializable, V> implements Map<K, V> {
     }
 
     /* (non-Javadoc)
-     * @see java.util.Map#isEmpty()
-     */
-    public boolean isEmpty() {
-        return false;
-    }
-
-    /* (non-Javadoc)
      * @see java.util.Map#keySet()
      */
     public Set<K> keySet() {
         return Collections.emptySet();
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Map#size()
-     */
-    public int size() {
-        //Don't know what the size is
-        return 0;
     }
 
     /* (non-Javadoc)

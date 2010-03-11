@@ -22,10 +22,8 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
        xsi:schemaLocation="
-            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-            http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
     
     <!-- 
@@ -33,49 +31,19 @@
      | This file is specified by the cacheManager bean at the bottom of this document
      +-->
 	
-    <!--
-     | Factory used by portal code to retrieve caches.
-     +-->
-    <bean id="cacheFactory" class="org.jasig.portal.utils.cache.CacheProviderFactory">
-        <property name="cacheProviderFacade" ref="cacheProvider" />
-        <property name="cacheModelFactory" ref="cacheModelFactory" />
-    </bean>
-    
-
-    <!-- Support classes for the cacheFactory and cacheProvider -->    
-
-    <bean id="cacheModelFactory" class="org.jasig.portal.utils.cache.EhCacheModelFactory" />
-
-	<!-- springmodules requires " An implementation of CacheProviderFacade should be registered under the name 'cacheProvider'"-->
-    <bean id="cacheProvider" class="org.jasig.portal.utils.cache.EhCacheFacade">
-    	<!-- dependencies are autowired -->
-    </bean>
-
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="cacheManagerName" value="uPortal.cacheManager" />
         <property name="configLocation" value="classpath:/properties/ehcache.xml" />
     </bean>
     
-    <bean id="baseCachingInterceptor" abstract="true" class="org.springmodules.cache.interceptor.caching.NameMatchCachingInterceptor">
-        <property name="cacheProviderFacade" ref="cacheProvider" />
-        <property name="cacheKeyGenerator">
-            <bean class="org.springmodules.cache.key.HashCodeCacheKeyGenerator">
-                <property name="generateArgumentHashCode" value="true" />
-            </bean>
-        </property>
-    </bean>
-    
-    <bean id="baseFlushingInterceptor" abstract="true" class="org.springmodules.cache.interceptor.flush.NameMatchFlushingInterceptor">
-        <property name="cacheProviderFacade" ref="cacheProvider" />
-    </bean>
-    
     <!-- 
      | Annotation based caching support
-     +-->
+     +
     <ehcache:annotations>
         <ehcache:caching id="org.jasig.portal.web.skin.Resources" cacheName="org.jasig.portal.web.skin.Resources" />
         <ehcache:caching id="org.jasig.portal.web.skin.Resources_DocumentFragment" cacheName="org.jasig.portal.web.skin.Resources_DocumentFragment" />
     </ehcache:annotations>
+    -->
 
     <!--
      | Service used by DLM to cache Layouts.
@@ -83,7 +51,6 @@
     <bean id="layoutCachingService" class="org.jasig.portal.layout.dlm.LayoutCachingService">
         <property name="layoutCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.portal.layout.dlm.LAYOUT_CACHE" />
             </bean>
         </property>
@@ -92,13 +59,11 @@
     <bean class="org.jasig.portal.utils.ResourceLoader">
         <property name="resourceUrlCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_CACHE" />
             </bean>
         </property>
         <property name="resourceUrlNotFoundCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_NOT_FOUND_CACHE" />
             </bean>
         </property>

@@ -28,23 +28,6 @@
      | no new configuration should be added to this file.    |
      +-  ************************************************* -->
 
-    <!--  
-     | Factory used by portal code to retrieve caches.
-     +-->
-    <bean id="cacheFactory" class="org.jasig.portal.utils.cache.CacheProviderFactory">
-        <property name="cacheProviderFacade" ref="cacheProviderFacade" />
-        <property name="cacheModelFactory" ref="cacheModelFactory" />
-    </bean> 
-    
-
-    <!-- Support classes for the cacheFactory and cacheProvider -->    
-
-    <bean id="cacheModelFactory" class="org.jasig.portal.utils.cache.EhCacheModelFactory" />
-
-    <bean id="cacheProviderFacade" class="org.jasig.portal.utils.cache.EhCacheFacade">
-        <property name="cacheManager" ref="cacheManager" />
-        <property name="createMissingCaches" value="true" />
-    </bean>
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="cacheManagerName" value="uPortal.cacheManager" />

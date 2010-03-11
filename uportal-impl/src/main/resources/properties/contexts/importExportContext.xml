@@ -500,7 +500,6 @@
             <util:map>
                 <entry key="Attributes.CACHE">
                     <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                        <property name="cacheFactory" ref="cacheFactory" />
                         <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
                     </bean>
                 </entry>
@@ -525,7 +524,6 @@
             <util:map>
                 <entry key="Attributes.CACHE">
                     <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                        <property name="cacheFactory" ref="cacheFactory" />
                         <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
                     </bean>
                 </entry>
