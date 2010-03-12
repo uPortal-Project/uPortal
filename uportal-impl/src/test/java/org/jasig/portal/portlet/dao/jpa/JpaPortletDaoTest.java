@@ -61,7 +61,7 @@ public class JpaPortletDaoTest extends AbstractJpaTests {
         return new String[] {"classpath:jpaTestApplicationContext.xml"};
     }
 
-    @PersistenceContext
+    @PersistenceContext(unitName="uPortalPersistence")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

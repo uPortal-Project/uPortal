@@ -48,7 +48,7 @@ public class JpaPortletDefinitionDao implements IPortletDefinitionDao {
     /**
      * @param entityManager the entityManager to set
      */
-    @PersistenceContext
+    @PersistenceContext(unitName="uPortalPersistence")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

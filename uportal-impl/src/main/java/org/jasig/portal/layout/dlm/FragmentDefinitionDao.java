@@ -53,7 +53,7 @@ public class FragmentDefinitionDao implements IFragmentDefinitionDao {
     /**
      * @param entityManager the entityManager to set
      */
-    @PersistenceContext
+    @PersistenceContext(unitName="uPortalPersistence")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

@@ -29,7 +29,6 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.dao.IChannelDefinitionDao;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,8 +58,8 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
     /**
      * @param entityManager the entityManager to set
      */
-    @PersistenceContext
-    public void setEntityManager(@Qualifier("main") EntityManager entityManager) {
+    @PersistenceContext(unitName="uPortalPersistence")
+    public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
