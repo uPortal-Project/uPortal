@@ -27,7 +27,10 @@
      | This file is here for supporting legacy unit tests,   |
      | no new configuration should be added to this file.    |
      +-  ************************************************* -->
-
+    
+    <bean id="cacheFactory" class="org.jasig.portal.utils.cache.CacheProviderFactory">
+        <property name="cacheManager" ref="cacheManager" />
+    </bean>
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="cacheManagerName" value="uPortal.cacheManager" />
