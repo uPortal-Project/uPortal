@@ -21,22 +21,19 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
     
     <!-- ******************** WARNING ********************  -+
      | This file is here for supporting legacy unit tests,   |
      | no new configuration should be added to this file.    |
      +-  ************************************************* -->
     
+    <context:annotation-config/>
+    <context:component-scan base-package="org.jasig.portal"/>
+    <context:property-placeholder location="classpath:/properties/dataSource.properties,classpath:/properties/portal.properties"/>
     
-    <bean id="propertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
-        <property name="locations">
-            <list>
-                <value>classpath:/properties/dataSource.properties</value>
-                <value>classpath:/properties/portal.properties</value>
-            </list>
-        </property>
-    </bean>
 
     <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
 </beans>

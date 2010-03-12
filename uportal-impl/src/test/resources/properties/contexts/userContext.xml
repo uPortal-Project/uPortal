@@ -27,5 +27,6 @@
      | This file is here for supporting legacy unit tests,   |
      | no new configuration should be added to this file.    |
      +-  ************************************************* -->
-
+        <bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
+        
 </beans>
