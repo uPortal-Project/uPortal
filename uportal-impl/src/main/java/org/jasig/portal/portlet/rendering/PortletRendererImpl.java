@@ -164,7 +164,7 @@ public class PortletRendererImpl implements IPortletRenderer {
      * @see org.jasig.portal.channels.portlet.IPortletRenderer#doAction(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public void doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public long doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Load the parameters to provide to the portlet with the request and update the state and mode
@@ -183,6 +183,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             this.logger.debug("Executing portlet action for window '" + portletWindow + "'");
         }
         
+        final long start = System.currentTimeMillis();
         try {
             this.portletContainer.doAction(portletWindow, httpServletRequest, httpServletResponse);
         }
@@ -195,6 +196,8 @@ public class PortletRendererImpl implements IPortletRenderer {
         catch (IOException ioe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action.", portletWindow, ioe);
         }
+        
+        return System.currentTimeMillis() - start;
     }
 
     @Override
@@ -231,6 +234,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             this.logger.debug("Rendering portlet for window '" + portletWindow + "'");
         }
 
+        final long start = System.currentTimeMillis();
         try {
             this.portletContainer.doRender(portletWindow, httpServletRequest, portletHttpServletResponseWrapper);
             portletHttpServletResponseWrapper.flushBuffer();
@@ -251,7 +255,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             this.logger.debug("Retrieved title '" + title + "' from request for: " + portletWindow);
         }
         
-        return new PortletRenderResult(title);
+        return new PortletRenderResult(title, System.currentTimeMillis() - start);
     }
     
     @Override
