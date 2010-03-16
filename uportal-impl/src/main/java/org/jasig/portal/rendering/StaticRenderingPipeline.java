@@ -730,8 +730,8 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     }
 
                 }
-                // signal the end of the rendering round
-                channelManager.finishedRenderingCycle();
+//                // signal the end of the rendering round
+//                channelManager.finishedRenderingCycle();
             }
             catch (PortalException pe) {
                 throw pe;

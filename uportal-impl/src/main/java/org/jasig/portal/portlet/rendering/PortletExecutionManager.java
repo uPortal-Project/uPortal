@@ -6,6 +6,7 @@
 
 package org.jasig.portal.portlet.rendering;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
@@ -159,7 +160,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      * {@link #startPortletRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)} the output from that render will
      * be used. If the portlet is not already rendering it will be started.
      */
-    public void outputPortlet(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response, Writer writer) {
+    public void outputPortlet(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response, Writer writer) throws IOException {
         final IPortletEntity parentPortletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
         final IPortletDefinition parentPortletDefinition = this.portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
         final int timeout = parentPortletDefinition.getChannelDefinition().getTimeout();
@@ -170,7 +171,12 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
             tracker = this.startPortletRenderInternal(portletWindowId, request, response);
         }
         
+        /*
+         * TODO waitForWorker needs to track if the portlet has already completed for this request and just return the request
+         * cached result object
+         */
         final PortletRenderResult portletRenderResult = this.waitForWorker(tracker.portletRenderExecutionWorker, tracker.portletRenderFuture, timeout);
+        writer.write(tracker.portletOutputBuffer.toString());
         
         //TODO publish portlet render event
     }
