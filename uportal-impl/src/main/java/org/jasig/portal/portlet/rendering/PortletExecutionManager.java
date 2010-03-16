@@ -106,14 +106,14 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         final IPortletDefinition parentPortletDefinition = this.portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
         final int timeout = parentPortletDefinition.getChannelDefinition().getTimeout();
         
-        final PortletActionExecutionWorker portletActionExecutionWorker = new PortletActionExecutionWorker(portletWindowId, request, response);
-        final Future<Long> portletActionFuture = this.portletThreadPool.submit(portletActionExecutionWorker);
+        final PortletActionExecutionWorker portletActionExecutionWorker = new PortletActionExecutionWorker(this.portletThreadPool, portletWindowId, request, response);
+        portletActionExecutionWorker.submit();
         
         /*
          * TODO an action will include generated event handling, need to make sure we don't timeout portlets whos actions have completed
          * but are waiting on event handlers to complete
          */
-        final Long actualExecutionTime = this.waitForWorker(portletActionExecutionWorker, portletActionFuture, timeout);
+        final Long actualExecutionTime = this.waitForWorker(portletActionExecutionWorker, timeout);
         
         //TODO publish portlet action event
         
@@ -144,8 +144,8 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      */
     protected PortletRenderingTracker startPortletRenderInternal(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
         final StringWriter portletOutputBuffer = new StringWriter();
-        final PortletRenderExecutionWorker portletRenderExecutionWorker = new PortletRenderExecutionWorker(portletWindowId, request, response, portletOutputBuffer);
-        final Future<PortletRenderResult> portletRenderFuture = this.portletThreadPool.submit(portletRenderExecutionWorker);
+        final PortletRenderExecutionWorker portletRenderExecutionWorker = new PortletRenderExecutionWorker(this.portletThreadPool, portletWindowId, request, response, portletOutputBuffer);
+        portletRenderExecutionWorker.submit();
         
         final PortletRenderingTracker tracker = new PortletRenderingTracker(portletOutputBuffer, portletRenderExecutionWorker, portletRenderFuture);
         
@@ -182,7 +182,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     }
     
     /*
-     * portlet execution Callable should track when the callable is created and then when
+     * portlet execution Callable should track when the callable is submitted and then when
      * the callback is actually started and completed. That way we can measure thread pool
      * wait times.
      */
@@ -219,11 +219,11 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
          */
     }
     
-    protected <V> V waitForWorker(PortletExecutionWorker<V> worker, Future<V> future, long timeout) {
+    protected <V> V waitForWorker(PortletExecutionWorker<V> worker, long timeout) {
         try {
             //TODO we probably don't want to wait here forever for the worker to start, what is a reasonable wait time?
             final long startTime = worker.waitForStart();
-            final V result = future.get(timeout - (System.currentTimeMillis() - startTime), TimeUnit.MILLISECONDS);
+            final V result = worker.get(timeout - (System.currentTimeMillis() - startTime), TimeUnit.MILLISECONDS);
             if (this.logger.isInfoEnabled()) {
                 this.logger.info("Execution complete on portlet " + worker.portletWindowId + " in " + worker.getDuration() + "ms");
             }
@@ -250,7 +250,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
              *  call future.cancel(true)
              */
             this.logger.warn("Execution failed on portlet " + worker.portletWindowId, e);
-            future.cancel(true);
+            worker.cancel(true);
             throw new RuntimeException("Portlet window id " + worker.portletWindowId + " failed execution due to timeout.", e);
         }
     }
@@ -280,37 +280,49 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     
     /**
      * Base Callable impl for portlet execution dispatching. Tracks the target, request, response objects as well as
-     * created, started and completed timestamps.
+     * submitted, started and completed timestamps.
      */
-    private abstract class PortletExecutionWorker<V> implements Callable<V> {
+    private static abstract class PortletExecutionWorker<V> {
         private final Object startMutex = new Object();
-        private final long created = System.currentTimeMillis();
+        private final ExecutorService executorService;
         final IPortletWindowId portletWindowId;
         final HttpServletRequest request;
         final HttpServletResponse response;
+        
+        private Future<V> future;
+        private volatile long submitted = 0;
         private volatile long started = 0;
         private volatile long complete = 0;
         
-        public PortletExecutionWorker(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+        public PortletExecutionWorker(ExecutorService executorService, IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
             //TODO wrap request & response with timeout tracking impl
+            this.executorService = executorService;
             this.portletWindowId = portletWindowId;
             this.request = request;
             this.response = response;
         }
-
-        @Override
-        public final V call() throws Exception {
-            synchronized (this.startMutex) {
-                //signal any threads waiting for the worker to start
-                this.started = System.currentTimeMillis();
-                this.startMutex.notifyAll();
-            }
-            try {
-                return this.callInternal();
-            }
-            finally {
-                this.complete = System.currentTimeMillis();
-            }
+        
+        public final void submit() {
+            this.submitted = System.currentTimeMillis();
+            this.future = this.executorService.submit(new Callable<V>() {
+                /* (non-Javadoc)
+                 * @see java.util.concurrent.Callable#call()
+                 */
+                @Override
+                public V call() throws Exception {
+                    synchronized (startMutex) {
+                        //signal any threads waiting for the worker to start
+                        started = System.currentTimeMillis();
+                        startMutex.notifyAll();
+                    }
+                    try {
+                        return callInternal();
+                    }
+                    finally {
+                        complete = System.currentTimeMillis();
+                    }
+                }
+            });
         }
         
         /**
@@ -334,12 +346,52 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
             
             return this.started;
         }
+        
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            if (this.future == null) {
+                throw new IllegalStateException("submit() must be called before cancel(boolean) can be called");
+            }
+            
+            return this.future.cancel(mayInterruptIfRunning);
+        }
+
+        public V get() throws InterruptedException, ExecutionException {
+            if (this.future == null) {
+                throw new IllegalStateException("submit() must be called before get() can be called");
+            }
+            
+            return this.future.get();
+        }
+
+        public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            if (this.future == null) {
+                throw new IllegalStateException("submit() must be called before get(long, TimeUnit) can be called");
+            }
+            
+            return this.future.get(timeout, unit);
+        }
+
+        public boolean isCancelled() {
+            if (this.future == null) {
+                throw new IllegalStateException("submit() must be called before isCancelled() can be called");
+            }
+            
+            return this.future.isCancelled();
+        }
+
+        public boolean isDone() {
+            if (this.future == null) {
+                throw new IllegalStateException("submit() must be called before isDone() can be called");
+            }
+            
+            return this.future.isDone();
+        }
 
         /**
-         * @return time that the worker was created
+         * @return time that the worker was submitted
          */
-        public final long getCreated() {
-            return this.created;
+        public final long getSubmitted() {
+            return this.submitted;
         }
 
         /**
@@ -357,10 +409,10 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         }
         
         /**
-         * @return time that the Worker had to wait from being created until being started
+         * @return time that the Worker had to wait from being submitted until being started
          */
         public final long getWait() {
-            return this.started - this.created;
+            return this.started - this.submitted;
         }
         
         /**
@@ -375,7 +427,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
             return "PortletExecutionWorker [" +
                 		"portletWindowId=" + this.portletWindowId + ", " +
         				"started=" + this.started + ", " +
-    					"created=" + this.created + ", " +
+    					"submitted=" + this.submitted + ", " +
 						"complete=" + this.complete + ", " +
 						"wait=" + this.getWait() + ", " +
                 		"duration=" + this.getDuration() + "]";
@@ -384,8 +436,8 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     }
     
     private class PortletActionExecutionWorker extends PortletExecutionWorker<Long> {
-        public PortletActionExecutionWorker(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-            super(portletWindowId, request, response);
+        public PortletActionExecutionWorker(ExecutorService executorService, IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+            super(executorService, portletWindowId, request, response);
         }
 
         @Override
@@ -397,8 +449,8 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     private class PortletRenderExecutionWorker extends PortletExecutionWorker<PortletRenderResult> {
         private final Writer writer;
         
-        public PortletRenderExecutionWorker(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response, Writer writer) {
-            super(portletWindowId, request, response);
+        public PortletRenderExecutionWorker(ExecutorService executorService, IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response, Writer writer) {
+            super(executorService, portletWindowId, request, response);
             this.writer = writer;
         }
         
