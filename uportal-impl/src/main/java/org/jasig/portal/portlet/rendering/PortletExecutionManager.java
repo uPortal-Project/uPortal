@@ -29,14 +29,25 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;
 
 /**
+ * requests always end up targeting a portlet window
+ *  for portlets within the UI (min, norm, max) the entity/subscription = the window, the window is persistent but its ID would be based on the entity ID
+ *  for stand-alone portlets (exclusive, detached) the window only needs to exist for the duration of the request, all request data should be stored on the URL
+ *  for config portlets the window is persistent and the ID would be stored in the parent code that is dispatching to the config mode portlet
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -52,11 +63,41 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     private IPortletEntityRegistry portletEntityRegistry;
     private ExecutorService portletThreadPool;
     private IPortletRenderer portletRenderer;
+    private IUserInstanceManager userInstanceManager;
     
-    
+    @Autowired
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        this.userInstanceManager = userInstanceManager;
+    }
+
+    @Autowired
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        this.portletWindowRegistry = portletWindowRegistry;
+    }
+
+    @Autowired
+    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
+        this.portletEntityRegistry = portletEntityRegistry;
+    }
+
+    @Autowired
+    public void setPortletThreadPool(@Qualifier("portletThreadPool") ExecutorService portletThreadPool) {
+        this.portletThreadPool = portletThreadPool;
+    }
+
+    @Autowired
+    public void setPortletRenderer(IPortletRenderer portletRenderer) {
+        this.portletRenderer = portletRenderer;
+    }
+
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
+    }
+    
+    public void doPortletAction(IPortletEntityId portletEntityId, HttpServletRequest request, HttpServletResponse response) {
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId);
+        this.doPortletAction(portletWindow.getPortletWindowId(), request, response);
     }
 
     public void doPortletAction(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
@@ -74,6 +115,20 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         final Long actualExecutionTime = this.waitForWorker(portletActionExecutionWorker, portletActionFuture, timeout);
         
         //TODO publish portlet action event
+        
+        //TODO on error redirect to appropriate render URL
+    }
+    
+    /**
+     * Starts the specified portlet rendering, returns immediately.
+     */
+    public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, subscribeId);
+        
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
+        
+        this.startPortletRenderInternal(portletWindow.getPortletWindowId(), request, response);
     }
     
     /**
@@ -128,6 +183,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
 
     @Override
     public void processEvents(PortletContainer container, PortletWindow portletWindow, HttpServletRequest request, HttpServletResponse response, List<Event> events) {
+        throw new UnsupportedOperationException("Events are not supported yet");
         /*
          * Note: that processEvents can be re-entrant.
          * 
@@ -140,7 +196,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
          * 'done'
          * 
          * perhaps only the very first processEvents call should wait for child events. It can store a
-         * request attribute that tracks all of the Future objects for the event calls. Then it can wait
+         * request attribute (ConcurrentLinkedQueue?) that tracks all of the Future objects for the event calls. Then it can wait
          * for all of those Futures to complete and handle the timeouts for them. The Callable will need
          * to be stored as well so start/end execution times can be tracked for timeout handling.
          */

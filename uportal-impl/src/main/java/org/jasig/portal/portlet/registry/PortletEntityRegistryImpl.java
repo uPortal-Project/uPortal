@@ -24,12 +24,16 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.om.AbstractObjectId;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.jasig.portal.user.IUserInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -131,6 +135,19 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
      */
     public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
         return this.portletEntityDao.getPortletEntitiesForUser(userId);
+    }
+    
+    public IPortletEntity getOrCreatePortletEntity(IUserInstance userInstance, String channelSubscribeId) {
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        
+        //Find the channel and portlet definitions
+        final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
+        final int channelPublishId = Integer.valueOf(channelNode.getChannelPublishId());
+        
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
+        
+        return this.getOrCreatePortletEntity(portletDefinition.getPortletDefinitionId(), channelSubscribeId, userInstance.getPerson().getID());
     }
     
     /* (non-Javadoc)

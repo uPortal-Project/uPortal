@@ -74,6 +74,7 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
 import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlet.url.RequestType;
@@ -183,13 +184,8 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     private ApplicationEventPublisher applicationEventPublisher;
     private CarResources carResources;
     private ResourcesDao resourcesDao;
+    private PortletExecutionManager portletExecutionManager;
     
-    /**
-     * @return the portletRequestParameterManager
-     */
-    public IPortletRequestParameterManager getPortletRequestParameterManager() {
-        return this.portletRequestParameterManager;
-    }
     /**
      * @param portletRequestParameterManager the portletRequestParameterManager to set
      */
@@ -199,12 +195,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     }
     
     /**
-     * @return the portletWindowRegistry
-     */
-    public IPortletWindowRegistry getPortletWindowRegistry() {
-        return this.portletWindowRegistry;
-    }
-    /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
     @Autowired(required=true)
@@ -212,9 +202,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         this.portletWindowRegistry = portletWindowRegistry;
     }
     
-    public CarResources getCarResources() {
-        return this.carResources;
-    }
     /**
      * @param carResources the carResources to set
      */
@@ -222,12 +209,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     public void setCarResources(CarResources carResources) {
         this.carResources = carResources;
     }
-    /**
-	 * @return the resourcesDao
-	 */
-	public ResourcesDao getResourcesDao() {
-		return resourcesDao;
-	}
 	/**
 	 * @param resourcesDao the resourcesDao to set
 	 */
@@ -235,8 +216,13 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
 	public void setResourcesDao(ResourcesDao resourcesDao) {
 		this.resourcesDao = resourcesDao;
 	}
-	
-	/* (non-Javadoc)
+
+	@Autowired(required=true)
+	public void setPortletExecutionManager(PortletExecutionManager portletExecutionManager) {
+        this.portletExecutionManager = portletExecutionManager;
+    }
+
+    /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
@@ -257,7 +243,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         final IPerson person = userInstance.getPerson();
         final LocaleManager localeManager = userInstance.getLocaleManager();
         final IUserPreferencesManager uPreferencesManager = userInstance.getPreferencesManager();
-        final ChannelManager channelManager = userInstance.getChannelManager();
         final Object renderingLock = userInstance.getRenderingLock();
         
         UPFileSpec upfs = new UPFileSpec(req);
@@ -277,7 +262,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
             uPElement.setMethodNodeId(newRootNodeId);
         }
         
-        channelManager.setUPElement(uPElement);
+//        channelManager.setUPElement(uPElement);
 
         // proccess possible portlet action
         final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(req);
@@ -287,25 +272,34 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
             if (RequestType.ACTION.equals(portletUrl.getRequestType())) {
                 final IPortletEntity targetedPortletEntity = this.portletWindowRegistry.getParentPortletEntity(req, targetedPortletWindowId);
                 if (targetedPortletEntity != null) {
-                    final String channelSubscribeId = targetedPortletEntity.getChannelSubscribeId();
-                    final boolean actionExecuted = channelManager.doChannelAction(req, res, channelSubscribeId, false);
-                    
-                    if (actionExecuted) {
-                        // The action completed, return immediately
-                        return;
-                    }
-    
-                    // The action didn't execute, continue and try to render normally
+                    /*
+                     * TODO should this work via window IDs or entityIDs? Probably both once action handling is moved out of the
+                     * rendering pipeline with the new URL syntax code
+                     */
+                    this.portletExecutionManager.doPortletAction(targetedPortletEntity.getPortletEntityId(), req, res);
+                    return;
+//                    final boolean actionExecuted = channelManager.doChannelAction(req, res, channelSubscribeId, false);
+//                    
+//                    if (actionExecuted) {
+//                        // The action completed, return immediately
+//                        return;
+//                    }
+//    
+//                    // The action didn't execute, continue and try to render normally
                 }
             }
         }
-        
-        // process possible worker dispatch
-        final boolean workerDispatched = this.processWorkerDispatchIfNecessary(req, res, uPreferencesManager, channelManager);
-        if (workerDispatched) {
-            //If a worker was dispatched to return immediately
-            return;
-        }
+
+        /*
+         * TODO we're going to ignore workers for now. Eventually we'll have to re-map EXCLUSIVE handling, again
+         * that will probably wait until the new URL syntax code is in place
+         */
+//        // process possible worker dispatch
+//        final boolean workerDispatched = this.processWorkerDispatchIfNecessary(req, res, uPreferencesManager, channelManager);
+//        if (workerDispatched) {
+//            //If a worker was dispatched to return immediately
+//            return;
+//        }
         
         //Set a larger buffer to allow for explicit flushing
         res.setBufferSize(16 * 1024);
@@ -345,16 +339,16 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                 IUserLayoutNodeDescription rElement = null;
                 // see if an old detach target exists in the servlet path
 
-                // give channels the current locale manager
-                channelManager.setLocaleManager(localeManager);
+//                // give channels the current locale manager
+//                channelManager.setLocaleManager(localeManager);
 
                 IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
 
                 // determine uPElement (optimistic prediction) --end
 
-                // set up the channel manager
-
-                channelManager.startRenderingCycle(req, res, uPElement);
+//                // set up the channel manager
+//
+//                channelManager.startRenderingCycle(req, res, uPElement);
 
                 // after this point the layout is determined
 
@@ -410,12 +404,12 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                 // update the render target
                 uPElement.setMethodNodeId(rootNodeId);
 
-                // inform channel manager about the new uPElement value
-                channelManager.setUPElement(uPElement);
-                // verify upElement and determine rendering root --begin
-                
-                // Increase output buffer size, buffer will be flushed before and after every <channel>
-                res.setBufferSize(16 * 1024);
+//                // inform channel manager about the new uPElement value
+//                channelManager.setUPElement(uPElement);
+//                // verify upElement and determine rendering root --begin
+//                
+//                // Increase output buffer size, buffer will be flushed before and after every <channel>
+//                res.setBufferSize(16 * 1024);
 
                 // Disable page caching
                 res.setHeader("pragma", "no-cache");
@@ -433,9 +427,9 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                 markupSerializer.asContentHandler();
                 // see if we can use character caching
                 boolean ccaching = (CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
-                channelManager.setCharacterCaching(ccaching);
-                // pass along the serializer name
-                channelManager.setSerializerName(tsd.getSerializerName());
+//                channelManager.setCharacterCaching(ccaching);
+//                // pass along the serializer name
+//                channelManager.setSerializerName(tsd.getSerializerName());
                 // initialize ChannelIncorporationFilter
                 CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager, CACHE_ENABLED && CHARACTER_CACHE_ENABLED, req, res);
 
@@ -461,7 +455,8 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                                     String channelSubscribeId = ((ChannelContentCacheEntry)ce).getChannelId();
                                     if(channelSubscribeId!=null) {
                                         try {
-                                            channelManager.startChannelRendering(req, res, channelSubscribeId);
+                                            this.portletExecutionManager.startPortletRender(channelSubscribeId, req, res);
+//                                            channelManager.startChannelRendering(req, res, channelSubscribeId);
                                         } catch (PortalException e) {
                                             log.error("UserInstance::renderState() : unable to start rendering channel (subscribeId=\""+channelSubscribeId+"\", user="+person.getID()+" layoutId="+uPreferencesManager.getCurrentProfile().getLayoutId(),e);
                                         }
@@ -471,7 +466,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                                     }
                                 }
                             }
-                            channelManager.commitToRenderingChannelSet();
+//                            channelManager.commitToRenderingChannelSet();
 
                             // go through the output loop
                             CachingSerializer cSerializer = (CachingSerializer) markupSerializer;

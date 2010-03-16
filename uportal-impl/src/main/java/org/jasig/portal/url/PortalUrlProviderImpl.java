@@ -284,6 +284,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         //Find the channel and portlet definitions
         final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(portletNodeId);
         final String channelPublishId = channelNode.getChannelPublishId();
+        //TODO this looks like a bug, it should be passing in an in here, not a string
         final IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(channelPublishId);
         if(null == channelDefinition) {
             throw new IllegalArgumentException("No channel definition found for publish id: " + channelPublishId);
