@@ -21,14 +21,16 @@ package org.jasig.portal.portlet.container.services;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResponseContext;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.ResourceURLProvider;
-import org.apache.pluto.driver.core.PortalRequestContext;
-import org.apache.pluto.driver.url.PortalURL;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -43,7 +45,6 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	private HttpServletRequest servletRequest;
 	private HttpServletResponse servletResponse;
 	private PortletWindow window;
-	private PortalURL portalURL;
 
 	PortletResponseContextImpl(PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
@@ -51,7 +52,6 @@ class PortletResponseContextImpl implements PortletResponseContext {
 		this.containerRequest = containerRequest;
 		this.containerResponse = containerResponse;
 		this.window = window;
-		this.portalURL = PortalRequestContext.getContext(containerRequest).createPortalURL();
 	}
 
 	/* (non-Javadoc)
@@ -59,8 +59,7 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	 */
 	@Override
 	public void addProperty(Cookie cookie) {
-		// TODO Auto-generated method stub
-
+		servletResponse.addCookie(cookie);
 	}
 
 	/* (non-Javadoc)
@@ -95,8 +94,15 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	 */
 	@Override
 	public Element createElement(String tagName) throws DOMException {
-		// TODO Auto-generated method stub
-		return null;
+		final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		try {
+			final DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+			final Document doc = builder.newDocument();
+			Element element = doc.createElement(tagName);
+			return element;
+		} catch (ParserConfigurationException e) {
+			throw new DOMException((short) 0, "failed to create a DocumentBuilder: " + e.getMessage());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -104,8 +110,7 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	 */
 	@Override
 	public PortletContainer getContainer() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.container;
 	}
 
 	/* (non-Javadoc)
@@ -113,8 +118,7 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	 */
 	@Override
 	public HttpServletRequest getContainerRequest() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.containerRequest;
 	}
 
 	/* (non-Javadoc)
@@ -122,8 +126,7 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	 */
 	@Override
 	public HttpServletResponse getContainerResponse() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.containerResponse;
 	}
 
 	/* (non-Javadoc)
@@ -131,8 +134,7 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	 */
 	@Override
 	public PortletWindow getPortletWindow() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.window;
 	}
 
 	/* (non-Javadoc)
@@ -140,7 +142,7 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	 */
 	@Override
 	public ResourceURLProvider getResourceURLProvider() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -149,8 +151,7 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	 */
 	@Override
 	public HttpServletRequest getServletRequest() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.servletRequest;
 	}
 
 	/* (non-Javadoc)
@@ -158,8 +159,7 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	 */
 	@Override
 	public HttpServletResponse getServletResponse() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.servletResponse;
 	}
 
 	/* (non-Javadoc)
@@ -168,11 +168,14 @@ class PortletResponseContextImpl implements PortletResponseContext {
 	@Override
 	public void init(HttpServletRequest servletRequest,
 			HttpServletResponse servletResponse) {
-		// TODO Auto-generated method stub
-
+		this.servletRequest = servletRequest;
+		this.servletResponse = servletResponse;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * From Pluto 2 javadoc:
+	 * "Releasing the response context means its internal storage can be released as well. If any outstanding changes have not been processed yet, those will be lost."
+	 *  (non-Javadoc)
 	 * @see org.apache.pluto.container.PortletResponseContext#release()
 	 */
 	@Override
