@@ -46,12 +46,6 @@ public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, 
     public static final String ATTRIBUTE__RUNTIME_DATA = IPortletAdaptor.class.getName() + ".RUNTIME_DATA";
     
     /**
-     * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the title the portlet
-     * dynamically sets under.
-     */
-    public static final String ATTRIBUTE__PORTLET_TITLE = IPortletAdaptor.class.getName() + ".PORTLET_TITLE";
-    
-    /**
      * Name of the {@link org.jasig.portal.ChannelDefinition} parameter the name of the
      * {@link org.apache.pluto.descriptors.portlet.PortletAppDD} is defined in.
      * 

@@ -44,7 +44,6 @@ import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.channels.portlet.InconsistentPortletModelException;
 import org.jasig.portal.channels.portlet.PortletDispatchException;
 import org.jasig.portal.channels.portlet.PortletHttpServletRequestWrapper;
@@ -250,7 +249,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         }
         
         
-        final String title = (String)httpServletRequest.getAttribute(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE);
+        final String title = (String)httpServletRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE);
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Retrieved title '" + title + "' from request for: " + portletWindow);
         }

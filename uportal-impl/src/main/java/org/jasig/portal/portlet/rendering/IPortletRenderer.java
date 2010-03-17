@@ -45,6 +45,11 @@ public interface IPortletRenderer {
 	 * will store a Map of user info attributes that has support for multi-valued attributes.
 	 */
 	public static final String MULTIVALUED_USERINFO_MAP_ATTRIBUTE = "org.jasig.portlet.USER_INFO_MULTIVALUED";
+	/**
+	 * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the title the portlet
+	 * dynamically sets under.
+	 */
+	public static final String ATTRIBUTE__PORTLET_TITLE = IPortletRenderer.class.getName() + ".PORTLET_TITLE";
 
 	/**
      * Initializes the portlet within the portlet container

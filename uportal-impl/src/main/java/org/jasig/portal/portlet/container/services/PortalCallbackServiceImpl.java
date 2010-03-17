@@ -27,10 +27,10 @@ import org.apache.pluto.container.PortletURLProvider;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.ResourceURLProvider;
 import org.apache.pluto.driver.core.ResourceURLProviderImpl;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider;
 import org.jasig.portal.portlet.url.PortletURLProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,6 +137,6 @@ public class PortalCallbackServiceImpl /* *implements PortalCallbackService */ {
      * @see org.apache.pluto.spi.PortalCallbackService#setTitle(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow, java.lang.String)
      */
     public void setTitle(HttpServletRequest request, PortletWindow plutoPortletWindow, String title) {
-        request.setAttribute(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE, title);
+        request.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE, title);
     }
 }

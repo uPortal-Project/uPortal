@@ -369,14 +369,14 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             throw new PortletDispatchException("Exception executing portlet RenderRequest: " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, e);
         }
         
-        channelRuntimeData.put(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE, renderResult);
+        channelRuntimeData.put(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE, renderResult);
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#getTitle(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures, org.jasig.portal.ChannelRuntimeData)
      */
     public String getTitle(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData) {
-        final PortletRenderResult renderResult = (PortletRenderResult)channelRuntimeData.get(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE);
+        final PortletRenderResult renderResult = (PortletRenderResult)channelRuntimeData.get(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE);
         
         if (renderResult != null) {
             return renderResult.getTitle();
