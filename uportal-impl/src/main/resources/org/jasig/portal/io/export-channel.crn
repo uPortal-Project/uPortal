@@ -26,74 +26,63 @@
  |
  | These are:
  |   - ${FNAME}=the identifier of the entity to export
- |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
- |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
- |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
  |   - Settings defined in classpath://properties/db/entities/export.properties
+ |   - ${channelRegistryStore}=Injected by importExportContext.xml
+ |   - ${portletDefinitionRegistry}=Injected by importExportContext.xml
  |
  +-->
 <with-attribute key="Attributes.NODE" value="${newDoc(channel-definition)}">
     <echo-ln>Export Channel:  FNAME=${FNAME}</echo-ln>
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-channel_v3-2.crn)}"/>
-    <with-attribute key="CHAN_ID" value="${sql(SELECT MAX(chan_id) FROM up_channel WHERE chan_fname = '${FNAME}')}">
+    <with-attribute key="channelDefinition" value="${groovy(channelRegistryStore.getChannelDefinition(FNAME))}">
         <choose>
-            <when test="${jexl(CHAN_ID == null)}">
+            <when test="${jexl(channelDefinition == null)}">
                 <echo-ln>WARNING:  Channel '${FNAME}' does not exist;  no channel file will be generated.</echo-ln>
                 <log logger-name="org.jasig.portal.io.export-channel" level="warn">Channel '${FNAME}' does not exist;  no channel file will be generated.</log>
             </when>
             <otherwise>
-                <sql-query>
-                    <sql>SELECT * FROM up_channel WHERE chan_id = ?</sql>
-                    <parameter value="${CHAN_ID}"/>
+
+                <!-- Establish basic structure of the document... -->
+                <append-node>
+                    <title>${groovy(channelDefinition.getTitle())}</title>
+                    <name>${groovy(channelDefinition.getName())}</name>
+                    <fname>${groovy(channelDefinition.getFName())}</fname>
+                    <desc>${groovy(channelDefinition.getDescription())}</desc>
+                    <type>${groovy(channelDefinition.getType().getName())}</type>
+                    <class>${groovy(channelDefinition.getJavaClass())}</class>
+                    <timeout>${groovy(channelDefinition.getTimeout())}</timeout>
+                    <hasedit>${groovy(channelDefinition.isEditable() ? 'Y' : 'N')}</hasedit>
+                    <hashelp>${groovy(channelDefinition.hasHelp() ? 'Y' : 'N')}</hashelp>
+                    <hasabout>${groovy(channelDefinition.hasAbout() ? 'Y' : 'N')}</hasabout>
+                    <secure>${groovy(channelDefinition.isSecure() ? 'Y' : 'N')}</secure>
+                    <locale>en_US</locale>
+                    <categories/>
+                    <groups/>
+                    <users/>
+                    <parameters/>
+                    <portletPreferences/>
+                </append-node>
+
+                <!-- Categories -->
+                <groovy>
+                    <script>
+                        import org.jasig.portal.channel.IChannelDefinition;
+                        import org.jasig.portal.groups.IGroupMember;
+                        import org.jasig.portal.services.GroupService;
+                        
+                        IGroupMember gm = GroupService.getGroupMember(channelDefinition.getId().toString(), IChannelDefinition.class);
+                        Iterator categories = GroupService.getCompositeGroupService().findContainingGroups(gm);
+                        ScriptAttributes.RESPONSE.setAttribute('categories', categories);
+                    </script>
                     <subtasks>
-                        <!-- Establish basic structure of the document... -->
-                        <append-node>
-                            <chan-id>${CHAN_ID}</chan-id>
-                            <title>${CHAN_TITLE}</title>
-                            <name>${CHAN_NAME}</name>
-                            <fname>${FNAME}</fname>
-                            <desc>${CHAN_DESC}</desc>
-                            <class>${CHAN_CLASS}</class>
-                            <timeout>${CHAN_TIMEOUT}</timeout>
-                            <hasedit>${CHAN_EDITABLE}</hasedit>
-                            <hashelp>${CHAN_HAS_HELP}</hashelp>
-                            <hasabout>${CHAN_HAS_ABOUT}</hasabout>
-                            <secure>${CHAN_SECURE}</secure>
-                            <locale>en_US</locale>
-                            <categories/>
-                            <groups/>
-                            <users/>
-                            <parameters/>
-                            <portletPreferences/>
-                        </append-node>
-                        <!-- Standard Channel Type -->
-                        <sql-query>
-                            <sql>SELECT type_name FROM up_chan_type WHERE type_id = ?</sql>
-                            <parameter value="${CHAN_TYPE_ID}"/>
-                            <subtasks>
-                                <append-node sibling="${singleNode(desc)}">
-                                    <type>${TYPE_NAME}</type>
-                                </append-node>
-                            </subtasks>
-                        </sql-query>
-                        <!-- Categories -->
-                        <sql-query>
-                            <sql>
-                                SELECT upg.group_name
-                                FROM up_group upg LEFT JOIN up_group_membership upgm ON upg.group_id = upgm.group_id
-                                WHERE upgm.member_key = ? AND upg.entity_type_id = ? AND upgm.member_is_group = 'F'
-                                ORDER BY upg.group_name
-                            </sql>
-                            <parameter value="${valueOf(chan-id)}"/>
-                            <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.channel.IChannelDefinition')}"/>
-                            <subtasks>
-                                <append-node parent="${singleNode(categories)}">
-                                    <category>${GROUP_NAME}</category>
-                                </append-node>
-                            </subtasks>
-                        </sql-query>
+                        <for-each items="${categories}" attribute-name="category">
+                            <append-node parent="${singleNode(categories)}">
+                                <category>${groovy(category.getName())}</category>
+                            </append-node>
+                        </for-each>
                     </subtasks>
-                </sql-query>
+                </groovy>
+
                 <!--  Groups and Users  -->
                 <with-attribute key="MEMBERSHIPS" value="${crn(find-membership.crn)}">
                     <if test="${groovy(MEMBERSHIPS.size() > 0)}">
@@ -123,34 +112,20 @@
                         </for-each>
                     </if>
                 </with-attribute>
+
                 <!--  Standard Channel Parameters  -->
-                <sql-query>
-                    <sql>
-                        SELECT * 
-                        FROM up_channel_param 
-                        WHERE chan_id = ?
-                        ORDER BY chan_parm_nm
-                    </sql>
-                    <parameter value="${CHAN_ID}"/>
-                    <subtasks>
-                        <if test="${jexl(CHAN_PARM_VAL != null)}">
-                            <append-node parent="${singleNode(parameters)}">
-                                <parameter>
-                                    <name>${CHAN_PARM_NM}</name>
-                                    <value>${CHAN_PARM_VAL}</value>
-                                    <description></description>
-                                    <ovrd>${CHAN_PARM_OVRD}</ovrd>
-                                </parameter>
-                            </append-node>
-                            <if test="${jexl(CHAN_PARM_DESC != null)}">
-                                <append-node parent="${singleNode(parameters/parameter[position() = last()]/description)}" node="${textNode(${CHAN_PARM_DESC})}"/>
-                            </if>
-                        </if>
-                    </subtasks>
-                </sql-query>
+                <for-each items="${groovy(channelDefinition.getParameters())}" attribute-name="channelParameter">
+                    <append-node parent="${singleNode(parameters)}">
+                        <parameter>
+                            <name>${groovy(channelParameter.getName())}</name>
+                            <value>${groovy(channelParameter.getValue())}</value>
+                            <description>${groovy(channelParameter.getDescription() ?: '')}</description>
+                            <ovrd>${groovy(channelParameter.getOverride() ? 'Y' : 'N')}</ovrd>
+                        </parameter>
+                    </append-node>
+                </for-each>
                 <!--  Portlet preferences  -->
-<!--                <with-attribute key="PORTLET_DEF" value="${groovy(PORTAL_CONTEXT.getBean('portletDefinitionRegistry').getPortletDefinition(CHAN_ID.intValue()))}">-->
-                <with-attribute key="PORTLET_DEF" value="${groovy(portletDefinitionRegistry.getPortletDefinition(CHAN_ID.intValue()))}">
+                <with-attribute key="PORTLET_DEF" value="${groovy(portletDefinitionRegistry.getPortletDefinition(channelDefinition.getId()))}">
                     <if test="${groovy(PORTLET_DEF != null)}">
                         <for-each items="${groovy(PORTLET_DEF.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
                             <with-attribute key="PORTLET_PREF_NAME" value="${groovy(portletPreference.getName())}">
@@ -161,7 +136,6 @@
                                         <values/>
                                     </portletPreference>
                                 </append-node>
-                                
                                 <with-attribute key="Attributes.NODE" value="${singleNode(portletPreferences/portletPreference[name=$PORTLET_PREF_NAME]/values)}">
                                     <for-each items="${groovy(portletPreference.getValues())}" attribute-name="preferenceValue">
                                         <append-node>
@@ -173,8 +147,9 @@
                         </for-each>
                     </if>
                 </with-attribute>
-                <delete-node node="${singleNode(chan-id)}"/>
+
                 <return value="${Attributes.NODE}"/>
+
             </otherwise>
         </choose>
     </with-attribute>

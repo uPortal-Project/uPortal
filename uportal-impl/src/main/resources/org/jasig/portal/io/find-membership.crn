@@ -19,7 +19,7 @@
 
 -->
 
-<with-attribute key="CHANDEFID" value="CHAN_ID.${req(CHAN_ID)}">
+<with-attribute key="CHANDEFID" value="CHAN_ID.${groovy(channelDefinition.getId())}">
     <groovy>
         <script>
             def getAuthdMembers(chanDefId) {
