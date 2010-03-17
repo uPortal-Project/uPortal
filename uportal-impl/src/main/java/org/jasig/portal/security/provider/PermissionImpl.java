@@ -19,6 +19,7 @@
 
 package org.jasig.portal.security.provider;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.jasig.portal.security.IPermission;
@@ -29,7 +30,7 @@ import org.jasig.portal.security.IPermission;
  * @author Dan Ellentuck
  * @version $Revision$
  */
-public class PermissionImpl implements IPermission{
+public class PermissionImpl implements IPermission, Serializable {
   private String m_owner = null;
   private String m_principal = null;
   private String m_activity = null;
@@ -37,6 +38,7 @@ public class PermissionImpl implements IPermission{
   private String m_type = null;
   private Date m_effective = null;
   private Date m_expires = null;
+  private static final long serialVersionUID = 1L;
 
   /**
    * This constructor ensures that all Permission objects are created with an owner specified.

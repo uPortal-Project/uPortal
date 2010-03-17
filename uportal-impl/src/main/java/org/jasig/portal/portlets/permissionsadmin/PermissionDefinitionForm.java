@@ -62,6 +62,12 @@ public class PermissionDefinitionForm implements Serializable {
     private JsonEntityBean target;
     private static final Log log = LogFactory.getLog(RDBMPermissionImpl.class);
     
+    /**
+     * Existing permissions data used to populate this form.  If non-null, these 
+     * entries will be replaced (removed and re-inserted) upon saving. 
+     */
+    private IPermission[] permissions = null;
+    
     /*
      * Public API.
      */
@@ -95,7 +101,7 @@ public class PermissionDefinitionForm implements Serializable {
         this.setActivity(activity);
         
         // Find permissions that match the inputs from the IPermissionStore
-        IPermission[] permissions = store.select(owner, null, activity, target, null);
+        permissions = store.select(owner, null, activity, target, null);
         
         // Build the set of existing assignments
         List<Assignment> flatAssignmentsList = new ArrayList<Assignment>();
@@ -257,6 +263,20 @@ public class PermissionDefinitionForm implements Serializable {
         }
         
     }
+    
+    public enum Mode {
+        CREATE,
+        UPDATE
+    }
+    
+    /**
+     * Indicates whether this form is for creating or updating permissions. 
+     * 
+     * @return &quot;CREATE&quot; or &quot;UPDATE&quot; 
+     */
+    public Mode getMode() {
+        return permissions == null ? Mode.CREATE : Mode.UPDATE;
+    }
 
     public boolean validateEditPermission(MessageContext msgs) {
         
@@ -293,6 +313,21 @@ public class PermissionDefinitionForm implements Serializable {
     }
     
     public boolean save(IPermissionStore store, MessageContext msgs) {
+
+        // Assertions.
+        if (store == null) {
+            String msg = "Argument 'store' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        if (msgs == null) {
+            String msg = "Argument 'msgs' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        // First clear out items that we're replacing...
+        if (permissions != null) {
+            store.delete(permissions);
+        }
 
         List<IPermission> list = new ArrayList<IPermission>();
         for (Assignment a : assignments) {

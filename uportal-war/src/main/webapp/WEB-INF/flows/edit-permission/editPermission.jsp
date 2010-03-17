@@ -198,6 +198,7 @@ up.jQuery(function() {
             .submit();
     });
     $("#${n}submit").click(function() {
+        <c:if test="${permissionDefinition.mode == 'UPDATE'}">if (!confirm('These entries will REPLACE the previous entreis.  Is that what you want to do?')) return;</c:if>
         $("#${n}editPermissionForm")
             .attr("action", "<c:out value="${submitUrl}" escapeXml="false"/>")
             .submit();
