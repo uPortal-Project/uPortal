@@ -454,11 +454,8 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
+                <entry key="channelRegistryStore">
+                    <ref bean="channelRegistryStore"/>
                 </entry>
                 <entry key="portletDefinitionRegistry">
                     <ref bean="portletDefinitionRegistry"/>
