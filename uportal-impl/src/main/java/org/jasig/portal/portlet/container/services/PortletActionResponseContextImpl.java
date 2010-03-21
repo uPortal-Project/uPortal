@@ -18,138 +18,88 @@
  */
 package org.jasig.portal.portlet.container.services;
 
-import java.util.List;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
-import javax.portlet.Event;
-import javax.portlet.PortletMode;
-import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.container.EventProvider;
 import org.apache.pluto.container.PortletActionResponseContext;
 import org.apache.pluto.container.PortletContainer;
+import org.apache.pluto.container.PortletURLProvider;
 import org.apache.pluto.container.PortletWindow;
+import org.apache.pluto.driver.core.PortalRequestContext;
+import org.apache.pluto.driver.url.PortalURL;
 
 /**
  * @author Nicholas Blair, npblair@wisc.edu
  * @version $Revision$
  */
-class PortletActionResponseContextImpl extends
-		PortletResponseContextImpl implements PortletActionResponseContext {
+class PortletActionResponseContextImpl extends PortletStateAwareResponseContextImpl implements
+PortletActionResponseContext
+{
+	private boolean redirect;
+	private String redirectLocation;
+	private String renderURLParamName;
 
-	
-	PortletActionResponseContextImpl(PortletContainer container,
-			HttpServletRequest containerRequest,
-			HttpServletResponse containerResponse, PortletWindow window) {
-		super(container, containerRequest, containerResponse, window);
+	public PortletActionResponseContextImpl(PortletContainer container, HttpServletRequest containerRequest,
+			HttpServletResponse containerResponse, PortletWindow window, PortletURLProvider portletURLProvider, EventProvider eventProvider)
+	{
+		super(container, containerRequest, containerResponse, window, portletURLProvider, eventProvider);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletActionResponseContext#getResponseURL()
-	 */
-	@Override
-	public String getResponseURL() {
-		// TODO Auto-generated method stub
+	public String getResponseURL()
+	{
+		if (!isReleased())
+		{
+			close();
+			if (!redirect || renderURLParamName != null)
+			{
+				PortalURL url = PortalRequestContext.getContext(getServletRequest()).createPortalURL();
+				if (redirect)
+				{
+					try
+					{
+						return redirectLocation + "?" + URLEncoder.encode(renderURLParamName, "UTF-8") + "=" + URLEncoder.encode(url.toURL(true), "UTF-8");
+					}
+					catch (UnsupportedEncodingException e)
+					{
+						// Cannot happen: UTF-8 is a buildin/required encoder
+						return null;
+					}
+				}
+				else
+				{
+					return url.toURL(false);
+				}
+			}
+			else
+			{
+				return redirectLocation;
+			}
+		}
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletActionResponseContext#isRedirect()
-	 */
-	@Override
-	public boolean isRedirect() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isRedirect()
+	{
+		return redirect;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletActionResponseContext#setRedirect(java.lang.String)
-	 */
-	@Override
-	public void setRedirect(String location) {
-		// TODO Auto-generated method stub
-
+	public void setRedirect(String location)
+	{
+		setRedirect(location, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletActionResponseContext#setRedirect(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void setRedirect(String location, String renderURLParamName) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletStateAwareResponseContext#getEventProvider()
-	 */
-	@Override
-	public EventProvider getEventProvider() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletStateAwareResponseContext#getEvents()
-	 */
-	@Override
-	public List<Event> getEvents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletStateAwareResponseContext#getPortletMode()
-	 */
-	@Override
-	public PortletMode getPortletMode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletStateAwareResponseContext#getPublicRenderParameters()
-	 */
-	@Override
-	public Map<String, String[]> getPublicRenderParameters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletStateAwareResponseContext#getRenderParameters()
-	 */
-	@Override
-	public Map<String, String[]> getRenderParameters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletStateAwareResponseContext#getWindowState()
-	 */
-	@Override
-	public WindowState getWindowState() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletStateAwareResponseContext#setPortletMode(javax.portlet.PortletMode)
-	 */
-	@Override
-	public void setPortletMode(PortletMode portletMode) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.PortletStateAwareResponseContext#setWindowState(javax.portlet.WindowState)
-	 */
-	@Override
-	public void setWindowState(WindowState windowState) {
-		
+	public void setRedirect(String location, String renderURLParamName)
+	{
+		if (!isClosed())
+		{
+			this.redirectLocation = location;
+			this.renderURLParamName = renderURLParamName;
+			this.redirect = true;
+		}
 	}
 
 }

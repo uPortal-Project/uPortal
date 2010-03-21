@@ -23,7 +23,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.container.PortletURLProvider;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.ResourceURLProvider;
 import org.apache.pluto.driver.core.ResourceURLProviderImpl;
@@ -32,7 +31,6 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider;
-import org.jasig.portal.portlet.url.PortletURLProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -121,10 +119,11 @@ public class PortalCallbackServiceImpl /* *implements PortalCallbackService */ {
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.PortalCallbackService#getPortletURLProvider(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)
      */
+    /*
     public PortletURLProvider getPortletURLProvider(HttpServletRequest request, PortletWindow plutoPortletWindow) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(request, plutoPortletWindow);
         return new PortletURLProviderImpl(portletWindow, request, this.portletUrlSyntaxProvider);
-    }
+    }*/
 
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.PortalCallbackService#getResourceURLProvider(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)

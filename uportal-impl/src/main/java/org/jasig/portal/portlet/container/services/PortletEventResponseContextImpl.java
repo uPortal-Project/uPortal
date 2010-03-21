@@ -18,40 +18,24 @@
  */
 package org.jasig.portal.portlet.container.services;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.pluto.container.EventProvider;
 import org.apache.pluto.container.PortletContainer;
-import org.apache.pluto.container.PortletResourceRequestContext;
+import org.apache.pluto.container.PortletEventResponseContext;
+import org.apache.pluto.container.PortletURLProvider;
 import org.apache.pluto.container.PortletWindow;
 
 /**
  * @author Nicholas Blair, npblair@wisc.edu
  * @version $Revision$
  */
-class PortletResourceRequestContextImpl extends PortletRequestContextImpl implements
-                PortletResourceRequestContext
-{
-    public PortletResourceRequestContextImpl(PortletContainer container, HttpServletRequest containerRequest,
-                                             HttpServletResponse containerResponse, PortletWindow window)
-    {
-        super(container, containerRequest, containerResponse, window, true);
-    }
+class PortletEventResponseContextImpl extends PortletStateAwareResponseContextImpl implements
+PortletEventResponseContext {
 
-    public String getCacheability()
-    {
-        return getPortalURL().getCacheability();
-    }
-
-    public Map<String, String[]> getPrivateRenderParameterMap()
-    {
-        return getPortalURL().getPrivateRenderParameters();
-    }
-
-    public String getResourceID()
-    {
-        return getPortalURL().getResourceID();
-    }
+	public PortletEventResponseContextImpl(PortletContainer container, HttpServletRequest containerRequest,
+			HttpServletResponse containerResponse, PortletWindow window, PortletURLProvider portletURLProvider, EventProvider eventProvider) {
+		super(container, containerRequest, containerResponse, window, portletURLProvider, eventProvider);
+	}
 }
