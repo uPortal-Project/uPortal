@@ -21,22 +21,21 @@ package org.jasig.portal.portlet.url;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
 import javax.portlet.PortletSecurityException;
+import javax.portlet.ResourceURL;
 import javax.portlet.WindowState;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletURLProvider;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apache.pluto.container.PortletWindow;
+import org.apache.pluto.driver.url.PortalURL;
+import org.apache.pluto.driver.url.PortalURLParameter;
 
 /**
  * Tracks configuration for a portlet URL then generates one when {@link #toString()} is called.
@@ -47,209 +46,188 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 public class PortletURLProviderImpl implements PortletURLProvider {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private final IPortletWindow portletWindow;
-    private final HttpServletRequest httpServletRequest;
-    private final IPortletUrlSyntaxProvider portletUrlSyntaxProvider;
-    
-    private final PortletUrl portletUrl;
-    
-    public PortletURLProviderImpl(IPortletWindow portletWindow, HttpServletRequest httpServletRequest, IPortletUrlSyntaxProvider portletUrlSyntaxProvider) {
-        Validate.notNull(portletWindow, "portletWindow can not be null");
-        Validate.notNull(httpServletRequest, "httpServletRequest can not be null");
-        Validate.notNull(portletUrlSyntaxProvider, "portletUrlSyntaxProvider can not be null");
-        
-        this.portletWindow = portletWindow;
-        this.httpServletRequest = httpServletRequest;
-        this.portletUrlSyntaxProvider = portletUrlSyntaxProvider;
-        
-        //Init the portlet URL to have the same default assumptions as the PortletURLProvider interface
-        this.portletUrl = new PortletUrl(this.portletWindow.getPortletWindowId());
-        this.portletUrl.setParameters(new HashMap<String, List<String>>());
-        this.portletUrl.setRequestType(RequestType.RENDER);
+    private final PortalURL url;
+    private final TYPE type;
+    private final String window;
+    private PortletMode portletMode;
+    private WindowState windowState;
+    private String cacheLevel;
+    private String resourceID;
+    private Map<String, String[]> renderParameters;
+    private Map<String, String[]> publicRenderParameters;
+    private Map<String, List<String>> properties;
+
+    public PortletURLProviderImpl(PortalURL url, TYPE type, PortletWindow portletWindow)
+    {
+        this.url = url;
+        this.type = type;
+        this.window = portletWindow.getId().getStringId();
     }
     
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.PortletURLProvider#clearParameters()
-     */
-    public void clearParameters() {
-        this.portletUrl.getParameters().clear();
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.PortletURLProvider#isSecureSupported()
-     */
-    public boolean isSecureSupported() {
-        return this.httpServletRequest.isSecure();
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.PortletURLProvider#setSecure()
-     */
-    public void setSecure() throws PortletSecurityException {
-        if (!this.httpServletRequest.isSecure()) {
-            throw new PortletSecurityException("Secure URLs are not supported at this time");
+    public PortalURL apply()
+    {
+        PortalURL url = this.url.clone();
+        if (PortletURLProvider.TYPE.ACTION == type)
+        {
+            url.setActionWindow(window);
+            url.setResourceWindow(null);
+            url.clearParameters(window);
         }
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.PortletURLProvider#setAction(boolean)
-     */
-    public void setAction(boolean action) {
-        if (action) {
-            this.portletUrl.setRequestType(RequestType.ACTION);
-        }
-        else {
-            this.portletUrl.setRequestType(RequestType.RENDER);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.PortletURLProvider#setParameters(java.util.Map)
-     * @param parmeters is Map<String, String[]>
-     */
-    @SuppressWarnings("unchecked")
-    public void setParameters(Map parameters) {
-        final Map<String, List<String>> listParameters = new LinkedHashMap<String, List<String>>();
-        
-        for (final Map.Entry<String, String[]> parameterEntry : ((Map<String, String[]>)parameters).entrySet()) {
-            final String name = parameterEntry.getKey();
-            final String[] values = parameterEntry.getValue();
-            
-            if (values == null) {
-                listParameters.put(name, null);
+        else if (PortletURLProvider.TYPE.RESOURCE == type)
+        {
+            url.setActionWindow(null);
+            url.setResourceWindow(window);
+            if (!ResourceURL.FULL.equals(cacheLevel))
+            {
+                for (PortalURLParameter parm : url.getParameters())
+                {
+                    if (window.equals(parm.getWindowId()))
+                    {
+                        url.getPrivateRenderParameters().put(parm.getName(), parm.getValues());
+                    }                            
+                }
             }
-            else {
-                listParameters.put(name, Arrays.asList(values));
+            url.clearParameters(window);
+        }
+        else
+        {
+            url.setResourceWindow(null);
+            url.setActionWindow(null);
+            url.clearParameters(window);
+        }
+        if (portletMode != null)
+        {
+            url.setPortletMode(window, portletMode);
+        }
+        if (windowState != null)
+        {
+            url.setWindowState(window, windowState);
+        }
+        if (renderParameters != null)
+        {
+            for (Map.Entry<String,String[]> entry : renderParameters.entrySet())
+            {
+                if (publicRenderParameters == null || !publicRenderParameters.containsKey(entry.getKey()))
+                {
+                    url.addParameter(new PortalURLParameter(window, entry.getKey(), entry.getValue()));
+                }
             }
         }
-        
-        this.portletUrl.setParameters(listParameters);
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.PortletURLProvider#setPortletMode(javax.portlet.PortletMode)
-     */
-    public void setPortletMode(PortletMode mode) {
-        if (!this.portletWindow.getPortletMode().equals(mode)) {
-            this.portletUrl.setPortletMode(mode);
+        if (publicRenderParameters != null)
+        {
+            for (Map.Entry<String,String[]> entry : publicRenderParameters.entrySet())
+            {
+                url.getNewPublicParameters().put(entry.getKey(),entry.getValue() != null ? entry.getValue() : new String[]{null});
+            }
         }
+        url.setResourceID(resourceID);
+        url.setCacheability(cacheLevel);
+        return url;
     }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.PortletURLProvider#setWindowState(javax.portlet.WindowState)
-     */
-    public void setWindowState(WindowState state) {
-        if (!this.portletWindow.getWindowState().equals(state)) {
-            this.portletUrl.setWindowState(state);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return this.portletUrlSyntaxProvider.generatePortletUrl(this.httpServletRequest, this.portletWindow, this.portletUrl);
-    }
-
-
-	@Override
-	public String getCacheability() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public PortletMode getPortletMode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public Map<String, List<String>> getProperties() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public Map<String, String[]> getPublicRenderParameters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public Map<String, String[]> getRenderParameters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public String getResourceID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public TYPE getType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public WindowState getWindowState() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public boolean isSecure() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-	@Override
-	public void setCacheability(String cacheLevel) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void setResourceID(String resourceID) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void setSecure(boolean secure) throws PortletSecurityException {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public String toURL() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public void write(Writer out, boolean escapeXML) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
     
+    public TYPE getType()
+    {
+        return type;
+    }
+    
+    public void setPortletMode(PortletMode mode)
+    {
+        this.portletMode = mode;
+    }
+    
+    public PortletMode getPortletMode()
+    {
+        return portletMode;
+    }
+
+    public void setWindowState(WindowState state)
+    {
+        this.windowState = state;
+    }
+
+    public WindowState getWindowState()
+    {
+        return windowState;
+    }
+
+    public void setSecure(boolean secure) throws PortletSecurityException {
+        // ignore: not supported
+    }
+    
+    public boolean isSecure()
+    {
+        return false;
+    }
+    
+    public Map<String,String[]> getRenderParameters()
+    {
+        if (renderParameters == null)
+        {
+            renderParameters = new HashMap<String,String[]>();
+        }
+        return renderParameters;
+    }
+    
+    public Map<String,String[]> getPublicRenderParameters()
+    {
+        if (publicRenderParameters == null)
+        {
+            publicRenderParameters = new HashMap<String,String[]>();
+        }
+        return publicRenderParameters;
+    }
+    
+    public String getCacheability()
+    {
+        return cacheLevel;
+    }
+
+    public void setCacheability(String cacheLevel)
+    {
+        this.cacheLevel = cacheLevel;
+    }
+
+    public String getResourceID()
+    {
+        return resourceID;
+    }
+
+    public void setResourceID(String resourceID)
+    {
+        this.resourceID = resourceID;
+    }
+    
+    public String toURL()
+    {
+        return toURL(false);
+    }
+
+    public String toURL(boolean absolute)
+    {
+        return apply().toURL(absolute);
+    }
+
+    public void write(Writer out, boolean escapeXML) throws IOException
+    {
+        String result = apply().toURL(false);
+        if (escapeXML)
+        {
+            result = result.replaceAll("&", "&amp;");
+            result = result.replaceAll("<", "&lt;");
+            result = result.replaceAll(">", "&gt;");
+            result = result.replaceAll("\'", "&#039;");
+            result = result.replaceAll("\"", "&#034;");
+        }
+        out.write(result);
+    }
+
+    public Map<String, List<String>> getProperties()
+    {
+        if (properties == null)
+        {
+            properties = new HashMap<String, List<String>>();
+        }
+        return properties;
+    }
     
 }
