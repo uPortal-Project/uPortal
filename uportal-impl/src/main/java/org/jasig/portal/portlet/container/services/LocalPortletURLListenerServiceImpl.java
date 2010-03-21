@@ -29,11 +29,13 @@ import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.driver.services.container.PortletURLListenerServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Nicholas Blair, npblair@wisc.edu
  * @version $Revision$
  */
+@Service("portletURLListenerService")
 public class LocalPortletURLListenerServiceImpl implements
 		PortletURLListenerService {
 
