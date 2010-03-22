@@ -119,11 +119,6 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>jtidy</groupId>
             <artifactId>jtidy</artifactId>
         </dependency>
@@ -297,13 +292,6 @@
             <groupId>org.springframework.webflow</groupId>
             <artifactId>org.springframework.webflow</artifactId>
         </dependency>
-
-        <!--  
-        <dependency>
-            <groupId>org.springmodules</groupId>
-            <artifactId>spring-modules-cache</artifactId>
-        </dependency>
-        -->
         
         <dependency>
             <groupId>oro</groupId>
