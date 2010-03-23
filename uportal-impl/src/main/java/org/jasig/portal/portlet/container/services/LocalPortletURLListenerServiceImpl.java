@@ -26,7 +26,6 @@ import javax.portlet.PortletURLGenerationListener;
 import org.apache.pluto.container.PortletURLListenerService;
 import org.apache.pluto.container.om.portlet.Listener;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
-import org.apache.pluto.driver.services.container.PortletURLListenerServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,7 +38,7 @@ import org.springframework.stereotype.Service;
 public class LocalPortletURLListenerServiceImpl implements
 		PortletURLListenerService {
 
-    protected final Logger LOG = LoggerFactory.getLogger(PortletURLListenerServiceImpl.class);
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public List<PortletURLGenerationListener> getPortletURLGenerationListeners(PortletApplicationDefinition app)
     {
@@ -57,11 +56,11 @@ public class LocalPortletURLListenerServiceImpl implements
                         listeners.add((PortletURLGenerationListener)clazz.newInstance());
                     }
                 } catch (ClassNotFoundException e) {
-                    LOG.error("class not found for " + listener.getListenerClass(), e);
+                    logger.error("class not found for " + listener.getListenerClass(), e);
                 } catch (InstantiationException e) {
-                    LOG.error("instantiation failed for " + listener.getListenerClass(), e);
+                    logger.error("instantiation failed for " + listener.getListenerClass(), e);
                 } catch (IllegalAccessException e) {
-                    LOG.error("IllegalAccessException for " + listener.getListenerClass(), e);
+                    logger.error("IllegalAccessException for " + listener.getListenerClass(), e);
                 }
             }
         }

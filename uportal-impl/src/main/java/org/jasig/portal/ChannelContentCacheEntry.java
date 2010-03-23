@@ -19,24 +19,40 @@
 
 package org.jasig.portal;
 
+import java.io.IOException;
+import java.io.StringWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 import org.jasig.portal.serialize.CachingSerializer;
 /**
  * @deprecated All IChannel implementations should be migrated to portlets
  */
 @Deprecated
 public class ChannelContentCacheEntry extends BaseChannelCacheEntry {
+    protected final Log logger = LogFactory.getLog(this.getClass());
     
     public ChannelContentCacheEntry(String channelId) {
         super(channelId);
     }
 
-    public void replayCache(CachingSerializer serializer, ChannelManager cm,
+    public void replayCache(CachingSerializer serializer, PortletExecutionManager portletExecutionManager,
         HttpServletRequest req, HttpServletResponse res)
         throws PortalException {
-        cm.outputChannel(req, res, getChannelId(), serializer);
+        
+        try {
+            final StringWriter output = new StringWriter();
+            portletExecutionManager.outputPortlet(this.getChannelId(), req, res, output);
+            serializer.printRawCharacters(output.toString());
+        }
+        catch (IOException ioe) {
+            //TODO better error handling
+            this.logger.error("Failed to incorporate channel " + this.getChannelId(), ioe);
+        }
     }
 
     public CacheType getCacheType() {

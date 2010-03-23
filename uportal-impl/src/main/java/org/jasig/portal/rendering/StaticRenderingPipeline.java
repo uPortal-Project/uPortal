@@ -422,16 +422,15 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                 // get a serializer appropriate for the target media
                 BaseMarkupSerializer markupSerializer =
                     MEDIA_MANAGER.getSerializerByName(tsd.getSerializerName(),
-                        new ChannelTitleIncorporationWiterFilter(out, channelManager, ulm));
+                        new ChannelTitleIncorporationWiterFilter(out, this.portletExecutionManager, ulm, req, res));
                 // set up the serializer
                 markupSerializer.asContentHandler();
                 // see if we can use character caching
-                boolean ccaching = (CHARACTER_CACHE_ENABLED && (markupSerializer instanceof CachingSerializer));
-//                channelManager.setCharacterCaching(ccaching);
+//                channelManager.setCharacterCaching(CACHE_ENABLED);
 //                // pass along the serializer name
 //                channelManager.setSerializerName(tsd.getSerializerName());
                 // initialize ChannelIncorporationFilter
-                CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter(markupSerializer, channelManager, CACHE_ENABLED && CHARACTER_CACHE_ENABLED, req, res);
+                CharacterCachingChannelIncorporationFilter cif = new CharacterCachingChannelIncorporationFilter((CachingSerializer)markupSerializer, portletExecutionManager, ulm, CACHE_ENABLED && CHARACTER_CACHE_ENABLED, req, res);
 
                 String cacheKey = null;
                 boolean output_produced = false;
@@ -439,7 +438,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     boolean ccache_exists = false;
                     // obtain the cache key
                     cacheKey = constructCacheKey(uPreferencesManager, rootNodeId);
-                    if (ccaching) {
+                    if (CHARACTER_CACHE_ENABLED) {
                         // obtain character cache
                         List<CacheEntry> cacheEntries = systemCharacterCache.get(cacheKey);
                         if(cacheEntries!=null && cacheEntries.size()>0) {
@@ -477,12 +476,12 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                                 if (log.isDebugEnabled()) {
                                     DebugCachingSerializer dcs = new DebugCachingSerializer();
                                     log.debug("----------printing " + ce.getCacheType() + " cache block "+Integer.toString(sb));
-                                    ce.replayCache(dcs, channelManager, req, res);
+                                    ce.replayCache(dcs, this.portletExecutionManager, req, res);
                                     log.debug(dcs.getCache());
                                 }
 
                                 // get cache block output
-                                ce.replayCache(cSerializer, channelManager, req, res);
+                                ce.replayCache(cSerializer, this.portletExecutionManager, req, res);
                             }
 
                             cSerializer.flush();
@@ -490,7 +489,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                         }
                     }
                     // if this failed, try XSLT cache
-                    if ((!ccaching) || (!ccache_exists)) {
+                    if ((!CACHE_ENABLED) || (!ccache_exists)) {
                         // obtain XSLT cache
 
                         SAX2BufferImpl cachedBuffer = systemCache.get(cacheKey);
@@ -501,7 +500,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                             }
                             
                             // attach rendering buffer downstream of the cached buffer
-                            ChannelRenderingBuffer crb = new ChannelRenderingBuffer(cachedBuffer, channelManager, ccaching, req, res);
+                            ChannelRenderingBuffer crb = new ChannelRenderingBuffer(cachedBuffer, this.portletExecutionManager, CACHE_ENABLED, req, res);
                             
                             // attach channel incorporation filter downstream of the channel rendering buffer
                             cif.setParent(crb);
@@ -530,7 +529,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     tst.setParameter(ResourcesXalanElements.SKIN_RESOURCESDAO_PARAMETER_NAME, resourcesDao);
 
                     // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
-                    ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager, ccaching, req, res);
+                    ChannelRenderingBuffer crb = new ChannelRenderingBuffer(this.portletExecutionManager, CACHE_ENABLED, req, res);
                     ssth.setResult(new SAXResult(crb));
 
                     // determine and set the stylesheet params
@@ -668,7 +667,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                         dupl2.setParent(taif);
                     }
 
-                    if (CACHE_ENABLED && !ccaching) {
+                    if (CACHE_ENABLED && !CACHE_ENABLED) {
                         // record cache
                         // attach caching buffer downstream of the theme transformer
                         SAX2BufferImpl newCache = new SAX2BufferImpl();
@@ -698,7 +697,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                                 + dbwr2.toString() + "\n\n");
                     }
 
-                    if (CACHE_ENABLED && ccaching) {
+                    if (CACHE_ENABLED) {
                         // save character block cache
                         List<CacheEntry> cacheBlocks = cif.getCacheBlocks();
                         if(cacheBlocks == null) {
@@ -722,7 +721,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                                         log.debug("----------channel content entry "+Integer.toString(i));
                                     }
                                     DebugCachingSerializer dcs = new DebugCachingSerializer();
-                                    ce.replayCache(dcs, channelManager, req, res);
+                                    ce.replayCache(dcs, this.portletExecutionManager, req, res);
                                     log.debug(dcs.getCache());
                                 }
                             }

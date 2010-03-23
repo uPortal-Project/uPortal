@@ -21,9 +21,12 @@ package org.jasig.portal.io;
 
 import java.io.Writer;
 
-import org.jasig.portal.ChannelManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 
 /**
  * Provides for streaming token replacement with a character stream.
@@ -36,18 +39,23 @@ public class ChannelTitleIncorporationWiterFilter extends AbstractTokenReplaceme
     public static final int MAX_CHANNEL_ID_LENGTH = 32;
     public static final String TITLE_TOKEN_SUFFIX = "}";
     
-    private final ChannelManager channelManager;
+    private final PortletExecutionManager portletExecutionManager;
     private final IUserLayoutManager userLayoutManager;
+    private final HttpServletRequest httpServletRequest;
+    private final HttpServletResponse httpServletResponse;
 
     /**
      * @param wrappedWriter Writer to delegate writing to.
      * @param channelManager Used to load the dynamic channel title.
      * @param userLayoutManager Used to access the default title if no dynamic title is provided.
      */
-    public ChannelTitleIncorporationWiterFilter(Writer wrappedWriter, ChannelManager channelManager, IUserLayoutManager userLayoutManager) {
+    public ChannelTitleIncorporationWiterFilter(Writer wrappedWriter, PortletExecutionManager portletExecutionManager, IUserLayoutManager userLayoutManager,
+            HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         super(wrappedWriter, TITLE_TOKEN_PREFIX, MAX_CHANNEL_ID_LENGTH, TITLE_TOKEN_SUFFIX);
-        this.channelManager = channelManager;
+        this.portletExecutionManager = portletExecutionManager;
         this.userLayoutManager = userLayoutManager;
+        this.httpServletRequest = httpServletRequest;
+        this.httpServletResponse = httpServletResponse;
     }
 
     /* (non-Javadoc)
@@ -60,7 +68,7 @@ public class ChannelTitleIncorporationWiterFilter extends AbstractTokenReplaceme
         
         String title = null;
         if (!disableDynamicTitle) {
-            title = this.channelManager.getChannelTitle(channelId);
+            title = this.portletExecutionManager.getPortletTitle(title, this.httpServletRequest, this.httpServletResponse);
         }
         
         if (title == null) {

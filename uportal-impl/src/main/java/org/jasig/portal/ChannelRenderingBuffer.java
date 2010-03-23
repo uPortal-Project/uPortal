@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -53,7 +54,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
 
     private final HttpServletRequest request;
     private final HttpServletResponse response;
-    private final ChannelManager cm;
+    private final PortletExecutionManager portletExecutionManager;
     private final boolean ccaching;
 
     // information about the current channel
@@ -64,9 +65,9 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
     private String channelPublishId;
     private long timeOut;
     
-  public ChannelRenderingBuffer(XMLReader parent, ChannelManager chanman, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
+  public ChannelRenderingBuffer(XMLReader parent, PortletExecutionManager portletExecutionManager, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
       super(parent);
-      this.cm = chanman;
+      this.portletExecutionManager = portletExecutionManager;
       this.ccaching = ccaching;
       this.request = request;
       this.response = response;
@@ -75,8 +76,8 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
       this.startBuffering();
   }
   
-  public ChannelRenderingBuffer(ChannelManager chanman, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
-      this.cm = chanman;
+  public ChannelRenderingBuffer(PortletExecutionManager portletExecutionManager, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
+      this.portletExecutionManager = portletExecutionManager;
       this.ccaching = ccaching;
       this.request = request;
       this.response = response;
@@ -91,7 +92,6 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
   }
 
   public void endDocument() throws SAXException {
-    cm.commitToRenderingChannelSet();
     super.endDocument();
   }
 
@@ -120,7 +120,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
     if (insideChannelElement) {
       if (qName.equals("channel")) {
           try {
-              cm.startChannelRendering(this.request, this.response, this.channelSubscribeId);
+              this.portletExecutionManager.startPortletRender(this.channelSubscribeId, this.request, this.response);
           } catch (PortalException pe) {
               log.error("ChannelRenderingBuffer::endElement() : unable to start rendering channel! (channelSubscribeId=\""+channelSubscribeId+"\")");
           }
