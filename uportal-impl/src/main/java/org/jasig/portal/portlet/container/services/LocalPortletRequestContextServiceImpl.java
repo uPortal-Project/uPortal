@@ -3,34 +3,25 @@
  */
 package org.jasig.portal.portlet.container.services;
 
-import javax.portlet.PortletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.container.EventProvider;
 import org.apache.pluto.container.PortletActionResponseContext;
 import org.apache.pluto.container.PortletContainer;
-import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.PortletEventResponseContext;
 import org.apache.pluto.container.PortletRenderResponseContext;
 import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.PortletRequestContextService;
 import org.apache.pluto.container.PortletResourceRequestContext;
 import org.apache.pluto.container.PortletResourceResponseContext;
-import org.apache.pluto.container.PortletURLProvider;
 import org.apache.pluto.container.PortletWindow;
-import org.apache.pluto.container.driver.PortletContextService;
-import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
-import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider;
-import org.jasig.portal.url.IPortalRequestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.pluto.driver.services.container.PortletActionResponseContextImpl;
+import org.apache.pluto.driver.services.container.PortletEventResponseContextImpl;
+import org.apache.pluto.driver.services.container.PortletRenderResponseContextImpl;
+import org.apache.pluto.driver.services.container.PortletRequestContextImpl;
+import org.apache.pluto.driver.services.container.PortletResourceRequestContextImpl;
+import org.apache.pluto.driver.services.container.PortletResourceResponseContextImpl;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.ServletContextAware;
 
 /**
  * @author Nicholas Blair, npblair@wisc.edu
@@ -38,59 +29,8 @@ import org.springframework.web.context.ServletContextAware;
  */
 @Service("portletRequestContextService")
 public class LocalPortletRequestContextServiceImpl implements
-PortletRequestContextService, ServletContextAware {
-
-	protected final Log log = LogFactory.getLog(this.getClass());
-	private ServletContext servletContext;
-	private PortletContextService portletContextService;
-	private IPortalRequestUtils portalRequestUtils;
-	private PortletURLProvider portletURLProvider;
-	private EventProvider eventProvider;
-	private IPortletUrlSyntaxProvider portletUrlSyntaxProvider;
-	private IPortletWindowRegistry portletWindowRegistry;
-	private IPortletEntityRegistry portletEntityRegistry;
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
-	 */
-	@Autowired(required=true)
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
-
-	/**
-	 * @param portletContextService the portletContextService to set
-	 */
-	@Autowired(required=true)
-	public void setPortletContextService(PortletContextService portletContextService) {
-		this.portletContextService = portletContextService;
-	}
-
-	/**
-	 * @param portalRequestUtils the portalRequestUtils to set
-	 */
-	@Autowired(required=true)
-	public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-		this.portalRequestUtils = portalRequestUtils;
-	}
-
-	/**
-	 * @param portletURLProvider the portletURLProvider to set
-	 */
-	@Autowired(required=true)
-	public void setPortletURLProvider(PortletURLProvider portletURLProvider) {
-		this.portletURLProvider = portletURLProvider;
-	}
-
-	/**
-	 * @param eventProvider the eventProvider to set
-	 */
-	@Autowired(required=true)
-	public void setEventProvider(EventProvider eventProvider) {
-		this.eventProvider = eventProvider;
-	}
+PortletRequestContextService {
+	
 
 	/* (non-Javadoc)
 	 * @see org.apache.pluto.container.PortletRequestContextService#getPortletActionRequestContext(org.apache.pluto.container.PortletContainer, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apache.pluto.container.PortletWindow)
@@ -99,20 +39,8 @@ PortletRequestContextService, ServletContextAware {
 	public PortletRequestContext getPortletActionRequestContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		PortletDefinition portletDefinition = window.getPortletDefinition();
-		PortletConfig config;
-		try {
-			config = this.portletContextService.getPortletConfig(portletDefinition.getApplication().getName(), portletDefinition.getPortletName());
-			HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
-			HttpServletResponse servletResponse = this.portalRequestUtils.getOriginalPortalResponse(containerRequest);
-			PortletRequestContextImpl result = new PortletRequestContextImpl(container, containerRequest, containerResponse, window, true);
-			result.init(config, servletContext, servletRequest, servletResponse);
-			return result;
-		} catch (PortletContainerException e) {
-			log.error("exception from portletContextService#getPortletConfig for portletDefinition " + portletDefinition, e);
-			// TODO return null or throw a RuntimeException?
-			return null;
-		}
+		PortletRequestContextImpl result = new PortletRequestContextImpl(container, containerRequest, containerResponse, window, true);
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -122,10 +50,7 @@ PortletRequestContextService, ServletContextAware {
 	public PortletActionResponseContext getPortletActionResponseContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
-		HttpServletResponse servletResponse = this.portalRequestUtils.getOriginalPortalResponse(containerRequest);
-		PortletActionResponseContextImpl result = new PortletActionResponseContextImpl(container, containerRequest, containerResponse, window, portletURLProvider, eventProvider);
-		result.init(servletRequest, servletResponse);
+		PortletActionResponseContextImpl result = new PortletActionResponseContextImpl(container, containerRequest, containerResponse, window);
 		return result;
 	}
 
@@ -136,20 +61,8 @@ PortletRequestContextService, ServletContextAware {
 	public PortletRequestContext getPortletEventRequestContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		PortletDefinition portletDefinition = window.getPortletDefinition();
-		PortletConfig config;
-		try {
-			config = this.portletContextService.getPortletConfig(portletDefinition.getApplication().getName(), portletDefinition.getPortletName());
-			HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
-			HttpServletResponse servletResponse = this.portalRequestUtils.getOriginalPortalResponse(containerRequest);
-			PortletRequestContextImpl result = new PortletRequestContextImpl(container, containerRequest, containerResponse, window, false);
-			result.init(config, servletContext, servletRequest, servletResponse);
-			return result;
-		} catch (PortletContainerException e) {
-			log.error("exception from portletContextService#getPortletConfig for portletDefinition " + portletDefinition, e);
-			// TODO return null or throw a RuntimeException?
-			return null;
-		}
+		PortletRequestContextImpl result = new PortletRequestContextImpl(container, containerRequest, containerResponse, window, false);
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -159,10 +72,8 @@ PortletRequestContextService, ServletContextAware {
 	public PortletEventResponseContext getPortletEventResponseContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
-		HttpServletResponse servletResponse = this.portalRequestUtils.getOriginalPortalResponse(containerRequest);
-		PortletEventResponseContextImpl result = new PortletEventResponseContextImpl(container, containerRequest, containerResponse, window, portletURLProvider, eventProvider);
-		result.init(servletRequest, servletResponse);
+		
+		PortletEventResponseContextImpl result = new PortletEventResponseContextImpl(container, containerRequest, containerResponse, window);
 		return result;
 	}
 
@@ -173,24 +84,8 @@ PortletRequestContextService, ServletContextAware {
 	public PortletRequestContext getPortletRenderRequestContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-
-		PortletDefinition portletDefinition = window.getPortletDefinition();
-		PortletConfig config;
-		try {
-			config = this.portletContextService.getPortletConfig(portletDefinition.getApplication().getName(), portletDefinition.getPortletName());
-			HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
-			HttpServletResponse servletResponse = this.portalRequestUtils.getOriginalPortalResponse(containerRequest);
-
-			PortletRequestContextImpl result = new PortletRequestContextImpl(container, containerRequest, containerResponse, window, false);
-			result.init(config, servletContext, servletRequest, servletResponse);
-			return result;
-		} catch (PortletContainerException e) {
-			log.error("exception from portletContextService#getPortletConfig for portletDefinition " + portletDefinition, e);
-			// TODO return null or throw a RuntimeException?
-			return null;
-		}
-
-
+		PortletRequestContextImpl result = new PortletRequestContextImpl(container, containerRequest, containerResponse, window, false);
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -200,11 +95,7 @@ PortletRequestContextService, ServletContextAware {
 	public PortletRenderResponseContext getPortletRenderResponseContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
-		HttpServletResponse servletResponse = this.portalRequestUtils.getOriginalPortalResponse(containerRequest);
-		PortletRenderResponseContextImpl result = new PortletRenderResponseContextImpl(container, containerRequest, containerResponse, window, portletUrlSyntaxProvider, portletWindowRegistry, portletEntityRegistry);
-		result.init(servletRequest, servletResponse);
-
+		PortletRenderResponseContextImpl result = new PortletRenderResponseContextImpl(container, containerRequest, containerResponse, window);
 		return result;
 	}
 
@@ -215,22 +106,8 @@ PortletRequestContextService, ServletContextAware {
 	public PortletResourceRequestContext getPortletResourceRequestContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		PortletDefinition portletDefinition = window.getPortletDefinition();
-		PortletConfig config;
-		try {
-			config = this.portletContextService.getPortletConfig(portletDefinition.getApplication().getName(), portletDefinition.getPortletName());
-			HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
-			HttpServletResponse servletResponse = this.portalRequestUtils.getOriginalPortalResponse(containerRequest);
-
-			PortletResourceRequestContextImpl result = new PortletResourceRequestContextImpl(container, containerRequest, containerResponse, window);
-			result.init(config, servletContext, servletRequest, servletResponse);
-			// TODO set cacheability and resourceId on PortletResourceRequestContextImpl result
-			return result;
-		} catch (PortletContainerException e) {
-			log.error("exception from portletContextService#getPortletConfig for portletDefinition " + portletDefinition, e);
-			// TODO return null or throw a RuntimeException?
-			return null;
-		}
+		PortletResourceRequestContextImpl result = new PortletResourceRequestContextImpl(container, containerRequest, containerResponse, window);
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -241,11 +118,7 @@ PortletRequestContextService, ServletContextAware {
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
 
-		PortletResourceResponseContextImpl result = new PortletResourceResponseContextImpl(container, containerRequest, containerResponse, window, portletUrlSyntaxProvider, portletWindowRegistry, portletEntityRegistry);
-		HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
-		HttpServletResponse servletResponse = this.portalRequestUtils.getOriginalPortalResponse(containerRequest);
-
-		result.init(servletRequest, servletResponse);
+		PortletResourceResponseContextImpl result = new PortletResourceResponseContextImpl(container, containerRequest, containerResponse, window);
 		return result;
 	}
 
