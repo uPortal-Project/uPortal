@@ -147,14 +147,16 @@
 .up #portalSidebar {background:#336699 url(../common/images/rounded_corner_bottomleft.png) bottom left no-repeat;}
 .up #portalSidebarInner {background:transparent url(../common/images/rounded_corner_bottomright.png) bottom right no-repeat;}
 /* Sidebar Widgets */
-.up #portalSidebar .fl-widget {padding:7px; font-size:85%; background:transparent url(../common/images/light_top_100px_flat.png) 0 0 repeat-x;}
+.up #portalSidebar .fl-widget {padding:7px; font-size:85%; background:transparent url(../common/images/light_top_100px_30.png) 0 0 repeat-x; border:1px solid #ACC9E6;}
 .up #portalSidebar .fl-widget .fl-widget-titlebar h2 {color:#eee;}
+.up #portalSidebar .fl-widget-content,
+.up #portalSidebar .fl-widget .fl-listmenu {background-color:#336699;}
 .up #portalSidebar .fl-widget .fl-listmenu {border-width:0px; border-bottom-width:1px;}
 .up #portalSidebar .fl-widget .fl-listmenu a {padding-left:28px; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); background-position:0.5em 0.5em; background-repeat:no-repeat;}
 .up #portalSidebar .fl-widget .fl-listmenu li,
-.up #portalSidebar .fl-widget .fl-listmenu li a {background-color:#98b6c1; color:#336699 !important;}
+.up #portalSidebar .fl-widget .fl-listmenu li a {background-color:#336699 !important; color:#ACC9E6 !important;}
 .up #portalSidebar .fl-widget .fl-listmenu li:hover,
-.up #portalSidebar .fl-widget .fl-listmenu li a:hover {color:#fff !important; background-color:#5a95cf;}
+.up #portalSidebar .fl-widget .fl-listmenu li a:hover {color:#fff !important; background-color:#5a95cf !important;}
 
 /* Login */
 .up #portalLogin {}
@@ -183,9 +185,10 @@
 
 /* Portlet Navigation (focused view) */
 .up #portletNavigation #portletNavigationLinkHome a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tab_go.png);}
+.up #portletNavigation h3 {color:#fff;}
 
 /* Fragment Administration */
-.up #portalFragAdminList .fl-widget-content {background-color:#98b6c1;}
+.up #portalFragAdminList .fl-widget-content {}
 .up #portalFragAdminExit {border-bottom:1px solid #ff6600;}
 .up #portalFragAdminExit h2 {color:#ff6600;}
 .up #portalFragAdminExit #exitFragment {font-weight:bold; color:#fff; background-color:#FF6600; background-image:none; border-top:1px solid #FFCA95; border-left:1px solid #FFCA95; border-bottom:1px solid #884400; border-right:1px solid #884400;}

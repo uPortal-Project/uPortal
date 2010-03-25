@@ -38,11 +38,19 @@
     </skin-description>
   </skin>
 	
-	<skin>
+  <skin>
     <skin-key>coal</skin-key>
     <skin-name>Coal</skin-name>
     <skin-description>
       Dark charcoal and gray.
+    </skin-description>
+  </skin>
+  
+  <skin>
+    <skin-key>hc</skin-key>
+    <skin-name>High Contrast</skin-name>
+    <skin-description>
+      High contrast black and white.
     </skin-description>
   </skin>
   

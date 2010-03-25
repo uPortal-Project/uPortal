@@ -45,11 +45,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
     
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet ptl-mgr view-setparameters" role="section">
 
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading">
+  <!-- Portlet Titlebar -->
+  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  	<h2 class="title" role="heading">
       <c:choose>
         <c:when test="${ completed }">
           <spring:message code="edit-portlet.editPortletHeading"/>
@@ -59,32 +59,35 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </c:otherwise>
       </c:choose>
     </h2>
-  </div> <!-- end: portlet-title -->
+  </div> <!-- end: portlet-titlebar -->
   
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <!-- Portlet Content -->
+  <div class="fl-widget-content portlet-content" role="main">
 
     <form:form modelAttribute="channel" action="${queryUrl}" method="POST">
 
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="channel">
-        <div class="portlet-msg-error" role="alert">
-            <form:errors path="*" element="div"/>
-        </div> <!-- end: portlet-msg -->
+      <div class="portlet-msg-error portlet-msg error" role="alert">
+        <form:errors path="*" element="div"/>
+      </div> <!-- end: portlet-msg -->
     </spring:hasBindErrors>
           
     <!-- Add a note to the page if the portle supports config mode  -->
     <c:if test="${supportsConfig}">
-      <div class="portlet-msg-info" role="alert">
+      <div class="portlet-msg-info portlet-msg info" role="alert">
         <spring:message code="setParameters.portletSupportsConfig"/>
       </div>
     </c:if>
     
+    <!-- Portlet Section -->
     <c:if test="${ channel.portlet }">
       <div class="portlet-section" role="region">
-        <h3 class="portlet-section-header" role="heading"><spring:message code="setParameters.xmlPreferencesHeader"/></h3>
-        <div class="portlet-section-body">
-          <p class="portlet-section-note" role="note"><spring:message code="setParameters.xmlPreferencesSummary"/></p>
+        <div class="titlebar">
+          <h3 class="title" role="heading"><spring:message code="setParameters.xmlPreferencesHeader"/></h3>
+        </div>
+        <div class="content">
+          <p class="note" role="note"><spring:message code="setParameters.xmlPreferencesSummary"/></p>
           <table>
             <thead>
               <tr>
@@ -108,21 +111,23 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </tbody>
           </table>
         </div>
-      </div>
+      </div> <!-- end: porltet-section -->
     </c:if>
 
     <!-- Step Loop -->
     <c:forEach items="${ cpd.params.steps }" var="step">
     
-    <!-- Portlet Section -->
-    <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">${ step.name }</h3>
-      <div class="portlet-section-body">
-          <p class="portlet-section-note" role="note">${ step.description }</p>
+      <!-- Portlet Section -->
+      <div class="portlet-section" role="region">
+        <div class="titlebar">
+          <h3 class="title" role="heading">${ step.name }</h3>
+        </div>
+        <div class="content">
+          <p class="note" role="note">${ step.description }</p>
           
           <!-- Channel Parameters -->
           <c:if test="${ fn:length(step.parameters) > 0 }">
-            <table summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
+            <table class="portlet-table" summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
               <thead>
                 <tr>
                   <th><spring:message code="setParameters.parametersHeading"/></th>
@@ -140,8 +145,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                          <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ paramName }'].value"/>
                       </c:when>
                       <c:otherwise>
-	                    <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>
-	                    <c:set var="overrideParamPath" value="parameterOverrides['${ parameter.name }'].value"/>
+                      <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>
+                      <c:set var="overrideParamPath" value="parameterOverrides['${ parameter.name }'].value"/>
                       </c:otherwise>
                     </c:choose>
                     <c:choose>
@@ -159,8 +164,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                   parameterValues="${ channel.portletPreferences[paramName].value }"/>
                               </c:when>
                               <c:otherwise>
-	                            <editPortlet:parameterInput parameterType="${ parameter.type }" 
-	                              parameterPath="${ paramPath }"/>
+                              <editPortlet:parameterInput parameterType="${ parameter.type }" 
+                                parameterPath="${ paramPath }"/>
                               </c:otherwise>
                             </c:choose>
                           </td>
@@ -177,97 +182,97 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               </tbody>
             </table>        
           </c:if> <!-- End Channel Parameters -->
-
+  
           <c:if test="${ channel.portlet }">
-             <c:if test="${ fn:length(step.preferences) > 0 }">
-               <div class="preference-options-section">
-	            <table summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
-	              <thead>
-	                <tr>
-	                  <th><spring:message code="setParameters.parametersHeading"/></th>
-	                  <th><spring:message code="setParameters.valuesHeading"/></th>
-	                  <th><spring:message code="setParameters.userEditableHeading"/></th>
-	                </tr>
-	              </thead>
-	              <tbody>
-	                <c:forEach items="${ step.preferences }" var="parameter">
-	                  <c:if test="${ parameter.modify != 'subscribeOnly' }">
-	                    <c:set var="paramPath" value="portletPreferences['${ parameter.name }'].value"/>
-	                    <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ parameter.name }'].value"/>
-	                    <c:choose>
-	                      <c:when test="${ parameter.type.display == 'hidden' }">
-	                        <c:set var="values" value="${ channel.portletPreferences[parameter.name].value }"/>
-	                        <input type="hidden" name="${ paramPath }" value="${ fn:length(values) > 0 ? values[0] : '' }"/>
-	                      </c:when>
-	                      <c:otherwise>
-	                        <tr>
-	                          <td class="preference-name"><span class="uportal-label">${ parameter.label }:</span></td>
-	                          <td>
-                                  <editPortlet:parameterInput parameterType="${ parameter.type }" 
-                                    parameterPath="${ paramPath }" parameterName="${ parameter.name }" 
-                                    parameterValues="${ channel.portletPreferences[parameter.name].value }"/>
-	                          </td>
-	                          <td>
-		                        <c:if test="${ parameter.modify != 'publish-only' }">
-		                          <form:checkbox path="${overrideParamPath}" value="true"/>
-		                        </c:if>
-		                      </td>
-	                        </tr>
-	                      </c:otherwise>
-	                    </c:choose>
-	                  </c:if>
-	                </c:forEach>
-	              </tbody>
-	            </table>
-	            </div>   
-	          </c:if>
+            <c:if test="${ fn:length(step.preferences) > 0 }">
+              <div class="preference-options-section">
+                <table class="portlet-table" summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
+                  <thead>
+                    <tr>
+                      <th><spring:message code="setParameters.parametersHeading"/></th>
+                      <th><spring:message code="setParameters.valuesHeading"/></th>
+                      <th><spring:message code="setParameters.userEditableHeading"/></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <c:forEach items="${ step.preferences }" var="parameter">
+                      <c:if test="${ parameter.modify != 'subscribeOnly' }">
+                        <c:set var="paramPath" value="portletPreferences['${ parameter.name }'].value"/>
+                        <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ parameter.name }'].value"/>
+                        <c:choose>
+                          <c:when test="${ parameter.type.display == 'hidden' }">
+                            <c:set var="values" value="${ channel.portletPreferences[parameter.name].value }"/>
+                            <input type="hidden" name="${ paramPath }" value="${ fn:length(values) > 0 ? values[0] : '' }"/>
+                          </c:when>
+                          <c:otherwise>
+                            <tr>
+                              <td class="preference-name"><span class="uportal-label">${ parameter.label }:</span></td>
+                              <td>
+                                    <editPortlet:parameterInput parameterType="${ parameter.type }" 
+                                      parameterPath="${ paramPath }" parameterName="${ parameter.name }" 
+                                      parameterValues="${ channel.portletPreferences[parameter.name].value }"/>
+                              </td>
+                              <td>
+                              <c:if test="${ parameter.modify != 'publish-only' }">
+                                <form:checkbox path="${overrideParamPath}" value="true"/>
+                              </c:if>
+                            </td>
+                            </tr>
+                          </c:otherwise>
+                        </c:choose>
+                      </c:if>
+                    </c:forEach>
+                  </tbody>
+                </table>
+              </div>   
+            </c:if>
           </c:if> <!-- End Portlet Preferences -->
-                    
-                    
+                      
+                      
           <!-- Other Parameters Loop -->
           <c:forEach items="${ step.arbitraryParameters }" var="arbitraryParam">
             <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
             
-             <div class="parameter-options-section" prefix="${ prefix }">
-              <table>
-                <thead>
-                  <tr>
-                    <th><spring:message code="setParameters.preferencesHeading"/></th>
-                    <th><spring:message code="setParameters.valuesHeading"/></th>
-                    <th><spring:message code="setParameters.userEditableHeading"/></th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <c:forEach items="${ channel.parameters }" var="channelParam">
-                    <c:if test="${ fn:startsWith(channelParam.key, prefix) }">
-                    <c:set var="paramPath" value="parameters['${ channelParam.key }'].value"/>
-                    <c:set var="overrideParamPath" value="parameterOverrides['${ channelParam.key }'].value"/>
-                      <tr>
-                        <td>${ fn:substringAfter(channelParam.key, prefix) }</td>
-                        <td><form:input path="${ paramPath }"/></td>
-                        <td>
-                            <form:checkbox path="${overrideParamPath}" value="true"/>
-                        </td>
-                        <td><a class="delete-parameter-link" href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
-                      </tr>
-                    </c:if>
-                  </c:forEach>
-                </tbody>
-              </table> 
-              <p><a class="add-parameter-link" href="javascript:;"><spring:message code="setParameters.addButton"/></a></p>
-              <div style="display:none">
-                <div class="parameter-adding-dialog jqueryui" title="<spring:message code="setParameters.addButton"/>">
+              <div class="parameter-options-section" prefix="${ prefix }">
+                <table class="portlet-table">
+                  <thead>
+                    <tr>
+                      <th><spring:message code="setParameters.preferencesHeading"/></th>
+                      <th><spring:message code="setParameters.valuesHeading"/></th>
+                      <th><spring:message code="setParameters.userEditableHeading"/></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <c:forEach items="${ channel.parameters }" var="channelParam">
+                      <c:if test="${ fn:startsWith(channelParam.key, prefix) }">
+                      <c:set var="paramPath" value="parameters['${ channelParam.key }'].value"/>
+                      <c:set var="overrideParamPath" value="parameterOverrides['${ channelParam.key }'].value"/>
+                        <tr>
+                          <td>${ fn:substringAfter(channelParam.key, prefix) }</td>
+                          <td><form:input path="${ paramPath }"/></td>
+                          <td>
+                              <form:checkbox path="${overrideParamPath}" value="true"/>
+                          </td>
+                          <td><a class="delete-parameter-link" href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
+                        </tr>
+                      </c:if>
+                    </c:forEach>
+                  </tbody>
+                </table> 
+                <p><a class="add-parameter-link" href="javascript:;"><spring:message code="setParameters.addButton"/></a></p>
+                <div style="display:none">
+                  <div class="parameter-adding-dialog jqueryui" title="<spring:message code="setParameters.addButton"/>">
+                  </div>
                 </div>
-              </div>
               </div>
             </c:forEach>
           </c:forEach> <!-- End Other Parameters Loop -->
-      
+        
           <!-- Other Preferences -->
           <c:if test="${ step.arbitraryPreferences }">
             <div class="preference-options-section">
-              <table>
+              <table class="portlet-table">
                 <thead>
                   <tr>
                     <th><spring:message code="setParameters.preferencesHeading"/></th>
@@ -304,32 +309,32 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <div class="parameter-adding-dialog jqueryui" title="<spring:message code="setParameters.addButton"/>">
                 </div>
               </div>
-              </div>
+            </div>
           </c:if> <!-- End Other Preferences -->
-      
-        </div> <!-- End Pane -->
         
-    	</div> <!-- end: portlet-section -->
+        </div> <!-- end: content -->
+          
+      </div> <!-- end: portlet-section -->
     
     </c:forEach> <!-- End Step Loop -->
 
-    <!-- Portlet Buttons -->    
-    <div class="portlet-button-group">
+    <!-- Buttons -->    
+    <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
+          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="portlet-button" type="submit" value="<spring:message code="edit-portlet.backButton"/>" class="secondary" name="_eventId_back"/>
-          <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
+          <input class="button" type="submit" value="<spring:message code="edit-portlet.backButton"/>" class="secondary" name="_eventId_back"/>
+          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="portlet-button" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
+      <input class="button" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
     </div>
     
     </form:form> <!-- End Form -->
     
-  </div> <!-- end: portlet-body -->
+  </div> <!-- end: portlet-content -->
   
 </div> <!-- end: portlet -->
 

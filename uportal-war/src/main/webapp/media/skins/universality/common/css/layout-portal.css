@@ -17,14 +17,14 @@
  * under the License.
  */
 
-/* uPORTAL PORTLET LAYOUT CSS
- * These declarations are scoped for portlets (not the portal).
+/* uPORTAL UNIVERSALITY THEME LAYOUT CSS
+ * These declarations are scoped both for the portal and for portlets.
  * These declarations are specific to the "universality" theme.
  * This CSS is shared across all skins that use the "universality" theme.
  * These declarations work with the Fluid Skinning System (FSS) to establish the basic portal layout structure.
  * Only CSS that affects the layout (positioning) of major elements should be listed here.  Such as:
  *   display, position, float, clear, width, height, min-width, min-height, margin, border, padding, overflow
- * CSS that sets the visual style of portlets is handled by individual skins.
+ * CSS that sets the visual style of the portal (and portlets) is handled by individual skins.
  * This CSS assumes the use of a CSS reset (by default the FSS "fss-reset.css") for browser normalization.
  */
  
@@ -32,364 +32,290 @@
  * For the standards and guidelines that govern the user interface of uPortal portlets including HTML, CSS, JavaScript, accessibilty, naming conventions, 3rd Party libraries (like jQuery and the Fluid Skinning System) and more, refer to:
  * http://www.ja-sig.org/wiki/x/cQ
  */
-
-
-/*====================================*/
-/* Fluid Skinning System Extensions */
-/*====================================*/
-/* Overrides and extenstions to FSS specific to portlets. */
-
-/* Helper: Widget */
+ 
+ 
 /* 
- * The FSS fl-widget structure should be applied to portlets.
- * However, the fl-widget structure can be used for more than portlets.
- * These classes specify how the fl-widget classes style a portlet.
- * Use: .fl-widget.portlet
+----------------------------------------------------
+  Fluid Skinning System extensions and overrides.
+----------------------------------------------------
+ * The Fluid Skinning System is a group of CSS files with a specially designed modular structure and class-specific format.
+ * It is meant to work well as both a standalone CSS foundation for your site and Fluid Infusion components.
+ * In FSS, "themes" refer to the color schemes and "window dressings" for basic markup and FSS Helpers, such as Tabs, Widgets, Menus, etc.
+ * For more information on FSS themes, refer to:
+ * http://wiki.fluidproject.org/x/egNS
+ * The FSS theme created for uPortal is "fl-theme-uportal", and is a class of the <body> tag, used for namespacing.
  */
-.fl-widget.portlet {background:transparent; border:none;}
-.fl-widget-content.portlet-content {padding:0 0.1em;}
+
+.fl-col-flex6 {width:6%; float:left; display:inline;}
+.fl-col-flex7 {width:7%; float:left; display:inline;}
+.fl-col-flex8 {width:8%; float:left; display:inline;}
+.fl-col-flex9 {width:9%; float:left; display:inline;}
+.fl-col-flex10 {width:10%; float:left; display:inline;}
+.fl-col-flex11 {width:11%; float:left; display:inline;}
+.fl-col-flex12 {width:12%; float:left; display:inline;}
+.fl-col-flex13 {width:13%; float:left; display:inline;}
+.fl-col-flex14 {width:14%; float:left; display:inline;}
+.fl-col-flex15 {width:15%; float:left; display:inline;}
+.fl-col-flex16 {width:16%; float:left; display:inline;}
+.fl-col-flex17 {width:17%; float:left; display:inline;}
+.fl-col-flex18 {width:18%; float:left; display:inline;}
+.fl-col-flex19 {width:19%; float:left; display:inline;}
+.fl-col-flex20 {width:20%; float:left; display:inline;}
+.fl-col-flex21 {width:21%; float:left; display:inline;}
+.fl-col-flex22 {width:22%; float:left; display:inline;}
+.fl-col-flex23 {width:23%; float:left; display:inline;}
+.fl-col-flex24 {width:24%; float:left; display:inline;}
+.fl-col-flex25 {width:25%; float:left; display:inline;}
+.fl-col-flex26 {width:26%; float:left; display:inline;}
+.fl-col-flex27 {width:27%; float:left; display:inline;}
+.fl-col-flex28 {width:28%; float:left; display:inline;}
+.fl-col-flex29 {width:29%; float:left; display:inline;}
+.fl-col-flex30 {width:30%; float:left; display:inline;}
+.fl-col-flex31 {width:31%; float:left; display:inline;}
+.fl-col-flex32 {width:32%; float:left; display:inline;}
+.fl-col-flex33 {width:33%; float:left; display:inline;}
+.fl-col-flex34 {width:34%; float:left; display:inline;}
+.fl-col-flex35 {width:35%; float:left; display:inline;}
+.fl-col-flex36 {width:36%; float:left; display:inline;}
+.fl-col-flex37 {width:37%; float:left; display:inline;}
+.fl-col-flex38 {width:38%; float:left; display:inline;}
+.fl-col-flex39 {width:39%; float:left; display:inline;}
+.fl-col-flex40 {width:40%; float:left; display:inline;}
+.fl-col-flex41 {width:41%; float:left; display:inline;}
+.fl-col-flex42 {width:42%; float:left; display:inline;}
+.fl-col-flex43 {width:43%; float:left; display:inline;}
+.fl-col-flex44 {width:44%; float:left; display:inline;}
+.fl-col-flex45 {width:45%; float:left; display:inline;}
+.fl-col-flex46 {width:46%; float:left; display:inline;}
+.fl-col-flex47 {width:47%; float:left; display:inline;}
+.fl-col-flex48 {width:48%; float:left; display:inline;}
+.fl-col-flex49 {width:49%; float:left; display:inline;}
+.fl-col-flex50 {width:50%; float:left; display:inline;}
+*:first-child+html .fl-col-flex50 {width:49%;} /* hack needed for IE7 */
+.fl-col-flex51 {width:51%; float:left; display:inline;}
+.fl-col-flex52 {width:52%; float:left; display:inline;}
+.fl-col-flex53 {width:53%; float:left; display:inline;}
+.fl-col-flex54 {width:54%; float:left; display:inline;}
+.fl-col-flex55 {width:55%; float:left; display:inline;}
+.fl-col-flex56 {width:56%; float:left; display:inline;}
+.fl-col-flex57 {width:57%; float:left; display:inline;}
+.fl-col-flex58 {width:58%; float:left; display:inline;}
+.fl-col-flex59 {width:59%; float:left; display:inline;}
+.fl-col-flex60 {width:60%; float:left; display:inline;}
+.fl-col-flex61 {width:61%; float:left; display:inline;}
+.fl-col-flex62 {width:62%; float:left; display:inline;}
+.fl-col-flex63 {width:63%; float:left; display:inline;}
+.fl-col-flex64 {width:64%; float:left; display:inline;}
+.fl-col-flex65 {width:65%; float:left; display:inline;}
+.fl-col-flex66 {width:66%; float:left; display:inline;}
+.fl-col-flex67 {width:67%; float:left; display:inline;}
+.fl-col-flex68 {width:68%; float:left; display:inline;}
+.fl-col-flex69 {width:69%; float:left; display:inline;}
+.fl-col-flex70 {width:70%; float:left; display:inline;}
+.fl-col-flex71 {width:71%; float:left; display:inline;}
+.fl-col-flex72 {width:72%; float:left; display:inline;}
+.fl-col-flex73 {width:73%; float:left; display:inline;}
+.fl-col-flex74 {width:74%; float:left; display:inline;}
+.fl-col-flex75 {width:75%; float:left; display:inline;}
+.fl-col-flex76 {width:76%; float:left; display:inline;}
+.fl-col-flex77 {width:77%; float:left; display:inline;}
+.fl-col-flex78 {width:78%; float:left; display:inline;}
+.fl-col-flex79 {width:79%; float:left; display:inline;}
+.fl-col-flex80 {width:80%; float:left; display:inline;}
+.fl-col-flex81 {width:81%; float:left; display:inline;}
+.fl-col-flex82 {width:82%; float:left; display:inline;}
+.fl-col-flex83 {width:83%; float:left; display:inline;}
+.fl-col-flex84 {width:84%; float:left; display:inline;}
+.fl-col-flex85 {width:85%; float:left; display:inline;}
+.fl-col-flex86 {width:86%; float:left; display:inline;}
+.fl-col-flex87 {width:87%; float:left; display:inline;}
+.fl-col-flex88 {width:88%; float:left; display:inline;}
+.fl-col-flex89 {width:89%; float:left; display:inline;}
+.fl-col-flex90 {width:90%; float:left; display:inline;}
+.fl-col-flex91 {width:91%; float:left; display:inline;}
+.fl-col-flex92 {width:92%; float:left; display:inline;}
+.fl-col-flex93 {width:93%; float:left; display:inline;}
+.fl-col-flex94 {width:94%; float:left; display:inline;}
+.fl-col-flex95 {width:95%; float:left; display:inline;}
+.fl-col-flex96 {width:96%; float:left; display:inline;}
+.fl-col-flex97 {width:97%; float:left; display:inline;}
+.fl-col-flex98 {width:98%; float:left; display:inline;}
+.fl-col-flex99 {width:99%; float:left; display:inline;}
 
 
-/*====================================*/
-/* uPortal Portlet Extensions */
-/*====================================*/
-/* uPortal-specific additions, extensions, and overrides. */
+/* Removes padding and margin compensations for padding. */
+.fl-col-mixed .fl-col-flex-left {margin-left:200px;}
+.fl-col-mixed .fl-col-flex-right {margin-right:200px;}
+.fl-col-mixed-100 .fl-col-flex-left {margin-left:100px;}
+.fl-col-mixed-100 .fl-col-flex-right {margin-right:100px;}
+.fl-col-mixed-150 .fl-col-flex-left {margin-left:150px;}
+.fl-col-mixed-150 .fl-col-flex-right {margin-right:150px;}
+.fl-col-mixed-200 .fl-col-flex-left {margin-left:200px;}
+.fl-col-mixed-200 .fl-col-flex-right {margin-right:200px;}
+.fl-col-mixed-250 .fl-col-flex-left {margin-left:250px;}
+.fl-col-mixed-250 .fl-col-flex-right {margin-right:250px;}
+.fl-col-mixed-300 .fl-col-flex-left {margin-left:300px;}
+.fl-col-mixed-300 .fl-col-flex-right {margin-right:300px;}
 
-/* Portlet */
+
+/* Prevent cascading margins of nested column layouts. */
+.layout-1-columns #portalPageBodyColumns.fl-col-flex,
+.layout-1-columns #portalPageBodyColumns .fl-col-flex {margin:0;}
+
+
 /* 
- * Portlet is a structural element, the root portlet div and namespace.
- * Portlet contains 
- * Portlets are mapped to the WAI-ARIA role "section";
- * "A renderable structural containment unit in a document or application."
- * Refer to: http://www.w3.org/TR/wai-aria/roles#section
- * Additional classes on the root div include:
- * the FSS structural class ("fl-widget")
- * the specific portlet class (e.g., "prm-mgr" for Permissions Manager portlet)
- * and the current portlet view class (e.g., "view-detail" for the Detail view).
- * For example: <div class="fl-widget portlet prm-mgr view-detail" role="section">
+------------------------------------
+  uPortal Layout and Structure.
+------------------------------------ 
+ * uPortal is namespaced with "up", a class of the <body> tag.
  */
-.portlet {}
+
+/* forms */
+input[type="checkbox"] {margin-right:0.5em;}
+fieldset input[type="checkbox"] {margin-bottom:1em;}
+
+/* common */
+.portal-pipe {padding:0 0.5em;}
+
+ul.horizontal-list-floated li {list-style:none; float:left; padding-left:1em;}
+ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;}
+
+/* Add the "purpose-layout" class to any table you are using for layout purposes. */
+table.purpose-layout,
+table.purpose-layout th,
+table.purpose-layout td {margin:0; padding:0;}
 
 
-/* Decorators */
-/* 
- * Global decorators that can be applied broadly.
- * For example, add the "highlight" class to give a piece of content visual importance.
- */
-.portlet .hide {display:none !important;}
+/* page */
+#portalPage {min-width:700px; clear:both;}
 
+
+/* header */
+#portalPageBar h2 {margin:0; padding:0.5em 0 0 1em; position:absolute; top:0; left:0;}
+#portalPageBarLinks {padding:0.5em 1em 0.5em 0;}
+#portalPageBarLinks a {padding:0 0.5em;}
+#portalSkipNav a, 
+#portalSkipNav a:hover, 
+#portalSkipNav a:visited {position:absolute; left:0; top:-500px; width:1px; height:1px; overflow:hidden;} /* This sets the skip-to links to be completely hidden until a user tabs to the link. */
+#portalSkipNav a:active, 
+#portalSkipNav a:focus {position:static; width:auto; height:auto;} /* This sets the skip-to links to be completely hidden until a user tabs to the link. */
+#portalLogo {}
+#portalWelcome {position:absolute; top:3em; left:195px;} /* Keep the top value relative to the text size so that the top position remains good when the browser text size is increased. Set the left width to the width of your logo (plus logo margins). This margin prevents it from colliding with the logo if the browser window is shrunk down. */
+#portalWelcome .logout-label {padding-left: 0.5em;} /* Gives a bit of space between the welcome statement and the logout link. */
+.focused #portalPageBar img {float:left; margin:3px 0 0 10px}
+
+
+/* body */
+#portalPageBodyTitleRowContents {position:relative; padding:0 1em;} /* Sets this container as positioned to have other elements poisitioned relative to it. */
+.breadcrumb-separator {padding:0 0.5em;}
+#portalPageBodyTitleRow h1 {margin:0;}
 /* Columns */
+.portal-page-column-inner {padding-top:2px; padding-left:1em; padding-bottom:2em; min-height:100px;}
+#portalPageBodyColumns .single .portal-page-column-inner, 
+#portalPageBodyColumns .right .portal-page-column-inner {padding-right:2em;}
+#portalPageBodyColumns .single .portal-page-column-inner, 
+#portalPageBodyColumns .left .portal-page-column-inner {padding-left:2em;}
+/* focused */
+.focused #portalPageBodyTitleRow {padding:1em 1em 0 1em;}
+#portalPageBodyBreadcrumb {margin-bottom:0.5em;}
+.focused .portal-page-column-inner {padding:0em 2em 2em 2em;}
+.focused .up-portlet-content {padding:0;}
+
+/* Sidebar */
+#portalSidebar {padding:0;}
+#portalSidebarInner {padding:0 1em 2em 1em;}
+#portalSidebar #portalCustomizationLinks .portal-pipe {display:none;}
+
+/* portlet wrappers */
+.up-portlet-wrapper {margin-bottom:1em;}
+.up-portlet-titlebar {position:relative;}
+.up-portlet-titlebar h2 {margin:0; padding:2px 20px 3px 20px;}
+.up-portlet-controls {position:absolute; top:4px; right:0;}
+.dashboard .up-portlet-controls .up-portlet-control {padding-right:1em;}
+.up-portlet-content-wrapper {padding:1em;}
+/* No chrome */
+.fl-widget.no-chrome .up-portlet-titlebar {display:none;}
+.fl-widget.no-chrome,
+.fl-widget.no-chrome .up-portlet-content-wrapper {padding:0; border:none; background:none;}
+
+/* footer */
+#portalPageFooter {padding-top:2em;}
+#portalPageFooterInner {padding:1em;}
+#portalProductAndVersion {margin-top:1em;}
+
+/* login */
+#portalLogin label {display:block; margin-bottom:0.3em;}
+#portalLogin input {margin-bottom:1em;}
+
+/* navigation */
+#portalNavigation ul {margin:0; padding:0;}
+/* subrow */
+#portalNavigationSubrow {padding:0.5em 0;}
+.sidebar-left-100 #portalNavigationSubrow ul {margin-left:120px;}
+.sidebar-left-150 #portalNavigationSubrow ul {margin-left:170px;}
+.sidebar-left-200 #portalNavigationSubrow ul {margin-left:220px;}
+.sidebar-left-250 #portalNavigationSubrow ul {margin-left:270px;}
+.sidebar-left-300 #portalNavigationSubrow ul {margin-left:320px;}
+.sidebar-right-100 #portalNavigationSubrow ul {margin-right:120px;}
+.sidebar-right-150 #portalNavigationSubrow ul {margin-right:170px;}
+.sidebar-right-200 #portalNavigationSubrow ul {margin-right:220px;}
+.sidebar-right-250 #portalNavigationSubrow ul {margin-right:270px;}
+.sidebar-right-300 #portalNavigationSubrow ul {margin-right:320px;}
+#portalNavigationSubrow li {list-style-type:none; display:inline;}
+#portalNavigationSubrow a {padding:0em 1em;}
+/* Flyout subnav */
+#portalNavigation .portal-flyout-container {width:200px; position:absolute; z-index:100000; display:none;}
+#portalNavigation .portal-flyout-container li {list-style:none;}
+#portalNavigation .portal-flyout-container .portal-subnav-list li {display:list-item; position:static; padding:0;}
+#portalNavigation .portal-flyout-container .portal-subnav-list li a {display:block;}
+#portalNavigation .portal-flyout-iframe {position:absolute; z-index:9;}
+/* Add Tab */
+#portalNavigation .add-tab {display:inline-block;}
+
+/* Customization Links */
 /* 
- * Where FSS is not used, these helpers produce column layouts.
- */
-.portlet .columns2 .column,
-.portlet .columns3 .column,
-.portlet .columns4 .column {float:left; display:inline;}
+ | When rendered in the Title Row (with the Page Title).
+ | Turns the list into a row and positions it to the top right corner. 
+*/
+#portalPageBodyTitleRow #portalCustomizationLinks {position:absolute; top:0; right:0; text-align:right; margin:0 0 0 250px;}
+#portalPageBodyTitleRow .fl-widget {margin:0;}
+#portalPageBodyTitleRow .fl-widget .fl-widget-titlebar,
+#portalPageBodyTitleRow .fl-widget .fl-widget-titlebar h2, 
+#portalPageBodyTitleRow .fl-widget .fl-widget-content, 
+#portalPageBodyTitleRow #portalCustomizationLinks ul,
+#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu,
+#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu li,
+#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu a {display:inline; border:none;}
+#portalPageBodyTitleRow #portalCustomizationLinks h2 {margin:0; padding-right:1em;}
+#portalPageBodyTitleRow #portalCustomizationLinks ul.fl-listmenu {margin:0;}
 
+/* quicklinks */	
+#portalQuicklinks {}
 
-/* Views */
-/* 
- * Lists different views of the portlet as tabbed navigation.
- * View navigation is the top-most content (sits above the Titlebar).
- * View navigation is mapped to the WAI-ARIA role "tablist";
- * "A list of tab elements, which are references to tabpanel elements"
- * Refer to: http://www.w3.org/TR/wai-aria/roles#tablist
- * Uses FSS fl-tabs for base structure and formatting.
- * Active view (selected tab) contents are contained in the fl-tab-content div
- * and mapped to the WAI-ARIA role "tabpanel".
- */
-.portlet .portlet-views {}
-.portlet .portlet-views > .tabs {}
-.portlet .portlet-views > .content {padding:1em;}
+#portalQuicklinks ul, 
+#portalQuicklinks li {margin:0; padding:0;}
 
+/* web search */
+#webSearchContainer form {padding:1em;}
+#webSearchContainer input, 
+#webSearchContainer select {margin-bottom:0.5em;}
+#portalPageHeader #webSearchContainer {position:absolute; top:3em; right:0;}
+#portalPageHeader #webSearchContainer h2 {display:none;}
+#portalPageHeader #webSearchContainer input,
+#portalPageHeader #webSearchContainer select {margin-left:0.3em;}
 
-/* Titlebar */
-/* 
- * The portlet view "header" which minimally includes the view title.
- * Titlebar maps to the WAI-ARIA role "sectionhead";
- * "A structure that labels or summarizes the topic of its related section."
- * Refer to: http://www.w3.org/TR/wai-aria/roles#sectionhead
- * Titlebar may also contain:
- * Subtitle, breadcrumb, options, actions, tags, details or toolbar.
- * Subtitle is a secondary descriptor of the title, sits just below the title.
- * Breadcrumb is a navigation marker and trail, sits on top of the title.
- * Actions are primary actions directly associated with the title, displayed as links/s on the same line as the title.
- * Tags is a list of tags applied to the portlet/view.
- * Details is a metadata area; not the main content of the view, but supporting information of the title.
- */
-.portlet .portlet-titlebar {position:relative; margin-bottom:1em;}
-.portlet .portlet-titlebar > .title {padding:0 0 0.2em 0; margin:0;}
-.portlet .portlet-titlebar > .subtitle {margin:0 0 2em 0; padding-top:0.4em;}
-.portlet .portlet-titlebar .breadcrumb {margin-bottom:0.5em;}
-.portlet .portlet-titlebar > .options {padding:0.5em 0;}
-.portlet .portlet-titlebar ul {margin:0; padding:0; overflow:hidden; zoom:1;} 
-.portlet .portlet-titlebar li {list-style-type:none; float:left; display:inline; padding:0 5px 0 5px; margin-left:-5px;}
-.portlet .portlet-titlebar .actions,
-.portlet .portlet-titlebar .return-link {position:absolute; top:0; right:0;}
-.portlet .portlet-titlebar .return-link {top:0.3em;}
-.portlet .portlet-titlebar  .breadcrumb~.return-link {top:1.8em;}
-.portlet .portlet-titlebar .tags {padding-bottom:0.5em;}
-.portlet .portlet-titlebar .details .detail,
-.portlet .portlet-titlebar .details .label {display:inline;}
-.portlet .portlet-titlebar .details .detail~.detail {padding-left:1.5em;}
-.portlet .portlet-titlebar .details a {margin:0;}
+#tooltip h3, #tooltip div { margin: 0; }
+#tooltip {position:absolute; z-index:3000; opacity:0.85; max-width:400px; padding:4px;}
 
+/* Fragment Administration */
+#fragmentAdminForm {margin:0; padding:0;}
+#portalFragAdminExit h2 {margin:0; padding:0.5em 1em 0em 1em;}
+#portalFragAdminExit form {margin:0; padding:0 1em 1em 1em;}
+#portalFragAdminExit #exitFragment {margin-left:1em; padding:0.3em 1em;}
 
-/* Toolbar */
-/* 
- * A collection of commonly used (or view-specific) functions represented in compact visual form.
- * Resides within the Titlebar.
- * Renders an unordered list (ul) inline as a horizontal list of links.
- * Optionally floats right additional utilities (e.g., search form) separate from the ul.
- * Toolbar maps to the WAI-ARIA role "toolbar";
- * "A collection of commonly used functions represented in compact visual form."
- * Refer to: http://www.w3.org/TR/wai-aria/roles#toolbar
- */
-.portlet .portlet-toolbar {padding:0.5em 0;}
-.portlet .portlet-toolbar ul {margin:0; padding:0; overflow:hidden; zoom:1;}
-.portlet .portlet-toolbar ul li {list-style-type:none; float:left; display:inline; padding:0 5px; margin-left:-5px;}
-.portlet .portlet-toolbar .search {text-align:right;}
+/* Portlet Navigation */
+#portletNavigation h3 {margin:0.5em 0 0 0; padding:0.2em 0.5em;}
 
-
-/* Search */
-/*
- * Formatting for search forms(aside from general form formatting).
- */
-.portlet .portlet-search form {margin-left:20px;}
-
-
-/* Tags */
-/*
- * A taxonomy of terms applied to the content, displayed as a horizontal list of links.
- */
-.portlet .tags {}
-.portlet .tags .label {display:inline;}
-.portlet .tags a {margin:0;}
-
-
-/* Content */
-/* 
- * The main content area of the portlet view.
- * Content maps to the WAI-ARIA role "main";
- * "The main content of a document."
- * Refer to: http://www.w3.org/TR/wai-aria/roles#main
- */
-.portlet .portlet-content {zoom:1; margin:5px 0 0 0; overflow: auto;}
-
-
-/* Messages */
-/* 
- * Dynamic system messages to tell people that an (otherwise invisible, backend) event occurred.
- * Messages can be of these types: status, info, error, alert, success.
- * Change the base CSS class for the appropriate type of message.
- * Use an appropriate WAI-ARIA role (either "status" or "alert") on the HTML element to describe the message.
- * Refer to: http://www.w3.org/TR/wai-aria/roles#status
- * Use an h3 for the message title, and a paragraph for the message text.
- * Messages communicate a system event, but should be written so that a _person_ can understand it. Use plain, people-oriented language. 
- */
-.portlet .portlet-msg {padding:0.25em 0.25em 0.25em 2.25em;}
-.portlet .portlet-msg .title {}
-.portlet .portlet-msg .content {}
-
-
-/* Notes */
-/* 
- * Optional. These notes help people know what to do in the active portlet view.
- * Notes may also be used in Sections (below)
- * Maps to the WAI-ARIA role "note";
- * "A section whose content is parenthetic or ancillary to the main content of the resource."
- * Refer to: http://www.w3.org/TR/wai-aria/roles#note
- */
-.portlet .portlet-content .note p {margin:0 0 1em 0;}
-
-
-/* Sections */
-/* 
- * A portlet-section is a structural element.
- * Sections are mapped to the WAI-ARIA role "region";
- * "A large perceivable section of a web page or document, 
- * that the author feels should be included in a summary of page features."
- * Refer to: http://www.w3.org/TR/wai-aria/roles#region
- * A section has a Titlebar (with Options), and Content.
- */
-.portlet .portlet-section {margin-bottom:1em;}
-.portlet .portlet-section > .titlebar .title {margin:0; padding-top:1em; padding-bottom:0.2em;}
-.portlet .portlet-section > .titlebar .options {padding:0.5em 0em; text-align:right;}
-.portlet .portlet-section > .titlebar .options .view-filter {text-align:left;}
-.portlet .portlet-section > .titlebar .options > a {padding:0.1em 0.5em;}
-.portlet .portlet-section > .content {}
-.portlet .portlet-section > .content > .note {}
-
-
-/* Section Titles */
-/*
- * Unique treatment for specific section titles.
- */
-.portlet .title.selections,
-.portlet .title.search,
-.portlet .title.browse {padding-bottom:0.3em; padding-left:20px;}
-.portlet .title.browse {margin-top:2em;}
-
-
-/* Tables */
-/*
- * Tables are meant to be used for displaying data.  Avoid using tables for layout.
- * If you must use a table for layout, add the "purpose-layout" class to the table (no borders or colors on the table). 
- */
-.portlet table.portlet-table th,
-.portlet table.portlet-table td {padding:0.1em 1em;}
-.portlet table.purpose-layout,
-.portlet table.purpose-layout th,
-.portlet table.purpose-layout td {padding:0;}
-
-
-/* Forms */
-/*
- * Use the "portlet-form" class on a form to produce a nicely formatted, boxed form.
- * Form buttons should use the following Buttons classes.
- */
-.portlet form select,
-.portlet form input[type="text"],
-.portlet form textarea {margin-top:2px; font-size:11px;}
-.portlet form input[type="text"],
-.portlet form textarea {padding:3px;}
-.portlet .portlet-form {width:400px; padding:1em; font-size:11px;}
-.portlet .portlet-form form {margin:0;}
-.portlet .portlet-form form fieldset {padding:0.5em 1em;}
-.portlet .portlet-form form legend {margin-bottom:1em;}
-.portlet .portlet-form form table {}
-.portlet .portlet-form form table td {padding:0; border:none;}
-.portlet .portlet-form form table td.label {padding-right:3px; text-align:right; width:100px; vertical-align:top; padding-top:5px;}
-.portlet .portlet-form form .field-container {display:inline-block; padding:1px; position:relative; width:auto;}
-.portlet .portlet-form form .inputtext,
-.portlet .portlet-form form .inputpassword {width:206px;}
-.portlet .portlet-form form .inputdate,
-.portlet .portlet-form form .inputtime {width:94px;}
-.portlet .portlet-form form .inputtime {margin-left:4px;}
-.portlet .portlet-form form .buttons {margin:0 0 0 105px; border:none;}
-.portlet .portlet-form.wider {width:600px;}
-
-
-/* Buttons */
-/*
- * Gives links and form buttons a consistent button look.
- * If multiple buttons, add the "buttons" class to the wrapping element.
- * If multiple buttons, add the "primary" class to the default action.
- */
-.portlet button, 
-.portlet .button,
-.portlet form input[type="submit"] {margin:0 5px; padding:2px 10px;}
-.portlet a.button {display:inline-block;}
-.portlet .buttons {padding:1em 0;}
-.portlet .button:hover {cursor:pointer;}
-
-
-/* Overflow box */
-/*
- *
- */
-.portlet .fl-overflow {width:185px; height:300px; margin:0 1em 1em 0; padding:0.31em; overflow-x:auto; overflow-y:scroll;}
-
-
-/* Pager */
-/*
- * Formats pagination controls.
- * Assumes the Fluid Infusion pager component.
- */
-.portlet .view-pager ul {margin:0; padding:0;}
-.portlet .fl-pager .fl-pager-ui li {list-style-type:none; display:inline-block;}
-.fl-pager caption {padding:.63em 0em; margin-bottom:0em;}
-.fl-pager th {cursor:pointer;}
-.fl-pager-controls {padding:.69em .69em;}
-.flc-pager-links a {vertical-align:middle;}
-
-
-/* Selection Basket */
-/*
- * A box showing the items a user has selected.
- */
-.portlet .selection {padding-right:2em;}
-.portlet .selection-basket {margin-left:20px; min-height:15em;}
-.portlet .selection-basket ul {margin:1em}
-.portlet .selection-basket li {list-style:none;}
-.portlet .selection-basket a {display:block; padding:0.3em 20px;}
-.portlet .selection .buttons {margin-left:20px;}
-
-
-/* Hierarchy Browser */
-/*
- * A "folder-view" browser of hierarchy.
- */
-.portlet .browse-hierarchy .fl-tab-content {margin-left:20px; padding:0;}
-.portlet .browse-hierarchy h5 {padding-top:0.1em; padding-left:30px;}
-.portlet .browse-hierarchy .titlebar .title {padding:0.5em 1em;}
-.portlet .browse-hierarchy .titlebar .title .fl-text-align-right {padding-top:0.7em;}
-.portlet .browse-hierarchy a.select {padding:0.2em 1em 0.2em 2em;}
-.portlet .browse-hierarchy .breadcrumb span {padding:0.5em 0;}
-.portlet .browse-hierarchy .content {padding:0.5em 1em 1em 1em;}
-.portlet .browse-hierarchy h7 {margin:1em 0 0.3em 0;}
-.portlet .browse-hierarchy ul.group-member,
-.portlet .browse-hierarchy ul.person-member,
-.portlet .browse-hierarchy ul.category-member {margin:0;}
-.portlet .browse-hierarchy .group-member li,
-.portlet .browse-hierarchy .person-member li,
-.portlet .browse-hierarchy .category-member li {list-style:none;}
-.portlet .browse-hierarchy .group-member a,
-.portlet .browse-hierarchy .person-member a,
-.portlet .browse-hierarchy .category-member a {display:block; padding:0.2em 0 0.2em 20px;}
-
-
-
-/*====================================*/
-/* Specific Portlets */
-/*====================================*/
-/* Style definitions for structures and elements unique to a specific portlet. */
-
-
-/* CSyndFeed Channel - RSS */
-.news-items ul,
-.news-items li {margin:0;}
-.news-items li {list-style:none;}
-.news-items .news-item-excerpt {display:block; padding-top:0.3em;}
-.news-source p {padding:1em;}
-
-
-/* Groups Manager Channel */
-.groupmgr-entity,
-.groupmgr-group {padding:0.3em 1em; margin-bottom:0.5em;}
-.groupmgr-entity strong,
-.groupmgr-group strong {padding-right:1em;}
-.groupmgr-entity table {margin:1em 0;}
-.groupmgr-entity table th {padding:0.2em 1em;}
-.groupmgr-entity table td {padding:0.5em 1em;}
-.groupmgr-edit-group,
-.groupmgr-close-group,
-.groupmgr-done-editing,
-.groupmgr-delete-group {padding-right:1em;}
-.groupmgr-show-info,
-.groupmgr-hide-info,
-.groupmgr-remove-member {padding-left:1em;}
-.groupmgr-edit-group img,
-.groupmgr-close-group img,
-.groupmgr-show-info img,
-.groupmgr-done-editing img,
-.groupmgr-delete-group img,
-.groupmgr-remove-member img,
-.groupmgr-hide-info img {padding-right:0.3em;}
-.groupmgr-right-pane td label {display:block; text-align:right;}
-.groupmgr-right-pane input {margin-right:0.5em;}
-
-
-/* Portlet Manager */
-.preference-name {vertical-align: top;}
-
-
-/**
- * Class used by script to fix old IE ZIndex issues. The JavaScript that goes with this class
- * is defined here:
- *  uportal-war/src/main/webapp/media/skins/universality/common/javascript/uportal/flyout-nav.js
- */
-.ieZindex-fix_on-top
-{
-  z-index: 10000;
-}
+/* Ajax Menus */
+#changeColumns tr td { text-align: center; }
+#changeColumns img { vertical-align: middle; padding:3px; }

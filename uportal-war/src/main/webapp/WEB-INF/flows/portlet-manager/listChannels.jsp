@@ -56,77 +56,78 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
     
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet ptl-mgr view-home" role="section">
 	<form id="${n}portletSelectionForm">
   
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading"><spring:message code="listChannels.title"/></h2>
-  </div> <!-- end: portlet-title -->
-  
-  <!-- Portlet Toolbar -->
-  <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
-    <div class="fl-col">
-    	<ul>
-    		<li><a href="${ newPortletUrl }" title="<spring:message code="listChannels.newPortletButton"/>"><span><spring:message code="listChannels.newPortletButton"/></span></a></li>
-      </ul>
+  <!-- Portlet Titlebar -->
+  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  	<h2 class="title" role="heading"><spring:message code="listChannels.title"/></h2>
+    <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
+      <div class="fl-col">
+        <ul>
+          <li><a href="${ newPortletUrl }" title="<spring:message code="listChannels.newPortletButton"/>"><span><spring:message code="listChannels.newPortletButton"/></span></a></li>
+        </ul>
+      </div>
+      <div class="fl-col fl-text-align-right">
+        <input id="${n}channelSearch"/>
+        <input type="submit" value="<spring:message code="listChannels.searchSubmitButton"/>"/>
+      </div>
     </div>
-    <div class="fl-col fl-text-align-right">
-  		<input id="${n}channelSearch"/>
-      <input type="submit" value="<spring:message code="listChannels.searchSubmitButton"/>"/>
-    </div>
-  </div> <!-- end: portlet-toolbar -->
+  </div>
         
-	<!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+	<!-- Portlet Content -->
+  <div class="fl-widget-content portlet-content" role="main">
   
-  	<!-- Portlet Messages -->
-  	<div class="portlet-msg-info" role="status" id="${n}loadingMessage">
-    	<h3>Loading Information</h3>
-    	<p>Please wait while the system finishes loading the portlet registry.</p>
-    </div> <!-- end: portlet-msg -->
+  	<!-- Portlet Message -->
+  	<div class="portlet-msg-info portlet-msg info" role="status" id="${n}loadingMessage">
+    	<div class="titlebar">
+        <h3 class="title">Loading Information</h3>
+      </div>
+      <div class="content">
+    	  <p>Please wait while the system finishes loading the portlet registry.</p>
+      </div>
+    </div>
     
     <!-- Portlet Section -->
     <div id="${n}channelAddingTabs" class="portlet-section fl-pager" role="region"> 
-      <h3 class="portlet-section-header" role="heading">
-        <spring:message code="listChannels.portletListHeading"/>
-      </h3>
-      
-      <!-- Portlet Section Options -->
-      <div class="fl-col-flex2 portlet-section-options">
-        <div class="fl-col view-filter">
-          <label for="${n}categorySelectMenu"><spring:message code="listChannels.categoryFilterLabel"/></label>
-          <select id="${n}categorySelectMenu">
-            <option value=""><spring:message code="listChannels.categoryFilterAllCategories"/></option>
-          </select>
+      <div class="titlebar">
+        <h3 class="title" role="heading">
+          <spring:message code="listChannels.portletListHeading"/>
+        </h3>   
+        <div class="fl-col-flex2 options">
+          <div class="fl-col view-filter">
+            <label for="${n}categorySelectMenu"><spring:message code="listChannels.categoryFilterLabel"/></label>
+            <select id="${n}categorySelectMenu">
+              <option value=""><spring:message code="listChannels.categoryFilterAllCategories"/></option>
+            </select>
+          </div>
+          <div class="fl-col flc-pager-top view-pager">
+            <ul id="pager-top" class="fl-pager-ui">
+              <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="listChannels.pagerPrevious"/></a></li>
+              <li>
+                <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
+                  <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
+                  <li class="flc-pager-pageLink-disabled">2</li>
+                  <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
+                </ul>
+              </li>
+              <li class="flc-pager-next"><a href="#"><spring:message code="listChannels.pagerNext"/> &gt;</a></li>
+              <li>
+                <span class="flc-pager-summary"><spring:message code="listChannels.pagerPerPagePrefix"/></span>
+                <span> <select class="pager-page-size flc-pager-page-size">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                </select></span> <spring:message code="listChannels.pagerPerPageSuffix"/>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="fl-col view-pager flc-pager-top">
-          <ul id="pager-top" class="fl-pager-ui">
-            <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="listChannels.pagerPrevious"/></a></li>
-            <li>
-              <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
-                <li class="flc-pager-pageLink-disabled">2</li>
-                <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
-              </ul>
-            </li>
-            <li class="flc-pager-next"><a href="#"><spring:message code="listChannels.pagerNext"/> &gt;</a></li>
-            <li>
-              <span class="flc-pager-summary"><spring:message code="listChannels.pagerPerPagePrefix"/></span>
-              <span> <select class="pager-page-size flc-pager-page-size">
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              </select></span> <spring:message code="listChannels.pagerPerPageSuffix"/>
-            </li>
-          </ul>
-        </div>
-      </div> <!-- end: portlet-section-options -->
+      </div>
+      <div class="content">
 
-      <div class="portlet-section-body">
-
-        <table id="${n}categoriesTable1" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
+        <table id="${n}categoriesTable1" summary="" xmlns:rsf="http://ponder.org.uk" class="portlet-table" style="width:100%;">
           <thead>
             <tr rsf:id="header:">
               <th id="${n}portletName" class="flc-pager-sort-header"><a rsf:id="name" title="Click to sort" href="javascript:;"><spring:message code="listChannels.portletTableNameHeading"/></a></th>

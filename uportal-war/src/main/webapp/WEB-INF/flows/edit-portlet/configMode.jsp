@@ -58,17 +58,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
     
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet ptl-mgr view-configmode" role="section">
 
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading">
+  <!-- Portlet Titlebar -->
+  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+    <h2 class="title" role="heading">
       <spring:message code="edit-portlet.configMode"/>
     </h2>
-  </div> <!-- end: portlet-title -->
+  </div> <!-- end: portlet-titlebar -->
   
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <!-- Portlet Content -->
+  <div class="fl-widget-content portlet-content" role="main">
     <up:render-delegate fname="${CHANNEL_FNAME}" portletMode="CONFIG">
         <up:parent-url>
             <up:param name="execution" value="${flowExecutionKey}"/>
@@ -76,6 +76,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </up:parent-url>
     </up:render-delegate>
     
-  </div> <!-- end: portlet-body -->
+  </div> <!-- end: portlet-content -->
   
 </div> <!-- end: portlet -->

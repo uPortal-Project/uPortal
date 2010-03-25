@@ -56,15 +56,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
-  <form method="POST" id="${n}editPermissionForm">
+<div class="fl-widget portlet prm-mgr view-editperm" role="section">
 
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading"><spring:message code="editPermission.title"/></h2>
-  </div> <!-- end: portlet-title -->
+  <!-- Portlet Titlebar -->
+  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+    <h2 class="title" role="heading"><spring:message code="editPermission.createPermissionHeader"/></h2>
+  </div>
   
-  <div id="${n}errors" role="alert" class="portlet-msg-error" style="display: none">
+  <!-- Portlet Message -->
+  <div id="${n}errors" role="alert" class="portlet-msg-error portlet-msg error" style="display: none">
     <ul>
       <c:forEach items="${flowRequestContext.messageContext.allMessages}" var="msg">
         <li><c:out value="${msg.text}"/></li>
@@ -72,28 +72,25 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </ul>
   </div>
   
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
-
-    <!-- General Configuration Section -->
-    <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading"><spring:message code="editPermission.createPermissionHeader"/></h3>
-      <div class="portlet-section-body">
+  <!-- Portlet Content -->
+  <div class="fl-widget-content portlet-content" role="main">
       
-        <table summary="<spring:message code="editPermission.permissionTableSummary"/>">
+      	<div class="portlet-form wider">
+        <form method="POST" id="${n}editPermissionForm">
+        <table class="purpose-layout" summary="<spring:message code="editPermission.permissionTableSummary"/>">
           <thead>
-            <tr>
+            <!--<tr>
               <th><spring:message code="editPermission.itemHeading"/></th>
               <th><spring:message code="editPermission.valueHeading"/></th>
-            <tr>
+            <tr>-->
           </thead>
           <tbody>
             <tr>
-              <td class="fl-text-align-right"><spring:message code="editPermission.ownerLabel"/></td>
+              <td class="label"><label for="owner"><spring:message code="editPermission.ownerLabel"/>:</label></td>
               <td><input id="${n}owner" name="owner" type="text" style="outline-color: -moz-use-text-color; outline-style: none; outline-width: medium;"></td>
             </tr>
             <tr>
-              <td class="fl-text-align-right"><spring:message code="editPermission.principalsLabel"/></td>
+              <td class="label"><label for=""><spring:message code="editPermission.principalsLabel"/>:</label></td>
               <td>
                 <ul>
                     <c:forEach var="root" items="${permissionDefinition.assignments}">
@@ -105,11 +102,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               </td>
             </tr>
             <tr>
-              <td class="fl-text-align-right"><spring:message code="editPermission.activityLabel"/></td>
+              <td class="label"><label for="activity"><spring:message code="editPermission.activityLabel"/>:</label></td>
               <td><input id="${n}activity" name="activity" type="text" style="outline-color: -moz-use-text-color; outline-style: none; outline-width: medium;"></td>
             </tr>
             <tr>
-              <td class="fl-text-align-right"><spring:message code="editPermission.targetLabel"/></td>
+              <td class="label"><label for="target"><spring:message code="editPermission.targetLabel"/>:</label></td>
               <td>
                 <p><input id="${n}target" name="target" type="text" style="outline-color: -moz-use-text-color; outline-style: none; outline-width: medium;"></p>
                 <a id="${n}groupTarget" href="javascript: void(0);"><spring:message code="editPermission.selectGroupLink"/></a>
@@ -119,23 +116,21 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </tbody>
         </table>
         
-      </div>
-    </div>
-    <!-- END: General Configuration Section -->
+		<!-- Buttons -->
+          <div class="buttons">
+            <a class="button primary" id="${n}submit" href="javascript: void(0);" title="<spring:message code="editPermission.submitButton"/>">
+              <span><spring:message code="editPermission.submitButton"/></span>
+            </a>
+            <a class="button" href="${cancelUrl}" title="<spring:message code="editPermission.cancelButton"/>">
+              <span><spring:message code="editPermission.cancelButton"/></span>
+            </a>
+          </div> <!-- end: buttons -->
+        
+        </form>
+        </div>
     
-  </div> <!-- end: portlet-body -->
-  
-  <!-- Portlet Toolbar -->
-  <div class="fl-col-flex2" role="toolbar">
-    <div class="fl-col">
-      <ul>
-        <li><a href="${cancelUrl}" title="<spring:message code="editPermission.cancelButton"/>"><span><spring:message code="editPermission.cancelButton"/></span></a></li>
-        <li><a id="${n}submit" href="javascript: void(0);" title="<spring:message code="editPermission.submitButton"/>"><span><spring:message code="editPermission.submitButton"/></span></a></li>
-      </ul>
-    </div>
-  </div> <!-- end: portlet-toolbar -->
+  </div> <!-- end: portlet-content -->
 
-  </form>
 </div> <!-- end: portlet -->
 
 <script type="text/javascript">

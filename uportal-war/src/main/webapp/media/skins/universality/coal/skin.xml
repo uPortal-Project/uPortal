@@ -35,8 +35,14 @@
   <!-- For printing of portal pages. Common to all skins using the universality theme -->
   <css>../common/css/print.css</css>
   
-  <!-- For layout of portal pages (in tandem with FSS fluid.layout.css). Common to all skins using the universality theme. -->
-  <css>../common/css/layout.css</css>
+  <!-- For layout of portal pages. Common to all skins using the universality theme. -->
+  <css>../common/css/layout-portal.css</css>
+	
+  <!-- Support for the JSR-168 portlet specficiation. Common to all skins using the universality theme. -->
+  <css>../common/css/jsr168.css</css>
+	
+  <!-- For layout of portlet content. Common to all skins using the universality theme. -->
+  <css>../common/css/layout-portlet.css</css>
   
   <!-- Visual style for the portal. -->
   <css>portal.css</css>

@@ -57,74 +57,76 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet prm-mgr view-listperms" role="section">
   <form id="${n}listPermissionsForm">
   
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading"><spring:message code="listPermissions.title"/></h2>
-  </div> <!-- end: portlet-title -->
-
-  <!-- Portlet Toolbar -->
-  <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
-    <div class="fl-col">
-      <ul>
-        <li><a href="${createUrl}" title="<spring:message code="listPermissions.newPermissionButton"/>"><span><spring:message code="listPermissions.newPermissionButton"/></span></a></li>
-      </ul>
+  <!-- Portlet Titlebar -->
+  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+    <h2 class="title" role="heading"><spring:message code="listPermissions.title"/></h2>
+    <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
+      <div class="fl-col">
+        <ul>
+          <li><a href="${createUrl}" class="button" title="<spring:message code="listPermissions.newPermissionButton"/>"><span><spring:message code="listPermissions.newPermissionButton"/></span></a></li>
+        </ul>
+      </div>
+      <div class="fl-col fl-text-align-right">
+        <input id="${n}permissionSearch"/>
+        <input type="submit" class="button" value="<spring:message code="listPermissions.searchSubmitButton"/>"/>
+      </div>
     </div>
-    <div class="fl-col fl-text-align-right">
-      <input id="${n}permissionSearch"/>
-      <input type="submit" value="<spring:message code="listPermissions.searchSubmitButton"/>"/>
-    </div>
-  </div> <!-- end: portlet-toolbar -->
 
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  </div> <!-- end: portlet-titlebar -->
+  
+  <!-- Portlet Content -->
+  <div class="fl-widget-content portlet-content" role="main">
   
     <!-- Portlet Messages -->
-    <div class="portlet-msg-info" role="status" id="${n}loadingMessage">
-        <h3>Loading Information</h3>
+    <div class="portlet-msg-info portlet-msg info" role="status" id="${n}loadingMessage">
+      <div class="titlebar">
+        <h3 class="title">Loading Information</h3>
+      </div>
+      <div class="content">
         <p>Please wait while the system finishes loading permissions.</p>
+      </div>
     </div> <!-- end: portlet-msg -->
 
     <!-- Portlet Section -->
-    <div id="${n}permissionAddingTabs" class="portlet-section fl-pager" role="region"> 
-      <h3 class="portlet-section-header" role="heading">
-        <spring:message code="listPermissions.permissionListHeading"/>
-      </h3>
-
-      <!-- Portlet Section Options -->
-      <div class="fl-col-flex2 portlet-section-options">
-        <div class="fl-col view-filter">
-          <!-- This space left blank for future filtering options... -->
+    <div id="${n}permissionAddingTabs" class="fl-pager portlet-section" role="region">
+      <div class="titlebar">
+        <h3 class="title" role="heading">
+          <spring:message code="listPermissions.permissionListHeading"/>
+        </h3>
+        <div class="fl-col-mixed-200 options">
+          <div class="fl-col-fixed fl-force-left view-filter">
+            <!-- This space left blank for future filtering options... -->
+          </div>
+          <div class="fl-col-flex view-pager flc-pager-top">
+            <ul id="pager-top" class="fl-pager-ui">
+              <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="listPermissions.pagerPrevious"/></a></li>
+              <li>
+                <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
+                  <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
+                  <li class="flc-pager-pageLink-disabled">2</li>
+                  <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
+                </ul>
+              </li>
+              <li class="flc-pager-next"><a href="#"><spring:message code="listPermissions.pagerNext"/> &gt;</a></li>
+              <li>
+                <span class="flc-pager-summary"><spring:message code="listPermissions.pagerPerPagePrefix"/></span>
+                <span> <select class="pager-page-size flc-pager-page-size">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                </select></span> <spring:message code="listPermissions.pagerPerPageSuffix"/>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div class="fl-col view-pager flc-pager-top">
-          <ul id="pager-top" class="fl-pager-ui">
-            <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="listPermissions.pagerPrevious"/></a></li>
-            <li>
-              <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
-                <li class="flc-pager-pageLink-disabled">2</li>
-                <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
-              </ul>
-            </li>
-            <li class="flc-pager-next"><a href="#"><spring:message code="listPermissions.pagerNext"/> &gt;</a></li>
-            <li>
-              <span class="flc-pager-summary"><spring:message code="listPermissions.pagerPerPagePrefix"/></span>
-              <span> <select class="pager-page-size flc-pager-page-size">
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              </select></span> <spring:message code="listPermissions.pagerPerPageSuffix"/>
-            </li>
-          </ul>
-        </div>
-      </div> <!-- end: portlet-section-options -->
+      </div>
+      <div class="content">
 
-      <div class="portlet-section-body">
-
-        <table id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
+        <table class="portlet-table" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
           <thead>
             <tr rsf:id="header:">
               <th id="${n}permissionOwner" class="flc-pager-sort-header"><a rsf:id="permissionOwner" title="Click to sort" href="javascript:;"><spring:message code="listPermissions.permissionOwnerHeading"/></a></th>
@@ -152,7 +154,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>  
     </div> <!-- end: portlet-section -->
 
-  </div> <!-- end: portlet-body -->
+  </div> <!-- end: portlet-content -->
   </form>
 
 </div> <!-- end: portlet -->

@@ -39,11 +39,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
     
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet ptl-mgr view-basicinfo" role="section">
 
-	<!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading">
+	<!-- Portlet Titlebar -->
+  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  	<h2 class="title" role="heading">
       <c:choose>
         <c:when test="${ completed }">
           <spring:message code="edit-portlet.editPortletHeading"/>
@@ -53,26 +53,28 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </c:otherwise>
       </c:choose>
     </h2>
-  </div> <!-- end: portlet-title -->
+  </div> <!-- end: portlet-titlebar -->
   
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <!-- Portlet Content -->
+  <div class="fl-widget-content portlet-content" role="main">
     
     <form:form modelAttribute="channel" action="${queryUrl}" method="POST">
 	
 	<!-- Portlet Messages -->
     <spring:hasBindErrors name="channel">
-        <div class="portlet-msg-error" role="alert">
+        <div class="portlet-msg-error portlet-msg error" role="alert">
             <form:errors path="*" element="div"/>
         </div> <!-- end: portlet-msg -->
     </spring:hasBindErrors>
 		
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading"><spring:message code="basicInfo.summaryHeading"/></h3>
-      <div class="portlet-section-body">
+      <div class="titlbar">
+        <h3 class="title" role="heading"><spring:message code="basicInfo.summaryHeading"/></h3>
+      </div>
+      <div class="content">
 
-        <table summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
+        <table class="portlet-table" summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
           <thead>
             <tr>
             	<th><spring:message code="basicInfo.optionHeading"/></th>
@@ -118,8 +120,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading"><spring:message code="basicInfo.controlsHeading"/></h3>
-      <div class="portlet-section-body">
+      <div class="titlebar">
+        <h3 class="title" role="heading"><spring:message code="basicInfo.controlsHeading"/></h3>
+      </div>
+      <div class="content">
       
       	<fieldset>
           <legend><spring:message code="basicInfo.controlsLegend"/></legend>
@@ -143,22 +147,22 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
     </div> <!-- end: portlet-section -->
     
-    <!-- Portlet Buttons -->
-    <div class="portlet-button-group">
+    <!-- Buttons -->
+    <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
+          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="portlet-button secondary" type="submit" value="<spring:message code="edit-portlet.backButton"/>" name="_eventId_back"/>
-          <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
+          <input class="button" type="submit" value="<spring:message code="edit-portlet.backButton"/>" name="_eventId_back"/>
+          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="portlet-button secondary" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
+      <input class="button" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
     </div>
     
     </form:form> <!-- End Form -->
             
-	</div> <!-- end: portlet-body -->
+	</div> <!-- end: portlet-content -->
         
 </div> <!-- end: portlet -->

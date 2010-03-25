@@ -76,25 +76,27 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet ptl-mgr view-review" role="section">
 
-	<!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading"><c:out value="${ channel.title }"/></h2>
-  </div> <!-- end: portlet-title -->
+	<!-- Portlet Titlebar -->
+  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  	<h2 class="title" role="heading"><c:out value="${ channel.title }"/></h2>
+  </div> <!-- end: portlet-titlebar -->
   
-	<!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+	<!-- Portlet Content -->
+  <div class="fl-widget-content portlet-content" role="main">
   
   	<!-- General Configuration Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading"><spring:message code="reviewPortlet.heading"/></h3>
-      <div class="portlet-section-options">
-        <a href="${ basicInfoUrl }"><span><spring:message code="reviewPortlet.editButton"/></span></a>
+    	<div class="titlebar">
+        <h3 class="title" role="heading"><spring:message code="reviewPortlet.heading"/></h3>
+        <div class="options">
+          <a href="${ basicInfoUrl }"><span><spring:message code="reviewPortlet.editButton"/></span></a>
+        </div>
       </div>
-      <div class="portlet-section-body">
+      <div class="content">
       
-        <table summary="<spring:message code="reviewPortlet.configurationTableSummary"/>">
+        <table class="portlet-table" summary="<spring:message code="reviewPortlet.configurationTableSummary"/>">
           <thead>
             <tr>
               <th><spring:message code="reviewPortlet.configurationHeading"/></th>
@@ -162,13 +164,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
     <!-- Channel Parameters Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading"><spring:message code="setParameters.parametersHeading"/></h3>
-      <div class="portlet-section-options">
-        <a href="${ setParametersUrl }"><span><spring:message code="reviewPortlet.editParametersButton"/></span></a>
+      <div class="titlebar">
+        <h3 class="title" role="heading"><spring:message code="setParameters.parametersHeading"/></h3>
+        <div class="options">
+          <a href="${ setParametersUrl }"><span><spring:message code="reviewPortlet.editParametersButton"/></span></a>
+        </div>
       </div>
-      <div class="portlet-section-body">
+      <div class="content">
       
-        <table summary="<spring:message code="reviewPortlet.configurationTableSummary"/>">
+        <table class="portlet-table" summary="<spring:message code="reviewPortlet.configurationTableSummary"/>">
           <thead>
             <tr>
               <th><spring:message code="reviewPortlet.configurationHeading"/></th>
@@ -233,9 +237,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <c:if test="${ channel.portlet }">
       <!-- Portlet.xml Preferences Section -->
       <div class="portlet-section" role="region">
-        <h3 class="portlet-section-header" role="heading"><spring:message code="setParameters.xmlPreferencesHeader"/></h3>
-        <div class="portlet-section-body">
-          <table>
+        <div class="titlebar">
+          <h3 class="title" role="heading"><spring:message code="setParameters.xmlPreferencesHeader"/></h3>
+        </div>
+        <div class="content">
+          <table class="portlet-table">
             <thead>
               <tr>
                 <th><spring:message code="setParameters.preferencesHeading"/></th>
@@ -263,20 +269,22 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
       <!-- Portlet Preferences Section -->
       <div class="portlet-section" role="region">
-        <h3 class="portlet-section-header" role="heading"><spring:message code="setParameters.preferencesHeader"/></h3>
-        <div class="portlet-section-options">
-          <c:choose>
-            <c:when test="${supportsConfig and channel.id >= 0}">
-              <a href="${ configModeUrl }"><span><spring:message code="reviewPortlet.enterConfigModeButton"/></span></a>
-            </c:when>
-            <c:otherwise>
-              <a href="${ setParametersUrl }"><span>Edit Preferences</span></a>
-            </c:otherwise>
-          </c:choose>
+        <div class="titlebar">
+          <h3 class="title" role="heading"><spring:message code="setParameters.preferencesHeader"/></h3>
+          <div class="options">
+            <c:choose>
+              <c:when test="${supportsConfig and channel.id >= 0}">
+                <a href="${ configModeUrl }"><span><spring:message code="reviewPortlet.enterConfigModeButton"/></span></a>
+              </c:when>
+              <c:otherwise>
+                <a href="${ setParametersUrl }"><span>Edit Preferences</span></a>
+              </c:otherwise>
+            </c:choose>
+          </div>
         </div>
-        <div class="portlet-section-body">
+        <div class="content">
         
-          <table summary="<spring:message code="reviewPortlet.configurationTableSummary"/>">
+          <table class="portlet-table" summary="<spring:message code="reviewPortlet.configurationTableSummary"/>">
             <thead>
               <tr>
                 <th><spring:message code="setParameters.preferencesHeading"/></th>
@@ -309,11 +317,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   	
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading"><spring:message code="reviewPortlet.categoriesHeading"/></h3>
-      <div class="portlet-section-options">
-        <a href="${ chooseCategoryUrl }"><span><spring:message code="reviewPortlet.editCategoriesButton"/></span></a>
+      <div class="titlebar">
+        <h3 class="title" role="heading"><spring:message code="reviewPortlet.categoriesHeading"/></h3>
+        <div class="options">
+          <a href="${ chooseCategoryUrl }"><span><spring:message code="reviewPortlet.editCategoriesButton"/></span></a>
+        </div>
       </div>
-      <div class="portlet-section-body">
+      <div class="content">
 
         <ul class="category-member">
           <c:forEach items="${ channel.categories }" var="category">
@@ -326,11 +336,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading"><spring:message code="reviewPortlet.groupsHeading"/></h3>
-      <div class="portlet-section-options">
-        <a href="${ chooseGroupUrl }"><span><spring:message code="reviewPortlet.editGroupsButton"/></span></a>
+      <div class="titlebar">
+        <h3 class="title" role="heading"><spring:message code="reviewPortlet.groupsHeading"/></h3>
+        <div class="options">
+          <a href="${ chooseGroupUrl }"><span><spring:message code="reviewPortlet.editGroupsButton"/></span></a>
+        </div>
       </div>
-      <div class="portlet-section-body">
+      <div class="content">
       
         <ul class="group-member">
         <c:forEach items="${ channel.groups }" var="group">
@@ -343,13 +355,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading"><spring:message code="lifecycle.heading"/></h3>
-      <div class="portlet-section-options">
-        <a href="${ lifecycleUrl }"><span><spring:message code="reviewPortlet.editLifecycleButton"/></span></a>
+      <div class="titlebar">
+        <h3 class="title" role="heading"><spring:message code="lifecycle.heading"/></h3>
+        <div class="options">
+          <a href="${ lifecycleUrl }"><span><spring:message code="reviewPortlet.editLifecycleButton"/></span></a>
+        </div>
       </div>
-      <div class="portlet-section-body">
+      <div class="content">
       
-        <table summary="<spring:message code="reviewPortlet.lifecycleSummary"/>">
+        <table class="portlet-table" summary="<spring:message code="reviewPortlet.lifecycleSummary"/>">
           <thead>
             <tr>
               <th><spring:message code="reviewPortlet.optionHeading"/></th>
@@ -385,15 +399,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
     </div> <!-- end: portlet-section -->
     
-		<!-- Portlet Buttons -->
-    <div class="portlet-button-group">
-    	<a class="portlet-button portlet-button-primary" href="${ saveUrl }"><spring:message code="edit-portlet.saveButton"/></a>
+		<!-- Buttons -->
+    <div class="buttons">
+    	<a class="button primary" href="${ saveUrl }"><spring:message code="edit-portlet.saveButton"/></a>
     	<c:if test="${supportsConfig and channel.id < 0}">
-    	   <a class="portlet-button portlet-button-primary" href="${ saveAndConfigUrl }"><spring:message code="edit-portlet.saveAndConfigButton"/></a>
+    	   <a class="button primary" href="${ saveAndConfigUrl }"><spring:message code="edit-portlet.saveAndConfigButton"/></a>
     	</c:if>
-    	<a class="portlet-button" href="${ cancelUrl }"><spring:message code="edit-portlet.cancelButton"/></a>
+    	<a class="button" href="${ cancelUrl }"><spring:message code="edit-portlet.cancelButton"/></a>
     </div>
     
-  </div> <!-- end: portlet-body -->
+  </div> <!-- end: portlet-content -->
   
 </div> <!-- end: portlet -->

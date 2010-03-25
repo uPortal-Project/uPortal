@@ -39,43 +39,45 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
     
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet ptl-mgr view-confirmremove" role="section">
 
 	<!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading">
+  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  	<h2 class="title" role="heading">
       <spring:message code="confirmRemove.title"/>
     </h2>
-  </div> <!-- end: portlet-title -->
+  </div> <!-- end: portlet-titlebar -->
   
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <!-- Portlet Content -->
+  <div class="fl-widget-content portlet-content" role="main">
 
     <form:form modelAttribute="channel" action="${submitUrl}" method="POST">
 
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="channel">
-        <div class="portlet-msg-error" role="alert">
+        <div class="portlet-msg-error portlet-msg error" role="alert">
             <form:errors path="*" element="div"/>
         </div> <!-- end: portlet-msg -->
     </spring:hasBindErrors>
 
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading"><spring:message code="confirmRemove.heading" arguments="${ channel.name }"/></h3>
-      <div class="portlet-section-body">
+      <div class="titlebar">
+        <h3 class="title" role="heading"><spring:message code="confirmRemove.heading" arguments="${ channel.name }"/></h3>
+      </div>
+      <div class="content">
         <spring:message code="confirmRemove.text" arguments="${ channel.name }"/>
 	  </div>
 	</div> <!-- end: portlet-section -->
     
     <!-- Portlet Buttons -->
-    <div class="portlet-button-group">
-      <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="confirmRemove.removeButton"/>" name="_eventId_remove"/>
-      <input class="portlet-button secondary" type="submit" value="<spring:message code="confirmRemove.cancelButton"/>" name="_eventId_cancel"/>
+    <div class="buttons">
+      <input class="button primary" type="submit" value="<spring:message code="confirmRemove.removeButton"/>" name="_eventId_remove"/>
+      <input class="button" type="submit" value="<spring:message code="confirmRemove.cancelButton"/>" name="_eventId_cancel"/>
     </div>
     
     </form:form> <!-- End Form -->
             
-	</div> <!-- end: portlet-body -->
+	</div> <!-- end: portlet-content -->
         
 </div> <!-- end: portlet -->
