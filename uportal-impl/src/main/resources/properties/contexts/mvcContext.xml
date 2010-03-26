@@ -40,7 +40,9 @@
                 <value>/WEB-INF/flows/register-portal/register-portal</value>
                 <value>/WEB-INF/flows/groups-selector/groups-selector</value>
                 <value>/WEB-INF/flows/edit-portlet/edit-portlet</value>
+                <value>/WEB-INF/flows/edit-group/edit-group</value>
                 <value>/WEB-INF/flows/portlet-manager/portlet-manager</value>
+                <value>/WEB-INF/flows/groups-manager/groups-manager</value>
                 <value>/WEB-INF/flows/edit-permission/edit-permission</value>
                 <value>/WEB-INF/flows/permissions-administration/permissions-administration</value>
                 <value>/WEB-INF/flows/cache-manager/cache-manager</value>

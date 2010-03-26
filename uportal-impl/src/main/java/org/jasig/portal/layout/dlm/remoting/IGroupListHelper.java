@@ -43,6 +43,23 @@ public interface IGroupListHelper {
 	public Set<JsonEntityBean> search(String entityType, String searchTerm);
 
 	/**
+	 * Get the root entity for a particular type of group entity.
+	 * 
+	 * @param groupType
+	 * @return
+	 */
+	public JsonEntityBean getRootEntity(String groupType);
+	
+	/**
+	 * Get the set of entity types allowed as children of the specified group
+	 * type.
+	 * 
+	 * @param groupType
+	 * @return
+	 */
+	public Set<String> getEntityTypesForGroupType(String groupType);
+
+	/**
 	 * Return the string representation of the type of a specified entity object.
 	 * 
 	 * @param entity	Entity whose type needs to be determined
@@ -57,7 +74,15 @@ public interface IGroupListHelper {
 	 * @return				Entity name, or <code>null</code> if none is found
 	 */
 	public String lookupEntityName(JsonEntityBean entityBean);
-	
+
+	/**
+	 * Return a JsonEntityBean for the supplied IGroupMember instance.
+	 * 
+	 * @param member
+	 * @return
+	 */
+	public JsonEntityBean getEntity(IGroupMember member);
+
 	/**
 	 * Retrieve an individual entity matching the specified type and id.  If
 	 * populateChildren is set to <code>true</code> populate the entity bean

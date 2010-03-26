@@ -41,6 +41,10 @@ public class GroupListHelperImpl implements IGroupListHelper {
 
 	private static final Log log = LogFactory.getLog(GroupListHelperImpl.class);
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#search(java.lang.String, java.lang.String)
+	 */
 	@SuppressWarnings("unchecked")
 	public Set<JsonEntityBean> search(String entityType, String searchTerm) {
 		
@@ -87,6 +91,57 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getRootEntity(java.lang.String)
+	 */
+	public JsonEntityBean getRootEntity(String groupType) {
+		
+		String rootKey;
+		if (EntityEnum.GROUP.toString().equals(groupType)) {
+			rootKey = "local.0";
+		} else if (EntityEnum.CATEGORY.toString().equals(groupType)) {
+			rootKey = "local.1";
+		} else {
+			throw new IllegalArgumentException("Unable to determine a root entity for group type '" + groupType + "'");
+		}
+		
+		JsonEntityBean bean = getEntity(groupType, rootKey, false);
+		
+		return bean;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntityTypesForGroupType(java.lang.String)
+	 */
+	public Set<String> getEntityTypesForGroupType(String groupType) {
+
+		// add the group type itself to the allowed list
+		Set<String> set = new HashSet<String>();
+		set.add(groupType);
+		
+		/*
+		 * If the supplied type is a person group, add the person entity type.
+		 * If the supplied type is a category, add the channel type.  Otherwise,
+		 * throw an exception.
+		 * 
+		 * This method will require an update if more entity types are added
+		 * in the future.
+		 */
+		
+		if (EntityEnum.GROUP.toString().equals(groupType)) {
+			set.add(EntityEnum.PERSON.toString());
+		} else if (EntityEnum.CATEGORY.toString().equals(groupType)) {
+			set.add(EntityEnum.CHANNEL.toString());
+		} else {
+			throw new IllegalArgumentException("Unable to determine a root entity for group type '" + groupType + "'");
+		}
+		
+		return set;
+
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntity(java.lang.String, java.lang.String, boolean)
 	 */
 	public JsonEntityBean getEntity(String entityType, String entityId, boolean populateChildren) {
@@ -127,7 +182,32 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		}
 		
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntity(org.jasig.portal.groups.IGroupMember)
+	 */
+	public JsonEntityBean getEntity(IGroupMember member) {
 
+		// get the type of this member entity
+		String entityType = getEntityType(member);
+		EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
+		
+		// construct a new entity bean for this entity
+		JsonEntityBean entity;
+		if (entityEnum.isGroup()) {
+			entity = new JsonEntityBean((IEntityGroup) member, entityEnum.toString());
+		} else {
+			entity = new JsonEntityBean(member, entityEnum.toString());
+		}
+		
+		// if the name hasn't been set yet, look up the entity name
+		if (entity.getName() == null) {
+			entity.setName(lookupEntityName(entity));
+		}
+		return entity;
+	}
+	
 	/**
 	 * <p>Populates the children of the JsonEntityBean.  Creates new
 	 * JsonEntityBeans for the known types (person, group, or category), and
@@ -143,25 +223,8 @@ public class GroupListHelperImpl implements IGroupListHelper {
 			
 			IGroupMember member = children.next();
 			
-			// get the type of this member entity
-			String entityType = getEntityType(member);
-			EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
-			
-			// construct a new entity bean for this entity
-			JsonEntityBean jsonChild;
-			if (entityEnum.isGroup()) {
-				jsonChild = new JsonEntityBean((IEntityGroup) member, entityEnum.toString());
-			} else {
-				jsonChild = new JsonEntityBean(member, entityEnum.toString());
-			}
-			
-			
-			// if the name hasn't been set yet, look up the entity name
-			if (jsonChild.getName() == null) {
-				jsonChild.setName(lookupEntityName(jsonChild));
-			}
-			
 			// add the entity bean to the list of children
+			JsonEntityBean jsonChild = getEntity(member);
 			jsonBean.addChild(jsonChild);
 		}
 		
