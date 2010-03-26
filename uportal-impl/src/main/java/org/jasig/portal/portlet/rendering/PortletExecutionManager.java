@@ -42,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -123,7 +124,15 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      * Starts the specified portlet rendering, returns immediately.
      */
     public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
-        final IPortletWindow portletWindow = this.getDefaultPortletWindow(subscribeId, request);
+        final IPortletWindow portletWindow;
+        try {
+            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
+        }
+        catch (DataRetrievalFailureException e) {
+            this.logger.warn("Failed to start portlet rendering: " + subscribeId, e);
+            //probably from a channel that isn't a portlet
+            return;
+        }
         
         this.startPortletRenderInternal(portletWindow.getPortletWindowId(), request, response);
     }
@@ -136,7 +145,16 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     }
     
     public void outputPortlet(String subscribeId, HttpServletRequest request, HttpServletResponse response, Writer writer) throws IOException {
-        final IPortletWindow portletWindow = this.getDefaultPortletWindow(subscribeId, request);
+        final IPortletWindow portletWindow;
+        try {
+            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
+        }
+        catch (DataRetrievalFailureException e) {
+            this.logger.warn("Failed to output portlet: " + subscribeId, e);
+            //probably from a channel that isn't a portlet
+            return;
+        }
+
         this.outputPortlet(portletWindow.getPortletWindowId(), request, response, writer);
     }
     
@@ -159,7 +177,16 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      * Gets the title for the specified portlet
      */
     public String getPortletTitle(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
-        final IPortletWindow portletWindow = this.getDefaultPortletWindow(subscribeId, request);
+        final IPortletWindow portletWindow;
+        try {
+            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
+        }
+        catch (DataRetrievalFailureException e) {
+            this.logger.warn("Failed to get portlet title: " + subscribeId, e);
+            //probably from a channel that isn't a portlet
+            return null;
+        }
+
         return this.getPortletTitle(portletWindow.getPortletWindowId(), request, response);
     }
     
@@ -168,14 +195,23 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         final int timeout = getPortletRenderTimeout(portletWindowId, request);
         final PortletRenderResult portletRenderResult = tracker.get(timeout);
         
+        if (portletRenderResult == null) {
+            return null;
+        }
+        
         return portletRenderResult.getTitle();
     }
 
     protected IPortletWindow getDefaultPortletWindow(String subscribeId, HttpServletRequest request) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, subscribeId);
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
-        return portletWindow;
+        try {
+            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, subscribeId);
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
+            return portletWindow;
+        }
+        catch (RuntimeException re) {
+            throw new DataRetrievalFailureException("Could not find IPortletWindow for subscribe id '" + subscribeId + "'", re);
+        }
     }
     
     protected int getPortletRenderTimeout(IPortletWindowId portletWindowId, HttpServletRequest request) {
@@ -326,12 +362,14 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
             catch (InterruptedException e) {
                 // TODO ErrorPortlet handling an unhandled exception from the portlet
                 this.logger.warn("Execution failed on portlet " + this.portletWindowId, e);
-                throw new RuntimeException("Portlet window id " + this.portletWindowId + " failed execution due to an exception.", e);
+//                throw new RuntimeException("Portlet window id " + this.portletWindowId + " failed execution due to an exception.", e);
+                return null;
             }
             catch (ExecutionException e) {
                 // TODO ErrorPortlet handling an unhandled exception from the portlet
                 this.logger.warn("Execution failed on portlet " + this.portletWindowId, e);
-                throw new RuntimeException("Portlet window id " + this.portletWindowId + " failed execution due to an exception.", e);
+//                throw new RuntimeException("Portlet window id " + this.portletWindowId + " failed execution due to an exception.", e);
+                return null;
             }
             catch (TimeoutException e) {
                 // TODO ErrorPortlet handling a timeout from the portlet
@@ -345,7 +383,8 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
                  */
                 this.logger.warn("Execution failed on portlet " + this.portletWindowId, e);
                 this.future.cancel(true);
-                throw new RuntimeException("Portlet window id " + this.portletWindowId + " failed execution due to timeout.", e);
+//                throw new RuntimeException("Portlet window id " + this.portletWindowId + " failed execution due to timeout.", e);
+                return null;
             }
         }
         
