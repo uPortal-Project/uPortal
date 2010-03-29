@@ -29,7 +29,7 @@
 <div class="fl-widget portlet" role="section">
     
     <!-- Portlet Title -->
-    <div class="fl-widget-titlebar portlet-title" role="sectionhead">
+    <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">Delete Group</h2>
     </div> <!-- end: portlet-title -->
     

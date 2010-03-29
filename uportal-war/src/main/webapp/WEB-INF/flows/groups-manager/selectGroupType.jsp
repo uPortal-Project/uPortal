@@ -47,13 +47,13 @@
                         <li>
                             <input id="${n}groupTypeCategory" type="radio" name="groupType" value="category"/>
                             <label for="${n}groupTypeCategory">
-                                <spring:message code="groups-manager.categories"/>
+                                <spring:message code="groups-manager.type.categories"/>
                             </label>
                         </li>
                         <li>
                             <input id="${n}groupTypePerson" type="radio" name="groupType" value="group"/>
                             <label for="${n}groupTypePerson">
-                                <spring:message code="groups-manager.groups"/>
+                                <spring:message code="groups-manager.type.groups"/>
                             </label>
                         </li>
                     </ul>
