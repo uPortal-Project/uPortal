@@ -29,27 +29,39 @@
 <div class="fl-widget portlet" role="section">
     
     <!-- Portlet Title -->
-    <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-        <h2 role="heading">Select Group Type</h2>
+    <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+        <h2 class="title" role="heading">
+            <spring:message code="groups-manager.selectGroupType" />
+        </h2>
     </div> <!-- end: portlet-title -->
     
     <!-- Portlet Body -->
-    <div class="fl-widget-content portlet-body" role="main">
+    <div class="fl-widget-content portlet-content" role="main">
         
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
             <div class="portlet-section-body">
                 <form action="${ formUrl }" method="POST">
                     
-                    <p>
-                        <input id="${n}groupTypeCategory" type="radio" name="groupType" value="category"/>
-                        <label for="${n}groupTypeCategory">Channel Categories</label>
-                        <input id="${n}groupTypePerson" type="radio" name="groupType" value="group"/>
-                        <label for="${n}groupTypePerson">Person Groups</label>
-                    </p>
+                    <ul>
+                        <li>
+                            <input id="${n}groupTypeCategory" type="radio" name="groupType" value="category"/>
+                            <label for="${n}groupTypeCategory">
+                                <spring:message code="groups-manager.categories"/>
+                            </label>
+                        </li>
+                        <li>
+                            <input id="${n}groupTypePerson" type="radio" name="groupType" value="group"/>
+                            <label for="${n}groupTypePerson">
+                                <spring:message code="groups-manager.groups"/>
+                            </label>
+                        </li>
+                    </ul>
                     
-                    <div class="portlet-button-group">
-                        <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="groups-manager.next"/>" name="_eventId_next"/>
+                    <div class="buttons">
+                        <input class="button primary" type="submit" 
+                            value="<spring:message code="groups-manager.next"/>" 
+                            name="_eventId_next"/>
                     </div>
                     
                 </form>

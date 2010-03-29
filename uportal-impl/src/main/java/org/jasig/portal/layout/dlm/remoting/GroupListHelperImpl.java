@@ -31,6 +31,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityNameFinder;
+import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IPerson;
@@ -99,7 +100,8 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		if (EntityEnum.GROUP.toString().equals(groupType)) {
 			rootKey = "local.0";
 		} else if (EntityEnum.CATEGORY.toString().equals(groupType)) {
-			rootKey = "local.1";
+	        IEntityGroup categoryGroup = GroupService.getDistinguishedGroup(IGroupConstants.CHANNEL_CATEGORIES);
+	        return new JsonEntityBean(categoryGroup, EntityEnum.CHANNEL.toString());
 		} else {
 			throw new IllegalArgumentException("Unable to determine a root entity for group type '" + groupType + "'");
 		}

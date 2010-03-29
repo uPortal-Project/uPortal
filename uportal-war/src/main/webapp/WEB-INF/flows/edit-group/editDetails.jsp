@@ -30,11 +30,11 @@
     
     <!-- Portlet Title -->
     <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-        <h2 role="heading">Edit Group Details</h2>
+        <h2 class="title" role="heading">Edit Group Details</h2>
     </div> <!-- end: portlet-title -->
     
     <!-- Portlet Body -->
-    <div class="fl-widget-content portlet-body" role="main">
+    <div class="fl-widget-content portlet-content" role="main">
         
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
@@ -58,16 +58,16 @@
                             </tr>  
                         </tbody>
                     </table>
-                    <div class="portlet-button-group">
+                    <div class="buttons">
                         <c:choose>
                             <c:when test="${ completed }">
-                              <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
+                              <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
                             </c:when>
                             <c:otherwise>
-                              <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
+                              <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
                             </c:otherwise>
                         </c:choose>
-                        <input class="portlet-button" type="submit" value="<spring:message code="groups-manager.cancel"/>" name="_eventId_cancel"/>
+                        <input class="button" type="submit" value="<spring:message code="groups-manager.cancel"/>" name="_eventId_cancel"/>
                     </div>
                 </form:form>
             </div>

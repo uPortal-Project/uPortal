@@ -28,6 +28,7 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -150,12 +151,14 @@ public class GroupAdministrationHelper {
 	}
 	
 	/**
-	 * Create a new group under the specified parent.
+	 * Create a new group under the specified parent.  The new group will 
+	 * automatically be added to the parent group.
 	 * 
-	 * @param groupForm
-	 * @param parent
+	 * @param groupForm		form object representing the new group
+	 * @param parent		parent group for this new group
+	 * @param creator		the uPortal user creating the new group
 	 */
-	public void createGroup(GroupForm groupForm, JsonEntityBean parent, String creatorId) {
+	public void createGroup(GroupForm groupForm, JsonEntityBean parent, IPerson creator) {
 		
 		if (log.isDebugEnabled()) {
 			log.debug("Creating new group for group form ["
@@ -164,21 +167,27 @@ public class GroupAdministrationHelper {
 		}
 
 		// get the entity type of the parent group
-		EntityEnum type = EntityEnum.getEntityEnum(parent.getEntityType());
+		EntityEnum type = EntityEnum.getEntityEnum(groupForm.getType());
 		
 		// create a new group with the parent's entity type
 		IEntityGroup group = GroupService.newGroup(type.getClazz());
 		
 		// find the current version of this group entity
-		group.setCreatorID(creatorId);
+		group.setCreatorID(creator.getUserName());
 		group.setName(groupForm.getName());
 		group.setDescription(groupForm.getDescription());
 		
 		// add all the group membership information from the group form
 		// to the group
 		for (JsonEntityBean child : groupForm.getMembers()) {
-			IGroupMember member = GroupService.findGroup(child.getId());
-			group.addMember(member);
+			EntityEnum childType = EntityEnum.getEntityEnum(child.getEntityType());
+			if (childType.isGroup()) {
+				IEntityGroup member = GroupService.findGroup(child.getId());
+				group.addMember(member);
+			} else {
+				IGroupMember member = GroupService.getGroupMember(child.getId(), type.getClazz());
+				group.addMember(member);
+			}
 		}
 		
 		// save the group, updating both its basic information and group
