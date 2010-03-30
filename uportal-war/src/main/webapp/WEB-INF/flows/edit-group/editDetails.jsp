@@ -26,52 +26,47 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet grp-mgr view-editdetails" role="section">
     
     <!-- Portlet Title -->
-    <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">Edit Group Details</h2>
     </div> <!-- end: portlet-title -->
     
     <!-- Portlet Body -->
-    <div class="fl-widget-content portlet-content" role="main">
-        
-        <!-- Portlet Section -->
-        <div class="portlet-section" role="region">
-            <div class="portlet-section-body">
-                <form:form action="${ formUrl }" method="POST" modelAttribute="group">
-                    <table summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="fl-text-align-right">Name</td>
-                                <td><form:input path="name"/></td>
-                            </tr>  
-                            <tr>
-                                <td class="fl-text-align-right">Description</td>
-                                <td><form:input path="description"/></td>
-                            </tr>  
-                        </tbody>
-                    </table>
-                    <div class="buttons">
-                        <c:choose>
-                            <c:when test="${ completed }">
-                              <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
-                            </c:when>
-                            <c:otherwise>
-                              <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
-                            </c:otherwise>
-                        </c:choose>
-                        <input class="button" type="submit" value="<spring:message code="groups-manager.cancel"/>" name="_eventId_cancel"/>
-                    </div>
-                </form:form>
-            </div>
+    <div class="fl-widget-content content portlet-content" role="main">
+        <div class="portlet-form">
+            <form:form action="${ formUrl }" method="POST" modelAttribute="group">
+                <table class="purpose-layout" summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="label"><label for="name">Name:</label></td>
+                            <td><form:input path="name"/></td>
+                        </tr>  
+                        <tr>
+                            <td class="label"><label for="description">Description</label></td>
+                            <td><form:input path="description"/></td>
+                        </tr>  
+                    </tbody>
+                </table>
+                <div class="buttons">
+                    <c:choose>
+                        <c:when test="${ completed }">
+                          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
+                        </c:when>
+                        <c:otherwise>
+                          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
+                        </c:otherwise>
+                    </c:choose>
+                    <input class="button" type="submit" value="<spring:message code="groups-manager.cancel"/>" name="_eventId_cancel"/>
+                </div>
+            </form:form>
         </div>
-        
     </div>
 </div>

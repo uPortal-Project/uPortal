@@ -39,135 +39,129 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet grp-mgr view-selectgroups" role="section">
 
 	<!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading"><spring:message code="${ pageTitleCode }" text="${ pageTitleText }"/></h2>
-    <h3><spring:message code="${ pageSubtitleCode }" arguments="${ pageSubtitleChannelName }" text="${ pageSubtitleText }"/></h3>
-  </div> <!-- end: portlet-title -->
+  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+  	<h2 class="title" role="heading"><spring:message code="${ pageTitleCode }" text="${ pageTitleText }"/></h2>
+    <h3 class="subtitle"><spring:message code="${ pageSubtitleCode }" arguments="${ pageSubtitleChannelName }" text="${ pageSubtitleText }"/></h3>
+  </div> <!-- end: portlet-titlebar -->
   
 	<!-- Portlet Body -->
-  <div id="${n}chooseGroupsBody" class="fl-widget-content portlet-body" role="main">
+  <div id="${n}chooseGroupsBody" class="fl-widget-content content portlet-content" role="main">
  
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="channel">
-        <div class="portlet-msg-error" role="alert">
+        <div class="portlet-msg-error portlet-msg error" role="alert">
             <c:forEach var="error" items="${errors.allErrors}">
                 <spring:message code="${error.code}" text="${error.defaultMessage}"/><br />
             </c:forEach>
         </div> <!-- end: portlet-msg -->
     </spring:hasBindErrors>
     
-    <!-- start: 2 panel -->
-    <div class="fl-col-flex2">
-    
-      <!-- start: left panel -->
-      <div class="fl-col fl-force-left">
-      	<!-- start: selections -->
-      	<div class="portlet-selection">
+    <!-- 2 panel -->
+    <div class="fl-col-flex2">  
+        <!-- left panel -->
+        <div class="fl-col fl-force-left">
         
-          <h4 class="portlet-heading-selections"><spring:message code="chooseGroups.selectionsHeading"/></h4>
-          <form action="${ submitUrl }" method="post">
-          <div id="${n}selectionBasket" class="portlet-selection-basket">
-            <ul>
-              <c:forEach items="${groups}" var="group">
-                <li>
-                  <a key="${group}" href="javascript:;"><c:out value="${group.name}"/></a>
-                  <input type="hidden" name="groups" value="${group.entityType}:${group.id}"/>
-                </li>
-              </c:forEach>
-            </ul>
-          </div>
-          
-          <!-- Portlet Buttons --> 
-          <div class="portlet-button-group">
-            <c:if test="${ showBackButton }">
-              <input class="portlet-button" type="submit" value="<spring:message code="${ backButtonCode }" text="${ backButtonText }"/>" name="_eventId_back"/>
-            </c:if>
-              <input class="portlet-button portlet-button-primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
-            <c:if test="${ showCancelButton }">
-              <input class="portlet-button" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
-            </c:if>
-          </div> <!-- end: Portlet Buttons --> 
-          
-          </form>
-        
-        </div><!-- end: selections -->
-      </div><!-- end: left panel -->
-      
-      
-      <!-- start: right panel -->
-      <div class="fl-col">
-        
-        <!-- start: search -->
-        <div class="portlet-search">
-          <h4 class="portlet-heading-search"><spring:message code="chooseGroups.searchHeading"/></h4>
-          <form id="${n}searchForm">
-            <input type="text" name="searchterm" value="<spring:message code="chooseGroups.searchBoxDefault"/>"/>
-            <input type="submit" value="<spring:message code="chooseGroups.searchSubmit"/>" />
-          </form>
-        </div><!-- end: search -->
-
-        <!-- start: browse -->
-        <div class="portlet-browse">
-          <h4 class="portlet-heading-browse"><spring:message code="chooseGroups.browseHeading"/></h4>
-          <!-- Not yet implemented
-          <ul class="fl-tabs fl-tabs-left">
-            <li class="fl-activeTab"><a href="#" title="<spring:message code="chooseGroups.groupsHeading"/>"><span><spring:message code="chooseGroups.groupsHeading"/></span></a></li>
-            <li><a href="#" title="<spring:message code="chooseGroups.favoritesHeading"/>"><span><spring:message code="chooseGroups.favoritesHeading"/></span></a></li>
-            <li><a href="#" title="<spring:message code="chooseGroups.recentlySelectedHeading"/>"><span><spring:message code="chooseGroups.recentlySelectedHeading"/></span></a></li>
-          </ul>-->
-          
-          <!-- start: browse content -->
-          <div class="fl-tab-content">
-            
-            <!-- start: browse content header -->
-            <div id="${n}entityBrowsingHeader" class="portlet-browse-header">
-            	<div id="${n}entityBrowsingBreadcrumbs" class="portlet-browse-breadcrumb"></div>
-              <div class="fl-container fl-col-flex2">
-                <div class="fl-col">
-                    <h5 id="${n}currentEntityName"></h5>
+            <!-- selections -->
+            <div class="portlet-selection">
+                <div class="titlebar">
+                    <h4 class="title selections"><spring:message code="chooseGroups.selectionsHeading"/></h4>
                 </div>
-                <div class="fl-col fl-text-align-right">
-                  <a class="portlet-browse-select" id="${n}selectEntityLink" href="javascript:;"><span><spring:message code="chooseGroups.selectButton"/></span></a>
-                </div>
-              </div>
-            </div>
-            <!-- end: browse content header -->
+                <div class="content">
+                    <form action="${ submitUrl }" method="post">
+                    <div id="${n}selectionBasket" class="selection-basket">
+                        <ul>
+                          <c:forEach items="${groups}" var="group">
+                            <li>
+                              <a key="${group}" href="javascript:;"><c:out value="${group.name}"/></a>
+                              <input type="hidden" name="groups" value="${group.entityType}:${group.id}"/>
+                            </li>
+                          </c:forEach>
+                        </ul>
+                    </div>
+                    <!-- buttons --> 
+                    <div class="buttons">
+                        <c:if test="${ showBackButton }">
+                            <input class="button" type="submit" value="<spring:message code="${ backButtonCode }" text="${ backButtonText }"/>" name="_eventId_back"/>
+                        </c:if>
+                        <input class="button primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
+                        <c:if test="${ showCancelButton }">
+                            <input class="button" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
+                        </c:if>
+                    </div> <!-- end: buttons --> 
+                    </form>
+				</div> <!-- end: selections content --> 
+            </div><!-- end: selections -->
             
-            <!-- start: browse content: selections -->
-            <div class="fl-container portlet-browse-body">
-              <p><span class="current-entity-name">Everyone</span> <spring:message code="chooseGroups.includes"/>:</p>
-              <p id="${n}browsingResultNoMembers" style="display:none"><spring:message code="chooseGroups.noMembers"/></p>
-              <c:forEach items="${selectTypes}" var="type">
-                <c:choose>
-                  <c:when test="${type == 'group'}">
-                    <h7><spring:message code="chooseGroups.groupsHeading"/></h7>
-                    <ul class="group-member-list">
-                    </ul>
-                  </c:when>
-                  <c:when test="${type == 'person'}">
-                    <h7><spring:message code="chooseGroups.peopleHeading"/></h7>
-                    <ul class="person-member-list">
-                    </ul>
-                  </c:when>
-                  <c:when test="${type == 'category'}">
-                    <h7><spring:message code="chooseGroups.categoriesHeading"/></h7>
-                    <ul class="category-member-list">
-                    </ul>
-                  </c:when>
-                </c:choose>
-              </c:forEach>
-            </div>
-            <!-- end: browse content: selections -->  
-          
-          </div> <!-- end: browse content -->
-          
-        </div> <!-- end: portlet-browse -->
+        </div><!-- end: left panel -->
+        <!-- right panel -->
+        <div class="fl-col">
         
-      </div> <!-- end: left panel -->
+            <!-- start: search -->
+            <div class="portlet-search">
+              <h4 class="title search"><spring:message code="chooseGroups.searchHeading"/></h4>
+              <form id="${n}searchForm">
+                <input type="text" name="searchterm" value="<spring:message code="chooseGroups.searchBoxDefault"/>"/>
+                <input type="submit" class="button" value="<spring:message code="chooseGroups.searchSubmit"/>" />
+              </form>
+            </div><!-- end: search -->
     
+            <!-- start: browse -->
+            <div class="browse-hierarchy">
+                <div class="titlebar">
+                    <h4 class="title browse"><spring:message code="chooseGroups.browseHeading"/></h4>
+                </div>
+                <!-- browse content -->
+                <div class="content">
+                    
+                    <!-- Entity -->
+                    <div class="entity">
+                        <!-- entity titlebar -->
+                        <div id="${n}entityBrowsingHeader" class="titlebar">
+                            <div id="${n}entityBrowsingBreadcrumbs" class="breadcrumb"></div>
+                            <h5 class="title" id="${n}currentEntityName"></h5>
+                            <div class="actions">
+                                <a class="select button" id="${n}selectEntityLink" href="javascript:;"><span><spring:message code="chooseGroups.selectButton"/></span></a>
+                            </div>
+                        </div> <!-- end: titlebar -->    
+                        <!-- entity selections -->
+                        <div class="fl-container content">
+                            <p><span class="current">Everyone</span> <spring:message code="chooseGroups.includes"/>:</p>
+                            <p id="${n}browsingResultNoMembers" style="display:none"><spring:message code="chooseGroups.noMembers"/></p>
+                            <c:forEach items="${selectTypes}" var="type">
+                                <c:choose>
+                                    <c:when test="${type == 'group'}">
+                                        <div class="group">
+                                            <h6 class="title"><spring:message code="chooseGroups.groupsHeading"/></h6>
+                                            <ul class="member-list">
+                                            </ul>
+                                        </div>
+                                    </c:when>
+                                    <c:when test="${type == 'person'}">
+                                        <div class="person">
+                                            <h6 class="title"><spring:message code="chooseGroups.peopleHeading"/></h6>
+                                            <ul class="member-list">
+                                            </ul>
+                                        </div>
+                                    </c:when>
+                                    <c:when test="${type == 'category'}">
+                                        <div class="category">
+                                            <h6 class="title"><spring:message code="chooseGroups.categoriesHeading"/></h6>
+                                            <ul class="member-list">
+                                            </ul>
+                                        </div>
+                                    </c:when>
+                                </c:choose>
+                            </c:forEach>
+                        </div> <!-- end: selections -->
+                    </div> <!-- end: entity -->
+                
+                </div> <!-- end: browse content -->
+            </div> <!-- end: browse-hierarcy -->
+        
+        </div> <!-- end: Right panel -->
     </div> <!-- end: 2 panel -->
 
 	<div id="${n}searchDialog" title="<spring:message code="chooseGroups.searchResultsTitle"/>">
@@ -175,8 +169,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	    <ul id="${n}searchResults"></ul>
 	</div>
 
-  </div> <!-- end: portlet-body -->
-  
+  </div> <!-- end: portlet-content -->
 </div> <!-- end: portlet -->
 
 <script src="media/org/jasig/portal/flows/groups-selector/groups-selector.min.js" language="JavaScript" type="text/javascript"></script>

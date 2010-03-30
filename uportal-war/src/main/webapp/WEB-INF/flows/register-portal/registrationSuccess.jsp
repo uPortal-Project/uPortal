@@ -21,19 +21,42 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<h2>Your portal has been successfully registered</h2>
+<!-- Portlet -->
+<div class="fl-widget portlet portal-reg view-success" role="section">
 
-<p>
-	Thanks for registering this portal instance with Jasig!  We appreciate
-	knowing more about our users.  If you'd like to see a list of other uPortal
-	deployers who have registered their portals, Jasig maintains a list at
-	<a href="http://www.jasig.org/uportal/deployments" target="_blank" 
-	alt="uPortal deployments list">http://www.jasig.org/uportal/deployments</a>.
-</p>
-
-<portlet:actionURL var="backToStartUrl">
-    <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="registrationForm" />
-</portlet:actionURL>
-<a href="${backToStartUrl}">Back</a><br/>
+    <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    	<h2 class="title" role="heading">Portal Registration</h2>
+    </div>
+    
+    <!-- Portlet Content -->
+	<div class="fl-widget-content content portlet-content" role="main">   
+		
+        <!-- Messages -->
+        <div class="portlet-msg-success portlet-msg success" role="status">
+            <div class="titlebar">
+            	<h3 class="title">Your portal has been successfully registered</h3>
+            </div>
+            <div class="content">
+                <p>
+                    Thanks for registering this portal instance with Jasig!
+                </p>
+            </div>
+        </div>
+        
+        <p>
+            We appreciate knowing more about our users.  If you'd like to see a list of other uPortal deployers who have registered their portals, Jasig maintains a list at <a href="http://www.jasig.org/uportal/deployments" target="_blank" alt="uPortal deployments list">http://www.jasig.org/uportal/deployments</a>.
+        </p>
+        
+        <!-- Buttons -->
+        <div class="buttons">
+            <portlet:actionURL var="backToStartUrl">
+                <portlet:param name="execution" value="${flowExecutionKey}" />
+                <portlet:param name="_eventId" value="registrationForm" />
+            </portlet:actionURL>
+            <a class="button" href="${backToStartUrl}">Finish</a>
+        </div>
+    
+    </div> <!-- end: portlet-content -->
+</div> <!-- end:portlet -->
 

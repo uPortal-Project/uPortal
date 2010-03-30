@@ -59,7 +59,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <div class="fl-widget portlet prm-mgr view-editperm" role="section">
 
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading"><spring:message code="editPermission.createPermissionHeader"/></h2>
   </div>
   
@@ -73,7 +73,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div>
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="fl-widget-content content portlet-content" role="main">
       
       	<div class="portlet-form wider">
         <form method="POST" id="${n}editPermissionForm">

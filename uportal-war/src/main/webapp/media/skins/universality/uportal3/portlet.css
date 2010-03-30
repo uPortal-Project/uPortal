@@ -116,48 +116,30 @@
  * Tags is a list of tags applied to the portlet/view.
  * Details is a metadata area; not the main content of the view, but supporting information of the title.
  */
+.portlet .titlebar {}
+.portlet .titlebar .breadcrumb {font-size:10px; color:#ccc;}
+.portlet .titlebar .breadcrumb .separator {font-size:90%;}
+.portlet .titlebar .breadcrumb a {color:#bbb !important; font-weight:normal; text-decoration:none !important;}
+.portlet .titlebar .breadcrumb a:hover {color:#999 !important; text-decoration:underline !important;}
+.portlet .titlebar .actions li {border:none;}
+.portlet .titlebar .return-link {font-weight:bold; text-decoration:none !important;}
+.portlet .titlebar .toolbar {background:#e2e8e7; border-top:1px solid #ccc;}
+.portlet .titlebar .details {font-size:85%;}
+.portlet .titlebar .details .sysid .name {font-family:"Courier New", Courier, monospace;}
+.portlet .titlebar .details a {font-weight:normal;}
 .portlet .portlet-titlebar {}
-.portlet .portlet-titlebar > .title {font-size:150%; border-bottom:1px solid #ccc;}
-.portlet .portlet-titlebar > .subtitle {font-size:120%; border-top:2px solid #ccc;}
-.portlet .portlet-titlebar .breadcrumb {font-size:10px; color:#ccc;}
-.portlet .portlet-titlebar .breadcrumb .separator {font-size:90%;}
-.portlet .portlet-titlebar .breadcrumb a {color:#bbb; font-weight:normal; text-decoration:none;}
-.portlet .portlet-titlebar .breadcrumb a:hover {color:#999; text-decoration:underline;}
+.portlet .portlet-titlebar > .title {font-size:150%; border-bottom:1px solid #ccc; color:#369;}
+.portlet .portlet-titlebar > .subtitle {font-size:120%; border-top:2px solid #ccc; color:#777;}
 .portlet .portlet-titlebar > .options {border-top:1px solid #ccc;}
-.portlet .portlet-titlebar .actions li {border:none;}
-.portlet .portlet-titlebar .return-link {font-weight:bold; text-decoration:none !important;}
-.portlet .portlet-titlebar .details {font-size:85%;}
-.portlet .portlet-titlebar .details .sysid .name {font-family:"Courier New", Courier, monospace;}
-.portlet .portlet-titlebar .details a {font-weight:normal;}
-
-
-/* Toolbar */
-/* 
- * A collection of commonly used (or view-specific) functions represented in compact visual form.
- * Resides within the Titlebar.
- * Renders an unordered list (ul) inline as a horizontal list of links.
- * Optionally floats right additional utilities (e.g., search form) separate from the ul.
- * Toolbar maps to the WAI-ARIA role "toolbar";
- * "A collection of commonly used functions represented in compact visual form."
- * Refer to: http://www.w3.org/TR/wai-aria/roles#toolbar
- */
-.portlet .portlet-toolbar {background:#e2e8e7; border-top:1px solid #ccc;}
-
-
-/* Search */
-/*
- * Formatting for search forms(aside from general form formatting).
- */
-.portlet .portlet-search form {}
 
 
 /* Tags */
 /*
  * A taxonomy of terms applied to the content, displayed as a horizontal list of links.
  */
-.portlet .tags {font-size:11px;}
-.portlet .tags .label {font-size:100%;}
-.portlet .tags a {font-weight:normal;}
+.portlet .titlebar .tags {font-size:11px;}
+.portlet .titlebar .tags .label {font-size:100%;}
+.portlet .titlebar .tags a {font-weight:normal;}
 
 
 /* Content */
@@ -243,15 +225,15 @@
 /* Tables */
 /*
  * Tables are meant to display data. Avoid using tables for layout.
- * Therefore, the default styling includes padding and borders on cells, 
- * and background color on table headers, for the displaying of data.
  * If you must use a table for layout, add the "purpose-layout" class to the table.
  * The purpose-layout class will remove all padding, borders, and colors on the table.
- * 
  */
+.up table,
+.up table th,
+.up table td {border:none !important;} 
 .portlet table.portlet-table,
 .portlet table.portlet-table th,
-.portlet table.portlet-table td {border-style:solid; border-width:1px; border-color:#ccc; border-collapse:collapse;}
+.portlet table.portlet-table td {border-style:solid !important; border-width:1px !important; border-color:#ccc !important; border-collapse:collapse !important;}
 .portlet table.portlet-table {border-width:2px !important; border-color:#999 !important;}
 .portlet table.portlet-table th,
 .portlet table.portlet-table td {border-color:#ccc !important;}
@@ -302,9 +284,12 @@
 .portlet .buttons .button.primary {background-color:#336699; color:#fff;}
 .portlet .buttons a.button {color:#000 !important;}
 .portlet .buttons a.button.primary {color:#fff !important;}
-.portlet .button:hover {background-color:#5a95cf !important; /*background-color:#7a9e0d;*/}
 .portlet .button:hover,
-.portlet a.button:hover {color:#fff !important;}
+.portlet form input[type="submit"]:hover {background-color:#5a95cf !important; /*background-color:#7a9e0d;*/}
+.portlet .button:hover,
+.portlet a.button:hover,
+.portlet form input[type="submit"]:hover {color:#fff !important;}
+.portlet form input[type="submit"]:hover {cursor:pointer;}
 
 
 /* Overflow box */
@@ -345,29 +330,22 @@
 /*
  * A "folder-view" browser of hierarchy.
  */
-.portlet .browse-hierarchy .fl-tab-content {border:1px solid #ccc;}
-.portlet .browse-hierarchy h5 {font-size:200%; font-weight:normal;}
-.portlet .browse-hierarchy .selected {background-color:#D1F0E0}
-.portlet .browse-hierarchy .selected h5 {background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 10px 50% no-repeat; color:#009900;}
-.portlet .browse-hierarchy .titlebar .title {border-bottom:2px solid #ccc;}
-.portlet .browse-hierarchy a.select {background:#fff url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/add.png) 0.3em 50% no-repeat; border:1px solid #336699; color:#336699; text-decoration:none;}
-.portlet .browse-hierarchy a.select:hover {background-color:#7a9e0d; color:#fff;}
-.portlet .browse-hierarchy .selected a.select {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png); border-color:#333; color:#333;}
-.portlet .browse-hierarchy .selected a.select:hover {background-color:#ffeeee; border-color:#cc0000;}
-.portlet .browse-hierarchy .breadcrumb span {color:#999;}
-.portlet .browse-hierarchy .breadcrumb a {font-weight:normal; color:#666; text-decoration:none;}
-.portlet .browse-hierarchy .breadcrumb a:hover {color:#000; text-decoration:underline;}
-.portlet .browse-hierarchy .content {}
-.portlet .browse-hierarchy h7 {font-weight:bold;}
-.portlet .browse-hierarchy .group-member a,
-.portlet .browse-hierarchy .person-member a,
-.portlet .browse-hierarchy .category-member a {background-position:0 50%; background-repeat:no-repeat;}
-.portlet .browse-hierarchy .group-member a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png)}
-.portlet .browse-hierarchy .person-member a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/vcard.png)}
-.portlet .browse-hierarchy .category-member a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tag_orange.png)}
-.portlet .browse-hierarchy .group-member a:hover,
-.portlet .browse-hierarchy .person-member a:hover,
-.portlet .browse-hierarchy .category-member a:hover {background-color:#FFFFCC; color:#336699;}
+.portlet .browse-hierarchy {}
+.portlet .browse-hierarchy > .content {border:1px solid #ccc;}
+.portlet .browse-hierarchy .entity {}
+.portlet .browse-hierarchy .entity > .titlebar {border-bottom:2px solid #ccc; background-color:#e7e7e7;}
+.portlet .browse-hierarchy .entity > .titlebar .title {font-size:150%; font-weight:normal;}
+.portlet .browse-hierarchy .entity > .titlebar.selected {background-color:#D1F0E0;}
+.portlet .browse-hierarchy .entity > .titlebar.selected .title {background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 10px 50% no-repeat; color:#009900;}
+.portlet .browse-hierarchy .entity .breadcrumb {font-size:85%;}
+.portlet .browse-hierarchy .entity .breadcrumb span {color:#999;}
+.portlet .browse-hierarchy .entity .breadcrumb a {font-weight:normal; color:#666 !important; text-decoration:none !important;}
+.portlet .browse-hierarchy .entity .breadcrumb a:hover {color:#000 !important; text-decoration:underline !important;}
+.portlet .browse-hierarchy .entity .member-list a {background-position:0 50%; background-repeat:no-repeat;}
+.portlet .browse-hierarchy .entity .group .member-list a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png)}
+.portlet .browse-hierarchy .entity .person .member-list a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/vcard.png)}
+.portlet .browse-hierarchy .entity .category .member-list a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tag_orange.png)}
+.portlet .browse-hierarchy .entity .member-list a:hover {background-color:#FFFFCC; color:#336699;}
 
 
 

@@ -25,57 +25,59 @@
     <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
 
-<div class="fl-widget portlet" role="section">
-    <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-        <h2 role="heading"><spring:message code="personLookup.searchTitle" /></h2>
+<!-- Portlet -->
+<div class="fl-widget portlet prs-lkp view-lookup" role="section">
+
+	<!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+        <h2 class="title" role="heading"><spring:message code="personLookup.searchTitle" /></h2>
     </div>
     
-    <div class="fl-widget-content portlet-body" role="main">
-    
-        <div class="portlet-section" role="region">
+    <!-- Portlet Content -->
+    <div class="fl-widget-content content portlet-content" role="main">
         
-            <div class="portlet-section-body">
-        
-				<c:if test="${emptyQueryResults == 'true'}">
-				    <div class="portlet-msg-info" role="status">
-				        <spring:message code="personLookup.emptyResults" />
-				    </div>
-				</c:if>
-
-				<form:form modelAttribute="personQuery" action="${queryUrl}">
-				    <table>
-				        <tbody>
-				            <c:forEach var="queryAttribute" items="${queryAttributes}">
-				                <tr>
-				                    <td>
-				                        <form:label path="attributes['${queryAttribute}'].value"><spring:message code="${queryAttribute}" text="${queryAttribute}" arguments="${queryAttribute}"/></form:label>
-				                    </td>
-				                    <td>
-				                        <form:input path="attributes['${queryAttribute}'].value"/>
-				                    </td>
-				                    <td>
-				                        <form:errors path="attributes['${queryAttribute}'].value"/>
-				                    </td>
-				                </tr>
-				            </c:forEach>
-				        </tbody>            
-				    </table>
-
-                    <div class="portlet-button-group">
-	                    <spring:message var="searchButtonText" code="personLookup.searchButton" />
-	                    <input class="portlet-button portlet-button-primary" type="submit" class="button" name="_eventId_search" value="${searchButtonText}" />
-	                    
-	                    <spring:message var="newSearchButtonText" code="personLookup.newSearchButton" />
-	                    <input class="portlet-button secondary" type="submit" class="button" name="_eventId_newSearch" value="${newSearchButtonText}" />
-	                    
-	                    <c:if test="${showCancelButton == 'true'}">
-	                        <spring:message var="cancelButtonText" code="personLookup.cancelButton" />
-	                        <input class="portlet-button" type="submit" class="button" name="_eventId_cancel" value="${cancelButtonText}" />
-	                    </c:if>
-                    </div>
-				    
-				</form:form>
+        <c:if test="${emptyQueryResults == 'true'}">
+            <div class="portlet-msg-info" role="status">
+                <spring:message code="personLookup.emptyResults" />
             </div>
+        </c:if>
+		
+        <div class="portlet-form">
+            <form:form modelAttribute="personQuery" action="${queryUrl}">
+                <table class="purpose-layout">
+                    <tbody>
+                        <c:forEach var="queryAttribute" items="${queryAttributes}">
+                            <tr>
+                                <td class="label">
+                                    <form:label path="attributes['${queryAttribute}'].value"><spring:message code="${queryAttribute}" text="${queryAttribute}" arguments="${queryAttribute}"/></form:label>
+                                </td>
+                                <td>
+                                    <form:input path="attributes['${queryAttribute}'].value"/>
+                                </td>
+                                <td>
+                                    <form:errors path="attributes['${queryAttribute}'].value"/>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>            
+                </table>
+				
+                <!-- Buttons -->
+                <div class="buttons">
+                    <spring:message var="searchButtonText" code="personLookup.searchButton" />
+                    <input class="button primary" type="submit" class="button" name="_eventId_search" value="${searchButtonText}" />
+                    
+                    <spring:message var="newSearchButtonText" code="personLookup.newSearchButton" />
+                    <input class="button" type="submit" class="button" name="_eventId_newSearch" value="${newSearchButtonText}" />
+                    
+                    <c:if test="${showCancelButton == 'true'}">
+                        <spring:message var="cancelButtonText" code="personLookup.cancelButton" />
+                        <input class="button" type="submit" class="button" name="_eventId_cancel" value="${cancelButtonText}" />
+                    </c:if>
+                </div>
+                
+            </form:form>
         </div>
+
     </div>
 </div>

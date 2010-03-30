@@ -26,15 +26,15 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet grp-mgr view-confirmremove" role="section">
     
     <!-- Portlet Title -->
-    <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">Delete Group</h2>
     </div> <!-- end: portlet-title -->
     
     <!-- Portlet Body -->
-    <div class="fl-widget-content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content" role="main">
         
     <form action="${formUrl}" method="POST">
 
@@ -43,7 +43,7 @@
           <div class="titlebar">
               <h3 class="title" role="heading"><spring:message code="confirmRemove.heading" arguments="${ group.name }"/></h3>
           </div>
-          <div class="portlet-section-body">
+          <div class="content">
             <spring:message code="confirmRemove.text" arguments="${ group.name }"/>
           </div>
         </div> <!-- end: portlet-section -->

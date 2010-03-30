@@ -21,17 +21,39 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<h2>Registration Error</h2>
+<!-- Portlet -->
+<div class="fl-widget portlet portal-reg view-failed" role="section">
 
-<p>
-	An unexpected error occured while submitting your registration. Please
-    either try submitting your registration again or check the portal log
-    file for related exceptions. 
-</p>
-
-<portlet:actionURL var="backToStartUrl">
-    <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="registrationForm" />
-</portlet:actionURL>
-<a href="${backToStartUrl}">Back</a><br/>
-
+    <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    	<h2 class="title" role="heading">Portal Registration</h2>
+    </div>
+    
+    <!-- Portlet Content -->
+	<div class="fl-widget-content content portlet-content" role="main">   
+		
+        <!-- Messages -->
+        <div class="portlet-msg-error portlet-msg error" role="alert">
+            <div class="titlebar">
+            	<h3 class="title">Registration Error</h3>
+            </div>
+            <div class="content">
+                <p>
+                    An unexpected error occured while submitting your registration. Please
+                    either try submitting your registration again or check the portal log
+                    file for related exceptions. 
+                </p>
+            </div>
+        </div>
+        
+        <!-- Buttons -->
+        <div class="buttons">
+            <portlet:actionURL var="backToStartUrl">
+                <portlet:param name="execution" value="${flowExecutionKey}" />
+                <portlet:param name="_eventId" value="registrationForm" />
+            </portlet:actionURL>
+            <a class="button" href="${backToStartUrl}">Back</a>
+        </div>
+    
+    </div> <!-- end: portlet-content -->
+</div> <!-- end:portlet -->

@@ -61,24 +61,26 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <form id="${n}listPermissionsForm">
   
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading"><spring:message code="listPermissions.title"/></h2>
-    <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
+    <div class="fl-col-flex2 toolbar" role="toolbar">
       <div class="fl-col">
         <ul>
           <li><a href="${createUrl}" class="button" title="<spring:message code="listPermissions.newPermissionButton"/>"><span><spring:message code="listPermissions.newPermissionButton"/></span></a></li>
         </ul>
       </div>
       <div class="fl-col fl-text-align-right">
-        <input id="${n}permissionSearch"/>
-        <input type="submit" class="button" value="<spring:message code="listPermissions.searchSubmitButton"/>"/>
+      	<div class="search">
+          <input id="${n}permissionSearch"/>
+          <input type="submit" class="button" value="<spring:message code="listPermissions.searchSubmitButton"/>"/>
+        </div>
       </div>
     </div>
 
   </div> <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="fl-widget-content content portlet-content" role="main">
   
     <!-- Portlet Messages -->
     <div class="portlet-msg-info portlet-msg info" role="status" id="${n}loadingMessage">

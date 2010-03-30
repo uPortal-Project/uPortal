@@ -61,14 +61,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <div class="fl-widget portlet ptl-mgr view-configmode" role="section">
 
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
       <spring:message code="edit-portlet.configMode"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="fl-widget-content content portlet-content" role="main">
     <up:render-delegate fname="${CHANNEL_FNAME}" portletMode="CONFIG">
         <up:parent-url>
             <up:param name="execution" value="${flowExecutionKey}"/>

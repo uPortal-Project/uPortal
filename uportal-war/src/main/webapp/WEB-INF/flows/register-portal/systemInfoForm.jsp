@@ -21,52 +21,77 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<h2>Register this portal instance</h2>
+<!-- Portlet -->
+<div class="fl-widget portlet reg-portal view-preview" role="section">
 
-<portlet:actionURL var="postUrl">
-    <portlet:param name="execution" value="${flowExecutionKey}" />
-</portlet:actionURL>
-<form:form modelAttribute="registrationRequest" action="${postUrl}" method="post">
-    <h3>System information</h3>
-    <p>
-        We can automatically gather information about your portal's environment
-        for you and submit it along with this registration.  If you prefer not
-        to submit this information, just uncheck the appropriate box. You will
-        be able to review this infomration before it is submitted.
-    </p>
-    <ul>
-        <c:forEach var="dataEntry" items="${registrationRequest.dataToSubmit}">
-            <li style="list-style-type: none;">
-                <spring:message var="dataDisplayName" text="${dataEntry.key}" code="data.${dataEntry.key}" />
-                <form:checkbox path="dataToSubmit['${dataEntry.key}']" value="true"/> 
-                <form:label path="dataToSubmit['${dataEntry.key}']" cssClass="fl-label"> ${dataDisplayName}</form:label>
-            </li>
-        </c:forEach>
-    </ul>
-
-	<h3>Sharing</h3>
-	
-	<p>
-		Jasig maintains a public list of deployed uPortal instances.  We'd love to 
-		include your portal in our list of uPortal-powered sites and on a map of 
-		worldwide portal deployments.  If you're interested in viewing our current list
-		of uPortal sites, you can visit it at <a href="http://www.jasig.org/uportal/deployments"
-		target="_blank" alt="uPortal deployments list">http://www.jasig.org/uportal/deployments</a>.
-	</p>
-	
-	<ul>
-	   <li style="list-style-type: none;">
-		   <form:checkbox path="shareInfo"/> 
-		   <form:label path="shareInfo" cssClass="fl-label">
-              It's OK to include my deployment information on
-              <a href="http://www.jasig.org/uportal/deployments" target="_blank" alt="uPortal deployments list">jasig.org</a>.
-              Contact information will never be shared.
-           </form:label>
-        </li>
-	</ul>
-	
-    <p>
-       <input type="submit" name="_eventId_previous" value="Back" class="portlet-form-button" title="Back to Organization Infomration" />
-       <input type="submit" name="_eventId_next" value="Preview Registration" class="portlet-form-button" />
-    </p>
-</form:form>
+    <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    	<h2 class="title" role="heading">Register your portal</h2>
+    </div>
+    
+    <!-- Portlet Content -->
+	<div class="fl-widget-content content portlet-content" role="main">
+        
+        <!-- Portlet Section -->
+        <div class="portlet-section" role="region">
+            <div class="titlebar">
+                <h3 class="title" role="heading">System Information</h3>
+            </div>
+            <div class="content">
+                
+                <portlet:actionURL var="postUrl">
+                    <portlet:param name="execution" value="${flowExecutionKey}" />
+                </portlet:actionURL>
+                
+                <!-- Note -->
+                <div class="note" role="note">
+                    <p>
+                        We can automatically gather information about your portal's environment
+                        for you and submit it along with this registration.  If you prefer not
+                        to submit this information, just uncheck the appropriate box. You will
+                        be able to review this infomration before it is submitted.
+                    </p>
+                </div>
+                
+                <div class="portlet-form">
+                    <form:form modelAttribute="registrationRequest" action="${postUrl}" method="post">
+                    
+                        <fieldset>
+                            <c:forEach var="dataEntry" items="${registrationRequest.dataToSubmit}">
+                                <div>
+                                    <spring:message var="dataDisplayName" text="${dataEntry.key}" code="data.${dataEntry.key}" />
+                                    <form:checkbox path="dataToSubmit['${dataEntry.key}']" value="true"/> 
+                                    <form:label path="dataToSubmit['${dataEntry.key}']" cssClass="fl-label"> ${dataDisplayName}</form:label>
+                                </div>
+                            </c:forEach>
+                        </fieldset>
+                    
+                        <h4>Sharing</h4>
+                        <p>
+                            Jasig maintains a public list of deployed uPortal instances.  We'd love to 
+                            include your portal in our list of uPortal-powered sites and on a map of 
+                            worldwide portal deployments.  If you're interested in viewing our current list
+                            of uPortal sites, you can visit it at <a href="http://www.jasig.org/uportal/deployments"
+                            target="_blank" alt="uPortal deployments list">http://www.jasig.org/uportal/deployments</a>.
+                        </p>
+                        <div>
+                           <form:checkbox path="shareInfo"/> 
+                           <form:label path="shareInfo" cssClass="fl-label">
+                              It's OK to include my deployment information on
+                              <a href="http://www.jasig.org/uportal/deployments" target="_blank" alt="uPortal deployments list">jasig.org</a>.
+                              Contact information will never be shared.
+                           </form:label>
+                        </div>
+                        
+                        <div class="buttons">
+                           <input type="submit" name="_eventId_previous" value="Back" class="button" title="Back to Organization Infomration" />
+                           <input type="submit" name="_eventId_next" value="Preview Registration" class="button" />
+                        </div>
+                    </form:form>
+                    
+                </div>
+            </div>
+        </div>
+                    
+    </div> <!-- end: portlet-content -->
+</div> <!-- end:portlet -->

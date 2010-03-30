@@ -60,7 +60,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<form id="${n}portletSelectionForm">
   
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading"><spring:message code="listChannels.title"/></h2>
     <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
       <div class="fl-col">
@@ -76,7 +76,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div>
         
 	<!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="fl-widget-content content portlet-content" role="main">
   
   	<!-- Portlet Message -->
   	<div class="portlet-msg-info portlet-msg info" role="status" id="${n}loadingMessage">

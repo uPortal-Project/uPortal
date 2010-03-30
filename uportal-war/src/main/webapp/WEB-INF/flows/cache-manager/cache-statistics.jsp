@@ -30,20 +30,17 @@
 </portlet:actionURL>
         
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading"><spring:message code="cache-statistics.title"/></h2>
-    <h3><c:out value="${cacheName}"/></h3>
-  </div> <!-- end: portlet-title -->
+<div class="fl-widget portlet cache-mgr view-statistics" role="section">
+  <!-- Portlet Titlebar -->
+  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <h2 class="title" role="heading"><spring:message code="cache-statistics.title"/></h2>
+    <h3 class="subtitle"><c:out value="${cacheName}"/></h3>
+  </div> <!-- end: portlet-titlebar -->
 
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
-    <!-- Portlet Section -->
-    <div class="portlet-section" role="region">
-      <div class="portlet-section-body">
+  <!-- Portlet Content -->
+  <div class="fl-widget-content content portlet-content" role="main">
       
-        <table>
+        <table class="portlet-table">
             <thead>
                 <tr><th><spring:message code="cache-statistics.propertyColumn"/></th><th><spring:message code="cache-statistics.valueColumn"/></th></tr>
             </thead>
@@ -82,9 +79,9 @@
     </div>
 
     <!-- Portlet Buttons -->
-    <div class="portlet-button-group">
-        <a class="portlet-button portlet-button-primary" href="${ flushUrl }"><spring:message code="cache-statistics.emptyCacheButton"/></a>
-        <a class="portlet-button" href="${ homeUrl }"><spring:message code="cache-statistics.cancelButton"/></a>
+    <div class="buttons">
+        <a class="button primary" href="${ flushUrl }"><spring:message code="cache-statistics.emptyCacheButton"/></a>
+        <a class="button" href="${ homeUrl }"><spring:message code="cache-statistics.cancelButton"/></a>
     </div>
     
   </div>

@@ -29,28 +29,28 @@ var uportal = uportal || {};
         that.currentEntity = entity;
         
         updateBreadcrumbs(that, entity);
-        $(".current-entity-name").text(entity.name);
+        $(".current").text(entity.name);
         
         // clear any content from the entity browser members section
-        $(that.options.entityTypes).each(function(){ $("." + this + "-member-list").html(""); });
+        $(that.options.entityTypes).each(function(){ $("." + this.entityType + " .member-list").html(""); });
         
         // for each entity, create a list element in the correct section 
         $(entity.children).each(function(i){
             var link = $(document.createElement("a")).attr("href", "javascript:;")
                 .html("<span>" + this.name + "</span>").attr("key", this.entityType + ":" + this.id)
                 .click(function(){ browseEntity(that, $(this).attr("key")); });
-            $("." + this.entityType + "-member-list").append(
+            $("." + this.entityType + " .member-list").append(
                 $(document.createElement("li")).addClass(this.entityType).append(link)
             );
         });
         
         // hide any sections with no members
         $(that.options.entityTypes).each(function(){
-            $("." + this + "-member-list").prev().css("display", $("." + this + "-member-list li").size() > 0 ? "block" : "none" );
+            $("." + this + " .member-list").prev().css("display", $("." + this + " .member-list li").size() > 0 ? "block" : "none" );
         });
         
         // if there are no members overall, display the no contents message
-        that.locate("browsingResultNoMembers").css("display", $(".portlet-browse-body li").size() > 0 ? "none" : "block");
+        that.locate("browsingResultNoMembers").css("display", $(".browse-hierarchy .member-list li").size() > 0 ? "none" : "block");
         
         // set the breadcrumbs state
         setBreadcrumbSelectionState(that, $.inArray(key, that.options.selected) >= 0);

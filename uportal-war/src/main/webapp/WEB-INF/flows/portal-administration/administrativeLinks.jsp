@@ -22,79 +22,89 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
     
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet portal-adm view-links" role="section">
   
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading">Portal Administration Tools</h2>
-  </div> <!-- end: portlet-title -->
+  <!-- Portlet Titlebar -->
+  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <h2 class="title" role="heading">Portal Administration Tools</h2>
+  </div>
   
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <!-- Portlet Content -->
+  <div class="fl-widget-content content portlet-content" role="main">
   
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">User Administration</h3>
-      <div class="portlet-section-body">
-        <ul>
-            <li>
-                <a href="render.userLayoutRootNode.uP?uP_fname=IdentitySwapper">Swap identity</a>
-            </li>
-            <li>
-                <a href="render.userLayoutRootNode.uP?uP_fname=AttributeSwapper">Swap attributes</a>
-            </li>
-            <li>
-                <a href="render.userLayoutRootNode.uP?uP_fname=passwordmgr">Manage passwords</a>
-            </li>
-            <li>
-                <a href="render.userLayoutRootNode.uP?uP_fname=reset-user-layout">Reset a user's layout</a>
-            </li>
-        </ul>
-	  </div>
+    	<div class="titlebar">
+      		<h3 class="title" role="heading">User Administration</h3>
+        </div>
+        <div class="content">
+            <ul>
+                <li>
+                    <a href="render.userLayoutRootNode.uP?uP_fname=IdentitySwapper">Swap identity</a>
+                </li>
+                <li>
+                    <a href="render.userLayoutRootNode.uP?uP_fname=AttributeSwapper">Swap attributes</a>
+                </li>
+                <li>
+                    <a href="render.userLayoutRootNode.uP?uP_fname=passwordmgr">Manage passwords</a>
+                </li>
+                <li>
+                    <a href="render.userLayoutRootNode.uP?uP_fname=reset-user-layout">Reset a user's layout</a>
+                </li>
+            </ul>
+        </div>
 	</div>
 	
+    <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">Portal Entity Administration</h3>
-      <div class="portlet-section-body">
-        <ul>
-            <li>
-                <a href="render.userLayoutRootNode.uP?uP_fname=portlet-admin">Manage portlets</a>
-            </li>
-            <li>
-                <a href="render.userLayoutRootNode.uP?uP_fname=groupsmanager">Manage groups</a>
-            </li>
-            <li>
-                <a href="render.userLayoutRootNode.uP?uP_fname=permissionsmanager">Manage permissions</a>
-            </li>
-        </ul>
-      </div>
+    	<div class="titlebar">
+      		<h3 class="title" role="heading">Portal Entity Administration</h3>
+        </div>
+        <div class="content">
+            <ul>
+                <li>
+                    <a href="render.userLayoutRootNode.uP?uP_fname=portlet-admin">Manage portlets</a>
+                </li>
+                <li>
+                    <a href="render.userLayoutRootNode.uP?uP_fname=groupsmanager">Manage groups</a>
+                </li>
+                <li>
+                    <a href="render.userLayoutRootNode.uP?uP_fname=permissionsmanager">Manage permissions</a>
+                </li>
+            </ul>
+        </div>
     </div>
     
+    <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">Portal Administration</h3>
-      <div class="portlet-section-body">
-        <ul>
-            <li>
-                <a href="render.userLayoutRootNode.uP?uP_fname=cache-manager">Manage Cache instances</a>
-            </li>
-            <li>
-                <a href="render.userLayoutRootNode.uP?uP_fname=toggle-resources-aggregation">Toggle JS/CSS Aggregation</a>
-            </li>
-        </ul>
-      </div>
+    	<div class="titlebar">
+      		<h3 class="title" role="heading">Portal Administration</h3>
+        </div>
+        <div class="content">
+            <ul>
+                <li>
+                    <a href="render.userLayoutRootNode.uP?uP_fname=cache-manager">Manage Cache instances</a>
+                </li>
+                <li>
+                    <a href="render.userLayoutRootNode.uP?uP_fname=toggle-resources-aggregation">Toggle JS/CSS Aggregation</a>
+                </li>
+            </ul>
+        </div>
     </div>
     
+    <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">Import/Export</h3>
-      <div class="portlet-section-body">
-        <ul>
-            <li>
-                <a href="render.userLayoutRootNode.uP?uP_fname=ImportExportPortlet">Import, Export, and Delete Entities</a>
-            </li>
-        </ul>
-      </div>  
+    	<div class="titlebar">
+      		<h3 class="title" role="heading">Import/Export</h3>
+        </div>
+        <div class="content">
+            <ul>
+                <li>
+                    <a href="render.userLayoutRootNode.uP?uP_fname=ImportExportPortlet">Import, Export, and Delete Entities</a>
+                </li>
+            </ul>
+        </div>  
     </div>
     
-  </div>
-
-</div>
+  </div> <!-- end: portlet-content -->
+</div> <!-- end: portlet -->

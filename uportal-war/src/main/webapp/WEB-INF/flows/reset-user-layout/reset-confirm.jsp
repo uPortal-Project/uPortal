@@ -25,33 +25,34 @@
 </portlet:actionURL>
         
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
-    <!-- Portlet Section -->
-    <div class="portlet-section" role="region">
-      <div class="portlet-section-body">   
+<div class="fl-widget portlet reset-layout view-result" role="section">
 
-        <div class="portlet-msg-alert" role="alert">
-            <h3>Caution!</h3>
-            <p>Resetting a customer's layout is irreversible.</p>
+    <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    	<h2 class="title" role="heading">Reset User Layout</h2>
+    </div>
+    
+    <!-- Portlet Content -->
+	<div class="fl-widget-content content portlet-content" role="main">   
+		
+        <!-- Messages -->
+        <div class="portlet-msg-alert portlet-msg alert" role="alert">
+            <div class="titlebar">
+            	<h3 class="title">Caution!</h3>
+            </div>
+            <div class="content">
+            	<p>Resetting a customer's layout is irreversible.</p>
+            </div>
         </div>
 
-        <!-- Portlet Section -->
-        <div class="portlet-section" role="region">
-          <div class="portlet-section-body">
-            <p>Are you sure you want to reset the layout for <c:out value="${person}"/>?</p>
-          </div>
-        </div> <!-- end: portlet-section -->
-        
+		<p>Are you sure you want to reset the layout for <c:out value="${person}"/>?</p>
+        <!-- Buttons -->
         <form action="${formUrl}" method="POST">
-        <div class="portlet-button-group">
-            <input class="portlet-button portlet-button-primary" type="submit" value="Reset Layout" name="_eventId_confirm"/>
-            <input class="portlet-button secondary" type="submit" value="Cancel" name="_eventId_cancel"/>
+        <div class="buttons">
+            <input class="button primary" type="submit" value="Reset Layout" name="_eventId_confirm"/>
+            <input class="button " type="submit" value="Cancel" name="_eventId_cancel"/>
         </div>
         </form>
-      </div>
-    </div>
-  </div>
-  
-</div>
+    
+    </div> <!-- end: portlet-content -->
+</div> <!-- end:portlet -->

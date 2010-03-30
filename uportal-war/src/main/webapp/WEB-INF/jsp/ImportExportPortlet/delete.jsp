@@ -24,57 +24,68 @@
 
 <portlet:defineObjects/>
 
-<div class="fl-widget portlet" role="section">
-	<div class="fl-widget-titlebar portlet-title" role="sectionhead">
-		<h2 role="heading">Delete Portlet Entities</h2>
-		<h3>Select an entity to delete</h3>
-	</div>
-	
-    <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
-        <div class="fl-col">
+<!-- Portlet -->
+<div class="fl-widget portlet imp-exp view-delete" role="section">
+
+    <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    	<h2 class="title" role="heading">Delete Portlet Entities</h2>
+        <div class="toolbar" role="toolbar">
             <ul>
-                <li><a href="<portlet:renderURL><portlet:param name="view" value="import"/></portlet:renderURL>">Import</a></li>
-                <li><a href="<portlet:renderURL><portlet:param name="view" value="export"/></portlet:renderURL>">Export</a></li>
+                <li><a class="button" href="<portlet:renderURL><portlet:param name="view" value="import"/></portlet:renderURL>">Import</a></li>
+                <li><a class="button" href="<portlet:renderURL><portlet:param name="view" value="export"/></portlet:renderURL>">Export</a></li>
             </ul>
-        </div>
+    	</div>
     </div>
     
-    <div class="fl-widget-content portlet-body" role="main">
-    
-        <div class="portlet-section" role="region">
-        
-            <div class="portlet-section-body">
-
-                <div class="portlet-msg-alert" role="alert">
-					<p>Deleting some entities can do very bad things to 
-					your portal.  By default, all delete operations are disabled;  use this feature 
-					with caution.</p>
-				</div>
-				
-                <div class="portlet-note" role="note">
-                    <p>Use this form to delete portal entities through this Portlet.</p>
-                </div>
-                
-                <form method="POST" action="<portlet:actionURL><portlet:param name="action" value="doDelete"/><portlet:param name="view" value="status"/></portlet:actionURL>">
-                    <p>
-						<label class="portlet-form-label" for="entityType">Type:</label>
-						<select id="entityType" name="entityType">
-						    <option>[Select Type]</option>
-						    <c:forEach items="${supportedTypes}" var="type">
-						        <option value="${type}"><c:out value="${type}"/></option>
-						    </c:forEach>
-						</select>
-						
-						<label class="portlet-form-label" for="sysid">Id:</label>
-						<input type="text" id="sysid" name="sysid"/>
-					</p>
-                    
-                    <div class="portlet-button-group">
-                        <input class="portlet-button portlet-button-primary" type="submit" value="Import"/>
-                    </div>
-                </form>
-
+    <!-- Portlet Content -->
+	<div class="fl-widget-content content portlet-content" role="main">   
+		
+        <!-- Messages -->
+        <div class="portlet-msg-error portlet-msg error" role="alert">
+            <div class="titlebar">
+            	<h3 class="title">Warning</h3>
+            </div>
+            <div class="content">
+                <p>Deleting some entities can do very bad things to your portal.  By default, all delete operations are disabled;  use this feature with caution.</p>
             </div>
         </div>
-    </div>
-</div>
+        
+        <!-- Note -->
+        <div class="note" role="note">
+            <p>Select an entity to delete.</p>
+        </div>
+        
+        <div class="portlet-form">
+            <form method="POST" action="<portlet:actionURL><portlet:param name="action" value="doDelete"/><portlet:param name="view" value="status"/></portlet:actionURL>">
+                <table class="purpose-layout">
+                	<tr>
+                        <td class="label">
+                        	<label class="portlet-form-label" for="entityType">Type:</label>
+                        </td>
+                        <td>
+                            <select id="entityType" name="entityType">
+                                <option>[Select Type]</option>
+                                <c:forEach items="${supportedTypes}" var="type">
+                                    <option value="${type}"><c:out value="${type}"/></option>
+                                </c:forEach>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                        	<label class="portlet-form-label" for="sysid">Id:</label>
+                        </td>
+                        <td>
+                        	<input type="text" id="sysid" name="sysid"/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="buttons">
+                    <input class="button primary" type="submit" value="Delete"/>
+                </div>
+            </form>
+        </div>
+    
+    </div> <!-- end: portlet-content -->
+</div> <!-- end:portlet -->

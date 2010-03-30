@@ -25,28 +25,32 @@
 </portlet:actionURL>
         
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
-    <!-- Portlet Section -->
-    <div class="portlet-section" role="region">
-      <div class="portlet-section-body">   
+<div class="fl-widget portlet reset-layout view-result" role="section">
 
-        <!-- Portlet Section -->
-        <div class="portlet-section" role="region"> 
-          <div class="portlet-section-body">
-            <p>Layout for <c:out value="${person.attributes['username']}"/> has been reset.</p>
-          </div>
-        </div> <!-- end: portlet-section -->
-        
-        <form action="${formUrl}" method="POST">
-        <div class="portlet-button-group">
-            <input class="portlet-button portlet-button-primary" type="submit" value="Continue" name="_eventId_continue"/>
-            
-        </div>
-        </form>
-      </div>
+    <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    	<h2 class="title" role="heading">Reset User Layout</h2>
     </div>
-  </div>
-  
-</div>
+    
+    <!-- Portlet Content -->
+	<div class="fl-widget-content content portlet-content" role="main">
+    
+    <!-- Messages --> 
+    <div class="portlet-msg-success portlet-msg success" role="status">
+    	<div class="titlebar">
+            <h3 class="title">Success</h3>
+        </div>
+        <div class="content">
+            <p>Layout for <c:out value="${person.attributes['username']}"/> has been reset.</p>
+        </div>
+    </div>
+    
+    <!-- Buttons -->
+    <form action="${formUrl}" method="POST">
+        <div class="buttons">
+        	<input class="button primary" type="submit" value="Continue" name="_eventId_continue"/>
+        </div>
+    </form>
+    
+    </div> <!-- end: portlet-content -->
+</div> <!-- end:portlet -->

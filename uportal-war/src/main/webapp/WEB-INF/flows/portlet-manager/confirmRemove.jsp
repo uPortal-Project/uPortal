@@ -42,14 +42,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <div class="fl-widget portlet ptl-mgr view-confirmremove" role="section">
 
 	<!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading">
       <spring:message code="confirmRemove.title"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="fl-widget-content content portlet-content" role="main">
 
     <form:form modelAttribute="channel" action="${submitUrl}" method="POST">
 

@@ -47,16 +47,16 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet grp-mgr view-reviewgroup" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><c:out value="${ group.name }"/></h2>
         <p>Created by ${ group.creatorId }</p>
     </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Body -->
-    <div class="fl-widget-content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content" role="main">
     
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
@@ -66,7 +66,7 @@
                     <a href="${ editDetailsUrl }"><span>Edit Name and Description</span></a>
                 </div>
             </div>
-            <div class="portlet-section-body">
+            <div class="content">
                 <p>${ group.description }</p>
                 <c:if test="${ not empty group.key }">
                     <p>
@@ -85,7 +85,7 @@
                     <a href="${ editMembersUrl }"><span>Edit Members</span></a>
                 </div>
             </div>
-            <div class="portlet-section-body">
+            <div class="content">
                 <ul class="group-member">
                     <c:forEach items="${ group.members }" var="child">
                         <li><a href="${ editMembersUrl }">${ child.name }</a></li>

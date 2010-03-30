@@ -117,38 +117,26 @@
  * Tags is a list of tags applied to the portlet/view.
  * Details is a metadata area; not the main content of the view, but supporting information of the title.
  */
-.portlet .portlet-titlebar {position:relative; margin-bottom:1em;}
+.portlet .titlebar {position:relative; margin-bottom:1em;}
+.portlet .titlebar .breadcrumb {margin-bottom:0.5em;}
+.portlet .titlebar > .options {padding:0.5em 0;}
+.portlet .titlebar ul {margin:0; padding:0; overflow:hidden; zoom:1;} 
+.portlet .titlebar li {list-style-type:none; float:left; display:inline; padding:0 5px 0 5px; margin-left:-5px;}
+.portlet .titlebar .actions,
+.portlet .titlebar .return-link {position:absolute; top:0; right:0;}
+.portlet .titlebar .return-link {top:0.3em;}
+.portlet .titlebar  .breadcrumb~.return-link {top:1.8em;}
+.portlet .titlebar .toolbar {padding:0.5em 0;}
+.portlet .titlebar .toolbar ul {margin:0; padding:0; overflow:hidden; zoom:1;}
+.portlet .titlebar .toolbar ul li {list-style-type:none; float:left; display:inline; padding:0 5px; margin-left:-5px;}
+.portlet .titlebar .toolbar .search {text-align:right;}
+.portlet .titlebar .tags {padding-bottom:0.5em;}
+.portlet .titlebar .details .detail,
+.portlet .titlebar .details .label {display:inline;}
+.portlet .titlebar .details .detail~.detail {padding-left:1.5em;}
+.portlet .titlebar .details a {margin:0;}
 .portlet .portlet-titlebar > .title {padding:0 0 0.2em 0; margin:0;}
 .portlet .portlet-titlebar > .subtitle {margin:0 0 2em 0; padding-top:0.4em;}
-.portlet .portlet-titlebar .breadcrumb {margin-bottom:0.5em;}
-.portlet .portlet-titlebar > .options {padding:0.5em 0;}
-.portlet .portlet-titlebar ul {margin:0; padding:0; overflow:hidden; zoom:1;} 
-.portlet .portlet-titlebar li {list-style-type:none; float:left; display:inline; padding:0 5px 0 5px; margin-left:-5px;}
-.portlet .portlet-titlebar .actions,
-.portlet .portlet-titlebar .return-link {position:absolute; top:0; right:0;}
-.portlet .portlet-titlebar .return-link {top:0.3em;}
-.portlet .portlet-titlebar  .breadcrumb~.return-link {top:1.8em;}
-.portlet .portlet-titlebar .tags {padding-bottom:0.5em;}
-.portlet .portlet-titlebar .details .detail,
-.portlet .portlet-titlebar .details .label {display:inline;}
-.portlet .portlet-titlebar .details .detail~.detail {padding-left:1.5em;}
-.portlet .portlet-titlebar .details a {margin:0;}
-
-
-/* Toolbar */
-/* 
- * A collection of commonly used (or view-specific) functions represented in compact visual form.
- * Resides within the Titlebar.
- * Renders an unordered list (ul) inline as a horizontal list of links.
- * Optionally floats right additional utilities (e.g., search form) separate from the ul.
- * Toolbar maps to the WAI-ARIA role "toolbar";
- * "A collection of commonly used functions represented in compact visual form."
- * Refer to: http://www.w3.org/TR/wai-aria/roles#toolbar
- */
-.portlet .portlet-toolbar {padding:0.5em 0;}
-.portlet .portlet-toolbar ul {margin:0; padding:0; overflow:hidden; zoom:1;}
-.portlet .portlet-toolbar ul li {list-style-type:none; float:left; display:inline; padding:0 5px; margin-left:-5px;}
-.portlet .portlet-toolbar .search {text-align:right;}
 
 
 /* Search */
@@ -241,6 +229,8 @@
 .portlet table.purpose-layout,
 .portlet table.purpose-layout th,
 .portlet table.purpose-layout td {padding:0;}
+.portlet table.purpose-layout thead,
+.portlet table.purpose-layout th {display:none;}
 
 
 /* Forms */
@@ -308,35 +298,29 @@
 /*
  * A box showing the items a user has selected.
  */
-.portlet .selection {padding-right:2em;}
+.portlet .portlet-selection {padding-right:2em;}
 .portlet .selection-basket {margin-left:20px; min-height:15em;}
 .portlet .selection-basket ul {margin:1em}
 .portlet .selection-basket li {list-style:none;}
 .portlet .selection-basket a {display:block; padding:0.3em 20px;}
-.portlet .selection .buttons {margin-left:20px;}
+.portlet .portlet-selection .buttons {margin-left:20px;}
 
 
 /* Hierarchy Browser */
 /*
  * A "folder-view" browser of hierarchy.
  */
-.portlet .browse-hierarchy .fl-tab-content {margin-left:20px; padding:0;}
-.portlet .browse-hierarchy h5 {padding-top:0.1em; padding-left:30px;}
-.portlet .browse-hierarchy .titlebar .title {padding:0.5em 1em;}
-.portlet .browse-hierarchy .titlebar .title .fl-text-align-right {padding-top:0.7em;}
-.portlet .browse-hierarchy a.select {padding:0.2em 1em 0.2em 2em;}
-.portlet .browse-hierarchy .breadcrumb span {padding:0.5em 0;}
-.portlet .browse-hierarchy .content {padding:0.5em 1em 1em 1em;}
-.portlet .browse-hierarchy h7 {margin:1em 0 0.3em 0;}
-.portlet .browse-hierarchy ul.group-member,
-.portlet .browse-hierarchy ul.person-member,
-.portlet .browse-hierarchy ul.category-member {margin:0;}
-.portlet .browse-hierarchy .group-member li,
-.portlet .browse-hierarchy .person-member li,
-.portlet .browse-hierarchy .category-member li {list-style:none;}
-.portlet .browse-hierarchy .group-member a,
-.portlet .browse-hierarchy .person-member a,
-.portlet .browse-hierarchy .category-member a {display:block; padding:0.2em 0 0.2em 20px;}
+.portlet .browse-hierarchy > .titlebar .title .fl-text-align-right {padding-top:0.7em;}
+.portlet .browse-hierarchy > .content {margin-left:20px; padding:0;}
+.portlet .browse-hierarchy .entity > .titlebar {padding:0.1em 1em;}
+.portlet .browse-hierarchy .entity > .titlebar .actions {top:auto; bottom:0.5em; right:1em;}
+.portlet .browse-hierarchy .entity > .titlebar .title {padding-top:0.1em; padding-left:30px;}
+.portlet .browse-hierarchy .entity .breadcrumb span {padding:0.5em 0;}
+.portlet .browse-hierarchy .entity > .content {padding:0.5em 1em 1em 1em;}
+.portlet .browse-hierarchy .entity > .content > .titlebar > .title {margin:1em 0 0.3em 0;}
+.portlet .browse-hierarchy .entity ul.member-list {margin:0 0 1em 0;}
+.portlet .browse-hierarchy .entity .member-list li {list-style:none;}
+.portlet .browse-hierarchy .entity .member-list li a {display:block; padding:0.2em 0 0.2em 20px;}
 
 
 

@@ -25,36 +25,32 @@
 </portlet:actionURL>
     
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet loc-sel view-select" role="section">
   
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading">Set Language Preference</h2>
-  </div> <!-- end: portlet-title -->
-  
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
-  
-    <!-- Portlet Section -->
-    <div class="portlet-section" role="region">
-      <div class="portlet-section-body">
-        <form action="${queryUrl}" method="POST">
-			<ul style="margin:0">
-				<c:forEach items="${ locales }" var="locale">
-				    <li style="list-style:none;padding:0.2em 0 0.2em 0">
-					    <input type="radio" name="locale" value="${ locale.code }" ${ locale.code == currentLocale ? "checked" : '' }/>
-					    <img src="/ResourceServingWebapp/rs/famfamfam/flags/${ fn:toLowerCase(locale.locale.country) }.png"/>
-					    ${ locale.displayLanguage }
-				    </li>
-				</c:forEach>
-			</ul>
-            <div class="portlet-button-group">
-		  	   <input class="portlet-button portlet-button-primary" type="submit" value="Update" name="_eventId_updateLocale"/>
-		  	</div>
-		</form>
-      </div>  
+    <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    	<h2 class="title" role="heading">Set Language Preference</h2>
     </div>
     
-  </div>
-
+    <!-- Portlet Content -->
+    <div class="fl-widget-content content portlet-content" role="main">
+    
+    	<div class="portlet-form">
+            <form action="${queryUrl}" method="POST">
+                <ul style="margin:0">
+                    <c:forEach items="${ locales }" var="locale">
+                        <li style="list-style:none;padding:0.2em 0 0.2em 0">
+                        <input type="radio" name="locale" value="${ locale.code }" ${ locale.code == currentLocale ? "checked" : '' }/>
+                        <img src="/ResourceServingWebapp/rs/famfamfam/flags/${ fn:toLowerCase(locale.locale.country) }.png"/>
+                        ${ locale.displayLanguage }
+                    </li>
+                    </c:forEach>
+                </ul>
+                <div class="buttons">
+                    <input class="button primary" type="submit" value="Update" name="_eventId_updateLocale"/>
+                </div>
+            </form>
+    	</div>
+        
+    </div>
 </div>

@@ -42,14 +42,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <div class="fl-widget portlet ptl-mgr view-chooseportlet" role="section">
 
     <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
        <spring:message code="edit-portlet.newPortletHeading"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="fl-widget-content content portlet-content" role="main">
     
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="channel">

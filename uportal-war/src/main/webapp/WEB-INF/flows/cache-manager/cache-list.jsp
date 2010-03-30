@@ -27,34 +27,32 @@
 </portlet:actionURL>
 
 <!-- Portlet -->
-<div class="fl-widget portlet cache-manager" role="section">
+<div class="fl-widget portlet cache-mgr view-list" role="section">
 
-  <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-    <h2 role="heading"><spring:message code="cache-list.title"/></h2>
-  </div> <!-- end: portlet-title -->
-  
-  <!-- Portlet Toolbar -->
-  <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
-    <div class="fl-col">
-        <ul>
-            <li><a href="${flushAllUrl}"><span><spring:message code="cache-list.emptyAllButton" /></span></a></li>
-      </ul>
-    </div>
-  </div> <!-- end: portlet-toolbar -->
-
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+        <h2 class="title" role="heading"><spring:message code="cache-list.title"/></h2>
+        <div class="toolbar" role="toolbar">
+            <ul>
+                <li><a class="button" href="${flushAllUrl}"><span><spring:message code="cache-list.emptyAllButton" /></span></a></li>
+            </ul>
+        </div>
+    </div> <!-- end: portlet-titlebar -->
+    
+  <!-- Portlet Content -->
+  <div class="fl-widget-content content portlet-content" role="main">
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <h3 class="portlet-section-header" role="heading">
-       <spring:message code="cache-list.listHeading"/>
-      </h3>
+    	<div class="titlebar">
+            <h3 class="portlet-section-header" role="heading">
+            	<spring:message code="cache-list.listHeading"/>
+            </h3>
+        </div>
       
-      <div class="portlet-section-body">
-        <p class="portlet-section-note" role="note"><spring:message code="cache-list.listDescription"/></p>
+      <div class="content">
+        <p class="note" role="note"><spring:message code="cache-list.listDescription"/></p>
       
-        <table class="cache-table">
+        <table class="portlet-table cache-table">
             <thead>
                 <tr>
                     <th><spring:message code="cache-list.table-header.name"/></th>
