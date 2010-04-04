@@ -21,7 +21,7 @@
   <parameters>
     <parameter> 
       <name>portletApplicationId</name>  
-      <value>/jasig-widget-portlets</value>  
+      <value>jasig-widget-portlets</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

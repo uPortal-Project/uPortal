@@ -468,11 +468,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.portals.pluto</groupId>
-                <artifactId>pluto-portal-driver-impl</artifactId>
-                <version>${pluto.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>pluto-container-driver-api</artifactId>
                 <version>${pluto.version}</version>
             </dependency>

@@ -45,7 +45,6 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.util.WebUtils;
@@ -385,18 +384,15 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     protected IPortletWindow createPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, IPortletWindowId delegateParent) {
         //Get the parent definition to determine the descriptor data
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
-        final Tuple<String, String> portletDescriptorKeys = this.portletDefinitionRegistry.getPortletDescriptorKeys(portletDefinition);
+        final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
 
-        final String portletApplicationId = portletDescriptorKeys.first;
-        final String portletName = portletDescriptorKeys.second;
-
-        final PortletDefinition portletDef = null;
+        
         final PortletWindowImpl portletWindow;
         if (delegateParent == null) {
-            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName, portletDef);
+            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletDescriptor);
         }
         else {
-            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName, delegateParent, portletDef);
+            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletDescriptor, delegateParent);
         }
         
         this.initializePortletWindow(request, portletEntityId, portletWindow);

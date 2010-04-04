@@ -26,8 +26,10 @@ import javax.servlet.http.HttpSession;
 
 import junit.framework.TestCase;
 
+import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.easymock.EasyMock;
 import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -52,7 +54,9 @@ public class TransientPortletWindowRegistryImplTest extends TestCase {
         final IPortletEntityRegistry portletEntityRegistry = EasyMock.createMock(IPortletEntityRegistry.class);
         final IPortletDefinitionRegistry portletDefinitionRegistry = EasyMock.createMock(IPortletDefinitionRegistry.class);
         final IPortletDefinition portletDefinition = EasyMock.createMock(IPortletDefinition.class);
+        final IPortletDefinitionId portletDefinitionId = EasyMock.createMock(IPortletDefinitionId.class);
         final IPortletEntity portletEntity = EasyMock.createMock(IPortletEntity.class);
+        final PortletDefinition portletDescriptor = EasyMock.createMock(PortletDefinition.class);
         
         final ConcurrentHashMap<Object, Object> transientPortletWindowMap = new ConcurrentHashMap<Object, Object>();
         
@@ -68,13 +72,14 @@ public class TransientPortletWindowRegistryImplTest extends TestCase {
         EasyMock.expect(request.getAttribute(TransientPortletWindowRegistryImpl.TRANSIENT_PORTLET_WINDOW_MAP_ATTRIBUTE)).andReturn(transientPortletWindowMap).times(2);
         EasyMock.expect(portletEntityId.getStringId()).andReturn("peid1").times(2);
         EasyMock.expect(portletEntityRegistry.getParentPortletDefinition(portletEntityId)).andReturn(portletDefinition);
-        EasyMock.expect(portletDefinitionRegistry.getPortletDescriptorKeys(portletDefinition)).andReturn(new Tuple<String, String>("pdk1.k", "pdk1.v"));
+        EasyMock.expect(portletDefinition.getPortletDefinitionId()).andReturn(portletDefinitionId);
+        EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDescriptor);
         EasyMock.expect(portletEntityRegistry.getPortletEntity("peid1")).andReturn(portletEntity);                
         EasyMock.expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
                 
         
         EasyMock.replay(request, session, sourcePortletWindowId, sourcePortletWindow, portletEntityId, 
-                portletEntityRegistry, portletDefinitionRegistry, portletDefinition, portletEntity);
+                portletEntityRegistry, portletDefinitionRegistry, portletDefinition, portletDefinitionId, portletDescriptor, portletEntity);
         
         
         transientPortletWindowRegistry.setPortletEntityRegistry(portletEntityRegistry);
@@ -95,6 +100,6 @@ public class TransientPortletWindowRegistryImplTest extends TestCase {
         assertEquals("peid1", portletWindow2.getPortletEntityId().getStringId());
 
         EasyMock.verify(request, session, sourcePortletWindowId, sourcePortletWindow, portletEntityId, 
-                portletEntityRegistry, portletDefinitionRegistry, portletDefinition, portletEntity);
+                portletEntityRegistry, portletDefinitionRegistry, portletDefinition, portletDefinitionId, portletDescriptor, portletEntity);
     }
 }

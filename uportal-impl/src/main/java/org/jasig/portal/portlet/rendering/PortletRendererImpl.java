@@ -66,6 +66,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -315,7 +316,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             
             securityRoleRefs = portletDescriptor.getSecurityRoleRefs();
         }
-        catch (PortletContainerException pce) {
+        catch (DataRetrievalFailureException pce) {
             throw new InconsistentPortletModelException("Could not retrieve PortletDD for portlet window '" + portletWindowId + "' to provide the required SecurityRoleRefDD List to the PortletHttpRequestWrapper.", portletWindowId, pce);
         }
         

@@ -80,6 +80,7 @@ public class FilterManagerImpl implements FilterManager {
 	public void processFilter(ActionRequest req, ActionResponse res,
 			Portlet portlet, PortletContext portletContext)
 	throws PortletException, IOException {
+	    filterChain.setPortlet(portlet);
 		filterChain.doFilter(req, res);
 	}
 
@@ -90,6 +91,7 @@ public class FilterManagerImpl implements FilterManager {
 	public void processFilter(RenderRequest req, RenderResponse res,
 			Portlet portlet, PortletContext portletContext)
 	throws PortletException, IOException {
+        filterChain.setPortlet(portlet);
 		filterChain.doFilter(req, res);
 	}
 

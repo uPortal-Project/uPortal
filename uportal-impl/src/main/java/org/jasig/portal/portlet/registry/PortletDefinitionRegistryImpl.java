@@ -160,7 +160,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletApplicationDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
-    public PortletApplicationDefinition getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException {
+    public PortletApplicationDefinition getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) {
         final IPortletDefinition portletDefinition = this.getPortletDefinition(portletDefinitionId);
         if (portletDefinition == null) {
             return null;
@@ -169,13 +169,18 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(portletDefinition);
         
         final PortletRegistryService portletRegistryService = this.portalDriverContainerServices.getPortletRegistryService();
-        return portletRegistryService.getPortletApplication(portletDescriptorKeys.first);
+        try {
+            return portletRegistryService.getPortletApplication(portletDescriptorKeys.first);
+        }
+        catch (PortletContainerException e) {
+            throw new DataRetrievalFailureException("No portlet application descriptor could be found for the portlet definition: " + portletDefinition, e);
+        }
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
-    public PortletDefinition getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException {
+    public PortletDefinition getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) {
         final IPortletDefinition portletDefinition = this.getPortletDefinition(portletDefinitionId);
         if (portletDefinition == null) {
             return null;
@@ -184,7 +189,12 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(portletDefinition);
         
         final PortletRegistryService portletRegistryService = this.portalDriverContainerServices.getPortletRegistryService();
-        return portletRegistryService.getPortlet(portletDescriptorKeys.first, portletDescriptorKeys.second);
+        try {
+            return portletRegistryService.getPortlet(portletDescriptorKeys.first, portletDescriptorKeys.second);
+        }
+        catch (PortletContainerException e) {
+            throw new DataRetrievalFailureException("No portlet descriptor could be found for the portlet definition: " + portletDefinition, e);
+        }
     }
     
     /**

@@ -19,11 +19,14 @@
 
 package org.jasig.portal.portlet.url;
 
+import org.apache.pluto.container.PortletURLProvider.TYPE;
+
 /**
- * Defines types of requests to Porlets
+ * Defines types of requests to Portlets
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @deprecated replace with {@link TYPE}
  */
 public enum RequestType {
     /**

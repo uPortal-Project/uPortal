@@ -21,10 +21,11 @@ package org.jasig.portal.portlet.container;
 
 import javax.servlet.ServletContext;
 
-import org.apache.pluto.container.ContainerServices;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.driver.OptionalContainerServices;
+import org.apache.pluto.container.driver.PlutoServices;
 import org.apache.pluto.container.driver.PortalDriverContainerServices;
+import org.apache.pluto.container.driver.PortalDriverServices;
 import org.apache.pluto.container.driver.RequiredContainerServices;
 import org.apache.pluto.container.impl.PortletContainerImpl;
 import org.jasig.portal.portlet.container.services.LocalPortalDriverServicesImpl;
@@ -97,8 +98,9 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean<PortletCont
     @Override
     protected PortletContainer createInstance() throws Exception {
         final String containerName = this.getContainerName();
-        final ContainerServices containerServices = new LocalPortalDriverServicesImpl(this.requiredContainerServices, this.optionalContainerServices, this.driverContainerServices);
-        final PortletContainer portletContainer = new PortletContainerImpl(containerName, containerServices);
+        final PortalDriverServices containerServices = new LocalPortalDriverServicesImpl(this.requiredContainerServices, this.optionalContainerServices, this.driverContainerServices);
+        final PlutoServices plutoServices = new PlutoServices(containerServices);
+        final PortletContainer portletContainer = new PortletContainerImpl(containerName, plutoServices);
         
         portletContainer.init();
         

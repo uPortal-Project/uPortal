@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -35,6 +34,7 @@ import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -172,8 +172,8 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
         try {
             return this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
         }
-        catch (PortletContainerException pce) {
-            throw new PortalException("Failed to retrieve the PortletDD for portlet window: " + portletWindow, pce);
+        catch (DataRetrievalFailureException e) {
+            throw new PortalException("Failed to retrieve the PortletDD for portlet window: " + portletWindow, e);
         }
     }
 }

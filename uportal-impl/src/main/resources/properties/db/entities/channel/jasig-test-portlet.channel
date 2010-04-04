@@ -21,7 +21,7 @@
   <parameters>
     <parameter> 
       <name>portletApplicationId</name>  
-      <value>/FunctionalTestsPortlet</value>  
+      <value>FunctionalTestsPortlet</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

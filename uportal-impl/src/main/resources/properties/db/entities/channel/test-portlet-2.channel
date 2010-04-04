@@ -21,7 +21,7 @@
   <parameters>
     <parameter> 
       <name>portletApplicationId</name>  
-      <value>/pluto-testsuite</value>  
+      <value>pluto-testsuite</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

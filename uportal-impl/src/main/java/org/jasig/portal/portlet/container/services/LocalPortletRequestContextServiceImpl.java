@@ -15,12 +15,17 @@ import org.apache.pluto.container.PortletRequestContextService;
 import org.apache.pluto.container.PortletResourceRequestContext;
 import org.apache.pluto.container.PortletResourceResponseContext;
 import org.apache.pluto.container.PortletWindow;
-import org.apache.pluto.driver.services.container.PortletActionResponseContextImpl;
-import org.apache.pluto.driver.services.container.PortletEventResponseContextImpl;
-import org.apache.pluto.driver.services.container.PortletRenderResponseContextImpl;
-import org.apache.pluto.driver.services.container.PortletRequestContextImpl;
-import org.apache.pluto.driver.services.container.PortletResourceRequestContextImpl;
-import org.apache.pluto.driver.services.container.PortletResourceResponseContextImpl;
+import org.jasig.portal.portlet.container.PortletActionResponseContextImpl;
+import org.jasig.portal.portlet.container.PortletEventResponseContextImpl;
+import org.jasig.portal.portlet.container.PortletRenderResponseContextImpl;
+import org.jasig.portal.portlet.container.PortletRequestContextImpl;
+import org.jasig.portal.portlet.container.PortletResourceRequestContextImpl;
+import org.jasig.portal.portlet.container.PortletResourceResponseContextImpl;
+import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
+import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.url.IPortletUrlCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,19 +33,36 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service("portletRequestContextService")
-public class LocalPortletRequestContextServiceImpl implements
-PortletRequestContextService {
-	
+public class LocalPortletRequestContextServiceImpl implements PortletRequestContextService {
+    private IPortletWindowRegistry portletWindowRegistry;
+    private IRequestPropertiesManager requestPropertiesManager;
+    private IPortletUrlCreator portletUrlCreator;
 
-	/* (non-Javadoc)
+    @Autowired
+	public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        this.portletWindowRegistry = portletWindowRegistry;
+    }
+
+    @Autowired
+    public void setRequestPropertiesManager(IRequestPropertiesManager requestPropertiesManager) {
+        this.requestPropertiesManager = requestPropertiesManager;
+    }
+
+    @Autowired
+    public void setPortletUrlCreator(IPortletUrlCreator portletUrlCreator) {
+        this.portletUrlCreator = portletUrlCreator;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.apache.pluto.container.PortletRequestContextService#getPortletActionRequestContext(org.apache.pluto.container.PortletContainer, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apache.pluto.container.PortletWindow)
 	 */
 	@Override
 	public PortletRequestContext getPortletActionRequestContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		PortletRequestContextImpl result = new PortletRequestContextImpl(container, containerRequest, containerResponse, window, true);
-		return result;
+	    
+	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
+	    return new PortletRequestContextImpl(container, portletWindow, containerRequest, containerResponse, this.requestPropertiesManager);
 	}
 
 	/* (non-Javadoc)
@@ -50,8 +72,9 @@ PortletRequestContextService {
 	public PortletActionResponseContext getPortletActionResponseContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		PortletActionResponseContextImpl result = new PortletActionResponseContextImpl(container, containerRequest, containerResponse, window);
-		return result;
+	    
+	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
+        return new PortletActionResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, this.portletUrlCreator);
 	}
 
 	/* (non-Javadoc)
@@ -61,8 +84,9 @@ PortletRequestContextService {
 	public PortletRequestContext getPortletEventRequestContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		PortletRequestContextImpl result = new PortletRequestContextImpl(container, containerRequest, containerResponse, window, false);
-		return result;
+	    
+        final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
+        return new PortletRequestContextImpl(container, portletWindow, containerRequest, containerResponse, this.requestPropertiesManager);
 	}
 
 	/* (non-Javadoc)
@@ -73,8 +97,8 @@ PortletRequestContextService {
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
 		
-		PortletEventResponseContextImpl result = new PortletEventResponseContextImpl(container, containerRequest, containerResponse, window);
-		return result;
+	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
+        return new PortletEventResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portletUrlCreator);
 	}
 
 	/* (non-Javadoc)
@@ -84,8 +108,9 @@ PortletRequestContextService {
 	public PortletRequestContext getPortletRenderRequestContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		PortletRequestContextImpl result = new PortletRequestContextImpl(container, containerRequest, containerResponse, window, false);
-		return result;
+
+	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
+        return new PortletRequestContextImpl(container, portletWindow, containerRequest, containerResponse, this.requestPropertiesManager);
 	}
 
 	/* (non-Javadoc)
@@ -95,8 +120,9 @@ PortletRequestContextService {
 	public PortletRenderResponseContext getPortletRenderResponseContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		PortletRenderResponseContextImpl result = new PortletRenderResponseContextImpl(container, containerRequest, containerResponse, window);
-		return result;
+	    
+	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
+	    return new PortletRenderResponseContextImpl(container, portletWindow, containerRequest, containerResponse, this.requestPropertiesManager, this.portletUrlCreator);
 	}
 
 	/* (non-Javadoc)
@@ -106,8 +132,8 @@ PortletRequestContextService {
 	public PortletResourceRequestContext getPortletResourceRequestContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		PortletResourceRequestContextImpl result = new PortletResourceRequestContextImpl(container, containerRequest, containerResponse, window);
-		return result;
+	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
+        return new PortletResourceRequestContextImpl(container, portletWindow, containerRequest, containerResponse, this.requestPropertiesManager);
 	}
 
 	/* (non-Javadoc)
@@ -118,10 +144,8 @@ PortletRequestContextService {
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
 
-		PortletResourceResponseContextImpl result = new PortletResourceResponseContextImpl(container, containerRequest, containerResponse, window);
-		return result;
+	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
+        
+		return new PortletResourceResponseContextImpl(container, portletWindow, containerRequest, containerResponse, this.requestPropertiesManager, this.portletUrlCreator);
 	}
-
-
-
 }
