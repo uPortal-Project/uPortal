@@ -68,11 +68,15 @@ public interface IPermission {
   */
   public String PERMISSION_TYPE_GRANT = "GRANT";
   public String PERMISSION_TYPE_DENY = "DENY";
+
   /*
     A String representing the uPortal framework, used, for example, for
     Permission.owner when the framework grants a Permission.
   */
-  public String PORTAL_FRAMEWORK = "UP_FRAMEWORK";
+  public String PORTAL_PUBLISH = "UP_PORTLET_PUBLISH";
+  
+  public String PORTAL_SUBSCRIBE = "UP_PORTLET_SUBSCRIBE";
+
   /*
     A String which, when concatentated with a channel id, represents a portal
     channel.  Used, for example, for Permission.target when the portal framework
