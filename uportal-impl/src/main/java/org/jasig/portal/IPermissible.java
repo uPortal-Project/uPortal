@@ -19,6 +19,8 @@
 
 package org.jasig.portal;
 
+import java.util.Set;
+
 /**
  *
  *  This interface represents the set of questions any channel or service ("Owner") must answer
@@ -33,28 +35,11 @@ package org.jasig.portal;
  */
 public interface IPermissible {
 
-    /** Return a list of tokens representing all the activities this channel controls with permissions.
-     * These tokens can be used by the channel to ascertain permissions at runtime after they have
-     * been entered with the Permissions manager
-     */    
-    public String[] getActivityTokens();
-    /** For a given activity token, return a human-readable string that describes the activity.
-     * Used in rendering the Permissions Manager GUI.
-     */    
-    public String getActivityName(String token);
-    /** Return an array of tokens representing all targets this channel controls with permissions.
-     */    
-    public String[] getTargetTokens();
+    public Set<String> getTargetTokens();
+    
     /** Return the human readable name of a target
      */    
     public String getTargetName(String token);
-    /** Return the token used by this channel to represent itself as the owner of generated permissions.
-     * Can be arbitrary, but must be unique - I've been using classnames.  This is also used by the channel
-     * to request a PermissionManager from the AuthorizationService at runtime.
-     */    
-    public String getOwnerToken();
-    /** Human-readable name of the owner - normally the Channel name.
-     */    
-    public String getOwnerName();
+
 }
 

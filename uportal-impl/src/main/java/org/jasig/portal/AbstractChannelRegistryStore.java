@@ -100,7 +100,7 @@ public abstract class AbstractChannelRegistryStore implements IChannelRegistrySt
      */
     public void deleteChannelCategory(ChannelCategory category) throws GroupsException {
         String key = String.valueOf(category.getId());
-        ILockableEntityGroup categoryGroup = GroupService.findLockableGroup(key,"UP_FRAMEWORK");
+        ILockableEntityGroup categoryGroup = GroupService.findLockableGroup(key,"UP_PORTLET_PUBLISH");
         categoryGroup.delete();
     }
 

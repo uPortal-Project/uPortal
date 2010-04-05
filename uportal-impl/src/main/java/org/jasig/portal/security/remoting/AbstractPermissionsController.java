@@ -42,7 +42,7 @@ public abstract class AbstractPermissionsController {
      * Specifying the fName of a channel here pretty much violates the DRY 
      * principal;  perhaps we can think of a better way in the future.
      */
-    private static final String PERMISSIONS_ADMIN_PORTLET_FNAME = "permissions-admin";
+    private static final String PERMISSIONS_ADMIN_PORTLET_FNAME = "permissionsmanager";
     private static final ModelAndView NOT_AUTHORIZED_RESPONSE = new ModelAndView("jsonView", "ERROR", "Not Authorized");
     
     private IChannelRegistryStore channelRegistryStore;

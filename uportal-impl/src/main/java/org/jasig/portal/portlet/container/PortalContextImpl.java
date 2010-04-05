@@ -98,7 +98,7 @@ public class PortalContextImpl implements PortalContext {
     public String getPortalInfo() {
         //TODO Refactor this to use an injected utility to retrieve the version once VersionsManager is reviewed
         final VersionsManager versionManager = VersionsManager.getInstance();
-        final Version version = versionManager.getVersion(IPermission.PORTAL_FRAMEWORK);
+        final Version version = versionManager.getVersion(IPermission.PORTAL_PUBLISH);
         return "uPortal/" + version.dottedTriple();
     }
 

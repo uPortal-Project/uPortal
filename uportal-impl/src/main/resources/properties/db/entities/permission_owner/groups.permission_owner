@@ -1,0 +1,26 @@
+
+<permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
+  <name>uPortal Groups</name>
+  <fname>UP_GROUPS</fname>
+  <desc>Permissions controlling uPortal group and category viewing and management</desc>
+  <activities>
+    <activity>
+        <name>Add and remove groups</name>
+        <fname>ADD/REMOVE</fname>
+        <desc>Create and delete uPortal groups</desc>
+	  	<targetProvider>allGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Select a group</name>
+        <fname>SELECT</fname>
+        <desc></desc>
+	  	<targetProvider>allGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>View a group</name>
+        <fname>VIEW_GROUP</fname>
+        <desc>View detailed information about a uPortal group and its membership</desc>
+	  	<targetProvider>allGroupsTargetProvider</targetProvider>
+    </activity>
+  </activities>
+</permission-owner>

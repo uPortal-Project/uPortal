@@ -1,0 +1,72 @@
+<!--
+    
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+    
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+    
+-->
+
+<with>
+    <attribute key="permissionOwnerDao">${groovy(PORTAL_CONTEXT.getBean('permissionOwnerDao'))}</attribute>
+
+    <attribute key="OWNER_NAME">${valueOf(name)}</attribute>
+    <attribute key="OWNER_FNAME">${valueOf(fname)}</attribute>
+    <attribute key="OWNER_DESC">${valueOf(desc)}</attribute>
+
+    <!-- Create a new activities list for this permission owner -->
+    <attribute key="ACTIVITIES">${groovy(new HashSet())}</attribute>
+
+    <subtasks>
+        <node-iterator xpath="activities/activity">
+            <with>
+                <attribute key="ACTIVITY_NAME">${valueOf(name)}</attribute>
+                <attribute key="ACTIVITY_FNAME">${valueOf(fname)}</attribute>
+                <attribute key="ACTIVITY_DESC">${valueOf(desc)}</attribute>
+			    <attribute key="ACTIVITY_TARGET_PROVIDER">${valueOf(targetProvider)}</attribute>
+                <subtasks>
+                    <groovy>
+                        <script>
+                            act = new org.jasig.portal.permission.dao.jpa.PermissionActivityImpl();
+                            act.setName(ACTIVITY_NAME);
+                            act.setFname(ACTIVITY_FNAME);
+                            act.setDescription(ACTIVITY_DESC);
+                            act.setTargetProviderKey(ACTIVITY_TARGET_PROVIDER);
+                            ACTIVITIES.add(act);
+                        </script>
+                    </groovy>
+                </subtasks>
+            </with>
+        </node-iterator>
+        <sql-transaction>
+            <groovy>
+                <!-- 
+                    | We want to be sure that the specified Java class (i.e. ${valueOf(type)}) is 
+                    | present in the classpath.  This implementation will yield a simple stack 
+                    | trace if the test fails. 
+                    +-->
+                <script>
+                    owner = permissionOwnerDao.getOrCreatePermissionOwner(OWNER_FNAME);
+                    owner.setName(OWNER_NAME);
+                    owner.setFname(OWNER_FNAME);
+                    owner.setDescription(OWNER_DESC);
+                    owner.setActivities(ACTIVITIES);
+                    
+                    permissionOwnerDao.saveOwner(owner);
+                </script>
+            </groovy>
+        </sql-transaction>
+    </subtasks>
+</with>

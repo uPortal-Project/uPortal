@@ -391,6 +391,28 @@
                             </file-iterator>
                         </thread-pool>
         
+                        <!-- permissions -->
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.permission_owner">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Permission Owner:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                    <crn location="${valueOf(@script)}"/>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Permission Owner from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <throw/>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
+                        
                         <!-- permission_sets -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
                             <file-iterator dir="${$1}" includes="**/*.permission_set">

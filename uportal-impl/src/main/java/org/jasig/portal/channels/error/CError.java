@@ -481,7 +481,7 @@ public final class CError extends BaseChannel implements IPrivilegedChannel, ICa
             final EntityIdentifier ei = person.getEntityIdentifier();
             final IAuthorizationPrincipal ap = authService.newPrincipal(ei.getKey(), ei.getType());
             
-            if (ap.hasPermission(SupportedPermissions.OWNER, SupportedPermissions.VIEW_ACTIVITY, SupportedPermissions.DETAILS_TARGET)) {
+            if (ap.hasPermission("UP_ERROR_CHAN", "VIEW", "DETAILS")) {
                 this.ssTitle = "detailed";
             }
         }

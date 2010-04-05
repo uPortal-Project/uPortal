@@ -394,7 +394,7 @@ public class CGenericXSLT
             runtimeData.setParameter(paramName, version.dottedTriple());
         }
 
-        Version uPortalVersion = versionsManager.getVersion(IPermission.PORTAL_FRAMEWORK);
+        Version uPortalVersion = versionsManager.getVersion(IPermission.PORTAL_PUBLISH);
 
         // The "uP_productAndVersion" parameter is deprecated
         // instead use the "version-UP_FRAMEWORK" and other version parameters

@@ -98,41 +98,6 @@
     </rows> 
   </table>
   <table> 
-    <name>UPC_PERM_MGR</name>  
-    <rows> 
-      <row> 
-        <column>
-          <name>IPERMISSIBLE_CLASS</name>
-          <value>org.jasig.portal.channels.permissionsmanager.PermissiblePublishChannels</value>
-        </column> 
-      </row>  
-      <row> 
-        <column>
-          <name>IPERMISSIBLE_CLASS</name>
-          <value>org.jasig.portal.channels.permissionsmanager.PermissibleSubscribeChannels</value>
-        </column> 
-      </row>  
-      <row> 
-        <column>
-          <name>IPERMISSIBLE_CLASS</name>
-          <value>org.jasig.portal.channels.groupsmanager.CGroupsManager</value>
-        </column> 
-      </row>  
-      <row> 
-        <column>
-          <name>IPERMISSIBLE_CLASS</name>
-          <value>org.jasig.portal.channels.error.SupportedPermissions</value>
-        </column> 
-      </row>  
-      <row> 
-        <column>
-          <name>IPERMISSIBLE_CLASS</name>
-          <value>org.jasig.portal.channels.cusermanager.CUserManager</value>
-        </column> 
-      </row> 
-    </rows> 
-  </table>
-  <table> 
     <name>UP_PERSON_DIR</name>  
     <rows> 
       <row> 

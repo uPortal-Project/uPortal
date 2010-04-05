@@ -107,7 +107,6 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
 {
     private static final Log log = LogFactory.getLog(ChannelPublisher.class);
 
-    private static final String FRAMEWORK_OWNER = IPermission.PORTAL_FRAMEWORK;
     private static final String SUBSCRIBER_ACTIVITY =
         IPermission.CHANNEL_SUBSCRIBER_ACTIVITY;
     private static final String GRANT_PERMISSION_TYPE =

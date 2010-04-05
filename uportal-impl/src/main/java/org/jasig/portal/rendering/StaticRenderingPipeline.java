@@ -648,8 +648,9 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     // instead use the more generic "version-UP_VERSION" generated from the
                     // framework's functional name when all versions are pulled immediately
                     // above.
-                    Version uPortalVersion = versionsManager.getVersion(IPermission.PORTAL_FRAMEWORK);
-                    tst.setParameter("uP_productAndVersion", "uPortal " + uPortalVersion.dottedTriple());
+                    // TODO: handle version display in a 3.3-compliant way
+//                    Version uPortalVersion = versionsManager.getVersion(IPermission.PORTAL_PUBLISH);
+//                    tst.setParameter("uP_productAndVersion", "uPortal " + uPortalVersion.dottedTriple());
 
                     final Locale[] locales = localeManager.getLocales();
                     if (locales != null && locales.length > 0 && locales[0] != null) {

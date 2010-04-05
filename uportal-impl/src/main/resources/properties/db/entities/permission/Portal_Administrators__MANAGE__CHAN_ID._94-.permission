@@ -1,6 +1,6 @@
 
 <permission script="classpath://org/jasig/portal/io/import-permission_v2-6.crn">
-  <owner>UP_FRAMEWORK</owner>
+  <owner>UP_PORTLET_PUBLISH</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
     <group>Portal Administrators</group> 

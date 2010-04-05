@@ -19,8 +19,6 @@
 
 package org.jasig.portal.channel;
 
-import java.util.Date;
-
 import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
@@ -31,7 +29,7 @@ import org.jasig.portal.security.IPerson;
 @Deprecated
 public interface IChannelPublishingService {
 
-	public static final String FRAMEWORK_OWNER = "UP_FRAMEWORK";
+	public static final String FRAMEWORK_OWNER = "UP_PORTLET_SUBSCRIBE";
 	public static final String SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
 	public static final String GRANT_PERMISSION_TYPE = "GRANT";
 

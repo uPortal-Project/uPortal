@@ -31,6 +31,8 @@
     
     <bean id="channelDefinitionDao" class="org.jasig.portal.channel.dao.jpa.JpaChannelDefinitionDao"/>
     <bean id="channelTypeDao" class="org.jasig.portal.channel.dao.jpa.JpaChannelTypeDao"/> 
+    <bean id="permissionOwnerDao" class="org.jasig.portal.permission.dao.jpa.JpaPermissionOwnerDao"/> 
+
     <bean id="counterStore" class="org.jasig.portal.utils.PooledCounterStore">
         <property name="dataSource" ref="PortalDb" />
         <property name="transactionManager" ref="transactionManager" />

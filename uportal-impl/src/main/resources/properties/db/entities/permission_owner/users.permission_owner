@@ -1,0 +1,14 @@
+
+<permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
+  <name>uPortal Users</name>
+  <fname>UP_USERS</fname>
+  <desc>Permissions controlling uPortal user account management</desc>
+  <activities>
+    <activity>
+        <name>Impersonate users</name>
+        <fname>IMPERSONATE</fname>
+        <desc>Impersonate users for debugging purposes in uPortal</desc>
+        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
+    </activity>
+  </activities>
+</permission-owner>

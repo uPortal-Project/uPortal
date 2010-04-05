@@ -207,9 +207,11 @@ public void init() throws ServletException {
      */
     protected void doGetInternal(IWritableHttpServletRequest writableRequest, HttpServletResponse res) {
         // Send the uPortal version in a header
-        final VersionsManager versionManager = VersionsManager.getInstance();
-        final Version version = versionManager.getVersion(IPermission.PORTAL_FRAMEWORK);
-        res.setHeader("uPortal-version", "uPortal_rel-" + version.getMajor() + "-" + version.getMinor() + "-" + version.getMicro());
+
+        // TODO: Implement version display in a 3.3-compliant way
+//        final VersionsManager versionManager = VersionsManager.getInstance();
+//        final Version version = versionManager.getVersion(IPermission.PORTAL_SUBSCRIBE);
+//        res.setHeader("uPortal-version", "uPortal_rel-" + version.getMajor() + "-" + version.getMinor() + "-" + version.getMicro());
 
         //Check if the servlet failed to initialize
         if (fatalError) {

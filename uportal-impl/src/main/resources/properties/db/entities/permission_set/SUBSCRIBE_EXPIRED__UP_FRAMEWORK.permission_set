@@ -1,6 +1,6 @@
 
 <permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
-  <owner>UP_FRAMEWORK</owner>
+  <owner>UP_PORTLET_SUBSCRIBE</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
     <group>Portal System</group> 

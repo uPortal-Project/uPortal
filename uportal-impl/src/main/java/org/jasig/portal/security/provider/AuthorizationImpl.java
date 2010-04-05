@@ -175,7 +175,7 @@ protected void cacheUpdate(IPermissionSet ps) throws AuthorizationException
 
 @Override
 public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, int channelPublishId) throws AuthorizationException {
-    String owner = IPermission.PORTAL_FRAMEWORK;
+    String owner = IPermission.PORTAL_PUBLISH;
     String target = IPermission.CHANNEL_PREFIX + channelPublishId;
     
     // retrieve the indicated channel from the channel registry store and 
@@ -199,7 +199,7 @@ public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, int chan
 public boolean canPrincipalManage(IAuthorizationPrincipal principal, int channelPublishId)
 throws AuthorizationException
 {
-    String owner = IPermission.PORTAL_FRAMEWORK;
+    String owner = IPermission.PORTAL_PUBLISH;
     String target = IPermission.CHANNEL_PREFIX + channelPublishId;
     
     // retrieve the indicated channel from the channel registry store and 
@@ -273,7 +273,7 @@ public boolean canPrincipalManage(IAuthorizationPrincipal principal, ChannelLife
 {
 //    return doesPrincipalHavePermission
 //      (principal, IPermission.PORTAL_FRAMEWORK, IPermission.CHANNEL_PUBLISHER_ACTIVITY, null);
-    String owner = IPermission.PORTAL_FRAMEWORK;
+    String owner = IPermission.PORTAL_PUBLISH;
     
     // retrieve the indicated channel from the channel registry store and 
     // determine its current lifecycle state
@@ -349,7 +349,7 @@ throws AuthorizationException
  */
 public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelPublishId)
 {
-    String owner = IPermission.PORTAL_FRAMEWORK;
+    String owner = IPermission.PORTAL_SUBSCRIBE;
     String target = IPermission.CHANNEL_PREFIX + channelPublishId;
     
     // retrieve the indicated channel from the channel registry store and 
