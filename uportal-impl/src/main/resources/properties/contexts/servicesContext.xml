@@ -21,12 +21,73 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
     
     <bean id="carResources" class="org.jasig.portal.car.CarResources" />
 
     <bean id="externalServices" class="org.jasig.portal.services.ExternalServices">
         <property name="carResources" ref="carResources" />
         <property name="jndiManager" ref="jndiManager" />
+    </bean>   
+
+    <bean id="permissionTargetProviderRegistry" class="org.jasig.portal.permission.target.PermissionTargetProviderRegistryImpl">
+        <property name="providers">
+            <map>
+                <entry key="allEntitiesTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
+                        <constructor-arg>
+                            <util:set>
+                                <value>group</value>
+                                <value>person</value>
+                                <value>category</value>
+                                <value>channel</value>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="allGroupsTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
+                        <constructor-arg>
+                            <util:set>
+                                <value>group</value>
+                                <value>category</value>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="personAndGroupsTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
+                        <constructor-arg>
+                            <util:set>
+                                <value>group</value>
+                                <value>person</value>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="channelsAndCategoriesTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
+                        <constructor-arg>
+                            <util:set>
+                                <value>category</value>
+                                <value>channel</value>
+                            </util:set>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="errorChannelTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">
+                        <property name="targets">
+                            <util:list>
+                                <bean class="org.jasig.portal.permission.target.PermissionTargetImpl" p:key="DETAILS" p:name="Stack Trace"/>
+                            </util:list>
+                        </property>
+                    </bean>
+                </entry>
+            </map>
+        </property>
     </bean>    
+     
 </beans>
