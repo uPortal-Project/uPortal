@@ -222,11 +222,13 @@
     <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
         <echo message="Importing data" />
         <antcall target="crn-import">
-            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/base_entities" />
+            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/base_entities/" />
             <param name="noprompt" value="true" />
         </antcall>
+        <!-- Use build.properties to override the entities.location setting -->
+        <property name="entities.location" value="uportal-impl/src/main/resources/properties/db/entities/" />
         <antcall target="crn-import">
-            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/entities" />
+            <param name="dir" value="${basedir}/${entities.location}" />
             <param name="noprompt" value="true" />
         </antcall>
     </target>
@@ -1053,9 +1055,9 @@
         <property name="offline" value="-Djasig.ignore" />
         
         <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
-        	<arg value="-s${maven.settings}" />
-        	<arg value="${test.skip}" />
-			<arg value="${offline}" />
+            <arg value="-s${maven.settings}" />
+            <arg value="${test.skip}" />
+            <arg value="${offline}" />
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />
