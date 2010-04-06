@@ -24,6 +24,12 @@ server.webapps=${server.base}/webapps
 # If the mvn executable isn't on your path you can set the location here or set it on your path.
 #maven.home=
 
+######## uPortal Data ######## 
+
+# Use entities.location to override the location of data imported by the initdb 
+# and/or db-import targets;  required data is imported before entities specified here
+#entities.location=uportal-impl/src/main/data/default_entities
+
 
 ######## Deployment Configuration ##########
 # The following apply to deployPortletApp, deploy-war, and deploy-ear targets

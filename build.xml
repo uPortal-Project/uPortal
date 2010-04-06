@@ -222,11 +222,13 @@
     <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
         <echo message="Importing data" />
         <antcall target="crn-import">
-            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/base_entities" />
+            <param name="dir" value="${basedir}/uportal-impl/src/main/data/required_entities" />
             <param name="noprompt" value="true" />
         </antcall>
+    	<!-- Use build.properties to override the entities.location setting -->
+    	<property name="entities.location" value="uportal-impl/src/main/data/default_entities" />
         <antcall target="crn-import">
-            <param name="dir" value="${basedir}/uportal-impl/src/main/resources/properties/db/entities" />
+            <param name="dir" value="${basedir}/${entities.location}" />
             <param name="noprompt" value="true" />
         </antcall>
     </target>
