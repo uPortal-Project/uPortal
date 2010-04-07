@@ -20,19 +20,17 @@
 -->
 
 <ldap-search 
-		context-source="${ldapContext}" 
-		base-dn="${baseDn}" 
-		filter="${filter}" 
-		scope="${groovy(javax.naming.directory.SearchControls.SUBTREE_SCOPE)}" 
-		attributes-mapper="${attributesMapper}" 
-		attribute-name="record"
+        context-source="${ldapContext}" 
+        base-dn="${baseDn}" 
+        filter="${filter}" 
+        scope="${groovy(javax.naming.directory.SearchControls.SUBTREE_SCOPE)}" 
+        attributes-mapper="${attributesMapper}" 
+        attribute-name="record"
 	>
-	<subtasks>
-		<groovy>
-			<script>GROUPS.add(record);</script>
-			<subtasks>
-                <log logger-name="org.jasig.portal.groups.smartldap.init" >SmartLdap adding record for group:  ${groovy(record.getGroup().getName())}</log>
-			</subtasks>
-		</groovy>
-	</subtasks>
+    <groovy>
+        <script>GROUPS.add(record);</script>
+        <subtasks>
+            <log logger-name="org.jasig.portal.groups.smartldap.init" >SmartLdap adding record for group:  ${groovy(record.getGroup().getName())}</log>
+        </subtasks>
+    </groovy>
 </ldap-search>
