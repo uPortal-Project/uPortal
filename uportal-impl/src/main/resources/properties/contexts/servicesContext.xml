@@ -57,7 +57,7 @@
                         </constructor-arg>
                     </bean>
                 </entry>
-                <entry key="personAndGroupsTargetProvider">
+                <entry key="peopleAndGroupsTargetProvider">
                     <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
                         <constructor-arg>
                             <util:set>
@@ -81,7 +81,10 @@
                     <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">
                         <property name="targets">
                             <util:list>
-                                <bean class="org.jasig.portal.permission.target.PermissionTargetImpl" p:key="DETAILS" p:name="Stack Trace"/>
+                                <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">
+                                    <constructor-arg value="DETAILS"/>
+                                    <constructor-arg value="Stack Trace"/>
+                                </bean>
                             </util:list>
                         </property>
                     </bean>
