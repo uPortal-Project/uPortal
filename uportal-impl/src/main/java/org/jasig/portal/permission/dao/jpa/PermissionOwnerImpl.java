@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,8 +12,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.jasig.portal.permission.IPermissionActivity;
@@ -34,6 +39,8 @@ import org.jasig.portal.permission.IPermissionOwner;
 		@Parameter(name = "column", value = "NEXT_UP_PERMISSION_OWNER__HI") })
 public class PermissionOwnerImpl implements IPermissionOwner, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     @Id
 	@GeneratedValue(generator = "UP_PERMISSION_OWNER_GEN")
     @Column(name = "OWNER_ID")
@@ -48,7 +55,7 @@ public class PermissionOwnerImpl implements IPermissionOwner, Serializable {
     @Column(name = "OWNER_DESCRIPTION", length = 255)
     private String description;
 
-    @org.hibernate.annotations.CollectionOfElements(fetch = FetchType.EAGER, targetElement = PermissionActivityImpl.class)
+    @OneToMany(mappedBy = "owner", targetEntity = PermissionActivityImpl.class, fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
     @JoinTable(name = "UP_PERMISSION_ACTIVITY", joinColumns = @JoinColumn(name = "OWNER_ID"))
     private Set<IPermissionActivity> activities = new HashSet<IPermissionActivity>();
 
@@ -99,6 +106,41 @@ public class PermissionOwnerImpl implements IPermissionOwner, Serializable {
 
     public void setActivities(Set<IPermissionActivity> activities) {
         this.activities = activities;
+    }
+
+    /**
+     * @see java.lang.Object#equals(Object)
+     */
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof IPermissionOwner)) {
+            return false;
+        }
+
+        IPermissionOwner owner = (IPermissionOwner) obj;
+        return this.fname.equals(owner);
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return new HashCodeBuilder(464270933, -1074792143).append(this.fname)
+                .toHashCode();
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", this.id)
+                .append("fname", this.fname)
+                .append("name", this.name)
+                .append("description", this.description)
+                .toString();
     }
 
 }
