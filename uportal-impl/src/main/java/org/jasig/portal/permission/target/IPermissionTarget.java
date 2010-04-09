@@ -19,24 +19,10 @@ public interface IPermissionTarget {
     public String getKey();
     
     /**
-     * Set the key for this permission target.
-     * 
-     * @param key
-     */
-    public void setKey(String key);
-    
-    /**
      * Get the human-readable name of this permission target.
      * 
      * @return
      */
     public String getName();
-    
-    /**
-     * Set the human-readable name of this permission target.
-     * 
-     * @param name
-     */
-    public void setName(String name);
     
 }

@@ -1,10 +1,10 @@
 package org.jasig.portal.permission.target;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -57,18 +57,28 @@ public class SimpleStringTargetProviderImpl implements IPermissionTargetProvider
 
     /*
      * (non-Javadoc)
-     * @see org.jasig.portal.permission.target.IPermissionTargetProvider#getTargetKeys()
+     * @see org.jasig.portal.permission.target.IPermissionTargetProvider#searchTargets(java.lang.String)
      */
-    public Set<String> getTargetKeys() {
-        return targetMap.keySet();
-    }
+    public Collection<IPermissionTarget> searchTargets(String term) {
+        
+        // ensure that the search term is all lowercase to aid in string comparison
+        term = term.toLowerCase();
+        
+        // initialize a new collection of matching targets
+        Collection<IPermissionTarget> matching = new ArrayList<IPermissionTarget>();
+        
+        // iterate through each target, comparing it to the search term
+        for (IPermissionTarget target : targetMap.values()) {
+            // if the target's key or display name contains the search term,
+            // count it as matching
+            if (target.getKey().toLowerCase().contains(term)
+                    || target.getName().toLowerCase().contains(term)) {
+                matching.add(target);
+            }
+        }
 
-    /*
-     * (non-Javadoc)
-     * @see org.jasig.portal.permission.target.IPermissionTargetProvider#getTargets()
-     */
-    public Collection<IPermissionTarget> getTargets() {
-        return targetMap.values();
+        // return the list of matching targets
+        return matching;
     }
 
 }

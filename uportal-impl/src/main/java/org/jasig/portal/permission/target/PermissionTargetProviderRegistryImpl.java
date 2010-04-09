@@ -1,5 +1,6 @@
 package org.jasig.portal.permission.target;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,14 @@ public class PermissionTargetProviderRegistryImpl implements IPermissionTargetPr
      */
     public void registerTargetProvider(String key, IPermissionTargetProvider provider) {
         this.providers.put(key, provider);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.jasig.portal.permission.target.IPermissionTargetProviderRegistry#getTargetProviders()
+     */
+    public Collection<IPermissionTargetProvider> getTargetProviders() {
+        return this.providers.values();
     }
 
 }

@@ -1,5 +1,7 @@
 package org.jasig.portal.permission.target;
 
+import java.util.Collection;
+
 /**
  * IPermissionTargetProviderRegistry provides a registry of target provider
  * instances.  This registry can be used to retrieve provider instances
@@ -28,5 +30,12 @@ public interface IPermissionTargetProviderRegistry {
      * @return
      */
     public IPermissionTargetProvider getTargetProvider(String key);
+
+    /**
+     * Get the collection of all registered target providers.
+     * 
+     * @return
+     */
+    public Collection<IPermissionTargetProvider> getTargetProviders();
 
 }

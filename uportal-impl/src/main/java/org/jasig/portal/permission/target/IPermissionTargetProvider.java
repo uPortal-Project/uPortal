@@ -1,7 +1,6 @@
 package org.jasig.portal.permission.target;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * IPermissionTargetProvider provides an interface for retrieving and validating
@@ -14,22 +13,6 @@ import java.util.Set;
 public interface IPermissionTargetProvider {
     
     /**
-     * Get the set of all known target keys valid for use as targets for 
-     * this provider.
-     * 
-     * @return
-     */
-    public Set<String> getTargetKeys();
-    
-    /**
-     * Get the set of all known targets valid for use as targets for this
-     * provider. 
-     * 
-     * @return
-     */
-    public Collection<IPermissionTarget> getTargets();
-    
-    /**
      * Return the permission target associated with the specified key under
      * this provider.  If no target with the given key is valid for this 
      * provider, return <code>null</code>. 
@@ -38,5 +21,15 @@ public interface IPermissionTargetProvider {
      * @return
      */
     public IPermissionTarget getTarget(String key);
+    
+    /**
+     * Search this provider for a particular target using a single string
+     * search term.  Each target provider implementation is responsible for
+     * determining the definition a "matching" target.
+     * 
+     * @param term  search term
+     * @return      collection of matching targets
+     */
+    public Collection<IPermissionTarget> searchTargets(String term);
 
 }
