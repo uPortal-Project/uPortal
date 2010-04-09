@@ -58,7 +58,12 @@ public class ReferenceChannelNameFinder
      */
     public String getName (String key) throws Exception {
         IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-        IChannelDefinition cd = crs.getChannelDefinition(Integer.parseInt(key));
+        IChannelDefinition cd;
+        try {
+            cd = crs.getChannelDefinition(Integer.parseInt(key));
+        } catch (NumberFormatException e) {
+            cd = crs.getChannelDefinition(Integer.parseInt(key.split("\\.")[1]));
+        }
         return  cd.getName();
     }
 
