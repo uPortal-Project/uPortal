@@ -31,19 +31,20 @@
      | instance of org.jasig.portal.portlets.permissionsadmin.PermissionDefinitionForm.
      +-->
     <input name="permissionDefinition"/>
-
-    <view-state id="editPermission">
+    
+    <on-start>
+        <set name="flowScope.principals" value="permissionAdministrationHelper.getPrincipals(permissionDefinition)"/>
+    </on-start>
+    
+    <view-state id="editPermission" model="permissionDefinition">
         <transition on="choosePrinicipals" to="choosePrinicipals"/>
         <transition on="groupTarget" to="groupTarget"/>
         <transition on="portletTarget" to="portletTarget"/>
-        <transition on="cancel" to="cancel"/>
-        <transition on="submit" to="validate"/>
-        <on-exit>
-            <set name="permissionDefinition.owner" value="requestParameters.owner != null ? requestParameters.owner.split(',')[0] : null"/>
-            <set name="permissionDefinition.types" value="requestParameters"/>
-            <set name="permissionDefinition.activity" value="requestParameters.activity != null ? requestParameters.activity.split(',')[0] : null"/>
-            <set name="permissionDefinition.targetAsStringIfDifferent" value="requestParameters.target != null ? requestParameters.target.split(',')[0] : null"/>
-        </on-exit>
+        <transition on="cancel" to="cancel" bind="false" validate="false"/>
+        <transition on="submit" to="save" bind="false">
+            <set name="permissionDefinition.permissions" 
+                value="permissionAdministrationHelper.getPermissionAssignmentsFromRequest(permissionDefinition, externalContext.getNativeRequest())"/>
+        </transition>
     </view-state>
 
     <!-- Sub-flow to choose principals (groups and users) -->
@@ -67,75 +68,19 @@
         <input name="pageSubtitleCode" value="'editPermission.createPermissionHeader'" />
 
         <!-- Group input/output mapping -->
-        <input name="selectedGroups" value="permissionDefinition.principals"/>
-        <output name="selectedGroups" value="permissionDefinition.principals"/>
+        <input name="selectedGroups" value="principals"/>
+        <output name="selectedGroups" value="principals"/>
         
         <transition on="back" to="editPermission"/>
-        <transition on="finish" to="editPermission"/>
+        <transition on="finish" to="editPermission">
+            <evaluate expression="permissionAdministrationHelper.updatePrincipals(permissionDefinition, principals)"/>
+        </transition>
     </subflow-state>
 
-    <!-- Sub-flow to choose a group target -->
-    <subflow-state id="groupTarget" subflow="groups-selector">
-        <on-entry>
-            <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
-            <evaluate expression="entityTypes.add('group')"/>
-            <set name="flashScope.rootEntity" value="groupListHelper.getEntity('group', 'local.0', false)"/>
-        </on-entry>
-        <!-- View Parameters -->
-        <input name="selectTypes" value="entityTypes"/>
-        <input name="selectMultiple" value="false"/>
-        <input name="rootEntity" value="rootEntity"/>
-        
-        <input name="showCancelButton" value="false"/>
-        <input name="showBackButton" value="true"/>
-        <input name="saveButtonCode" value="'editPermission.submitButton'" />
-        <input name="backButtonCode" value="'editPermission.backButton'" />
-        <input name="pageTitleCode" value="'editPermission.title'"/>
-        <input name="pageSubtitleCode" value="'editPermission.groupTargetHeader'" />
-
-        <!-- Group input/output mapping -->
-        <input name="selectedGroups" value="new java.util.ArrayList()"/>
-        <output name="selectedGroups" value="permissionDefinition.target"/>
-        
-        <transition on="back" to="editPermission"/>
-        <transition on="finish" to="editPermission"/>
-    </subflow-state>
-
-    <!-- Sub-flow to choose a channel or channel category target -->
-    <subflow-state id="portletTarget" subflow="groups-selector">
-        <on-entry>
-            <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
-            <evaluate expression="entityTypes.add('category')"/>
-            <evaluate expression="entityTypes.add('channel')"/>
-            <set name="flashScope.rootEntity" value="groupListHelper.getEntity('category', 'local.1', false)"/>
-        </on-entry>
-        <!-- View Parameters -->
-        <input name="selectTypes" value="entityTypes"/>
-        <input name="selectMultiple" value="false"/>
-        <input name="rootEntity" value="rootEntity"/>
-        
-        <input name="showCancelButton" value="false"/>
-        <input name="showBackButton" value="true"/>
-        <input name="saveButtonCode" value="'editPermission.submitButton'" />
-        <input name="backButtonCode" value="'editPermission.backButton'" />
-        <input name="pageTitleCode" value="'editPermission.title'"/>
-        <input name="pageSubtitleCode" value="'editPermission.portletTargetHeader'" />
-
-        <!-- Group input/output mapping -->
-        <input name="selectedGroups" value="new java.util.ArrayList()"/>
-        <output name="selectedGroups" value="permissionDefinition.target"/>
-        
-        <transition on="back" to="editPermission"/>
-        <transition on="finish" to="editPermission"/>
-    </subflow-state>
-
-    <decision-state id="validate">
-        <if test="permissionDefinition.validateEditPermission(messageContext)" then="save" else="editPermission"/>
-    </decision-state>
-
-    <decision-state id="save">
-        <if test="permissionDefinition.save(permissionStore, messageContext)" then="done" else="editPermission"/>
-    </decision-state>
+    <action-state id="save">
+        <evaluate expression="permissionAdministrationHelper.savePermissions(permissionDefinition)"/>
+        <transition to="done"/>
+    </action-state>
 
     <end-state id="cancel" />
     <end-state id="done" />

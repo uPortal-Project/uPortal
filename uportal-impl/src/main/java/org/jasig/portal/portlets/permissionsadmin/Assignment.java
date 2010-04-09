@@ -30,6 +30,7 @@ public class Assignment implements Comparable<Assignment>, Serializable {
     private static final long serialVersionUID = 1L;
 
     // Instance Members.
+    private final String principalId;
     private final JsonEntityBean principal;
     private Type type;
     private final Set<Assignment> children = new TreeSet<Assignment>();
@@ -53,8 +54,8 @@ public class Assignment implements Comparable<Assignment>, Serializable {
      * 
      * @param principal User or group to which this permissions record applies
      */
-    public Assignment(JsonEntityBean principal) {
-        this(principal, Type.INHERIT);
+    public Assignment(String principalId, JsonEntityBean principal) {
+        this(principalId, principal, Type.INHERIT);
     }
 
     /**
@@ -63,7 +64,7 @@ public class Assignment implements Comparable<Assignment>, Serializable {
      * @param principal User or group to which this permissions record applies
      * @param type Either {@see Type.INHERIT}, {@see Type.GRANT}, or {@see Type.DENY}
      */
-    public Assignment(JsonEntityBean principal, Type type) {
+    public Assignment(String principalId, JsonEntityBean principal, Type type) {
 
         // Assertions.
         if (principal == null) {
@@ -75,6 +76,7 @@ public class Assignment implements Comparable<Assignment>, Serializable {
             throw new IllegalArgumentException(msg);
         }
         
+        this.principalId = principalId;
         this.principal = principal;
         this.type = type;
 
@@ -138,6 +140,10 @@ public class Assignment implements Comparable<Assignment>, Serializable {
         
         return rslt;
         
+    }
+
+    public String getPrincipalId() {
+        return principalId;
     }
 
 }

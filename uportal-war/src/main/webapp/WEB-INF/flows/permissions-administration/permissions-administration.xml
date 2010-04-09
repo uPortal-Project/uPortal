@@ -23,21 +23,46 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
     http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <on-start>
+        <set name="flowScope.owners" value="permissionOwnerDao.getAllPermissionOwners()"></set>
+    </on-start>
+
+    <!-- Display the list of permission owner systems -->
+    <view-state id="listOwners">
+        <transition on="listActivities" to="listActivities">
+            <set name="flowScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.ownerFname)"></set>
+        </transition>
+        <transition on="showActivity" to="showActivity">
+            <set name="flowScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.ownerFname)"></set>
+            <set name="flowScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activityFname)"></set>
+        </transition>
+    </view-state>
     
-    <view-state id="listPermissions">
-        <transition on="createPermission" to="create-permission"/>
+    <!-- Display the list of activities for the chosen owner system -->
+    <view-state id="listActivities">
+        <transition on="showActivity" to="showActivity">
+            <set name="flowScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activityFname)"></set>
+        </transition>
+        <transition on="back" to="listOwners"/>
+    </view-state>
+    
+    <!-- Display the details for a chosen permission activity -->
+    <view-state id="showActivity">
+        <transition on="owner" to="listOwners"/>
+        <transition on="permissions" to="listActivities"/>
+        <transition on="createPermission" to="selectTarget"/>
         <transition on="editPermission" to="edit-permission"/>
     </view-state>
     
-    <subflow-state id="create-permission" subflow="edit-permission">
-        <input name="permissionDefinition" value="new org.jasig.portal.portlets.permissionsadmin.PermissionDefinitionForm()"/>
-        <transition on="cancel" to="finishPermissionEdit"/>
-        <transition on="done" to="finishPermissionEdit"/>
-    </subflow-state>
+    <view-state id="selectTarget">
+        <transition on="cancel" to="showActivity"/>
+        <transition on="editPermission" to="edit-permission"/>
+    </view-state>
 
     <subflow-state id="edit-permission" subflow="edit-permission">
-        <input name="permissionDefinition" value="new org.jasig.portal.portlets.permissionsadmin.PermissionDefinitionForm().init(requestParameters.owner, requestParameters.activity, requestParameters.target, permissionStore, groupListHelper)"/>
-        <transition on="cancel" to="finishPermissionEdit"/>
+        <input name="permissionDefinition" value="permissionAdministrationHelper.getForm(owner, activity, requestParameters.target)"/>
+        <transition on="cancel" to="showActivity"/>
         <transition on="done" to="finishPermissionEdit"/>
     </subflow-state>
 

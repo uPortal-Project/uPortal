@@ -170,7 +170,6 @@ up.jQuery(function() {
     var deleteUrl = "${deleteUrl}";
 
     var getPermissions = function() {
-        $("#${n}loadingMessage").show();
         var rslt;
         $.ajax({
              url: "<c:out value="${renderRequest.contextPath}"/>/mvc/permissionsList",
@@ -184,21 +183,7 @@ up.jQuery(function() {
                 rslt = data.permissionsList;
              }
         });
-        $("#${n}loadingMessage").hide();
         return rslt;
-    }
-
-    var updateTable = function() {
-        var data = getPermissions();
-        var newModel = up.fluid.copy(pager.model);
-        newModel.totalRange = data.length;
-        newModel.pageIndex = 0;
-        newModel.pageCount = Math.max(1, Math.floor((newModel.totalRange - 1)/ newModel.pageSize) + 1);
-        up.fluid.clear(pager.options.dataModel);
-        up.fluid.model.copyModel(pager.options.dataModel, data);
-        pager.permutation = undefined;
-        pager.events.onModelChange.fire(newModel, pager.model, pager);
-        up.fluid.model.copyModel(pager.model, newModel);
     }
 
     // Initialize the pager
