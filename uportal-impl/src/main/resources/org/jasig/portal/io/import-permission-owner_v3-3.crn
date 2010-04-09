@@ -30,43 +30,47 @@
     <attribute key="ACTIVITIES">${groovy(new HashSet())}</attribute>
 
     <subtasks>
-        <node-iterator xpath="activities/activity">
-            <with>
-                <attribute key="ACTIVITY_NAME">${valueOf(name)}</attribute>
-                <attribute key="ACTIVITY_FNAME">${valueOf(fname)}</attribute>
-                <attribute key="ACTIVITY_DESC">${valueOf(desc)}</attribute>
-			    <attribute key="ACTIVITY_TARGET_PROVIDER">${valueOf(targetProvider)}</attribute>
-                <subtasks>
-                    <groovy>
-                        <script>
-                            act = new org.jasig.portal.permission.dao.jpa.PermissionActivityImpl();
-                            act.setName(ACTIVITY_NAME);
-                            act.setFname(ACTIVITY_FNAME);
-                            act.setDescription(ACTIVITY_DESC);
-                            act.setTargetProviderKey(ACTIVITY_TARGET_PROVIDER);
-                            ACTIVITIES.add(act);
-                        </script>
-                    </groovy>
-                </subtasks>
-            </with>
-        </node-iterator>
         <sql-transaction>
-            <groovy>
-                <!-- 
-                    | We want to be sure that the specified Java class (i.e. ${valueOf(type)}) is 
-                    | present in the classpath.  This implementation will yield a simple stack 
-                    | trace if the test fails. 
-                    +-->
-                <script>
-                    owner = permissionOwnerDao.getOrCreatePermissionOwner(OWNER_FNAME);
-                    owner.setName(OWNER_NAME);
-                    owner.setFname(OWNER_FNAME);
-                    owner.setDescription(OWNER_DESC);
-                    owner.setActivities(ACTIVITIES);
-                    
-                    permissionOwnerDao.saveOwner(owner);
-                </script>
-            </groovy>
+        	<with>
+        		<!-- Retrieve the applicable owner, or if none exists, create a new one -->
+        		<attribute key="OWNER">${groovy(permissionOwnerDao.getOrCreatePermissionOwner(OWNER_FNAME))}</attribute>
+	        		
+	        		<subtasks>
+	        		<!-- Add each activity to the owner -->
+			        <node-iterator xpath="activities/activity">
+			            <with>
+			                <attribute key="ACTIVITY_NAME">${valueOf(name)}</attribute>
+			                <attribute key="ACTIVITY_FNAME">${valueOf(fname)}</attribute>
+			                <attribute key="ACTIVITY_DESC">${valueOf(desc)}</attribute>
+						    <attribute key="ACTIVITY_TARGET_PROVIDER">${valueOf(targetProvider)}</attribute>
+			                <subtasks>
+			                    <groovy>
+			                        <script>
+			                            act = new org.jasig.portal.permission.dao.jpa.PermissionActivityImpl(OWNER);
+			                            act.setName(ACTIVITY_NAME);
+			                            act.setFname(ACTIVITY_FNAME);
+			                            act.setDescription(ACTIVITY_DESC);
+			                            act.setTargetProviderKey(ACTIVITY_TARGET_PROVIDER);
+			                            ACTIVITIES.add(act);
+			                        </script>
+			                    </groovy>
+			                </subtasks>
+			            </with>
+			        </node-iterator>
+			        
+			        <!-- Set the owner properties and persist it -->
+		            <groovy>
+		                <script>
+		                    OWNER.setName(OWNER_NAME);
+		                    OWNER.setFname(OWNER_FNAME);
+		                    OWNER.setDescription(OWNER_DESC);
+		                    OWNER.setActivities(ACTIVITIES);
+		                    permissionOwnerDao.saveOwner(OWNER);
+		                </script>
+		            </groovy>
+	            </subtasks>
+	            
+            </with>
         </sql-transaction>
     </subtasks>
 </with>
