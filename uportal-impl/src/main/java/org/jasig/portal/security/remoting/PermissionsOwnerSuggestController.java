@@ -72,7 +72,7 @@ public class PermissionsOwnerSuggestController extends AbstractPermissionsContro
      */
 
     @Override
-    protected ModelAndView invokeSensative(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    protected ModelAndView invokeSensitive(HttpServletRequest req, HttpServletResponse res) throws Exception {
         
         List<Map<String,String>> rslt = new ArrayList<Map<String,String>>();
 

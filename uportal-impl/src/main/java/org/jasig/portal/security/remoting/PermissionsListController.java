@@ -31,6 +31,12 @@ import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
+import org.jasig.portal.permission.IPermissionActivity;
+import org.jasig.portal.permission.IPermissionOwner;
+import org.jasig.portal.permission.dao.IPermissionOwnerDao;
+import org.jasig.portal.permission.target.IPermissionTarget;
+import org.jasig.portal.permission.target.IPermissionTargetProvider;
+import org.jasig.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +55,20 @@ public class PermissionsListController extends AbstractPermissionsController {
     @Autowired(required = true)
     public void setGroupListHelper(IGroupListHelper groupListHelper) {
         this.groupListHelper = groupListHelper;
+    }
+    
+    private IPermissionOwnerDao permissionOwnerDao;
+    
+    @Autowired(required = true)
+    public void setPermissionOwnerDao(IPermissionOwnerDao permissionOwnerDao) {
+        this.permissionOwnerDao = permissionOwnerDao;
+    }
+    
+    private IPermissionTargetProviderRegistry targetProviderRegistry;
+    
+    @Autowired(required = true)
+    public void setPermissionTargetProviderRegistry(IPermissionTargetProviderRegistry targetProviderRegistry) {
+        this.targetProviderRegistry = targetProviderRegistry;
     }
     
     /*
@@ -71,7 +91,7 @@ public class PermissionsListController extends AbstractPermissionsController {
      */
 
     @Override
-    protected ModelAndView invokeSensative(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    protected ModelAndView invokeSensitive(HttpServletRequest req, HttpServletResponse res) throws Exception {
         
         // The user is authorized to see this data;  now gather parameters
         String ownerParam = req.getParameter(OWNER_PARAMETER);
@@ -81,8 +101,18 @@ public class PermissionsListController extends AbstractPermissionsController {
 
         IPermission[] rslt = permissionStore.select(ownerParam, principalParam, 
                             activityParam, targetParam, null);
+        
+        IPermissionOwner owner = permissionOwnerDao.getOrCreatePermissionOwner(ownerParam);
+        IPermissionTargetProvider provider = null;
+        
+        for (IPermissionActivity activity : owner.getActivities()) {
+            if (activityParam.equals(activity.getFname())) {
+                String providerKey = activity.getTargetProviderKey();
+                provider = targetProviderRegistry.getTargetProvider(providerKey);
+            }
+        }
 
-        return new ModelAndView("jsonView", "permissionsList", marshall(rslt));
+        return new ModelAndView("jsonView", "permissionsList", marshall(rslt, provider));
 
     }
 
@@ -90,7 +120,7 @@ public class PermissionsListController extends AbstractPermissionsController {
      * Private Stuff.
      */
     
-    private List<Map<String,String>> marshall(IPermission[] data) {
+    private List<Map<String,String>> marshall(IPermission[] data, IPermissionTargetProvider provider) {
         
         // Assertions.
         if (data == null) {
@@ -109,6 +139,8 @@ public class PermissionsListController extends AbstractPermissionsController {
             entry.put("principalKey", p.getPrincipal());
             entry.put("activity", p.getActivity());
             entry.put("target", p.getTarget());
+            IPermissionTarget target = provider.getTarget(p.getTarget());
+            if (target != null) entry.put("targetName", target.getName());
             entry.put("permissionType", p.getType());
             rslt.add(entry);
             

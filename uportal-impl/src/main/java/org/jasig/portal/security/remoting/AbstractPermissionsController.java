@@ -97,7 +97,7 @@ public abstract class AbstractPermissionsController {
                 if (authServ.canPrincipalSubscribe(principal, chnl.getId())) {
 
                     // The user is authorized to perform the requested action...
-                    rslt = invokeSensative(req, res);
+                    rslt = invokeSensitive(req, res);
                     
                 }
 
@@ -108,7 +108,7 @@ public abstract class AbstractPermissionsController {
 
     }
 
-    protected abstract ModelAndView invokeSensative(HttpServletRequest req, HttpServletResponse res) throws Exception;
+    protected abstract ModelAndView invokeSensitive(HttpServletRequest req, HttpServletResponse res) throws Exception;
 
     /*
      * Private Stuff.

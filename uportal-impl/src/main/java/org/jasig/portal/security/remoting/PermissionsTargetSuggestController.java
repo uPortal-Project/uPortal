@@ -20,88 +20,89 @@
 package org.jasig.portal.security.remoting;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPermissionStore;
+import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.permission.target.IPermissionTarget;
+import org.jasig.portal.permission.target.IPermissionTargetProvider;
+import org.jasig.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * PermissionTargetSuggestController provides a JSON view of IPermissionTargets
+ * matching a supplied search string that is suitable for use with the 
+ * jquery.tokeninput.js plugin.
+ * 
+ * @author Drew Wills
+ * @author Jen Bourey, jbourey@unicon.net
+ * @version $Revision$
+ * @since 3.3
+ */
 @Controller
 @RequestMapping("//permissionsTargetSuggest")
 public class PermissionsTargetSuggestController extends AbstractPermissionsController {
     
-    /**
-     * Targets that match these patterns will be excluded from the list of 
-     * suggestions because there are better ways to enter them.
-     */
-    public static final String[] EXCLUDE_PATTERNS_UPPERCASE = new String[] {
-            "CHAN_ID.\\d+",
-            "LOCAL.\\d+"
-    };
-
-
-    private IPermissionStore permissionStore;
+    private IPermissionTargetProviderRegistry targetProviderRegistry;
     
-    /*
-     * This Map is the central data structure of this controller.  We're 
-     * lazy-initializing it in the firt request for 2 key reasons:
-     *  - (1) Legacy permissions code uses the PortalApplicationContextLocator, 
-     *        and therefore the Spring context can get caught in circular 
-     *        dependencies and fail to load;  and
-     *  - (2) In the (near) future, we expect to "refresh" this data 
-     *        periodically in order to reflect data changes that may have 
-     *        occurred since it was initialized.   
-     */
-    private Map<String,String> targets;
-    
+    @Autowired(required = true)
+    public void setPermissionTargetProviderRegistry(IPermissionTargetProviderRegistry registry) {
+        this.targetProviderRegistry = registry;
+    }
+
     /*
      * Public API.
      */
 
     public static final String TEXT_PARAMETER = "q";
 
-    @Autowired(required=true)
-    public void setPermissionStore(IPermissionStore permissionStore) {
-        this.permissionStore = permissionStore;
-    }
-
     /*
      * Protected API.
      */
 
     @Override
-    protected ModelAndView invokeSensative(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        
+    protected ModelAndView invokeSensitive(HttpServletRequest req, HttpServletResponse res) throws Exception {
+
+        // initialize our JSON result object
         List<Map<String,String>> rslt = new ArrayList<Map<String,String>>();
 
-        // The user is authorized to see this data;  now gather parameters
+        // if the search text parameter is non-blank, attempt to find matching
+        // permission targets
         String text = req.getParameter(TEXT_PARAMETER);
-        if (text != null && text.trim().length() > 0) {
-            text = text.trim().toUpperCase();
-            // Echo what the user typed (if anything) b/c the data model accepts arbitrary text
-            Map<String,String> echo = new HashMap<String,String>();
-            echo.put("name", text);
-            echo.put("id", text);
-            rslt.add(echo);
-            for (Map.Entry<String,String> y : getTargetsMap().entrySet()) {
-                if (y.getKey().contains(text)) {
-                    Map<String,String> map = new HashMap<String,String>();
-                    map.put("name", y.getValue());
-                    map.put("id", y.getValue());
-                    rslt.add(map);
-                }
+        if (!StringUtils.isBlank(text)) {
+            
+            /*
+             * First build up a sorted set of matching permission targets.  To
+             * accomplish this we will need to get matching targets from
+             * each registered target provider.
+             */
+            
+            SortedSet<IPermissionTarget> matchingTargets = new TreeSet<IPermissionTarget>();
+            for (IPermissionTargetProvider provider : targetProviderRegistry.getTargetProviders()) {
+                // add matching results for this target provider to the set
+                Collection<IPermissionTarget> targets = provider.searchTargets(text);
+                matchingTargets.addAll(targets);
+            }
+
+            /*
+             * Add the sorted permission targets to our result list
+             */
+            
+            for (IPermissionTarget target : matchingTargets) {
+                Map<String,String> map = new HashMap<String,String>();
+                map.put("id", target.getKey());
+                map.put("name", target.getName());
+                rslt.add(map);
             }
             
         }
@@ -110,36 +111,4 @@ public class PermissionsTargetSuggestController extends AbstractPermissionsContr
 
     }
     
-    private Map<String,String> getTargetsMap() {
-        
-        if (targets == null) {
-            // Gather owners in a set to remove duplicates...
-            final Set<String> set = new HashSet<String>();
-            final IPermission[] allPermissions = permissionStore.select(null, null, null, null, null);
-            for (IPermission p : allPermissions) {
-                String target = p.getTarget();
-                boolean exclude = false;  // default
-                for (String pattern : EXCLUDE_PATTERNS_UPPERCASE) {
-                    if (target.matches(pattern)) {
-                        exclude = true;
-                        break;
-                    }
-                }
-                if (!exclude) {
-                    set.add(target);
-                }
-            }
-            
-            // Switch to SortedMap for matching...
-            final Map<String,String> m = new TreeMap<String,String>();
-            for (String s : set) {
-                m.put(s.toUpperCase(), s);
-            }
-            targets = Collections.unmodifiableMap(m);
-        }
-        
-        return targets;
-
-    }
-
 }
