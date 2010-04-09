@@ -28,17 +28,20 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
 
 public class GroupListHelperImpl implements IGroupListHelper {
+
+    private static final String PRINCIPAL_SEPARATOR = "\\.";
 
 	private static final Log log = LogFactory.getLog(GroupListHelperImpl.class);
 	
@@ -210,6 +213,44 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		return entity;
 	}
 	
+    public JsonEntityBean getEntityForPrincipal(String principalString) {
+        
+        // split the principal string into its type and key components
+        String[] parts = principalString.split(PRINCIPAL_SEPARATOR, 2);        
+        String key = parts[1];
+        int typeId = Integer.parseInt(parts[0]);
+        
+        // get the EntityEnum type for the entity id number
+        @SuppressWarnings("unchecked")
+        Class type = EntityTypes.getEntityType(typeId);
+        String entityType = "person";
+        if (IEntityGroup.class.isAssignableFrom(type)) {
+            entityType = "group";
+        }
+
+        // get the JsonEntityBean for this type and key
+        JsonEntityBean bean = getEntity(entityType, key, false);
+        return bean;
+    }
+    
+    public IAuthorizationPrincipal getPrincipalForEntity(JsonEntityBean entity) {
+        
+        // attempt to determine the entity type class for this principal
+        Class entityType;
+        EntityEnum jsonType = EntityEnum.getEntityEnum(entity.getEntityType()); 
+        if (jsonType.isGroup()) {
+            entityType = IEntityGroup.class;
+        } else {
+            entityType = jsonType.getClazz();
+        }
+        
+        // construct an authorization principal for this JsonEntityBean
+        AuthorizationService authService = AuthorizationService.instance();
+        IAuthorizationPrincipal p = authService.newPrincipal(entity.getId(), entityType);
+        return p;
+    }
+
+	
 	/**
 	 * <p>Populates the children of the JsonEntityBean.  Creates new
 	 * JsonEntityBeans for the known types (person, group, or category), and
@@ -242,28 +283,14 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	 */
 	public String getEntityType(IGroupMember entity) {
 		
-		// first check the possible person entity types
-		if(entity.getEntityType().equals(IPerson.class)) {
-			if(entity instanceof IEntityGroup) {
-				return EntityEnum.GROUP.toString();
-			} else {
-				return EntityEnum.PERSON.toString();
-			}
-		} 
-		
-		// next check the possible channel entity types  
-		else if(entity.getEntityType().equals(IChannelDefinition.class)) {
-			if (entity instanceof IEntityGroup) {
-				return EntityEnum.CATEGORY.toString();
-			} else {
-				return EntityEnum.CHANNEL.toString();
-			}
-		} 
-		
-		// We don't know what this is.  Just give up and return null. 
-		else {
-			return null;
-		}
+	    if (IEntityGroup.class.isAssignableFrom(entity.getClass())) {
+	        return EntityEnum.getEntityEnum(entity.getEntityType(), true).toString();
+	    } 
+	    
+	    else {
+            return EntityEnum.getEntityEnum(entity.getEntityType(), false).toString();
+	    }
+	    
 	}
 	
 	/*

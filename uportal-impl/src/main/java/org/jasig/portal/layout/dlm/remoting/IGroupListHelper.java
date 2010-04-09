@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 
 /**
  * Helper methods for retrieving portal entities.
@@ -107,5 +108,9 @@ public interface IGroupListHelper {
 	 * @return			List of matching JsonEntityBeans 
 	 */
 	public List<JsonEntityBean> getEntityBeans(List<String> params);
+	
+    public JsonEntityBean getEntityForPrincipal(String principalString);
+
+    public IAuthorizationPrincipal getPrincipalForEntity(JsonEntityBean entity);
 
 }
