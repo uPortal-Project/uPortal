@@ -68,7 +68,7 @@ public class FindEntityController  {
 
 		EntityIdentifier ei = person.getEntityIdentifier();
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-	    if (!ap.hasPermission("org.jasig.portal.channels.groupsmanager.CGroupsManager", "VIEW", entityId)) {
+	    if (!ap.hasPermission("UP_GROUPS", "VIEW", entityId)) {
 			throw new AuthorizationException("User " + person.getUserName() + 
 					" does not have view permissions on entity " + entityId);
 		}
