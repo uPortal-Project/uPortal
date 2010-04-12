@@ -128,7 +128,6 @@ var uportal = uportal || {};
      * Update the visual selection state for the currently-browsed entity
      */
     var setBreadcrumbSelectionState = function(that, selected) {
-        console.log("setting breadcrumb", that, selected);
         var link = that.locate("selectEntityLink").unbind("click");
         // deselect the currently-browsed entity
         if (!selected) {
