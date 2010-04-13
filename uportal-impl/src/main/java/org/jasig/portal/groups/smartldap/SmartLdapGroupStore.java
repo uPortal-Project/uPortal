@@ -159,7 +159,8 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
     	}
 
     	List<IEntityGroup> rslt = new LinkedList<IEntityGroup>();
-    	if (gm.isGroup()) {		// Check the local indeces...
+    	if (gm.isGroup()) {		
+    	    // Check the local indeces...
     		IEntityGroup group = (IEntityGroup) gm;
     		List<String> list = parents.get(group.getLocalKey());
     		if (list != null) {
@@ -168,9 +169,9 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
         			rslt.add(groups.get(s));
         		}
     		}
-    	} else if (gm.isEntity()) {	// Ask the individual...
-
-    		// Build an IPerson...
+    	} else if (gm.isEntity() && gm.getEntityType().equals(ROOT_GROUP.getEntityType())) {	
+    	    
+    	    // Ask the individual...
     		EntityIdentifier ei = gm.getUnderlyingEntityIdentifier();
     		Map<String,List<Object>> seed = new HashMap<String,List<Object>>();
     		List<Object> seedValue = new LinkedList<Object>();
@@ -179,42 +180,38 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
     		Map<String,List<Object>> attr = PersonDirectory.getPersonAttributeDao().getMultivaluedUserAttributes(seed);
             // avoid NPEs and unnecessary IPerson creation
             if (attr != null && !attr.isEmpty()) {
+                IPerson p = PersonFactory.createPerson();
+                p.setAttributes(attr);
 
-    		IPerson p = PersonFactory.createPerson();
-    		p.setAttributes(attr);
+                // Analyze its memberships...
+                String attrName = (String) spring_context.getBean("memberOfAttributeName");
+                Object groupKeys = p.getAttributeValues(attrName);
+                // IPerson returns null if no value is defined for this attribute...
+                if (groupKeys != null) {
 
-    		// Analyze its memberships...
-    		String attrName = (String) spring_context.getBean("memberOfAttributeName");
-    		Object groupKeys = p.getAttributeValues(attrName);
-    		// IPerson returns null if no value is defined for this attribute...
-    		if (groupKeys != null) {
+                    List<String> list = new LinkedList<String>();
+                    if (groupKeys instanceof String) {
+                        list.add((String) groupKeys);
+                    } else if (groupKeys instanceof Object[]) {
+                        Object[] objs = (Object[]) groupKeys;
+                        for (Object o : objs) {
+                            list.add((String) o);
+                        }
+                    } else if (groupKeys instanceof List) {
+                        List<?> objs = (List<?>) groupKeys;
+                        for (Object o : objs) {
+                            list.add((String) o);
+                        }
+                    }
 
-        		List<String> list = new LinkedList<String>();
-        		if (groupKeys instanceof String) {
-        			list.add((String) groupKeys);
-        		} else if (groupKeys instanceof Object[]) {
-        			Object[] objs = (Object[]) groupKeys;
-        			for (Object o : objs) {
-        				list.add((String) o);
-        			}
-        		} else if (groupKeys instanceof List) {
-        			List<?> objs = (List<?>) groupKeys;
-        			for (Object o : objs) {
-        				list.add((String) o);
-        			}
-        		}
-
-    			for (String s : list) {
-    				if (groups.containsKey(s)) {
-            			rslt.add(groups.get(s));
-    				}
-        		}
-    		}
+                    for (String s : list) {
+                        if (groups.containsKey(s)) {
+                            rslt.add(groups.get(s));
+                        }
+                    }
+                }
             }
-    		
-    	} else {
-    		// WTF...
-    	    log.warn("The specified IGroupMember is neither a group nor an entity:  " + gm.getKey());
+
     	}
     	
     	return rslt.iterator();
@@ -327,7 +324,7 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
     	}
 
     	// We only match the IPerson leaf type...
-    	if (!leaftype.equals(IPerson.class)) {
+    	if (!leaftype.equals(ROOT_GROUP.getEntityType())) {
     		return new EntityIdentifier[0];
     	}
     	
