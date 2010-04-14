@@ -728,7 +728,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
                   insert =
                       "INSERT INTO UP_USER_PROFILE (USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID) " +
-                      "VALUES(?, ?, ?, ?, NULL, ?, ?)";
+                      "VALUES(?, ?, ?, ?, ?, NULL, ?, ?)";
                   insertStmt = con.prepareStatement(insert);
                   while (rs.next()) {
                 	  int id = getNextKey();
