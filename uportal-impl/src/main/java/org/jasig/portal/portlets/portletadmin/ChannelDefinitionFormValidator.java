@@ -84,7 +84,7 @@ public class ChannelDefinitionFormValidator {
 		if (StringUtils.isEmpty(def.getName())) {
 			context.addMessage(new MessageBuilder().error().source("name")
 					.code("errors.channelDefinition.name.empty")
-					.defaultText("Please enter an fname").build());
+					.defaultText("Please enter a name").build());
 		}
 
 		// if this is a new channel and the name is already taken
