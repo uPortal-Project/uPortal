@@ -34,13 +34,15 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelManager;
-import org.jasig.portal.ChannelRegistryManager;
+import org.jasig.portal.ChannelRegistryStoreFactory;
+import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
@@ -56,9 +58,7 @@ import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * Provides targets for AJAX preference setting calls.
@@ -76,7 +76,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 	// default tab name
 	protected final static String BLANK_TAB_NAME = "New Tab";
 	protected final static String ACTIVE_TAB_PARAM = "activeTab";
-
+	
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// POST requests are not supported due to security considerations
@@ -460,27 +460,21 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 		// gather the parameters we need to move a channel
 		String destinationId = request.getParameter("elementID");
-		String sourceId = request.getParameter("channelID");
+		int sourceId = Integer.parseInt(request.getParameter("channelID"));
 		String method = request.getParameter("position");
 
-		Document channelRegistry = ChannelRegistryManager
-				.getChannelRegistry(per);
-		Element newChannel = channelRegistry.getElementById(sourceId);
-		NodeList params = newChannel.getElementsByTagName("parameter");
-		for (int i = 0; i < params.getLength(); i++) {
-			Element param = (Element) params.item(i);
-			String override = param.getAttribute("override");
-			if (override != null && override.equals("yes")) {
-				String paramValue = request.getParameter(param
-						.getAttribute("name"));
-				if (paramValue != null)
-					param.setAttribute("value", paramValue);
-			}
+		IChannelRegistryStore channelRegistryStore = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
+		IChannelDefinition definition = channelRegistryStore.getChannelDefinition(sourceId);
+		
+        IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(definition);
+		for (IChannelParameter param : definition.getParameters()) {
+		    if (param.getOverride()) {
+                String paramValue = request.getParameter(param.getName());
+                if (paramValue != null) {
+                    channel.setParameterValue(param.getName(), param.getValue());
+                }
+		    }
 		}
-
-		// move the node as requested and save the layout
-		IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(
-				newChannel);
 
 		IUserLayoutNodeDescription node = null;
 		if (isTab(ulm, destinationId)) {
