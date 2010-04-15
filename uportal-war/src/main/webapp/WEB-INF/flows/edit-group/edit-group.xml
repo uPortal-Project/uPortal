@@ -108,6 +108,7 @@
         <transition on="editDetails" to="editDetails"/>
         <transition on="editMembers" to="editMembers"/>
         <transition on="createChildGroup" to="createChildGroup"/>
+        <transition on="viewGroupPermissions" to="viewGroupPermissions"/>
         <transition on="confirmRemove" to="confirmRemove"/>
         
         <!-- save the portlet -->
@@ -117,6 +118,20 @@
         <transition on="cancel" to="cancelGroupEdit" bind="false"/>
     </view-state>
     
+    <view-state id="viewGroupPermissions">
+        <transition on="group" to="reviewGroup"/>
+        <transition on="editPermission" to="edit-permission"/>
+    </view-state>
+
+    <subflow-state id="edit-permission" subflow="edit-permission">
+        <on-entry>
+            <set name="flashScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.owner)"/>
+            <set name="flashScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activity)"/>
+        </on-entry>
+        <input name="permissionDefinition" value="permissionAdministrationHelper.getForm(owner, activity, requestParameters.target)"/>
+        <transition on="cancel" to="viewGroupPermissions"/>
+        <transition on="done" to="viewGroupPermissions"/>
+    </subflow-state>
     
     <view-state id="confirmRemove">
         <transition on="cancel" to="reviewGroup"/>

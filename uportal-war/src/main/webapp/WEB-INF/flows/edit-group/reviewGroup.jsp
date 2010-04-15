@@ -32,6 +32,10 @@
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="confirmRemove"/>
 </portlet:renderURL>
+<portlet:renderURL var="permissionsUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="viewGroupPermissions"/>
+</portlet:renderURL>
 <portlet:renderURL var="editDetailsUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="editDetails"/>
@@ -70,6 +74,7 @@
                 <p>${ group.description }</p>
                 <c:if test="${ not empty group.key }">
                     <p>
+                        <a href="${ permissionsUrl }">View Permissions</a>
                         <a href="${ deleteUrl }">Delete</a>
                         <a href="${ createMemberUrl }">Create new member group</a>
                     </p>
