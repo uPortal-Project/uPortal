@@ -46,7 +46,7 @@
 	 */
 	var Channel = function(el) {
 		var channel = { 
-			id: el.attr("ID"), 
+			id: el.attr("chanID"), 
 			fname: el.attr("fname"),
 			name: el.attr("name"), 
 			description: el.attr("description"),
@@ -67,7 +67,7 @@
 	};
 	
 	that.getChannel = function(channelId) {
-		return Channel($("channel[ID=" + channelId + "]:first", settings.channelXml));
+		return Channel($("channel[chanID=" + channelId + "]:first", settings.channelXml));
 	};
 
 	that.getCategories = function() {

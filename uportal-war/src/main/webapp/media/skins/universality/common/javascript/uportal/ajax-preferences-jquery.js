@@ -424,7 +424,7 @@
 		    $.post(settings.preferencesUrl, 
 		    	{
 		    		action: 'addChannel',
-		    		channelID: 'chan' + channelId,
+		    		channelID: channelId,
 		    		position: 'insertBefore',
 		    		elementID: elementId
 		    	},

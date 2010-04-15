@@ -92,6 +92,30 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     }
 
     /**
+     * Construct channel information from a Channel Definition object.
+     * 
+     * @param definition
+     */
+    public UserLayoutChannelDescription(IChannelDefinition definition) {
+        this();
+        this.title = definition.getTitle();
+        this.description = definition.getDescription();
+        this.setClassName(definition.getJavaClass());
+        this.channelPublishId = String.valueOf(definition.getId());
+        this.channelTypeId = String.valueOf(definition.getType().getId());
+        this.functionalName = definition.getFName();
+        this.timeout = definition.getTimeout();
+        this.editable = definition.isEditable();
+        this.hasHelp = definition.hasHelp();
+        this.hasAbout = definition.hasAbout();
+        
+        for (IChannelParameter param : definition.getParameters()) {
+            this.setParameterValue(param.getName(), param.getValue());
+            this.setParameterOverride(param.getName(), param.getOverride());
+        }
+    }
+
+    /**
      * Reconstruct channel information from an xml <code>Element</code>
      *
      * @param xmlNode a user layout channel <code>Element</code> value
