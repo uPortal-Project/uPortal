@@ -64,21 +64,16 @@ public class ChannelListController extends AbstractController {
 	private IPersonManager personManager;
 	private static final String TYPE_SUBSCRIBE = "subscribe";
 	private static final String TYPE_MANAGE = "manage";
-	private static final String TYPE_ALL = "all";
 
 	public ModelAndView handleRequestInternal(HttpServletRequest request,
 		HttpServletResponse response) throws Exception {
 		
 		String type = request.getParameter("type");
-		if(type == null || (!type.equals(TYPE_MANAGE) && !type.equals(TYPE_ALL))) {
+		if(type == null || (!type.equals(TYPE_MANAGE))) {
 			type = TYPE_SUBSCRIBE;
 		}
 		
 		IPerson user = personManager.getPerson(request);
-		if(type.equals(TYPE_ALL) && !AdminEvaluator.isAdmin(user)) {
-			/* Don't let non-admins list all channels. */
-			type = TYPE_SUBSCRIBE;
-		}
 
 		ChannelRegistryBean registry = getRegistry(user, type);
 
@@ -117,11 +112,13 @@ public class ChannelListController extends AbstractController {
 		EntityIdentifier ei = user.getEntityIdentifier();
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
-		for (IChannelDefinition channel : allChannels) {
-			if(type.equals(TYPE_ALL) || ap.canManage(channel.getId())) {
-				registry.addChannel(new ChannelBean(channel));
-			}
-		}
+	    if (type.equals(TYPE_MANAGE)) {
+	        for (IChannelDefinition channel : allChannels) {
+	            if (ap.canManage(channel.getId())) {
+	                registry.addChannel(new ChannelBean(channel));
+	            }
+	        }
+	    }
 		
 		return registry;
 	}
@@ -133,9 +130,7 @@ public class ChannelListController extends AbstractController {
 		
 		// add the direct child channels for this category
 		IChannelDefinition[] channels;		
-		if(type.equals(TYPE_ALL)) {
-			channels = channelRegistryStore.getChildChannels(category);
-		} else if(type.equals(TYPE_MANAGE)) {
+		if(type.equals(TYPE_MANAGE)) {
 			channels = channelRegistryStore.getManageableChildChannels(category, user);
 		} else {
 			channels = channelRegistryStore.getChildChannels(category, user);
