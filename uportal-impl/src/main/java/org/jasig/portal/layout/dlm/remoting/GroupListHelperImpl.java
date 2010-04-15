@@ -20,6 +20,7 @@
 package org.jasig.portal.layout.dlm.remoting;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -206,6 +207,11 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	 * @see org.jasig.portal.portlets.groupselector.GroupsSelectorHelper#getEntityBeans(java.util.List)
 	 */
 	public List<JsonEntityBean> getEntityBeans(List<String> params) {
+	    // if no parameters have been supplied, just return an empty list
+	    if (params == null || params.isEmpty()) {
+	        return Collections.<JsonEntityBean>emptyList();
+	    }
+	    
 		List<JsonEntityBean> beans = new ArrayList<JsonEntityBean>();
 		for (String param : params) {
 			String[] parts = param.split(":");
