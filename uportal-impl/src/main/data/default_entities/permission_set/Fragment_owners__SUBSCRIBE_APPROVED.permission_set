@@ -3,7 +3,7 @@
   <owner>UP_PORTLET_SUBSCRIBE</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
-    <group>Portal System</group> 
+    <group>Fragment Owners</group>
   </principal>
   <activity>SUBSCRIBE_APPROVED</activity>
   <target permission-type="GRANT"> 
