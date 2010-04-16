@@ -21,11 +21,13 @@ package org.jasig.portal.groups.smartldap;
 
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -426,20 +428,20 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
 
         // Gather IEntityGroup objects from LDAP...
         RuntimeRequestResponse req = new RuntimeRequestResponse();
-        List<LdapRecord> list = new LinkedList<LdapRecord>();
-        req.setAttribute("GROUPS", list);
+        Set<LdapRecord> set = new HashSet<LdapRecord>();
+        req.setAttribute("GROUPS", set);
         for (String name : spring_context.getBeanDefinitionNames()) {
             req.setAttribute(name, spring_context.getBean(name));
         }
         runner.run(initTask, req);
         
         if (log.isInfoEnabled()) {
-            String msg = "init() found " + list.size() + " records.";
+            String msg = "init() found " + set.size() + " records.";
             log.info(msg);
         }
         
         // Do a first loop to build the main catalog (new_groups)...
-        for (LdapRecord r : list) {
+        for (LdapRecord r : set) {
             
             // new_groups (me)...
             IEntityGroup g = r.getGroup();
@@ -448,7 +450,7 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
         }
         
         // Do a second loop to build local indeces...
-        for (LdapRecord r : list) {
+        for (LdapRecord r : set) {
 
             IEntityGroup g = r.getGroup();
 

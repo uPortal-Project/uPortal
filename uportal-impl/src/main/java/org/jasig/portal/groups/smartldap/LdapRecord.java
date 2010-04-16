@@ -52,12 +52,26 @@ public final class LdapRecord {
 		
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+	    if (o == null || !(o instanceof LdapRecord)) {
+	        return false;
+	    }
+	    LdapRecord lr = (LdapRecord) o;
+	    return lr.getGroup().getKey().equals(getGroup().getKey());
+	}
+	
 	public IEntityGroup getGroup() {
 		return group;
 	}
 	
 	public List<String> getKeysOfChildren() {
 		return keysOfChildren;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return getGroup().getKey().hashCode();
 	}
 	
 }

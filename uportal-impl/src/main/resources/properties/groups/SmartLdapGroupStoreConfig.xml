@@ -57,6 +57,26 @@
     </bean>
 
     <!--
+     | These beans tell smartLdap whether to gather additional groups that are 
+     | members of groups returned by the first baseDn and filter, and where to 
+     | look if so.
+     |
+     |   - resolveMemberGroups=[true|false]
+     |   - resolveDn={a different, broader baseDn than the one above}
+     |
+     | Here's how it works:  smartLdap will first collect all groups under the 
+     | baseDn specified above.  If 'resolveMemberGroups' is enabled, it will 
+     | also search for additional groups (found within the 'resolveDn' specified 
+     | here) that are members of groups in the first collection.
+     +-->
+    <bean id="resolveMemberGroups" class="java.lang.Boolean">
+        <constructor-arg><value>false</value></constructor-arg>
+    </bean>
+    <bean id="resolveDn" class="java.lang.String">
+        <constructor-arg><value>changeme</value></constructor-arg>
+    </bean>
+
+    <!--
      | This bean identifies the name of the Person Attribute that
      | lists the SmartLdap groups each person is a member of.
      +-->

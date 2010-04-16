@@ -28,9 +28,21 @@
         attribute-name="record"
 	>
     <groovy>
-        <script>GROUPS.add(record);</script>
+        <script>
+            boolean isNew = GROUPS.add(record);
+            ScriptAttributes.REQUEST.setAttribute('isNew', isNew);
+        </script>
         <subtasks>
             <log logger-name="org.jasig.portal.groups.smartldap.init" >SmartLdap adding record for group:  ${groovy(record.getGroup().getName())}</log>
+            <if test="${groovy(isNew &amp;&amp; resolveMemberGroups)}">
+                <with>
+                    <attribute key="baseDn">${resolveDn}</attribute>
+                    <attribute key="filter">(&amp;${filter}(${memberOfAttributeName}=${groovy(record.getGroup().getLocalKey())}))</attribute>
+                    <subtasks>
+                        <crn location="init.crn"/>
+                    </subtasks>
+                </with>
+            </if>
         </subtasks>
     </groovy>
 </ldap-search>
