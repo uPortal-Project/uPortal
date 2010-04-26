@@ -48,31 +48,43 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-    
-        <c:forEach items="${ owners }" var="owner">
-            <div class="${ owner.fname }">
-                <h2>
-                    <portlet:actionURL var="ownerUrl">
-                        <portlet:param name="execution" value="${flowExecutionKey}" />
-                        <portlet:param name="_eventId" value="listActivities"/>
-                        <portlet:param name="ownerFname" value="${ owner.fname }"/>
-                    </portlet:actionURL>
-                    <a href="${ ownerUrl }">${ owner.name }</a>
-                </h2>
-                <p>${ owner.description }</p>
-                <p>
-                    <c:forEach items="${ owner.activities }" var="activity" varStatus="status">
-                        <portlet:actionURL var="activityUrl">
-                            <portlet:param name="execution" value="${ flowExecutionKey }"/>
-                            <portlet:param name="_eventId" value="showActivity"/>
+    <div class="fl-col-flex2">  
+        <!-- left panel -->
+        <div class="fl-col fl-force-left">
+            <c:set var="numOwners" value="${ fn:length(owners) }" />
+            <c:set var="split" value="${ numOwners / 2 }" />
+            <c:forEach items="${ owners }" var="owner" varStatus="ownerStatus">
+                <div class="permission-owner ${ owner.fname }">
+                    <h2>
+                        <portlet:actionURL var="ownerUrl">
+                            <portlet:param name="execution" value="${flowExecutionKey}" />
+                            <portlet:param name="_eventId" value="listActivities"/>
                             <portlet:param name="ownerFname" value="${ owner.fname }"/>
-                            <portlet:param name="activityFname" value="${ activity.fname }"/>
                         </portlet:actionURL>
-                        <a href="${ activityUrl }">${ activity.name }</a>${ status.last ? "" : ", " }
-                    </c:forEach>
-                </p>
-            </div>
-        </c:forEach>
+                        <a href="${ ownerUrl }">${ owner.name }</a>
+                    </h2>
+                    <p>${ owner.description }</p>
+                    <p>
+                        <c:forEach items="${ owner.activities }" var="activity" varStatus="status">
+                            <portlet:actionURL var="activityUrl">
+                                <portlet:param name="execution" value="${ flowExecutionKey }"/>
+                                <portlet:param name="_eventId" value="showActivity"/>
+                                <portlet:param name="ownerFname" value="${ owner.fname }"/>
+                                <portlet:param name="activityFname" value="${ activity.fname }"/>
+                            </portlet:actionURL>
+                            <a href="${ activityUrl }">${ activity.name }</a>${ status.last ? "" : ", " }
+                        </c:forEach>
+                    </p>
+                </div>
+                
+                <c:if test="${ split <= ownerStatus.index+1 and ownerStatus.index+1 < split+1 }">
+                    </div>
+                    <div class="fl-col">
+                </c:if>
+                
+            </c:forEach>
+    
+        </div>
 
     </div> <!-- end: portlet-section -->
 
