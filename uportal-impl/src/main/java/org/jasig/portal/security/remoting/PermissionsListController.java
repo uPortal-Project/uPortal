@@ -27,6 +27,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
@@ -48,6 +50,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/permissionsList")
 public class PermissionsListController extends AbstractPermissionsController {
 
+    protected final Log log = LogFactory.getLog(getClass());
+    
     private IPermissionStore permissionStore;
     
     private IGroupListHelper groupListHelper;
@@ -105,14 +109,8 @@ public class PermissionsListController extends AbstractPermissionsController {
         IPermissionOwner owner = permissionOwnerDao.getOrCreatePermissionOwner(ownerParam);
         IPermissionTargetProvider provider = null;
         
-        for (IPermissionActivity activity : owner.getActivities()) {
-            if (activityParam.equals(activity.getFname())) {
-                String providerKey = activity.getTargetProviderKey();
-                provider = targetProviderRegistry.getTargetProvider(providerKey);
-            }
-        }
 
-        return new ModelAndView("jsonView", "permissionsList", marshall(rslt, provider));
+        return new ModelAndView("jsonView", "permissionsList", marshall(rslt));
 
     }
 
@@ -120,7 +118,7 @@ public class PermissionsListController extends AbstractPermissionsController {
      * Private Stuff.
      */
     
-    private List<Map<String,String>> marshall(IPermission[] data, IPermissionTargetProvider provider) {
+    private List<Map<String,String>> marshall(IPermission[] data) {
         
         // Assertions.
         if (data == null) {
@@ -139,9 +137,40 @@ public class PermissionsListController extends AbstractPermissionsController {
             entry.put("principalKey", p.getPrincipal());
             entry.put("activity", p.getActivity());
             entry.put("target", p.getTarget());
-            IPermissionTarget target = provider.getTarget(p.getTarget());
-            if (target != null) entry.put("targetName", target.getName());
             entry.put("permissionType", p.getType());
+            
+            /*
+             *  Attempt to find a name for this target through the permission
+             *  target provider registry.  If none can be found, just use
+             *  the target key. 
+             */
+            
+            String targetName = null;
+            try {
+                // attempt to get the target provider for this activity
+                IPermissionActivity activity = permissionOwnerDao.getPermissionActivity(p.getOwner(), p.getActivity());
+                entry.put("activityName", activity.getName());
+
+                IPermissionOwner owner = permissionOwnerDao.getPermissionOwner(p.getOwner());
+                entry.put("ownerName", owner.getName());
+
+                String providerKey = activity.getTargetProviderKey();
+                IPermissionTargetProvider provider = targetProviderRegistry.getTargetProvider(providerKey);
+                
+                // get the target from the provider
+                IPermissionTarget target = provider.getTarget(p.getTarget());
+                targetName = target.getName();
+                
+            } catch (RuntimeException e) {
+                // likely a result of a null activity or provider
+                log.trace("Failed to resolve target name", e);
+            }
+            
+            if (targetName == null) {
+                targetName = p.getTarget();
+            }
+            entry.put("targetName", targetName);
+
             rslt.add(entry);
             
         }

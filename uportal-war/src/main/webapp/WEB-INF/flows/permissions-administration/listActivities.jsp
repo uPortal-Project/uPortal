@@ -43,11 +43,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
-    <h2 class="title" role="heading">
-        <a href="${ backUrl }">Permissions</a> > 
-        ${ owner.name }
-    </h2>
-    <h3 class="subtitle">${ owner.description }</h3>
+    <a href="${ backUrl }">Permissions</a> > 
+    <div class="permission-owner ${ owner.fname }">
+        <h2 class="title" role="heading">
+            ${ owner.name }
+        </h2>
+        <h3>${ owner.description }</h3>
+    </div>
   </div> <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
