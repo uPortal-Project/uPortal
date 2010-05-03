@@ -13,6 +13,7 @@ import java.util.Vector;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAdditionalDescriptor;
 import org.jasig.portal.security.IOpaqueCredentials;
+import org.jasig.portal.security.IParentAwareSecurityContext;
 import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
@@ -84,7 +85,11 @@ public abstract class ChainingSecurityContext implements ISecurityContext
       ISecurityContext sctx = ((Entry) e.nextElement()).getCtx();
       // The principal and credential are now set for all subcontexts in Authentication
       try {
-        sctx.authenticate();
+          if (sctx instanceof IParentAwareSecurityContext) {
+              ((IParentAwareSecurityContext) sctx).authenticate(this);
+          } else {
+              sctx.authenticate();
+          }        
       } catch (Exception ex) {
         error = true;
         log.error("Exception authenticating subcontext " + sctx, ex);

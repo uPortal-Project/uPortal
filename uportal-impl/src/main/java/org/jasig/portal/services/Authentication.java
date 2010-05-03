@@ -240,6 +240,33 @@ public class Authentication {
     */
    public void setContextParameters (HashMap principals, HashMap credentials, String ctxName,
          ISecurityContext securityContext, IPerson person) {
+       
+       if (log.isDebugEnabled()) {
+           StringBuilder msg = new StringBuilder();
+           msg.append("Preparing to authenticate;  setting parameters for context name '")
+                               .append(ctxName).append("', context class '")
+                               .append(securityContext.getClass().getName())
+                               .append("'");
+           // Display principalTokens...
+           msg.append("\n\t Available Principal Tokens");
+           for (Object o : principals.entrySet()) {
+               Map.Entry<?, ?> y = (Map.Entry<?, ?>) o;
+               msg.append("\n\t\t").append(y.getKey()).append("=").append(y.getValue());
+           }
+           // Keep credentialTokens secret, but indicate whether they were provided...
+           msg.append("\n\t Available Credential Tokens");
+           for (Object o : credentials.entrySet()) {
+               Map.Entry<?, ?> y = (Map.Entry<?, ?>) o;
+               String val = (String) y.getValue();
+               String valWasSpecified = null;
+               if (val != null) {
+                   valWasSpecified = val.trim().length() == 0 ? "empty" : "provided";  
+               }
+               msg.append("\n\t\t").append(y.getKey()).append(" was ").append(valWasSpecified);
+           }
+           log.debug(msg.toString());
+       }
+       
       String username = (String)principals.get(ctxName);
       String credential = (String)credentials.get(ctxName);
       // If username or credential are null, this indicates that the token was not
