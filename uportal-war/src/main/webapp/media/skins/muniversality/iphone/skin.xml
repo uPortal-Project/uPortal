@@ -22,15 +22,14 @@
 
 <s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
 
-  <css>/ResourceServingWebapp/rs/fluid/1.1.2/css/fss-framework-1.1.2.min.css</css>
+  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
+  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-layout.min.css</css>
     
   <!-- Default jqueryui css -->
-  <css>/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css</css>
+  <css>/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css>
     
-  <css type="fss-theme" name="fl-theme-iphone">../common/fss-mobile-layout.css</css>
+  <css type="fss-theme" name="fl-theme-iphone">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-theme-iphone.min.css</css>
 
-  <css>fss-mobile-theme-iphone.css</css>
-    
   <!-- Support for legacy uPortal css classes. -->
   <css>legacy.css</css>
 
@@ -38,8 +37,8 @@
   <css>../../universality/uportal3/portlet.css</css>
       
 
-  <js>/ResourceServingWebapp/rs/jquery/1.3.2/jquery-1.3.2.min.js</js>
-  <js>/ResourceServingWebapp/rs/jqueryui/1.7.2/jquery-ui-1.7.2-v2.min.js</js>
-  <js>/ResourceServingWebapp/rs/fluid/1.1.2/js/fluid-all-1.1.2.min.js</js>
+  <js>/ResourceServingWebapp/rs/jquery/1.4.2/jquery-1.4.2.min.js</js>
+  <js>/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
+  <js>/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.min.js</js>
     
 </s:resources>

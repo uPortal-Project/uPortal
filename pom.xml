@@ -173,7 +173,7 @@
         <pluto.version>1.1.7</pluto.version>
         <portlet-api.version>1.0</portlet-api.version>
         <quartz.version>1.6.1</quartz.version>
-        <resource-server.version>1.0.7</resource-server.version>
+        <resource-server.version>1.0.9</resource-server.version>
         <rome.version>0.9</rome.version>
         <servlet-api.version>2.5</servlet-api.version>
         <slf4j.version>1.5.11</slf4j.version>
