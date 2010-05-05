@@ -20,7 +20,7 @@
     </parameter>
     <parameter> 
       <name>skin</name>  
-      <value>uportal3</value>  
+      <value>iphone</value>  
       <description>Mobile design skin name</description>  
       <type>1</type> 
     </parameter>

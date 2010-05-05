@@ -188,15 +188,27 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>aggregate-muniversality-skin</id>
+                        <id>aggregate-iphone-skin</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>aggregate</goal>
                         </goals>
                         <inherited>false</inherited>
                         <configuration>
-                            <skinConfigurationFile>src/main/webapp/media/skins/muniversality/uportal3/skin.xml</skinConfigurationFile>
-                            <outputRootDirectory>${project.build.directory}/${project.build.finalName}/media/skins/muniversality/uportal3/</outputRootDirectory>
+                            <skinConfigurationFile>src/main/webapp/media/skins/muniversality/iphone/skin.xml</skinConfigurationFile>
+                            <outputRootDirectory>${project.build.directory}/${project.build.finalName}/media/skins/muniversality/iphone/</outputRootDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>aggregate-android-skin</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <skinConfigurationFile>src/main/webapp/media/skins/muniversality/android/skin.xml</skinConfigurationFile>
+                            <outputRootDirectory>${project.build.directory}/${project.build.finalName}/media/skins/muniversality/android/</outputRootDirectory>
                         </configuration>
                     </execution>
                 </executions>

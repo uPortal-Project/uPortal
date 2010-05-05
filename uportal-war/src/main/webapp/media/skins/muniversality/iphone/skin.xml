@@ -22,16 +22,14 @@
 
 <s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
 
-  <css>/ResourceServingWebapp/rs/fluid/1.1.2/css/fss-framework-1.1.2.min.css</css>
+  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
+  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-layout.min.css</css>
     
   <!-- Default jqueryui css -->
-  <css>/ResourceServingWebapp/rs/jqueryui/1.6rc6/theme/smoothness/ui.all.min.css</css>
+  <css>/ResourceServingWebapp/rs/jqueryui/1.7.2/theme/smoothness/jquery-ui-1.7.2-smoothness.min.css</css>
     
-  <css>../common/fss-mobile-iphone-layout.css</css>
+  <css type="fss-theme" name="fl-theme-iphone">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-theme-iphone.min.css</css>
 
-  <!-- Visual style for the portal. Built and formatted as a Fluid Mobile Skinning System theme. -->
-  <css>portal.css</css>
-    
   <!-- Support for legacy uPortal css classes. -->
   <css>legacy.css</css>
 

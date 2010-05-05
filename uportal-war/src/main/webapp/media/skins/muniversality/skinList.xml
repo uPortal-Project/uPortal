@@ -23,10 +23,18 @@
 <skins>
   
   <skin>
-    <skin-key>uportal3</skin-key>
-    <skin-name>uPortal 3</skin-name>
+    <skin-key>iphone</skin-key>
+    <skin-name>iphone</skin-name>
     <skin-description>
-      Mobile theme and skin.
+      iPhone theme and skin.
+    </skin-description>
+  </skin>
+  
+  <skin>
+    <skin-key>android</skin-key>
+    <skin-name>android</skin-name>
+    <skin-description>
+      Android theme and skin.
     </skin-description>
   </skin>
   

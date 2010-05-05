@@ -118,9 +118,11 @@
 -->
 <xsl:template name="mobile.header">
     <div class="flc-screenNavigator-navbar fl-navbar fl-table">
-        <h1 class="fl-table-cell">uPortal Mobile</h1>
-        <div class="fl-table-cell up-mobile-nav">
-            <xsl:call-template name="mobile.auth.link"/>
+        <div class="fl-table-row">
+            <h1 class="fl-table-cell">uPortal Mobile</h1>
+            <div class="fl-table-cell up-mobile-nav">
+                <xsl:call-template name="mobile.auth.link"/>
+            </div>
         </div>
     </div>
 </xsl:template>
@@ -173,9 +175,9 @@
     <xsl:variable name="ALL_GROUPS" select="//group" />
     <xsl:for-each select="$ALL_GROUPS">
         <xsl:if test="count(channel) > 0">
-            <div id="tab-section_{navblock/@ID}" class="fl-panel fl-panel-autoHeading">
+            <div id="tab-section_{navblock/@ID}" class="fl-container fl-container-autoHeading">
                 <h3><xsl:value-of select="navblock/@name"/></h3>
-                <ul class="fl-listmenu">
+                <ul class="fl-list-menu fl-list-brief">
                     <xsl:for-each select="channel">
                         <li>
                             <a class="flc-screenNavigator-backButton" href="{$BASE_ACTION_URL}?uP_root={@ID}" title="To view {@name}">
