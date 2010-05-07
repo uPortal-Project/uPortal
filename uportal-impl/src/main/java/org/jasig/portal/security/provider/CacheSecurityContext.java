@@ -69,7 +69,6 @@ class CacheSecurityContext extends ChainingSecurityContext implements ISecurityC
         throw new UnsupportedOperationException(msg);
     }
 
-    @Override
     public void authenticate(ISecurityContext parent) throws PortalSecurityException {
 
         // Save the parent for future use
