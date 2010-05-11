@@ -58,7 +58,7 @@
   <!-- Optional overrides specific to IE6.  This file needs to be created if you want IE6 specific CSS. -->
   <css conditional="if IE 6">ie6.css</css>
   
-  <js>/ResourceServingWebapp/rs/jquery/1.4/jquery-1.4.2.min.js</js>
+  <js>/ResourceServingWebapp/rs/jquery/1.4.2/jquery-1.4.2.min.js</js>
   <js>/ResourceServingWebapp/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.min.js</js>
   <js>/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
   <js>/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.min.js</js>
