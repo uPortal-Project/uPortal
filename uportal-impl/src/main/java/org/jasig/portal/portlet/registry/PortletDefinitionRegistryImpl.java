@@ -212,7 +212,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         else {
             final IChannelParameter portletApplicaitonIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
             if (portletApplicaitonIdParam == null) {
-                throw new DataRetrievalFailureException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "'. ChannelDefinition=" + channelDefinition);
+                throw new NotAPortletException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "'. ChannelDefinition=" + channelDefinition);
             }
             
             portletApplicationId = portletApplicaitonIdParam.getValue();
@@ -220,7 +220,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         
         final IChannelParameter portletNameParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
         if (portletNameParam == null) {
-            throw new DataRetrievalFailureException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "'. ChannelDefinition=" + channelDefinition);
+            throw new NotAPortletException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "'. ChannelDefinition=" + channelDefinition);
         }
         final String portletName = portletNameParam.getValue();
         

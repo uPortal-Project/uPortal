@@ -1,28 +1,10 @@
 /**
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright 2007 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
-
 package org.jasig.portal.url;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -55,33 +37,42 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
-import org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
 
 /**
- * 
+ * {@link IPortalUrlProvider} and {@link IUrlGenerator} implementation
+ * that uses a consistent human readable URL format.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Component
 public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator {
     
-    public static final String SEPERATOR = "_";
-    public static final String PORTAL_PARAM_PREFIX = "uP" + SEPERATOR;
-    public static final String PORTLET_CONTROL_PREFIX = "pltc" + SEPERATOR;
-    public static final String PORTLET_PARAM_PREFIX = "pltp" + SEPERATOR;
+    public static final String SEPARATOR = "_";
+    public static final String PORTAL_PARAM_PREFIX = "uP" + SEPARATOR;
+    public static final String PORTLET_CONTROL_PREFIX = "pltc" + SEPARATOR;
+    public static final String PORTLET_PARAM_PREFIX = "pltp" + SEPARATOR;
 
     public static final String PARAM_REQUEST_TARGET = PORTLET_CONTROL_PREFIX + "target";
     public static final String PARAM_WINDOW_STATE = PORTLET_CONTROL_PREFIX + "state";
     public static final String PARAM_PORTLET_MODE = PORTLET_CONTROL_PREFIX + "mode";
     
+    public static final String SLASH = "/";
+    public static final String ACTION_SUFFIX = "action.uP";
+    public static final String RENDER_SUFFIX = "render.uP";
+    public static final String WORKER_SUFFIX = "worker.uP";
+    
     public static final String NO_STATE_REGEX = ".*(normal|max|detached|exclusive|legacy).*";
     private static final Pattern NO_STATE_PATTERN = Pattern.compile(NO_STATE_REGEX);
-    public static final String PORTAL_REQUEST_REGEX = "^(?:([^/]*)/)*(normal|max|detached|exclusive|legacy)/(?:([^/]*)/)?(render\\.uP|action\\.uP|)$";
+    public static final String PORTAL_REQUEST_REGEX = "^(?:([^/]*)/)*(normal|max|detached|exclusive|legacy)/(?:([^/]*)/)?(render\\.uP|action\\.uP|worker\\.uP|)$";
     private static final Pattern PORTAL_REQUEST_PATTERN = Pattern.compile(PORTAL_REQUEST_REGEX);
     
     private static final String PORTAL_REQUEST_INFO_ATTR = PortalUrlProviderImpl.class.getName() + ".PORTAL_REQUEST_INFO"; 
@@ -92,8 +83,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     private IUserInstanceManager userInstanceManager;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
-    private ITransientPortletWindowRegistry portletWindowRegistry;
+    private IPortletWindowRegistry portletWindowRegistry;
     private IChannelRegistryStore channelRegistryStore;
+    private IPortalRequestUtils portalRequestUtils;
 
     /**
      * @param defaultEncoding the defaultEncoding to set
@@ -105,6 +97,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /**
      * @param userInstanceManager the userInstanceManager to set
      */
+    @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
@@ -112,6 +105,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
@@ -119,6 +113,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
+    @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
@@ -126,18 +121,28 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    public void setPortletWindowRegistry(ITransientPortletWindowRegistry portletWindowRegistry) {
+    @Autowired
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
     
     /**
      * @param channelRegistryStore the channelRegistryStore to set
      */
+    @Autowired
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
         this.channelRegistryStore = channelRegistryStore;
     }
 
-    /* (non-Javadoc)
+    /**
+	 * @param portalRequestUtils the portalRequestUtils to set
+	 */
+    @Autowired
+	public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+		this.portalRequestUtils = portalRequestUtils;
+	}
+	
+	/* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortalRequestInfo(javax.servlet.http.HttpServletRequest)
      */
     public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request) throws InvalidPortalRequestException {        
@@ -180,24 +185,31 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             String renderInformation = m.group(4);
             
             // upper case group(2) to get UrlState enum
-            requestInfo.setUrlState(UrlState.valueOf(stateInformation.toUpperCase()));
-            // true if group(4) matches "action", false otherwise
-            requestInfo.setAction("action.uP".equals(renderInformation));
+            requestInfo.setUrlState(UrlState.valueOfIngoreCase(stateInformation));
+            // true if group(4) matches ACTION, false otherwise
+            requestInfo.setAction(ACTION_SUFFIX.equals(renderInformation));
             
             // group(3) can be null - if so ignore setting targetedPortletWindowId and targetedChannelSubscribeId
             if(null != channelInformation) {
-                // portletWindowId cannot contain a "."
+            	String channelName = channelInformation;
+            	String channelSubscribeId = null;
+            	// portletWindowId cannot contain a "."
                 // if group(3) contains a ".", set subscribe Id to value after "."
-                if(channelInformation.contains(".")) {
-                    String [] channelElements = channelInformation.split("\\.");
-                    IPortletWindowId portletWindowId = portletWindowRegistry.getPortletWindowId(channelElements[0]);
-                    requestInfo.setTargetedPortletWindowId(portletWindowId);
-                    requestInfo.setTargetedChannelSubscribeId(channelElements[1]);
-                } else {
-                    // no "." in group(3), just set as portletWindowId and leave targetedChannelSubscribeId null
-                    IPortletWindowId portletWindowId = portletWindowRegistry.getPortletWindowId(channelInformation);
-                    requestInfo.setTargetedPortletWindowId(portletWindowId);
-                }
+            	if(channelInformation.contains(".")) {
+            		String [] channelInformationElements = channelInformation.split("\\.");
+            		channelName = channelInformationElements[0];
+            		channelSubscribeId = channelInformationElements[1];
+            	}
+            	
+            	IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(channelName);
+            	boolean isPortlet = channelDefinition.isPortlet();
+                
+            	requestInfo.setTargetedChannelSubscribeId(channelSubscribeId);
+            	
+            	if(isPortlet) {
+            		IPortletWindowId portletWindowId = portletWindowRegistry.getPortletWindowId(channelName);
+            		requestInfo.setTargetedPortletWindowId(portletWindowId);
+            	}
             }
             
             // group(1) may contain slashes to separate sub folders
@@ -215,9 +227,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 logger.debug("finished building requestInfo: " + requestInfo);
             }
             return requestInfo;
-        } else {
-            throw new InvalidPortalRequestException("could not extract portal request from " + requestPath);
         }
+         
+        throw new InvalidPortalRequestException("could not extract portal request from " + requestPath);
     }
 
     /* (non-Javadoc)
@@ -227,38 +239,36 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-        // TODO is this the user's default folder?
-        final String rootFolderId = userLayoutManager.getRootFolderId();
+
+        final IUserLayout userLayout = userLayoutManager.getUserLayout();
         
-        //TODO determine default active tab for user
-        // xpath may look like: /layout/folder/folder[type='regular' and hidden='false'][0]/@ID
-        
+        final XPathExpression defaultTabIdExpression = this.getUserDefaultTabIdExpression();
+        final String defaultTabId = userLayout.findNodeId(defaultTabIdExpression);
+          
         // call out to getFolderUrlByNodeId, pass in default nodeId for user
-        return getFolderUrlByNodeId(request, rootFolderId);
-        
-        //return new PortalLayoutUrlImpl(request, this, rootFolderId);
+        return getFolderUrlByNodeId(request, defaultTabId);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getFolderUrlByNodeId(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
-    public IBasePortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId) {
-        final String resolvedFolderId = this.verifyFolderId(request, folderNodeId);
-        return new PortalLayoutUrlImpl(request, this, resolvedFolderId);
+    public ILayoutPortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId) {
+        final String resolvedFolderId = this.verifyLayoutNodeId(request, folderNodeId);
+        return new LayoutPortalUrlImpl(request, this, resolvedFolderId);
 
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortletUrlByNodeId(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
      */
-    public IPortalPortletUrl getPortletUrl(HttpServletRequest request, IPortletWindowId portletWindowId) {
-        return new PortalPortletUrlImpl(request, this, portletWindowId);
+    public IPortletPortalUrl getPortletUrl(HttpServletRequest request, IPortletWindowId portletWindowId) {
+        return new PortletPortalUrlImpl(request, this, portletWindowId);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortletUrlByFName(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
-    public IPortalPortletUrl getPortletUrlByFName(HttpServletRequest request, String portletFName) {
+    public IPortletPortalUrl getPortletUrlByFName(HttpServletRequest request, String portletFName) {
         //Get the user's layout manager
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
@@ -276,7 +286,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortletUrlByNodeId(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
-    public IPortalPortletUrl getPortletUrlByNodeId(HttpServletRequest request, String portletNodeId) {
+    public IPortletPortalUrl getPortletUrlByNodeId(HttpServletRequest request, String portletNodeId) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
@@ -284,11 +294,17 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         //Find the channel and portlet definitions
         final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(portletNodeId);
         final String channelPublishId = channelNode.getChannelPublishId();
-        //TODO this looks like a bug, it should be passing in an in here, not a string
-        final IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(channelPublishId);
+        final IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(Integer.parseInt(channelPublishId));
         if(null == channelDefinition) {
             throw new IllegalArgumentException("No channel definition found for publish id: " + channelPublishId);
         }
+        
+        //Support using portlet URLs for channels, if not a portlet create a url using the subscribe ID
+        if (!channelDefinition.isPortlet()) {
+            return new PortletPortalUrlImpl(request, this, portletNodeId);
+        }
+        
+        
         final IPortletDefinition portletDefinition = channelDefinition.getPortletDefinition();
         if (portletDefinition == null) {
             throw new IllegalArgumentException("No portlet defintion found for channel definition '" + channelPublishId + "'.");
@@ -303,8 +319,271 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         return this.getPortletUrl(request, portletWindowId);
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IUrlGenerator#generateLayoutUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.ILayoutPortalUrl, java.lang.String)
+     */
+    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl, String targetNodeId) {
+        final String encoding = this.getEncoding(request);
+        final UrlBuilder url = new UrlBuilder(encoding);
+        
+        final String contextPath = this.getCleanedContextPath(request);
+        url.setPath(contextPath);
 
-    protected String verifyFolderId(HttpServletRequest request, String folderNodeId) {
+        final String folderId = this.verifyLayoutNodeId(request, targetNodeId);
+        url.addPath(folderId);
+
+        final Boolean renderInNormal = layoutPortalUrl.isRenderInNormal();
+        if (renderInNormal != null && renderInNormal) {
+            url.addPath(UrlState.NORMAL.toLowercaseString());
+        }
+        else {
+            final IPortalRequestInfo requestInfo = getPortalRequestInfo(request);
+            final UrlState urlState = requestInfo.getUrlState();
+            url.addPath(urlState.toLowercaseString());
+        }
+        
+        final boolean action = layoutPortalUrl.isAction();
+        if (action) {
+            url.addPath(ACTION_SUFFIX);
+        }
+        else {
+            url.addPath(RENDER_SUFFIX);
+        }
+
+        //Add all portal parameters
+        final Map<String, List<String>> portalParameters = layoutPortalUrl.getPortalParameters();
+        url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
+        
+        //Add all layout parameters
+        final Map<String, List<String>> layoutParameters = layoutPortalUrl.getLayoutParameters();
+        url.addParameters(PORTAL_PARAM_PREFIX, layoutParameters);
+        
+        return url.toString();
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IUrlGenerator#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IPortalPortletUrl, org.jasig.portal.portlet.om.IPortletWindowId)
+     */
+    public String generatePortletUrl(HttpServletRequest request, IPortletPortalUrl portalPortletUrl, IPortletWindowId portletWindowId) {
+        Validate.notNull(request, "HttpServletRequest was null");
+        Validate.notNull(portalPortletUrl, "IPortalPortletUrl was null");
+        Validate.notNull(portletWindowId, "IPortletWindowId was null");
+       
+        //Convert the callback request to the portal request
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
+        
+        final String encoding = this.getEncoding(request);
+        final UrlBuilder url = new UrlBuilder(encoding);
+        
+        final String contextPath = this.getCleanedContextPath(request);
+        url.setPath(contextPath);
+        
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(portletWindow.getPortletEntityId());
+        
+        //Add folder information if available: /tabId
+        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+        // if not a transient node, we need to lookup user layout information
+        if (!channelSubscribeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
+            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+            final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+            final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+            final IUserLayout userLayout = userLayoutManager.getUserLayout();
+            
+            final XPathExpression findChannelTabExpression = this.getFindChannelTabIdExpression(channelSubscribeId);
+            final String tabId = userLayout.findNodeId(findChannelTabExpression);
+            
+            //Add folder ID of parent tab if it exists
+            if (tabId != null) {
+                final String folderId = this.verifyLayoutNodeId(request, tabId);
+                url.addPath(folderId);
+            }
+        }
+        
+        //Add state information
+        final WindowState requestedWindowState = portalPortletUrl.getWindowState();
+        final WindowState currentWindowState = portletWindow.getWindowState();
+        final WindowState urlWindowState = requestedWindowState != null ? requestedWindowState : currentWindowState;
+      
+        final String windowStateString;
+        if (WindowState.MAXIMIZED.equals(urlWindowState)) {
+            windowStateString = UrlState.MAX.toLowercaseString();
+        }
+        else if (IPortletRenderer.DETACHED.equals(urlWindowState)) {
+            windowStateString = UrlState.DETACHED.toLowercaseString();
+        }
+        else if (IPortletRenderer.EXCLUSIVE.equals(urlWindowState)) {
+            windowStateString = UrlState.EXCLUSIVE.toLowercaseString();
+        }
+        else {
+            if(!WindowState.NORMAL.equals(urlWindowState)) {
+                this.logger.warn("Unknown WindowState '" + urlWindowState + "' specified for portlet window " + portletWindow + ", defaulting to NORMAL");
+            }
+            
+            windowStateString = UrlState.NORMAL.toLowercaseString();
+        }
+        url.addPath(windowStateString);
+        
+        //Add channel information: /fname.chanid
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletEntity.getPortletDefinitionId());
+        final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
+        final String fname = channelDefinition.getFName();
+        final String validFname = FunctionalNameType.INVALID_CHARS_PATTERN.matcher(fname).replaceAll("_");
+        url.addPath(validFname + "." + channelSubscribeId);
+        
+        //File part 
+        if (portalPortletUrl.isAction()) {
+            url.addPath(ACTION_SUFFIX);
+        }
+        else {
+            url.addPath(RENDER_SUFFIX);
+        }
+        
+        //Query String  
+        //Target portlet window info
+        url.addParameter(PARAM_REQUEST_TARGET, portletWindowId.getStringId());
+          
+        //Portlet mode info
+        final PortletMode portletMode = portalPortletUrl.getPortletMode();
+        if (portletMode != null && !portletMode.equals(portletWindow.getPortletMode())) {
+            url.addParameter(PARAM_PORTLET_MODE, portletMode.toString());
+        } 
+        
+        //Add window state param for switching between normal and maximized
+        if (requestedWindowState != null && !requestedWindowState.equals(currentWindowState) 
+                && (WindowState.MINIMIZED.equals(urlWindowState) || WindowState.NORMAL.equals(urlWindowState))) {
+            url.addParameter(PARAM_WINDOW_STATE, requestedWindowState.toString());
+        }
+        
+        //Add all portal parameters
+        final Map<String, List<String>> portalParameters = portalPortletUrl.getPortalParameters();
+        url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
+
+        //Add all portlet parameters
+        final Map<String, List<String>> portletParameters = portalPortletUrl.getPortletParameters();
+        url.addParameters(PORTLET_PARAM_PREFIX, portletParameters);
+        
+        if(logger.isDebugEnabled()) {
+            logger.debug("finished portlet url: " + url.toString());
+        }
+        return url.toString();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IUrlGenerator#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IPortalPortletUrl, java.lang.String)
+     */
+    public String generatePortletUrl(HttpServletRequest request, IPortletPortalUrl portalPortletUrl, String channelSubscribeId) {
+        Validate.notNull(request, "HttpServletRequest was null");
+        Validate.notNull(portalPortletUrl, "IPortalPortletUrl was null");
+        Validate.notNull(channelSubscribeId, "IPortletWindowId was null");
+       
+        //Convert the callback request to the portal request
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
+        
+        final String encoding = this.getEncoding(request);
+        final UrlBuilder url = new UrlBuilder(encoding);
+        
+        final String contextPath = this.getCleanedContextPath(request);
+        url.setPath(contextPath);
+        
+        //Add folder information if available: /tabId
+        // if not a transient node, we need to lookup user layout information
+        if (!channelSubscribeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
+            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+            final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+            final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+            final IUserLayout userLayout = userLayoutManager.getUserLayout();
+            
+            final XPathExpression findChannelTabExpression = this.getFindChannelTabIdExpression(channelSubscribeId);
+            final String tabId = userLayout.findNodeId(findChannelTabExpression);
+            
+            //Add folder ID of parent tab if it exists
+            if (tabId != null) {
+                final String folderId = this.verifyLayoutNodeId(request, tabId);
+                url.addPath(folderId);
+            }
+        }
+
+        final WindowState requestedWindowState = portalPortletUrl.getWindowState();
+      
+        if (WindowState.MAXIMIZED.equals(requestedWindowState)) {
+            url.addPath(UrlState.MAX.toLowercaseString());
+        }
+        else if (IPortletRenderer.DETACHED.equals(requestedWindowState)) {
+            url.addPath(UrlState.DETACHED.toLowercaseString());
+        }
+        else if (IPortletRenderer.EXCLUSIVE.equals(requestedWindowState)) {
+            url.addPath(UrlState.EXCLUSIVE.toLowercaseString());
+        }
+        else if (WindowState.MINIMIZED.equals(requestedWindowState)) {
+            //Support for minimizing channels
+            url.addParameter(PORTAL_PARAM_PREFIX + "tcattr", "minimized");
+            url.addParameter("minimized_channelId", channelSubscribeId);
+            url.addParameter("minimized_" + channelSubscribeId + "_value", "true");
+        }
+        else {
+            url.addPath(UrlState.NORMAL.toLowercaseString());
+        }
+        
+        //TODO PRINT WindowState support, handle the same way as detached
+        
+        /**
+         * state - max, print
+         *  uP_print_target={@ID}
+         * mode - help, about, edit
+         *  uP_help|edit|about_target={@ID}
+         */
+        
+        final PortletMode requestedPortletMode = portalPortletUrl.getPortletMode();
+//        if (PortletMode.EDIT.equals(requestedPortletMode)) {
+//            
+//        }
+        if (requestedPortletMode != null) {
+            this.logger.warn("Request PortletMode '" + requestedPortletMode + "' is not handled for IChannel integration");
+        }
+        
+        //TODO portlet mode to channel event mapping support
+        
+        //Add channel information: /fname.chanid
+        
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        
+        //Find the channel definitions
+        final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
+        if(channelNode == null) {
+            // not in user layout
+            throw new IllegalArgumentException("channel node id not in user's layout: " + channelSubscribeId);
+        }
+        
+        final String fname = channelNode.getFunctionalName();
+        final String validFname = FunctionalNameType.INVALID_CHARS_PATTERN.matcher(fname).replaceAll("_");
+        url.addPath(validFname + "." + channelSubscribeId);
+        
+        //File part 
+        if (portalPortletUrl.isAction()) {
+            url.addPath(ACTION_SUFFIX);
+        }
+        else {
+            url.addPath(RENDER_SUFFIX);
+        }
+        
+        //Add all portal parameters
+        final Map<String, List<String>> portalParameters = portalPortletUrl.getPortalParameters();
+        url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
+        
+        //Add all portlet parameters
+        final Map<String, List<String>> portletParameters = portalPortletUrl.getPortletParameters();
+        url.addParameters(PORTLET_PARAM_PREFIX, portletParameters);
+        
+        if(logger.isDebugEnabled()) {
+            logger.debug("finished portlet url: " + url.toString());
+        }
+        return url.toString();
+    }
+
+	protected String verifyLayoutNodeId(HttpServletRequest request, String folderNodeId) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
@@ -312,9 +591,6 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         if (node == null) {
             throw new IllegalArgumentException("No layout node exists for id: " + folderNodeId);
-        }
-        if (node.getType() != IUserLayoutNodeDescription.FOLDER) {
-            throw new IllegalArgumentException("Layout node is not a folder for id: " + folderNodeId);
         }
         
         final String resolvedFolderId = node.getId();
@@ -335,234 +611,33 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         return this.defaultEncoding;
     }
-    
-    
-    protected void encodeAndAppend(StringBuilder url, String encoding, String name, String... values) {
-        this.encodeAndAppend(url, encoding, name, Arrays.asList(values));
-    }
-    
-    /**
-     * Encodes parameter name and value(s) on to the url using the specified encoding. The option to pass more than one
-     * value is provided to avoid encoding the same name multiple times.  
-     * 
-     * @param url The URL StringBuilder to append the parameters to
-     * @param encoding The encoding to use.
-     * @param name The name of the parameter
-     * @param values The values for the parameter, a & will be appended between each name/value pair added when multiple values are passed.
-     */
-    protected void encodeAndAppend(StringBuilder url, String encoding, String name, List<String> values) {
-        try {
-            name = URLEncoder.encode(name, encoding);
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Failed to encode portlet URL parameter name '" + name + "' for encoding '" + encoding + "'");
-        }
-        
-        if (values.size() == 0) {
-            url.append(name).append("=");
-        }
-        else {
-            for (final Iterator<String> valueItr = values.iterator(); valueItr.hasNext(); ) {
-                String value = valueItr.next();
-                if (value == null) {
-                    value = "";
-                }
-                
-                try {
-                    value = URLEncoder.encode(value, encoding);
-                }
-                catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException("Failed to encode portlet URL parameter value '" + value + "' for encoding '" + encoding + "'");
-                }
-                
-                url.append(name).append("=").append(value);
-                
-                if (valueItr.hasNext()) {
-                    url.append("&");
-                }
-            }
-        }
-    }
 
     /**
      * @param request The current requet
      * @return The base URL, will be absolute (start with / or protocol://) and will end with a /
      */
-    protected StringBuilder getUrlBase(HttpServletRequest request) {
-        final StringBuilder url = new StringBuilder(request.getContextPath());
+    protected String getCleanedContextPath(HttpServletRequest request) {
+        String contextPath = request.getContextPath();
         
         //Make sure the URL starts with a /
-        if (url.charAt(0) != '/') {
-            url.insert(0, '/');
+        if (contextPath.charAt(0) == '/') {
+            contextPath = contextPath.substring(1);
         }
         
         //Make sure the URL ends with a /
-        if (url.charAt(url.length() - 1) != '/') {
-            url.append('/');
+        if (contextPath.charAt(contextPath.length() - 1) == '/') {
+            contextPath = contextPath.substring(0, contextPath.length() - 1);
         }
 
-        return url;
+        return contextPath;
     }
     
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlGenerator#generatePortalUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IBasePortalUrl, java.lang.String)
+    /**
+     * Returns an {@link XPathExpression} that represents the specified channel NodeId.
+     * 
+     * @param channelNodeId
+     * @return
      */
-    public String generatePortalUrl(HttpServletRequest request, IBasePortalUrl basePortalUrl, String targetFolderId) {
-        final StringBuilder url = this.getUrlBase(request);
-
-        //Add targeted folder id
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-        final IUserLayout userLayout = userLayoutManager.getUserLayout();
-        
-        final XPathExpression findChannelTabExpression = this.getFindChannelTabIdExpression(targetFolderId);
-        final String tabId = userLayout.findNodeId(findChannelTabExpression);
-        
-        //Add folder ID of parent tab if it exists
-        if (tabId != null) {
-            final String folderId = this.verifyFolderId(request, tabId);
-            url.append("/").append(folderId);
-        }
-        
-        
-        final String folderId = this.verifyFolderId(request, targetFolderId);
-        url.append("/").append(folderId);
-
-        //TODO need to allow portal URLs to set the UrlState
-        //TODO need to determine current URL state if specific UrlState is not already set?
-        //Add state information - call out to getPortalRequestInfo to get UrlState, and action?
-        // basePortalUrl may not have the ability to set state, also may never be action
-        url.append("/").append(UrlState.NORMAL);
-        //TODO are portal URLs always render URLs?
-        url.append("/render.uP");
-
-        //Add all portal parameters
-        final Map<String, List<String>> portalParameters = basePortalUrl.getPortalParameters();
-        if (portalParameters.size() > 0) {
-            final String encoding = this.getEncoding(request);
-            
-            String seperator = "?";
-            for (final Map.Entry<String, List<String>> paramEntry : portalParameters.entrySet()) {
-                final String name = paramEntry.getKey();
-                final List<String> values = paramEntry.getValue();
-                this.encodeAndAppend(url.append(seperator), encoding, PORTAL_PARAM_PREFIX + name, values);
-                seperator = "&";
-            }
-        }
-        
-        return url.toString();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlGenerator#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IPortalPortletUrl, org.jasig.portal.portlet.om.IPortletWindowId)
-     */
-    public String generatePortletUrl(HttpServletRequest request, IPortalPortletUrl portalPortletUrl, IPortletWindowId portletWindowId) {
-        Validate.notNull(request, "HttpServletRequest was null");
-        Validate.notNull(portalPortletUrl, "IPortalPortletUrl was null");
-        Validate.notNull(portletWindowId, "IPortletWindowId was null");
-       
-        final StringBuilder url = this.getUrlBase(request);
-        
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(portletWindow.getPortletEntityId());
-        
-        //Add folder information if available: /tabId
-        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
-        // if not a transient node, we need to lookup user layout information
-        if (!channelSubscribeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
-            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-            final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-            final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-            final IUserLayout userLayout = userLayoutManager.getUserLayout();
-            
-            final XPathExpression findChannelTabExpression = this.getFindChannelTabIdExpression(channelSubscribeId);
-            final String tabId = userLayout.findNodeId(findChannelTabExpression);
-            
-            //Add folder ID of parent tab if it exists
-            if (tabId != null) {
-                final String folderId = this.verifyFolderId(request, tabId);
-                url.append(folderId);
-                url.append("/");
-            }
-        }
-        
-        //Add state information
-        final WindowState requestedWindowState = portalPortletUrl.getWindowState();
-        final WindowState currentWindowState = portletWindow.getWindowState();
-        final WindowState urlWindowState = requestedWindowState != null ? requestedWindowState : currentWindowState;
-      
-        String windowStateString = UrlState.NORMAL.toString().toLowerCase();
-        if (WindowState.MAXIMIZED.equals(urlWindowState)) {
-            windowStateString = UrlState.MAX.toString().toLowerCase();
-        }
-        else if (IPortletRenderer.DETACHED.equals(urlWindowState)) {
-            windowStateString = UrlState.DETACHED.toString().toLowerCase();
-        }
-        else if (IPortletRenderer.EXCLUSIVE.equals(urlWindowState)) {
-            windowStateString = UrlState.EXCLUSIVE.toString().toLowerCase();
-        }
-        else {
-            this.logger.warn("Unknown WindowState '" + urlWindowState + "' specified for portlet window " + portletWindow + ", defaulting to NORMAL");
-        }
-        url.append(windowStateString);
-        
-        //Add channel information: /fname.chanid
-        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletEntity.getPortletDefinitionId());
-        final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
-        final String fname = channelDefinition.getFName();
-        final String validFname = FunctionalNameType.INVALID_CHARS_PATTERN.matcher(fname).replaceAll("_");
-        url.append("/").append(validFname).append(".").append(channelSubscribeId);
-        
-        //File part 
-        if (portalPortletUrl.isAction()) {
-            url.append("/action.uP");
-        }
-        else {
-            url.append("/render.uP");
-        }
-        final String encoding = this.getEncoding(request);
-        
-        //Query String  
-        //Target portlet window info
-        this.encodeAndAppend(url.append("?"), encoding, PARAM_REQUEST_TARGET, portletWindowId.getStringId());
-          
-        //Portlet mode info
-        final PortletMode portletMode = portalPortletUrl.getPortletMode();
-        if (portletMode != null && !portletMode.equals(portletWindow.getPortletMode())) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE, portletMode.toString());
-        } 
-        
-        //Add window state param for switching between normal and maximized
-        if (requestedWindowState != null && !requestedWindowState.equals(currentWindowState) 
-                && (WindowState.MINIMIZED.equals(urlWindowState) || WindowState.NORMAL.equals(urlWindowState))) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE, requestedWindowState.toString());
-        }
-        
-        //Add all portal parameters
-        final Map<String, List<String>> portalParameters = portalPortletUrl.getPortalParameters();
-        for (final Map.Entry<String, List<String>> paramEntry : portalParameters.entrySet()) {
-            final String name = paramEntry.getKey();
-            final List<String> values = paramEntry.getValue();
-            this.encodeAndAppend(url.append("&"), encoding, PORTAL_PARAM_PREFIX + name, values);
-        }
-
-        //Add all portlet parameters
-        final Map<String, List<String>> portletParameters = portalPortletUrl.getPortletParameters();
-        for (final Map.Entry<String, List<String>> paramEntry : portletParameters.entrySet()) {
-            final String name = paramEntry.getKey();
-            final List<String> values = paramEntry.getValue();
-            this.encodeAndAppend(url.append("&"), encoding, PORTLET_PARAM_PREFIX + name, values);
-        }
-        
-        if(logger.isDebugEnabled()) {
-            logger.debug("finished portlet url: " + url.toString());
-        }
-        return url.toString();
-    }
-    
-    
     protected XPathExpression getFindChannelTabIdExpression(String channelNodeId) {
         final String expression = "/layout/folder/folder[descendant::channel[@ID='" + channelNodeId + "']]/@ID";
         
@@ -577,7 +652,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
     }
     
-    
+    /**
+     * Returns an {@link XPathExpression} that represents the specified tab NodeId.
+     * @param tabNodeId
+     * @return
+     */
     protected XPathExpression getFindTabIdExpression(String tabNodeId) {
         final String expression = "/layout/folder/folder[@ID='" + tabNodeId + "']/@ID";
         
@@ -591,4 +670,24 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             throw new IllegalArgumentException("Invalid XPath expression: " + expression, e);
         }
     }
+
+    /**
+     * Returns an {@link XPathExpression} that represent's the user's default tab.
+     * 
+     * @return
+     */
+    protected XPathExpression getUserDefaultTabIdExpression() {
+    	final String expression = "/layout/folder/folder[type='regular' and hidden='false'][0]/@ID";
+    	
+    	final XPathFactory xPathFactory = XPathFactory.newInstance();
+        final XPath xPath = xPathFactory.newXPath();
+        try {
+            //TODO compile the expression once and cache it!
+            return xPath.compile(expression);
+        }
+        catch (XPathExpressionException e) {
+            throw new IllegalArgumentException("Invalid XPath expression: " + expression, e);
+        }
+    }
+	
 }

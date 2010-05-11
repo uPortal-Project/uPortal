@@ -23,11 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,18 +45,26 @@ import org.springframework.stereotype.Service;
 public class UserLocaleHelper {
 
 	private IUserInstanceManager userInstanceManager;
+	private IPortalRequestUtils portalRequestUtils;
 	
 	/**
 	 * Set the UserInstanceManager
 	 * 
 	 * @param userInstanceManager
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
 		this.userInstanceManager = userInstanceManager;
 	}
+	
+	@Autowired
+	public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        this.portalRequestUtils = portalRequestUtils;
+    }
 
-	/**
+
+
+    /**
 	 * Return a list of LocaleBeans matching the currently available locales
 	 * for the portal.
 	 * 
@@ -84,9 +94,9 @@ public class UserLocaleHelper {
 	 * @param request
 	 * @return
 	 */
-	public Locale getCurrentUserLocale(HttpServletRequest request) {
-
-		IUserInstance ui = userInstanceManager.getUserInstance(request);
+	public Locale getCurrentUserLocale(PortletRequest request) {
+	    final HttpServletRequest originalPortalRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
+		IUserInstance ui = userInstanceManager.getUserInstance(originalPortalRequest);
 		IUserPreferencesManager upm = ui.getPreferencesManager();
         LocaleManager localeManager = upm.getUserPreferences().getProfile().getLocaleManager();
         

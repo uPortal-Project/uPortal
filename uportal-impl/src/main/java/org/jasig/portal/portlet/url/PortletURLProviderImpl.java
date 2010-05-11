@@ -67,11 +67,11 @@ public class PortletURLProviderImpl implements PortletURLProvider {
         
         switch (type) {
             case ACTION: {
-                this.portletUrl.setRequestType(RequestType.ACTION);
+                this.portletUrl.setRequestType(PortletURLProvider.TYPE.ACTION);
             } break;
             
             case RENDER: {
-                this.portletUrl.setRequestType(RequestType.RENDER);
+                this.portletUrl.setRequestType(PortletURLProvider.TYPE.RENDER);
             } break;
             
             default: {
@@ -122,18 +122,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     @Override
     public TYPE getType() {
-        final RequestType requestType = this.portletUrl.getRequestType();
-        switch (requestType) {
-            case RENDER: {
-                return TYPE.RENDER;
-            }
-            case ACTION: {
-                return TYPE.ACTION;
-            }
-            default: {
-                throw new IllegalStateException("Unusupported URL type: " + requestType);
-            }
-        }
+        return this.portletUrl.getRequestType();
     }
 
     @Override

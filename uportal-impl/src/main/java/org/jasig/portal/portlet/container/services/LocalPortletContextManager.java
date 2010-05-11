@@ -19,6 +19,7 @@
 package org.jasig.portal.portlet.container.services;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +27,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pluto.container.PortletAppDescriptorService;
 import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.RequestDispatcherService;
@@ -41,9 +44,11 @@ import org.apache.pluto.container.driver.PortletContextService;
 import org.apache.pluto.container.driver.PortletRegistryEvent;
 import org.apache.pluto.container.driver.PortletRegistryListener;
 import org.apache.pluto.container.driver.PortletRegistryService;
+import org.apache.pluto.container.impl.PortletAppDescriptorServiceImpl;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.util.ClasspathScanner;
+import org.apache.pluto.container.util.StringManager;
 import org.apache.pluto.driver.container.ApplicationIdResolver;
 import org.apache.pluto.driver.container.Configuration;
 import org.apache.pluto.driver.container.DriverPortletConfigImpl;
@@ -58,8 +63,17 @@ import org.springframework.stereotype.Service;
  * @version $Revision$
  */
 @Service
-public class LocalPortletContextManager implements PortletRegistryService,
-		PortletContextService {
+public class LocalPortletContextManager implements PortletRegistryService, PortletContextService {
+    
+    /** Web deployment descriptor location. */
+    private static final String WEB_XML = "/WEB-INF/web.xml";
+
+    /** Portlet deployment descriptor location. */
+    private static final String PORTLET_XML = "/WEB-INF/portlet.xml";
+
+    /** Exception Messages. */
+    private static final StringManager EXCEPTIONS = StringManager.getManager(
+            PortletDescriptorRegistry.class.getPackage().getName());
 
 	/**
      * Logger Instance
@@ -95,23 +109,42 @@ public class LocalPortletContextManager implements PortletRegistryService,
 
     /**
      * The classloader for the portal, key is portletWindow and value is the classloader.
+     * TODO this looks like a horrible memory leak
      */
     private final Map<String,ClassLoader> classLoaders = new HashMap<String,ClassLoader>();
     
+    /**
+     * Cache of descriptors.  WeakHashMap is used so that
+     * once the context is destroyed (kinda), the cache is eliminated.
+     * Ideally we'd use a ServletContextListener, but at this
+     * point I'm wondering if we really want to add another
+     * config requirement in the servlet xml? Hmm. . .
+     */
+    private final Map<ServletContext, PortletApplicationDefinition> portletAppDefinitionCache = new WeakHashMap<ServletContext, PortletApplicationDefinition>();
+    
     private RequestDispatcherService requestDispatcherService;
+    private PortletAppDescriptorService portletAppDescriptorService = new PortletAppDescriptorServiceImpl();
 
     /**
 	 * @param requestDispatcherService the requestDispatcherService to set
 	 */
-    @Autowired(required=true)
+    @Autowired
 	public void setRequestDispatcherService(
 			RequestDispatcherService requestDispatcherService) {
 		this.requestDispatcherService = requestDispatcherService;
 	}
     
-    
+    public void setPortletAppDescriptorService(PortletAppDescriptorService portletAppDescriptorService) {
+        this.portletAppDescriptorService = portletAppDescriptorService;
+    }
 
     // Public Methods ----------------------------------------------------------
+
+    
+
+
+
+
 
     /**
      * Retrieves the PortletContext associated with the given ServletContext.
@@ -126,9 +159,8 @@ public class LocalPortletContextManager implements PortletRegistryService,
 	    String contextPath = getContextPath(servletContext);
         String applicationName = contextPath.substring(1);
         if (!portletContexts.containsKey(applicationName)) {
-        	PortletDescriptorRegistry portletRegistry = PortletDescriptorRegistry.getRegistry();
 
-            PortletApplicationDefinition portletApp = portletRegistry.getPortletAppDD(servletContext, applicationName, contextPath);
+            PortletApplicationDefinition portletApp = this.getPortletAppDD(servletContext, applicationName, contextPath);
 
             DriverPortletContext portletContext = new DriverPortletContextImpl(servletContext, portletApp, requestDispatcherService);
 
@@ -287,6 +319,59 @@ public class LocalPortletContextManager implements PortletRegistryService,
         }
 
         logger.info("Portlet Context '/" + context.getApplicationName() + "' removed.");
+    }
+    
+    /**
+     * Retrieve the Portlet Application Deployment Descriptor for the given
+     * servlet context.  Create it if it does not allready exist.
+     *
+     * @param servletContext  the servlet context.
+     * @return The portlet application deployment descriptor.
+     * @throws PortletContainerException if the descriptor can not be found or parsed
+     */
+    public PortletApplicationDefinition getPortletAppDD(ServletContext servletContext, String name, String contextPath)
+    throws PortletContainerException {
+        PortletApplicationDefinition portletApp = this.portletAppDefinitionCache.get(servletContext);
+        if (portletApp == null) {
+            portletApp = createDefinition(servletContext, name, contextPath);
+            this.portletAppDefinitionCache.put(servletContext, portletApp);
+        }
+        return portletApp;
+    }
+
+
+    // Private Methods ---------------------------------------------------------
+
+    /**
+     * Creates the portlet.xml deployment descriptor representation.
+     *
+     * @param servletContext  the servlet context for which the DD is requested.
+     * @return the Portlet Application Deployment Descriptor.
+     * @throws PortletContainerException
+     */
+    private PortletApplicationDefinition createDefinition(ServletContext servletContext, String name, String contextPath)
+    throws PortletContainerException {
+        PortletApplicationDefinition portletApp = null;
+        try {
+            InputStream paIn = servletContext.getResourceAsStream(PORTLET_XML);
+            InputStream webIn = servletContext.getResourceAsStream(WEB_XML);
+            if (paIn == null) {
+                throw new PortletContainerException("Cannot find '" + PORTLET_XML +
+                    "'. Are you sure it is in the deployed package?");
+            }
+            if (webIn == null) {
+                throw new PortletContainerException("Cannot find '" + WEB_XML +
+                    "'. Are you sure it is in the deployed package?");
+            }
+            portletApp = this.portletAppDescriptorService.read(name, contextPath, paIn);
+            this.portletAppDescriptorService.mergeWebDescriptor(portletApp, webIn);
+        } catch (Exception ex) {
+            throw new PortletContainerException(EXCEPTIONS.getString(
+                    "error.context.descriptor.load",
+                    new String[] { servletContext.getServletContextName() }),
+                    ex);
+        }
+        return portletApp;
     }
 
 //

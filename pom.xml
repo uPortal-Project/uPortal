@@ -169,11 +169,11 @@
         <log4j.version>1.2.15</log4j.version>
         <mail.version>1.4.1</mail.version>
         <ognl.version>2.7.3</ognl.version>
-        <org.springframework.webflow.version>2.0.5.RELEASE</org.springframework.webflow.version>
+        <org.springframework.webflow.version>2.0.9.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
         <person-directory.version>1.5.0-RC6</person-directory.version>
-        <pluto.version>2.0.0</pluto.version>
+        <pluto.version>2.0.2-SNAPSHOT</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.6.1</quartz.version>
         <resource-server.version>1.0.6</resource-server.version>
@@ -674,12 +674,12 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework.webflow</groupId>
-                <artifactId>org.springframework.binding</artifactId>
+                <artifactId>spring-binding</artifactId>
                 <version>${org.springframework.webflow.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.webflow</groupId>
-                <artifactId>org.springframework.webflow</artifactId>
+                <artifactId>spring-webflow</artifactId>
                 <version>${org.springframework.webflow.version}</version>
             </dependency>
             <dependency>

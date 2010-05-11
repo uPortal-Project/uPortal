@@ -27,7 +27,7 @@
     </parameter>
     <parameter> 
       <name>portletApplicationId</name>  
-      <value>WeatherPortlet</value>  
+      <value>/WeatherPortlet</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

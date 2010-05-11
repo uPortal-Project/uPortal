@@ -263,6 +263,10 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                                     "channel with functional name '" + fname +
                                 "'.", e);
                         }
+                        
+                        if (this.channelSubscribeId == null) {
+                            log.error("Could not find channelSubscribeId for: " + fname);
+                        }
                     }
                 }
 				if (ccaching) {
@@ -306,7 +310,10 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
             if (qName.equals ("channel") && this.insideElement.equals("channel")) {
 
             	try {
-					if (this.ser != null) {
+            	    if (channelSubscribeId == null) {
+            	        log.error("null channelSubscribeId prevents outputting channel with subscribe id = " + channelSubscribeId);
+            	    }
+            	    else if (this.ser != null) {
 						if (ccaching) {
 							cacheEntries.add(new ChannelContentCacheEntry(channelSubscribeId));
 						}

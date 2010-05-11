@@ -65,10 +65,12 @@ public class ChannelTitleIncorporationWiterFilter extends AbstractTokenReplaceme
     protected String replaceToken(String channelId) {
         final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)this.userLayoutManager.getNode(channelId);
         final boolean disableDynamicTitle = Boolean.valueOf(channelNode.getParameterValue("disableDynamicTitle"));
+
+        final String channelSubscribeId = channelNode.getChannelSubscribeId();
         
         String title = null;
-        if (!disableDynamicTitle) {
-            title = this.portletExecutionManager.getPortletTitle(title, this.httpServletRequest, this.httpServletResponse);
+        if (!disableDynamicTitle && channelSubscribeId != null) {
+            title = this.portletExecutionManager.getPortletTitle(channelSubscribeId, this.httpServletRequest, this.httpServletResponse);
         }
         
         if (title == null) {

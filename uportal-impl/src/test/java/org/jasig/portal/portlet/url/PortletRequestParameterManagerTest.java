@@ -24,6 +24,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.apache.pluto.container.PortletURLProvider;
 import org.easymock.EasyMock;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -78,7 +79,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("id");
         final PortletUrl portletUrl = new PortletUrl(portletWindowId);
-        portletUrl.setRequestType(RequestType.RENDER);
+        portletUrl.setRequestType(PortletURLProvider.TYPE.RENDER);
         parameterManager.setTargetedPortletUrl(request, portletUrl);
         
         final IPortletWindowId targetedPortletWindowId = parameterManager.getTargetedPortletWindowId(request);

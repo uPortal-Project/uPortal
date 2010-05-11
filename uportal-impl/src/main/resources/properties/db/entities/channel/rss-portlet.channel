@@ -21,7 +21,7 @@
   <parameters>
     <parameter> 
       <name>portletApplicationId</name>  
-      <value>RssPortlet</value>  
+      <value>/RssPortlet</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>

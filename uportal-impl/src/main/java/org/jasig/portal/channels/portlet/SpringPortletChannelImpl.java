@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.PortletURLProvider;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.ChannelCacheKey;
 import org.jasig.portal.ChannelRuntimeData;
@@ -428,7 +429,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
                         portletUrl = new PortletUrl(portletWindowId);
                     }
                     
-                    portletUrl.setRequestType(RequestType.RENDER);
+                    portletUrl.setRequestType(PortletURLProvider.TYPE.RENDER);
                     
                     this.portletRequestParameterManager.setAdditionalPortletUrl(httpServletRequest, portletUrl);
                 }

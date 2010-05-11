@@ -92,8 +92,6 @@
         <property name="dataSource" ref="PortalDb"/>
     </bean>   
     
-    
-    <!-- Executes flows: the central entry point into the Spring Web Flow system -->
     <webflow:flow-executor id="flowExecutor">
         <webflow:flow-execution-attributes>
             <webflow:always-redirect-on-pause value="false" />
@@ -106,6 +104,10 @@
     </webflow:flow-registry>
     
     <!-- The flow-builder-service to set our custom conversion service -->
-    <webflow:flow-builder-services id="flowBuilderServices"
-        conversion-service="portalConversionService"/>
+    <webflow:flow-builder-services id="flowBuilderServices" 
+        view-factory-creator="viewFactoryCreator"
+        conversion-service="portalConversionService" />
+        
+    <!-- Custom view factory creator that allows us to configure the flow beans in the top level application context -->
+    <bean id="viewFactoryCreator" class="org.jasig.portal.utils.web.flow.RuntimeMvcViewFactoryCreator" />
 </beans>

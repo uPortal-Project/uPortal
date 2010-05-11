@@ -1,25 +1,12 @@
 /**
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright 2007 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
-
 package org.jasig.portal.url;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,19 +27,30 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @author Eric Dalquist
  * @version $Revision$
  */
-class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUrl {
+class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUrl {
     private final IPortletWindowId portletWindowId;
+    private final String channelSubscribeId;
+    
     private final ConcurrentMap<String, List<String>> portletParameters = new ConcurrentHashMap<String, List<String>>();
     private WindowState windowState = null;
     private PortletMode portletMode = null;
     private boolean action = false;
     
     
-    public PortalPortletUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, IPortletWindowId portletWindowId) {
+    public PortletPortalUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, IPortletWindowId portletWindowId) {
         super(request, urlGenerator);
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
         
         this.portletWindowId = portletWindowId;
+        this.channelSubscribeId = null;
+    }
+    
+    public PortletPortalUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, String channelSubscribeId) {
+        super(request, urlGenerator);
+        Validate.notNull(channelSubscribeId, "portletWindowId can not be null");
+        
+        this.portletWindowId = null;
+        this.channelSubscribeId = channelSubscribeId;
     }
 
     /* (non-Javadoc)
@@ -96,6 +94,25 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
     public void setPortletMode(PortletMode portletMode) {
         this.portletMode = portletMode;
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortalPortletUrl#addPortletParameter(java.lang.String, java.lang.String[])
+     */
+    public void addPortletParameter(String name, String... values) {
+        Validate.notNull(name, "name can not be null");
+        Validate.noNullElements(values, "values can not be null or contain null elements");
+        
+        List<String> valuesList = this.portletParameters.get(name);
+        if (valuesList == null) {
+            valuesList = new ArrayList<String>(values.length);
+        }
+        
+        for (final String value : values) {
+            valuesList.add(value);
+        }
+        
+        this.portletParameters.put(name, valuesList);
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalPortletUrl#setPortletParameter(java.lang.String, java.lang.String[])
@@ -126,13 +143,24 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
     public void setWindowState(WindowState windowState) {
         this.windowState = windowState;
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IBasePortalUrl#getUrlString()
+     */
+    public String getUrlString() {
+        if (this.portletWindowId != null) {
+            return this.urlGenerator.generatePortletUrl(this.request, this, this.portletWindowId);
+        }
+        
+        return this.urlGenerator.generatePortletUrl(this.request, this, this.channelSubscribeId);
+    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return this.urlGenerator.generatePortletUrl(this.request, this, this.portletWindowId);
+        return this.getUrlString();
     }
 
     /**
@@ -157,10 +185,10 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
         if (object == this) {
             return true;
         }
-        if (!(object instanceof PortalPortletUrlImpl)) {
+        if (!(object instanceof PortletPortalUrlImpl)) {
             return false;
         }
-        PortalPortletUrlImpl rhs = (PortalPortletUrlImpl) object;
+        PortletPortalUrlImpl rhs = (PortletPortalUrlImpl) object;
         return new EqualsBuilder()
             .appendSuper(super.equals(object))
             .append(this.portletWindowId, rhs.portletWindowId)
@@ -169,4 +197,11 @@ class PortalPortletUrlImpl extends AbstractPortalUrl implements IPortalPortletUr
             .append(this.action, rhs.action)
             .isEquals();
     }
+
+    /**
+     * 
+     */
+	public void addPortletParameter(String name, String value) {
+		this.portletParameters.put(name, Arrays.asList(new String[] { value }));
+	}
 }

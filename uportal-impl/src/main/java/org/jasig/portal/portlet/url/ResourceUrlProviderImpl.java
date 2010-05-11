@@ -19,7 +19,11 @@
 
 package org.jasig.portal.portlet.url;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.pluto.container.ResourceURLProvider;
+import org.jasig.portal.portlet.om.IPortletWindow;
 
 /**
  * Simple handling for resource URL generation
@@ -28,12 +32,19 @@ import org.apache.pluto.container.ResourceURLProvider;
  * @version $Revision$
  */
 public class ResourceUrlProviderImpl implements ResourceURLProvider {
+    private final IPortletWindow portletWindow;
+    private final HttpServletRequest containerRequest;
+    private final HttpServletResponse containerResponse;
+    
     private String path = null;
     
-    public ResourceUrlProviderImpl() {
+   public ResourceUrlProviderImpl(IPortletWindow portletWindow, HttpServletRequest containerRequest, HttpServletResponse containerResponse) {
+        this.portletWindow = portletWindow;
+        this.containerRequest = containerRequest;
+        this.containerResponse = containerResponse;
     }
 
-   /*
+    /*
     * (non-Javadoc)
     * @see org.apache.pluto.container.ResourceURLProvider#setAbsoluteURL(java.lang.String)
     */

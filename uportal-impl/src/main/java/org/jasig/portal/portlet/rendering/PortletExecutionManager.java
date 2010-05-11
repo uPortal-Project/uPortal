@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,14 +37,20 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.registry.NotAPortletException;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.threading.TrackingThreadLocal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 /**
  * requests always end up targeting a portlet window
@@ -124,13 +131,18 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      * Starts the specified portlet rendering, returns immediately.
      */
     public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
+        Assert.notNull(subscribeId, "subscribeId cannot be null");
+        
         final IPortletWindow portletWindow;
         try {
             portletWindow = this.getDefaultPortletWindow(subscribeId, request);
         }
+        catch (NotAPortletException nape) {
+            this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
+            return;
+        }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to start portlet rendering: " + subscribeId, e);
-            //probably from a channel that isn't a portlet
             return;
         }
         
@@ -145,13 +157,18 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     }
     
     public void outputPortlet(String subscribeId, HttpServletRequest request, HttpServletResponse response, Writer writer) throws IOException {
+        Assert.notNull(subscribeId, "subscribeId cannot be null");
+        
         final IPortletWindow portletWindow;
         try {
             portletWindow = this.getDefaultPortletWindow(subscribeId, request);
         }
+        catch (NotAPortletException nape) {
+            this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
+            return;
+        }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to output portlet: " + subscribeId, e);
-            //probably from a channel that isn't a portlet
             return;
         }
 
@@ -177,13 +194,18 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      * Gets the title for the specified portlet
      */
     public String getPortletTitle(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
+        Assert.notNull(subscribeId, "subscribeId cannot be null");
+        
         final IPortletWindow portletWindow;
         try {
             portletWindow = this.getDefaultPortletWindow(subscribeId, request);
         }
+        catch (NotAPortletException nape) {
+            this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
+            return null;
+        }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to get portlet title: " + subscribeId, e);
-            //probably from a channel that isn't a portlet
             return null;
         }
 
@@ -208,6 +230,9 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
             final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, subscribeId);
             final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
             return portletWindow;
+        }
+        catch (NotAPortletException nape) {
+            throw nape;
         }
         catch (RuntimeException re) {
             throw new DataRetrievalFailureException("Could not find IPortletWindow for subscribe id '" + subscribeId + "'", re);
@@ -313,12 +338,21 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         
         public final void submit() {
             this.submitted = System.currentTimeMillis();
+            
+            final Map<TrackingThreadLocal<Object>, Object> trackingThreadLocalData = TrackingThreadLocal.getCurrentData();
+            final RequestAttributes requestAttributesFromHolder = RequestContextHolder.getRequestAttributes();
+            final Locale localeFromHolder = LocaleContextHolder.getLocale();
+            
             this.future = this.executorService.submit(new Callable<V>() {
                 /* (non-Javadoc)
                  * @see java.util.concurrent.Callable#call()
                  */
                 @Override
                 public V call() throws Exception {
+                    TrackingThreadLocal.setCurrentData(trackingThreadLocalData);
+                    RequestContextHolder.setRequestAttributes(requestAttributesFromHolder);
+                    LocaleContextHolder.setLocale(localeFromHolder);
+                    
                     started = System.currentTimeMillis();
                     //signal any threads waiting for the worker to start
                     startLatch.countDown();
@@ -330,6 +364,10 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
                         if (logger.isDebugEnabled()) {
                             logger.debug("Execution complete on portlet " + portletWindowId + " in " + getDuration() + "ms");
                         }
+                        
+                        TrackingThreadLocal.clearCurrentData();
+                        LocaleContextHolder.resetLocaleContext();
+                        RequestContextHolder.resetRequestAttributes();
                     }
                 }
             });

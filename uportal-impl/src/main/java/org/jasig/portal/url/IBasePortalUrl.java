@@ -1,20 +1,7 @@
 /**
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright (c) 2000-2009, Jasig, Inc.
+ * See license distributed with this file and available online at
+ * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
 
 package org.jasig.portal.url;
@@ -43,6 +30,17 @@ public interface IBasePortalUrl {
      * @param values The value or values for the parameter
      */
     public void setPortalParameter(String name, String... values);
+    public void setPortalParameter(String name, List<String> values);
+    
+    /**
+     * Adds a URL parameter targeted to the portal.
+     * 
+     * This method adds the provided parameters on to any existing parameters with the given key.
+     * 
+     * @param name The parameter name
+     * @param values The value or values for the parameter
+     */
+    public void addPortalParameter(String name, String... values);
     
     /**
      * Sets a portal parameter map for this URL.
@@ -63,5 +61,5 @@ public interface IBasePortalUrl {
     /**
      * @return Generate a URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
      */
-    public String toString();
+    public String getUrlString();
 }

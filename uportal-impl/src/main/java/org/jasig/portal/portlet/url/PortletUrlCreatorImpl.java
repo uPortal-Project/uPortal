@@ -50,8 +50,7 @@ public class PortletUrlCreatorImpl implements IPortletUrlCreator {
      */
     @Override
     public ResourceURLProvider createResourceUrlProvider(IPortletWindow portletWindow, HttpServletRequest containerRequest, HttpServletResponse containerResponse) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Resource URLs are not implemented yet");
+        return new ResourceUrlProviderImpl(portletWindow, containerRequest, containerResponse);
     }
 
     /* (non-Javadoc)

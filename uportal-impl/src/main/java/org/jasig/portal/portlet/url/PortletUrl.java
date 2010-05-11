@@ -30,6 +30,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.pluto.container.PortletURLProvider;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
@@ -41,7 +42,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  */
 public class PortletUrl {
     private final IPortletWindowId targetWindowId;
-    private RequestType requestType = null;
+    private PortletURLProvider.TYPE requestType = null;
     private Map<String, List<String>> parameters = null;
     private WindowState windowState = null;
     private PortletMode portletMode = null;
@@ -61,10 +62,10 @@ public class PortletUrl {
         return this.targetWindowId;
     }
 
-    public RequestType getRequestType() {
+    public PortletURLProvider.TYPE getRequestType() {
         return requestType;
     }
-    public void setRequestType(RequestType requestType) {
+    public void setRequestType(PortletURLProvider.TYPE requestType) {
         this.requestType = requestType;
     }
 
