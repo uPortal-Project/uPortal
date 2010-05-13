@@ -189,7 +189,11 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
         while (parameterNames != null && parameterNames.hasMoreElements()) {
             final String parameterName = parameterNames.nextElement();
             
-            if (!parameterName.equals("uP_channelTarget") && !parameterName.equals("uP_fname")) {
+            if (!parameterName.equals("uP_channelTarget") && !parameterName.equals("uP_fname")
+            		&& !parameterName.equals("uP_help_target") 
+            		&& !parameterName.equals("uP_about_target")
+            		&& !parameterName.equals("uP_edit_target")
+            		&& !parameterName.equals("uP_detach_target")) {
                 final String[] parameterValues = request.getParameterValues(parameterName);
                 channelParameters.put(parameterName, parameterValues);
             }
@@ -244,7 +248,27 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
         if (targetChannelId == null) {
             targetChannelId = request.getParameter("uP_channelTarget");
         }
-
+        
+        // check if the uP_help_target parameter has been passed        
+        if (targetChannelId == null) {
+            targetChannelId = request.getParameter("uP_help_target");
+        }
+        
+        // check if the uP_about_target parameter has been passed
+        if (targetChannelId == null) {
+            targetChannelId = request.getParameter("uP_about_target");
+        }        
+        
+        // check if the uP_edit_target parameter has been passed
+        if (targetChannelId == null) {
+            targetChannelId = request.getParameter("uP_edit_target");
+        }        
+        
+        // check if the uP_detach_target parameter has been passed
+        if (targetChannelId == null) {
+            targetChannelId = request.getParameter("uP_detach_target");
+        }    
+        
         final UPFileSpec upfs = new UPFileSpec(request);
         
         // determine target channel id

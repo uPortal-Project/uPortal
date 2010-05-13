@@ -295,6 +295,10 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
      * @see org.jasig.portal.channels.portlet.ISpringPortletChannel#isCacheValid(org.jasig.portal.ChannelStaticData, org.jasig.portal.PortalControlStructures, org.jasig.portal.ChannelRuntimeData, java.lang.Object)
      */
     public boolean isCacheValid(ChannelStaticData channelStaticData, PortalControlStructures portalControlStructures, ChannelRuntimeData channelRuntimeData, Object validity) {
+        if (channelRuntimeData.isTargeted()) {
+        	return false;
+        }
+        
         //Get the portlet window
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
