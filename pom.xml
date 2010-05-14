@@ -173,7 +173,7 @@
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
         <person-directory.version>1.5.0-RC6</person-directory.version>
-        <pluto.version>2.0.2-SNAPSHOT</pluto.version>
+        <pluto.version>2.1.0-SNAPSHOT</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.6.1</quartz.version>
         <resource-server.version>1.0.6</resource-server.version>
