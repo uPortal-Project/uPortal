@@ -35,7 +35,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.PersonDirectory;
 
-public class SmartLdapGroupStore implements IEntityGroupStore {
+public final class SmartLdapGroupStore implements IEntityGroupStore {
 		
     // Instance Members.
     private ApplicationContext spring_context = null;
@@ -83,23 +83,8 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
 
     public static final String ROOT_KEY = "SmartLdap ROOT";
     public static final String ROOT_DESC = "A root group provided for the SmartLdapGroupStore.";
-	
-    public static final EntityIdentifier ENTITY_IDENTIFIER = new EntityIdentifier(ROOT_KEY, 
-											org.jasig.portal.groups.IEntityGroup.class);
-	
-    public static final IEntityGroup ROOT_GROUP;
-    static {
-	    
-	    try {
-	        ROOT_GROUP = new EntityTestingGroupImpl(ROOT_KEY, IPerson.class);
-	        ROOT_GROUP.setCreatorID("System");
-	        ROOT_GROUP.setName(ROOT_KEY);
-	        ROOT_GROUP.setDescription(ROOT_DESC);
-	    } catch (Throwable t) {
-            throw new RuntimeException(t);
-	    }
 
-    }
+    public static final IEntityGroup ROOT_GROUP = createRootGroup();
 
     public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
         log.warn("Unsupported method accessed:  SmartLdapGroupStore.contains");
@@ -576,6 +561,17 @@ public class SmartLdapGroupStore implements IEntityGroupStore {
     /*
      * Implementation.
      */
+    
+    private static IEntityGroup createRootGroup() {
+        
+        IEntityGroup rslt = new EntityTestingGroupImpl(ROOT_KEY, IPerson.class);
+        rslt.setCreatorID("System");
+        rslt.setName(ROOT_KEY);
+        rslt.setDescription(ROOT_DESC);
+        
+        return rslt;
+
+    }
 
     private SmartLdapGroupStore() {
         
