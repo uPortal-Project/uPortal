@@ -123,6 +123,29 @@ Version $Revision: 1.1 $
 
     <step>
       <ID>2</ID>
+      
+      <name>Portlet Titles</name>
+      
+      <parameter modify="publish-only">
+        <name>disableDynamicTitle</name>
+        <label>Disable Dynamic Title</label>
+        <type base="string" input="single-choice" display="drop-down">
+            <restriction type="enumeration">
+                <value>false</value>
+                <value>true</value>
+            </restriction>
+        </type>
+        <defaultValue>true</defaultValue>
+        <example>true</example>
+        <description>
+          Disable dynamic portlet titles.
+        </description>
+      </parameter>
+
+    </step>
+
+    <step>
+      <ID>3</ID>
 
       <name>Portlet Preferences</name>
 
