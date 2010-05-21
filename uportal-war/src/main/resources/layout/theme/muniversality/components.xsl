@@ -35,10 +35,24 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:upAuthentication="xalan://org.jasig.portal.security.xslt.XalanAuthenticationHelper">
+<xsl:stylesheet  
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:xalan="http://xml.apache.org/xalan" 
+  xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
+  xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
+  xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
+  xmlns:upAuthentication="xalan://org.jasig.portal.security.xslt.XalanAuthenticationHelper"  
+  version="1.0">
 
-
+  <xalan:component prefix="portal" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+  </xalan:component>
+  <xalan:component prefix="portlet" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+  </xalan:component>
+  <xalan:component prefix="layout" elements="url param">
+    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
+  </xalan:component>
 <!-- ======================================================================================================================================================== -->
 <!-- ========== PUBLIC VIEW ================================================================================================================================= -->
 <!-- ======================================================================================================================================================== -->
@@ -140,7 +154,10 @@
                             <xsl:value-of select="$EXTERNAL_LOGIN_URL"/>
                         </xsl:when>
                         <xsl:otherwise>
-                            <xsl:value-of select="$BASE_ACTION_URL"/>?uP_fname=portal_login_general
+                        	<xsl:variable name="portletLoginUrl">
+                        		<portlet:url fname="portal_login_general" state="MAXIMIZED"/>
+                        	</xsl:variable>
+                            <xsl:value-of select="$portletLoginUrl"/>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:attribute>
@@ -178,7 +195,10 @@
                 <ul class="fl-listmenu">
                     <xsl:for-each select="channel">
                         <li>
-                            <a class="flc-screenNavigator-backButton" href="{$BASE_ACTION_URL}?uP_root={@ID}" title="To view {@name}">
+                        	<xsl:variable name="portletUrl">
+        						<portlet:url layoutId="{@ID}" state="MAXIMIZED"/>
+      						</xsl:variable>
+                            <a class="flc-screenNavigator-backButton" href="{$portletUrl}" title="To view {@name}">
                                 <xsl:value-of select="@name" />
                             </a>
                         </li>
@@ -224,7 +244,10 @@
         <div class="fl-table-row">
             
             <div class="fl-table-cell up-mobile-focus">
-                <a id="up-page-back-button" href="{$BASE_ACTION_URL}?uP_root=root" class="fl-button fl-backButton">
+            	<xsl:variable name="basePortalUrl">
+        			<portal:url/>
+      			</xsl:variable>
+                <a id="up-page-back-button" href="basePortalUrl" class="fl-button fl-backButton">
                     <span class="fl-button-inner">Back</span>
                 </a>
             </div>
