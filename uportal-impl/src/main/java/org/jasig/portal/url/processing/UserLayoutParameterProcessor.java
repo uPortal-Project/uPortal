@@ -19,6 +19,8 @@
 
 package org.jasig.portal.url.processing;
 
+import java.util.Enumeration;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
@@ -94,7 +96,8 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
             case NORMAL:
             default:
                 final String tabId = portalRequestInfo.getTargetedLayoutNodeId();
-                structureStylesheetUserPreferences.putParameterValue("activeTabNodeId", tabId);
+                final String tabIndex = this.findTabIndex(userLayoutManager, tabId);
+                structureStylesheetUserPreferences.putParameterValue("activeTab", tabIndex);
                 structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
             break;
         }
@@ -104,6 +107,21 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         userLayoutManager.processLayoutParameters(person, userPreferences, request);
 
         return true;
+    }
+    
+    protected String findTabIndex(IUserLayoutManager userLayoutManager, String tabId) {
+        final String rootFolderId = userLayoutManager.getRootFolderId();
+        final Enumeration<String> rootsChildren = userLayoutManager.getChildIds(rootFolderId);
+        
+        int tabIndex = 0;
+        for (String topNodeId = rootsChildren.nextElement(); rootsChildren.hasMoreElements(); topNodeId = rootsChildren.nextElement()) {
+            tabIndex++;
+            if (tabId.equals(topNodeId)) {
+                return Integer.toString(tabIndex);
+            }
+        }
+        
+        return "none";
     }
 
     /**
