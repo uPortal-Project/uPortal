@@ -54,14 +54,4 @@ public interface IPortletUrlSyntaxProvider {
      */
     public PortletUrl parsePortletUrl(HttpServletRequest request);
     
-    /**
-     * Parses the parameters on the request, providing a Map of portlet IDs that were targeted with parameters
-     * and the populated PortletUrl object for that ID. All PortletUrl objects returned will have their {@link RequestType}
-     * set.
-     * 
-     * @param request The request to parse parameters from
-     * @return The targeted IPortletWindowId and the PortletUrl representing the arguments, null if no portlet was targeted by the URL.
-     * @throws IllegalArgumentException if request is null.
-     */
-    public Tuple<IPortletWindowId, PortletUrl> parsePortletParameters(HttpServletRequest request);
 }
