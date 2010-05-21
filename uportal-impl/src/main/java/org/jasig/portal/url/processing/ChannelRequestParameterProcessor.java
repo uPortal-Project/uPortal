@@ -48,6 +48,8 @@ import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.UploadStatus;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
+import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.url.support.IChannelRequestParameterManager;
 import org.jasig.portal.user.IUserInstance;
@@ -77,6 +79,7 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
     private IPortletRequestParameterManager portletRequestParameterManager;
     private IChannelRequestParameterManager channelRequestParameterManager;
     private IUserInstanceManager userInstanceManager;
+    private IPortalUrlProvider portalUrlProvider;
     
     /**
      * @return the userInstanceManager
@@ -118,8 +121,22 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
     public void setChannelRequestParameterManager(IChannelRequestParameterManager channelRequestParameterManager) {
         this.channelRequestParameterManager = channelRequestParameterManager;
     }
-
-    /* (non-Javadoc)
+    /**
+	 * @return the portalUrlProvider
+	 */
+	public IPortalUrlProvider getPortalUrlProvider() {
+		return portalUrlProvider;
+	}
+	/**
+	 * @param portalUrlProvider the portalUrlProvider to set
+	 */
+	@Autowired
+	public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
+		this.portalUrlProvider = portalUrlProvider;
+	}
+	
+	
+	/* (non-Javadoc)
      * @see org.jasig.portal.url.processing.IRequestParameterProcessor#processParameters(org.jasig.portal.url.IWritableHttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
@@ -138,10 +155,13 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
             //Need to wait for the portlet request processor to complete
             return false;
         }
-        
+       
+    	IPortalRequestInfo requestInfo = portalUrlProvider.getPortalRequestInfo(request);
+    	
         //Determine the targeted channel
-        final String targetChannelId = this.getTargetChannelId(request);
-        
+        //final String targetChannelId = this.getTargetChannelId(request);
+        final String targetChannelId = requestInfo.getTargetedChannelSubscribeId();
+    	
         //If no channel is targeted mark the request as such in the manager and return
         if (targetChannelId == null) {
             this.channelRequestParameterManager.setNoChannelParameters(request);
@@ -153,7 +173,7 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
         
         //If it is a portlet request just set the targeted channel id with an empty parameters map 
         if (isPortletRequest) {
-            this.channelRequestParameterManager.setChannelParameters(request, targetChannelId, channelParameters);
+            this.channelRequestParameterManager.setChannelParameters(request, targetChannelId, new HashMap<String, Object[]>());
             return true;
         }
 
@@ -185,6 +205,16 @@ public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport i
             channelParameters.put(UPLOAD_STATUS, new UploadStatus[] { uploadStatus });
         }
 
+        /* TODO - do we need the portalUrlProvider to do parameter processing?
+        IPortalChannelUrl channelUrl = portalUrlProvider.getChannelUrlByNodeId(request, targetChannelId);
+        Map<String, List<String>> channelPortalParameters = channelUrl.getPortalParameters();
+        for(Map.Entry<String, List<String>> mapEntry : channelPortalParameters.entrySet()) {
+        	String key = mapEntry.getKey();
+        	List<String> values = mapEntry.getValue();
+        	channelParameters.put(key, values.toArray());
+        }
+        */
+        
         // process parameters on the request object
         final Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames != null && parameterNames.hasMoreElements()) {

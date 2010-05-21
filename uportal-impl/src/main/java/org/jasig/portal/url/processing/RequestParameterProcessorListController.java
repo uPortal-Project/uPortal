@@ -103,7 +103,7 @@ public class RequestParameterProcessorListController implements IRequestParamete
             
             //If the max cycle count is reached log a warning and break out of the dynamic processing loop
             if (cycles >= this.maxNumberOfProcessingCycles) {
-                this.logger.warn(incompleteDynamicProcessors.size() + " IDynamicRequestParameterProcessors did not completel processing after " + cycles + " attempts. Execution will continue but this situation should be reviewed. Incomplete Processors=" + incompleteDynamicProcessors, new Throwable("Stack Trace"));
+                this.logger.warn(incompleteDynamicProcessors.size() + " IDynamicRequestParameterProcessors did not complete processing after " + cycles + " attempts. Execution will continue but this situation should be reviewed. Incomplete Processors=" + incompleteDynamicProcessors, new Throwable("Stack Trace"));
                 break;
             }
         }

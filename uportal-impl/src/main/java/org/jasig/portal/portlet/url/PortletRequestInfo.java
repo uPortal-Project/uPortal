@@ -5,6 +5,7 @@
  */
 package org.jasig.portal.portlet.url;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
@@ -22,13 +23,13 @@ import org.apache.pluto.container.PortletURLProvider.TYPE;
  */
 public class PortletRequestInfo {
     private final TYPE requestType;
-    private final Map<String, String[]> parameters;
+    private final Map<String, List<String>> parameters;
     
     public PortletRequestInfo(TYPE requestType) {
         this(requestType, null);
     }
 
-    public PortletRequestInfo(TYPE requestType, Map<String, String[]> parameters) {
+    public PortletRequestInfo(TYPE requestType, Map<String, List<String>> parameters) {
         Validate.notNull(requestType, "requestType can not be null");
         
         this.requestType = requestType;
@@ -45,7 +46,7 @@ public class PortletRequestInfo {
     /**
      * @return the parameters, null if no parameters are passed
      */
-    public Map<String, String[]> getParameters() {
+    public Map<String, List<String>> getParameters() {
         return this.parameters;
     }
     
