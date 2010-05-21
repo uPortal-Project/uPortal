@@ -34,7 +34,8 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
-import org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.junit.Assert;
@@ -89,11 +90,39 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/home/normal/weather.31/render.uP");
         
+        IPerson person = createMock(IPerson.class);
+        expect(person.getID()).andReturn(1);
+        replay(person);
+        
+        IUserInstance mockUserInstance = createMock(IUserInstance.class);
+        expect(mockUserInstance.getPerson()).andReturn(person);
+        replay(mockUserInstance);
+        
+        IUserInstanceManager mockUserInstanceInstanceManager = createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceInstanceManager.getUserInstance(mockRequest)).andReturn(mockUserInstance).times(2);
+        replay(mockUserInstanceInstanceManager);
+        
+        IPortletEntityId portletEntityId = createMock(IPortletEntityId.class);
+        replay(portletEntityId);
+        
+        IPortletEntity portletEntity = createMock(IPortletEntity.class);
+        expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        replay(portletEntity);
+        
+        IPortletEntityRegistry portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+        expect(portletEntityRegistry.getPortletEntity("31", 1)).andReturn(portletEntity);
+        replay(portletEntityRegistry);
+        
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
         expect(mockPortletWindowId.getStringId()).andReturn("weather");
         replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
+        
+        IPortletWindow portletWindow = createMock(IPortletWindow.class);
+        expect(portletWindow.getPortletWindowId()).andReturn(mockPortletWindowId);
+        replay(portletWindow);
+        
+        IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
+        expect(mockPortletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(portletWindow);
         replay(mockPortletWindowRegistry);
         
         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
@@ -104,8 +133,10 @@ public class PortalUrlProviderImplTest {
         replay(mockChannelRegistryStore);
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletEntityRegistry(portletEntityRegistry);
         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
         provider.setChannelRegistryStore(mockChannelRegistryStore);
+        provider.setUserInstanceManager(mockUserInstanceInstanceManager);
         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
         Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
         Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
@@ -131,12 +162,40 @@ public class PortalUrlProviderImplTest {
          mockRequest.setContextPath("/uPortal/");
          mockRequest.setRequestURI("/uPortal/home/normal/weather.31/");
          
+         IPerson person = createMock(IPerson.class);
+         expect(person.getID()).andReturn(1);
+         replay(person);
+         
+         IUserInstance mockUserInstance = createMock(IUserInstance.class);
+         expect(mockUserInstance.getPerson()).andReturn(person);
+         replay(mockUserInstance);
+         
+         IUserInstanceManager mockUserInstanceInstanceManager = createMock(IUserInstanceManager.class);
+         expect(mockUserInstanceInstanceManager.getUserInstance(mockRequest)).andReturn(mockUserInstance).times(2);
+         replay(mockUserInstanceInstanceManager);
+         
+         IPortletEntityId portletEntityId = createMock(IPortletEntityId.class);
+         replay(portletEntityId);
+         
+         IPortletEntity portletEntity = createMock(IPortletEntity.class);
+         expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+         replay(portletEntity);
+         
+         IPortletEntityRegistry portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+         expect(portletEntityRegistry.getPortletEntity("31", 1)).andReturn(portletEntity);
+         replay(portletEntityRegistry);
+         
          IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
          expect(mockPortletWindowId.getStringId()).andReturn("weather");
          replay(mockPortletWindowId);
-         ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-         expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-         replay(mockPortletWindowRegistry);
+         
+         IPortletWindow portletWindow = createMock(IPortletWindow.class);
+         expect(portletWindow.getPortletWindowId()).andReturn(mockPortletWindowId);
+         replay(portletWindow);
+         
+         IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
+         expect(mockPortletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(portletWindow);
+         replay(mockPortletWindowRegistry);         
          
          IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
          expect(mockChannelDefinition.isPortlet()).andReturn(true);
@@ -146,8 +205,10 @@ public class PortalUrlProviderImplTest {
          replay(mockChannelRegistryStore);
          
          PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+         provider.setPortletEntityRegistry(portletEntityRegistry);
          provider.setPortletWindowRegistry(mockPortletWindowRegistry);
          provider.setChannelRegistryStore(mockChannelRegistryStore);
+         provider.setUserInstanceManager(mockUserInstanceInstanceManager);
          IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
          Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
          Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
@@ -177,12 +238,49 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/home/normal/weather/");
         
+        IPerson person = createMock(IPerson.class);
+        expect(person.getID()).andReturn(1);
+        replay(person);
+        
+        IUserLayoutManager userLayoutManager = createMock(IUserLayoutManager.class);
+        expect(userLayoutManager.getSubscribeId("weather")).andReturn("ctf1");
+        replay(userLayoutManager);
+        
+        IUserPreferencesManager userPreferencesManager = createMock(IUserPreferencesManager.class);
+        expect(userPreferencesManager.getUserLayoutManager()).andReturn(userLayoutManager);
+        replay(userPreferencesManager);
+        
+        IUserInstance mockUserInstance = createMock(IUserInstance.class);
+        expect(mockUserInstance.getPreferencesManager()).andReturn(userPreferencesManager);
+        expect(mockUserInstance.getPerson()).andReturn(person);
+        replay(mockUserInstance);
+        
+        IUserInstanceManager mockUserInstanceInstanceManager = createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceInstanceManager.getUserInstance(mockRequest)).andReturn(mockUserInstance).times(2);
+        replay(mockUserInstanceInstanceManager);
+        
+        IPortletEntityId portletEntityId = createMock(IPortletEntityId.class);
+        replay(portletEntityId);
+        
+        IPortletEntity portletEntity = createMock(IPortletEntity.class);
+        expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        replay(portletEntity);
+        
+        IPortletEntityRegistry portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+        expect(portletEntityRegistry.getPortletEntity("ctf1", 1)).andReturn(portletEntity);
+        replay(portletEntityRegistry);
+        
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
         expect(mockPortletWindowId.getStringId()).andReturn("weather");
         replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
+        
+        IPortletWindow portletWindow = createMock(IPortletWindow.class);
+        expect(portletWindow.getPortletWindowId()).andReturn(mockPortletWindowId);
+        replay(portletWindow);
+        
+        IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
+        expect(mockPortletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(portletWindow);
+        replay(mockPortletWindowRegistry);         
         
         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
         expect(mockChannelDefinition.isPortlet()).andReturn(true);
@@ -192,11 +290,13 @@ public class PortalUrlProviderImplTest {
         replay(mockChannelRegistryStore);
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletEntityRegistry(portletEntityRegistry);
         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
         provider.setChannelRegistryStore(mockChannelRegistryStore);
+        provider.setUserInstanceManager(mockUserInstanceInstanceManager);
         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
         Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
+        Assert.assertEquals("ctf1", requestInfo.getTargetedChannelSubscribeId());
         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
         Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
         Assert.assertFalse(requestInfo.isAction());
@@ -227,7 +327,7 @@ public class PortalUrlProviderImplTest {
         
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
         replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+        IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
         replay(mockPortletWindowRegistry);
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
@@ -266,7 +366,7 @@ public class PortalUrlProviderImplTest {
         
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
         replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+        IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
         replay(mockPortletWindowRegistry);
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
@@ -296,12 +396,49 @@ public class PortalUrlProviderImplTest {
          mockRequest.setContextPath("/uPortal/");
          mockRequest.setRequestURI("/uPortal/max/weather/render.uP");
          
+         IPerson person = createMock(IPerson.class);
+         expect(person.getID()).andReturn(1);
+         replay(person);
+         
+         IUserLayoutManager userLayoutManager = createMock(IUserLayoutManager.class);
+         expect(userLayoutManager.getSubscribeId("weather")).andReturn("ctf1");
+         replay(userLayoutManager);
+         
+         IUserPreferencesManager userPreferencesManager = createMock(IUserPreferencesManager.class);
+         expect(userPreferencesManager.getUserLayoutManager()).andReturn(userLayoutManager);
+         replay(userPreferencesManager);
+         
+         IUserInstance mockUserInstance = createMock(IUserInstance.class);
+         expect(mockUserInstance.getPreferencesManager()).andReturn(userPreferencesManager);
+         expect(mockUserInstance.getPerson()).andReturn(person);
+         replay(mockUserInstance);
+         
+         IUserInstanceManager mockUserInstanceInstanceManager = createMock(IUserInstanceManager.class);
+         expect(mockUserInstanceInstanceManager.getUserInstance(mockRequest)).andReturn(mockUserInstance).times(2);
+         replay(mockUserInstanceInstanceManager);
+         
+         IPortletEntityId portletEntityId = createMock(IPortletEntityId.class);
+         replay(portletEntityId);
+         
+         IPortletEntity portletEntity = createMock(IPortletEntity.class);
+         expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+         replay(portletEntity);
+         
+         IPortletEntityRegistry portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+         expect(portletEntityRegistry.getPortletEntity("ctf1", 1)).andReturn(portletEntity);
+         replay(portletEntityRegistry);
+         
          IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
          expect(mockPortletWindowId.getStringId()).andReturn("weather");
          replay(mockPortletWindowId);
-         ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-         expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-         replay(mockPortletWindowRegistry);
+         
+         IPortletWindow portletWindow = createMock(IPortletWindow.class);
+         expect(portletWindow.getPortletWindowId()).andReturn(mockPortletWindowId);
+         replay(portletWindow);
+         
+         IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
+         expect(mockPortletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(portletWindow);
+         replay(mockPortletWindowRegistry);   
          
          IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
          expect(mockChannelDefinition.isPortlet()).andReturn(true);
@@ -311,11 +448,13 @@ public class PortalUrlProviderImplTest {
          replay(mockChannelRegistryStore);
          
          PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+         provider.setPortletEntityRegistry(portletEntityRegistry);
          provider.setPortletWindowRegistry(mockPortletWindowRegistry);
          provider.setChannelRegistryStore(mockChannelRegistryStore);
+         provider.setUserInstanceManager(mockUserInstanceInstanceManager);
          IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
          Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
-         Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
+         Assert.assertEquals("ctf1", requestInfo.getTargetedChannelSubscribeId());
          Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
          Assert.assertEquals(null, requestInfo.getTargetedLayoutNodeId());
          Assert.assertFalse(requestInfo.isAction());
@@ -339,12 +478,49 @@ public class PortalUrlProviderImplTest {
          mockRequest.setContextPath("/uPortal/");
          mockRequest.setRequestURI("/uPortal/max/weather/");
          
+         IPerson person = createMock(IPerson.class);
+         expect(person.getID()).andReturn(1);
+         replay(person);
+         
+         IUserLayoutManager userLayoutManager = createMock(IUserLayoutManager.class);
+         expect(userLayoutManager.getSubscribeId("weather")).andReturn("ctf1");
+         replay(userLayoutManager);
+         
+         IUserPreferencesManager userPreferencesManager = createMock(IUserPreferencesManager.class);
+         expect(userPreferencesManager.getUserLayoutManager()).andReturn(userLayoutManager);
+         replay(userPreferencesManager);
+         
+         IUserInstance mockUserInstance = createMock(IUserInstance.class);
+         expect(mockUserInstance.getPreferencesManager()).andReturn(userPreferencesManager);
+         expect(mockUserInstance.getPerson()).andReturn(person);
+         replay(mockUserInstance);
+         
+         IUserInstanceManager mockUserInstanceInstanceManager = createMock(IUserInstanceManager.class);
+         expect(mockUserInstanceInstanceManager.getUserInstance(mockRequest)).andReturn(mockUserInstance).times(2);
+         replay(mockUserInstanceInstanceManager);
+         
+         IPortletEntityId portletEntityId = createMock(IPortletEntityId.class);
+         replay(portletEntityId);
+         
+         IPortletEntity portletEntity = createMock(IPortletEntity.class);
+         expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+         replay(portletEntity);
+         
+         IPortletEntityRegistry portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+         expect(portletEntityRegistry.getPortletEntity("ctf1", 1)).andReturn(portletEntity);
+         replay(portletEntityRegistry);
+         
          IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
          expect(mockPortletWindowId.getStringId()).andReturn("weather");
          replay(mockPortletWindowId);
-         ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-         expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-         replay(mockPortletWindowRegistry);
+         
+         IPortletWindow portletWindow = createMock(IPortletWindow.class);
+         expect(portletWindow.getPortletWindowId()).andReturn(mockPortletWindowId);
+         replay(portletWindow);
+         
+         IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
+         expect(mockPortletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(portletWindow);
+         replay(mockPortletWindowRegistry);   
          
          IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
          expect(mockChannelDefinition.isPortlet()).andReturn(true);
@@ -354,11 +530,13 @@ public class PortalUrlProviderImplTest {
          replay(mockChannelRegistryStore);
          
          PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+         provider.setPortletEntityRegistry(portletEntityRegistry);
          provider.setPortletWindowRegistry(mockPortletWindowRegistry);
          provider.setChannelRegistryStore(mockChannelRegistryStore);
+         provider.setUserInstanceManager(mockUserInstanceInstanceManager);
          IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
          Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
-         Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
+         Assert.assertEquals("ctf1", requestInfo.getTargetedChannelSubscribeId());
          Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
          Assert.assertEquals(null, requestInfo.getTargetedLayoutNodeId());
          Assert.assertFalse(requestInfo.isAction());
@@ -379,12 +557,40 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/max/bookmarks.ctf1/render.uP");
         
+        IPerson person = createMock(IPerson.class);
+        expect(person.getID()).andReturn(1);
+        replay(person);
+        
+        IUserInstance mockUserInstance = createMock(IUserInstance.class);
+        expect(mockUserInstance.getPerson()).andReturn(person);
+        replay(mockUserInstance);
+        
+        IUserInstanceManager mockUserInstanceInstanceManager = createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceInstanceManager.getUserInstance(mockRequest)).andReturn(mockUserInstance).times(2);
+        replay(mockUserInstanceInstanceManager);
+        
+        IPortletEntityId portletEntityId = createMock(IPortletEntityId.class);
+        replay(portletEntityId);
+        
+        IPortletEntity portletEntity = createMock(IPortletEntity.class);
+        expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        replay(portletEntity);
+        
+        IPortletEntityRegistry portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+        expect(portletEntityRegistry.getPortletEntity("ctf1", 1)).andReturn(portletEntity);
+        replay(portletEntityRegistry);
+        
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
         expect(mockPortletWindowId.getStringId()).andReturn("bookmarks");
         replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("bookmarks")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
+        
+        IPortletWindow portletWindow = createMock(IPortletWindow.class);
+        expect(portletWindow.getPortletWindowId()).andReturn(mockPortletWindowId);
+        replay(portletWindow);
+        
+        IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
+        expect(mockPortletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(portletWindow);
+        replay(mockPortletWindowRegistry);   
         
         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
         expect(mockChannelDefinition.isPortlet()).andReturn(true);
@@ -394,8 +600,10 @@ public class PortalUrlProviderImplTest {
         replay(mockChannelRegistryStore);
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletEntityRegistry(portletEntityRegistry);
         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
         provider.setChannelRegistryStore(mockChannelRegistryStore);
+        provider.setUserInstanceManager(mockUserInstanceInstanceManager);
         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
         Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
         Assert.assertEquals("ctf1", requestInfo.getTargetedChannelSubscribeId());
@@ -419,12 +627,40 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/home/normal/weather.31/action.uP");
         
+        IPerson person = createMock(IPerson.class);
+        expect(person.getID()).andReturn(1);
+        replay(person);
+        
+        IUserInstance mockUserInstance = createMock(IUserInstance.class);
+        expect(mockUserInstance.getPerson()).andReturn(person);
+        replay(mockUserInstance);
+        
+        IUserInstanceManager mockUserInstanceInstanceManager = createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceInstanceManager.getUserInstance(mockRequest)).andReturn(mockUserInstance).times(2);
+        replay(mockUserInstanceInstanceManager);
+        
+        IPortletEntityId portletEntityId = createMock(IPortletEntityId.class);
+        replay(portletEntityId);
+        
+        IPortletEntity portletEntity = createMock(IPortletEntity.class);
+        expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        replay(portletEntity);
+        
+        IPortletEntityRegistry portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+        expect(portletEntityRegistry.getPortletEntity("31", 1)).andReturn(portletEntity);
+        replay(portletEntityRegistry);
+        
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
         expect(mockPortletWindowId.getStringId()).andReturn("weather");
         replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
+        
+        IPortletWindow portletWindow = createMock(IPortletWindow.class);
+        expect(portletWindow.getPortletWindowId()).andReturn(mockPortletWindowId);
+        replay(portletWindow);
+        
+        IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
+        expect(mockPortletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(portletWindow);
+        replay(mockPortletWindowRegistry);   
         
         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
         expect(mockChannelDefinition.isPortlet()).andReturn(true);
@@ -434,8 +670,10 @@ public class PortalUrlProviderImplTest {
         replay(mockChannelRegistryStore);
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletEntityRegistry(portletEntityRegistry);
         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
         provider.setChannelRegistryStore(mockChannelRegistryStore);
+        provider.setUserInstanceManager(mockUserInstanceInstanceManager);
         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
         Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
         Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
@@ -459,12 +697,40 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/home/max/weather.31/render.uP");
         
+        IPerson person = createMock(IPerson.class);
+        expect(person.getID()).andReturn(1);
+        replay(person);
+        
+        IUserInstance mockUserInstance = createMock(IUserInstance.class);
+        expect(mockUserInstance.getPerson()).andReturn(person);
+        replay(mockUserInstance);
+        
+        IUserInstanceManager mockUserInstanceInstanceManager = createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceInstanceManager.getUserInstance(mockRequest)).andReturn(mockUserInstance).times(2);
+        replay(mockUserInstanceInstanceManager);
+        
+        IPortletEntityId portletEntityId = createMock(IPortletEntityId.class);
+        replay(portletEntityId);
+        
+        IPortletEntity portletEntity = createMock(IPortletEntity.class);
+        expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        replay(portletEntity);
+        
+        IPortletEntityRegistry portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+        expect(portletEntityRegistry.getPortletEntity("31", 1)).andReturn(portletEntity);
+        replay(portletEntityRegistry);
+        
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
         expect(mockPortletWindowId.getStringId()).andReturn("weather");
         replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
+        
+        IPortletWindow portletWindow = createMock(IPortletWindow.class);
+        expect(portletWindow.getPortletWindowId()).andReturn(mockPortletWindowId);
+        replay(portletWindow);
+        
+        IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
+        expect(mockPortletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(portletWindow);
+        replay(mockPortletWindowRegistry);   
         
         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
         expect(mockChannelDefinition.isPortlet()).andReturn(true);
@@ -474,8 +740,10 @@ public class PortalUrlProviderImplTest {
         replay(mockChannelRegistryStore);
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletEntityRegistry(portletEntityRegistry);
         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
         provider.setChannelRegistryStore(mockChannelRegistryStore);
+        provider.setUserInstanceManager(mockUserInstanceInstanceManager);
         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
         Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
         Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
@@ -499,12 +767,40 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/home/exclusive/weather.31/render.uP");
         
+        IPerson person = createMock(IPerson.class);
+        expect(person.getID()).andReturn(1);
+        replay(person);
+        
+        IUserInstance mockUserInstance = createMock(IUserInstance.class);
+        expect(mockUserInstance.getPerson()).andReturn(person);
+        replay(mockUserInstance);
+        
+        IUserInstanceManager mockUserInstanceInstanceManager = createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceInstanceManager.getUserInstance(mockRequest)).andReturn(mockUserInstance).times(2);
+        replay(mockUserInstanceInstanceManager);
+        
+        IPortletEntityId portletEntityId = createMock(IPortletEntityId.class);
+        replay(portletEntityId);
+        
+        IPortletEntity portletEntity = createMock(IPortletEntity.class);
+        expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        replay(portletEntity);
+        
+        IPortletEntityRegistry portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+        expect(portletEntityRegistry.getPortletEntity("31", 1)).andReturn(portletEntity);
+        replay(portletEntityRegistry);
+        
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
         expect(mockPortletWindowId.getStringId()).andReturn("weather");
         replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
+        
+        IPortletWindow portletWindow = createMock(IPortletWindow.class);
+        expect(portletWindow.getPortletWindowId()).andReturn(mockPortletWindowId);
+        replay(portletWindow);
+        
+        IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
+        expect(mockPortletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(portletWindow);
+        replay(mockPortletWindowRegistry);   
         
         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
         expect(mockChannelDefinition.isPortlet()).andReturn(true);
@@ -514,8 +810,10 @@ public class PortalUrlProviderImplTest {
         replay(mockChannelRegistryStore);
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletEntityRegistry(portletEntityRegistry);
         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
         provider.setChannelRegistryStore(mockChannelRegistryStore);
+        provider.setUserInstanceManager(mockUserInstanceInstanceManager);
         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
         Assert.assertEquals(UrlState.EXCLUSIVE, requestInfo.getUrlState());
         Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
@@ -539,12 +837,40 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal/");
         mockRequest.setRequestURI("/uPortal/home/subtab1/subtab2/normal/weather.31/render.uP");
         
+        IPerson person = createMock(IPerson.class);
+        expect(person.getID()).andReturn(1);
+        replay(person);
+        
+        IUserInstance mockUserInstance = createMock(IUserInstance.class);
+        expect(mockUserInstance.getPerson()).andReturn(person);
+        replay(mockUserInstance);
+        
+        IUserInstanceManager mockUserInstanceInstanceManager = createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceInstanceManager.getUserInstance(mockRequest)).andReturn(mockUserInstance).times(2);
+        replay(mockUserInstanceInstanceManager);
+        
+        IPortletEntityId portletEntityId = createMock(IPortletEntityId.class);
+        replay(portletEntityId);
+        
+        IPortletEntity portletEntity = createMock(IPortletEntity.class);
+        expect(portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        replay(portletEntity);
+        
+        IPortletEntityRegistry portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+        expect(portletEntityRegistry.getPortletEntity("31", 1)).andReturn(portletEntity);
+        replay(portletEntityRegistry);
+        
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
         expect(mockPortletWindowId.getStringId()).andReturn("weather");
         replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
+        
+        IPortletWindow portletWindow = createMock(IPortletWindow.class);
+        expect(portletWindow.getPortletWindowId()).andReturn(mockPortletWindowId);
+        replay(portletWindow);
+        
+        IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
+        expect(mockPortletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(portletWindow);
+        replay(mockPortletWindowRegistry);   
         
         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
         expect(mockChannelDefinition.isPortlet()).andReturn(true);
@@ -553,10 +879,11 @@ public class PortalUrlProviderImplTest {
         expect(mockChannelRegistryStore.getChannelDefinition("weather")).andReturn(mockChannelDefinition);
         replay(mockChannelRegistryStore);
         
-        
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
+        provider.setPortletEntityRegistry(portletEntityRegistry);
         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
         provider.setChannelRegistryStore(mockChannelRegistryStore);
+        provider.setUserInstanceManager(mockUserInstanceInstanceManager);
         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
         Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
         Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
@@ -584,7 +911,7 @@ public class PortalUrlProviderImplTest {
         //IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
         //expect(mockPortletWindowId.getStringId()).andReturn(null);
         //replay(mockPortletWindowId);
-        //ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+        //IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
         //expect(mockPortletWindowRegistry.getPortletWindowId(null)).andReturn(mockPortletWindowId);
         //replay(mockPortletWindowRegistry);
         
@@ -1005,30 +1332,30 @@ public class PortalUrlProviderImplTest {
         // BEGIN transient mock objects
         String expressionText = "/layout/folder/folder[descendant::channel[@ID='" + details.getChannelId() + "']]/@ID";
         
-        IUserLayout mockUserLayout = createMock(IUserLayout.class);
+        IUserLayout mockUserInstanceLayout = createMock(IUserLayout.class);
         // we have to tell EasyMock to expect ANY instance of XPathExpression as XPathExpression equals is based on instance equality
-        expect(mockUserLayout.findNodeId(EasyMock.isA(XPathExpression.class))).andReturn(expressionText);
-        replay(mockUserLayout);
+        expect(mockUserInstanceLayout.findNodeId(EasyMock.isA(XPathExpression.class))).andReturn(expressionText);
+        replay(mockUserInstanceLayout);
         
         // BEGIN only expect IUserLayoutNodeDescription calls if folderName is defined
-        IUserLayoutNodeDescription mockUserLayoutNodeDescription = createMock(IUserLayoutNodeDescription.class);
+        IUserLayoutNodeDescription mockUserInstanceLayoutNodeDescription = createMock(IUserLayoutNodeDescription.class);
         if(null != details.getFolderName()) {
-            expect(mockUserLayoutNodeDescription.getType()).andReturn(IUserLayoutNodeDescription.FOLDER);
-            expect(mockUserLayoutNodeDescription.getId()).andReturn(details.getFolderName());
+            expect(mockUserInstanceLayoutNodeDescription.getType()).andReturn(IUserLayoutNodeDescription.FOLDER);
+            expect(mockUserInstanceLayoutNodeDescription.getId()).andReturn(details.getFolderName());
         }
-        replay(mockUserLayoutNodeDescription);
+        replay(mockUserInstanceLayoutNodeDescription);
         // END only expect IUserLayoutNodeDescription calls if folderName is defined
         
-        IUserLayoutManager mockUserLayoutManager = createMock(IUserLayoutManager.class);
-        expect(mockUserLayoutManager.getUserLayout()).andReturn(mockUserLayout);
-        expect(mockUserLayoutManager.getNode(expressionText)).andReturn(mockUserLayoutNodeDescription);
-        replay(mockUserLayoutManager);
-        IUserPreferencesManager mockUserPreferencesManager = createMock(IUserPreferencesManager.class);
-        expect(mockUserPreferencesManager.getUserLayoutManager()).andReturn(mockUserLayoutManager).times(2);
-        replay(mockUserPreferencesManager);
-        IUserInstance mockUser = createMock(IUserInstance.class);
-        expect(mockUser.getPreferencesManager()).andReturn(mockUserPreferencesManager).times(2);
-        replay(mockUser);
+        IUserLayoutManager mockUserInstanceLayoutManager = createMock(IUserLayoutManager.class);
+        expect(mockUserInstanceLayoutManager.getUserLayout()).andReturn(mockUserInstanceLayout);
+        expect(mockUserInstanceLayoutManager.getNode(expressionText)).andReturn(mockUserInstanceLayoutNodeDescription);
+        replay(mockUserInstanceLayoutManager);
+        IUserPreferencesManager mockUserInstancePreferencesManager = createMock(IUserPreferencesManager.class);
+        expect(mockUserInstancePreferencesManager.getUserLayoutManager()).andReturn(mockUserInstanceLayoutManager).times(2);
+        replay(mockUserInstancePreferencesManager);
+        IUserInstance mockUserInstance = createMock(IUserInstance.class);
+        expect(mockUserInstance.getPreferencesManager()).andReturn(mockUserInstancePreferencesManager).times(2);
+        replay(mockUserInstance);
         IPortletEntityId mockPortletEntityId = createMock(IPortletEntityId.class);
         expect(mockPortletEntityId.getStringId()).andReturn(details.getChannelId());
         replay(mockPortletEntityId);
@@ -1054,9 +1381,9 @@ public class PortalUrlProviderImplTest {
         // END transient mock objects
 
         // BEGIN mock dependencies for PortalUrlProviderImpl
-        IUserInstanceManager mockUserInstanceManager= createMock(IUserInstanceManager.class);
-        expect(mockUserInstanceManager.getUserInstance(details.getHttpServletRequest())).andReturn(mockUser).times(2);
-        replay(mockUserInstanceManager);
+        IUserInstanceManager mockUserInstanceInstanceManager= createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceInstanceManager.getUserInstance(details.getHttpServletRequest())).andReturn(mockUserInstance).times(2);
+        replay(mockUserInstanceInstanceManager);
     
         IPortletDefinitionRegistry mockPortletDefinitionRegistry = createMock(IPortletDefinitionRegistry.class);
         expect(mockPortletDefinitionRegistry.getPortletDefinition(mockPortletDefinitionId)).andReturn(mockPortletDefinition);
@@ -1066,7 +1393,7 @@ public class PortalUrlProviderImplTest {
         expect(mockPortletEntityRegistry.getPortletEntity(mockPortletEntityId)).andReturn(mockPortletEntity);
         replay(mockPortletEntityRegistry);
         
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
+        IPortletWindowRegistry mockPortletWindowRegistry = createMock(IPortletWindowRegistry.class);
         expect(mockPortletWindowRegistry.getPortletWindow(details.getHttpServletRequest(), details.getPortletWindowId())).andReturn(mockPortletWindow);
         replay(mockPortletWindowRegistry);
         
@@ -1080,7 +1407,7 @@ public class PortalUrlProviderImplTest {
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
         provider.setChannelRegistryStore(mockChannelRegistryStore);
-        provider.setUserInstanceManager(mockUserInstanceManager);
+        provider.setUserInstanceManager(mockUserInstanceInstanceManager);
         provider.setPortletDefinitionRegistry(mockPortletDefinitionRegistry);
         provider.setPortletEntityRegistry(mockPortletEntityRegistry);
         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
@@ -1101,39 +1428,39 @@ public class PortalUrlProviderImplTest {
         // BEGIN transient mock objects
     	String expressionText = "/layout/folder/folder[descendant::channel[@ID='" + details.getChannelId() + "']]/@ID";
         
-        IUserLayout mockUserLayout = createMock(IUserLayout.class);
+        IUserLayout mockUserInstanceLayout = createMock(IUserLayout.class);
         // we have to tell EasyMock to expect ANY instance of XPathExpression as XPathExpression equals is based on instance equality
-        expect(mockUserLayout.findNodeId(EasyMock.isA(XPathExpression.class))).andReturn(expressionText);
-        replay(mockUserLayout);
+        expect(mockUserInstanceLayout.findNodeId(EasyMock.isA(XPathExpression.class))).andReturn(expressionText);
+        replay(mockUserInstanceLayout);
         
         // BEGIN only expect IUserLayoutNodeDescription calls if folderName is defined
-        IUserLayoutChannelDescription mockUserLayoutChannelDescription = createMock(IUserLayoutChannelDescription.class);
+        IUserLayoutChannelDescription mockUserInstanceLayoutChannelDescription = createMock(IUserLayoutChannelDescription.class);
         if(null != details.getFolderName()) {
-            expect(mockUserLayoutChannelDescription.getType()).andReturn(IUserLayoutNodeDescription.FOLDER);
-            expect(mockUserLayoutChannelDescription.getId()).andReturn(details.getFolderName());
+            expect(mockUserInstanceLayoutChannelDescription.getType()).andReturn(IUserLayoutNodeDescription.FOLDER);
+            expect(mockUserInstanceLayoutChannelDescription.getId()).andReturn(details.getFolderName());
         }
         if(null != details.getChannelFName()) {
-            expect(mockUserLayoutChannelDescription.getFunctionalName()).andReturn(details.getChannelFName());
+            expect(mockUserInstanceLayoutChannelDescription.getFunctionalName()).andReturn(details.getChannelFName());
         }
-        replay(mockUserLayoutChannelDescription);
+        replay(mockUserInstanceLayoutChannelDescription);
         // END only expect IUserLayoutNodeDescription calls if folderName is defined
         
-        IUserLayoutManager mockUserLayoutManager = createMock(IUserLayoutManager.class);
+        IUserLayoutManager mockUserInstanceLayoutManager = createMock(IUserLayoutManager.class);
         if(null != details.getChannelFName()) {
-        	expect(mockUserLayoutManager.getSubscribeId(details.getChannelFName())).andReturn(details.getChannelId());
+        	expect(mockUserInstanceLayoutManager.getSubscribeId(details.getChannelFName())).andReturn(details.getChannelId());
         } 
         if (null != details.getChannelId())  {
-        	expect(mockUserLayoutManager.getNode(details.getChannelId())).andReturn(mockUserLayoutChannelDescription);
+        	expect(mockUserInstanceLayoutManager.getNode(details.getChannelId())).andReturn(mockUserInstanceLayoutChannelDescription);
         }
-        expect(mockUserLayoutManager.getUserLayout()).andReturn(mockUserLayout);
-        expect(mockUserLayoutManager.getNode(expressionText)).andReturn(mockUserLayoutChannelDescription);
-        replay(mockUserLayoutManager);
-        IUserPreferencesManager mockUserPreferencesManager = createMock(IUserPreferencesManager.class);
-        expect(mockUserPreferencesManager.getUserLayoutManager()).andReturn(mockUserLayoutManager).times(3);
-        replay(mockUserPreferencesManager);
-        IUserInstance mockUser = createMock(IUserInstance.class);
-        expect(mockUser.getPreferencesManager()).andReturn(mockUserPreferencesManager).times(3);
-        replay(mockUser);
+        expect(mockUserInstanceLayoutManager.getUserLayout()).andReturn(mockUserInstanceLayout);
+        expect(mockUserInstanceLayoutManager.getNode(expressionText)).andReturn(mockUserInstanceLayoutChannelDescription);
+        replay(mockUserInstanceLayoutManager);
+        IUserPreferencesManager mockUserInstancePreferencesManager = createMock(IUserPreferencesManager.class);
+        expect(mockUserInstancePreferencesManager.getUserLayoutManager()).andReturn(mockUserInstanceLayoutManager).times(3);
+        replay(mockUserInstancePreferencesManager);
+        IUserInstance mockUserInstance = createMock(IUserInstance.class);
+        expect(mockUserInstance.getPreferencesManager()).andReturn(mockUserInstancePreferencesManager).times(3);
+        replay(mockUserInstance);
         
         IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
         expect(mockChannelDefinition.getFName()).andReturn(details.getChannelFName());
@@ -1144,9 +1471,9 @@ public class PortalUrlProviderImplTest {
         // END transient mock objects
 
         // BEGIN mock dependencies for PortalUrlProviderImpl
-        IUserInstanceManager mockUserInstanceManager= createMock(IUserInstanceManager.class);
-        expect(mockUserInstanceManager.getUserInstance(details.getHttpServletRequest())).andReturn(mockUser).times(3);
-        replay(mockUserInstanceManager);
+        IUserInstanceManager mockUserInstanceInstanceManager= createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceInstanceManager.getUserInstance(details.getHttpServletRequest())).andReturn(mockUserInstance).times(3);
+        replay(mockUserInstanceInstanceManager);
         // END mock dependencies for PortalUrlProviderImpl
         
         IPortalRequestUtils mockPortalRequestUtils = createMock(IPortalRequestUtils.class);
@@ -1154,7 +1481,7 @@ public class PortalUrlProviderImplTest {
         replay(mockPortalRequestUtils);
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setUserInstanceManager(mockUserInstanceManager);
+        provider.setUserInstanceManager(mockUserInstanceInstanceManager);
         provider.setPortalRequestUtils(mockPortalRequestUtils);
         return provider;
     }
@@ -1172,36 +1499,36 @@ public class PortalUrlProviderImplTest {
 //        // BEGIN transient mock objects
 //        String expressionText = "/layout/folder/folder[descendant::channel[@ID='" + details.getChannelId() + "']]/@ID";
 //        
-//        IUserLayout mockUserLayout = createMock(IUserLayout.class);
+//        IUserLayout mockUserInstanceLayout = createMock(IUserLayout.class);
 //        // we have to tell EasyMock to expect ANY instance of XPathExpression as XPathExpression equals is based on instance equality
-//        expect(mockUserLayout.findNodeId(EasyMock.isA(XPathExpression.class))).andReturn(expressionText);
-//        replay(mockUserLayout);
+//        expect(mockUserInstanceLayout.findNodeId(EasyMock.isA(XPathExpression.class))).andReturn(expressionText);
+//        replay(mockUserInstanceLayout);
 //        
 //        // BEGIN only expect IUserLayoutNodeDescription calls if folderName is defined
-        IUserLayoutNodeDescription mockUserLayoutNodeDescription = createMock(IUserLayoutNodeDescription.class);
+        IUserLayoutNodeDescription mockUserInstanceLayoutNodeDescription = createMock(IUserLayoutNodeDescription.class);
         if(null != details.getFolderName()) {
-            expect(mockUserLayoutNodeDescription.getType()).andReturn(IUserLayoutNodeDescription.FOLDER);
-            expect(mockUserLayoutNodeDescription.getId()).andReturn(details.getFolderName());
+            expect(mockUserInstanceLayoutNodeDescription.getType()).andReturn(IUserLayoutNodeDescription.FOLDER);
+            expect(mockUserInstanceLayoutNodeDescription.getId()).andReturn(details.getFolderName());
         }
-        replay(mockUserLayoutNodeDescription);
+        replay(mockUserInstanceLayoutNodeDescription);
         // END only expect IUserLayoutNodeDescription calls if folderName is defined
 //        
-        IUserLayoutManager mockUserLayoutManager = createMock(IUserLayoutManager.class);
-        expect(mockUserLayoutManager.getNode(details.getFolderId())).andReturn(mockUserLayoutNodeDescription);
+        IUserLayoutManager mockUserInstanceLayoutManager = createMock(IUserLayoutManager.class);
+        expect(mockUserInstanceLayoutManager.getNode(details.getFolderId())).andReturn(mockUserInstanceLayoutNodeDescription);
 //        if(null != details.getChannelFName()) {
-//            expect(mockUserLayoutManager.getSubscribeId(details.getChannelFName())).andReturn(details.getChannelId());
+//            expect(mockUserInstanceLayoutManager.getSubscribeId(details.getChannelFName())).andReturn(details.getChannelId());
 //        } else {
-//            expect(mockUserLayoutManager.getNode(details.getChannelId())).andReturn(mockUserLayoutNodeDescription);
+//            expect(mockUserInstanceLayoutManager.getNode(details.getChannelId())).andReturn(mockUserInstanceLayoutNodeDescription);
 //        }
-//        expect(mockUserLayoutManager.getUserLayout()).andReturn(mockUserLayout);
-//        expect(mockUserLayoutManager.getNode(expressionText)).andReturn(mockUserLayoutNodeDescription);
-        replay(mockUserLayoutManager);
-        IUserPreferencesManager mockUserPreferencesManager = createMock(IUserPreferencesManager.class);
-        expect(mockUserPreferencesManager.getUserLayoutManager()).andReturn(mockUserLayoutManager).times(2);
-        replay(mockUserPreferencesManager);
-        IUserInstance mockUser = createMock(IUserInstance.class);
-        expect(mockUser.getPreferencesManager()).andReturn(mockUserPreferencesManager).times(2);
-        replay(mockUser);
+//        expect(mockUserInstanceLayoutManager.getUserLayout()).andReturn(mockUserInstanceLayout);
+//        expect(mockUserInstanceLayoutManager.getNode(expressionText)).andReturn(mockUserInstanceLayoutNodeDescription);
+        replay(mockUserInstanceLayoutManager);
+        IUserPreferencesManager mockUserInstancePreferencesManager = createMock(IUserPreferencesManager.class);
+        expect(mockUserInstancePreferencesManager.getUserLayoutManager()).andReturn(mockUserInstanceLayoutManager).times(2);
+        replay(mockUserInstancePreferencesManager);
+        IUserInstance mockUserInstance = createMock(IUserInstance.class);
+        expect(mockUserInstance.getPreferencesManager()).andReturn(mockUserInstancePreferencesManager).times(2);
+        replay(mockUserInstance);
 //        
 //        IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
 //        expect(mockChannelDefinition.getFName()).andReturn(details.getChannelFName());
@@ -1212,13 +1539,13 @@ public class PortalUrlProviderImplTest {
 //        // END transient mock objects
 
         // BEGIN mock dependencies for PortalUrlProviderImpl
-        IUserInstanceManager mockUserInstanceManager= createMock(IUserInstanceManager.class);
-        expect(mockUserInstanceManager.getUserInstance(details.getHttpServletRequest())).andReturn(mockUser).times(2);
-        replay(mockUserInstanceManager);
+        IUserInstanceManager mockUserInstanceInstanceManager= createMock(IUserInstanceManager.class);
+        expect(mockUserInstanceInstanceManager.getUserInstance(details.getHttpServletRequest())).andReturn(mockUserInstance).times(2);
+        replay(mockUserInstanceInstanceManager);
         // END mock dependencies for PortalUrlProviderImpl
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setUserInstanceManager(mockUserInstanceManager);
+        provider.setUserInstanceManager(mockUserInstanceInstanceManager);
         return provider;
     }
     

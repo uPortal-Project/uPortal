@@ -154,6 +154,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             return portalRequestInfo;
         }
         
+        //TODO don't create a new object each time
         final String requestPath = new UrlPathHelper().getPathWithinApplication(request);
         // first pass looks for absence of state
         Matcher firstPass = NO_STATE_PATTERN.matcher(requestPath);
@@ -200,6 +201,13 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             		channelName = channelInformationElements[0];
             		channelSubscribeId = channelInformationElements[1];
             	}
+            	else {
+            	    //lookup 
+            	    final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+            	    final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+            	    final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+            	    channelSubscribeId = userLayoutManager.getSubscribeId(channelName);
+            	}
             	
             	IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(channelName);
             	boolean isPortlet = channelDefinition.isPortlet();
@@ -207,8 +215,12 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             	requestInfo.setTargetedChannelSubscribeId(channelSubscribeId);
             	
             	if(isPortlet) {
-            		IPortletWindowId portletWindowId = portletWindowRegistry.getPortletWindowId(channelName);
-            		requestInfo.setTargetedPortletWindowId(portletWindowId);
+        	        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+            	    final IPerson person = userInstance.getPerson();
+            	    
+            	    final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(channelSubscribeId, person.getID());
+            	    final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
+            	    requestInfo.setTargetedPortletWindowId(portletWindow.getPortletWindowId());
             	}
             }
             

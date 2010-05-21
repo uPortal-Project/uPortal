@@ -29,11 +29,7 @@ public enum UrlState {
     /**
      * Rendering a single portlet where the portlet is responsible for all output, binary output is supported.
      */
-    EXCLUSIVE,
-    /**
-     * Used by legacy content that is not using the new portal URL APIs
-     */
-    LEGACY;
+    EXCLUSIVE;
     
     private final String lowercase;
     
