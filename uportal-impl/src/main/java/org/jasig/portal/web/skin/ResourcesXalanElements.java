@@ -94,12 +94,14 @@ public class ResourcesXalanElements {
 		}
 		
 		final ResourcesDao resourcesDao = (ResourcesDao) transformer.getParameter(SKIN_RESOURCESDAO_PARAMETER_NAME);
-        DocumentFragment headFragment = resourcesDao.getResourcesFragment(primaryPath, relativeRoot);
+		final String portalContextPath = (String) transformer.getParameter("CONTEXT_PATH");
+		
+        DocumentFragment headFragment = resourcesDao.getResourcesFragment(primaryPath, portalContextPath + relativeRoot);
 		if(null == headFragment) {		
 			if(logger.isWarnEnabled()) {
 				logger.warn(primaryPath.toString() + " not found, attempting " + secondaryPath.toString());
 			}
-			headFragment = resourcesDao.getResourcesFragment(secondaryPath, relativeRoot);
+			headFragment = resourcesDao.getResourcesFragment(secondaryPath, portalContextPath + relativeRoot);
 		}
 		// if it's still null, we have to bail out
 		if(null == headFragment) {
