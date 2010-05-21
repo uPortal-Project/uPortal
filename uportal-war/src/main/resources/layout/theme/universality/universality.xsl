@@ -66,8 +66,9 @@
     xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
     xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-    extension-element-prefixes="portal portlet layout" 
-    exclude-result-prefixes="xalan portal portlet layout upAuth upGroup" 
+    xmlns:skin="http://www.jasig.org/uportal/web/skin"
+    extension-element-prefixes="portal portlet layout skin" 
+    exclude-result-prefixes="xalan portal portlet layout upAuth upGroup skin" 
     version="1.0">
   
   <!-- ============================= -->
@@ -132,7 +133,7 @@
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
   <xsl:variable name="PORTAL_SHORTCUT_ICON">favicon.ico</xsl:variable>
   <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$SKIN_PATH,'/skin.xml')"/>
-  <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/s:resources/css[@type='fss-theme']/@name"/>
+  <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/skin:resources/css[@type='fss-theme']/@name"/>
   <xsl:variable name="FLUID_THEME_CLASS">
     <xsl:choose>
       <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>
