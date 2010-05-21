@@ -52,7 +52,6 @@ public interface IPortletUrlSyntaxProvider {
      * @return The PortletUrl data for the request, null if no portlet is targeted by this request
      * @throws IllegalArgumentException if request is null.
      */
-     @Deprecated
     public PortletUrl parsePortletUrl(HttpServletRequest request);
     
     /**
