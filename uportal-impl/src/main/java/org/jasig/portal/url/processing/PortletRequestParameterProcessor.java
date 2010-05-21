@@ -105,24 +105,20 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
      * @see org.jasig.portal.url.processing.IRequestParameterProcessor#processParameters(org.jasig.portal.url.IWritableHttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
-        final Tuple<IPortletWindowId, PortletUrl> portletUrlInfo = this.portletUrlSyntaxProvider.parsePortletParameters(request);
-        
+    	final PortletUrl portletUrl = this.portletUrlSyntaxProvider.parsePortletUrl(request);
+    	 
         //TODO need a way to mark which portlet generated the URL
 
-        //If no PortletUrls then no targeted portlets
-        if (portletUrlInfo == null) {
-            this.portletRequestParameterManager.setNoPortletRequest(request);
-            return true;
+        if(portletUrl == null) {
+    		this.portletRequestParameterManager.setNoPortletRequest(request);
+    		return true;
+    	
         }
-
-        //Iterate over each PortletUrl, updating the IPortletWindow it is for and notifying the IPorltetRequestParameterManager
-        //that a request for that portlet has been made
-        final IPortletWindowId portletWindowId = portletUrlInfo.first;
-        final PortletUrl portletUrl = portletUrlInfo.second;
-
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        final IPortletWindowId targetWindowId = portletUrl.getTargetWindowId();
+        
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, targetWindowId);
         if (portletWindow == null) {
-            this.logger.warn("No IPortletWindow exists for IPortletWindowId='" + portletWindowId
+            this.logger.warn("No IPortletWindow exists for IPortletWindowId='" + targetWindowId
                     + "'. Request parameters for this IPortletWindowId will be ignored. Ignored parameters: "
                     + portletUrl);
         }
@@ -136,13 +132,14 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
             if (windowState != null) {
                 portletWindow.setWindowState(windowState);
             }
+            
         }
 
         final Map<String, List<String>> parameters = portletUrl.getParameters();
         final TYPE requestType = portletUrl.getRequestType();
         final PortletRequestInfo portletRequestInfo = new PortletRequestInfo(requestType, parameters);
 
-        this.portletRequestParameterManager.setRequestInfo(request, portletWindowId, portletRequestInfo);
+        this.portletRequestParameterManager.setRequestInfo(request, targetWindowId, portletRequestInfo);
 
         return true;
     }
