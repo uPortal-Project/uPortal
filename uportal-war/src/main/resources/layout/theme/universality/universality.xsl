@@ -51,13 +51,26 @@
 <!-- ============================================= -->
 <!-- 
  | RED
- | This statement defines this document as XSL.
+ | This statement defines this document as XSL and declares the Xalan extension
+ | elements used for URL generation and permissions checks.
+ |
+ | If a change is made to this section it MUST be copied to all other XSL files
+ | used by the theme
 -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<!-- ============================================= -->
-
-
-	<!-- ============================= -->
+<xsl:stylesheet 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xalan="http://xml.apache.org/xalan" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
+    xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
+    xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
+    xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    extension-element-prefixes="portal portlet layout" 
+    exclude-result-prefixes="xalan portal portlet layout upAuth upGroup" 
+    version="1.0">
+  
+  <!-- ============================= -->
   <!-- ========== IMPORTS ========== -->
   <!-- ============================= -->
   <!-- 
@@ -73,6 +86,17 @@
   <xsl:import href="content.xsl" />     <!-- Templates for content structure (i.e. portlets) -->
   <xsl:import href="preferences.xsl" /> <!-- Templates for preferences-specific structures -->
   <!-- ============================= -->
+
+    <xalan:component prefix="portal" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+    </xalan:component>
+    <xalan:component prefix="portlet" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+    </xalan:component>
+    <xalan:component prefix="layout" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
+    </xalan:component>
+<!-- ============================================= -->
   
   
   <!-- ========================================= -->
