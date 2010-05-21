@@ -53,7 +53,10 @@
  | RED
  | This statement defines this document as XSL.
 -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:skin="http://www.jasig.org/uportal/web/skin"
+  version="1.0" >
 <!-- ============================================= -->
 
 
@@ -108,7 +111,7 @@
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
   <xsl:variable name="PORTAL_SHORTCUT_ICON">favicon.ico</xsl:variable>
   <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$SKIN_PATH,'/skin.xml')"/>
-  <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/s:resources/css[@type='fss-theme']/@name"/>
+  <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/skin:resources/css[@type='fss-theme']/@name"/>
   <xsl:variable name="FLUID_THEME_CLASS">
     <xsl:choose>
       <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>
