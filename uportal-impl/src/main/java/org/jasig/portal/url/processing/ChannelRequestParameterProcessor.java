@@ -70,7 +70,6 @@ import org.springframework.web.multipart.commons.CommonsFileUploadSupport;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service("channelRequestParameterProcessor")
 public class ChannelRequestParameterProcessor extends CommonsFileUploadSupport implements IRequestParameterProcessor, DisposableBean {
     public static final String UPLOAD_STATUS = "up_upload_status";
     

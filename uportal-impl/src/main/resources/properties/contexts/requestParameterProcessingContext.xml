@@ -27,52 +27,10 @@
     <bean id="requestParameterProcessorController" class="org.jasig.portal.url.processing.RequestParameterProcessorListController">
         <property name="dynamicRequestParameterProcessors">
             <list value-type="org.jasig.portal.url.processing.IRequestParameterProcessor">
-                <!-- <ref local="urlParameterProcessor" />  -->
                 <!-- note: portletRequestParameterProcessor and userLayoutRequestParameterProcessor are @Service beans - must use ref "bean" -->
-                <!-- channelRequestParameterProcessor is still defined in this file, can use ref "local" -->
                 <ref bean="portletRequestParameterProcessor" />
                 <ref bean="userLayoutRequestParameterProcessor" />
-                <ref local="channelRequestParameterProcessor" />
             </list>
-        </property>
-    </bean>
-    
-    <!-- 
-     | Use UrlRequestParameterProcessor to pull structure and theme parameters 
-     | from arbitrary elements of the request URL.  The following example sets 
-     | the 'activeTab' structure parameter based on the first logical directory 
-     |  after 'uPortal/'
-     |
-     | E.g. given a request URL of
-     |   - http://localhost:8080/uPortal/foo/render.userLayoutRootNode.uP
-     | The value of 'activeTab' would be 
-     |   - foo
-     +-->
-    <!-- 
-    <bean id="urlParameterProcessor" class="org.jasig.portal.url.processing.UrlRequestParameterProcessor">
-        <property name="userInstanceManager" ref="userInstanceManager" />
-        <property name="structureParameters">
-            <map>
-                <entry key="activeTab">
-                    <value>[^/]*//[^/]*/uPortal/([^/]*)/</value>
-                </entry>
-            </map>
-        </property>
-    </bean>
-     -->
-
-    <bean id="channelRequestParameterProcessor" class="org.jasig.portal.url.processing.ChannelRequestParameterProcessor">
-        <property name="maxUploadSize">
-            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetClass" value="org.jasig.portal.properties.PropertiesManager" />
-                <property name="targetMethod" value="getPropertyAsInt" />
-                <property name="arguments">
-                    <list>
-                        <value>org.jasig.portal.RequestParamWrapper.file_upload_max_size</value>
-                        <value>3000000</value>
-                    </list>
-                </property>
-            </bean>
         </property>
     </bean>
     
