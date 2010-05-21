@@ -30,6 +30,25 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @version $Revision$
  */
 public interface IPortletRequestParameterManager {
+    
+    /**
+     * Mark this request as not having any portlet request parameters associated with it.
+     * 
+     * @param request The current request.
+     * @throws IllegalArgumentException If request is null
+     */
+    public void setNoPortletRequest(HttpServletRequest request);
+    
+    /**
+     * Set the type of request for this portlet.
+     * 
+     * @param request The current request.
+     * @param portletId The ID of the portlet targeted
+     * @param portletRequestInfo Data about the request
+     * @throws IllegalArgumentException If request, portletId, or portletRequest are null.
+     */
+    public void setRequestInfo(HttpServletRequest request, IPortletWindowId portletId, PortletRequestInfo portletRequestInfo);
+    
     /**
      * Set the PortletUrl for the portlet that is targeted by the request
      * 
@@ -37,6 +56,7 @@ public interface IPortletRequestParameterManager {
      * @param portletUrl The PortletUrl for the targeted portlet, null if no portlet was targeted for the request
      * @throws IllegalArgumentException If request or is null.
      */
+    @Deprecated
     public void setTargetedPortletUrl(HttpServletRequest request, PortletUrl portletUrl);
     
     /**
@@ -46,6 +66,7 @@ public interface IPortletRequestParameterManager {
      * @param portletUrl The PortletUrl for the additional portlet
      * @throws IllegalArgumentException If request or portletUrl are null.
      */
+     @Deprecated
     public void setAdditionalPortletUrl(HttpServletRequest request, PortletUrl portletUrl);
     
     /**
@@ -68,5 +89,16 @@ public interface IPortletRequestParameterManager {
      * @throws IllegalArgumentException If request is null
      * @throws org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException If this request doesn't have the necessary information associated with it yet to return a request type
      */
+     @Deprecated
     public PortletUrl getPortletRequestInfo(HttpServletRequest request, IPortletWindowId portletWindowId);
+    
+    /**
+     * Gets the request information for the targeted portlet, returns null if no portlet was targeted.
+     * 
+     * @param request The current request.
+     * @return The PortletRequestInfo for the targeted IPortletWindowId, null if no portlet was targeted.
+     * @throws IllegalArgumentException If request is null
+     * @throws org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException If this request doesn't have the necessary information associated with it yet to return a request type
+     */
+    public PortletRequestInfo getPortletRequestInfo(HttpServletRequest request);
 }

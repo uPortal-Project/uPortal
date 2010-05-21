@@ -88,6 +88,10 @@ import org.jasig.portal.serialize.OutputFormat;
 import org.jasig.portal.serialize.XMLSerializer;
 import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
+import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.xml.BaseUrlXalanElements;
+import org.jasig.portal.url.xml.PortletUrlXalanElements;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
@@ -185,6 +189,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     private CarResources carResources;
     private ResourcesDao resourcesDao;
     private PortletExecutionManager portletExecutionManager;
+    private IPortalUrlProvider portalUrlProvider;
     
     /**
      * @param portletRequestParameterManager the portletRequestParameterManager to set
@@ -221,6 +226,17 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
 	public void setPortletExecutionManager(PortletExecutionManager portletExecutionManager) {
         this.portletExecutionManager = portletExecutionManager;
     }
+    
+     public IPortalUrlProvider getPortalUrlProvider() {
+        return this.portalUrlProvider;
+    }
+    /**
+     * Used to generate URLs in the theme XSL
+     */
+    @Autowired
+    public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
+        this.portalUrlProvider = portalUrlProvider;
+    }
 
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
@@ -245,31 +261,19 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         final IUserPreferencesManager uPreferencesManager = userInstance.getPreferencesManager();
         final Object renderingLock = userInstance.getRenderingLock();
         
-        UPFileSpec upfs = new UPFileSpec(req);
-        String rootNodeId = upfs.getMethodNodeId();
-        if (rootNodeId == null) {
-            rootNodeId = UPFileSpec.USER_LAYOUT_ROOT_NODE;
-        }
-        
         // see if a new root target has been specified
-        String newRootNodeId = req.getParameter("uP_detach_target");
-
-        // set optimistic uPElement value
-        UPFileSpec uPElement = new UPFileSpec(UPFileSpec.RENDER_METHOD, rootNodeId, null, null);
-
-        if (newRootNodeId != null) {
-            // set a new root
-            uPElement.setMethodNodeId(newRootNodeId);
-        }
-        
-//        channelManager.setUPElement(uPElement);
+        //String newRootNodeId = req.getParameter("uP_detach_target");
 
         // proccess possible portlet action
-        final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(req);
+        final IPortalRequestInfo requestInfo = portalUrlProvider.getPortalRequestInfo(req);
+        
+        
+        //final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(req);
+        final IPortletWindowId targetedPortletWindowId = requestInfo.getTargetedPortletWindowId();
         if (targetedPortletWindowId != null) {
-            final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(req, targetedPortletWindowId);
+            //final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(req, targetedPortletWindowId);
             
-            if (RequestType.ACTION.equals(portletUrl.getRequestType())) {
+            if (requestInfo.isAction()) {
                 final IPortletEntity targetedPortletEntity = this.portletWindowRegistry.getParentPortletEntity(req, targetedPortletWindowId);
                 if (targetedPortletEntity != null) {
                     /*
@@ -339,8 +343,24 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                 IUserLayoutNodeDescription rElement = null;
                 // see if an old detach target exists in the servlet path
 
+                UPFileSpec upfs = new UPFileSpec(req);
+                String rootNodeId = upfs.getMethodNodeId();
+                if (rootNodeId == null) {
+                    rootNodeId = UPFileSpec.USER_LAYOUT_ROOT_NODE;
+                }
 //                // give channels the current locale manager
 //                channelManager.setLocaleManager(localeManager);
+
+                // see if a new root target has been specified
+                String newRootNodeId = req.getParameter("uP_detach_target");
+
+                // set optimistic uPElement value
+                UPFileSpec uPElement = new UPFileSpec(UPFileSpec.RENDER_METHOD, rootNodeId, null, null);
+
+                if (newRootNodeId != null) {
+                    // set a new root
+                    uPElement.setMethodNodeId(newRootNodeId);
+                }
 
                 IUserLayoutManager ulm = uPreferencesManager.getUserLayoutManager();
 
@@ -611,6 +631,13 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     }
 
                     // prepare for the theme transformation
+                    
+                    //TODO move into elements specific advisor interfaces when componentizing this class
+                    //Setup the transformer parameters
+                    tst.setParameter(BaseUrlXalanElements.PORTAL_URL_PROVIDER_PARAMETER, this.portalUrlProvider);
+                    tst.setParameter(BaseUrlXalanElements.CURRENT_PORTAL_REQUEST, req);
+                    tst.setParameter(PortletUrlXalanElements.PORTLET_WINDOW_REGISTRY_PARAMETER, this.portletWindowRegistry);
+                    tst.setParameter("CONTEXT_PATH", req.getContextPath() + "/");
 
                     // set up of the parameters
                     tst.setParameter("baseActionURL", uPElement.getUPFile());

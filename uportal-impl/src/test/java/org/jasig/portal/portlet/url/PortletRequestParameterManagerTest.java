@@ -22,22 +22,24 @@ package org.jasig.portal.portlet.url;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
-import org.apache.pluto.container.PortletURLProvider;
+import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.easymock.EasyMock;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.PortalHttpServletRequestWrapper;
 import org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletRequestParameterManagerTest extends TestCase {
+public class PortletRequestParameterManagerTest {
+	
+	@Test
     public void testNoParameters() throws Exception {
         final PortletRequestParameterManager parameterManager = new PortletRequestParameterManager();
         
@@ -45,22 +47,23 @@ public class PortletRequestParameterManagerTest extends TestCase {
         request.setAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         
         final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
-        EasyMock.expect(portalRequestUtils.getOriginalPortalRequest(request)).andReturn(request).times(2);
+        EasyMock.expect(portalRequestUtils.getOriginalPortalRequest(request)).andReturn(request).times(3);
         
         EasyMock.replay(portalRequestUtils);
         
         parameterManager.setPortalRequestUtils(portalRequestUtils);
-        parameterManager.setTargetedPortletUrl(request, null);
+        parameterManager.setNoPortletRequest(request);
         
         final IPortletWindowId targetedPortletWindowId = parameterManager.getTargetedPortletWindowId(request);
-        assertNull(targetedPortletWindowId);
+        Assert.assertNull(targetedPortletWindowId);
         
-        final PortletUrl portletUrl = parameterManager.getPortletRequestInfo(request, new MockPortletWindowId("test"));
-        assertNull("portletRequestType should be null", portletUrl);
+        final PortletRequestInfo portletRequestInfo = parameterManager.getPortletRequestInfo(request);
+        Assert.assertNull("portletRequestType should be null", portletRequestInfo);
         
         EasyMock.verify(portalRequestUtils);
     }
     
+	@Test
     public void testParameters() throws Exception {
         final PortletRequestParameterManager parameterManager = new PortletRequestParameterManager();
         
@@ -78,19 +81,18 @@ public class PortletRequestParameterManagerTest extends TestCase {
         parameterManager.setPortalRequestUtils(portalRequestUtils);
         
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("id");
-        final PortletUrl portletUrl = new PortletUrl(portletWindowId);
-        portletUrl.setRequestType(PortletURLProvider.TYPE.RENDER);
-        parameterManager.setTargetedPortletUrl(request, portletUrl);
+        parameterManager.setRequestInfo(request, portletWindowId, new PortletRequestInfo(TYPE.RENDER));
         
         final IPortletWindowId targetedPortletWindowId = parameterManager.getTargetedPortletWindowId(request);
-        assertEquals(portletWindowId, targetedPortletWindowId);
+        Assert.assertEquals(portletWindowId, targetedPortletWindowId);
         
-        final PortletUrl portletUrl2 = parameterManager.getPortletRequestInfo(request, targetedPortletWindowId);
-        assertEquals(portletUrl, portletUrl2);
+        final PortletRequestInfo portletRequestInfo = parameterManager.getPortletRequestInfo(request);
+        Assert.assertEquals(new PortletRequestInfo(TYPE.RENDER), portletRequestInfo);
         
         EasyMock.verify(portalRequestUtils);
     }
 
+	@Test
     public void testNoParsing() throws Exception {
         final PortletRequestParameterManager parameterManager = new PortletRequestParameterManager();
         
@@ -98,7 +100,7 @@ public class PortletRequestParameterManagerTest extends TestCase {
         request.setAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         
         final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
-        EasyMock.expect(portalRequestUtils.getOriginalPortalRequest(request)).andReturn(request).times(1);
+        EasyMock.expect(portalRequestUtils.getOriginalPortalRequest(request)).andReturn(request).times(2);
         
         EasyMock.replay(portalRequestUtils);
         
@@ -106,15 +108,15 @@ public class PortletRequestParameterManagerTest extends TestCase {
         
         try {
             parameterManager.getTargetedPortletWindowId(request);
-            fail("A RequestParameterProcessingIncompleteException should have been thrown for calling getTargetedPortletWindowIds before any set method");
+            Assert.fail("A RequestParameterProcessingIncompleteException should have been thrown for calling getTargetedPortletWindowIds before any set method");
         }
         catch (RequestParameterProcessingIncompleteException ise) {
             //expected
         }
         
         try {
-            parameterManager.getPortletRequestInfo(request, new MockPortletWindowId(""));
-            fail("A RequestParameterProcessingIncompleteException should have been thrown for calling getPortletRequestType before any set method");
+            parameterManager.getPortletRequestInfo(request);
+            Assert.fail("A RequestParameterProcessingIncompleteException should have been thrown for calling getPortletRequestType before any set method");
         }
         catch (RequestParameterProcessingIncompleteException ise) {
             //expected
