@@ -240,6 +240,11 @@ html { background-color:#E6EEFB; }
 .up #portalAdminLinks #portalAdminLinksPortletAdmin a { background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_cascade.png); background-repeat:no-repeat }
 .up #portalAdminLinks #portalAdminLinksCustomize a { background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/overlays.png); }
 
+/* Fragment Administration */
+.up #portalFragAdminExit {background:#B1C6F2; border:1px solid #39f; margin:0 2em 1em 2em; -webkit-box-shadow:0 0 12px rgba(0,0,0,.5); -moz-box-shadow:0 0 12px rgba(0,0,0,.5); }
+.up #portalFragAdminExit h2 {color:#344461; font-size:150%;}
+.up #portalFragAdminExit .fl-widget-content {background:#B1C6F2;}
+
 /* Portlet Navigation (focused view) */
 .up #portletNavigation { border-bottom:2px solid #333399; }
 .up #portletNavigation h3 { margin:0; padding:0.2em 0.5em; color:#293B5A; font-size:90%; }

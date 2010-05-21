@@ -23,7 +23,6 @@
  * These declarations are scoped for the portal, and not specifically for portlets.
  * For portlet-specifc CSS, see "portlet.css" in the same directory.
  * CSS specified at the portal scope will naturally cascade into portlets.
- * This CSS begins with the Fluid Skinning System (FSS) specification and is followed by uPortal-specfic extensions and overrides.
  * This CSS assumes the use of a CSS reset (by default the FSS "fss-reset.css") for browser normalization.
  */
  
@@ -44,27 +43,95 @@
  
 /* 
 ------------------------------------
-  Fluid Skinning System theme.
+  Fluid Skinning System overrides.
 ------------------------------------
  * The Fluid Skinning System is a group of CSS files with a specially designed modular structure and class-specific format.
  * It is meant to work well as both a standalone CSS foundation for your site and Fluid Infusion components.
  * In FSS, "themes" refer to the color schemes and "window dressings" for basic markup and FSS Helpers, such as Tabs, Widgets, Menus, etc.
  * For more information on FSS themes, refer to:
  * http://wiki.fluidproject.org/x/egNS
- * The FSS theme created for uPortal is "fl-theme-uportal", and is a class of the <body> tag, used for namespacing.
-*/
+ * uPortal skins generally use a FSS theme as the base CSS styling for the portal. 
+ * If a FSS theme is used with this skin, it is specified in skin.xml and applied first (from the resource server).
+ * These are any overrides to the FSS theme.
+ */
  
-.fl-widget {border-radius:7px; -moz-border-radius:7px; -webkit-border-radius:7px;}
+.fl-widget {-moz-border-radius:7px; -webkit-border-radius:7px; border-radius:7px;}
 .fl-widget-titlebar,
 .fl-widget-content,
-.fl-listmenu {border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;}
+.fl-listmenu {-moz-border-radius:5px; -webkit-border-radius:5px; border-radius:5px;}
+
+
+/* 
+------------------------------------
+  jQuery UI overrides.
+------------------------------------ 
+ * uPortal uses jQuery UI (http://jqueryui.com/) for animation, effects, and widgets.
+ * jQuery UI themes are expected by uPortal to format jQuery UI elements used by the portal.
+ * The specific jQuery UI theme used in this skin is specified in skin.xml
+ * A default theme (smoothness) is available from the resource server.
+ * Alternate themes can be used by changing the reference in skin.xml
+ * These are any overrides to the jQuery UI theme.
+*/
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button, 
+.ui-widget {font-size: 1em; font-family:arial,helvetica,clean,sans-serif;}
+.ui-tabs .ui-tabs-nav li { list-style-image:none; list-style-position:outside;list-style-type:none; }
+
+/* jQuery tooltip */
+#tooltip {background-color: #fffbbf; color: #344461; border: thin solid #b1c6f2;}
+
 
 /* 
 ------------------------------------
   uPortal specific CSS.
 ------------------------------------ 
- * uPortal is namespaced with "up", a class of the <body> tag.
+ * Layering on top of FSS and jQueryUI, this css is specific to style uPortal.
+ * uPortal is namespaced with "up", a class on the <body> tag.
  */
+
+/* Universal Decorators */
+
+/* Forms */
+/*
+ * Gives form elements a consistent look across the portal.
+ */
+.up select,
+.up input[type="text"],
+.up input:not([type="submit"]),
+.up input:not([type="button"]),
+.up textarea {font-family:"lucida grande",tahoma,verdana,arial,sans-serif; border:1px solid #BDC7D8; border-color:#96A6C5;}
+.up input[type="text"],
+.up input:not([type="submit"]),
+.up input:not([type="button"]) {background-color:#fff; background-image:-webkit-gradient(linear, 0% 0%, 0% 12%, from(#ccc), to(#fff)); background-image:-moz-linear-gradient(0% 12% 90deg, #fff, #ccc);}
+.up select:focus,
+.up input[type="text"]:focus,
+.up textarea:focus {-webkit-box-shadow:0 0 12px rgba(51,204,255,.9); -moz-box-shadow:0 0 12px rgba(51,204,255,.9); box-shadow:0 0 12px rgba(51,204,255,.9);}
+
+/* Buttons */
+/*
+ * Gives links and form buttons a consistent button look across the portal.
+ * Add the "button" class to the element you want to be styled as a button.
+ * If multiple buttons, add the "buttons" class to the wrapping element.
+ * If multiple buttons, add the "primary" class to the element that is the default action (e.g., class="button primary").
+ */
+.up button, 
+.up .button,
+.up input[type="submit"],
+.up input[type="button"] {border-width:1px; border-style:solid; border-color:#000; background:#336699 url(../common/images/button_bkd.png) top left repeat-x; color:#fff; font-size:11px; font-weight:bold; font-family:"lucida grande",tahoma,verdana,arial,sans-serif; text-transform:capitalize; text-shadow:0 -1px 1px rgba(0,0,0,.5); -webkit-box-shadow:0 1px 2px rgba(0,0,0,.5); -moz-box-shadow:0 1px 2px rgba(0,0,0,.5); box-shadow:0 1px 2px rgba(0,0,0,.5);}
+.up a.button {color:#fff !important;  text-decoration:none !important;}
+.up .buttons {border-top:0.2em solid #ccc;}
+.up .buttons .button {background-color:#F0F0F0; border-color:#000; color:#000;}
+.up .buttons .primary {background-color:#336699; color:#fff;}
+.up .buttons a.button {color:#000 !important;}
+.up .buttons a.primary {color:#fff !important;}
+.up .button:hover,
+.up .button:focus,
+.up a.button:hover,
+.up a.button:focus,
+.up input[type="submit"]:hover,
+.up input[type="submit"]:focus,
+.up input[type="button"]:hover,
+.up input[type="button"]:focus {background-color:#5a95cf !important; color:#fff !important; cursor:pointer;}
 
 /* Page */
 .up {font-family:Verdana, Arial, Helvetica, sans-serif; color:#333;}
@@ -89,10 +156,10 @@
 .up #portalWelcome {top:3.5em; left:250px;}
 
 /* Web Search */
-.up #webSearchContainer,
-.up #webSearchContainer .fl-widget-content {margin:0; padding:0; background:transparent; border:none;} {background:transparent; border:none;}
+.up #portalPageHeader #webSearchContainer,
+.up #portalPageHeader #webSearchContainer .fl-widget-content {margin:0; padding:0; background:transparent; border:none;} {background:transparent; border:none;}
 .up #webSearchContainer select {display:none;}
-.up #webSearchContainer #webSearchSubmit {background:#000 url(images/btn_bkd.gif) top left repeat-x; border:1px solid #000; color:#333; font-size:90%; font-weight:bold; padding:0.1em 0.5em;}
+.up #webSearchContainer #webSearchSubmit {background:#000 url(images/btn_bkd.gif) top left repeat-x; border:1px solid #000; color:#333; font-size:90%; font-weight:bold; padding:0.1em 0.5em; text-shadow:0 -1px 1px rgba(0,0,0,.2);}
 .up #webSearchContainer #webSearchSubmit:hover {background-position:0 -200px; cursor:pointer;}
 
 /* Navigation */
@@ -103,7 +170,7 @@
 .up #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:transparent;}
 .up #portalNavigation .fl-tabs {padding:0.4em 0; text-align:center; border:none;}
 .up #portalNavigation .fl-tabs li.portal-navigation {position:relative; padding:0.4em 0;}
-.up #portalNavigation .fl-tabs li.portal-navigation a {padding:0.4em 2em; font-size:120%; font-weight:bold; color:#fff !important; text-decoration:none;}
+.up #portalNavigation .fl-tabs li.portal-navigation a {padding:0.4em 2em; font-size:120%; font-weight:bold; color:#fff !important; text-decoration:none; text-shadow:1px 1px 1px rgba(0,0,0,.5);}
 *:first-child+html .up #portalNavigation .fl-tabs,
 *:first-child+html .up #portalNavigation .fl-tabs li.portal-navigation {padding:0;} /* hack needed for IE7 */
 .up #portalNavigation .fl-tabs li.portal-navigation:hover,
@@ -113,14 +180,14 @@
 .up #portalNavigation .fl-tabs li.portal-navigation.fl-tabs-active a.portal-navigation-link:hover {background:#2e5579 url(images/nav_tab_bkd.gif) top left repeat-x; border-left:1px solid #1e3851; border-right:1px solid #1e3851; color:#fff;}
 .up #portalNavigation .fl-tab-content {background-color:#fff; color:#000;}
 .up #portalNavigationSubrow.fl-tab-content {text-align:center; background:#336699 url(images/nav_subrow_bkd.gif) top right repeat-x;}
-.up #portalNavigationSubrow a {text-decoration:none; color:#acc9e6 !important;}
+.up #portalNavigationSubrow a {text-decoration:none; color:#acc9e6 !important; text-shadow:1px 1px 1px rgba(0,0,0,.5);}
 .up #portalNavigationSubrow a:hover {color:#eee !important;}
 
 /* Flyout Navigation */
 .up #portalNavigation .portal-flyout-container {padding:0 3px 3px 0; background:transparent url(../common/images/drop_shadow.png) bottom right no-repeat;}
 .up #portalNavigation .portal-flyout-container-inner {padding:2px; background-color:#336699;}
 .up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav {border-bottom:1px solid #336699;}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link {padding:4px 10px 4px 25px; color:#336699 !important; font-weight:normal; font-size:100%; background-color:#98b6c1; background-position:5px 3px; background-repeat:no-repeat; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); text-decoration:none; text-align:left; display:block; border:none}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link {padding:4px 10px 4px 25px; color:#336699 !important; font-weight:bold; font-size:100%; background-color:#98b6c1; background-position:5px 3px; background-repeat:no-repeat; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); text-decoration:none; text-align:left; display:block; border:none; text-shadow:1px 1px 1px rgba(0,0,0,.2);}
 .up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:hover {color:#fff !important; background-color:#5a95cf;}
 
 /* Body */
@@ -147,14 +214,16 @@
 .up #portalSidebar {background:#336699 url(../common/images/rounded_corner_bottomleft.png) bottom left no-repeat;}
 .up #portalSidebarInner {background:transparent url(../common/images/rounded_corner_bottomright.png) bottom right no-repeat;}
 /* Sidebar Widgets */
-.up #portalSidebar .fl-widget {padding:7px; font-size:85%; background:transparent url(../common/images/light_top_100px_flat.png) 0 0 repeat-x;}
+.up #portalSidebar .fl-widget {padding:7px; font-size:85%; background:transparent url(../common/images/light_top_100px_30.png) 0 0 repeat-x; border:1px solid #ACC9E6;}
 .up #portalSidebar .fl-widget .fl-widget-titlebar h2 {color:#eee;}
+.up #portalSidebar .fl-widget-content,
+.up #portalSidebar .fl-widget .fl-listmenu {background-color:#336699;}
 .up #portalSidebar .fl-widget .fl-listmenu {border-width:0px; border-bottom-width:1px;}
 .up #portalSidebar .fl-widget .fl-listmenu a {padding-left:28px; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); background-position:0.5em 0.5em; background-repeat:no-repeat;}
 .up #portalSidebar .fl-widget .fl-listmenu li,
-.up #portalSidebar .fl-widget .fl-listmenu li a {background-color:#98b6c1; color:#336699 !important;}
+.up #portalSidebar .fl-widget .fl-listmenu li a {background-color:#336699 !important; color:#ACC9E6 !important;}
 .up #portalSidebar .fl-widget .fl-listmenu li:hover,
-.up #portalSidebar .fl-widget .fl-listmenu li a:hover {color:#fff !important; background-color:#5a95cf;}
+.up #portalSidebar .fl-widget .fl-listmenu li a:hover {color:#fff !important; background-color:#5a95cf !important;}
 
 /* Login */
 .up #portalLogin {}
@@ -183,11 +252,12 @@
 
 /* Portlet Navigation (focused view) */
 .up #portletNavigation #portletNavigationLinkHome a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tab_go.png);}
+.up #portletNavigation h3 {color:#fff;}
 
 /* Fragment Administration */
-.up #portalFragAdminList .fl-widget-content {background-color:#98b6c1;}
-.up #portalFragAdminExit {border-bottom:1px solid #ff6600;}
-.up #portalFragAdminExit h2 {color:#ff6600;}
+.up #portalFragAdminExit {margin:0; border:none; border-bottom:1px solid #ff6600; -moz-border-radius:0px; -webkit-border-radius:0px; border-radius:0px;}
+.up #portalFragAdminExit h2 {color:#ff6600; font-size:150%;}
+.up #portalFragAdminExit .fl-widget-content {background:#ffffcc;}
 .up #portalFragAdminExit #exitFragment {font-weight:bold; color:#fff; background-color:#FF6600; background-image:none; border-top:1px solid #FFCA95; border-left:1px solid #FFCA95; border-bottom:1px solid #884400; border-right:1px solid #884400;}
 .up #portalFragAdminExit #exitFragment:hover {background-color:#FF3300; cursor:pointer;}
 .up .sidebar-left-100 #portalFragAdminExit,
@@ -280,17 +350,3 @@
 .up :focus{outline-width:0px;}
 .up .fl-reorderer-movable-selected:focus,
 .up .fl-reorderer-movable-dragging:focus {outline: 2px solid #f68922;}
-
-
-/* 
-------------------------------------
-  Overrides to jQuery UI css.
------------------------------------- 
-*/
-
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button, 
-.ui-widget {font-size: 1em; font-family:arial,helvetica,clean,sans-serif;}
-.ui-tabs .ui-tabs-nav li { list-style-image:none; list-style-position:outside;list-style-type:none; }
-
-/* jQuery tooltip */
-#tooltip {background-color: #fffbbf; color: #344461; border: thin solid #b1c6f2;}

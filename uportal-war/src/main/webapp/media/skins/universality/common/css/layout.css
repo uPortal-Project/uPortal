@@ -174,6 +174,18 @@
 input[type="checkbox"] {margin-right:0.5em;}
 fieldset input[type="checkbox"] {margin-bottom:1em;}
 
+/* Buttons */
+/*
+ * Gives links and form buttons a consistent button look.
+ * If multiple buttons, add the "buttons" class to the wrapping element.
+ * If multiple buttons, add the "primary" class to the default action.
+ */
+.button,
+form input[type="submit"] {margin:0 5px; padding:2px 10px;}
+a.button {display:inline-block;}
+.buttons {padding:1em 0;}
+.button:hover {cursor:pointer;}
+
 /* common */
 .portal-pipe {padding:0 0.5em;}
 
@@ -309,7 +321,7 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* Fragment Administration */
 #fragmentAdminForm {margin:0; padding:0;}
-#portalFragAdminExit h2 {margin:0; padding:0.5em 1em 0em 1em;}
+#portalFragAdminExit h2 {margin:0; padding:0.5em 0.5em 0 0.5em;}
 #portalFragAdminExit form {margin:0; padding:0 1em 1em 1em;}
 #portalFragAdminExit #exitFragment {margin-left:1em; padding:0.3em 1em;}
 
@@ -319,7 +331,9 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Ajax Menus */
 #changeColumns tr td { text-align: center; }
 #changeColumns img { vertical-align: middle; padding:3px; }
-
+#skinList {margin-bottom:1.5em;}
+#skinList h2 {display:inline; margin-left:0.5em;}
+#skinList .fl-widget-content {padding:1em;}
 
 /* 
 ------------------------------------

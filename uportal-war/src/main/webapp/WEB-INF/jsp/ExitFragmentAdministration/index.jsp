@@ -24,14 +24,14 @@
 
 <portlet:defineObjects/>
 
-<div id="portalFragAdminExit" class="block">
-  <div class="block-inner">
-    <h2 class="block-title">Fragment Administration</h2>
-    <div class="block-content">
-      <form name="fragmentAdminExitForm" action="${loginUrl}">
-      	<label for="exitFragment">You are currently logged in as <strong><c:out value="${USERNAME}"/></strong> for DLM fragment administration</label>
-      	<input id="exitFragment" type="Submit" value="Exit Fragment"/>
-      </form>
+<div id="portalFragAdminExit" class="fl-widget">
+    <div class="fl-widget-titlebar">
+    	<h2 class="fl-widget-title">Fragment Administration</h2>
     </div>
-  </div>
+    <div class="fl-widget-content">
+        <form name="fragmentAdminExitForm" action="${loginUrl}">
+        	<label for="exitFragment">You are currently logged in as <strong><c:out value="${USERNAME}"/></strong> for DLM fragment administration</label>
+        	<input id="exitFragment" type="Submit" value="Exit Fragment"/>
+        </form>
+    </div>
 </div>
