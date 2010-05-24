@@ -24,6 +24,14 @@
       Light blue and white.
     </skin-description>
   </skin>
+	
+	<skin>
+    <skin-key>hc</skin-key>
+    <skin-name>High Contrast</skin-name>
+    <skin-description>
+      High contrast black and white.
+    </skin-description>
+  </skin>
   
 </skins>
 
