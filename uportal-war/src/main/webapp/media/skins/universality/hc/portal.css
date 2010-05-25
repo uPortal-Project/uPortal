@@ -1,0 +1,265 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/*
+
+/* uPORTAL PORTAL CSS
+ * These declarations are scoped for the portal, and not specifically for portlets.
+ * For portlet-specifc CSS, see "portlet.css" in the same directory.
+ * CSS specified at the portal scope will naturally cascade into portlets.
+ * This CSS assumes the use of a CSS reset (by default the FSS "fss-reset.css") for browser normalization.
+ */
+ 
+/* uPORTAL DEVELOPMENT STANDARDS AND GUIDELINES
+ * For the standards and guidelines that govern the user interface of uPortal portlets including HTML, CSS, JavaScript, accessibilty, naming conventions, 3rd Party libraries (like jQuery and the Fluid Skinning System) and more, refer to:
+ * http://www.ja-sig.org/wiki/x/cQ
+ */
+ 
+/* ICONS
+ * This CSS uses the Silk icon set 1.3 by Mark James:
+ * http://www.famfamfam.com/lab/icons/silk/
+ * which is licensed under a Creative Commons Attribution 2.5 License:
+ * http://creativecommons.org/licenses/by/2.5/
+ * This icon set is free for use under the CCA 2.5 license, so long as there 
+ * is a link back to the author's site.  This reference is present in the 
+ * portal footer markup of the universality theme.
+ */
+ 
+/* 
+------------------------------------
+  Fluid Skinning System overrides.
+------------------------------------
+ * The Fluid Skinning System is a group of CSS files with a specially designed modular structure and class-specific format.
+ * It is meant to work well as both a standalone CSS foundation for your site and Fluid Infusion components.
+ * In FSS, "themes" refer to the color schemes and "window dressings" for basic markup and FSS Helpers, such as Tabs, Widgets, Menus, etc.
+ * For more information on FSS themes, refer to:
+ * http://wiki.fluidproject.org/x/egNS
+ * uPortal skins generally use a FSS theme as the base CSS styling for the portal. 
+ * If a FSS theme is used with this skin, it is specified in skin.xml and applied first (from the resource server).
+ * These are any overrides to the FSS theme.
+ */
+.fl-widget {-moz-border-radius:7px; -webkit-border-radius:7px; border-radius:7px;}
+.fl-widget-titlebar,
+.fl-widget-content,
+.fl-listmenu {-moz-border-radius:5px; -webkit-border-radius:5px; border-radius:5px;}
+.up .fl-widget-content {margin:0;}
+
+/* 
+------------------------------------
+  jQuery UI overrides.
+------------------------------------ 
+ * uPortal uses jQuery UI (http://jqueryui.com/) for animation, effects, and widgets.
+ * jQuery UI themes are expected by uPortal to format jQuery UI elements used by the portal.
+ * The specific jQuery UI theme used in this skin is specified in skin.xml
+ * A default theme (smoothness) is available from the resource server.
+ * Alternate themes can be used by changing the reference in skin.xml
+ * These are any overrides to the jQuery UI theme.
+*/
+.ui-state-highlight, .ui-widget-content .ui-state-highlight {color:#fff !important;}
+.ui-widget-header, .ui-datepicker .ui-datepicker-title {background-color:#000 !important; color:#fff !important;}
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {background-color:#000 !important}
+
+
+/* 
+------------------------------------
+  uPortal specific CSS.
+------------------------------------ 
+ * Layering on top of FSS and jQueryUI, this css is specific to style uPortal.
+ * uPortal is namespaced with "up", a class on the <body> tag.
+ */
+ 
+/* Page */
+.up {font-size:120%;}
+
+/* Portal Page Bar */
+.up #portalPageBarLinks {float:right; margin-left:250px; padding-right:15px;}
+.up .logged-in #portalPageBarLogout .portal-pipe {display:none;}
+.up .not-logged-in #portalPageBarHelp .portal-pipe {display:none;}
+
+/* Header */
+.up #portalPageHeader {}
+.up #portalLogo {padding:2em 5em 1em 2em;}
+.up .focused #portalLogo {padding:10px 30px;}
+.up #portalPageHeader .fl-widget,
+.up #portalPageHeader .fl-widget-content {border:none; background-color:#fff; padding:0; margin:0;}
+
+/*.up #portalSkipNav a, .up #portalSkipNav a:hover, .up #portalSkipNav a:visited {height:auto; left:250px; overflow:auto; position:absolute; top:0.2em; width:auto;}
+.up #portalSkipNav #skipToContent {margin-left:170px;}*/
+
+/* portalWelcome
+ Keep the top value relative to the text size so that the top position remains good when the browser text size is increased. 
+ Set the left width to the width of your logo (plus logo margins).
+ This margin prevents it from colliding with the logo if the browser window is shrunk down. 
+*/
+.up #portalWelcome {top:2.2em; left:250px; font-weight:bold; font-size:130%;}
+.up #portalWelcome,
+.up #portalWelcome div {background-color:transparent !important;}
+.up #portalWelcome .logout-label {display:none;}
+
+/* Web Search */
+.up #portalPageHeader #webSearchContainer {top:1.5em;}
+.up #portalPageHeader #webSearchContainer,
+.up #portalPageHeader #webSearchContainer div {background-color:transparent !important;}
+.up #portalPageHeader #webSearchContainer select {display:none;}
+.up #webSearchContainer .fl-widget-content {margin:0; padding:0; background:transparent; border:none;}
+.up #webSearchContainer #webSearchSubmit {background-color:#000; color:#fff; border:1px solid #000; font-size:90%; font-weight:bold; padding:0.1em 0.5em;}
+.up #webSearchContainer #webSearchSubmit:hover {cursor:pointer;}
+
+/* Navigation */
+.up #portalNavigation .fl-tabs,
+.up #portalNavigation .fl-tabs * {margin:0; padding:0; background:none; border:none; display:block;}
+.up #portalNavigation .fl-tabs {text-align:left; padding-left:225px;}
+.up #portalNavigation .fl-tabs > li,
+.up #portalNavigation .fl-tabs > li > a,
+.up #portalNavigation .fl-tabs > li > a span {float:left;}
+.up #portalNavigation .fl-tabs > li {position:relative; margin-right:3px;}
+.up #portalNavigation .fl-tabs > li > a {
+	padding:7px 25px;
+	border:2px solid #000;
+	border-bottom:none;
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+.up #portalNavigation .fl-tabs li.fl-tabs-active > a,
+.up #portalNavigation .fl-tabs li.fl-tabs-active > a span {color:#000 !important;}
+.up #portalNavigation .fl-tabs li span {background-color:transparent !important;}
+
+.up #portalNavigation .fl-tabs .portal-flyout-container * {margin:0; padding:0; background:none; border:none;}
+.up #portalNavigation .fl-tabs .portal-flyout-container {
+	background-color:#fff; 
+	border:2px solid #000;
+	border-top:none;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	-webkit-box-shadow:0 3px 12px rgba(0,0,0,1); 
+	-moz-box-shadow:0 3px 12px rgba(0,0,0,1);
+	box-shadow:0 3px 12px rgba(0,0,0,1);
+}
+.up #portalNavigation .fl-tabs .portal-flyout-container li a  {padding:10px 25px; color:#eee !important; font-size:85%;}
+.up #portalNavigation .fl-tabs .portal-flyout-container li {border-top:1px dotted #999;}
+.up #portalNavigation .fl-tabs .portal-flyout-container li a:hover {color:#fff !important; background-color:#000 !important;}
+.up #portalNavigation .fl-tabs .portal-flyout-container li a:hover span {color:#fff !important;}
+
+
+/* Body */
+.up #portalPageBody {border-top:1em solid #000;}
+.up #portalPageBodyTitleRow {display:none;}
+.up #portalPageBodyTitleRow h1 {display:none;}
+/* Focused */
+.up .focused #portalPageBodyTitleRow h1 {font-size:300%;}
+
+/* Columns */
+.up #portalPageBodyColumns.fl-col-flex,
+.up .layout-1-columns .portal-page-column.fl-col-flex {padding:0;} /* Removes default padding from FSS  */
+
+/* Sidebar */
+.up #portalSidebar {background:}
+.up #portalSidebarInner {padding:2em 1em 0 0;}
+/* Sidebar Widgets */
+.up #portalSidebar .fl-widget {background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000), to(#999)); background-image:-moz-linear-gradient(0% 100% 90deg, #000, #999); border:0.2em solid #000;}
+.up #portalSidebar .fl-widget-inner {padding:5px; background-color:#000 !important; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius:5px;}
+.up #portalSidebar .fl-widget .fl-widget-titlebar,
+.up #portalSidebar .fl-widget .fl-widget-content {margin-bottom:0; -moz-border-radius:3px; -webkit-border-radius:3px; border-radius:3px;}
+.up #portalSidebar .fl-widget .fl-widget-titlebar,
+.up #portalSidebar .fl-widget .fl-widget-titlebar h2 {background-color:#000 !important; color:#fff !important; border:none !important; text-decoration:none;}
+.up #portalSidebar .fl-widget-titlebar h2 {padding:0.5em;}
+.up #portalSidebar .fl-widget .fl-listmenu,
+.up #portalSidebar .fl-widget .fl-listmenu li {margin:0; padding:0;}
+.up #portalSidebar .fl-widget .fl-listmenu {background-color:#000 !important; color:#fff !important; border:none !important;}
+.up #portalSidebar .fl-widget .fl-listmenu a {border-bottom:0.2em solid #000;}
+.up #portalSidebar .fl-widget .fl-listmenu a:hover,
+.up #portalSidebar .fl-widget .fl-listmenu a:focus {border-bottom:0.2em solid red;}
+
+/* Login */
+
+/* Ajax Menus */
+.up #changeColumns tr td { text-align: center; }
+.up #changeColumns img { vertical-align: middle; padding:3px; }
+
+
+/* Customization Links */
+
+/* Administration Links */
+
+/* Portlet Navigation */
+
+/* Ajax Menus */
+.up #changeColumns tr td {text-align:center;}
+.up #changeColumns img {vertical-align:middle; padding:3px;}
+
+/* Fragment Administration */
+.up #portalFragAdminExit {border-bottom:1px solid #000;}
+.up #portalFragAdminExit #exitFragment {font-weight:bold; color:#fff; background-color:#000; background-image:none; border:1px solid #000;}
+.up #portalFragAdminExit #exitFragment:hover {cursor:pointer;}
+
+#portalPageBodyColumns .portal-page-column-inner {padding-top:2em; padding-bottom:2em;}
+#portalPageBodyColumns .single .portal-page-column-inner, 
+#portalPageBodyColumns .left .portal-page-column-inner {padding-left:2em; padding-right:1em;}
+#portalPageBodyColumns .right .portal-page-column-inner {padding-right:2em;}
+
+/* Portlets */
+.up .dashboard .up-portlet-wrapper-top,
+.up .dashboard .up-portlet-wrapper-bottom {display:none;}
+.up .dashboard .up-portlet-wrapper {border:0.2em solid #000; padding:0; margin-bottom:2em;}
+.up .dashboard .up-portlet-wrapper-inner {padding:0.5em; background-color:#000; border:0.1em solid #fff; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius:5px;}
+.up .dashboard .up-portlet-titlebar  {background-color:#000 !important; white-space:nowrap; padding-bottom:0.3em;}
+.up .dashboard .up-portlet-titlebar {background-color:#000 !important; color:#fff !important;}
+.up .dashboard .up-portlet-titlebar h2,
+.up .dashboard .up-portlet-titlebar h2 a,
+.up .dashboard .up-portlet-titlebar .up-portlet-controls a,
+.up .dashboard .up-portlet-titlebar .up-portlet-controls span {background-color:transparent !important; color:#fff !important; border:none !important; text-decoration:none;}
+.up .dashboard .up-portlet-titlebar h2 {margin-bottom:0.3em;}
+.up .dashboard .up-portlet-titlebar h2 a {font-size:150%; border-bottom:0.2em double #000 !important;}
+.up .dashboard .up-portlet-titlebar h2 a:hover,
+.up .dashboard .up-portlet-titlebar h2 a:focus {border-bottom-color:red !important;}
+.up .dashboard .up-portlet-controls {padding:0.1em 0.5em; background-color:#444 !important; position:static; text-align:right; -moz-border-radius:3px; -webkit-border-radius:3px; border-radius:3px;}
+.up .dashboard .up-portlet-controls .up-portlet-control {padding:0 0.5em;}
+.up .dashboard .up-portlet-controls .up-portlet-control:hover,
+.up .dashboard .up-portlet-controls .up-portlet-control:focus {background-color:#000 !important; border-bottom:0.2em double red !important;}
+/* No Chrome */
+.up .dashboard .no-chrome .up-portlet-content {border:none;}
+/* Alternate */
+
+/* Highlight */
+
+/* Locked Portlet */
+
+/* Footer */
+.up #portalPageFooter {text-align:center;}
+.up #portalPageFooterInner {border-top:1px solid #000; border-bottom:1px solid #000;}
+
+/* Fluid Layout Customizer styles */
+.up .fl-reorderer-movable-hover {cursor:move;}
+.up .fl-reorderer-movable-dragging-mouse {display:none;}
+.up .fl-reorderer-movable-dragging {filter:alpha(opacity=50); opacity:.5;}
+.up .fl-reorderer-avatar {outline: 0.4em solid #ff0000; background-color:#fff; width:auto; filter:alpha(opacity=60); opacity:.6;}
+.up .fl-reorderer-dropMarker {height:200px !important; background-color:#FF0000; margin-bottom:1em;}
+.up .drop-warning {position:absolute; top:50px; left:10px; border:0.2em solid #FF0000; background-color:#000; color:#fff; font-weight:bold; display:none; padding:1em; margin:0.5em; z-index:65535;}
+.up .drop-warning p {margin:0em; padding:0.5em 1em;}
+.up .fl-reorderer-movable-selected,
+.up .fl-reorderer-movable-selected:focus,
+.up .fl-reorderer-movable-dragging:focus {outline: 0.2em solid #ff0000;}
