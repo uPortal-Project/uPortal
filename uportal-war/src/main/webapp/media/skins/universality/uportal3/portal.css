@@ -132,6 +132,11 @@
 .up input[type="submit"]:focus,
 .up input[type="button"]:hover,
 .up input[type="button"]:focus {background-color:#5a95cf !important; color:#fff !important; cursor:pointer;}
+.up button[disabled="disabled"],
+.up .button[disabled="disabled"],
+.up input[disabled="disabled"],
+.up input[disabled="disabled"]:hover,
+.up input[disabled="disabled"]:focus {background:#ddd !important; border:1px solid #999 !important; color:#999 !important; text-shadow:none; cursor:default;}
 
 /* Page */
 .up {font-family:Verdana, Arial, Helvetica, sans-serif; color:#333;}

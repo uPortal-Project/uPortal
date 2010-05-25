@@ -152,6 +152,11 @@
 	-moz-box-shadow:0 0 15px rgba(246,153,45,1); 
 	box-shadow:0 0 15px rgba(246,153,45,1);
 }
+.up button[disabled="disabled"],
+.up .button[disabled="disabled"],
+.up input[disabled="disabled"],
+.up input[disabled="disabled"]:hover,
+.up input[disabled="disabled"]:focus {background:#ddd !important; border:1px solid #999 !important; color:#999 !important; text-shadow:none; cursor:default;}
 
 /* Page */
 html,
