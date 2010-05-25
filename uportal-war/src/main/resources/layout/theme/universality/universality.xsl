@@ -130,6 +130,7 @@
     <xsl:choose>
       <xsl:when test="$SKIN='university' or $SKIN='university-div1' or $SKIN='university-div2'">university</xsl:when> <!-- Set all institution skins to a specific theme configuration  -->
       <xsl:when test="$SKIN='coal'">coal</xsl:when>
+      <xsl:when test="$SKIN='hc'">hc</xsl:when>
       <xsl:when test="$SKIN='ivy'">ivy</xsl:when>
       <xsl:otherwise>uportal</xsl:otherwise>
     </xsl:choose>
@@ -257,7 +258,7 @@
   
   <xsl:param name="SIDEBAR_LOCATION">
     <xsl:choose>
-      <xsl:when test="$INSTITUTION='uportal'">right</xsl:when>
+      <xsl:when test="$INSTITUTION='uportal' or $INSTITUTION='hc'">right</xsl:when>
       <xsl:otherwise>left</xsl:otherwise>
     </xsl:choose>
   </xsl:param>
