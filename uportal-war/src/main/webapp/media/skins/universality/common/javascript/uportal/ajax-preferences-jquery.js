@@ -69,7 +69,7 @@
 		         	afterMove: movePortlet
 		         },
 		         styles: {
-		         	mouseDrag: "orderable-dragging-mouse"
+		         	mouseDrag: "fl-reorderer-movable-dragging-mouse"
 		         }
 		    };
 		    settings.myReorderer = up.fluid.reorderLayout ("#portalPageBodyColumns",options);
