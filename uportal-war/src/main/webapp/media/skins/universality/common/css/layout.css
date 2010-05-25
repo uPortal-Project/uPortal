@@ -280,7 +280,9 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigation .portal-flyout-container li {list-style:none;}
 #portalNavigation .portal-flyout-container .portal-subnav-list li {display:list-item; position:static; padding:0;}
 #portalNavigation .portal-flyout-container .portal-subnav-list li a {display:block;}
-#portalNavigation .portal-flyout-iframe {position:absolute; z-index:9;}
+/* Fix for IE z-index */
+.on-top {z-index:1000000;}
+
 /* Add Tab */
 #portalNavigation .add-tab {display:inline-block;}
 
