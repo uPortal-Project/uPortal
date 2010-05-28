@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.EventCoordinationService;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletWindow;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -314,12 +315,13 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      * Base Callable impl for portlet execution dispatching. Tracks the target, request, response objects as well as
      * submitted, started and completed timestamps.
      */
-    private static abstract class PortletExecutionWorker<V> {
+    private abstract class PortletExecutionWorker<V> {
         protected final Log logger = LogFactory.getLog(this.getClass());
         
         private final CountDownLatch startLatch = new CountDownLatch(1);
         private final ExecutorService executorService;
         final IPortletWindowId portletWindowId;
+        final String fName;
         final HttpServletRequest request;
         final HttpServletResponse response;
         
@@ -334,6 +336,11 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
             this.portletWindowId = portletWindowId;
             this.request = request;
             this.response = response;
+            
+            final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
+            final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
+            final IChannelDefinition channelDefinition = parentPortletDefinition.getChannelDefinition();
+            this.fName = channelDefinition.getFName();
         }
         
         public final void submit() {
@@ -349,6 +356,10 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
                  */
                 @Override
                 public V call() throws Exception {
+                    final Thread currentThread = Thread.currentThread();
+                    final String threadName = currentThread.getName();
+                    currentThread.setName(threadName + "-[" + fName + "]");
+                    
                     TrackingThreadLocal.setCurrentData(trackingThreadLocalData);
                     RequestContextHolder.setRequestAttributes(requestAttributesFromHolder);
                     LocaleContextHolder.setLocale(localeFromHolder);
@@ -368,6 +379,8 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
                         TrackingThreadLocal.clearCurrentData();
                         LocaleContextHolder.resetLocaleContext();
                         RequestContextHolder.resetRequestAttributes();
+                        
+                        currentThread.setName(threadName);
                     }
                 }
             });
