@@ -21,6 +21,7 @@ package org.jasig.portal.portlet.url;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -50,6 +51,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
     private final HttpServletRequest httpServletRequest;
     private final IPortletUrlSyntaxProvider portletUrlSyntaxProvider;
     
+    private final Map<String, String[]> renderParameters = new LinkedHashMap<String, String[]>();
     private final PortletUrl portletUrl;
     
     public PortletURLProviderImpl(TYPE type, IPortletWindow portletWindow, HttpServletRequest httpServletRequest, IPortletUrlSyntaxProvider portletUrlSyntaxProvider) {
@@ -110,8 +112,7 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     @Override
     public Map<String, String[]> getRenderParameters() {
-        // TODO Auto-generated method stub
-        return new LinkedHashMap<String, String[]>();
+        return this.renderParameters;
     }
 
     @Override
@@ -175,6 +176,14 @@ public class PortletURLProviderImpl implements PortletURLProvider {
 
     @Override
     public String toURL() {
+        final Map<String, List<String>> convertedParameters = new LinkedHashMap<String, List<String>>();
+        for (final Map.Entry<String, String[]> renderParameterEntry : this.renderParameters.entrySet()) {
+            final String[] values = renderParameterEntry.getValue();
+            final String name = renderParameterEntry.getKey();
+            convertedParameters.put(name, Arrays.asList(values));
+        }
+        this.portletUrl.setParameters(convertedParameters);
+        
         return this.portletUrlSyntaxProvider.generatePortletUrl(this.httpServletRequest, this.portletWindow, this.portletUrl);
     }
 
