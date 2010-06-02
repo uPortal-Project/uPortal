@@ -24,10 +24,10 @@ import org.springframework.util.Assert;
  * @version $Revision$
  */
 public abstract class AbstractPortletResponseResposeContextImpl {
-    final PortletContainer portletContainer;
-    final HttpServletRequest containerRequest;
-    final HttpServletResponse containerResponse;
-    final IPortletWindow portletWindow;
+    protected final PortletContainer portletContainer;
+    protected final HttpServletRequest containerRequest;
+    protected final HttpServletResponse containerResponse;
+    protected final IPortletWindow portletWindow;
 
     //Objects provided by the PortletServlet via the init method
     //The servlet objects are from the scope of the cross-context dispatch

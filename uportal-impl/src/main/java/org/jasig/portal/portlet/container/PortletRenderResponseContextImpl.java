@@ -17,7 +17,7 @@ import org.apache.pluto.container.PortletRenderResponseContext;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
-import org.jasig.portal.portlet.url.IPortletUrlCreator;
+import org.jasig.portal.url.IPortalUrlProvider;
 
 /**
  * @author Eric Dalquist
@@ -27,9 +27,9 @@ public class PortletRenderResponseContextImpl extends PortletMimeResponseContext
     
     public PortletRenderResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortletUrlCreator portletUrlCreator) {
+            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider) {
 
-        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portletUrlCreator);
+        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider);
 
     }
 

@@ -117,6 +117,10 @@ public class UrlBuilder implements Serializable, Cloneable {
         return l == null ? null : new ArrayList<T>(l);
     }
     
+    protected <T> List<T> copy(T[] t) {
+        return t == null ? null : new ArrayList<T>(Arrays.asList(t));
+    }
+    
     /**
      * Sets a URL parameter, replacing any existing parameter with the same name.
      * 
@@ -206,7 +210,8 @@ public class UrlBuilder implements Serializable, Cloneable {
     }
     
     /**
-     * Adds the contents of the specified Map as the parameters.
+     * Adds the contents of the specified Map as the parameters, the values of the Map are
+     * List<String>
      * 
      * @param namespace String to prepend to each parameter name in the Map
      * @param parameters Map of parameters to set
@@ -219,7 +224,29 @@ public class UrlBuilder implements Serializable, Cloneable {
         
         for (final Map.Entry<String, List<String>> newParamEntry : parameters.entrySet()) {
             final String name = newParamEntry.getKey();
-            List<String> values = this.copy(newParamEntry.getValue());
+            final List<String> values = this.copy(newParamEntry.getValue());
+            
+            this.parameters.put(namespace + name, values);
+        }
+        return this;
+    }
+    
+    /**
+     * Adds the contents of the specified Map as the parameters, the values of the Map are
+     * String[]
+     * 
+     * @param namespace String to prepend to each parameter name in the Map
+     * @param parameters Map of parameters to set
+     * @return this
+     */
+    public UrlBuilder addParametersArray(String namespace, Map<String, String[]> parameters) {
+        for (final String name : parameters.keySet()) {
+            Validate.notNull(name, "parameter map cannot contain any null keys");
+        }
+        
+        for (final Map.Entry<String, String[]> newParamEntry : parameters.entrySet()) {
+            final String name = newParamEntry.getKey();
+            final List<String> values = this.copy(newParamEntry.getValue());
             
             this.parameters.put(namespace + name, values);
         }

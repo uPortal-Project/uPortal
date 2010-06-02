@@ -22,8 +22,7 @@ package org.jasig.portal.portlet.url;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.utils.Tuple;
+import org.jasig.portal.url.IPortletPortalUrl;
 
 /**
  * Encapsulates the logic for writing to and reading from URLs for portlets. This should hide the actual paramter
@@ -43,7 +42,7 @@ public interface IPortletUrlSyntaxProvider {
      * @return A fully generated portlet URL ready to be rendered
      * @throws IllegalArgumentException if request, portletWindowId, or portletUrl are null
      */
-    public String generatePortletUrl(HttpServletRequest request, IPortletWindow portletWindow, PortletUrl portletUrl);
+    public String generatePortletUrl(HttpServletRequest request, IPortletWindow portletWindow, PortalPortletURLProvider portletUrl);
     
     /**
      * Parses out PortletUrl data from the request.
@@ -52,6 +51,6 @@ public interface IPortletUrlSyntaxProvider {
      * @return The PortletUrl data for the request, null if no portlet is targeted by this request
      * @throws IllegalArgumentException if request is null.
      */
-    public PortletUrl parsePortletUrl(HttpServletRequest request);
+    public IPortletPortalUrl parsePortletUrl(HttpServletRequest request);
     
 }

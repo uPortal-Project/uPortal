@@ -22,6 +22,7 @@ package org.jasig.portal.portlet.url;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.url.IPortletPortalUrl;
 
 /**
  * Provides access to portlet specific information for a HttpServletRequest.
@@ -57,7 +58,7 @@ public interface IPortletRequestParameterManager {
      * @throws IllegalArgumentException If request or is null.
      */
     @Deprecated
-    public void setTargetedPortletUrl(HttpServletRequest request, PortletUrl portletUrl);
+    public void setTargetedPortletUrl(HttpServletRequest request, IPortletPortalUrl portletUrl);
     
     /**
      * Set the PortletUrl for portlets that have data in this request but are not targeted
@@ -67,7 +68,7 @@ public interface IPortletRequestParameterManager {
      * @throws IllegalArgumentException If request or portletUrl are null.
      */
      @Deprecated
-    public void setAdditionalPortletUrl(HttpServletRequest request, PortletUrl portletUrl);
+    public void setAdditionalPortletUrl(HttpServletRequest request, IPortletPortalUrl portletUrl);
     
     /**
      * Gets the portlet window ID targeted by the request, returns null if no portlet was targeted.
@@ -90,7 +91,7 @@ public interface IPortletRequestParameterManager {
      * @throws org.jasig.portal.url.processing.RequestParameterProcessingIncompleteException If this request doesn't have the necessary information associated with it yet to return a request type
      */
      @Deprecated
-    public PortletUrl getPortletRequestInfo(HttpServletRequest request, IPortletWindowId portletWindowId);
+    public IPortletPortalUrl getPortletRequestInfo(HttpServletRequest request, IPortletWindowId portletWindowId);
     
     /**
      * Gets the request information for the targeted portlet, returns null if no portlet was targeted.

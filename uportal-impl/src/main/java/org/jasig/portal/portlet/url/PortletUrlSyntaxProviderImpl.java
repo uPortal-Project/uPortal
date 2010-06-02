@@ -81,10 +81,9 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, org.jasig.portal.portlet.url.PortletUrl)
+	 * @see org.jasig.portal.portlet.url.IPortletUrlSyntaxProvider#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, org.jasig.portal.portlet.url.PortalPortletURLProvider)
 	 */
-	public String generatePortletUrl(HttpServletRequest request,
-			IPortletWindow portletWindow, PortletUrl portletUrl) {
+	public String generatePortletUrl(HttpServletRequest request, IPortletWindow portletWindow, PortalPortletURLProvider portletUrl) {
 		IPortletPortalUrl portalPortletUrl = portalUrlProvider.getPortletUrl(request, portletWindow.getPortletWindowId());
 		portalPortletUrl = mergeWithPortletUrl(portalPortletUrl, portletUrl);
 		return portalPortletUrl.toString();

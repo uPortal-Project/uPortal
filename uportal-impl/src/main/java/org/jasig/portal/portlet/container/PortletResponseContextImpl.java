@@ -17,9 +17,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResponseContext;
 import org.apache.pluto.container.ResourceURLProvider;
+import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.url.IPortletUrlCreator;
+import org.jasig.portal.url.IPortalUrlProvider;
 import org.springframework.util.Assert;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -34,18 +35,18 @@ public class PortletResponseContextImpl extends AbstractPortletResponseResposeCo
     private boolean released = false;
     
     protected final IRequestPropertiesManager requestPropertiesManager;
-    protected final IPortletUrlCreator portletUrlCreator;
+    protected final IPortalUrlProvider portalUrlProvider;
     
     public PortletResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortletUrlCreator portletUrlCreator) {
+            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider) {
         super(portletContainer, portletWindow, containerRequest, containerResponse);
         
         Assert.notNull(requestPropertiesManager, "requestPropertiesManager can not be null");
-        Assert.notNull(portletUrlCreator, "portletUrlCreator can not be null");
+        Assert.notNull(portalUrlProvider, "portletUrlCreator can not be null");
         
         this.requestPropertiesManager = requestPropertiesManager;
-        this.portletUrlCreator = portletUrlCreator;
+        this.portalUrlProvider = portalUrlProvider;
     }
 
     /* (non-Javadoc)
@@ -105,7 +106,7 @@ public class PortletResponseContextImpl extends AbstractPortletResponseResposeCo
      */
     @Override
     public ResourceURLProvider getResourceURLProvider() {
-        return this.portletUrlCreator.createResourceUrlProvider(this.portletWindow, this.containerRequest, this.containerResponse);
+        return this.portalUrlProvider.getPortletUrl(TYPE.RESOURCE, this.containerRequest, this.portletWindow.getPortletWindowId());
     }
 
     /* (non-Javadoc)

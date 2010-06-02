@@ -8,6 +8,7 @@ package org.jasig.portal.url;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
@@ -51,7 +52,7 @@ public interface IPortalUrlProvider {
      * @return Portlet targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified ID doesn't exist for a channel in the users layout.
      */
-    public IPortletPortalUrl getPortletUrl(HttpServletRequest request, IPortletWindowId portletWindowId);
+    public IPortletPortalUrl getPortletUrl(TYPE type, HttpServletRequest request, IPortletWindowId portletWindowId);
     
     /**
      * @param request The current portal request
@@ -59,7 +60,7 @@ public interface IPortalUrlProvider {
      * @return Portlet targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified ID doesn't exist for a channel in the users layout.
      */
-    public IPortletPortalUrl getPortletUrlByNodeId(HttpServletRequest request, String portletNodeId);
+    public IPortletPortalUrl getPortletUrlByNodeId(TYPE type, HttpServletRequest request, String portletNodeId);
     
     /**
      * @param request The current portal request
@@ -67,5 +68,5 @@ public interface IPortalUrlProvider {
      * @return Portlet targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified fname does not exist.
      */
-    public IPortletPortalUrl getPortletUrlByFName(HttpServletRequest request, String portletFName);
+    public IPortletPortalUrl getPortletUrlByFName(TYPE type, HttpServletRequest request, String portletFName);
 }

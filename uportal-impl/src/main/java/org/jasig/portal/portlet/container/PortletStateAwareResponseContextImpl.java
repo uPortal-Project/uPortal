@@ -19,10 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.pluto.container.EventProvider;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletStateAwareResponseContext;
-import org.apache.pluto.container.PortletURLProvider;
+import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.url.IPortletUrlCreator;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletPortalUrl;
 
 /**
  * @author Eric Dalquist
@@ -30,17 +31,16 @@ import org.jasig.portal.portlet.url.IPortletUrlCreator;
  */
 public class PortletStateAwareResponseContextImpl extends PortletResponseContextImpl implements PortletStateAwareResponseContext {
     private final List<Event> events = new LinkedList<Event>();
-    protected final PortletURLProvider portletURLProvider;
+    private final IPortletPortalUrl portletUrl;
 
     public PortletStateAwareResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortletUrlCreator portletUrlCreator) {
+            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider) {
 
         super(portletContainer, portletWindow, containerRequest, containerResponse,
-                requestPropertiesManager, portletUrlCreator);
+                requestPropertiesManager, portalUrlProvider);
         
-        this.portletURLProvider = this.portletUrlCreator.createRenderUrlProvider(
-                this.portletWindow, this.containerRequest, this.containerResponse);
+        this.portletUrl = this.portalUrlProvider.getPortletUrl(TYPE.RENDER, containerRequest, this.portletWindow.getPortletWindowId());
     }
 
     /* (non-Javadoc)
@@ -64,7 +64,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
      */
     @Override
     public PortletMode getPortletMode() {
-        return this.isClosed() ? null : this.portletURLProvider.getPortletMode();
+        return this.isClosed() ? null : this.portletUrl.getPortletMode();
     }
 
     /* (non-Javadoc)
@@ -72,7 +72,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
      */
     @Override
     public Map<String, String[]> getPublicRenderParameters() {
-        return this.isClosed() ? null : this.portletURLProvider.getPublicRenderParameters();
+        return this.isClosed() ? null : this.portletUrl.getPublicRenderParameters();
     }
 
     /* (non-Javadoc)
@@ -80,7 +80,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
      */
     @Override
     public Map<String, String[]> getRenderParameters() {
-        return this.isClosed() ? null : this.portletURLProvider.getRenderParameters();
+        return this.isClosed() ? null : this.portletUrl.getRenderParameters();
     }
 
     /* (non-Javadoc)
@@ -88,7 +88,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
      */
     @Override
     public WindowState getWindowState() {
-        return this.isClosed() ? null : this.portletURLProvider.getWindowState();
+        return this.isClosed() ? null : this.portletUrl.getWindowState();
     }
 
     /* (non-Javadoc)
@@ -97,7 +97,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
     @Override
     public void setPortletMode(PortletMode portletMode) {
         if (!this.isClosed()) {
-            this.portletURLProvider.setPortletMode(portletMode);
+            this.portletUrl.setPortletMode(portletMode);
         }
     }
 
@@ -107,7 +107,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
     @Override
     public void setWindowState(WindowState windowState) {
         if (!this.isClosed()) {
-            this.portletURLProvider.setWindowState(windowState);
+            this.portletUrl.setWindowState(windowState);
         }
     }
 }

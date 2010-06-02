@@ -21,7 +21,7 @@ import org.apache.pluto.container.PortletURLProvider;
 import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.url.IPortletUrlCreator;
+import org.jasig.portal.url.IPortalUrlProvider;
 
 /**
  * @author Eric Dalquist
@@ -32,10 +32,10 @@ public class PortletMimeResponseContextImpl extends PortletResponseContextImpl i
     
     public PortletMimeResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortletUrlCreator portletUrlCreator) {
+            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider) {
 
         super(portletContainer, portletWindow, containerRequest, containerResponse, 
-                requestPropertiesManager, portletUrlCreator);
+                requestPropertiesManager, portalUrlProvider);
 
     }
 
@@ -108,7 +108,7 @@ public class PortletMimeResponseContextImpl extends PortletResponseContextImpl i
      */
     @Override
     public PortletURLProvider getPortletURLProvider(TYPE type) {
-        return this.portletUrlCreator.createUrlProvider(type, this.portletWindow, this.containerRequest, this.containerResponse);
+        return this.portalUrlProvider.getPortletUrl(type, this.containerRequest, this.portletWindow.getPortletWindowId());
     }
 
     /* (non-Javadoc)

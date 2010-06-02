@@ -5,21 +5,22 @@
  */
 package org.jasig.portal.url;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.portlet.PortletMode;
+import javax.portlet.PortletSecurityException;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.portlet.om.IPortletWindow;
 
 /**
  * Implementation of a portlet URL
@@ -28,29 +29,31 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @version $Revision$
  */
 class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUrl {
-    private final IPortletWindowId portletWindowId;
-    private final String channelSubscribeId;
+
+    protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private final ConcurrentMap<String, List<String>> portletParameters = new ConcurrentHashMap<String, List<String>>();
-    private WindowState windowState = null;
-    private PortletMode portletMode = null;
-    private boolean action = false;
+    private final IPortletWindow portletWindow;
+    private final TYPE urlType;
     
+    private final Map<String, String[]> portletParameters = new ParameterMap();
+    private final Map<String, String[]> publicRenderParameters = new ParameterMap();
+    private final Map<String, List<String>> properties = new LinkedHashMap<String, List<String>>();
     
-    public PortletPortalUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, IPortletWindowId portletWindowId) {
-        super(request, urlGenerator);
-        Validate.notNull(portletWindowId, "portletWindowId can not be null");
+    private String cacheability;
+    private PortletMode portletMode;
+    private WindowState windowState;
+    private Boolean secure;
+    private String resourceId;
+    private IPortletPortalUrl delegatePortletUrl;
+    
+    public PortletPortalUrlImpl(TYPE type, IPortletWindow portletWindow, HttpServletRequest httpServletRequest, IUrlGenerator urlGenerator) {
+        super(httpServletRequest, urlGenerator);
         
-        this.portletWindowId = portletWindowId;
-        this.channelSubscribeId = null;
-    }
-    
-    public PortletPortalUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, String channelSubscribeId) {
-        super(request, urlGenerator);
-        Validate.notNull(channelSubscribeId, "portletWindowId can not be null");
+        Validate.notNull(portletWindow, "portletWindow can not be null");
+        Validate.notNull(type, "type can not be null");
         
-        this.portletWindowId = null;
-        this.channelSubscribeId = channelSubscribeId;
+        this.portletWindow = portletWindow;
+        this.urlType = type;
     }
 
     /* (non-Javadoc)
@@ -61,9 +64,10 @@ class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUr
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.IPortalPortletUrl#getPortletParameters()
+     * @see org.jasig.portal.url.IPortletPortalUrl#getPortletParameters()
      */
-    public Map<String, List<String>> getPortletParameters() {
+    @Override
+    public Map<String, String[]> getPortletParameters() {
         return this.portletParameters;
     }
 
@@ -75,17 +79,11 @@ class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUr
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.IPortalPortletUrl#isAction()
+     * @see org.apache.pluto.container.PortletURLProvider#getType()
      */
-    public boolean isAction() {
-        return this.action;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IPortalPortletUrl#setAction(boolean)
-     */
-    public void setAction(boolean action) {
-        this.action = action;
+    @Override
+    public TYPE getType() {
+        return this.urlType;
     }
 
     /* (non-Javadoc)
@@ -102,14 +100,21 @@ class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUr
         Validate.notNull(name, "name can not be null");
         Validate.noNullElements(values, "values can not be null or contain null elements");
         
-        List<String> valuesList = this.portletParameters.get(name);
+        final String[] valuesList = this.portletParameters.get(name);
+        
+        final String[] newValuesList;
+        final int copyStart;
         if (valuesList == null) {
-            valuesList = new ArrayList<String>(values.length);
+            newValuesList = new String[values.length];
+            copyStart = 0;
+        }
+        else {
+            newValuesList = new String[valuesList.length + values.length];
+            copyStart = valuesList.length;
+            System.arraycopy(valuesList, 0, newValuesList, 0, copyStart);
         }
         
-        for (final String value : values) {
-            valuesList.add(value);
-        }
+        System.arraycopy(values, 0, newValuesList, copyStart, values.length);
         
         this.portletParameters.put(name, valuesList);
     }
@@ -121,18 +126,16 @@ class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUr
         Validate.notNull(name, "name can not be null");
         Validate.noNullElements(values, "values can not be null or contain null elements");
         
-        final List<String> valuesList = new ArrayList<String>(values.length);
-        for (final String value : values) {
-            valuesList.add(value);
-        }
+        final String[] valuesCopy = new String[values.length];
+        System.arraycopy(values, 0, valuesCopy, 0, values.length);
         
-        this.portletParameters.put(name, valuesList);
+        this.portletParameters.put(name, valuesCopy);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalPortletUrl#setPortletParameters(java.util.Map)
      */
-    public void setPortletParameters(Map<String, List<String>> parameters) {
+    public void setPortletParameters(Map<String, String[]> parameters) {
         this.portletParameters.clear();
         this.portletParameters.putAll(parameters);
     }
@@ -144,15 +147,72 @@ class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUr
         this.windowState = windowState;
     }
     
+    @Override
+    public Map<String, String[]> getRenderParameters() {
+        return this.portletParameters;
+    }
+
+    @Override
+    public String getCacheability() {
+        return this.cacheability;
+    }
+
+    @Override
+    public Map<String, List<String>> getProperties() {
+        return this.properties;
+    }
+
+    @Override
+    public Map<String, String[]> getPublicRenderParameters() {
+        return this.publicRenderParameters;
+    }
+
+    @Override
+    public String getResourceID() {
+        return this.resourceId;
+    }
+
+    @Override
+    public boolean isSecure() {
+        return this.secure;
+    }
+
+    @Override
+    public void setCacheability(String cacheLevel) {
+        this.cacheability = cacheLevel;
+    }
+
+    @Override
+    public void setResourceID(String resourceID) {
+        this.resourceId = resourceID;
+    }
+
+    @Override
+    public void setSecure(boolean secure) throws PortletSecurityException {
+        this.secure = secure;
+    }
+
+    @Override
+    public String toURL() {
+        return this.getUrlString();
+    }
+
+    @Override
+    public void write(Writer out, boolean escapeXML) throws IOException {
+        final String url = this.getUrlString();
+        if (escapeXML) {
+            StringEscapeUtils.escapeXml(out, url);
+        }
+        else {
+            out.write(url);
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IBasePortalUrl#getUrlString()
      */
     public String getUrlString() {
-        if (this.portletWindowId != null) {
-            return this.urlGenerator.generatePortletUrl(this.request, this, this.portletWindowId);
-        }
-        
-        return this.urlGenerator.generatePortletUrl(this.request, this, this.channelSubscribeId);
+        return this.urlGenerator.generatePortletUrl(this.request, this, this.portletWindow.getPortletWindowId());
     }
 
     /* (non-Javadoc)
@@ -163,45 +223,124 @@ class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUr
         return this.getUrlString();
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(-942605321, 2130461357)
-            .appendSuper(super.hashCode())
-            .append(this.portletWindowId)
-            .append(this.windowState)
-            .append(this.portletMode)
-            .append(this.action)
-            .toHashCode();
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((this.cacheability == null) ? 0 : this.cacheability.hashCode());
+        result = prime * result + ((this.delegatePortletUrl == null) ? 0 : this.delegatePortletUrl.hashCode());
+        result = prime * result + ((this.portletMode == null) ? 0 : this.portletMode.hashCode());
+        result = prime * result + ((this.portletParameters == null) ? 0 : this.portletParameters.hashCode());
+        result = prime * result + ((this.portletWindow == null) ? 0 : this.portletWindow.hashCode());
+        result = prime * result + ((this.properties == null) ? 0 : this.properties.hashCode());
+        result = prime * result + ((this.publicRenderParameters == null) ? 0 : this.publicRenderParameters.hashCode());
+        result = prime * result + ((this.resourceId == null) ? 0 : this.resourceId.hashCode());
+        result = prime * result + ((this.secure == null) ? 0 : this.secure.hashCode());
+        result = prime * result + ((this.urlType == null) ? 0 : this.urlType.hashCode());
+        result = prime * result + ((this.windowState == null) ? 0 : this.windowState.hashCode());
+        return result;
     }
 
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
     @Override
-    public boolean equals(Object object) {
-        if (object == this) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(object instanceof PortletPortalUrlImpl)) {
+        if (!super.equals(obj)) {
             return false;
         }
-        PortletPortalUrlImpl rhs = (PortletPortalUrlImpl) object;
-        return new EqualsBuilder()
-            .appendSuper(super.equals(object))
-            .append(this.portletWindowId, rhs.portletWindowId)
-            .append(this.windowState, rhs.windowState)
-            .append(this.portletMode, rhs.portletMode)
-            .append(this.action, rhs.action)
-            .isEquals();
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        PortletPortalUrlImpl other = (PortletPortalUrlImpl) obj;
+        if (this.cacheability == null) {
+            if (other.cacheability != null) {
+                return false;
+            }
+        }
+        else if (!this.cacheability.equals(other.cacheability)) {
+            return false;
+        }
+        if (this.delegatePortletUrl == null) {
+            if (other.delegatePortletUrl != null) {
+                return false;
+            }
+        }
+        else if (!this.delegatePortletUrl.equals(other.delegatePortletUrl)) {
+            return false;
+        }
+        if (this.portletMode == null) {
+            if (other.portletMode != null) {
+                return false;
+            }
+        }
+        else if (!this.portletMode.equals(other.portletMode)) {
+            return false;
+        }
+        if (this.portletParameters == null) {
+            if (other.portletParameters != null) {
+                return false;
+            }
+        }
+        else if (!this.portletParameters.equals(other.portletParameters)) {
+            return false;
+        }
+        if (this.portletWindow == null) {
+            if (other.portletWindow != null) {
+                return false;
+            }
+        }
+        else if (!this.portletWindow.equals(other.portletWindow)) {
+            return false;
+        }
+        if (this.properties == null) {
+            if (other.properties != null) {
+                return false;
+            }
+        }
+        else if (!this.properties.equals(other.properties)) {
+            return false;
+        }
+        if (this.publicRenderParameters == null) {
+            if (other.publicRenderParameters != null) {
+                return false;
+            }
+        }
+        else if (!this.publicRenderParameters.equals(other.publicRenderParameters)) {
+            return false;
+        }
+        if (this.resourceId == null) {
+            if (other.resourceId != null) {
+                return false;
+            }
+        }
+        else if (!this.resourceId.equals(other.resourceId)) {
+            return false;
+        }
+        if (this.secure == null) {
+            if (other.secure != null) {
+                return false;
+            }
+        }
+        else if (!this.secure.equals(other.secure)) {
+            return false;
+        }
+        if (this.urlType == null) {
+            if (other.urlType != null) {
+                return false;
+            }
+        }
+        else if (!this.urlType.equals(other.urlType)) {
+            return false;
+        }
+        if (this.windowState == null) {
+            if (other.windowState != null) {
+                return false;
+            }
+        }
+        else if (!this.windowState.equals(other.windowState)) {
+            return false;
+        }
+        return true;
     }
-
-    /**
-     * 
-     */
-	public void addPortletParameter(String name, String value) {
-		this.portletParameters.put(name, Arrays.asList(new String[] { value }));
-	}
 }
