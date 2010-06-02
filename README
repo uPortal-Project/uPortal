@@ -11,7 +11,7 @@ JDK 1.6 - Just a JRE is not sufficent, a full JDK is required
 Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration
     changes that must be made for Tomcat 6.0 which are documented in the uPortal
     manual. http://jasig.org/wiki/display/UPM31/01+Tomcat
-Maven 2.0.8 or later
+Maven 2.2.1 or later
 Ant 1.7.1 or later
     
     
