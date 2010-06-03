@@ -226,17 +226,6 @@ private String getRandomString(java.util.Random r, int length) {
     return new String(chars);
 }
 /**
- * Starts the application.
- * @param args an array of command-line arguments
- */
-public static void main(java.lang.String[] args) throws Exception
-{
-    String[] mainArgs = {"org.jasig.portal.groups.filesystem.FileSystemGroupsTest"};
-    print("START TESTING FILESYSTEM GROUP STORE" + CR);
-    junit.swingui.TestRunner.main(mainArgs);
-    print(CR + "END TESTING FILESYSTEM GROUP STORE");
-}
-/**
  * @param msg java.lang.String
  */
 private static void print(String msg)

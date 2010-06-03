@@ -252,20 +252,6 @@ private GroupService getService() throws GroupsException
     return GroupService.instance();
 }
 /**
- * Starts the application.
- * @param args an array of command-line arguments
- */
-public static void main(java.lang.String[] args) throws Exception
-{
-    String[] mainArgs = {"org.jasig.portal.concurrency.caching.EntityCacheTester"};
-    print("START TESTING CACHE");
-    printBlankLine();
-    junit.swingui.TestRunner.main(mainArgs);
-    printBlankLine();
-    print("END TESTING CACHE");
-
-}
-/**
  */
 private static void print (IEntity[] entities)
 {

@@ -5,9 +5,10 @@
 
 package org.jasig.portal.security.provider;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +30,6 @@ import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonManagerFactory;
-import org.jasig.portal.security.provider.AuthorizationImpl;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class ImpersonationFilter implements Filter {
 	

@@ -63,20 +63,6 @@ private ReferenceSequenceGenerator getGenerator() {
     return generator;
 }
 /**
- * Starts the application.
- * @param args an array of command-line arguments
- */
-public static void main(java.lang.String[] args) throws Exception
-{
-	String[] mainArgs = {"org.jasig.portal.SequenceGeneratorTester"};
-    print("START TESTING SEQUENCE GENERATOR");
-    printBlankLine();
-    junit.swingui.TestRunner.main(mainArgs);
-    printBlankLine();    
-    print("END TESTING SEQUENCE GENERATOR");
-    
-}
-/**
  * @param msg java.lang.String
  */
 private static void print(String msg) 

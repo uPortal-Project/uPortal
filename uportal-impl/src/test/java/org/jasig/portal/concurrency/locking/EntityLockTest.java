@@ -52,20 +52,6 @@ private IEntityLockService getService()  throws LockingException{
     return ReferenceEntityLockService.singleton();
 }
 /**
- * Starts the application.
- * @param args an array of command-line arguments
- */
-public static void main(java.lang.String[] args) throws Exception
-{
-    String[] mainArgs = {"org.jasig.portal.concurrency.locking.EntityLockTester"};
-    print("START TESTING LOCK STORE");
-    printBlankLine();
-    junit.swingui.TestRunner.main(mainArgs);
-    printBlankLine();
-    print("END TESTING LOCK STORE");
-
-}
-/**
  */
 private static void print (IEntityLock[] locks)
 {

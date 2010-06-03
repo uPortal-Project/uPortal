@@ -318,20 +318,6 @@ private void initializePermissionStore() throws AuthorizationException
     }
 }
 /**
- * Starts the application.
- * @param args an array of command-line arguments
- */
-public static void main(java.lang.String[] args) throws Exception
-{
-    String[] mainArgs = {"org.jasig.portal.security.provider.AuthorizationTester"};
-    print("START TESTING AUTHORIZATION SERVICE");
-    printBlankLine();
-    junit.swingui.TestRunner.main(mainArgs);
-    printBlankLine();
-    print("END TESTING AUTHORIZATION SERVICE");
-
-}
-/**
  * @param msg java.lang.String
  */
 private static void print(String msg)
