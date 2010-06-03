@@ -439,7 +439,7 @@
             <distributionManagement>
                 <site>
                     <id>ci-local-site</id>
-                    <url>file:/jasig/htdocs/developer.ja-sig.org/projects/uportal/${project.version}</url>
+                    <url>file:/var/www/domains/jasig.org/developer/htdocs/projects/uportal/${project.version}</url>
                 </site>
             </distributionManagement>
         </profile>
