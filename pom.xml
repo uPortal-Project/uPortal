@@ -4,9 +4,9 @@
 >
 
     <parent>
-        <groupId>org.jasig</groupId>
+        <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>15</version>
+        <version>18</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -20,9 +20,9 @@
     <url>${jasig-site-base}/uportal/${project.version}</url>
     
     <scm>
-        <connection>scm:svn:https://www.ja-sig.org/svn/uPortal/branches/rel-3-0-patches</connection>
-        <developerConnection>scm:svn:https://www.ja-sig.org/svn/uPortal/branches/rel-3-0-patches</developerConnection>
-        <url>http://developer.jasig.org/source/browse/jasigsvn/uPortal/branches/rel-3-0-patches</url>
+        <connection>${jasig-scm-base-mvn}/uPortal/branches/rel-3-0-patches</connection>
+        <developerConnection>${jasig-scm-base-mvn}/uPortal/branches/rel-3-0-patches</developerConnection>
+        <url>${jasig-scm-view-base}/uPortal/branches/rel-3-0-patches</url>
     </scm>
     
     <distributionManagement>
@@ -39,7 +39,7 @@
     
     <ciManagement>
         <system>bamboo</system>
-        <url>http://developer.jasig.org/bamboo/browse/UP</url>
+        <url>https://developer.jasig.org/bamboo/browse/UP</url>
         <notifiers>
             <notifier>
                 <type>mail</type>
@@ -53,20 +53,6 @@
     </ciManagement>
 
     <repositories>
-        <repository>            
-            <id>sonatype-nexus-releases</id>
-            <name>Sonatype Nexus Releases</name>
-            <url>http://oss.sonatype.org/content/repositories/releases</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-        <repository>
-            <id>maven2-repository.dev.java.net</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
         <repository>
             <id>jasig-3rd-party</id>
             <name>Jasig 3rd Party Repository</name>
@@ -74,7 +60,6 @@
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
-
         <repository>
             <id>jasig-m2</id>
             <name>Jasig Maven2 Repository</name>
@@ -82,30 +67,19 @@
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
-
         <repository>            
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
             <id>sonatype-nexus-releases</id>
             <name>Sonatype Nexus Releases</name>
             <url>http://oss.sonatype.org/content/repositories/releases</url>
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-
+        </repository>
+    </repositories>
 
     <properties>
         <!-- The final name of the uPortal web-application -->
         <uportal.docbase>uPortal</uportal.docbase>
+        <project-site-path>/uportal/${project.version}</project-site-path>
         
         <!-- The JDBC Driver used by uPortal -->
         <jdbc.groupId>hsqldb</jdbc.groupId>
@@ -403,45 +377,6 @@
                     <url>http://people.apache.org/builds/portals-pluto/m2-staging-repository</url>
                 </pluginRepository>
             </pluginRepositories>
-        </profile>
-
-        <profile>
-            <id>fix1600</id>
-            <activation>
-                <jdk>1.6</jdk>
-            </activation>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>maven2-repository.dev.java.net</id>
-                    <name>Java.net Repository for Maven</name>
-                    <url>http://download.java.net/maven/2</url>
-                </pluginRepository>
-            </pluginRepositories>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jvnet.fix1600</groupId>
-                        <artifactId>fix1600</artifactId>
-                        <version>1.5</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>fix</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>ci-local-site</id>
-            <distributionManagement>
-                <site>
-                    <id>ci-local-site</id>
-                    <url>file:/var/www/domains/jasig.org/developer/htdocs/projects/uportal/${project.version}</url>
-                </site>
-            </distributionManagement>
         </profile>
     </profiles>
 </project>
