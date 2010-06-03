@@ -129,7 +129,7 @@
         <collections-generic.version>4.01</collections-generic.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-codec.version>1.4</commons-codec.version>
-        <commons-dbcp.version>1.4</commons-dbcp.version>
+        <commons-dbcp.version>1.3</commons-dbcp.version>
         <commons-fileupload>1.2.1</commons-fileupload>
         <commons-httpclient.version>3.0.1</commons-httpclient.version>
         <commons-io.version>1.4</commons-io.version>
