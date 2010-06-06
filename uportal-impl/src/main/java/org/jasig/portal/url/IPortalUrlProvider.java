@@ -54,6 +54,8 @@ public interface IPortalUrlProvider {
      */
     public IPortletPortalUrl getPortletUrl(TYPE type, HttpServletRequest request, IPortletWindowId portletWindowId);
     
+    public IPortletResourcePortalUrl getPortletResourceUrl(HttpServletRequest request, IPortletWindowId portletWindowId);
+    
     /**
      * @param request The current portal request
      * @param portletNodeId ID of the channel in the user's layout that should be targeted by the URL.

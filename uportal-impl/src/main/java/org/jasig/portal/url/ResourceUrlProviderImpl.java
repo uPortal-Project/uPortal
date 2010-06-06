@@ -17,12 +17,10 @@
  * under the License.
  */
 
-package org.jasig.portal.portlet.url;
+package org.jasig.portal.url;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.pluto.container.ResourceURLProvider;
 import org.jasig.portal.portlet.om.IPortletWindow;
 
 /**
@@ -31,17 +29,15 @@ import org.jasig.portal.portlet.om.IPortletWindow;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class ResourceUrlProviderImpl implements ResourceURLProvider {
+public class ResourceUrlProviderImpl implements IPortletResourcePortalUrl {
     private final IPortletWindow portletWindow;
     private final HttpServletRequest containerRequest;
-    private final HttpServletResponse containerResponse;
     
     private String path = null;
     
-   public ResourceUrlProviderImpl(IPortletWindow portletWindow, HttpServletRequest containerRequest, HttpServletResponse containerResponse) {
+   public ResourceUrlProviderImpl(IPortletWindow portletWindow, HttpServletRequest containerRequest) {
         this.portletWindow = portletWindow;
         this.containerRequest = containerRequest;
-        this.containerResponse = containerResponse;
     }
 
     /*
@@ -69,5 +65,45 @@ public class ResourceUrlProviderImpl implements ResourceURLProvider {
     @Override
     public String toString() {
         return this.path;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.path == null) ? 0 : this.path.hashCode());
+        result = prime * result + ((this.portletWindow == null) ? 0 : this.portletWindow.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ResourceUrlProviderImpl other = (ResourceUrlProviderImpl) obj;
+        if (this.path == null) {
+            if (other.path != null) {
+                return false;
+            }
+        }
+        else if (!this.path.equals(other.path)) {
+            return false;
+        }
+        if (this.portletWindow == null) {
+            if (other.portletWindow != null) {
+                return false;
+            }
+        }
+        else if (!this.portletWindow.equals(other.portletWindow)) {
+            return false;
+        }
+        return true;
     }
 }

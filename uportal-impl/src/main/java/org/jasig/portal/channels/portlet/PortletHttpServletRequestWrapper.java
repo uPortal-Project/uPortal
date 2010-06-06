@@ -19,6 +19,7 @@
 
 package org.jasig.portal.channels.portlet;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -61,22 +62,22 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
     private final IPerson person;
     private final List<? extends SecurityRoleRef> securityRoleRefs;
     
-    public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest, Map<String, List<String>> parameters, IPerson person, List<? extends SecurityRoleRef> securityRoleRefs) {
+    public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest, Map<String, String[]> parameters, IPerson person, List<? extends SecurityRoleRef> securityRoleRefs) {
         super(httpServletRequest);
         Validate.notNull(parameters, "parameters can not be null");
         Validate.notNull(person, "person can not be null");
         Validate.notNull(securityRoleRefs, "securityRoleRefs can not be null");
         
         this.parameters = new LinkedHashMap<String, String[]>();
-        for (final Map.Entry<String, List<String>> parameterEntry : parameters.entrySet()) {
+        for (final Map.Entry<String, String[]> parameterEntry : parameters.entrySet()) {
             final String name = parameterEntry.getKey();
-            final List<String> values = parameterEntry.getValue();
+            final String[] values = parameterEntry.getValue();
             
             if (values == null) {
                 this.parameters.put(name, null);
             }
             else {
-                this.parameters.put(name, values.toArray(new String[values.size()]));
+                this.parameters.put(name, Arrays.copyOf(values, values.length));
             }
         }
         

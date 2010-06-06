@@ -24,7 +24,6 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -56,7 +55,7 @@ class PortletWindowImpl implements IPortletWindow {
     private final IPortletWindowId portletWindowId;
     private final IPortletWindowId delegationParent;
     
-    private Map<String, List<String>> requestParameters = new HashMap<String, List<String>>();
+    private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
     private transient PortletMode portletMode = PortletMode.VIEW;
     private transient WindowState windowState = WindowState.NORMAL;
     private Integer expirationCache = null;
@@ -171,14 +170,14 @@ class PortletWindowImpl implements IPortletWindow {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#getRequestParameers()
      */
-    public Map<String, List<String>> getRequestParameters() {
+    public Map<String, String[]> getRequestParameters() {
         return this.requestParameters;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
      */
-    public void setRequestParameters(Map<String, List<String>> requestParameters) {
+    public void setRequestParameters(Map<String, String[]> requestParameters) {
         this.requestParameters = requestParameters;
     }
     

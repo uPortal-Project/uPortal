@@ -17,7 +17,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResponseContext;
 import org.apache.pluto.container.ResourceURLProvider;
-import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalUrlProvider;
@@ -106,7 +105,7 @@ public class PortletResponseContextImpl extends AbstractPortletResponseResposeCo
      */
     @Override
     public ResourceURLProvider getResourceURLProvider() {
-        return this.portalUrlProvider.getPortletUrl(TYPE.RESOURCE, this.containerRequest, this.portletWindow.getPortletWindowId());
+        return this.portalUrlProvider.getPortletResourceUrl(this.containerRequest, this.portletWindow.getPortletWindowId());
     }
 
     /* (non-Javadoc)

@@ -75,9 +75,6 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.PortletExecutionManager;
-import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
-import org.jasig.portal.portlet.url.PortletUrl;
-import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
@@ -183,7 +180,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     
     protected final Log log = LogFactory.getLog(this.getClass());
     
-    private IPortletRequestParameterManager portletRequestParameterManager;
     private IPortletWindowRegistry portletWindowRegistry;
     private ApplicationEventPublisher applicationEventPublisher;
     private CarResources carResources;
@@ -192,17 +188,9 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     private IPortalUrlProvider portalUrlProvider;
     
     /**
-     * @param portletRequestParameterManager the portletRequestParameterManager to set
-     */
-    @Autowired(required=true)
-    public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
-        this.portletRequestParameterManager = portletRequestParameterManager;
-    }
-    
-    /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
@@ -210,26 +198,28 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     /**
      * @param carResources the carResources to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setCarResources(CarResources carResources) {
         this.carResources = carResources;
     }
 	/**
 	 * @param resourcesDao the resourcesDao to set
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setResourcesDao(ResourcesDao resourcesDao) {
 		this.resourcesDao = resourcesDao;
 	}
 
-	@Autowired(required=true)
+	@Autowired
 	public void setPortletExecutionManager(PortletExecutionManager portletExecutionManager) {
         this.portletExecutionManager = portletExecutionManager;
     }
     
-     public IPortalUrlProvider getPortalUrlProvider() {
+	@Autowired
+    public IPortalUrlProvider getPortalUrlProvider() {
         return this.portalUrlProvider;
     }
+	
     /**
      * Used to generate URLs in the theme XSL
      */

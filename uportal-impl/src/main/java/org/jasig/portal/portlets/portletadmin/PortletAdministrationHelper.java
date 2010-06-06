@@ -45,13 +45,11 @@ import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.driver.PortalDriverContainerServices;
 import org.apache.pluto.container.driver.PortletRegistryService;
 import org.apache.pluto.container.impl.PortletContextImpl;
-import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Supports;
 import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.api.portlet.DelegateState;
 import org.jasig.portal.api.portlet.DelegationActionResponse;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
@@ -59,7 +57,6 @@ import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelPublishingService;
 import org.jasig.portal.channel.IChannelType;
-import org.jasig.portal.channels.portlet.CSpringPortletAdaptor;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
@@ -73,7 +70,6 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
-import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
@@ -675,24 +671,20 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    final PortletDelegationDispatcher requestDispatcher = this.portletDelegationLocator.getRequestDispatcher(actionRequest, portletWindowId);
 	    
 	    final DelegationActionResponse delegationResponse = requestDispatcher.doAction(actionRequest, actionResponse);
-	    final PortletUrl renderUrl = delegationResponse.getRenderUrl();
-	    final DelegateState delegateState = delegationResponse.getDelegateState();
-        if (renderUrl == null || 
-	            (renderUrl.getPortletMode() != null && !IPortletRenderer.CONFIG.equals(renderUrl.getPortletMode())) ||
-	            !IPortletRenderer.CONFIG.equals(delegateState.getPortletMode())) {
-	        
-	        //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
-	        return true;
-	    }
+//	    final PortletUrl renderUrl = delegationResponse.getRenderUrl();
+//	    final DelegateState delegateState = delegationResponse.getDelegateState();
+//        if (renderUrl == null || 
+//	            (renderUrl.getPortletMode() != null && !IPortletRenderer.CONFIG.equals(renderUrl.getPortletMode())) ||
+//	            !IPortletRenderer.CONFIG.equals(delegateState.getPortletMode())) {
+//	        
+//	        //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
+//	        return true;
+//	    }
 	    
 	    return false;
 	}
 	
 	public boolean offerPortletSelection(ChannelDefinitionForm form) {
-		if (!CSpringPortletAdaptor.class.getName().equals(form.getJavaClass())) {
-			return false;
-		}
-		
 		Map<String, Attribute> parameters = form.getParameters();
 		if (parameters.get("portletName") != null
 				&& !StringUtils.isBlank(parameters.get("portletName").getValue())){

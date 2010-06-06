@@ -21,6 +21,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * Implementation of a portlet URL
@@ -54,6 +55,11 @@ class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUr
         
         this.portletWindow = portletWindow;
         this.urlType = type;
+    }
+    
+    @Override
+    public IPortletWindowId getTargetWindowId() {
+        return this.portletWindow.getPortletWindowId();
     }
 
     /* (non-Javadoc)

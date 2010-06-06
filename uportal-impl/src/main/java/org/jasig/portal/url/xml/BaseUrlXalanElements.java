@@ -14,6 +14,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.xalan.extensions.XSLProcessorContext;
 import org.apache.xalan.templates.ElemExtensionCall;
 import org.apache.xalan.transformer.TransformerImpl;
+import org.jasig.portal.portlet.registry.NotAPortletException;
 import org.jasig.portal.url.IBasePortalUrl;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.w3c.dom.Node;
@@ -59,6 +60,10 @@ public abstract class BaseUrlXalanElements<T extends IBasePortalUrl> {
             return url.getUrlString();
         }
         catch (Throwable t) {
+            if (t instanceof NotAPortletException) {
+                return "NOT_A_PORTLET";
+            }
+            
             if (t instanceof TransformerException) {
                 final TransformerException te = (TransformerException)t;
                 transformer.setExceptionThrown(te);

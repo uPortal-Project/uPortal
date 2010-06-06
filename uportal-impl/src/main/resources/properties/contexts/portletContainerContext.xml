@@ -90,7 +90,4 @@
     <!--********** Portlet Registries ********** -->
     <bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.TransientPortletWindowRegistryImpl" />
     
-    <!--********** Portlet Rendering Channel ********** -->
-    <bean id="portletChannel" class="org.jasig.portal.channels.portlet.SpringPortletChannelImpl" />
-    
 </beans>

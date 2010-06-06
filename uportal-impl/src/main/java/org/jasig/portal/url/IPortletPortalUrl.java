@@ -9,6 +9,8 @@ package org.jasig.portal.url;
 import java.util.Map;
 
 import org.apache.pluto.container.PortletURLProvider;
+import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * Specific type of portal URL that targets a portlet. The URL can have portal parameters and portlet parameters, support
@@ -18,6 +20,11 @@ import org.apache.pluto.container.PortletURLProvider;
  * @version $Revision$
  */
 public interface IPortletPortalUrl extends IBasePortalUrl, PortletURLProvider {
+    /**
+     * @return The ID of the {@link IPortletWindow} this url targets
+     */
+    public IPortletWindowId getTargetWindowId();
+    
     /**
      * Sets a URL parameter targeted to the portlet.
      * 

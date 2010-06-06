@@ -59,12 +59,12 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener;
-import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
-import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletPortalUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
@@ -84,34 +84,30 @@ public class PortletRendererImpl implements IPortletRenderer {
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
     private PortletContainer portletContainer;
-    private IPortletRequestParameterManager portletRequestParameterManager;
+    private IPortalUrlProvider portalUrlProvider;
     private PortletDelegationLocator portletDelegationLocator;
     
-    @Autowired(required=true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletContainer(PortletContainer portletContainer) {
         this.portletContainer = portletContainer;
     }
-    @Autowired(required=true)
-    public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
-        this.portletRequestParameterManager = portletRequestParameterManager;
-    }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
         this.portletDelegationLocator = portletDelegationLocator;
     }
@@ -168,13 +164,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Load the parameters to provide to the portlet with the request and update the state and mode
-        Map<String, List<String>> parameters = null;
-        final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
-        if (portletUrl != null) {
-            parameters = portletUrl.getParameters();
-            
-            this.setupPortletWindow(httpServletRequest, portletWindow, portletUrl);
-        }
+        final Map<String, String[]> parameters = portletWindow.getRequestParameters();
         
         httpServletRequest = this.setupPortletRequest(httpServletRequest, portletWindow, parameters);
         
@@ -204,23 +194,7 @@ public class PortletRendererImpl implements IPortletRenderer {
     public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer printWriter) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
-        //Load the parameters to provide with the request
-        final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
-        
-        Map<String, List<String>> parameters;
-        //Current portlet isn't targeted, use parameters from previous request
-        if (portletUrl == null) {
-            parameters = portletWindow.getRequestParameters();
-        }
-        //Current portlet is targeted, set parameters and update state/mode
-        else {
-            parameters = portletUrl.getParameters();
-            if (parameters != null) {
-                portletWindow.setRequestParameters(parameters);
-            }
-            
-            this.setupPortletWindow(httpServletRequest, portletWindow, portletUrl);
-        }
+        final Map<String, String[]> parameters = portletWindow.getRequestParameters();
         
         //Setup the request and response
         httpServletRequest = this.setupPortletRequest(httpServletRequest, portletWindow, parameters);
@@ -295,7 +269,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         
     }
 
-    protected HttpServletRequest setupPortletRequest(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, Map<String, List<String>> parameters) {
+    protected HttpServletRequest setupPortletRequest(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, Map<String, String[]> parameters) {
         if (parameters == null) {
             parameters = Collections.emptyMap();
         }
@@ -327,7 +301,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         return portletHttpServletRequestWrapper;
     }
 
-    protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, PortletUrl portletUrl) {
+    protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, IPortletPortalUrl portletUrl) {
         final PortletMode portletMode = portletUrl.getPortletMode();
         if (portletMode != null) {
             if (IPortletRenderer.CONFIG.equals(portletMode)) {

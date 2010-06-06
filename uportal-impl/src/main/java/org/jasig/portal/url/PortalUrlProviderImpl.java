@@ -69,17 +69,17 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     public static final String SLASH = "/";
     public static final String ACTION_SUFFIX = "action.uP";
     public static final String RENDER_SUFFIX = "render.uP";
-    public static final String WORKER_SUFFIX = "worker.uP";
     
-    public static final String NO_STATE_REGEX = ".*(normal|max|detached|exclusive|legacy).*";
-    private static final Pattern NO_STATE_PATTERN = Pattern.compile(NO_STATE_REGEX);
-    public static final String PORTAL_REQUEST_REGEX = "^(?:([^/]*)/)*(normal|max|detached|exclusive|legacy)/(?:([^/]*)/)?(render\\.uP|action\\.uP|worker\\.uP|)$";
-    private static final Pattern PORTAL_REQUEST_PATTERN = Pattern.compile(PORTAL_REQUEST_REGEX);
+    public static final String NO_STATE_REGEX = ".*(normal|max|detached|exclusive).*";
+    public static final Pattern NO_STATE_PATTERN = Pattern.compile(NO_STATE_REGEX);
+    public static final String PORTAL_REQUEST_REGEX = "^(?:([^/]*)/)*(normal|max|detached|exclusive)/(?:([^/]*)/)?(render\\.uP|action\\.uP|)$";
+    public static final Pattern PORTAL_REQUEST_PATTERN = Pattern.compile(PORTAL_REQUEST_REGEX);
     
     private static final String PORTAL_REQUEST_INFO_ATTR = PortalUrlProviderImpl.class.getName() + ".PORTAL_REQUEST_INFO"; 
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
+    private final UrlPathHelper urlPathHelper = new UrlPathHelper();
     private String defaultEncoding = "UTF-8";
     private IUserInstanceManager userInstanceManager;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -155,8 +155,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             return portalRequestInfo;
         }
         
-        //TODO don't create a new object each time
-        final String requestPath = new UrlPathHelper().getPathWithinApplication(request);
+        final String requestPath = this.urlPathHelper.getPathWithinApplication(request);
         // first pass looks for absence of state
         Matcher firstPass = NO_STATE_PATTERN.matcher(requestPath);
         if(!firstPass.matches()) {
@@ -241,6 +240,19 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             }
             return requestInfo;
         }
+        
+        /* portal params
+         * layout params
+         * 
+         * portlet info
+         *  portlet params
+         *  portlet state/mode
+         *  public portlet params
+         *  target portlet
+         *  delegate portlet info (recurse)
+         */
+        
+        //TODO request type & parameter parsing
          
         throw new InvalidPortalRequestException("could not extract portal request from " + requestPath);
     }
@@ -271,6 +283,15 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
 
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortalUrlProvider#getPortletResourceUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
+     */
+    @Override
+    public IPortletResourcePortalUrl getPortletResourceUrl(HttpServletRequest request, IPortletWindowId portletWindowId) {
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        return new ResourceUrlProviderImpl(portletWindow, request);
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortletUrlByNodeId(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
      */

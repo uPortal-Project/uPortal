@@ -64,12 +64,12 @@ public interface IPortletWindow extends PortletWindow, Serializable {
      * @param requestParameters The current request parameters for the portlet
      * @throws IllegalArgumentException if parameters is null.
      */
-    public void setRequestParameters(Map<String, List<String>> requestParameters);
+    public void setRequestParameters(Map<String, String[]> requestParameters);
     
     /**
      * @return The current request parameters for the portlet
      */
-    public Map<String, List<String>> getRequestParameters();
+    public Map<String, String[]> getRequestParameters();
     
     /**
      * Sets the expiration timeout for the portlet rendering cache. If null is set

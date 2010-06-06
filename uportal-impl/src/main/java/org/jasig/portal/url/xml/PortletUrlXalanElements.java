@@ -10,6 +10,7 @@ import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.TransformerException;
 
+import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.apache.xalan.extensions.XSLProcessorContext;
 import org.apache.xalan.templates.ElemExtensionCall;
 import org.apache.xalan.transformer.TransformerImpl;
@@ -47,20 +48,35 @@ public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortletPortal
         final IPortalUrlProvider portalUrlProvider = (IPortalUrlProvider)transformer.getParameter(PORTAL_URL_PROVIDER_PARAMETER);
         
         final Node contextNode = context.getContextNode();
+        
+        final String typeName = elem.getAttribute("type", contextNode, transformer);
+        final TYPE type;
+        if (typeName != null) {
+            try {
+                type = TYPE.valueOf(typeName.toUpperCase());
+            }
+            catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("The specified portlet url type '" + typeName + "' is not supported.", e);
+            }
+        }
+        else {
+            type = TYPE.RENDER;
+        }
+        
         final String fname = elem.getAttribute("fname", contextNode, transformer);
         final String windowId = elem.getAttribute("windowId", contextNode, transformer);
         final String layoutNodeId = elem.getAttribute("layoutId", contextNode, transformer);
         
         final IPortletPortalUrl portletUrl;
         if (fname != null && windowId == null && layoutNodeId == null) {
-            portletUrl = portalUrlProvider.getPortletUrlByFName(request, fname);
+            portletUrl = portalUrlProvider.getPortletUrlByFName(type, request, fname);
         }
         else if (fname == null && windowId != null && layoutNodeId == null) {
             final IPortletWindowId portletWindowId = portletWindowRegistry.getPortletWindowId(windowId);
-            portletUrl = portalUrlProvider.getPortletUrl(request, portletWindowId);
+            portletUrl = portalUrlProvider.getPortletUrl(type, request, portletWindowId);
         }
         else if (fname == null && windowId == null && layoutNodeId != null) {
-            portletUrl = portalUrlProvider.getPortletUrlByNodeId(request, layoutNodeId);
+            portletUrl = portalUrlProvider.getPortletUrlByNodeId(type, request, layoutNodeId);
         }
         else {
             throw new IllegalArgumentException("One and only one target attribute is allowed. Please specify one of: 'fname', 'windowId', 'layoutId'");
@@ -87,9 +103,6 @@ public class PortletUrlXalanElements extends BaseUrlXalanElements<IPortletPortal
         if (mode != null) {
             url.setPortletMode(new PortletMode(mode));
         }
-        
-        final String action = elem.getAttribute("action", contextNode, transformer);
-        url.setAction(Boolean.parseBoolean(action));
     }
     
     /* (non-Javadoc)

@@ -480,6 +480,12 @@
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>pluto-util</artifactId>
                 <version>${pluto.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-jdk14</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>

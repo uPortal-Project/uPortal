@@ -15,6 +15,7 @@ import javax.xml.transform.stream.StreamSource;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.easymock.EasyMock;
@@ -43,7 +44,6 @@ public class PortletUrlXalanElementsTest extends TestCase {
         portalPortletUrl.addPortletParameter("node", "element");
         portalPortletUrl.addPortletParameter("empty", "");
         portalPortletUrl.addPortalParameter("something", "for the portal");
-        portalPortletUrl.setAction(false);
         EasyMock.expectLastCall(); //works for all previous void calls
         
         EasyMock.expect(portalPortletUrl.getUrlString()).andReturn("/uPortal/home/normal/bookmarks.1/render.uP");
@@ -52,7 +52,7 @@ public class PortletUrlXalanElementsTest extends TestCase {
         final IPortalUrlProvider portalUrlProvider = EasyMock.createMock(IPortalUrlProvider.class);
         
         
-        EasyMock.expect(portalUrlProvider.getPortletUrlByFName(request, "bookmarks")).andReturn(portalPortletUrl);
+        EasyMock.expect(portalUrlProvider.getPortletUrlByFName(TYPE.RENDER, request, "bookmarks")).andReturn(portalPortletUrl);
         
         
         

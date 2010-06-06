@@ -8,7 +8,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathExpression;
 
+import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.easymock.EasyMock;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserPreferencesManager;
@@ -986,10 +986,10 @@ public class PortalUrlProviderImplTest {
         
         IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);
-        expect(mockPortalPortletUrl.isAction()).andReturn(false);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
+        expect(mockPortalPortletUrl.getType()).andReturn(TYPE.RENDER);
         expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
+        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, String[]>());
         replay(mockPortalPortletUrl);
         
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
@@ -1035,10 +1035,10 @@ public class PortalUrlProviderImplTest {
         
         IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);
-        expect(mockPortalPortletUrl.isAction()).andReturn(false);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
+        expect(mockPortalPortletUrl.getType()).andReturn(TYPE.RENDER);
         expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
+        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, String[]>());
         replay(mockPortalPortletUrl);
         
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
@@ -1073,10 +1073,10 @@ public class PortalUrlProviderImplTest {
         
         IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
-        expect(mockPortalPortletUrl.isAction()).andReturn(false);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
+        expect(mockPortalPortletUrl.getType()).andReturn(TYPE.RENDER);
         expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
+        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, String[]>());
         replay(mockPortalPortletUrl);
         
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
@@ -1111,10 +1111,10 @@ public class PortalUrlProviderImplTest {
         
         IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
-        expect(mockPortalPortletUrl.isAction()).andReturn(false);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.HELP);
+        expect(mockPortalPortletUrl.getType()).andReturn(TYPE.RENDER);
         expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
+        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, String[]>());
         replay(mockPortalPortletUrl);
         
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
@@ -1159,10 +1159,10 @@ public class PortalUrlProviderImplTest {
         
         IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);
-        expect(mockPortalPortletUrl.isAction()).andReturn(false);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
+        expect(mockPortalPortletUrl.getType()).andReturn(TYPE.RENDER);
         expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
+        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, String[]>());
         replay(mockPortalPortletUrl);
         
         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
@@ -1207,16 +1207,12 @@ public class PortalUrlProviderImplTest {
         
         IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
         expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
-        expect(mockPortalPortletUrl.isAction()).andReturn(true);
         expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
+        expect(mockPortalPortletUrl.getType()).andReturn(TYPE.ACTION);
         expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        Map<String, List<String>> portletParameters = new HashMap<String, List<String>>();
-        List<String> ppActionValues = new ArrayList<String>();
-        ppActionValues.add("addCity");
-        portletParameters.put("pp_action", ppActionValues);
-        List<String> ppZipValues = new ArrayList<String>();
-        ppZipValues.add("53706");
-        portletParameters.put("pp_zip", ppZipValues);
+        Map<String, String[]> portletParameters = new ParameterMap();
+        portletParameters.put("pp_action", new String[] { "addCity" });
+        portletParameters.put("pp_zip", new String[] { "53706" });
         expect(mockPortalPortletUrl.getPortletParameters()).andReturn(portletParameters);
         replay(mockPortalPortletUrl);
         
@@ -1238,56 +1234,6 @@ public class PortalUrlProviderImplTest {
         Assert.assertEquals("/uPortal/home/normal/weather.31/action.uP?pltc_target=target&pltp_pp_action=addCity&pltp_pp_zip=53706", result);
         
         verify(mockPortalPortletUrl, mockPortletWindowId);
-    }
-    
-    /**
-     * From http://www.ja-sig.org/wiki/display/UPC/Consistent+Portal+URLs
-     * Tests "Example Url" #7:
-     <pre>
-    Action URL for the weather portlet on a normal view of the home tab that is passing two parameters, action and zip. Since this is an action it would redirect to a normal URL rendering the home tab.
-
-    /uPortal/normal/home/weather.31/action.uP?pltc_target=target&pltp_pp_action=addCity&pltp_pp_zip=53706
-     </pre>
-     *
-     * context path: /uPortal/
-     * channel fname: weather
-     * channel subscribe id: 31
-     * portlet window state: normal
-     * @throws Exception
-     */
-    @Test
-    public void testGenerateChannelPortletUrlWeatherAction() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        
-        IPortletPortalUrl mockPortalPortletUrl = createMock(IPortletPortalUrl.class);
-        expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
-        expect(mockPortalPortletUrl.isAction()).andReturn(true);
-        expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
-        expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        Map<String, List<String>> portletParameters = new HashMap<String, List<String>>();
-        List<String> ppActionValues = new ArrayList<String>();
-        ppActionValues.add("addCity");
-        portletParameters.put("pp_action", ppActionValues);
-        List<String> ppZipValues = new ArrayList<String>();
-        ppZipValues.add("53706");
-        portletParameters.put("pp_zip", ppZipValues);
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(portletParameters);
-        replay(mockPortalPortletUrl);
-        
-        ProviderSetupDetails details = new ProviderSetupDetails();
-        details.setChannelFName("weather");
-        details.setChannelId("u1l1n1");
-        details.setFolderName("home");
-        details.setHttpServletRequest(mockRequest);
-        details.setPortletMode(PortletMode.VIEW);
-        details.setWindowState(WindowState.NORMAL);
-        PortalUrlProviderImpl provider = generateMockProviderForChannelUrl(details);
-        
-        String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, "u1l1n1");
-        Assert.assertEquals("/uPortal/home/normal/weather.u1l1n1/action.uP?pltp_pp_action=addCity&pltp_pp_zip=53706", result);
-        
-        verify(mockPortalPortletUrl);
     }
     
     /**

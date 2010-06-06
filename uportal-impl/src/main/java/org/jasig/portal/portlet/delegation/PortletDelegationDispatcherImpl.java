@@ -21,15 +21,11 @@ package org.jasig.portal.portlet.delegation;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
-import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,11 +40,11 @@ import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
-import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
-import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletPortalUrl;
 
 /**
  * @author Eric Dalquist
@@ -64,20 +60,20 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
     private final IPortalRequestUtils portalRequestUtils;
     private final IPersonManager personManager;
     private final IPortletRenderer portletRenderer;
-    private final IPortletRequestParameterManager portletRequestParameterManager;
+    private final IPortalUrlProvider portalUrlProvider;
     private final IPortletDelegationManager portletDelegationManager;
     
 
     public PortletDelegationDispatcherImpl(IPortletWindow portletWindow, IPortletWindow parentPortletWindow, int userId,
             IPortalRequestUtils portalRequestUtils, IPersonManager personManager, IPortletRenderer portletRenderer,
-            IPortletRequestParameterManager portletRequestParameterManager, IPortletDelegationManager portletDelegationManager) {
+            IPortalUrlProvider portalUrlProvider, IPortletDelegationManager portletDelegationManager) {
         
         Validate.notNull(portletWindow, "portletWindow can not be null");
         Validate.notNull(parentPortletWindow, "parentPortletWindow can not be null");
         Validate.notNull(portalRequestUtils, "portalRequestUtils can not be null");
         Validate.notNull(personManager, "personManager can not be null");
         Validate.notNull(portletRenderer, "portletRenderer can not be null");
-        Validate.notNull(portletRequestParameterManager, "portletRequestParameterManager can not be null");
+        Validate.notNull(portalUrlProvider, "portalUrlProvider can not be null");
         Validate.notNull(portletDelegationManager, "portletDelegationManager can not be null");
         
         this.portletWindow = portletWindow;
@@ -86,7 +82,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         this.portalRequestUtils = portalRequestUtils;
         this.personManager = personManager;
         this.portletRenderer = portletRenderer;
-        this.portletRequestParameterManager = portletRequestParameterManager;
+        this.portalUrlProvider = portalUrlProvider;
         this.portletDelegationManager = portletDelegationManager;
     }
 
@@ -141,7 +137,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
             return new DelegationActionResponse(this.getDelegateState(), redirectLocation);
         }
         
-        final PortletUrl portletUrl = this.portletDelegationManager.getDelegatePortletActionRedirectUrl(actionRequest);
+        final IPortletPortalUrl portletUrl = this.portletDelegationManager.getDelegatePortletActionRedirectUrl(actionRequest);
         return new DelegationActionResponse(this.getDelegateState(), portletUrl);
     }
 
@@ -218,39 +214,39 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         
         //Get or create the parent portlet URL
         final IPortletWindowId parentPortletWindowId = this.parentPortletWindow.getPortletWindowId();
-        final PortletUrl parentPortletUrl = new PortletUrl(parentPortletWindowId);
-        this.portletDelegationManager.setParentPortletUrl(request, parentPortletUrl);
-        
-        final DelegateState delegateState = delegationRequest.getDelegateState();
-        if (delegateState != null) {
-            final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
-            
-            //Get or create the delegate portlet URL
-            PortletUrl delegatePortletUrl = this.portletRequestParameterManager.getPortletRequestInfo(request, portletWindowId);
-            if (delegatePortletUrl == null) {
-                delegatePortletUrl = new PortletUrl(portletWindowId);
-                this.portletRequestParameterManager.setAdditionalPortletUrl(request, delegatePortletUrl);
-            }
-            parentPortletUrl.setDelegatePortletUrl(delegatePortletUrl);
-
-            final PortletMode mode = delegateState.getPortletMode();
-            delegatePortletUrl.setPortletMode(mode);
-
-            final WindowState state = delegateState.getWindowState();
-            delegatePortletUrl.setWindowState(state);
-        }
-        
-        final WindowState parentWindowState = delegationRequest.getParentWindowState();
-        if (parentWindowState != null) {
-            parentPortletUrl.setWindowState(parentWindowState);
-        }
-        final PortletMode parentPortletMode = delegationRequest.getParentPortletMode();
-        if (parentPortletMode != null) {
-            parentPortletUrl.setPortletMode(parentPortletMode);
-        }
-        final Map<String, List<String>> parentParameters = delegationRequest.getParentParameters();
-        if (parentParameters != null) {
-            parentPortletUrl.setParameters(parentParameters);
-        }
+//        final IPortletPortalUrl parentPortletUrl = new PortletUrl(parentPortletWindowId);
+//        this.portletDelegationManager.setParentPortletUrl(request, parentPortletUrl);
+//        
+//        final DelegateState delegateState = delegationRequest.getDelegateState();
+//        if (delegateState != null) {
+//            final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
+//            
+//            //Get or create the delegate portlet URL
+//            IPortletPortalUrl delegatePortletUrl = this.portletRequestParameterManager.getPortletRequestInfo(request, portletWindowId);
+//            if (delegatePortletUrl == null) {
+//                delegatePortletUrl = new PortletUrl(portletWindowId);
+//                this.portletRequestParameterManager.setAdditionalPortletUrl(request, delegatePortletUrl);
+//            }
+//            parentPortletUrl.setDelegatePortletUrl(delegatePortletUrl);
+//
+//            final PortletMode mode = delegateState.getPortletMode();
+//            delegatePortletUrl.setPortletMode(mode);
+//
+//            final WindowState state = delegateState.getWindowState();
+//            delegatePortletUrl.setWindowState(state);
+//        }
+//        
+//        final WindowState parentWindowState = delegationRequest.getParentWindowState();
+//        if (parentWindowState != null) {
+//            parentPortletUrl.setWindowState(parentWindowState);
+//        }
+//        final PortletMode parentPortletMode = delegationRequest.getParentPortletMode();
+//        if (parentPortletMode != null) {
+//            parentPortletUrl.setPortletMode(parentPortletMode);
+//        }
+//        final Map<String, List<String>> parentParameters = delegationRequest.getParentParameters();
+//        if (parentParameters != null) {
+//            parentPortletUrl.setParameters(parentParameters);
+//        }
     }
 }
