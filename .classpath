@@ -14,5 +14,6 @@
 	<classpathentry excluding="**" kind="src" output="uportal-portlets-overlay/WebProxyPortlet/target/classes" path="uportal-portlets-overlay/WebProxyPortlet/src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/holdorph/.m2/repository/org/jasig/cas/cas-server-core/3.3.5/cas-server-core-3.3.5.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
