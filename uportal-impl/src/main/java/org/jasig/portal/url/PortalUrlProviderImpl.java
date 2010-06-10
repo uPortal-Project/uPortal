@@ -5,9 +5,9 @@
  */
 package org.jasig.portal.url;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.portlet.PortletMode;
@@ -18,7 +18,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,24 +56,25 @@ import org.springframework.web.util.UrlPathHelper;
 @Component
 public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator {
     
+    
     public static final String SEPARATOR = "_";
-    public static final String PORTAL_PARAM_PREFIX = "uP" + SEPARATOR;
-    public static final String PORTLET_CONTROL_PREFIX = "pltc" + SEPARATOR;
-    public static final String PORTLET_PARAM_PREFIX = "pltp" + SEPARATOR;
+    public static final String PORTAL_PARAM_PREFIX                  = "uP" + SEPARATOR;
+    public static final String LAYOUT_PARAM_PREFIX                  = "uPl" + SEPARATOR;
+    public static final String PORTLET_CONTROL_PREFIX               = "Pc" + SEPARATOR;
+    public static final String PORTLET_PARAM_PREFIX                 = "Pp" + SEPARATOR;
+    public static final String PORTLET_PUBLIC_RENDER_PARAM_PREFIX   = "Ppr" + SEPARATOR;
 
-    public static final String PARAM_REQUEST_TARGET = PORTLET_CONTROL_PREFIX + "target";
-    public static final String PARAM_WINDOW_STATE = PORTLET_CONTROL_PREFIX + "state";
-    public static final String PARAM_PORTLET_MODE = PORTLET_CONTROL_PREFIX + "mode";
+    public static final String PARAM_WINDOW_STATE   = PORTLET_CONTROL_PREFIX + "s";
+    public static final String PARAM_PORTLET_MODE   = PORTLET_CONTROL_PREFIX + "m";
     
     public static final String SLASH = "/";
-    public static final String ACTION_SUFFIX = "action.uP";
-    public static final String RENDER_SUFFIX = "render.uP";
+    public static final String PORTLET_PATH_ELEMENT_SEPERATOR = ".";
+    public static final String PORTLET_PATH_PREFIX = "p";
+    public static final String FOLDER_PATH_PREFIX = "f";
+    public static final String REQUEST_TYPE_SUFFIX = ".uP";
     
-    public static final String NO_STATE_REGEX = ".*(normal|max|detached|exclusive).*";
-    public static final Pattern NO_STATE_PATTERN = Pattern.compile(NO_STATE_REGEX);
-    public static final String PORTAL_REQUEST_REGEX = "^(?:([^/]*)/)*(normal|max|detached|exclusive)/(?:([^/]*)/)?(render\\.uP|action\\.uP|)$";
-    public static final Pattern PORTAL_REQUEST_PATTERN = Pattern.compile(PORTAL_REQUEST_REGEX);
-    
+    private static final Pattern SLASH_PATTERN = Pattern.compile(SLASH);
+    private static final Pattern PORTLET_PATH_ELEMENT_SEPERATOR_PATTERN = Pattern.compile(PORTLET_PATH_ELEMENT_SEPERATOR);
     private static final String PORTAL_REQUEST_INFO_ATTR = PortalUrlProviderImpl.class.getName() + ".PORTAL_REQUEST_INFO"; 
     
     protected final Log logger = LogFactory.getLog(this.getClass());
@@ -142,12 +142,20 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
 	public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
 		this.portalRequestUtils = portalRequestUtils;
 	}
+    
+    private enum ParseStep {
+        FOLDER,
+        PORTLET,
+        STATE,
+        TYPE,
+        COMPLETE;
+    }
 	
 	/* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortalRequestInfo(javax.servlet.http.HttpServletRequest)
      */
     public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request) throws InvalidPortalRequestException {        
-        IPortalRequestInfo portalRequestInfo = (IPortalRequestInfo)request.getAttribute(PORTAL_REQUEST_INFO_ATTR);
+        final IPortalRequestInfo portalRequestInfo = (IPortalRequestInfo)request.getAttribute(PORTAL_REQUEST_INFO_ATTR);
         if (portalRequestInfo != null) {
             if(logger.isDebugEnabled()) {
                 logger.debug("short-circuit: found portalRequestInfo within request attributes");
@@ -155,106 +163,117 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             return portalRequestInfo;
         }
         
+        final PortalRequestInfoImpl requestInfoBuilder = new PortalRequestInfoImpl();
+        PortletRequestInfoImpl portletRequestInfoBuilder = null;
+        
         final String requestPath = this.urlPathHelper.getPathWithinApplication(request);
-        // first pass looks for absence of state
-        Matcher firstPass = NO_STATE_PATTERN.matcher(requestPath);
-        if(!firstPass.matches()) {
-        	// requestPath doesn't contain state
-        	// assume NORMAL state, not an action
-        	// and that requestPath solely contains folder information (no targeted channel)
-        	PortalRequestInfoImpl requestInfo = new PortalRequestInfoImpl();
-        	requestInfo.setUrlState(UrlState.NORMAL);
-        	requestInfo.setAction(false);
-        	
-        	String [] folderElements = requestPath.split("\\/");
-            if(folderElements.length > 0) {
-                requestInfo.setTargetedLayoutNodeId(folderElements[folderElements.length-1]);
-            }
+        final String[] requestPathParts = SLASH_PATTERN.split(requestPath);
+        
+        ParseStep parseStep = ParseStep.FOLDER;
+        
+        
+        for (int pathPartIndex = 0; pathPartIndex < requestPathParts.length; pathPartIndex++) {
+            String pathPart = requestPathParts[pathPartIndex];
             
-            if(logger.isDebugEnabled()) {
-                logger.debug("finished building requestInfo: " + requestInfo);
-            }
-            return requestInfo;
-        }
-        // if we get here, the requestPath contains one of the states
-        Matcher m = PORTAL_REQUEST_PATTERN.matcher(requestPath);
-        if(m.matches()) {
-            PortalRequestInfoImpl requestInfo = new PortalRequestInfoImpl();
-            String folderInformation = m.group(1);
-            String stateInformation = m.group(2);
-            String channelInformation = m.group(3);
-            String renderInformation = m.group(4);
-            
-            // upper case group(2) to get UrlState enum
-            requestInfo.setUrlState(UrlState.valueOfIngoreCase(stateInformation));
-            // true if group(4) matches ACTION, false otherwise
-            requestInfo.setAction(ACTION_SUFFIX.equals(renderInformation));
-            
-            // group(3) can be null - if so ignore setting targetedPortletWindowId and targetedChannelSubscribeId
-            if(null != channelInformation) {
-            	String channelName = channelInformation;
-            	String channelSubscribeId = null;
-            	// portletWindowId cannot contain a "."
-                // if group(3) contains a ".", set subscribe Id to value after "."
-            	if(channelInformation.contains(".")) {
-            		String [] channelInformationElements = channelInformation.split("\\.");
-            		channelName = channelInformationElements[0];
-            		channelSubscribeId = channelInformationElements[1];
-            	}
-            	else {
-            	    //lookup 
-            	    final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-            	    final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-            	    final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-            	    channelSubscribeId = userLayoutManager.getSubscribeId(channelName);
-            	}
-            	
-            	IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(channelName);
-            	boolean isPortlet = channelDefinition.isPortlet();
-                
-            	requestInfo.setTargetedChannelSubscribeId(channelSubscribeId);
-            	
-            	if(isPortlet) {
-        	        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-            	    final IPerson person = userInstance.getPerson();
-            	    
-            	    final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(channelSubscribeId, person.getID());
-            	    final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
-            	    requestInfo.setTargetedPortletWindowId(portletWindow.getPortletWindowId());
-            	}
-            }
-            
-            // group(1) may contain slashes to separate sub folders
-            // set targetedLayoutNodeId to LAST folder
-            if(!StringUtils.isBlank(folderInformation)) {
-                String [] folderElements = folderInformation.split("\\/");
-                if(folderElements.length > 0) {
-                    requestInfo.setTargetedLayoutNodeId(folderElements[folderElements.length-1]);
+            switch (parseStep) {
+                case FOLDER: {
+                    parseStep = ParseStep.PORTLET;
+                    
+                    if (FOLDER_PATH_PREFIX.equals(pathPart)) {
+                        final List<String> folders = new LinkedList<String>();
+                        for (;pathPartIndex < requestPathParts.length; pathPartIndex++) {
+                            pathPart = requestPathParts[pathPartIndex];
+                            if (PORTLET_PATH_PREFIX.equals(pathPart)) {
+                                pathPartIndex--;
+                                break;
+                            }
+
+                            folders.add(pathPart);
+                        }
+                        
+                        //TODO resolve folder names to layout nodes
+                        if (folders.size() > 0) {
+                            requestInfoBuilder.setTargetedLayoutNodeId(folders.get(folders.size() - 1));
+                        }
+                        break;
+                    }
+                }
+                case PORTLET: {
+                    parseStep = ParseStep.STATE;
+                    
+                    if (PORTLET_PATH_PREFIX.equals(pathPart)) {
+                        if (++pathPartIndex < requestPathParts.length) {
+                            pathPart = requestPathParts[pathPartIndex];
+                            final String[] portletParts = PORTLET_PATH_ELEMENT_SEPERATOR_PATTERN.split(pathPart);
+                            final String fname = portletParts[0];
+                            final String subscribeId;
+                            if  (portletParts.length > 1) {
+                                subscribeId = portletParts[1];
+                            }
+                            else {
+                                final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+                                final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+                                final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+                                subscribeId = userLayoutManager.getSubscribeId(fname);
+                            }
+                            
+                            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+                            final IPerson person = userInstance.getPerson();
+                            
+                            final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(subscribeId, person.getID());
+                            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
+                            
+                            portletRequestInfoBuilder = new PortletRequestInfoImpl(portletWindow.getPortletWindowId());
+                        }
+                        
+                        break;
+                    }
+                }
+                case STATE: {
+                    parseStep = ParseStep.TYPE;
+                    
+                    final UrlState urlState = UrlState.valueOfIngoreCase(pathPart, null);
+                    if (urlState != null) {
+                        requestInfoBuilder.setUrlState(urlState);
+                        break;
+                    }
+                }
+                case TYPE: {
+                    parseStep = ParseStep.COMPLETE;
+                    
+                    if (pathPartIndex == requestPathParts.length - 1 && pathPart.endsWith(REQUEST_TYPE_SUFFIX) && pathPart.length() > REQUEST_TYPE_SUFFIX.length()) {
+                        final String urlTypePart = pathPart.substring(0, pathPart.length() - REQUEST_TYPE_SUFFIX.length());
+                        
+                        final UrlType urlType = UrlType.valueOfIngoreCase(urlTypePart, null);
+                        if (urlType != null) {
+                            requestInfoBuilder.setUrlType(urlType);
+                            break;
+                        }
+                    }
                 }
             }
-            
-            request.setAttribute(PORTAL_REQUEST_INFO_ATTR, requestInfo);
-            
-            if(logger.isDebugEnabled()) {
-                logger.debug("finished building requestInfo: " + requestInfo);
-            }
-            return requestInfo;
         }
         
-        /* portal params
-         * layout params
-         * 
-         * portlet info
-         *  portlet params
-         *  portlet state/mode
-         *  public portlet params
-         *  target portlet
-         *  delegate portlet info (recurse)
+        /*
+    public static final String PORTAL_PARAM_PREFIX                  = "uP" + SEPARATOR;
+    public static final String LAYOUT_PARAM_PREFIX                  = "uPl" + SEPARATOR;
+    public static final String PORTLET_CONTROL_PREFIX               = "Pc" + SEPARATOR;
+    public static final String PORTLET_PARAM_PREFIX                 = "Pp" + SEPARATOR;
+    public static final String PORTLET_PUBLIC_RENDER_PARAM_PREFIX   = "Ppr" + SEPARATOR;
+
+    public static final String PARAM_WINDOW_STATE   = PORTLET_CONTROL_PREFIX + "s";
+    public static final String PARAM_PORTLET_MODE   = PORTLET_CONTROL_PREFIX + "m";
          */
         
-        //TODO request type & parameter parsing
-         
-        throw new InvalidPortalRequestException("could not extract portal request from " + requestPath);
+        
+        
+        request.setAttribute(PORTAL_REQUEST_INFO_ATTR, requestInfoBuilder);
+        
+        if(logger.isDebugEnabled()) {
+            logger.debug("finished building requestInfo: " + requestInfoBuilder);
+        }
+        
+        return requestInfoBuilder;
     }
 
     /* (non-Javadoc)
@@ -373,10 +392,10 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         final boolean action = layoutPortalUrl.isAction();
         if (action) {
-            url.addPath(ACTION_SUFFIX);
+            url.addPath(UrlType.ACTION.toLowercaseString() + REQUEST_TYPE_SUFFIX);
         }
         else {
-            url.addPath(RENDER_SUFFIX);
+            url.addPath(UrlType.RENDER.toLowercaseString() + REQUEST_TYPE_SUFFIX);
         }
 
         //Add all portal parameters
@@ -458,17 +477,17 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
         final String fname = channelDefinition.getFName();
         final String validFname = FunctionalNameType.INVALID_CHARS_PATTERN.matcher(fname).replaceAll("_");
-        url.addPath(validFname + "." + channelSubscribeId);
+        url.addPath(validFname + PORTLET_PATH_ELEMENT_SEPERATOR + channelSubscribeId);
         
         //File part 
         switch (portalPortletUrl.getType()) {
             case ACTION: {
-                url.addPath(ACTION_SUFFIX);
+                url.addPath(UrlType.ACTION.toLowercaseString() + REQUEST_TYPE_SUFFIX);
             }
             break;
             
             case RENDER: {
-                url.addPath(RENDER_SUFFIX);
+                url.addPath(UrlType.RENDER.toLowercaseString() + REQUEST_TYPE_SUFFIX);
             }
             break;
             

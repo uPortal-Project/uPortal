@@ -49,6 +49,34 @@ import org.springframework.mock.web.MockHttpServletRequest;
  *
  */
 public class PortalUrlProviderImplTest {
+
+    /*
+f/folderName
+f/folderName/
+f/folderName/p/portletName
+f/folderName/p/portletName/
+f/folderName/p/portletName.subscribeId
+f/folderName/p/portletName.subscribeId/
+f/folderName/p/portletName.subscribeId/state
+f/folderName/p/portletName.subscribeId/state/
+f/folderName/p/portletName.subscribeId/state/render.uP
+f/folderName/folder2
+f/folderName/folder2/
+f/folderName/folder2/p/portletName
+f/folderName/folder2/p/portletName/
+f/folderName/folder2/p/portletName.subscribeId
+f/folderName/folder2/p/portletName.subscribeId/
+f/folderName/folder2/p/portletName.subscribeId/state
+f/folderName/folder2/p/portletName.subscribeId/state/
+f/folderName/folder2/p/portletName.subscribeId/state/render.uP
+p/portletName
+p/portletName/
+p/portletName.subscribeId
+p/portletName.subscribeId/
+p/portletName.subscribeId/state
+p/portletName.subscribeId/state/
+p/portletName.subscribeId/state/render.uP
+     */
     
     /**
      * {@link PortalUrlProviderImpl#getPortalRequestInfo(HttpServletRequest)} will cache the
@@ -129,7 +157,6 @@ public class PortalUrlProviderImplTest {
         expect(mockChannelDefinition.isPortlet()).andReturn(true);
         replay(mockChannelDefinition);
         IChannelRegistryStore mockChannelRegistryStore = createMock(IChannelRegistryStore.class);
-        expect(mockChannelRegistryStore.getChannelDefinition("weather")).andReturn(mockChannelDefinition);
         replay(mockChannelRegistryStore);
         
         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();

@@ -6,34 +6,26 @@
 package org.jasig.portal.url;
 
 /**
- * Represents the rendering state of the portal, all available states should be enumerated here
+ * Represents the request type of the url, all available request types should be enumerated here
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public enum UrlState {
+public enum UrlType {
     /* IMPORTANT, all enum keys must be completely upper case for the helper methods to not cause problems */
     
     /**
-     * Rendering with multiple portlets in the view
+     * Renders content
      */
-    NORMAL,
+    RENDER,
     /**
-     * Rendering a single portlet with portal provided UI
+     * Performs an action, the result from this type of URL will always be a redirect
      */
-    MAX,
-    /**
-     * Rendering a single portlet with portal markup but no portal rendered UI
-     */
-    DETACHED,
-    /**
-     * Rendering a single portlet where the portlet is responsible for all output, binary output is supported.
-     */
-    EXCLUSIVE;
+    ACTION;
     
     private final String lowercase;
     
-    private UrlState() {
+    private UrlType() {
         this.lowercase = this.toString().toLowerCase();
     }
     
@@ -41,11 +33,11 @@ public enum UrlState {
         return this.lowercase;
     }
     
-    public static UrlState valueOfIngoreCase(String name) {
-        return UrlState.valueOf(name.toUpperCase());
+    public static UrlType valueOfIngoreCase(String name) {
+        return UrlType.valueOf(name.toUpperCase());
     }
     
-    public static UrlState valueOfIngoreCase(String name, UrlState defaultValue) {
+    public static UrlType valueOfIngoreCase(String name, UrlType defaultValue) {
         if (name == null) {
             return defaultValue;
         }

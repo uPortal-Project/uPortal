@@ -5,7 +5,6 @@
  */
 package org.jasig.portal.url;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * Provides information about the portal request.
@@ -25,17 +24,12 @@ public interface IPortalRequestInfo {
     public String getTargetedLayoutNodeId();
     
     /**
-     * @return The channel being targeted by the request. If the request isn't targeting a particular channel null is returned.
+     * @return Information for a request targeting a portlet. If the request doesn't target a portlet null is returned.
      */
-    public String getTargetedChannelSubscribeId();
-    
-    /**
-     * @return The portlet window being targeted by the request, If the request isn't targeting a particular channel null is returned.
-     */
-    public IPortletWindowId getTargetedPortletWindowId();
+    public IPortletRequestInfo getPortletRequestInfo();
     
     /**
      * @return true if the request represents an action, false if it represents a render.
      */
-    public boolean isAction();
+    public UrlType getUrlType();
 }
