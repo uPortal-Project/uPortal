@@ -3,6 +3,9 @@
  */
 package org.jasig.portal.url;
 
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * Basic implementation of {@link IPortalRequestInfo} - a straightforward java bean.
@@ -18,9 +21,11 @@ package org.jasig.portal.url;
 class PortalRequestInfoImpl implements IPortalRequestInfo {
 
     private String targetedLayoutNodeId;
+    private Map<String, List<String>> layoutParameters;
     private IPortletRequestInfo portletRequestInfo;
     private UrlState urlState = UrlState.NORMAL;
     private UrlType urlType = UrlType.RENDER;
+    private Map<String, List<String>> portalParameters;
     
     public String getTargetedLayoutNodeId() {
         return this.targetedLayoutNodeId;
@@ -46,10 +51,24 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
     public void setUrlType(UrlType urlType) {
         this.urlType = urlType;
     }
+    public Map<String, List<String>> getLayoutParameters() {
+        return this.layoutParameters;
+    }
+    public void setLayoutParameters(Map<String, List<String>> layoutParameters) {
+        this.layoutParameters = layoutParameters;
+    }
+    public Map<String, List<String>> getPortalParameters() {
+        return this.portalParameters;
+    }
+    public void setPortalParameters(Map<String, List<String>> portalParameters) {
+        this.portalParameters = portalParameters;
+    }
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((this.layoutParameters == null) ? 0 : this.layoutParameters.hashCode());
+        result = prime * result + ((this.portalParameters == null) ? 0 : this.portalParameters.hashCode());
         result = prime * result + ((this.portletRequestInfo == null) ? 0 : this.portletRequestInfo.hashCode());
         result = prime * result + ((this.targetedLayoutNodeId == null) ? 0 : this.targetedLayoutNodeId.hashCode());
         result = prime * result + ((this.urlState == null) ? 0 : this.urlState.hashCode());
@@ -68,6 +87,22 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
             return false;
         }
         PortalRequestInfoImpl other = (PortalRequestInfoImpl) obj;
+        if (this.layoutParameters == null) {
+            if (other.layoutParameters != null) {
+                return false;
+            }
+        }
+        else if (!this.layoutParameters.equals(other.layoutParameters)) {
+            return false;
+        }
+        if (this.portalParameters == null) {
+            if (other.portalParameters != null) {
+                return false;
+            }
+        }
+        else if (!this.portalParameters.equals(other.portalParameters)) {
+            return false;
+        }
         if (this.portletRequestInfo == null) {
             if (other.portletRequestInfo != null) {
                 return false;
@@ -102,11 +137,10 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
         }
         return true;
     }
-    
     @Override
     public String toString() {
-        return "PortalRequestInfoImpl [urlType=" + this.urlType + ", urlState=" + this.urlState
-                + ", portletRequestInfo=" + this.portletRequestInfo + ", targetedLayoutNodeId="
-                + this.targetedLayoutNodeId + "]";
+        return "PortalRequestInfoImpl [layoutParameters=" + this.layoutParameters + ", portalParameters="
+                + this.portalParameters + ", portletRequestInfo=" + this.portletRequestInfo + ", targetedLayoutNodeId="
+                + this.targetedLayoutNodeId + ", urlState=" + this.urlState + ", urlType=" + this.urlType + "]";
     }
 }

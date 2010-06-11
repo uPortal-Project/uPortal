@@ -5,9 +5,13 @@
  */
 package org.jasig.portal.url;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.portlet.PortletMode;
@@ -68,13 +72,13 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     public static final String PARAM_PORTLET_MODE   = PORTLET_CONTROL_PREFIX + "m";
     
     public static final String SLASH = "/";
-    public static final String PORTLET_PATH_ELEMENT_SEPERATOR = ".";
+    public static final char PORTLET_PATH_ELEMENT_SEPERATOR = '.';
     public static final String PORTLET_PATH_PREFIX = "p";
     public static final String FOLDER_PATH_PREFIX = "f";
     public static final String REQUEST_TYPE_SUFFIX = ".uP";
     
+    private static final Pattern URL_PARAM_NAME_PATTERN = Pattern.compile("&([^&?=\n]*)");
     private static final Pattern SLASH_PATTERN = Pattern.compile(SLASH);
-    private static final Pattern PORTLET_PATH_ELEMENT_SEPERATOR_PATTERN = Pattern.compile(PORTLET_PATH_ELEMENT_SEPERATOR);
     private static final String PORTAL_REQUEST_INFO_ATTR = PortalUrlProviderImpl.class.getName() + ".PORTAL_REQUEST_INFO"; 
     
     protected final Log logger = LogFactory.getLog(this.getClass());
@@ -204,26 +208,31 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                     if (PORTLET_PATH_PREFIX.equals(pathPart)) {
                         if (++pathPartIndex < requestPathParts.length) {
                             pathPart = requestPathParts[pathPartIndex];
-                            final String[] portletParts = PORTLET_PATH_ELEMENT_SEPERATOR_PATTERN.split(pathPart);
-                            final String fname = portletParts[0];
+                            
+                            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+                            
+                            final String fname;
                             final String subscribeId;
-                            if  (portletParts.length > 1) {
-                                subscribeId = portletParts[1];
-                            }
-                            else {
-                                final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+                            
+                            final int seperatorIndex = pathPart.indexOf(PORTLET_PATH_ELEMENT_SEPERATOR);
+                            if (seperatorIndex <= 0 || seperatorIndex + 1 == pathPart.length()) {
+                                fname = pathPart;
+                                
                                 final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
                                 final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
                                 subscribeId = userLayoutManager.getSubscribeId(fname);
                             }
+                            else {
+                                fname = pathPart.substring(0, seperatorIndex);
+                                subscribeId = pathPart.substring(seperatorIndex + 1);
+                            }
                             
-                            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
                             final IPerson person = userInstance.getPerson();
-                            
                             final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(subscribeId, person.getID());
                             final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
                             
                             portletRequestInfoBuilder = new PortletRequestInfoImpl(portletWindow.getPortletWindowId());
+                            requestInfoBuilder.setPortletRequestInfo(portletRequestInfoBuilder);
                         }
                         
                         break;
@@ -231,6 +240,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 }
                 case STATE: {
                     parseStep = ParseStep.TYPE;
+                    
+                    //States other than the default only make sense if a portlet is being targeted
+                    if (requestInfoBuilder.getPortletRequestInfo() == null) {
+                        break;
+                    }
                     
                     final UrlState urlState = UrlState.valueOfIngoreCase(pathPart, null);
                     if (urlState != null) {
@@ -240,6 +254,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 }
                 case TYPE: {
                     parseStep = ParseStep.COMPLETE;
+                    
+                    //Types other than the default only make sense if a portlet is being targeted
+                    if (requestInfoBuilder.getPortletRequestInfo() == null) {
+                        break;
+                    }
                     
                     if (pathPartIndex == requestPathParts.length - 1 && pathPart.endsWith(REQUEST_TYPE_SUFFIX) && pathPart.length() > REQUEST_TYPE_SUFFIX.length()) {
                         final String urlTypePart = pathPart.substring(0, pathPart.length() - REQUEST_TYPE_SUFFIX.length());
@@ -254,18 +273,62 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             }
         }
         
-        /*
-    public static final String PORTAL_PARAM_PREFIX                  = "uP" + SEPARATOR;
-    public static final String LAYOUT_PARAM_PREFIX                  = "uPl" + SEPARATOR;
-    public static final String PORTLET_CONTROL_PREFIX               = "Pc" + SEPARATOR;
-    public static final String PORTLET_PARAM_PREFIX                 = "Pp" + SEPARATOR;
-    public static final String PORTLET_PUBLIC_RENDER_PARAM_PREFIX   = "Ppr" + SEPARATOR;
-
-    public static final String PARAM_WINDOW_STATE   = PORTLET_CONTROL_PREFIX + "s";
-    public static final String PARAM_PORTLET_MODE   = PORTLET_CONTROL_PREFIX + "m";
-         */
+        final Map<String, String[]> portalParameters = new ParameterMap();
+        final Map<String, String[]> portletParameters = new ParameterMap();
+        final Map<String, String[]> portletPublicParameters = new ParameterMap();
+        final Map<String, String[]> layoutParameters = new ParameterMap();
+        
+        final Map<String, String[]> parameterMap = request.getParameterMap();
+        
+        for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
+            final String name = parameterEntry.getKey();
+            if (name.startsWith(PORTAL_PARAM_PREFIX)) {
+                portalParameters.put(name, parameterEntry.getValue());
+            }
+            else if (name.startsWith(LAYOUT_PARAM_PREFIX)) {
+                layoutParameters.put(name, parameterEntry.getValue());
+            }
+            else if (name.startsWith(PORTLET_PARAM_PREFIX)) {
+                portletParameters.put(name, parameterEntry.getValue());
+            }
+            else if (name.startsWith(PORTLET_PUBLIC_RENDER_PARAM_PREFIX)) {
+                portletPublicParameters.put(name, parameterEntry.getValue());
+            }
+        }
         
         
+        final Map<String, String[]> postParameters = this.getPostParameters(request);
+        
+        //If the request targets a portlet do more parsing
+        if (portletRequestInfoBuilder != null) {
+            portletParameters.putAll(postParameters);
+            
+            portletRequestInfoBuilder.setPortletParameters(Collections.unmodifiableMap(ParameterMap.convertParameterMap(portletParameters)));
+            portletRequestInfoBuilder.setPublicPortletParameters(Collections.unmodifiableMap(ParameterMap.convertParameterMap(portletPublicParameters)));
+            
+            final String portletModeName = request.getParameter(PARAM_PORTLET_MODE);
+            if (portletModeName != null) {
+                portletRequestInfoBuilder.setPortletMode(new PortletMode(portletModeName));
+            }
+            
+            final String windowStateName = request.getParameter(PARAM_WINDOW_STATE);
+            if (windowStateName != null) {
+                portletRequestInfoBuilder.setWindowState(new WindowState(windowStateName));
+            }
+            
+            //TODO delegation parsing
+//            portletRequestInfoBuilder.setDelegatePortletRequestInfo(portletRequestInfoBuilder)
+            
+        }
+        else if (requestInfoBuilder.getTargetedLayoutNodeId() != null) {
+            layoutParameters.putAll(postParameters);
+        }
+        else {
+            portalParameters.putAll(postParameters);
+        }
+        
+        requestInfoBuilder.setLayoutParameters(Collections.unmodifiableMap(ParameterMap.convertParameterMap(layoutParameters)));
+        requestInfoBuilder.setPortalParameters(Collections.unmodifiableMap(ParameterMap.convertParameterMap(portalParameters)));
         
         request.setAttribute(PORTAL_REQUEST_INFO_ATTR, requestInfoBuilder);
         
@@ -274,6 +337,43 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
         
         return requestInfoBuilder;
+    }
+    
+
+    /**
+     * Parses the request URL to return a Set of the parameter names that were part of the POST and not on the URL string.
+     * 
+     * @param request The request to look at.
+     * @return The Set of parameter names from the POST, null if the request was not a POST.
+     */
+    protected Map<String, String[]> getPostParameters(HttpServletRequest request) {
+        // Only posts can have parameters not in the URL, ignore non-post requests.
+        final String method = request.getMethod();
+        if (!"POST".equals(method)) {
+            return Collections.emptyMap();
+        }
+        
+        final Map<String, String[]> postParameterMap = new ParameterMap(request.getParameterMap());
+        
+        final String queryString = request.getQueryString();
+        final Matcher paramNameMatcher = URL_PARAM_NAME_PATTERN.matcher("&" + queryString);
+
+        final String encoding = this.getEncoding(request);
+        
+        while (paramNameMatcher.find()) {
+            final String paramName = paramNameMatcher.group(1);
+            String decParamName;
+            try {
+                decParamName = URLDecoder.decode(paramName, encoding);
+            }
+            catch (UnsupportedEncodingException uee) {
+                decParamName = paramName;
+            }
+            
+            postParameterMap.remove(decParamName);
+        }
+        
+        return postParameterMap;
     }
 
     /* (non-Javadoc)
@@ -498,7 +598,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         //Query String  
         //Target portlet window info
-        url.addParameter(PARAM_REQUEST_TARGET, portletWindowId.getStringId());
+//        url.addParameter(PARAM_REQUEST_TARGET, portletWindowId.getStringId());
           
         //Portlet mode info
         final PortletMode portletMode = portalPortletUrl.getPortletMode();

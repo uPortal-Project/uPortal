@@ -9,6 +9,7 @@ package org.jasig.portal.url;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -41,7 +42,17 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
     public ParameterMap(Map<? extends String, ? extends String[]> m) {
         super(m);
     }
-
+    
+    public static Map<String, List<String>> convertParameterMap(Map<String, String[]> parameterMap) {
+        final Map<String, List<String>> newMap = new LinkedHashMap<String, List<String>>();
+        
+        for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
+            newMap.put(parameterEntry.getKey(), Arrays.asList(parameterEntry.getValue()));
+        }
+        
+        return newMap;
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (o == this)
