@@ -3,8 +3,6 @@
  */
 package org.jasig.portal.url;
 
-import java.util.Collections;
-
 import org.easymock.EasyMock;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -32,14 +30,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class PortalUrlProviderImplTest {
 
     /*
-f/folderName
-f/folderName/
-f/folderName/p/portletName
-f/folderName/p/portletName/
-f/folderName/p/portletName.subscribeId
-f/folderName/p/portletName.subscribeId/
-f/folderName/p/portletName.subscribeId/state
-f/folderName/p/portletName.subscribeId/state/
 f/folderName/p/portletName.subscribeId/state/render.uP
 f/folderName/folder2
 f/folderName/folder2/
@@ -114,191 +104,118 @@ p/portletName.subscribeId/state/render.uP
                 this.userPreferencesManager, this.userLayoutManager, this.person, this.portletEntity, this.portletWindow);
     }
     
-    @Test
-    public void testNoPathNoSlash() throws Exception {
+    private void testFolderUrlHelper(String uri, IPortalRequestInfo expected) throws Exception {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal");
+        mockRequest.setRequestURI(uri);
         
         this.replayAll();
         
         final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
         
         this.verifyAll();
+
+        Assert.assertEquals(expected.getTargetedLayoutNodeId(), requestInfo.getTargetedLayoutNodeId());
+        Assert.assertEquals(expected.getLayoutParameters(), requestInfo.getLayoutParameters());
+        Assert.assertEquals(expected.getPortalParameters(), requestInfo.getPortalParameters());
+        Assert.assertEquals(expected.getUrlState(), requestInfo.getUrlState());
+        Assert.assertEquals(expected.getUrlType(), requestInfo.getUrlType());
+    }
+    
+    @Test
+    public void testNoPathNoSlash() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
         
-        Assert.assertNull(requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertNull(requestInfo.getPortletRequestInfo());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        this.testFolderUrlHelper("/uPortal", expected);
     }
     
     @Test
     public void testNoPathWithSlash() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/");
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
         
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-        
-        Assert.assertNull(requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertNull(requestInfo.getPortletRequestInfo());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        this.testFolderUrlHelper("/uPortal/", expected);
     }
     
     @Test
     public void testNoPathWithState() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/max");
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
         
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-        
-        Assert.assertNull(requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertNull(requestInfo.getPortletRequestInfo());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        this.testFolderUrlHelper("/uPortal/max", expected);
     }
     
     @Test
     public void testNoPathWithType() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/action.uP");
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
         
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-        
-        Assert.assertNull(requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertNull(requestInfo.getPortletRequestInfo());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        this.testFolderUrlHelper("/uPortal/action.uP", expected);
     }
     
     @Test
     public void testSingleFolderUrlNoSlash() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName");
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
         
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-
-        Assert.assertEquals("folderName", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertNull(requestInfo.getPortletRequestInfo());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        this.testFolderUrlHelper("/uPortal/f/folderName", expected);
     }
     
     @Test
     public void testSingleFolderUrlWithSlash() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName/");
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
         
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-
-        Assert.assertEquals("folderName", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertNull(requestInfo.getPortletRequestInfo());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        this.testFolderUrlHelper("/uPortal/f/folderName/", expected);
     }
     
     @Test
     public void testSingleFolderUrlWithState() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName/max");
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "max";
         
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-
-        Assert.assertEquals("max", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertNull(requestInfo.getPortletRequestInfo());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        this.testFolderUrlHelper("/uPortal/f/folderName/max", expected);
     }
     
     @Test
     public void testSingleFolderUrlWithType() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName/action.uP");
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "action.uP";
         
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-
-        Assert.assertEquals("action.uP", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertNull(requestInfo.getPortletRequestInfo());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        this.testFolderUrlHelper("/uPortal/f/folderName/action.uP", expected);
     }
     
     @Test
     public void testMultipleFolderUrlNoSlash() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName/folderName2");
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName2";
         
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-
-        Assert.assertEquals("folderName2", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertNull(requestInfo.getPortletRequestInfo());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        this.testFolderUrlHelper("/uPortal/f/folderName/folderName2", expected);
     }
     
     @Test
     public void testMultipleFolderUrlWithSlash() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName2";
+        
+        this.testFolderUrlHelper("/uPortal/f/folderName/folderName2/", expected);
+    }
+    
+    private void testFolderPortletFnameUrlHelper(String uri, String subscribeId, IPortalRequestInfo expected) throws Exception {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName/folderName2/");
+        mockRequest.setRequestURI(uri);
+        
+        final MockPortletEntityId portletEntityId = new MockPortletEntityId(subscribeId);
+        final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
+
+        EasyMock.expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
+        EasyMock.expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager);
+        EasyMock.expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager);
+        EasyMock.expect(this.userLayoutManager.getSubscribeId("portletName")).andReturn(subscribeId);
+        EasyMock.expect(this.userInstance.getPerson()).andReturn(this.person);
+        EasyMock.expect(this.person.getID()).andReturn(1337);
+        EasyMock.expect(this.portletEntityRegistry.getPortletEntity(subscribeId, 1337)).andReturn(this.portletEntity);
+        EasyMock.expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        EasyMock.expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
+        EasyMock.expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
         
         this.replayAll();
         
@@ -306,57 +223,56 @@ p/portletName.subscribeId/state/render.uP
         
         this.verifyAll();
 
-        Assert.assertEquals("folderName2", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertNull(requestInfo.getPortletRequestInfo());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        Assert.assertEquals(expected.getTargetedLayoutNodeId(), requestInfo.getTargetedLayoutNodeId());
+        Assert.assertEquals(expected.getLayoutParameters(), requestInfo.getLayoutParameters());
+        Assert.assertEquals(expected.getPortalParameters(), requestInfo.getPortalParameters());
+        Assert.assertEquals(expected.getUrlState(), requestInfo.getUrlState());
+        Assert.assertEquals(expected.getUrlType(), requestInfo.getUrlType());
+        
+        final IPortletRequestInfo expectedPortletRequestInfo = expected.getPortletRequestInfo();
+        final IPortletRequestInfo portletRequestInfo = requestInfo.getPortletRequestInfo();
+        assertEquals(expectedPortletRequestInfo, portletRequestInfo);
     }
     
     @Test
     public void testSingleFolderPortletFnameUrlNoSlash() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName/p/portletName");
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
         
-        final MockPortletEntityId portletEntityId = new MockPortletEntityId("n42");
-        final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
-
-        this.setupFnamePortletUrlMocks(mockRequest, portletEntityId, portletWindowId);
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
         
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-
-        Assert.assertEquals("folderName", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
-        
-        final IPortletRequestInfo portletRequestInfo = requestInfo.getPortletRequestInfo();
-        Assert.assertNotNull(portletRequestInfo);
-        Assert.assertEquals(portletWindowId, portletRequestInfo.getTargetWindowId());
-        Assert.assertEquals(null, portletRequestInfo.getPortletMode());
-        Assert.assertEquals(null, portletRequestInfo.getWindowState());
-        Assert.assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
-        Assert.assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
-        Assert.assertNull(portletRequestInfo.getDelegatePortletRequestInfo());
+        testFolderPortletFnameUrlHelper("/uPortal/f/folderName/p/portletName", "n42", expected);
     }
     
     @Test
     public void testSingleFolderPortletFnameUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        
+        testFolderPortletFnameUrlHelper("/uPortal/f/folderName/p/portletName/", "n42", expected);
+    }
+    
+    private void testSingleFolderPortletFnameSubscribeIdUrlHelper(String uri, String subscribeId, IPortalRequestInfo expected) throws Exception {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName/p/portletName/");
+        mockRequest.setRequestURI(uri);
         
-        final MockPortletEntityId portletEntityId = new MockPortletEntityId("n42");
+        final MockPortletEntityId portletEntityId = new MockPortletEntityId(subscribeId);
         final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
 
-        this.setupFnamePortletUrlMocks(mockRequest, portletEntityId, portletWindowId);
+        EasyMock.expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
+        EasyMock.expect(this.userInstance.getPerson()).andReturn(this.person);
+        EasyMock.expect(this.person.getID()).andReturn(1337);
+        EasyMock.expect(this.portletEntityRegistry.getPortletEntity("n42", 1337)).andReturn(this.portletEntity);
+        EasyMock.expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        EasyMock.expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
+        EasyMock.expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
         
         this.replayAll();
         
@@ -364,142 +280,88 @@ p/portletName.subscribeId/state/render.uP
         
         this.verifyAll();
 
-        Assert.assertEquals("folderName", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
+        Assert.assertEquals(expected.getTargetedLayoutNodeId(), requestInfo.getTargetedLayoutNodeId());
+        Assert.assertEquals(expected.getLayoutParameters(), requestInfo.getLayoutParameters());
+        Assert.assertEquals(expected.getPortalParameters(), requestInfo.getPortalParameters());
+        Assert.assertEquals(expected.getUrlState(), requestInfo.getUrlState());
+        Assert.assertEquals(expected.getUrlType(), requestInfo.getUrlType());
         
+        final IPortletRequestInfo expectedPortletRequestInfo = expected.getPortletRequestInfo();
         final IPortletRequestInfo portletRequestInfo = requestInfo.getPortletRequestInfo();
-        Assert.assertNotNull(portletRequestInfo);
-        Assert.assertEquals(portletWindowId, portletRequestInfo.getTargetWindowId());
-        Assert.assertEquals(null, portletRequestInfo.getPortletMode());
-        Assert.assertEquals(null, portletRequestInfo.getWindowState());
-        Assert.assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
-        Assert.assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
-        Assert.assertNull(portletRequestInfo.getDelegatePortletRequestInfo());
+        assertEquals(expectedPortletRequestInfo, portletRequestInfo);
     }
     
     @Test
     public void testSingleFolderPortletFnameSubscribeIdUrlNoSlash() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName/p/portletName.n42");
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
         
-        final MockPortletEntityId portletEntityId = new MockPortletEntityId("n42");
-        final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
-
-        this.setupFnameSubscribeIdPortletUrlMocks(mockRequest, portletEntityId, portletWindowId);
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
         
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-
-        Assert.assertEquals("folderName", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
-        
-        final IPortletRequestInfo portletRequestInfo = requestInfo.getPortletRequestInfo();
-        Assert.assertNotNull(portletRequestInfo);
-        Assert.assertEquals(portletWindowId, portletRequestInfo.getTargetWindowId());
-        Assert.assertEquals(null, portletRequestInfo.getPortletMode());
-        Assert.assertEquals(null, portletRequestInfo.getWindowState());
-        Assert.assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
-        Assert.assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
-        Assert.assertNull(portletRequestInfo.getDelegatePortletRequestInfo());
+        this.testSingleFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42", "n42", expected);
     }
     
     @Test
     public void testSingleFolderPortletFnameSubscribeIdUrlWithSlash() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName/p/portletName.n42/");
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
         
-        final MockPortletEntityId portletEntityId = new MockPortletEntityId("n42");
-        final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
 
-        this.setupFnameSubscribeIdPortletUrlMocks(mockRequest, portletEntityId, portletWindowId);
-        
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-
-        Assert.assertEquals("folderName", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
-        
-        final IPortletRequestInfo portletRequestInfo = requestInfo.getPortletRequestInfo();
-        Assert.assertNotNull(portletRequestInfo);
-        Assert.assertEquals(portletWindowId, portletRequestInfo.getTargetWindowId());
-        Assert.assertEquals(null, portletRequestInfo.getPortletMode());
-        Assert.assertEquals(null, portletRequestInfo.getWindowState());
-        Assert.assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
-        Assert.assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
-        Assert.assertNull(portletRequestInfo.getDelegatePortletRequestInfo());
+        this.testSingleFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/", "n42", expected);
     }
     
     @Test
     public void testSingleFolderPortletFnameSubscribeIdMaximizedUrlNoSlash() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/f/folderName/p/portletName.n42/max");
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
         
-        final MockPortletEntityId portletEntityId = new MockPortletEntityId("n42");
-        final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
 
-        this.setupFnameSubscribeIdPortletUrlMocks(mockRequest, portletEntityId, portletWindowId);
-        
-        this.replayAll();
-        
-        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
-        
-        this.verifyAll();
-
-        Assert.assertEquals("folderName", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getLayoutParameters());
-        Assert.assertEquals(Collections.emptyMap(), requestInfo.getPortalParameters());
-        Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
-        Assert.assertEquals(UrlType.RENDER, requestInfo.getUrlType());
-        
-        final IPortletRequestInfo portletRequestInfo = requestInfo.getPortletRequestInfo();
-        Assert.assertNotNull(portletRequestInfo);
-        Assert.assertEquals(portletWindowId, portletRequestInfo.getTargetWindowId());
-        Assert.assertEquals(null, portletRequestInfo.getPortletMode());
-        Assert.assertEquals(null, portletRequestInfo.getWindowState());
-        Assert.assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
-        Assert.assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
-        Assert.assertNull(portletRequestInfo.getDelegatePortletRequestInfo());
+        this.testSingleFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max", "n42", expected);
     }
     
-    private void setupFnamePortletUrlMocks(MockHttpServletRequest mockRequest, final MockPortletEntityId portletEntityId, final MockPortletWindowId portletWindowId) {
-        EasyMock.expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
-        EasyMock.expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager);
-        EasyMock.expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager);
-        EasyMock.expect(this.userLayoutManager.getSubscribeId("portletName")).andReturn("n42");
-        EasyMock.expect(this.userInstance.getPerson()).andReturn(this.person);
-        EasyMock.expect(this.person.getID()).andReturn(1337);
-        EasyMock.expect(this.portletEntityRegistry.getPortletEntity("n42", 1337)).andReturn(this.portletEntity);
-        EasyMock.expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
-        EasyMock.expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
-        EasyMock.expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdMaximizedUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+
+        this.testSingleFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max/", "n42", expected);
     }
     
-    private void setupFnameSubscribeIdPortletUrlMocks(MockHttpServletRequest mockRequest, final MockPortletEntityId portletEntityId, final MockPortletWindowId portletWindowId) {
-        EasyMock.expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
-        EasyMock.expect(this.userInstance.getPerson()).andReturn(this.person);
-        EasyMock.expect(this.person.getID()).andReturn(1337);
-        EasyMock.expect(this.portletEntityRegistry.getPortletEntity("n42", 1337)).andReturn(this.portletEntity);
-        EasyMock.expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
-        EasyMock.expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
-        EasyMock.expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
+    private void assertEquals(final IPortletRequestInfo expectedPortletRequestInfo, final IPortletRequestInfo portletRequestInfo) {
+        if (expectedPortletRequestInfo != null) {
+            Assert.assertNotNull(portletRequestInfo);
+            Assert.assertEquals(expectedPortletRequestInfo.getTargetWindowId(), portletRequestInfo.getTargetWindowId());
+            Assert.assertEquals(expectedPortletRequestInfo.getPortletMode(), portletRequestInfo.getPortletMode());
+            Assert.assertEquals(expectedPortletRequestInfo.getWindowState(), portletRequestInfo.getWindowState());
+            Assert.assertEquals(expectedPortletRequestInfo.getPortletParameters(), portletRequestInfo.getPortletParameters());
+            Assert.assertEquals(expectedPortletRequestInfo.getPortletParameters(), portletRequestInfo.getPortletParameters());
+            
+            final IPortletRequestInfo expectedDelegatePortletRequestInfo = expectedPortletRequestInfo.getDelegatePortletRequestInfo();
+            final IPortletRequestInfo delegatePortletRequestInfo = portletRequestInfo.getDelegatePortletRequestInfo();
+            if (expectedDelegatePortletRequestInfo != null) {
+                this.assertEquals(expectedDelegatePortletRequestInfo, delegatePortletRequestInfo);
+            }
+            else {
+                Assert.assertNull(delegatePortletRequestInfo);
+            }
+        }
+        else {
+            Assert.assertNull(portletRequestInfo);
+        }
     }
 //    
 //    /**
