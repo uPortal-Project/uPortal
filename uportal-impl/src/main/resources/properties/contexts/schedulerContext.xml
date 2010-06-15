@@ -7,7 +7,7 @@
         <property name="scheduledTimerTasks">
             <list>
                 <ref bean="cacheMaintenanceTask" />
-                <ref bean="org.springframework.scheduling.timer.ScheduledTimerTask" />
+                <ref bean="carFilesLoadingTrigger" />
             </list>
         </property>
     </bean>
