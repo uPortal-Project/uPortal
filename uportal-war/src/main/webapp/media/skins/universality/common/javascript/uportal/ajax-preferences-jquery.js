@@ -464,21 +464,19 @@
 			                if (key == settings.currentSkin)
 			                    input.attr("checked", true);
 						}
-							
-						var span = $(document.createElement("div")).append(
-						    $(document.createElement("span"))
+						var widget = $(document.createElement("div"))
+							.addClass("fl-widget");
+						widget.append($(document.createElement("div"))
+								.addClass("fl-widget-titlebar")
 								.append(input)
-								.append(document.createTextNode(" " + $(this).children("skin-name").text()))
-								.addClass("portlet-form-field-label")
+								.append($(document.createElement("h2")).text($(this).children("skin-name").text()))
 							);
-						skinMenu.append(span);
-						var div = $(document.createElement("div"))
-							.addClass("portlet-font-dim").css("padding-left", "20px")
-							.css("padding-bottom", "10px");
-						div.append($(document.createElement("span")).text($(this).children("skin-description").text()));
-						div.append($(document.createElement("br")));
-						div.append($(document.createElement("img")).attr("src", settings.mediaPath + "/" + key + "/" + "thumb.gif"));
-						skinMenu.append(div);
+						widget.append($(document.createElement("div"))
+								.addClass("fl-widget-content")
+								.append($(document.createElement("p")).text($(this).children("skin-description").text()))
+								.append($(document.createElement("img")).attr("src", settings.mediaPath + "/" + key + "/" + "thumb.gif"))
+							);
+						skinMenu.append(widget);
 					});
 		
 		            skinMenu.css("height", "300px").css("overflow", "auto");

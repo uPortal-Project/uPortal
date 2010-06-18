@@ -333,3 +333,6 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Ajax Menus */
 #changeColumns tr td { text-align: center; }
 #changeColumns img { vertical-align: middle; padding:3px; }
+#skinList {margin-bottom:1.5em;}
+#skinList h2 {display:inline; margin-left:0.5em;}
+#skinList .fl-widget-content {padding:1em;}
