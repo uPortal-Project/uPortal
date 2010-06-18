@@ -260,20 +260,6 @@
 .portlet .portlet-form.wider {width:600px;}
 
 
-/* Buttons */
-/*
- * Gives links and form buttons a consistent button look.
- * If multiple buttons, add the "buttons" class to the wrapping element.
- * If multiple buttons, add the "primary" class to the default action.
- */
-.portlet button, 
-.portlet .button,
-.portlet form input[type="submit"] {margin:0 5px; padding:2px 10px;}
-.portlet a.button {display:inline-block;}
-.portlet .buttons {padding:1em 0;}
-.portlet .button:hover {cursor:pointer;}
-
-
 /* Overflow box */
 /*
  *

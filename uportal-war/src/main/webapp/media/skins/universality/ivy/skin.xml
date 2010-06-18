@@ -23,7 +23,7 @@
 <s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
   
 	<!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
-  <css>/ResourceServingWebapp/rs/fluid/1.2/css/fss-framework-1.2.min.css</css>
+  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
   
   <!-- Default jQuery UI theme.  Comment this out if you are using your own custom jQuery UI theme. -->
   <css>/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css>

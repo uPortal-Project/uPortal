@@ -23,7 +23,7 @@
 <s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
   
   <!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
-  <css>/ResourceServingWebapp/rs/fluid/1.2/css/fss-framework-1.2.min.css</css>
+  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
   
   <!-- Fluid Skinning System (FSS) theme. -->
   <css type="fss-theme" name="fl-theme-hc">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-theme-hc.min.css</css>

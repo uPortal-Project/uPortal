@@ -17,13 +17,12 @@
  * under the License.
  */
 
-/* uPORTAL PORTLET LAYOUT CSS
+/* uPORTAL PORTLET STYLE CSS
  * These declarations are scoped for portlet content specifically.
- * These declarations are portal theme overrides or new declarations necessary to format portlet content.
- * These declarations are for 
  * These declarations may be scoped for all portlets and/or for a specific portlet.
- * For portal-specifc layout CSS, see "layout-portal.css" in the same directory.
- * For portlet-specifc styling CSS, see "portlet.css" in the appropriate skin-name directory.
+ * These declarations may override the portal-scoped css (see "portal.css" in the same directory).
+ * These declarations are for visual styling only, not for layout.
+ * For portlet-specifc layout CSS, see "layout-portlet.css" in the universality/common/css directory.
  * This CSS assumes the use of a CSS reset (by default the FSS "fss-reset.css") for browser normalization.
  */
  
@@ -120,7 +119,8 @@
 .portlet .titlebar .breadcrumb {font-size:10px; color:#ccc;}
 .portlet .titlebar .breadcrumb .separator {font-size:90%;}
 .portlet .titlebar .breadcrumb a {color:#bbb !important; font-weight:normal; text-decoration:none !important;}
-.portlet .titlebar .breadcrumb a:hover {color:#999 !important; text-decoration:underline !important;}
+.portlet .titlebar .breadcrumb a:hover,
+.portlet .titlebar .breadcrumb a:focus {color:#999 !important; text-decoration:underline !important;}
 .portlet .titlebar .actions li {border:none;}
 .portlet .titlebar .return-link {font-weight:bold; text-decoration:none !important;}
 .portlet .titlebar .toolbar {background:#e2e8e7; border-top:1px solid #ccc;}
@@ -196,7 +196,8 @@
 .portlet .portlet-section > .titlebar .title {border-bottom:0.1em solid #ddd;}
 .portlet .portlet-section > .titlebar .options {background-color:#fff; font-size:85%;}
 .portlet .portlet-section > .titlebar .options a {text-decoration:none; color:#666; border-bottom:1px solid #ddd;}
-.portlet .portlet-section > .titlebar .options a:hover {text-decoration:none; background-color:#dfefff; color:#000;}
+.portlet .portlet-section > .titlebar .options a:hover,
+.portlet .portlet-section > .titlebar .options a:focus {text-decoration:none; background-color:#dfefff; color:#000;}
 .portlet .portlet-section > .content {}
 .portlet .portlet-section > .content > .note {}
 
@@ -225,8 +226,11 @@
 /* Tables */
 /*
  * Tables are meant to display data. Avoid using tables for layout.
+ * For a nicely formatted table to display data, add the "portlet-table" class to your table.
  * If you must use a table for layout, add the "purpose-layout" class to the table.
  * The purpose-layout class will remove all padding, borders, and colors on the table.
+ * There is still a lot of portlets and content pulled into the portal that uses tables for layout 
+ * (and has no concept of the purpose-layout class), therefore the default display for tables is no borders.
  */
 .up table,
 .up table th,
@@ -240,14 +244,22 @@
 .portlet table.portlet-table th {background-color:#E2E8E7 !important; color:#333; font-size:85%; padding:1px 1em; text-align:left;}
 .portlet table.portlet-table th a {color:#333 !important; padding-right:16px; background:transparent url(images/sort.png) 0 0 no-repeat;}
 .portlet table.portlet-table td {padding:5px 1em;}
-.portlet table.portlet-table th:hover {background-color:#336699 !important; color:#fff !important;}
-.portlet table.portlet-table th:hover a {color:#fff !important;}
-.portlet table.portlet-table tbody tr:hover {background-color:#FFE4B5;}
-.portlet table.portlet-table tbody tr:hover td { border-bottom-color:#FFA500 !important;}
-.portlet table.portlet-table td:hover {background-color:#F4A460;}
-.portlet table.portlet-table tbody tr:hover a {color:#FFA500 !important;}
+.portlet table.portlet-table th:hover,
+.portlet table.portlet-table th:focus {background-color:#336699 !important; color:#fff !important;}
+.portlet table.portlet-table th:hover a
+.portlet table.portlet-table th:focus a {color:#fff !important;}
+.portlet table.portlet-table tbody tr:hover,
+.portlet table.portlet-table tbody tr:focus {background-color:#FFE4B5;}
+.portlet table.portlet-table tbody tr:hover td,
+.portlet table.portlet-table tbody tr:focus td { border-bottom-color:#FFA500 !important;}
+.portlet table.portlet-table td:hover,
+.portlet table.portlet-table td:focus {background-color:#F4A460;}
+.portlet table.portlet-table tbody tr:hover a,
+.portlet table.portlet-table tbody tr:focus a {color:#FFA500 !important;}
 .portlet table.portlet-table tbody tr:hover td:hover a,
-.portlet table.portlet-table tbody tr:hover td:hover a:hover {color:#fff !important;}
+.portlet table.portlet-table tbody tr:focus td:focus a,
+.portlet table.portlet-table tbody tr:hover td:hover a:hover,
+.portlet table.portlet-table tbody tr:focus td:focus a:focus {color:#fff !important;}
 .portlet table.purpose-layout,
 .portlet table.purpose-layout th,
 .portlet table.purpose-layout td {border:none !important; background:none !important; background-color:transparent !important;}
@@ -255,14 +267,12 @@
 
 /* Forms */
 /*
- * Use the "portlet-form" class on a form to produce a nicely formatted, boxed form.
- * If using a table with the form, do not use the portle-table class on the table,
+ * Some universal form element styles are declared in portal.css.
+ * Use the "portlet-form" class on a wrapper element of a form to produce a nicely formatted, boxed form.
+ * If using a table with the form, do not use the "portlet-table" class on the table,
  * But do add the class "label" to the first td in each row that contains the label.
  * Form buttons should use the Buttons classes (see next section).
  */
-.portlet form select,
-.portlet form input[type="text"],
-.portlet form textarea {font-family:"lucida grande",tahoma,verdana,arial,sans-serif; border:1px solid #BDC7D8; border-color:#96A6C5;}
 .portlet .portlet-form {background-color:#eee; border:1px solid #ccc;}
 .portlet .portlet-form form fieldset {border:1px solid #ccc;}
 .portlet .portlet-form form legend {font-size:85%; color:#ccc;}
@@ -272,12 +282,14 @@
 /* Buttons */
 /*
  * Gives links and form buttons a consistent button look.
+ * Most of the universal button styling is declared in portal.css. 
+ * Add the "button" class to the element you want to be styled as a button.
  * If multiple buttons, add the "buttons" class to the wrapping element.
- * If multiple buttons, add the "primary" class to the default action.
+ * If multiple buttons, add the "primary" class to the element that is the default action (e.g., class="button primary").
  */
 .portlet button, 
 .portlet .button,
-.portlet form input[type="submit"] {border-width:1px; border-style:solid; background:#336699 url(../common/images/button_bkd.png) top left repeat-x; border-color:#000; color:#fff; font-size:11px; font-weight:bold; font-family:"lucida grande",tahoma,verdana,arial,sans-serif; text-transform:capitalize;}
+.portlet form input[type="submit"] {border-width:1px; border-style:solid; border-color:#000; background:#336699 url(../common/images/button_bkd.png) top left repeat-x; color:#fff; font-size:11px; font-weight:bold; font-family:"lucida grande",tahoma,verdana,arial,sans-serif; text-transform:capitalize; text-shadow:0 1px 1px rgba(255,255,255,.85); -webkit-box-shadow:0 1px 2px rgba(0,0,0,.5); -moz-box-shadow:0 1px 2px rgba(0,0,0,.5); box-shadow:0 1px 2px rgba(0,0,0,.5);}
 .portlet a.button {color:#fff !important;  text-decoration:none !important;}
 .portlet .buttons {border-top:0.2em solid #ccc;}
 .portlet .buttons .button {background-color:#F0F0F0; border-color:#000; color:#000;}
@@ -285,11 +297,23 @@
 .portlet .buttons a.button {color:#000 !important;}
 .portlet .buttons a.button.primary {color:#fff !important;}
 .portlet .button:hover,
-.portlet form input[type="submit"]:hover {background-color:#5a95cf !important; /*background-color:#7a9e0d;*/}
+.portlet .button:focus,
+.portlet form input[type="submit"]:hover,
+.portlet form input[type="submit"]:focus {background-color:#5a95cf !important; /*background-color:#7a9e0d;*/}
 .portlet .button:hover,
+.portlet .button:focus,
 .portlet a.button:hover,
-.portlet form input[type="submit"]:hover {color:#fff !important;}
-.portlet form input[type="submit"]:hover {cursor:pointer;}
+.portlet a.button:focus,
+.portlet form input[type="submit"]:hover,
+.portlet form input[type="submit"]:focus {color:#fff !important;}
+.portlet form input[type="submit"]:hover,
+.portlet form input[type="submit"]:focus {cursor:pointer;}
+.portlet .titlebar .toolbar .button,
+.portlet .titlebar .toolbar a.button {border-color:#ccc; background-color:#e2e8e7; color:#555;}
+.portlet .titlebar .toolbar .button:hover,
+.portlet .titlebar .toolbar .button:focus,
+.portlet .titlebar .toolbar a.button:hover,
+.portlet .titlebar .toolbar a.button:focus {border-color:#000; background-color:#7a9e0d !important;}
 
 
 /* Overflow box */
@@ -298,11 +322,13 @@
  */
 .portlet .fl-overflow {border:2px solid #dfdfdf;}
 .portlet .fl-overflow li {background:#fff;}
-.portlet .fl-overflow li:hover {background:#b2b4bf;}
-.portlet .fl-overflow li a {color:#000; text-decoration:none;}
-.portlet .fl-overflow li a:active {color:#000;}
-.portlet .fl-overflow li a:visited {color:#000;}
-.portlet .fl-overflow li a:hover {color:#000;}
+.portlet .fl-overflow li:hover,
+.portlet .fl-overflow li:focus {background:#b2b4bf;}
+.portlet .fl-overflow li a,
+.portlet .fl-overflow li a:active,
+.portlet .fl-overflow li a:visited,
+.portlet .fl-overflow li a:hover,
+.portlet .fl-overflow li a:focus {color:#000; text-decoration:none;}
 .portlet .fl-overflow li.portal-section-subheader {font-weight:bold;}
 
 
@@ -312,9 +338,11 @@
  * Assumes the Fluid Infusion pager component.
  */
 .fl-pager th a {color:#3d80b3; text-decoration:none;}
-.fl-pager th a:hover {color:#2694e8; text-decoration:none;}
+.fl-pager th a:hover,
+.fl-pager th a:focus {color:#2694e8; text-decoration:none;}
 .flc-pager-links a {color:#666666; text-decoration:none;}
-.flc-pager-links a:hover {color:#333333;}
+.flc-pager-links a:hover,
+.flc-pager-links a:focus {color:#333333;}
 
 
 /* Selection Basket */
@@ -323,7 +351,8 @@
  */
 .portlet .selection-basket {border:1px solid #4070A1;}
 .portlet .selection-basket a {background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 0 50% no-repeat; color:#009900;}
-.portlet .selection-basket a:hover {background-color:#FFFFCC; color:#336699; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png)}
+.portlet .selection-basket a:hover,
+.portlet .selection-basket a:focus {background-color:#FFFFCC; color:#336699; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png)}
 
 
 /* Hierarchy Browser */
@@ -340,12 +369,14 @@
 .portlet .browse-hierarchy .entity .breadcrumb {font-size:85%;}
 .portlet .browse-hierarchy .entity .breadcrumb span {color:#999;}
 .portlet .browse-hierarchy .entity .breadcrumb a {font-weight:normal; color:#666 !important; text-decoration:none !important;}
-.portlet .browse-hierarchy .entity .breadcrumb a:hover {color:#000 !important; text-decoration:underline !important;}
+.portlet .browse-hierarchy .entity .breadcrumb a:hover,
+.portlet .browse-hierarchy .entity .breadcrumb a:focus {color:#000 !important; text-decoration:underline !important;}
 .portlet .browse-hierarchy .entity .member-list a {background-position:0 50%; background-repeat:no-repeat;}
 .portlet .browse-hierarchy .entity .group .member-list a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png)}
 .portlet .browse-hierarchy .entity .person .member-list a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/vcard.png)}
 .portlet .browse-hierarchy .entity .category .member-list a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tag_orange.png)}
-.portlet .browse-hierarchy .entity .member-list a:hover {background-color:#FFFFCC; color:#336699;}
+.portlet .browse-hierarchy .entity .member-list a:hover,
+.portlet .browse-hierarchy .entity .member-list a:focus {background-color:#FFFFCC; color:#336699;}
 
 
 
@@ -378,7 +409,8 @@
 /* Cache Manager Portlet */
 .cache-manager .cache-member a {font-weight: normal; }
 .cache-manager .cache-member .cache-name a {padding:0.2em 0 0.2em 20px; background-position:0 50%; background-repeat:no-repeat; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/drive.png)}
-.cache-manager .cache-member:hover {background-color:#FFFFCC; color:#336699;}
+.cache-manager .cache-member:hover,
+.cache-manager .cache-member:focus {background-color:#FFFFCC; color:#336699;}
 
 /* Portlet Manager */
 .override-preference td {color:graytext; text-decoration:line-through;}
