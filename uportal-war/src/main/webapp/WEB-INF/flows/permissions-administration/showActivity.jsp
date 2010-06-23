@@ -69,9 +69,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
+  	<div class="breadcrumb">
+    	<span class="breadcrumb-1"><a href="${ permissionsUrl }">Permissions</a></span>
+        <span class="separator"> &gt; </span> 
+        <span class="breadcrumb-2"><a href="${ ownerUrl }">${ owner.name }</a></span>
+        <span class="separator"> &gt; </span> 
+    </div>
     <h2 class="title" role="heading">
-        <a href="${ permissionsUrl }">Permissions</a> > 
-        <a href="${ ownerUrl }">${ owner.name }</a> > 
         ${ activity.name }
     </h2>
     <h3 class="subtitle">${ activity.description }</h3>
