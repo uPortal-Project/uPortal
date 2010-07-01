@@ -72,7 +72,10 @@ public class FragmentDefinition extends Evaluator
     
     @Column(name = "PRECEDENCE")
     private double precedence = 0.0; // precedence of fragment
-    
+
+    @Column(name = "DESCRIPTION")
+    private String description;
+
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @IndexColumn(name = "EVAL_INDEX")
     @JoinTable(name = "UP_DLM_EVALUATOR_PAREN", joinColumns = @JoinColumn(name = "PAREN_EVAL_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_EVAL_ID"))
@@ -118,6 +121,7 @@ public class FragmentDefinition extends Evaluator
         this.ownerID = loadAttribute( "ownerID", atts, REQUIRED, e );
         this.defaultLayoutOwnerID = loadAttribute( "defaultLayoutOwnerID", 
                                                    atts, NOT_REQUIRED, e );
+        this.description = loadAttribute("description", atts, NOT_REQUIRED, e);
 
         String precedence = loadAttribute( "precedence", atts, REQUIRED, e );
         try 
@@ -152,6 +156,10 @@ public class FragmentDefinition extends Evaluator
         return this.precedence;
     }
     
+    public String getDescription() {
+        return description;
+    }
+
     public static String getDefaultLayoutOwnerId()
     {
         return cDefaultLayoutOwnerId;
@@ -363,6 +371,7 @@ public class FragmentDefinition extends Evaluator
         rslt.addAttribute("name", this.getName());
         rslt.addAttribute("ownerID", this.getOwnerId());
         rslt.addAttribute("precedence", Double.toString(this.getPrecedence()));
+        rslt.addAttribute("description", this.getDescription());
 
         // Serialize our children...
         for (Evaluator v : this.evaluators) {

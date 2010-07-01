@@ -29,8 +29,9 @@
     
     $.uportal.UportalLayoutManager = function(callerSettings) {
 		var settings = $.extend({
-		    preferencesUrl: 'ajax/preferences',
+		    preferencesUrl: 'mvc/layout',
 		    channelListUrl: 'mvc/channelList?xml=true',
+            subscriptionListUrl: 'mvc/tabList',
 		    portalUrl: null,
 		    mediaPath: null,
 		    currentSkin: null,
@@ -78,7 +79,7 @@
 			$('a[id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
 		
 			// set click handlers for tab moving and editing links
-			$("#addTabLink").click(function(){addTab()});
+            $("#addTabLink").click(initializeSubscribeTabMenu);
 			$("#deletePageLink").click(function(){deleteTab()});
 			$("#editPageLink").click(initializeLayoutMenu);
 			$("#movePageLeftLink").click(function(){moveTab('left')});
@@ -168,14 +169,14 @@
 		
 		var initializeLayoutMenu = function() {
 			// using defaultChecked attribute to compensate for IE radio button bug
-			$("#changeColumns").find("img")
+			$("#pageLayoutDialog .changeColumns").find("img")
 				.click(function(){
-					$("#changeColumns").find("input").removeAttr("checked").attr("defaultChecked");
+					$("#pageLayoutDialog .changeColumns").find("input").removeAttr("checked").attr("defaultChecked");
 					$(this).prev().attr("checked", "checked").attr("defaultChecked","defaultChecked");
 				})
 				.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
-			if ($("#changeColumns").find("input:checked").length == 0) {
-			   $("#changeColumns").find("tr:eq(1)").find("td:eq(" + (settings.columnCount-1) + ")").find("input").attr("checked", true).attr("defaultChecked","defaultChecked");
+			if ($("#pageLayoutDialog .changeColumns").find("input:checked").length == 0) {
+			   $("#pageLayoutDialog .changeColumns").find("tr:eq(1)").find("td:eq(" + (settings.columnCount-1) + ")").find("input").attr("checked", true).attr("defaultChecked","defaultChecked");
 			}
 			$("#pageLayoutDialog").dialog({ width:400, modal:true });
 		
@@ -269,8 +270,8 @@
 			    	// remove the checked and default checked attributes from all radio
 			    	// buttons and re-apply them to the current value to compensate
 			    	// for IE radio button bug
-			    	$("#changeColumns").find("input").removeAttr("checked").removeAttr("defaultChecked");
-			    	$("#changeColumns").find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
+			    	$("#pageLayoutDialog .changeColumns").find("input").removeAttr("checked").removeAttr("defaultChecked");
+			    	$("#pageLayoutDialog .changeColumns").find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
 					
 				});
 		};
@@ -304,12 +305,15 @@
 		
 		
 		// Tab editing persistence functions
-		var addTab = function() {
-			$.post(settings.preferencesUrl, {action: 'addTab'}, function(xml) {
-                if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
-				window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
-					($("#portalNavigationList > li").length + 1);
-			});
+		var addTab = function(name, columns) {
+			$.post(
+			    settings.preferencesUrl, 
+			    {action: 'addTab', tabName: name, columns: columns}, 
+			    function(data) {
+			        window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + ($("#portalNavigationList > li").length + 1);
+			    },
+			    "xml"
+			);
 		};
 		var deleteTab = function() {
 			if (!confirm(settings.messages.confirmRemoveTab)) return false;
@@ -502,7 +506,69 @@
 			return false;
 		};
 		
-		var handleServerError = function(xml) {
+        var initializeSubscribeTabMenu = function() {
+            initializeChangeColumns();
+            $("#subscribeTabTabs").tabs();
+            if (settings.subscriptionsSupported == 'true') {
+                uportal.FragmentBrowser($("#subscribeTab-tab-1"), 
+                    {
+                        fragmentServiceUrl: "mvc/tabList",
+                        listeners: { 
+                            onFragmentSelect: function(fragment) {
+                                var tab = $("#portalNavigation_" + settings.tabId);
+                                var tabPosition = 1;
+                                var targetId = null;
+                                // figure out what the current tab's number is
+                                $("[id*=portalNavigation_]").each(function(i){
+                                    if ($(this).attr("id") == tab.attr("id"))tabPosition = i+1;
+                                    targetId = $(this).attr("id").split("_")[1];
+                                });
+            
+                                var subscribeToTabVal = $("#subscribeTabId").val();
+                                $.post(settings.preferencesUrl, {action: "subscribeToTabs" ,sourceID: fragment.ownerID,method: 'appendAfter', tabPosition: tabPosition, elementID: targetId  }, function(xml) {
+                                    window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
+                                            ($("#portalNavigationList > li").length + 1);
+                                });
+                            }
+                        }
+                    }
+                );
+                $("#subscribeTabLoading").css("display", "none");
+            } else {
+                if ($("#subscribeTabTabs").tabs('length') > 1) $("#subscribeTabTabs").tabs('remove',0);
+            }
+        
+            // using defaultChecked attribute to compensate for IE radio button bug
+            $("#subscribeTabDialog").dialog({ width:500, modal:true });
+            $("#addTabLink")
+                .unbind('click', initializeSubscribeTabMenu)
+                .click(function(){
+                    $("#subscribeTabDialog").dialog('open');
+                 });
+                
+            $("#subscribeTab-tab-2 form").submit(function(){
+                var form = $(this);
+                var name = form.find(".page-name-input").val();
+                var layout = form.find("input[name='layoutChoice']").filter(":checked").val();
+                var columns = layout.split("-");
+                addTab(name, columns);
+                return false;
+            });
+
+        };
+        
+        var initializeChangeColumns=function() {
+            // using defaultChecked attribute to compensate for IE radio button bug
+            $("#pageLayoutDialog .changeColumns").find("img")
+            .click(function(){
+                $("#pageLayoutDialog .changeColumns").find("input").removeAttr("checked").attr("defaultChecked");
+                $(this).prev().attr("checked", "checked").attr("defaultChecked","defaultChecked");
+            })
+            .end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
+
+        }
+
+        var handleServerError = function(xml) {
 		    alert($("message", xml).text());
 		};
 

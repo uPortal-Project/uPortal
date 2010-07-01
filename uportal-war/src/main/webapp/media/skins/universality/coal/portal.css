@@ -408,3 +408,5 @@ html,
 .up #categorySelectMenu,
 .up #channelSelectMenu {color:#fff !important;}
 .up #skinList p {color:#000 !important;}
+
+.fragment-disabled, .fragment-disabled h2.fragment-title { color: #666; }

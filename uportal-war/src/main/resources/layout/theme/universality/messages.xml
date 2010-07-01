@@ -196,6 +196,9 @@
         <token name="AJAX_PORTAL_DROP_WARNING_MESSAGE">This portlet cannot be moved here. The portlet underneath is locked.</token>
         <token name="AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE">Are you sure you want to remove this tab?</token>
         <token name="AJAX_REMOVE_PORTLET_CONFIRMATION_MESSAGE">Are you sure you want to remove this portlet?</token>
+
+        <token name="AJAX_ADD_TAB_SUBSCRIBE_TAB_TITLE">Pre-made</token>
+        <token name="AJAX_ADD_TAB_CUSTOM_TAB_TITLE">Custom</token>
         
         <!-- Column Width Adjustments -->
         <token name="WIDTH_INCREMENT_TITLE">Expand this column by 5%</token>

@@ -153,6 +153,7 @@
   <xsl:param name="USER_ID">guest</xsl:param>
   <xsl:param name="userName">Guest User</xsl:param>
   <xsl:param name="USER_NAME"><xsl:value-of select="$userName"/></xsl:param>
+  <xsl:param name="subscriptionsSupported">true</xsl:param>
   <xsl:param name="uP_productAndVersion">uPortal</xsl:param>
   <xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>

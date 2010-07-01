@@ -354,3 +354,5 @@
 .up :focus{outline-width:0px;}
 .up .fl-reorderer-movable-selected:focus,
 .up .fl-reorderer-movable-dragging:focus {outline: 2px solid #f68922;}
+
+.fragment-disabled, .fragment-disabled h2.fragment-title { color: #666; }

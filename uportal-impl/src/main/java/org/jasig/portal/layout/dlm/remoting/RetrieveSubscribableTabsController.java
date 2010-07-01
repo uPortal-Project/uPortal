@@ -1,0 +1,177 @@
+package org.jasig.portal.layout.dlm.remoting;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
+import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
+import org.jasig.portal.layout.dlm.ConfigurationLoader;
+import org.jasig.portal.layout.dlm.FragmentDefinition;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * Returns JSON representing the list of subscribable fragments for the 
+ * currently-authenticated user.
+ * 
+ * @author Mary Hunt
+ * @author Jen Bourey
+ * @version $Revision$ $Date$
+ */
+@Controller
+@RequestMapping("/tabList")
+public class RetrieveSubscribableTabsController {
+
+	@Autowired
+	@Qualifier("userInstanceManager")
+	private IUserInstanceManager userInstanceManager;
+	
+	public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+	    this.userInstanceManager = userInstanceManager;
+	}
+	
+	private IUserFragmentSubscriptionDao userFragmentSubscriptionDao;
+	
+    @Autowired(required = true)
+	public void setUserFragmentSubscriptionDao(IUserFragmentSubscriptionDao userFragmentSubscriptionDao) {
+	    this.userFragmentSubscriptionDao = userFragmentSubscriptionDao;
+	}
+	
+    @Autowired
+    @Qualifier("dlmConfigurationLoader")
+    private ConfigurationLoader configurationLoader;
+    
+	@RequestMapping("/tabList")
+	public ModelAndView getSubscriptionList(HttpServletRequest request)  {
+
+	    Map<String, Object> model = new HashMap<String, Object>();
+	    
+	    /**
+	     * Retrieve the IPerson and IAuthorizationPrincipal for the currently
+	     * authenticated user
+	     */
+	    
+        IUserInstance userInstance = userInstanceManager.getUserInstance(request);
+        IPerson person = userInstance.getPerson();
+        AuthorizationService authService = AuthorizationService.instance();
+        IAuthorizationPrincipal principal = authService.newPrincipal(person.getUserName(), IPerson.class);
+    	
+        /**
+         * Build a collection of owner IDs for the fragments to which the 
+         * authenticated user is subscribed
+         */
+
+        // get the list of current subscriptions for this user
+        List<IUserFragmentSubscription> subscriptions = userFragmentSubscriptionDao
+                .getUserFragmentInfo(person);
+        
+        // transform it into the set of owners
+    	Set<String> subscribedOwners = new HashSet<String>();
+    	for (IUserFragmentSubscription subscription : subscriptions){
+    	    if (subscription.isActive()) {
+                subscribedOwners.add(subscription.getFragmentOwner());
+    	    }
+    	}
+    	
+    	/**
+    	 * Iterate through the list of all currently defined DLM fragments and
+    	 * determine if the current user has permissions to subscribe to each.
+    	 * Any subscribable fragments will be transformed into a JSON-friendly
+    	 * bean and added to the model.
+    	 */
+
+        final List<SubscribableFragment> jsonFragments = new ArrayList<SubscribableFragment>();
+
+    	// get the list of fragment definitions from DLM
+        final List<FragmentDefinition> fragmentDefinitions = configurationLoader.getFragments();
+
+        // iterate through the list
+        for (FragmentDefinition fragmentDefinition : fragmentDefinitions) {
+            String owner = fragmentDefinition.getOwnerId();
+            
+            // check to see if the current user has permission to subscribe to
+            // this fragment
+            if (principal.hasPermission("UP_FRAGMENT", "FRAGMENT_SUBSCRIBE", owner)) {
+                
+                // create a JSON fragment bean and add it to our list
+                boolean subscribed = subscribedOwners.contains(owner);
+                SubscribableFragment jsonFragment = new SubscribableFragment(
+                        fragmentDefinition.getName(), 
+                        fragmentDefinition.getDescription(), owner, subscribed);
+                jsonFragments.add(jsonFragment);
+            }
+            
+        }
+
+        model.put("fragments", jsonFragments);
+        	
+		return new ModelAndView("jsonView", model);
+		
+	}
+
+	/**
+	 * Convenience class for representing fragment information in JSON
+	 */
+    public class SubscribableFragment {
+        
+        private String name = null;
+        private String ownerID = null;
+        private String description;
+        private boolean subscribed;
+        
+        public SubscribableFragment(String name, String description, String ownerId, boolean subscribed) {
+            this.name = name;
+            this.description = description;
+            this.ownerID = ownerId;
+            this.subscribed = subscribed;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getOwnerID() {
+            return ownerID;
+        }
+
+        public void setOwnerID(String ownerID) {
+            this.ownerID = ownerID;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public boolean isSubscribed() {
+            return subscribed;
+        }
+
+        public void setSubscribed(boolean subscribed) {
+            this.subscribed = subscribed;
+        }
+        
+    }
+
+}

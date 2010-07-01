@@ -51,6 +51,7 @@
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" />
+        <mapping class="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
         
         <class-cache class="org.jasig.portal.layout.dlm.Evaluator" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl" usage="nonstrict-read-write"/>

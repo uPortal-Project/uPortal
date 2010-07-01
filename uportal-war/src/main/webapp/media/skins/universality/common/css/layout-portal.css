@@ -336,3 +336,5 @@ table.purpose-layout td {margin:0; padding:0;}
 #skinList {margin-bottom:1.5em;}
 #skinList h2 {display:inline; margin-left:0.5em;}
 #skinList .fl-widget-content {padding:1em;}
+
+.fragment-disabled .add-fragment-link { display:none }

@@ -63,6 +63,7 @@
   <js>../common/javascript/uportal/ajax-preferences-jquery.js</js>
   <js>../common/javascript/uportal/search.js</js>
   <js>../common/javascript/uportal/up-channel-browser.js</js>
+  <js>../common/javascript/uportal/up-subscription-browser.js</js>
   <js>../common/javascript/uportal/up-group-browser.js</js>
   <js>../common/javascript/uportal/flyout-nav.js</js>
   <js>../common/javascript/jquery.tokeninput.js</js>

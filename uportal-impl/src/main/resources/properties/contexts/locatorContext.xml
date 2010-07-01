@@ -153,4 +153,10 @@
         class="org.jasig.portal.spring.locator.UserIdentityStoreLocator">
         <!--  autowired -->
     </bean>
+    
+    <bean id="org.jasig.portal.spring.locator.UserFragmentSubscriptionDaoLocator" 
+        class="org.jasig.portal.spring.locator.UserFragmentSubscriptionDaoLocator">
+        <!--  autowired -->
+    </bean>
+    
 </beans>

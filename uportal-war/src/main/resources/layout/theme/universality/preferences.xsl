@@ -111,17 +111,89 @@
        <button id="previewChannelLink" class="portlet-form-button"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_USE_BUTTON']"/></button>&#160;
       </p>
      </div>
-     
+
+     <div id="subscribeTabDialog" title="{$TOKEN[@name='PREFERENCES_ADD_TAB_LABEL']}">
+      <div id="subscribeTabTabs">
+       <ul>
+        <li><a href="#subscribeTab-tab-1"><span><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_SUBSCRIBE_TAB_TITLE']"/></span></a></li>
+        <li><a href="#subscribeTab-tab-2"><span><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_CUSTOM_TAB_TITLE']"/></span></a></li>
+       </ul>
+       <div id="subscribeTab-tab-1">
+         <h4 id="subscribeTabLoading"><xsl:value-of select="$TOKEN[@name='AJAX_LOADING_TAB_LIST']"/></h4>
+         <div class="fragment-container">
+             <div class="fragment-choice fl-widget">
+                <div class="fl-widget-titlebar">
+        			<h2 class="fragment-title"></h2>
+                </div>
+                <div class="fl-widget-content">
+                    <p class="fragment-description"></p>
+                    <p><a class="add-fragment-link" href="javascript:;">add</a></p>
+                </div>
+             </div>
+         </div>
+         <p>
+         If a selection is grayed out, it is already included in your layout.
+         </p>
+       </div>
+       <div id="subscribeTab-tab-2">     
+         <xsl:call-template name="layoutForm"/>
+       </div>
+      </div>
+      </div>
+           
      <div id="pageLayoutDialog" title="{$TOKEN[@name='AJAX_EDIT_PAGE_DIALOG_TITLE']}">
+         <xsl:call-template name="layoutForm"/>
+     </div>	
+  
+     <div id="skinChoosingDialog" title="{$TOKEN[@name='AJAX_SELECT_SKIN_DIALOG_TITLE']}">
+      <form>
+       <h4 id="skinLoading"><xsl:value-of select="$TOKEN[@name='AJAX_SELECT_SKIN_LOADING_MESSAGE']"/></h4>
+       <p class="portlet-form-label">
+        <xsl:value-of select="$TOKEN[@name='AJAX_SELECT_SKIN_TITLE']"/>
+       </p>
+       <div id="skinList"></div>
+       <p>
+        <input type="submit" value="{$TOKEN[@name='AJAX_SELECT_SKIN_SUBMIT_BUTTON']}" class="portlet-form-button"/>&#160;
+       </p>
+      </form>
+     </div>
+     
+     <div id="portalDropWarning" style="display:none;">
+      <p><xsl:value-of select="$TOKEN[@name='AJAX_PORTAL_DROP_WARNING_MESSAGE']"/></p>
+     </div>
+     
+    </div>
+    <script type="text/javascript">
+       up.jQuery(document).ready(function(){
+          up.jQuery.uportal.UportalLayoutManager(
+            {
+              portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
+              mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',
+              currentSkin: '<xsl:value-of select="$SKIN"/>',
+              subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
+              messages: { 
+                  confirmRemoveTab: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE']"/>', 
+                  confirmRemovePortlet: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_PORTLET_CONFIRMATION_MESSAGE']"/>' 
+              }
+            }
+          );
+       });
+    </script>
+      
+   </xsl:when>
+  </xsl:choose>
+ </xsl:template>
+ 
+ <xsl:template name="layoutForm">
       <form>
       <p>
-       <label for="pageName" class="portlet-form-label"><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_PAGE_NAME']"/></label><br/>
-       <input id="pageName" name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
+       <label class="portlet-form-label"><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_PAGE_NAME']"/></label><br/>
+       <input class="page-name-input" name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
       </p>
       <hr/>
       <fieldset>
        <legend><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_PAGE_LAYOUT']"/></legend>
-       <table id="changeColumns" style="width: 100%">
+       <table class="changeColumns" style="width: 100%">
         <tr>
          <td><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_COLUMN_TITLE_1']"/></td>
          <td><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_COLUMN_TITLE_2']"/></td>
@@ -171,44 +243,6 @@
        </fieldset>
        <input type="submit" value="{$TOKEN[@name='AJAX_EDIT_PAGE_SUBMIT_BUTTON']}" class="portlet-form-button"/>
       </form>
-     </div>	
-  
-     <div id="skinChoosingDialog" title="{$TOKEN[@name='AJAX_SELECT_SKIN_DIALOG_TITLE']}">
-      <form>
-       <h4 id="skinLoading"><xsl:value-of select="$TOKEN[@name='AJAX_SELECT_SKIN_LOADING_MESSAGE']"/></h4>
-       <p class="portlet-form-label">
-        <xsl:value-of select="$TOKEN[@name='AJAX_SELECT_SKIN_TITLE']"/>
-       </p>
-       <div id="skinList"></div>
-       <p>
-        <input type="submit" value="{$TOKEN[@name='AJAX_SELECT_SKIN_SUBMIT_BUTTON']}" class="portlet-form-button"/>&#160;
-       </p>
-      </form>
-     </div>
-     
-     <div id="portalDropWarning" style="display:none;">
-      <p><xsl:value-of select="$TOKEN[@name='AJAX_PORTAL_DROP_WARNING_MESSAGE']"/></p>
-     </div>
-     
-    </div>
-    <script type="text/javascript">
-       up.jQuery(document).ready(function(){
-          up.jQuery.uportal.UportalLayoutManager(
-            {
-              portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
-              mediaPath: '<xsl:value-of select="$MEDIA_PATH"/>',
-              currentSkin: '<xsl:value-of select="$SKIN"/>',
-              messages: { 
-                  confirmRemoveTab: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE']"/>', 
-                  confirmRemovePortlet: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_PORTLET_CONFIRMATION_MESSAGE']"/>' 
-              }
-            }
-          );
-       });
-    </script>
-      
-   </xsl:when>
-  </xsl:choose>
- </xsl:template>
+   </xsl:template>
  
 </xsl:stylesheet>

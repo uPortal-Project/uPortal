@@ -26,39 +26,58 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.IChannelRegistryStore;
+import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
+import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
+import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
+import org.jasig.portal.layout.dlm.Constants;
+import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.UserPrefsHandler;
+import org.jasig.portal.layout.dlm.providers.AttributeEvaluator;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonFactory;
+import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.url.PortalHttpServletRequestWrapper;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Provides targets for AJAX preference setting calls.
@@ -66,27 +85,44 @@ import org.w3c.dom.Element;
  * @author jennifer.bourey@yale.edu
  * @version $Revision$ $Date$
  */
-public class UpdatePreferencesServlet extends HttpServlet {
+@Controller
+@RequestMapping("/layout")
+public class UpdatePreferencesServlet implements InitializingBean {
 
-	Log log = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 
-	private static IUserLayoutStore ulStore = UserLayoutStoreFactory
+	private IUserLayoutStore ulStore = UserLayoutStoreFactory
 			.getUserLayoutStoreImpl();
+
+    private IUserIdentityStore userStore;
+
+    @Autowired(required = true)
+    public void setUserIdentityStore(IUserIdentityStore userStore) {
+        this.userStore = userStore;
+    }
+    
+    private IUserFragmentSubscriptionDao userFragmentInfoDao;
+    
+    @Autowired(required = true)
+    public void setUserFragmentInfoDao(IUserFragmentSubscriptionDao userFragmentInfoDao) {
+        this.userFragmentInfoDao = userFragmentInfoDao;
+    }
+    
+    private IUserInstanceManager userInstanceManager;
+    
+    @Autowired(required = true)
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        this.userInstanceManager = userInstanceManager;
+    }
 
 	// default tab name
 	protected final static String BLANK_TAB_NAME = "New Tab";
 	protected final static String ACTIVE_TAB_PARAM = "activeTab";
-	
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// POST requests are not supported due to security considerations
-		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-	}
 
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
+    @RequestMapping(method = RequestMethod.POST)
+	public void updatePreferences(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-	    IUserInstanceManager userInstanceManager = null;
 	    IUserInstance ui = null;
 		IPerson per = null;
 		UserPreferencesManager upm = null;
@@ -100,9 +136,6 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		}
 
 		try {
-            final WebApplicationContext applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletContext());
-            userInstanceManager = (IUserInstanceManager) applicationContext.getBean("userInstanceManager", IUserInstanceManager.class);
-
             
 			// Retrieve the user's UserInstance object
 			ui = userInstanceManager.getUserInstance(request);
@@ -170,21 +203,13 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			} else if (action.equals("chooseSkin")) {
 				
 				chooseSkin(per, upm, ulm, request, response);
-				
+
+            } else if (action.equals("subscribeToTabs")) {
+                subscribeToTab(request, response, per, upm, ulm,
+                        userFragmentInfoDao);
+
 			} else if (action.equals("removeElement")) {
-
-				// Delete the requested element node.  This code is the same for 
-				// all node types, so we can just have a generic action.
-				String elementId = request.getParameter("elementID");
-				ulm.deleteNode(elementId);
-				try {
-					saveUserLayoutPreservingTab(ulm, upm, per);
-				} catch (Exception e) {
-					log.warn("Error saving layout", e);
-				}
-
-				printSuccess(response, "Removed element", null);
-
+			    removeElement(request, response, per, upm, ulm);
 			}
 
 		} catch (RuntimeException e) {
@@ -195,6 +220,254 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 	}
 
+    private void removeElement(HttpServletRequest request,
+            HttpServletResponse response, IPerson per,
+            UserPreferencesManager upm, IUserLayoutManager ulm)
+            throws IOException {
+        
+        // if the element ID starts with the fragment prefix and is a folder, 
+        // attempt first to treat it as a pulled fragment subscription
+        String elementId = request.getParameter("elementID");
+        if (elementId != null && elementId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX) && 
+                ulm.getNode( elementId ) instanceof org.jasig.portal.layout.node.UserLayoutFolderDescription) {
+            
+            // get the fragment owner's ID from the element string
+            String userIdString = StringUtils.substringBetween(elementId, Constants.FRAGMENT_ID_USER_PREFIX, Constants.FRAGMENT_ID_LAYOUT_PREFIX);
+            int userId = NumberUtils.toInt(userIdString,0);
+            
+            // construct a new person object reqpresenting the fragment owner
+            RestrictedPerson fragmentOwner = PersonFactory.createRestrictedPerson();
+            fragmentOwner.setID(userId);
+            fragmentOwner.setUserName(userStore.getPortalUserName(userId));
+            
+            // attempt to find a subscription for this fragment
+            IUserFragmentSubscription subscription = userFragmentInfoDao.getUserFragmentInfo(per, fragmentOwner);
+            
+            // if a subscription was found, remove it's registration
+            if (subscription != null) {
+                userFragmentInfoDao.deleteUserFragmentInfo(subscription);
+                ulm.loadUserLayout(true);
+            } 
+            
+            // otherwise, delete the node
+            else {
+                ulm.deleteNode(elementId);
+            }
+            
+        } else {
+            // Delete the requested element node.  This code is the same for 
+            // all node types, so we can just have a generic action.
+           ulm.deleteNode(elementId);
+        }
+        try {
+            saveUserLayoutPreservingTab(ulm, upm, per);
+        } catch (Exception e) {
+            log.warn("Error saving layout", e);
+        }
+
+        printSuccess(response, "Removed element", null);
+    }
+	   /**
+     * sets the fragment owner user name, and inactivates the subscription in the
+     * database and removes it from the in-memory person attributes
+     * @param per the logged in user
+     * @param subscriptionAttributes fragment owner subscription attributes
+     * @param fragmentOwner the fragment owner
+     * @param userName the fragment owner username
+     */
+    private void removeSubscription(IPerson per,
+            List<Object> subscriptionAttributes,
+            RestrictedPerson fragmentOwner, String userName) {
+        fragmentOwner.setUserName(userName);
+        updateSubciptionInfo(per, userFragmentInfoDao, fragmentOwner,false);    
+        subscriptionAttributes.remove(fragmentOwner.getUserName());
+        per.setAttribute("fragmentOwner", subscriptionAttributes);
+    }
+
+
+    /**
+     * Subscribes a user to a pre-formatted tab. The steps are:
+     * 1.  Tests to see whether the sourceID is already applicable to the person.  If true, no further action is required
+     *     since the a fragment may only be subscribed to once
+     * 2.  Adds the attribute to the person "fragmentOwner" attribute list 
+     * 3.  Adds the new attribute to the user's fragmentInfo if it is new, or updates the active flag if it already exists for the user in the database
+     * 4.  Forces a reload of the user preferences so that the new fragment will be pushed when the page refreshes
+     * 5.  Moves the new tab to the last tab position for the user and sets it to the selected tab position
+     * @param request the http servlet request must contain parameter "sourceID" with the value of a fragment owner name
+     * @param response the http servlet response
+     * @param per the logged in person
+     * @param upm the user preferences manager
+     * @param ulm the user layout manager
+     * @param userFragmentInfoDao
+     */
+    @SuppressWarnings("unchecked")
+    private void subscribeToTab(HttpServletRequest request,
+            HttpServletResponse response, IPerson per,
+            UserPreferencesManager upm, IUserLayoutManager ulm,
+            IUserFragmentSubscriptionDao userFragmentInfoDao) {
+        String subscriptionAttr = request.getParameter("sourceID");
+        if (StringUtils.isNotBlank(subscriptionAttr)) { 
+                List<Object> subscriptionAttributes = getAttributeList(per);
+                subscriptionAttributes.add(subscriptionAttr);
+                per.setAttribute("fragmentOwner", subscriptionAttributes);
+
+            
+                RestrictedPerson fragmentOwner = PersonFactory
+                        .createRestrictedPerson();
+                fragmentOwner.setUserName(subscriptionAttr);
+                updateSubciptionInfo(per, userFragmentInfoDao, fragmentOwner,true);
+                UserProfile currentProfile = upm.getUserPreferences()
+                        .getProfile();
+                int profileID = currentProfile.getProfileId();
+                int structID = currentProfile.getStructureStylesheetId();
+                // get the active tab number from the store so that we can
+                // preserve it
+                StructureStylesheetUserPreferences ssup = null;
+                try {
+                    ssup = ulStore.getStructureStylesheetUserPreferences(per,
+                            profileID, structID);
+                    StructureStylesheetUserPreferences origSsup = upm
+                            .getUserPreferences()
+                            .getStructureStylesheetUserPreferences();
+
+                    String currentTab = ssup
+                            .getParameterValue(ACTIVE_TAB_PARAM);
+
+                    ssup.putParameterValue(ACTIVE_TAB_PARAM, currentTab);
+                    upm.getUserPreferences()
+                            .setStructureStylesheetUserPreferences(ssup);
+                    ulm.loadUserLayout(true);
+
+                    moveSubscribedTab(per, upm, ulm, fragmentOwner, request,
+                            response);
+                } catch (Exception e) {
+                    log.warn("Error subscribing to fragment owned by "
+                            + subscriptionAttr, e);
+                }
+
+        }
+    }
+
+    /**
+     * Move a tab left or right.
+     * 
+     * @param per
+     * @param upm
+     * @param ulm
+     * @param request
+     * @param response
+     * @throws PortalException
+     * @throws IOException
+     */
+    private void moveSubscribedTab(IPerson per, UserPreferencesManager upm,
+            IUserLayoutManager ulm, IPerson fragmentOwner, HttpServletRequest request,
+            HttpServletResponse response) throws PortalException, IOException, Exception {
+
+        // gather the parameters we need to move a channel
+        String destinationId = request.getParameter("elementID");
+        String subscriptionAttr = request.getParameter("sourceID");
+        String method = request.getParameter("method");
+        String tabPosition = request.getParameter("tabPosition");
+        int uid = userStore.getPortalUID(fragmentOwner, false);
+        Document userLayout = ulStore.getUserLayout(per, upm.getUserPreferences().getProfile());
+        NodeList  nodes = null;
+        try
+        {
+                StringBuilder expression = new StringBuilder("//folder[@type='root']/folder[starts-with(@ID,'")
+                                           .append(Constants.FRAGMENT_ID_USER_PREFIX)
+                                           .append(uid)
+                                           .append("')]");
+                XPathFactory fac = XPathFactory.newInstance();
+                XPath xpath = fac.newXPath();
+                nodes = (NodeList) xpath.evaluate(expression.toString(), userLayout,  XPathConstants.NODESET);
+                // If we're moving this element before another one, we need
+                // to know what the target is. If there's no target, just
+                // assume we're moving it to the very end of the list.
+                String siblingId = null;
+                if (method.equals("insertBefore"))
+                    siblingId = destinationId;
+
+                // move the node as requested and save the layout
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    String sourceId = nodes.item(i).getAttributes().getNamedItem("ID").getTextContent();
+                    ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId);
+                }
+
+                    StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
+                            .getStructureStylesheetUserPreferences();
+
+                    try {
+                        String currentTab = ssup.getParameterValue(ACTIVE_TAB_PARAM);
+                        UserProfile currentProfile = upm.getUserPreferences().getProfile();
+                        int profileID = currentProfile.getProfileId();
+                        int structID = currentProfile.getStructureStylesheetId();
+                        // get the active tab number from the store so that we can preserve it
+                        String defaultTab = ulStore.getStructureStylesheetUserPreferences(per, profileID, structID).getParameterValue(ACTIVE_TAB_PARAM);
+                        // set the active tab to previously recorded value
+                        if (defaultTab.equals(currentTab)) {
+                            ssup.putParameterValue(ACTIVE_TAB_PARAM, tabPosition);
+                        }
+                        else {
+                            ssup.putParameterValue(ACTIVE_TAB_PARAM, defaultTab);
+                        }
+                        // This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
+                        ulStore.setStructureStylesheetUserPreferences(per, profileID, ssup);
+                    } catch (Exception e) {
+                        log.error(e);
+                    }
+
+                    ulm.saveUserLayout();
+
+                    // reset the active tab for viewing (not default)
+                    ssup.putParameterValue(ACTIVE_TAB_PARAM, tabPosition);
+
+                    printSuccess(response, "Saved new tab position", null);
+
+                
+        } catch (XPathExpressionException e) {
+            log.error("Error searching for fragments owned by "+ subscriptionAttr, e);
+        }
+
+
+        
+    }
+    
+    /**
+     * Update the user fragment info. If the record does not exist in the database
+     * it will be created, if the active flag is set to true.  If the record
+     * already exists in the database, the active flag will be updated.
+     * @param per
+     * @param userFragmentInfoDao
+     * @param fragmentOwner
+     * @param activeFlag
+     */
+    private void updateSubciptionInfo(IPerson per,
+            IUserFragmentSubscriptionDao userFragmentInfoDao,
+            RestrictedPerson fragmentOwner, boolean activeFlag) {
+        IUserFragmentSubscription userFragmentInfo = userFragmentInfoDao
+                .getUserFragmentInfo(per, fragmentOwner);
+        if (userFragmentInfo == null) {
+            if (activeFlag) {
+                userFragmentInfo = userFragmentInfoDao.createUserFragmentInfo(per, fragmentOwner);
+            }
+        } else {
+            userFragmentInfo.setActive(activeFlag);
+            userFragmentInfoDao
+                    .updateUserFragmentInfo(userFragmentInfo);
+        }
+    }
+
+
+    private List<Object> getAttributeList(IPerson per) {
+        Object[] subscriptionAttributeArray = per.getAttributeValues("fragmentOwner");
+        List<Object> subscriptionAttributes = new ArrayList();
+        if (subscriptionAttributeArray !=  null) {
+            for (Object attr : subscriptionAttributeArray ){
+                subscriptionAttributes.add(attr);
+            }
+        }
+        return subscriptionAttributes;
+    }
 	/**
 	 * Move a portlet to another location on the tab.
 	 * 
@@ -295,6 +568,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		String[] newcolumns = request.getParameterValues("columns[]");
 		int columnNumber = newcolumns.length;
 		String tabId = request.getParameter("tabId");
+        if (tabId ==  null) tabId = (String)request.getAttribute("tabId");
 		Enumeration columns = ulm.getChildIds(tabId);
 		List<String> columnList = new ArrayList<String>();
 		while (columns.hasMoreElements()) {
@@ -676,7 +950,8 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 		// construct a brand new tab
 		String id = "tbd";
-		String tabName = BLANK_TAB_NAME;
+        String tabName = request.getParameter("tabName");
+        if (StringUtils.isBlank(tabName)) tabName = BLANK_TAB_NAME;
 		IUserLayoutFolderDescription newTab = new UserLayoutFolderDescription();
 		newTab.setName(tabName);
 		newTab.setId(id);
@@ -714,8 +989,8 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			log.warn("Error saving layout", e);
 		}
 
-		printSuccess(response, "Added new tab", "<newNodeId>" + nodeId
-				+ "</newNodeId>");
+        request.setAttribute("tabId", nodeId);
+        changeColumns(per, upm, ulm, request, response);
 
 	}
 
@@ -884,5 +1159,10 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		response.getWriter().print("</status>");
 		response.getWriter().print("</response>");
 	}
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        ulStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+    }
 
 }
