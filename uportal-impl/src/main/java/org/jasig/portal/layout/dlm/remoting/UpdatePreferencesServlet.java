@@ -292,7 +292,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			IUserLayoutManager ulm, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, PortalException {
 
-		String[] newcolumns = request.getParameterValues("columns");
+		String[] newcolumns = request.getParameterValues("columns[]");
 		int columnNumber = newcolumns.length;
 		String tabId = request.getParameter("tabId");
 		Enumeration columns = ulm.getChildIds(tabId);
