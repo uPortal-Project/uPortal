@@ -121,6 +121,15 @@ public class UrlBuilder implements Serializable, Cloneable {
         return t == null ? null : new ArrayList<T>(Arrays.asList(t));
     }
     
+    protected String encode(String s) {
+        try {
+            return URLEncoder.encode(s, this.encoding);
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("Encoding '" + this.encoding + "' is not supported. This should have been caught in the consructor.", e);
+        }
+    }
+    
     /**
      * Sets a URL parameter, replacing any existing parameter with the same name.
      * 
@@ -266,6 +275,18 @@ public class UrlBuilder implements Serializable, Cloneable {
         this.addPath(elements);
         return this;
     }
+    
+    /**
+     * Adds a single element to the path.
+     * 
+     * @param element The element to add
+     * @return this
+     */
+    public UrlBuilder addPath(String element) {
+        Validate.notNull(element, "element cannot be null");
+        this.path.add(element);
+        return this;
+    }
 
     /**
      * Adds the provided elements to the path
@@ -344,13 +365,8 @@ public class UrlBuilder implements Serializable, Cloneable {
                 String name = paramEntry.getKey();
                 final List<String> values = paramEntry.getValue();
 
-                try {
-                    name = URLEncoder.encode(name, this.encoding);
-                }
-                catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException("Encoding '" + this.encoding + "' is not supported", e);
-                }
-
+                name = this.encode(name);
+                
                 if (values == null || values.size() == 0) {
                     url.append(name).append("=");
                 }
@@ -361,13 +377,7 @@ public class UrlBuilder implements Serializable, Cloneable {
                             value = "";
                         }
 
-                        try {
-                            value = URLEncoder.encode(value, this.encoding);
-                        }
-                        catch (UnsupportedEncodingException e) {
-                            throw new RuntimeException("Encoding '" + this.encoding + "' is not supported", e);
-                        }
-
+                        value = this.encode(value);
                         url.append(name).append("=").append(value);
                         
                         if (valueItr.hasNext()) {

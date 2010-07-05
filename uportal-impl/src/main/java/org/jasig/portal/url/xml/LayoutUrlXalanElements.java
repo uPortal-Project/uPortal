@@ -61,7 +61,9 @@ public class LayoutUrlXalanElements extends BaseUrlXalanElements<ILayoutPortalUr
         url.setAction(Boolean.parseBoolean(action));
         
         final String renderInNormal = elem.getAttribute("renderInNormal", contextNode, transformer);
-        url.setRenderInNormal(Boolean.parseBoolean(renderInNormal));
+        if (Boolean.parseBoolean(renderInNormal)) {
+            url.renderInNormal();
+        }
     }
 
     /* (non-Javadoc)

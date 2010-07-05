@@ -43,11 +43,31 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         super(m);
     }
     
-    public static Map<String, List<String>> convertParameterMap(Map<String, String[]> parameterMap) {
+    public Map<String, List<String>> toListMap() {
+        return convertArrayMap(this);
+    }
+    
+    public static Map<String, List<String>> convertArrayMap(Map<String, String[]> parameterMap) {
         final Map<String, List<String>> newMap = new LinkedHashMap<String, List<String>>();
         
         for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
             newMap.put(parameterEntry.getKey(), Arrays.asList(parameterEntry.getValue()));
+        }
+        
+        return newMap;
+    }
+    
+    public static ParameterMap convertListMap(Map<String, List<String>> parameterMap) {
+        final ParameterMap newMap = new ParameterMap();
+        
+        for (final Map.Entry<String, List<String>> parameterEntry : parameterMap.entrySet()) {
+            final List<String> values = parameterEntry.getValue();
+            if (values == null) {
+                newMap.put(parameterEntry.getKey(), null); 
+            }
+            else {
+                newMap.put(parameterEntry.getKey(), values.toArray(new String[values.size()]));   
+            }
         }
         
         return newMap;

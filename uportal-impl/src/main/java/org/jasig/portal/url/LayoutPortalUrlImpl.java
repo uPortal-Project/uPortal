@@ -7,10 +7,9 @@ package org.jasig.portal.url;
 
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,8 +25,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 class LayoutPortalUrlImpl extends AbstractPortalUrl implements ILayoutPortalUrl {
     private final String targetFolderId;
-    protected final ConcurrentMap<String, List<String>> layoutParameters = new ConcurrentHashMap<String, List<String>>();
-    private Boolean renderInNormal = null;
+    protected final Map<String, List<String>> layoutParameters = new LinkedHashMap<String, List<String>>();
+    private boolean renderInNormal = false;
     private boolean action = false;
     
     public LayoutPortalUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, String targetFolderId) {
@@ -40,15 +39,15 @@ class LayoutPortalUrlImpl extends AbstractPortalUrl implements ILayoutPortalUrl 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.ILayoutPortalUrl#isRenderInNormal()
      */
-    public Boolean isRenderInNormal() {
+    public boolean isRenderInNormal() {
         return this.renderInNormal;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.ILayoutPortalUrl#setRenderInNormal(boolean)
+     * @see org.jasig.portal.url.ILayoutPortalUrl#renderInNormal()
      */
-    public void setRenderInNormal(Boolean renderInNormal) {
-        this.renderInNormal = renderInNormal;
+    public void renderInNormal() {
+        this.renderInNormal = true;
     }
     
     public Map<String, List<String>> getLayoutParameters() {

@@ -21,14 +21,14 @@ import java.util.Map;
  */
 public interface ILayoutPortalUrl extends IBasePortalUrl {
     /**
-     * @param renderInNormal If the URL will result in rendering in {@link UrlState#NORMAL}
+     * If called the URL will result in rendering in {@link UrlState#NORMAL}
      */
-    public void setRenderInNormal(Boolean renderInNormal);
+    public void renderInNormal();
     
     /**
-     * @return Returns true if the URL will render in {@link UrlState#NORMAL}
+     * @return Returns true if the URL will render in {@link UrlState#NORMAL} If false the current {@link UrlState} should be used.
      */
-    public Boolean isRenderInNormal();
+    public boolean isRenderInNormal();
     
     /**
      * @param action Set true if the request should be an action.

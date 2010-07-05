@@ -87,6 +87,8 @@ import org.jasig.portal.tools.versioning.Version;
 import org.jasig.portal.tools.versioning.VersionsManager;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletRequestInfo;
+import org.jasig.portal.url.UrlType;
 import org.jasig.portal.url.xml.BaseUrlXalanElements;
 import org.jasig.portal.url.xml.PortletUrlXalanElements;
 import org.jasig.portal.user.IUserInstance;
@@ -259,12 +261,13 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         
         
         //final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(req);
-        final IPortletWindowId targetedPortletWindowId = requestInfo.getTargetedPortletWindowId();
-        if (targetedPortletWindowId != null) {
+        final IPortletRequestInfo portletRequestInfo = requestInfo.getPortletRequestInfo();
+        if (portletRequestInfo != null) {
             //final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(req, targetedPortletWindowId);
             
-            if (requestInfo.isAction()) {
-                final IPortletEntity targetedPortletEntity = this.portletWindowRegistry.getParentPortletEntity(req, targetedPortletWindowId);
+            if (UrlType.ACTION == requestInfo.getUrlType()) {
+                final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
+                final IPortletEntity targetedPortletEntity = this.portletWindowRegistry.getParentPortletEntity(req, targetWindowId);
                 if (targetedPortletEntity != null) {
                     /*
                      * TODO should this work via window IDs or entityIDs? Probably both once action handling is moved out of the
@@ -272,14 +275,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                      */
                     this.portletExecutionManager.doPortletAction(targetedPortletEntity.getPortletEntityId(), req, res);
                     return;
-//                    final boolean actionExecuted = channelManager.doChannelAction(req, res, channelSubscribeId, false);
-//                    
-//                    if (actionExecuted) {
-//                        // The action completed, return immediately
-//                        return;
-//                    }
-//    
-//                    // The action didn't execute, continue and try to render normally
                 }
             }
         }

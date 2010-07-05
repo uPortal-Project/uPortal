@@ -6,10 +6,9 @@
 package org.jasig.portal.url;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,7 +23,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public abstract class AbstractPortalUrl implements IBasePortalUrl {
     protected final HttpServletRequest request;
     protected final IUrlGenerator urlGenerator;
-    protected final ConcurrentMap<String, List<String>> portalParameters = new ConcurrentHashMap<String, List<String>>();
+    protected final Map<String, List<String>> portalParameters = new LinkedHashMap<String, List<String>>();
     
     protected AbstractPortalUrl(HttpServletRequest request, IUrlGenerator urlGenerator) {
         Validate.notNull(request, "request can not be null");

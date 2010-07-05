@@ -33,9 +33,13 @@ import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.url.UrlState;
 import org.jasig.portal.user.IUserInstance;
@@ -57,6 +61,7 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
     
     private IUserInstanceManager userInstanceManager;
     private IPortalUrlProvider portalUrlProvider;
+    private IPortletWindowRegistry portletWindowRegistry;
     
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
@@ -66,6 +71,11 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
     @Autowired
     public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
         this.portalUrlProvider = portalUrlProvider;
+    }
+
+    @Autowired
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        this.portletWindowRegistry = portletWindowRegistry;
     }
 
     public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
@@ -88,21 +98,35 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         final UrlState urlState = portalRequestInfo.getUrlState();
         switch (urlState) {
             case MAX:
-                final String targetedChannelSubscribeId = portalRequestInfo.getTargetedChannelSubscribeId();
-                //TODO can this ever be null if urlState is MAX?
-                structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", targetedChannelSubscribeId);
-            break;
+                final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
+                
+                if (portletRequestInfo != null) {
+                    final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
+                    final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, targetWindowId);
+                    
+                    final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+                    structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", channelSubscribeId);
+                    
+                    //If portletRequestInfo was null just fall through to NORMAL state
+                    break;
+                }
                 
             case NORMAL:
             default:
                 final String tabId = portalRequestInfo.getTargetedLayoutNodeId();
-                final String tabIndex = this.findTabIndex(userLayoutManager, tabId);
-                structureStylesheetUserPreferences.putParameterValue("activeTab", tabIndex);
-                structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
+                if (tabId != null) {
+                    final String tabIndex = this.findTabIndex(userLayoutManager, tabId);
+                    structureStylesheetUserPreferences.putParameterValue("activeTab", tabIndex);
+                    structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
+                }
+                else {
+                    //TODO setup default activeTab?
+                }
             break;
         }
         
         //TODO after portlet processing is complete set minimized theme flags by subscribeId
+        //TODO how are we going to track portlet minimization, what will the authoritative source of that info be? PortletWindow objects?
 
         userLayoutManager.processLayoutParameters(person, userPreferences, request);
 
