@@ -6,7 +6,7 @@
   <description-text>Presents the DLM layout in terms of tabs and columns.</description-text>
   <parameters>
     <parameter> 
-      <name>activeTab</name>  
+      <name>defaultTab</name>  
       <default-value>1</default-value>  
       <description>The number of the DLM tab that is initially active</description>  
       <type>1</type> 

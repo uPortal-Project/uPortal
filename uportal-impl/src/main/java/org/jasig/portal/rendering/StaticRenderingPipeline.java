@@ -755,7 +755,12 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                 //Find the activeTab index
                 final UserPreferences userPreferences = uPreferencesManager.getUserPreferences();
                 final StructureStylesheetUserPreferences structureStylesheetUserPreferences = userPreferences.getStructureStylesheetUserPreferences();
-                final String activeTab = structureStylesheetUserPreferences.getParameterValue("activeTab");
+                String activeTab = structureStylesheetUserPreferences.getParameterValue("activeTab");
+                if (activeTab == null) {
+                    // if the active tab is not set yet for this session, 
+                    // initialize it to the default tab value
+                    activeTab = structureStylesheetUserPreferences.getParameterValue("defaultTab");
+                }
                 final int activeTabIndex = org.apache.commons.lang.math.NumberUtils.toInt(activeTab, 1);
                 
                 //Get the user's layout and find the targeted folder (tab)
