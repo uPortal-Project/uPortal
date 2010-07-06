@@ -119,9 +119,11 @@
 | Skin Settings can be used to change the location of skin files.
 --> 
 <xsl:param name="skin">uportal3</xsl:param>
+<xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
 <xsl:variable name="SKIN" select="$skin"/>
-<xsl:variable name="MEDIA_PATH">media/skins/muniversality</xsl:variable>
-<xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
+<xsl:variable name="MEDIA_PATH">/media/skins/universality</xsl:variable>
+<xsl:variable name="SKIN_RESOURCES_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
+<xsl:variable name="SKIN_PATH" select="concat($CONTEXT_PATH,$MEDIA_PATH,'/',$SKIN)"/>
 <xsl:variable name="PORTAL_SHORTCUT_ICON">/favicon.ico</xsl:variable>
 <!-- ======================================== -->
 
@@ -245,7 +247,7 @@
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
-            <resources:output path="{$SKIN_PATH}/"/>
+            <resources:output path="{$SKIN_RESOURCES_PATH}/"/>
             <xsl:call-template name="page.js" />
         </head>
         <body class="up fl-theme-uportal">

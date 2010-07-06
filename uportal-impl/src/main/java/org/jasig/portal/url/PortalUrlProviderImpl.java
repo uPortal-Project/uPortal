@@ -23,6 +23,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -180,6 +181,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         ParseStep parseStep = ParseStep.FOLDER;
         for (int pathPartIndex = 0; pathPartIndex < requestPathParts.length; pathPartIndex++) {
             String pathPart = requestPathParts[pathPartIndex];
+            if (StringUtils.isEmpty(pathPart)) {
+                continue;
+            }
             
             switch (parseStep) {
                 case FOLDER: {
@@ -506,28 +510,21 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlGenerator#generateLayoutUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.ILayoutPortalUrl, java.lang.String)
+     * @see org.jasig.portal.url.IUrlGenerator#generateLayoutUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.ILayoutPortalUrl)
      */
-    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl, String targetNodeId) {
+    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl) {
         final String encoding = this.getEncoding(request);
         final UrlBuilder url = new UrlBuilder(encoding);
         
         final String contextPath = this.getCleanedContextPath(request);
         url.setPath(contextPath);
 
-        final String folderId = this.verifyLayoutNodeId(request, targetNodeId);
+        final String targetFolderId = layoutPortalUrl.getTargetFolderId();
+        final String folderId = this.verifyLayoutNodeId(request, targetFolderId);
         url.addPath(FOLDER_PATH_PREFIX);
         url.addPath(folderId);
 
-        final boolean renderInNormal = layoutPortalUrl.isRenderInNormal();
-        if (renderInNormal) {
-            url.addPath(UrlState.NORMAL.toLowercaseString());
-        }
-        else {
-            final IPortalRequestInfo requestInfo = getPortalRequestInfo(request);
-            final UrlState urlState = requestInfo.getUrlState();
-            url.addPath(urlState.toLowercaseString());
-        }
+        url.addPath(UrlState.NORMAL.toLowercaseString());
         
         final boolean action = layoutPortalUrl.isAction();
         if (action) {
@@ -545,16 +542,18 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final Map<String, List<String>> layoutParameters = layoutPortalUrl.getLayoutParameters();
         url.addParameters(LAYOUT_PARAM_PREFIX, layoutParameters);
         
+        if(logger.isDebugEnabled()) {
+            logger.debug("Generated '" + url + "' from '" + layoutPortalUrl);
+        }
         return url.toString();
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlGenerator#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IPortalPortletUrl, org.jasig.portal.portlet.om.IPortletWindowId)
+     * @see org.jasig.portal.url.IUrlGenerator#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IPortletPortalUrl)
      */
-    public String generatePortletUrl(HttpServletRequest request, IPortletPortalUrl portalPortletUrl, IPortletWindowId portletWindowId) {
+    public String generatePortletUrl(HttpServletRequest request, IPortletPortalUrl portletPortalUrl) {
         Validate.notNull(request, "HttpServletRequest was null");
-        Validate.notNull(portalPortletUrl, "IPortalPortletUrl was null");
-        Validate.notNull(portletWindowId, "IPortletWindowId was null");
+        Validate.notNull(portletPortalUrl, "IPortalPortletUrl was null");
        
         //Convert the callback request to the portal request
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
@@ -565,6 +564,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final String contextPath = this.getCleanedContextPath(request);
         url.setPath(contextPath);
         
+        final IPortletWindowId portletWindowId = portletPortalUrl.getTargetWindowId();
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
         final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(portletWindow.getPortletEntityId());
         
@@ -589,7 +589,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
         
         //Add state information
-        final WindowState requestedWindowState = portalPortletUrl.getWindowState();
+        final WindowState requestedWindowState = portletPortalUrl.getWindowState();
         final WindowState currentWindowState = portletWindow.getWindowState();
         final WindowState urlWindowState = requestedWindowState != null ? requestedWindowState : currentWindowState;
       
@@ -631,7 +631,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         url.addPath(urlState.toLowercaseString());
         
         //File part specifying the type of URL
-        switch (portalPortletUrl.getType()) {
+        switch (portletPortalUrl.getType()) {
             case ACTION: {
                 url.addPath(UrlType.ACTION.toLowercaseString() + REQUEST_TYPE_SUFFIX);
             }
@@ -643,13 +643,13 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             break;
             
             default: {
-                throw new IllegalArgumentException("Unsupported URL type: " + portalPortletUrl.getType()); 
+                throw new IllegalArgumentException("Unsupported URL type: " + portletPortalUrl.getType()); 
             }
         }
         
           
         //Portlet mode info
-        final PortletMode portletMode = portalPortletUrl.getPortletMode();
+        final PortletMode portletMode = portletPortalUrl.getPortletMode();
         if (portletMode != null && !portletMode.equals(portletWindow.getPortletMode())) {
             url.addParameter(PARAM_PORTLET_MODE, portletMode.toString());
         } 
@@ -661,15 +661,15 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
         
         //Add all portal parameters
-        final Map<String, List<String>> portalParameters = portalPortletUrl.getPortalParameters();
+        final Map<String, List<String>> portalParameters = portletPortalUrl.getPortalParameters();
         url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
 
         //Add all portlet parameters
-        final Map<String, String[]> portletParameters = portalPortletUrl.getPortletParameters();
+        final Map<String, String[]> portletParameters = portletPortalUrl.getPortletParameters();
         url.addParametersArray(PORTLET_PARAM_PREFIX, portletParameters);
         
         if(logger.isDebugEnabled()) {
-            logger.debug("finished portlet url: " + url.toString());
+            logger.debug("Generated '" + url + "' from '" + portletPortalUrl);
         }
         return url.toString();
     }

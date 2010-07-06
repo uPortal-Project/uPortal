@@ -20,15 +20,11 @@ import java.util.Map;
  * @version $Revision$
  */
 public interface ILayoutPortalUrl extends IBasePortalUrl {
-    /**
-     * If called the URL will result in rendering in {@link UrlState#NORMAL}
-     */
-    public void renderInNormal();
     
     /**
-     * @return Returns true if the URL will render in {@link UrlState#NORMAL} If false the current {@link UrlState} should be used.
+     * @return the layout folder id this URL targets
      */
-    public boolean isRenderInNormal();
+    public String getTargetFolderId();
     
     /**
      * @param action Set true if the request should be an action.

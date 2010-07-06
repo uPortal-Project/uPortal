@@ -7,8 +7,6 @@ package org.jasig.portal.url;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
-
 /**
  * Generates URLs for the current request based on the portal or portlet URL objects and target ids.
  * 
@@ -22,7 +20,7 @@ public interface IUrlGenerator {
      * @param targetFolderId The targeted folder id from the user's layout
      * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
      */
-    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl, String targetNodeId);
+    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl);
     
     /**
      * @param request The current request
@@ -30,5 +28,5 @@ public interface IUrlGenerator {
      * @param portletWindowId The targeted portlet window ID
      * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
      */
-    public String generatePortletUrl(HttpServletRequest request, IPortletPortalUrl portalPortletUrl, IPortletWindowId portletWindowId);
+    public String generatePortletUrl(HttpServletRequest request, IPortletPortalUrl portalPortletUrl);
 }

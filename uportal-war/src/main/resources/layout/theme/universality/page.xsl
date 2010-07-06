@@ -121,7 +121,7 @@
         	<link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
         </xsl:if>
         
-        <resources:output path="{$SKIN_PATH}/"/>
+        <resources:output path="{$SKIN_RESOURCES_PATH}/"/>
         <script type="text/javascript">
             var up = up || {};
             up.jQuery = jQuery.noConflict(true);

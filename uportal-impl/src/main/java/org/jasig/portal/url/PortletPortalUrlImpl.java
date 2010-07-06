@@ -218,15 +218,20 @@ class PortletPortalUrlImpl extends AbstractPortalUrl implements IPortletPortalUr
      * @see org.jasig.portal.url.IBasePortalUrl#getUrlString()
      */
     public String getUrlString() {
-        return this.urlGenerator.generatePortletUrl(this.request, this, this.portletWindow.getPortletWindowId());
+        return this.urlGenerator.generatePortletUrl(this.request, this);
     }
-
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return this.getUrlString();
+        return "PortletPortalUrl [portletWindow=" + this.portletWindow + ", portletMode=" + this.portletMode
+                + ", windowState=" + this.windowState + ", portletParameters=" + this.portletParameters
+                + ", properties=" + this.properties + ", cacheability=" + this.cacheability + ", resourceId="
+                + this.resourceId + ", secure=" + this.secure + ", publicRenderParameters="
+                + this.publicRenderParameters + ", delegatePortletUrl=" + this.delegatePortletUrl + ", urlType="
+                + this.urlType + ", portalParameters=" + this.portalParameters + "]";
     }
 
     @Override

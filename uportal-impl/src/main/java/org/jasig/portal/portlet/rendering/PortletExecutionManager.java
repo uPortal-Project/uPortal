@@ -243,7 +243,9 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     protected int getPortletRenderTimeout(IPortletWindowId portletWindowId, HttpServletRequest request) {
         final IPortletEntity parentPortletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
         final IPortletDefinition parentPortletDefinition = this.portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
-        return parentPortletDefinition.getChannelDefinition().getTimeout();
+//        return parentPortletDefinition.getChannelDefinition().getTimeout();
+        //TODO just for debugging
+        return (int)TimeUnit.MINUTES.toMillis(5);
     }
 
     protected PortletRenderExecutionWorker<StringWriter> getRenderedPortlet(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
@@ -369,6 +371,10 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
                     startLatch.countDown();
                     try {
                         return callInternal();
+                    }
+                    catch (Exception e) {
+                        logger.warn("Portlet '" + fName + "' failed with an exception", e);
+                        throw e;
                     }
                     finally {
                         complete = System.currentTimeMillis();

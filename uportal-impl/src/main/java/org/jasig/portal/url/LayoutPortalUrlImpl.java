@@ -26,7 +26,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 class LayoutPortalUrlImpl extends AbstractPortalUrl implements ILayoutPortalUrl {
     private final String targetFolderId;
     protected final Map<String, List<String>> layoutParameters = new LinkedHashMap<String, List<String>>();
-    private boolean renderInNormal = false;
     private boolean action = false;
     
     public LayoutPortalUrlImpl(HttpServletRequest request, IUrlGenerator urlGenerator, String targetFolderId) {
@@ -36,20 +35,10 @@ class LayoutPortalUrlImpl extends AbstractPortalUrl implements ILayoutPortalUrl 
         this.targetFolderId = targetFolderId;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.ILayoutPortalUrl#isRenderInNormal()
-     */
-    public boolean isRenderInNormal() {
-        return this.renderInNormal;
+    public String getTargetFolderId() {
+        return this.targetFolderId;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.ILayoutPortalUrl#renderInNormal()
-     */
-    public void renderInNormal() {
-        this.renderInNormal = true;
-    }
-    
     public Map<String, List<String>> getLayoutParameters() {
         return this.layoutParameters;
     }
@@ -96,12 +85,13 @@ class LayoutPortalUrlImpl extends AbstractPortalUrl implements ILayoutPortalUrl 
     }
 
     public String getUrlString() {
-        return this.urlGenerator.generateLayoutUrl(this.request, this, this.targetFolderId);
+        return this.urlGenerator.generateLayoutUrl(this.request, this);
     }
 
     @Override
     public String toString() {
-        return this.getUrlString();
+        return "LayoutPortalUrl [targetFolderId=" + this.targetFolderId + ", action=" + this.action
+                + ", layoutParameters=" + this.layoutParameters + ", portalParameters=" + this.portalParameters + "]";
     }
 
     /**
@@ -111,7 +101,6 @@ class LayoutPortalUrlImpl extends AbstractPortalUrl implements ILayoutPortalUrl 
     public int hashCode() {
         return new HashCodeBuilder(-942605321, 2130461357)
             .appendSuper(super.hashCode())
-            .append(this.renderInNormal)
             .append(this.targetFolderId)
             .append(this.layoutParameters)
             .toHashCode();
@@ -132,7 +121,6 @@ class LayoutPortalUrlImpl extends AbstractPortalUrl implements ILayoutPortalUrl 
         return new EqualsBuilder()
             .appendSuper(super.equals(object))
             .append(this.targetFolderId, rhs.targetFolderId)
-            .append(this.renderInNormal, rhs.renderInNormal)
             .append(this.layoutParameters, rhs.layoutParameters)
             .isEquals();
     }
