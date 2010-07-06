@@ -68,18 +68,38 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <div class="fl-widget portlet prm-mgr" role="section">
   
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
-  	<div class="breadcrumb">
-    	<span class="breadcrumb-1"><a href="${ permissionsUrl }">Permissions</a></span>
-        <span class="separator"> &gt; </span> 
-        <span class="breadcrumb-2"><a href="${ ownerUrl }">${ owner.name }</a></span>
-        <span class="separator"> &gt; </span> 
+	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
+    	<div class="breadcrumb">
+        	<span class="breadcrumb-1"><a href="">Categories</a></span>
+            <span class="separator">&gt; </span>
+            <span class="breadcrumb-1"><a href="${ permissionsUrl }">Permissions</a></span>
+            <span class="separator">&gt; </span>
+            
+        </div>
+        <h2 class="title" role="heading">Assignments</h2>
+        <h3 class="subtitle">${ activity.description }</h3>
+        
+        <div class="details">
+        	<ul class="permission_info">
+            	<li class="last">
+                	<span class="info_label">Category: </span> ${ owner.name } 
+                </li>
+                <li class="last">
+                	<span class="info_label">Permission: </span>${ activity.name } 
+                </li>
+                
+            </ul>
+        </div>
+        
+        <div role="toolbar" class="toolbar">
+            <ul>
+                <li><a href="${ createUrl }" class="button">Add an Assignement</a></li>
+            </ul>
+        </div>
+                 
     </div>
-    <h2 class="title" role="heading">
-        ${ activity.name }
-    </h2>
-    <h3 class="subtitle">${ activity.description }</h3>
-  </div> <!-- end: portlet-titlebar -->
+  
+    
   
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content" role="main">
@@ -87,14 +107,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div id="${n}permissionAddingTabs" class="portlet-section" role="region">
         <div class="titlebar">
-            <h3 class="title" role="heading">Assignments</h3>   
-
-        
-            <div class="fl-col-mixed-200 options">
+            <div class="options">
                 <div class="fl-col-fixed fl-force-left view-filter">
                 <!-- This space left blank for future filtering options... -->
                 </div>
-                <div class="fl-col-flex view-pager flc-pager-top">
+                <div class="view-pager flc-pager-top">
                     <ul id="pager-top" class="fl-pager-ui">
                         <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="listPermissions.pagerPrevious"/></a></li>
                         <li>
@@ -121,7 +138,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         
         <div class="content">
         
-            <table class="portlet-table" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
+            <table class="portlet-table" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;" title="Assignments of this permission">
                 <thead>
                     <tr rsf:id="header:">
                         <th id="${n}permissionPrincipal" class="flc-pager-sort-header"><a rsf:id="permissionPrincipal" title="Click to sort" href="javascript:;"><spring:message code="listPermissions.permissionPrincipalHeading"/></a></th>
@@ -144,7 +161,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         
         </div>
         
-        <a href="${ createUrl }">Assign to a new target</a>
+       
 
 
     </div> <!-- end: portlet-section -->

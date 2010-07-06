@@ -37,11 +37,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <!-- Portlet -->
 <div class="fl-widget portlet prm-mgr view-listperms" role="section">
   <form id="${n}listPermissionsForm">
-  
+    
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
-    <h2 class="title" role="heading">Permissions</h2>
-  </div> <!-- end: portlet-titlebar -->
+  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+      <div class="breadcrumb">
+      </div>
+      <h2 role="heading" class="title">Permissions by Categories</h2>
+      <h3 class="subtitle">Choose a category to view, add, or edit permissions</h3>
+      
+  </div>
+  <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content" role="main">

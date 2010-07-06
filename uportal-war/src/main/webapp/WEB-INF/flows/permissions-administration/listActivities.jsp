@@ -41,29 +41,33 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <!-- Portlet -->
 <div class="fl-widget portlet prm-mgr view-listperms" role="section">
   
+  
   <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
-    <a href="${ backUrl }">Permissions</a> > 
-    <div class="permission-owner ${ owner.fname }">
-        <h2 class="title" role="heading">
-            ${ owner.name }
-        </h2>
-        <h3>${ owner.description }</h3>
-    </div>
-  </div> <!-- end: portlet-titlebar -->
+	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
+	  	<div class="breadcrumb">
+	    	<span class="breadcrumb-1"><a href="${ backUrl }">Categories</a></span>
+	        <span class="separator">&gt; </span>
+	    </div>
+	    
+	    <h2 class="title" role="heading">Permissions</h2>
+	    <h3 class="subtitle">${ owner.description }</h3>
+	    	    
+	    <div class="details">
+	    	<ul class="permission_info">
+	        	<li class="last">
+	               <span class="info_label">Category: </span>${ owner.name } 
+	            </li>
+			</ul>
+		</div>
+	</div>
+  
   
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content" role="main">
   
-    <!-- Portlet Section -->
-    <div class="portlet-section" role="region">
-        <div class="titlebar">
-            <h3 class="title" role="heading">
-                Permissions within ${ owner.name }
-            </h3>   
-        </div>
-
-        <table class="portlet-table" style="width:100%">    
+    <!-- Portlet Section -->    
+		
+        <table class="portlet-table" style="width:100%" title="${ owner.description }">    
             <tr>
                 <th>Name</th>
                 <th>System ID</th>
@@ -83,9 +87,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <td>${ activity.description }</td>
                 </tr>
             </c:forEach>
-        </table>
-
-    </div> <!-- end: portlet-section -->
+        </table>    
 
   </div> <!-- end: portlet-content -->
 

@@ -117,8 +117,8 @@
  * Tags is a list of tags applied to the portlet/view.
  * Details is a metadata area; not the main content of the view, but supporting information of the title.
  */
-.portlet .titlebar {position:relative; margin-bottom:1em;}
-.portlet .titlebar .breadcrumb {margin-bottom:0.5em;}
+.portlet .titlebar {position:relative; margin-bottom:1.5em;}
+.portlet .titlebar .breadcrumb {margin-bottom:1em;}
 .portlet .titlebar > .options {padding:0.5em 0;}
 .portlet .titlebar ul {margin:0; padding:0; overflow:hidden; zoom:1;} 
 .portlet .titlebar li {list-style-type:none; float:left; display:inline; padding:0 5px 0 5px; margin-left:-5px;}
@@ -131,12 +131,13 @@
 .portlet .titlebar .toolbar ul li {list-style-type:none; float:left; display:inline; padding:0 5px; margin-left:-5px;}
 .portlet .titlebar .toolbar .search {text-align:right;}
 .portlet .titlebar .tags {padding-bottom:0.5em;}
+.portlet .titlebar .details {margin:0 0 1em 0; padding:5px 10px;}
 .portlet .titlebar .details .detail,
 .portlet .titlebar .details .label {display:inline;}
 .portlet .titlebar .details .detail~.detail {padding-left:1.5em;}
 .portlet .titlebar .details a {margin:0;}
 .portlet .portlet-titlebar > .title {padding:0 0 0.2em 0; margin:0;}
-.portlet .portlet-titlebar > .subtitle {margin:0 0 2em 0; padding-top:0.4em;}
+.portlet .portlet-titlebar > .subtitle {margin:0 0 1em 0; padding-top:0.4em;}
 
 
 /* Search */
@@ -308,6 +309,16 @@
 .portlet .browse-hierarchy .entity .member-list li {list-style:none;}
 .portlet .browse-hierarchy .entity .member-list li a {display:block; padding:0.2em 0 0.2em 20px;}
 
+/* Styling for multiselect plugin. One example is its use in the Permissions Portlet for choosing a "target" */
+.up .token-input-list input[type="text"] {border:none; background-image:none; font-size:medium;}
+.up .token-input-list input[type="text"]:focus {-moz-box-shadow:none;}
+.up .token-input-dropdown .token-input-dropdown-item2 {float:none; display:block; font-size:small;}
+.up .token-input-dropdown .token-input-dropdown-item {float:none; display:block;font-size:small;}
+.up div.token-input-dropdown, .up div.token-input-dropdown ul {height:200px; opacity:0.95;}
+.multiselect li.token-input-token {display:block; margin-left:5px;}
+.multiselect li.token-input-token p {font-size:medium;}
+.titlebar form {margin-bottom:200px;}
+
 
 
 /*====================================*/
@@ -349,6 +360,12 @@
 .groupmgr-right-pane td label {display:block; text-align:right;}
 .groupmgr-right-pane input {margin-right:0.5em;}
 
+/* Permissions Portlet 
+ * Styles the ongoing information shown in the title bar * 
+ * */
+ul.permission_info { padding:0; margin:0; clear:both;}
+ul.permission_info li {display:inline; list-style:none; padding:0; margin:0 15px 0 0; border-right:1px solid;}
+ul.permission_info li.last {border-right:none;}
 
 /* Portlet Manager */
 .preference-name {vertical-align: top;}

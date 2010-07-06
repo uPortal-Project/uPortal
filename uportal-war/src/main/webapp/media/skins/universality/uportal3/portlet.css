@@ -309,11 +309,11 @@
 .portlet form input[type="submit"]:hover,
 .portlet form input[type="submit"]:focus {cursor:pointer;}
 .portlet .titlebar .toolbar .button,
-.portlet .titlebar .toolbar a.button {border-color:#ccc; background-color:#e2e8e7; color:#555;}
+.portlet .titlebar .toolbar a.button {border-color:#ccc; background-color:#e2e8e7; color:#336699 !important;}
 .portlet .titlebar .toolbar .button:hover,
 .portlet .titlebar .toolbar .button:focus,
 .portlet .titlebar .toolbar a.button:hover,
-.portlet .titlebar .toolbar a.button:focus {border-color:#000; background-color:#7a9e0d !important;}
+.portlet .titlebar .toolbar a.button:focus {border-color:#000; background-color:#7a9e0d !important; color:#fff !important;}
 
 
 /* Overflow box */
@@ -414,3 +414,9 @@
 
 /* Portlet Manager */
 .override-preference td {color:graytext; text-decoration:line-through;}
+
+
+.portlet .titlebar .details {background-color:#f8f8f8; font-weight:bold;}
+.portlet .titlebar .details span {font-weight:normal;}
+
+

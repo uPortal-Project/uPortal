@@ -40,27 +40,41 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <!-- Portlet -->
 <div class="fl-widget portlet prm-mgr" role="section">
   
-  <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
-    <h2 class="title" role="heading">
-        <a href="${ permissionsUrl }">Permissions</a> > 
-        <a href="${ ownerUrl }">${ owner.name }</a> > 
-        ${ activity.name }
-    </h2>
-    <h3 class="subtitle">${ activity.description }</h3>
-  </div> <!-- end: portlet-titlebar -->
+<!-- Portlet Titlebar -->
+	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
+    	<div class="breadcrumb">
+        	<span class="breadcrumb-1"><a href="${ permissionsUrl }">Categories</a></span>
+            <span class="separator">&gt; </span>
+            <span class="breadcrumb-1"><a href="${ ownerUrl }">Permissions</a></span>
+            <span class="separator">&gt; </span>
+            <span class="breadcrumb-1"><a href="?">Assignments</a></span>
+            <span class="separator">&gt; </span>
+        </div>
+        <h2 class="title" role="heading">Add an Assignment</h2>
+        <h3 class="subtitle">${ activity.description }</h3>
+        
+        <div class="details">
+            <ul class="permission_info">
+            <li>
+            	<span class="info_label">Category: </span>${ owner.name } 
+            </li>
+            <li class="last">
+            	<span class="info_label">Permission: </span>${ activity.name } 
+            </li>
+            </ul>
+        </div>
+    </div>
+  
+    
   
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content" role="main">
   
     <!-- Portlet Section -->
-    <div id="${n}permissionAddingTabs" class="portlet-section" role="region">
-        <div class="titlebar">
-            <h3 class="title" role="heading">Select a new target</h3>   
-
+    
             <form id="${n}targetForm" action="${ formUrl }" method="POST">
-                <label for="${n}target">Target:</label> 
-                <input id="${n}target" class="target-input" name="target"/>
+                <label for="${n}target">Start by selecting a target:</label> 
+                <input id="${n}target" class="target-input multiselect" name="target"/>
 
                 <!-- Buttons -->
                 <div class="buttons">
@@ -70,8 +84,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 
             </form>
 
-    </div> <!-- end: portlet-section -->
-
+    
   </div> <!-- end: portlet-content -->
 
 </div> <!-- end: portlet -->
