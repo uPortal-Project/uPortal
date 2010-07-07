@@ -117,8 +117,42 @@ public class PLFIntegrator
 
         if ( id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) )
         {
-            // this should never happen. Moves of an incorporated channel
-            // should be indicated via the position set of the parent
+            // incorporated channel - if a copy of an inc'd channel is in the
+            // plf it is because either it has attribute edits. It does not
+            // imply movement.
+            // That is accomplished by the position set. So see if it still
+            // exists in the ilf for applying changes
+
+            Document ilf = ilfParent.getOwnerDocument();
+            Element original = ilf.getElementById( id );
+
+            if ( original == null )
+            {
+                // not there anymore, discard from plf
+                plfParent.removeChild( plfChild );
+                result.changedPLF = true;
+                return;
+            }
+
+            // found it, apply changes and see if they had any affect
+            boolean attributeChanged = false;
+            IntegrationResult childChanges = new IntegrationResult();
+
+            attributeChanged = EditManager.applyEditSet( plfChild, original );
+            applyChildChanges( plfChild, original, childChanges );
+
+            if ( attributeChanged == false &&
+                 childChanges.changedILF == false )
+            {
+                // no changes were used so remove this guy from plf.
+                plfParent.removeChild( plfChild );
+                result.changedPLF = true;
+            }
+            else
+                result.changedILF = true;
+            // need to pass on up whether PLF changed in called methods
+            if ( childChanges.changedPLF )
+                result.changedPLF = true;
         }
         else // plf channel
         {

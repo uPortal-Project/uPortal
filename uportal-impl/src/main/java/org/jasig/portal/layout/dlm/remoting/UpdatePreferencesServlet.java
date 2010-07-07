@@ -350,7 +350,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 			try {
 				// This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
 				UserPrefsHandler.setUserPreference(folder, "width", per);
-		        saveSSUPPreservingTab(upm, per, ssup);
+		        saveSSUPPreservingTab(ulm, upm, per, ssup);
 			} catch (Exception e) {
 				log.error("Error saving new column widths", e);
 			}
@@ -609,7 +609,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 				count++;
 			}
 
-	        saveSSUPPreservingTab(upm, per, ssup);
+	        saveSSUPPreservingTab(ulm, upm, per, ssup);
 
 		} catch (Exception e) {
 			log.error("Error saving new column widths", e);
@@ -649,7 +649,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 				// This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
 				UserPrefsHandler.setUserPreference(folder, "width", per);
 				
-		        saveSSUPPreservingTab(upm, per, ssup);
+		        saveSSUPPreservingTab(ulm, upm, per, ssup);
 
 			} catch (Exception e) {
 				log.error("Error saving new column widths", e);
@@ -813,7 +813,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
 	 * @param ssup
 	 * @throws Exception
 	 */
-	private void saveSSUPPreservingTab(UserPreferencesManager upm, IPerson per, StructureStylesheetUserPreferences ssup) throws Exception {
+	private void saveSSUPPreservingTab(IUserLayoutManager ulm, UserPreferencesManager upm, IPerson per, StructureStylesheetUserPreferences ssup) throws Exception {
 		int profileId = upm.getUserPreferences().getProfile().getProfileId();
 		String currentTab = ssup.getParameterValue( ACTIVE_TAB_PARAM );
         // get the active tab number from the store so that we can preserve it
@@ -823,6 +823,7 @@ public class UpdatePreferencesServlet extends HttpServlet {
         
 		// This is a brute force save of the new attributes.  It requires access to the layout store. -SAB
 		ulStore.setStructureStylesheetUserPreferences(per, profileId, ssup);
+		ulm.saveUserLayout();
 
 	    // set active tab in current preferences back to "current" tab
 	    ssup.putParameterValue( ACTIVE_TAB_PARAM, currentTab );
