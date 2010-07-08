@@ -293,7 +293,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * @see org.apache.pluto.container.PortletPreferencesService#store(org.apache.pluto.container.PortletWindow, javax.portlet.PortletRequest, java.util.Map)
      */
 	@Override
-    public void store(PortletWindow plutoPortletWindow, PortletRequest portletRequest, Map<String,PortletPreference> internalPreferences) throws PortletContainerException {
+    public void store(PortletWindow plutoPortletWindow, PortletRequest portletRequest, Map<String,PortletPreference> newPreferences) throws PortletContainerException {
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
         
         //Determine if the user is a guest
@@ -309,56 +309,90 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
         final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
 
+        //Is this CONFIG mode
+        final boolean configMode = IPortletRenderer.CONFIG.equals(portletWindow.getPortletMode());
         
         //Get Map of descriptor and definition preferences to check new preferences against
-        final Map<String, PortletPreference> preferencesMap = new HashMap<String, PortletPreference>();
+        final Map<String, PortletPreference> basePreferences = new HashMap<String, PortletPreference>();
         
         //Add deploy preferences
         final List<IPortletPreference> descriptorPreferencesList = this.getDescriptorPreferences(portletDescriptor);
-        this.addPreferencesToMap(descriptorPreferencesList, preferencesMap);
+        this.addPreferencesToMap(descriptorPreferencesList, basePreferences);
         
         //Add definition preferences if not config mode
         final IPortletPreferences definitionPreferences = portletDefinition.getPortletPreferences();
-        if (!IPortletRenderer.CONFIG.equals(portletWindow.getPortletMode())) {
+        if (!configMode) {
             final List<IPortletPreference> definitionPreferencesList = definitionPreferences.getPortletPreferences();
-            this.addPreferencesToMap(definitionPreferencesList, preferencesMap);
+            this.addPreferencesToMap(definitionPreferencesList, basePreferences);
+        }
+
+        //Get the currently stored preferences list to be modified, this is needed to reduce DB updates at the ORM layer
+        final List<IPortletPreference> preferencesList;
+        if (configMode) {
+            preferencesList = definitionPreferences.getPortletPreferences();
+        }
+        else if (this.isStoreInEntity(portletRequest)) {
+            final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
+            preferencesList = entityPreferences.getPortletPreferences();
+        }
+        else {
+            preferencesList = new LinkedList<IPortletPreference>();
         }
         
-        final List<IPortletPreference> portletPreferences = new LinkedList<IPortletPreference>();
+        //Build map of existing preferences for tracking which preferences have been removed
+        final Map<String, IPortletPreference> oldPreferences = new HashMap<String, IPortletPreference>();
+        for (final IPortletPreference preference : preferencesList) {
+            oldPreferences.put(preference.getName(), preference);
+        }
         
-        for (PortletPreference internalPreference : portletPreferences) {
+        for (final PortletPreference internalPreference : newPreferences.values()) {
+            //Ignore preferences with null names
+            final String name = internalPreference.getName();
+            if (name == null) {
+                continue;
+            }
+
             //Convert to a uPortal preference class to ensure quality check and persistence works
             final IPortletPreference preference = new PortletPreferenceImpl(internalPreference);
             
-            //If the preference exists as a descriptor or definition preference ignore it  
-            final String name = preference.getName();
-            if (name != null) {
-
-                final PortletPreference existingPreference = preferencesMap.get(name);
-                if (preference.equals(existingPreference)) {
-                    continue;
-                }
+            //If the preference exactly equals a descriptor or definition preference ignore it
+            final PortletPreference basePreference = basePreferences.get(name);
+            if (preference.equals(basePreference)) {
+                continue;
             }
             
-            //Not a descriptor or definition preference, append it to list to be stored
-            portletPreferences.add(preference);
+            //Remove the existing preference from the map since it is supposed to be persisted 
+            final IPortletPreference existingPreference = oldPreferences.remove(name);
+            if (existingPreference == null) {
+                //New preference, add it to the list
+                preferencesList.add(preference);
+            }
+            else {
+                //Existing preference, update the fields
+                existingPreference.setValues(preference.getValues());
+                existingPreference.setReadOnly(preference.isReadOnly());
+            }
         }
+        
+        //Remove any old preferences that were not in the new preferences list
+        preferencesList.removeAll(oldPreferences.values());
 
-        if (IPortletRenderer.CONFIG.equals(portletWindow.getPortletMode())) {
-            definitionPreferences.setPortletPreferences(portletPreferences);
+        //If in config mode store the preferences on the definition
+        if (configMode) {
+            definitionPreferences.setPortletPreferences(preferencesList);
             this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
         }
         //If not a guest or if guest prefs are shared store them on the entity
         else if (this.isStoreInEntity(portletRequest)) {
             //Update the portlet entity with the new preferences
             final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
-            entityPreferences.setPortletPreferences(portletPreferences);
+            entityPreferences.setPortletPreferences(preferencesList);
             this.portletEntityRegistry.storePortletEntity(portletEntity);
         }
         //Must be a guest and share must be off so store the prefs on the session
         else {
             //Store memory preferences
-            this.storeSessionPreferences(portletEntity.getPortletEntityId(), httpServletRequest, portletPreferences);
+            this.storeSessionPreferences(portletEntity.getPortletEntityId(), httpServletRequest, preferencesList);
         }
     }
     

@@ -21,6 +21,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
 import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,8 +50,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -75,6 +82,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     private ExecutorService portletThreadPool;
     private IPortletRenderer portletRenderer;
     private IUserInstanceManager userInstanceManager;
+    private EntityManagerFactory entityManagerFactory;
     
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
@@ -99,6 +107,11 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     @Autowired
     public void setPortletRenderer(IPortletRenderer portletRenderer) {
         this.portletRenderer = portletRenderer;
+    }
+    
+    @Autowired
+    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     @Override
@@ -366,6 +379,9 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
                     RequestContextHolder.setRequestAttributes(requestAttributesFromHolder);
                     LocaleContextHolder.setLocale(localeFromHolder);
                     
+                    final EntityManagerFactory emf = entityManagerFactory;
+                    final boolean participate = this.openEntityManager(emf);
+                    
                     started = System.currentTimeMillis();
                     //signal any threads waiting for the worker to start
                     startLatch.countDown();
@@ -382,11 +398,39 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
                             logger.debug("Execution complete on portlet " + portletWindowId + " in " + getDuration() + "ms");
                         }
                         
+                        this.closeEntityManager(emf, participate);
+                        
                         TrackingThreadLocal.clearCurrentData();
                         LocaleContextHolder.resetLocaleContext();
                         RequestContextHolder.resetRequestAttributes();
                         
                         currentThread.setName(threadName);
+                    }
+                }
+
+                private boolean openEntityManager(final EntityManagerFactory emf) {
+                    if (TransactionSynchronizationManager.hasResource(emf)) {
+                        // Do not modify the EntityManager: just set the participate flag.
+                        return true;
+                    }
+
+                    logger.debug("Opening JPA EntityManager in PortletExecutionWorker");
+                    try {
+                        final EntityManager em = entityManagerFactory.createEntityManager();
+                        TransactionSynchronizationManager.bindResource(emf, new EntityManagerHolder(em));
+                    }
+                    catch (PersistenceException ex) {
+                        throw new DataAccessResourceFailureException("Could not create JPA EntityManager", ex);
+                    }
+                    
+                    return false;
+                }
+
+                private void closeEntityManager(final EntityManagerFactory emf, final boolean participate) {
+                    if (!participate) {
+                        final EntityManagerHolder emHolder = (EntityManagerHolder)TransactionSynchronizationManager.unbindResource(emf);
+                        logger.debug("Closing JPA EntityManager in PortletExecutionWorker");
+                        EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
                     }
                 }
             });

@@ -503,10 +503,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         //Determine the appropriate portlet window ID
         final IPerson person = userInstance.getPerson();
         final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinition.getPortletDefinitionId(), portletNodeId, person.getID());
-        final IPortletWindow defaultPortletWindow = this.portletWindowRegistry.createDefaultPortletWindow(request, portletEntity.getPortletEntityId());
-        final IPortletWindowId portletWindowId = this.portletWindowRegistry.createTransientPortletWindowId(request, defaultPortletWindow.getPortletWindowId());
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
         
-        return this.getPortletUrl(type, request, portletWindowId);
+        return this.getPortletUrl(type, request, portletWindow.getPortletWindowId());
     }
     
     /* (non-Javadoc)
