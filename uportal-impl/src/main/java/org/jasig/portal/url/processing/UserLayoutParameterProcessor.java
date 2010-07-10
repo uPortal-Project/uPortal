@@ -33,6 +33,7 @@ import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
@@ -107,6 +108,13 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                     final String channelSubscribeId = portletEntity.getChannelSubscribeId();
                     structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", channelSubscribeId);
                     
+                    if (userLayoutManager instanceof TransientUserLayoutManagerWrapper) {
+                        // get wrapper implementation for focusing
+                        final TransientUserLayoutManagerWrapper transientUserLayoutManagerWrapper = (TransientUserLayoutManagerWrapper) userLayoutManager;
+                        // .. and now set it as the focused id
+                        transientUserLayoutManagerWrapper.setFocusedId(channelSubscribeId);
+                    }
+                    
                     //If portletRequestInfo was null just fall through to NORMAL state
                     break;
                 }
@@ -117,11 +125,11 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                 if (tabId != null) {
                     final String tabIndex = this.findTabIndex(userLayoutManager, tabId);
                     structureStylesheetUserPreferences.putParameterValue("activeTab", tabIndex);
-                    structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
                 }
                 else {
                     //TODO setup default activeTab?
                 }
+                structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
             break;
         }
         

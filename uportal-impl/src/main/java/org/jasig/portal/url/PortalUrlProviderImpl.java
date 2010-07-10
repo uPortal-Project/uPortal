@@ -767,7 +767,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
      * @return
      */
     protected XPathExpression getUserDefaultTabIdExpression() {
-    	final String expression = "/layout/folder/folder[type='regular' and hidden='false'][0]/@ID";
+    	final String expression = "/layout/folder/folder[@type='regular' and @hidden!='true'][1]/@ID";
     	
     	final XPathFactory xPathFactory = XPathFactory.newInstance();
         final XPath xPath = xPathFactory.newXPath();
