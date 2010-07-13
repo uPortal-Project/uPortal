@@ -45,24 +45,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     	<div class="breadcrumb">
         	<span class="breadcrumb-1"><a href="${ permissionsUrl }">Categories</a></span>
             <span class="separator">&gt; </span>
-            <span class="breadcrumb-1"><a href="${ ownerUrl }">Permissions</a></span>
+            <span class="breadcrumb-2"><a href="${ ownerUrl }">${ owner.name }</a></span>
             <span class="separator">&gt; </span>
-            <span class="breadcrumb-1"><a href="?">Assignments</a></span>
+            <span class="breadcrumb-3"><a href="?">${ activity.name }</a></span>
             <span class="separator">&gt; </span>
         </div>
-        <h2 class="title" role="heading">Add an Assignment</h2>
+        <h2 class="title" role="heading">Add an Assignment to <span class="name">${ activity.name }</span></h2>
         <h3 class="subtitle">${ activity.description }</h3>
-        
-        <div class="details">
-            <ul class="permission_info">
-            <li>
-            	<span class="info_label">Category: </span>${ owner.name } 
-            </li>
-            <li class="last">
-            	<span class="info_label">Permission: </span>${ activity.name } 
-            </li>
-            </ul>
-        </div>
     </div>
   
     
@@ -71,19 +60,19 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <div class="fl-widget-content portlet-content" role="main">
   
     <!-- Portlet Section -->
-    
-            <form id="${n}targetForm" action="${ formUrl }" method="POST">
-                <label for="${n}target">Start by selecting a target:</label> 
-                <input id="${n}target" class="target-input multiselect" name="target"/>
+    <div class="portlet-form">
+        <form id="${n}targetForm" action="${ formUrl }" method="POST">
+            <label for="${n}target">Select a target for the assigment by typing the target name:</label> 
+            <input id="${n}target" class="target-input multiselect" name="target"/>
 
-                <!-- Buttons -->
-                <div class="buttons">
-                    <input class="button primary" type="submit" value="<spring:message code="editPermission.submitButton"/>" name="_eventId_editPermission"/>
-                    <input class="button" type="submit" value="<spring:message code="editPermission.cancelButton"/>" name="_eventId_cancel"/>
-                </div> <!-- end: buttons -->
-                
-            </form>
-
+            <!-- Buttons -->
+            <div class="buttons">
+                <input class="button primary" type="submit" value="<spring:message code="editPermission.submitButton"/>" name="_eventId_editPermission"/>
+                <input class="button" type="submit" value="<spring:message code="editPermission.cancelButton"/>" name="_eventId_cancel"/>
+            </div> <!-- end: buttons -->
+            
+        </form>
+	</div>
     
   </div> <!-- end: portlet-content -->
 

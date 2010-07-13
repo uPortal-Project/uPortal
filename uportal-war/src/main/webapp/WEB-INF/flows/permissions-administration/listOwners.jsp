@@ -40,48 +40,48 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-      <div class="breadcrumb">
-      </div>
-      <h2 role="heading" class="title">Permissions by Categories</h2>
-      <h3 class="subtitle">Choose a category to view, add, or edit permissions</h3>
-      
+      <h2 role="heading" class="title">Permissions by Category</h2>
   </div>
   <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content" role="main">
-  
-    <!-- Portlet Section -->
-    <div class="portlet-section" role="region">
-    <div class="fl-col-flex2">  
-        <!-- left panel -->
+  	<!-- Panel list -->
+    <div class="fl-col-flex2 panel-list"> 
+    
+        <!-- 2 column layout -->
         <div class="fl-col fl-force-left">
             <c:set var="numOwners" value="${ fn:length(owners) }" />
             <c:set var="split" value="${ numOwners / 2 }" />
             <c:forEach items="${ owners }" var="owner" varStatus="ownerStatus">
-                <div class="permission-owner ${ owner.fname }">
-                    <h2>
-                        <portlet:actionURL var="ownerUrl">
-                            <portlet:param name="execution" value="${flowExecutionKey}" />
-                            <portlet:param name="_eventId" value="listActivities"/>
-                            <portlet:param name="ownerFname" value="${ owner.fname }"/>
-                        </portlet:actionURL>
-                        <a href="${ ownerUrl }">${ owner.name }</a>
-                    </h2>
-                    <p>${ owner.description }</p>
-                    <p>
-                        <c:forEach items="${ owner.activities }" var="activity" varStatus="status">
-                            <portlet:actionURL var="activityUrl">
-                                <portlet:param name="execution" value="${ flowExecutionKey }"/>
-                                <portlet:param name="_eventId" value="showActivity"/>
+            	<!-- Panel -->
+                <div class="permission-owner ${ owner.fname } panel icon-large">
+                	<div class="titlebar">
+                        <h2 class="title">
+                            <portlet:actionURL var="ownerUrl">
+                                <portlet:param name="execution" value="${flowExecutionKey}" />
+                                <portlet:param name="_eventId" value="listActivities"/>
                                 <portlet:param name="ownerFname" value="${ owner.fname }"/>
-                                <portlet:param name="activityFname" value="${ activity.fname }"/>
                             </portlet:actionURL>
-                            <a href="${ activityUrl }">${ activity.name }</a>${ status.last ? "" : ", " }
-                        </c:forEach>
-                    </p>
-                </div>
-                
+                            <a href="${ ownerUrl }">${ owner.name }</a>
+                        </h2>    
+                        <h3 class="subtitle">${ owner.description }</h3>
+                    </div>
+                    <div class="content">
+                        <span class="perm-list">
+                            <c:forEach items="${ owner.activities }" var="activity" varStatus="status">
+                                <portlet:actionURL var="activityUrl">
+                                    <portlet:param name="execution" value="${ flowExecutionKey }"/>
+                                    <portlet:param name="_eventId" value="showActivity"/>
+                                    <portlet:param name="ownerFname" value="${ owner.fname }"/>
+                                    <portlet:param name="activityFname" value="${ activity.fname }"/>
+                                </portlet:actionURL>
+                                <a href="${ activityUrl }">${ activity.name }</a>${ status.last ? "" : ", " }
+                            </c:forEach>
+                        </span>
+                    </div>
+                </div> <!-- end: panel -->
+                <!-- Second column -->
                 <c:if test="${ split <= ownerStatus.index+1 and ownerStatus.index+1 < split+1 }">
                     </div>
                     <div class="fl-col">
@@ -89,9 +89,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 
             </c:forEach>
     
-        </div>
-
-    </div> <!-- end: portlet-section -->
+        </div> <!-- end: panel list -->
 
   </div> <!-- end: portlet-content -->
   </form>

@@ -47,41 +47,31 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        ${ permissionDefinition.owner.name } > 
-        <h2 class="title" role="heading">${ permissionDefinition.activity.name }</h2>
-        <h3 class="subtitle">${ permissionDefinition.activity.description }</h3>
+    	<div class="breadcrumb">
+        	<span class="breadcrumb-1"><a href="${ permissionsUrl }">Categories</a></span>
+            <span class="separator">&gt; </span>
+            <span class="breadcrumb-2"><a href="${ ownerUrl }">${ permissionDefinition.owner.name }</a></span>
+            <span class="separator">&gt; </span>
+            <span class="breadcrumb-3"><a href="?">${ permissionDefinition.activity.name }</a></span>
+            <span class="separator">&gt; </span>
+        </div>
+        <h2 class="title" role="heading">Edit assignment for <span class="name">${ permissionDefinition.activity.name }</span></h2>
+        <h3 class="subtitle">With target <span class="name">${ permissionDefinition.target.name }</span></h3>
+        <div class="toolbar">
+        	<ul>
+                <li><a href="${ choosePrinicipalsUrl }" class="button">Choose Principals</a></li>
+            </ul>
+        </div>
     </div>
 
     <!-- Portlet Content -->
     <div class="fl-widget-content content portlet-content" role="main">
-        
-        <!-- Portlet Section -->
-        <div class="portlet-section" role="region">
-            <div class="titlebar">
-                <h3 class="title" role="heading">
-                    Target: ${ permissionDefinition.target.name }
-                </h3>   
-            </div>
-        </div>
-    
-        <!-- Portlet Section -->
-        <div class="portlet-section" role="region">
-        
-            <div class="titlebar">
-                <h3 class="title" role="heading">Assignments</h3>
-            </div>
-            
-            <div>
-                <ul id="assignments"></ul>
-            </div>
-            
-            <p>
-                <a href="${ choosePrinicipalsUrl }">Choose Principals</a>
-            </p>
 
             <form:form method="POST" id="${n}editPermissionForm" action="${ formUrl }" commandName="permissionDefinition">
 
-                <form:errors path="*"/>      
+                <form:errors path="*"/>  
+                
+                <ul id="assignments"></ul>    
   
                 <div id="${n}inputs" style="display:none">
                 </div>
@@ -92,10 +82,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <input class="button" type="submit" value="<spring:message code="editPermission.cancelButton"/>" name="_eventId_cancel"/>
                 </div> <!-- end: buttons -->
                 
-            </form:form>        
-            
-        </div>
-      
+            </form:form>
+    
     </div> <!-- end: portlet-content -->
 
 </div> <!-- end: portlet -->
@@ -110,8 +98,8 @@ up.jQuery(function() {
     var addAssignments = function(assignments, list) {
         $(assignments).each(function(idx, assignment) {
             var li = $(document.createElement("li"));
-            var html = assignment.principal.name;
-            html += " <select id=\"permissions'" + assignment.principalId + "'\" name=\"permissions['" + assignment.principalId + "']\"><option value=\"INHERIT\">INHERIT</option><option value=\"GRANT\">GRANT</option><option value=\"DENY\">DENY</option></select>";
+            var html = "<span>" + assignment.principal.name;
+            html += " <select id=\"permissions'" + assignment.principalId + "'\" name=\"permissions['" + assignment.principalId + "']\"><option value=\"INHERIT\">INHERIT</option><option value=\"GRANT\">GRANT</option><option value=\"DENY\">DENY</option></select></span>";
             li.html(html);
             li.find("select")
                 .val(assignment.type).attr("principal", assignment.principalId)

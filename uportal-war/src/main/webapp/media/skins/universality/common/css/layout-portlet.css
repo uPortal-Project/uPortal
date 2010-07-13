@@ -126,9 +126,9 @@
 .portlet .titlebar .return-link {position:absolute; top:0; right:0;}
 .portlet .titlebar .return-link {top:0.3em;}
 .portlet .titlebar  .breadcrumb~.return-link {top:1.8em;}
-.portlet .titlebar .toolbar {padding:0.5em 0;}
+.portlet .titlebar .toolbar {padding:0;}
 .portlet .titlebar .toolbar ul {margin:0; padding:0; overflow:hidden; zoom:1;}
-.portlet .titlebar .toolbar ul li {list-style-type:none; float:left; display:inline; padding:0 5px; margin-left:-5px;}
+.portlet .titlebar .toolbar ul li {list-style-type:none; float:left; display:inline; padding:5px; margin-left:-5px;}
 .portlet .titlebar .toolbar .search {text-align:right;}
 .portlet .titlebar .tags {padding-bottom:0.5em;}
 .portlet .titlebar .details {margin:0 0 1em 0; padding:5px 10px;}
@@ -136,8 +136,8 @@
 .portlet .titlebar .details .label {display:inline;}
 .portlet .titlebar .details .detail~.detail {padding-left:1.5em;}
 .portlet .titlebar .details a {margin:0;}
-.portlet .portlet-titlebar > .title {padding:0 0 0.2em 0; margin:0;}
-.portlet .portlet-titlebar > .subtitle {margin:0 0 1em 0; padding-top:0.4em;}
+.portlet .portlet-titlebar > .title {margin:0;}
+.portlet .portlet-titlebar > .subtitle {margin:0 0 1em 0; padding-top:0.2em;}
 
 
 /* Search */
@@ -259,7 +259,10 @@
 .portlet .portlet-form form .inputtime {margin-left:4px;}
 .portlet .portlet-form form .buttons {margin:0 0 0 105px; border:none;}
 .portlet .portlet-form.wider {width:600px;}
-
+.portlet .portlet-form ul,
+.portlet .portlet-form li {margin:0; padding:0; list-style-type:none;}
+.portlet .portlet-form li {margin:0 0 5px 105px;}
+.portlet .portlet-form li label {position:relative; top:-4px;}
 
 /* Overflow box */
 /*

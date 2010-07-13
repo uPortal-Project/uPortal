@@ -121,15 +121,46 @@
 .portlet .titlebar .breadcrumb a {color:#bbb !important; font-weight:normal; text-decoration:none !important;}
 .portlet .titlebar .breadcrumb a:hover,
 .portlet .titlebar .breadcrumb a:focus {color:#999 !important; text-decoration:underline !important;}
+.portlet .titlebar .title {}
+.portlet .titlebar .title .name,
+.portlet .titlebar .subtitle .name {color:#369;}
+.portlet .titlebar .subtitle {font-size:100%; font-weight:normal; color:#444; padding-left:1em;}
 .portlet .titlebar .actions li {border:none;}
 .portlet .titlebar .return-link {font-weight:bold; text-decoration:none !important;}
 .portlet .titlebar .toolbar {background:#e2e8e7; border-top:1px solid #ccc;}
-.portlet .titlebar .details {font-size:85%;}
+.portlet .titlebar .toolbar .button,
+.portlet .titlebar .toolbar a.button {
+	border-color:#ccc;
+	background-color:#e2e8e7;
+	background-image:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#e2e8e7), to(#fff)); 
+	background-image:-moz-linear-gradient(0% 50% 90deg, #e2e8e7, #fff);
+	color:#555 !important;
+	text-shadow:none;
+}
+.portlet .titlebar .toolbar .button:hover,
+.portlet .titlebar .toolbar .button:focus,
+.portlet .titlebar .toolbar a.button:hover,
+.portlet .titlebar .toolbar a.button:focus,
+.portlet .titlebar .toolbar input[type="submit"]:hover,
+.portlet .titlebar .toolbar input[type="submit"]:focus,
+.portlet .titlebar .toolbar input[type="button"]:hover,
+.portlet .titlebar .toolbar input[type="button"]:focus {
+	border-color:#000;
+	background-color:#666;
+	background-image:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#666), to(#fff)); 
+	background-image:-moz-linear-gradient(0% 50% 90deg, #666, #fff);
+	color:#fff !important;
+	text-shadow:0 -1px 1px rgba(0,0,0,.5); 
+}
+.portlet .titlebar .details {font-size:85%; background-color:#f8f8f8; font-weight:bold;}
 .portlet .titlebar .details .sysid .name {font-family:"Courier New", Courier, monospace;}
 .portlet .titlebar .details a {font-weight:normal;}
+.portlet .titlebar .details span {font-weight:normal;}
 .portlet .portlet-titlebar {}
-.portlet .portlet-titlebar > .title {font-size:150%; border-bottom:1px solid #ccc; color:#369;}
-.portlet .portlet-titlebar > .subtitle {font-size:120%; border-top:2px solid #ccc; color:#777;}
+.portlet .portlet-titlebar > .title {font-size:150%; font-weight:normal; border-bottom:1px solid #ccc;}
+.up .focused .portlet .portlet-titlebar > .title {font-size:250%;}
+.up .focused .portlet .portlet-titlebar > .subtitle {font-size:120%;}
+.portlet .portlet-titlebar > .subtitle {}
 .portlet .portlet-titlebar > .options {border-top:1px solid #ccc;}
 
 
@@ -214,13 +245,45 @@
 .portlet .title.browse {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/chart_organisation.png);}
 
 
-/* 2 Panel */
+/* 2 Panel Layout */
 /*
  * Two side-by-side, colored panels.  
  */
 .portlet .portlet-2panel {border:2px solid #336699;}
 .portlet .portlet-2panel .portlet-panel-left {background-color:#e2e8e7;}
 .portlet .portlet-2panel .portlet-panel-right {background-color:#fff;}
+
+/* Panel List */
+/*
+ * For lists of boxed panels of like content. Larger and more visual than normal un/ordered lists.
+ */
+.portlet .panel-list .panel {
+	margin-bottom:1em;
+	padding:0.5em 1em;
+	background:#eee url(../common/images/light_top_100px_70.png) 0 0 repeat-x;
+	background:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#eee), to(#fff)); 
+	background:-moz-linear-gradient(0% 50% 90deg, #eee, #fff);
+	border:1px solid #a9a9a9;
+	-moz-border-radius:7px;
+	-webkit-border-radius:7px;
+	border-radius:7px;
+}
+.portlet .panel-list .panel:hover,
+.portlet .panel-list .panel:focus {
+	border-color:#333;
+	-webkit-box-shadow:4px 4px 4px rgba(0,0,0,.25); 
+	-moz-box-shadow:4px 4px 4px rgba(0,0,0,.25);
+	box-shadow:4px 4px 4px rgba(0,0,0,.25);
+}
+.portlet .panel-list .icon-large {padding-left:4em;}
+.portlet .panel-list .panel > .titlebar {margin-bottom:0.5em;}
+.portlet .panel-list .panel > .titlebar .title {margin:0;}
+.portlet .panel-list .panel > .titlebar .title a {font-weight:bold; text-decoration:none;}
+.portlet .panel-list .panel > .titlebar .title a:hover,
+.portlet .panel-list .panel > .titlebar .title a:focus {text-decoration:underline;}
+.portlet .panel-list .panel > .titlebar .subtitle {margin:0;}
+.portlet .panel-list .panel > .content {padding:0;}
+.portlet .panel-list .panel > .content .perm-list {font-size:80%;}
 
 
 /* Tables */
@@ -279,43 +342,6 @@
 .portlet .portlet-form form .buttons {border:none;}
 
 
-/* Buttons */
-/*
- * Gives links and form buttons a consistent button look.
- * Most of the universal button styling is declared in portal.css. 
- * Add the "button" class to the element you want to be styled as a button.
- * If multiple buttons, add the "buttons" class to the wrapping element.
- * If multiple buttons, add the "primary" class to the element that is the default action (e.g., class="button primary").
- */
-.portlet button, 
-.portlet .button,
-.portlet form input[type="submit"] {border-width:1px; border-style:solid; border-color:#000; background:#336699 url(../common/images/button_bkd.png) top left repeat-x; color:#fff; font-size:11px; font-weight:bold; font-family:"lucida grande",tahoma,verdana,arial,sans-serif; text-transform:capitalize; text-shadow:0 1px 1px rgba(255,255,255,.85); -webkit-box-shadow:0 1px 2px rgba(0,0,0,.5); -moz-box-shadow:0 1px 2px rgba(0,0,0,.5); box-shadow:0 1px 2px rgba(0,0,0,.5);}
-.portlet a.button {color:#fff !important;  text-decoration:none !important;}
-.portlet .buttons {border-top:0.2em solid #ccc;}
-.portlet .buttons .button {background-color:#F0F0F0; border-color:#000; color:#000;}
-.portlet .buttons .button.primary {background-color:#336699; color:#fff;}
-.portlet .buttons a.button {color:#000 !important;}
-.portlet .buttons a.button.primary {color:#fff !important;}
-.portlet .button:hover,
-.portlet .button:focus,
-.portlet form input[type="submit"]:hover,
-.portlet form input[type="submit"]:focus {background-color:#5a95cf !important; /*background-color:#7a9e0d;*/}
-.portlet .button:hover,
-.portlet .button:focus,
-.portlet a.button:hover,
-.portlet a.button:focus,
-.portlet form input[type="submit"]:hover,
-.portlet form input[type="submit"]:focus {color:#fff !important;}
-.portlet form input[type="submit"]:hover,
-.portlet form input[type="submit"]:focus {cursor:pointer;}
-.portlet .titlebar .toolbar .button,
-.portlet .titlebar .toolbar a.button {border-color:#ccc; background-color:#e2e8e7; color:#336699 !important;}
-.portlet .titlebar .toolbar .button:hover,
-.portlet .titlebar .toolbar .button:focus,
-.portlet .titlebar .toolbar a.button:hover,
-.portlet .titlebar .toolbar a.button:focus {border-color:#000; background-color:#7a9e0d !important; color:#fff !important;}
-
-
 /* Overflow box */
 /*
  *
@@ -337,12 +363,22 @@
  * Formats pagination controls.
  * Assumes the Fluid Infusion pager component.
  */
-.fl-pager th a {color:#3d80b3; text-decoration:none;}
-.fl-pager th a:hover,
-.fl-pager th a:focus {color:#2694e8; text-decoration:none;}
-.flc-pager-links a {color:#666666; text-decoration:none;}
-.flc-pager-links a:hover,
-.flc-pager-links a:focus {color:#333333;}
+ /* Fluid Pager */
+ .portlet .view-pager {font-size:85%;}
+.portlet .flc-pager-top {margin-bottom:0.5em;}
+.portlet .flc-pager-bottom {margin-top:0.5em;}
+.portlet .view-pager ul.fl-pager-ui {text-align:right}
+.portlet .view-pager .fl-pager-ui li {list-style-type:none; display:inline; padding-left:5px}
+.portlet .view-pager .fl-pager-ui a.fl-pager-disabled,
+.portlet .view-pager .fl-pager-ui .fl-pager-disabled a { color: #777777; border: 0; text-decoration: none; cursor: default; }
+.portlet .view-pager .fl-pager-ui a.fl-pager-currentPage,
+.portlet .view-pager .fl-pager-ui .fl-pager-currentPage a { color: #000000; border: 0; text-decoration: none; cursor: default;}
+.portlet .fl-pager th a {color:#3d80b3; text-decoration:none;}
+.portlet .fl-pager th a:hover,
+.portlet .fl-pager th a:focus {color:#2694e8; text-decoration:none;}
+.portlet .flc-pager-links a {color:#666666; text-decoration:none;}
+.portlet .flc-pager-links a:hover,
+.portlet .flc-pager-links a:focus {color:#333333;}
 
 
 /* Selection Basket */
@@ -412,11 +448,31 @@
 .cache-manager .cache-member:hover,
 .cache-manager .cache-member:focus {background-color:#FFFFCC; color:#336699;}
 
-/* Portlet Manager */
+/* Portlet Administration */
 .override-preference td {color:graytext; text-decoration:line-through;}
 
-
-.portlet .titlebar .details {background-color:#f8f8f8; font-weight:bold;}
-.portlet .titlebar .details span {font-weight:normal;}
-
-
+/* Permissions Administration */
+.prm-mgr .panel-list .panel {
+	margin-right: 2em;
+	padding-bottom:1em;
+	background:none;
+	border:1px solid #fff;
+	border-bottom:1px dotted #ccc;
+	-moz-border-radius:0px;
+	-webkit-border-radius:0px;
+	border-radius:0px;
+}
+.prm-mgr .panel-list .panel:hover,
+.prm-mgr .panel-list .panel:focus {border:1px solid #999;}
+.prm-mgr .panel-list .icon-large.permission-owner {background:transparent url(images/icons/applications-other.png) 1em 0.5em no-repeat;}
+.prm-mgr .panel-list .icon-large.UP_ERROR_CHAN {background-image:url(images/icons/dialog-warning.png);}
+.prm-mgr .panel-list .icon-large.UP_FRAGMENT {background-image:url(images/icons/preferences-system-windows.png);}
+.prm-mgr .panel-list .icon-large.UP_USERS {background-image:url(images/icons/system-users.png);}
+/*
+.prm-mgr .panel-list .icon-large.UP_GROUPS {background-image:url(images/icons/system-groups.png);}
+.prm-mgr .panel-list .icon-large.UP_PORTLET_PUBLISH {background-image:url(images/icons/window-publish.png);}
+.prm-mgr .panel-list .icon-large.UP_PORTLET_SUBSCRIBE {background-image:url(images/icons/window-add.png);}
+*/
+.prm-mgr.view-editperm form ul {margin:0;}
+.prm-mgr.view-editperm form ul li {list-style-type:none; border-top:1px dotted #ccc;}
+.prm-mgr.view-editperm form ul li span {display:block; padding:0.5em 0em 0.5em 2em;}

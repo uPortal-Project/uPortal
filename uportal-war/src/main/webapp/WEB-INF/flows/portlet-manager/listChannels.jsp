@@ -62,10 +62,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading"><spring:message code="listChannels.title"/></h2>
-    <div class="fl-col-flex2 portlet-toolbar" role="toolbar">
+    <div class="fl-col-flex2 toolbar" role="toolbar">
       <div class="fl-col">
         <ul>
-          <li><a href="${ newPortletUrl }" title="<spring:message code="listChannels.newPortletButton"/>"><span><spring:message code="listChannels.newPortletButton"/></span></a></li>
+          <li><a class="button" href="${ newPortletUrl }" title="<spring:message code="listChannels.newPortletButton"/>"><span><spring:message code="listChannels.newPortletButton"/></span></a></li>
         </ul>
       </div>
       <div class="fl-col fl-text-align-right">
@@ -89,12 +89,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
     
     <!-- Portlet Section -->
-    <div id="${n}channelAddingTabs" class="portlet-section fl-pager" role="region"> 
-      <div class="titlebar">
-        <h3 class="title" role="heading">
-          <spring:message code="listChannels.portletListHeading"/>
-        </h3>   
-        <div class="fl-col-flex2 options">
+    <div id="${n}channelAddingTabs" class="fl-pager">   
+        <div class="fl-col-flex2">
           <div class="fl-col view-filter">
             <label for="${n}categorySelectMenu"><spring:message code="listChannels.categoryFilterLabel"/></label>
             <select id="${n}categorySelectMenu">
@@ -124,8 +120,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </ul>
           </div>
         </div>
-      </div>
-      <div class="content">
 
         <table id="${n}categoriesTable1" summary="" xmlns:rsf="http://ponder.org.uk" class="portlet-table" style="width:100%;">
           <thead>
@@ -148,8 +142,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </tbody>
         </table>
       
-      </div>  
-    </div> <!-- end: portlet-section -->
+      </div>
     
   </div> <!-- end: portlet-body -->
   </form>

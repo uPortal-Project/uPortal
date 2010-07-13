@@ -48,17 +48,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	    	<span class="breadcrumb-1"><a href="${ backUrl }">Categories</a></span>
 	        <span class="separator">&gt; </span>
 	    </div>
-	    
-	    <h2 class="title" role="heading">Permissions</h2>
+	    <h2 class="title" role="heading">Permissions in <span class="name">${ owner.name }</span></h2>
 	    <h3 class="subtitle">${ owner.description }</h3>
-	    	    
-	    <div class="details">
-	    	<ul class="permission_info">
-	        	<li class="last">
-	               <span class="info_label">Category: </span>${ owner.name } 
-	            </li>
-			</ul>
-		</div>
 	</div>
   
   

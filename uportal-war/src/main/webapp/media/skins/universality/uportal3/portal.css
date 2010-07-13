@@ -55,6 +55,7 @@
  * These are any overrides to the FSS theme.
  */
  
+.fl-theme-mist a {font-weight:normal;}
 .fl-widget {-moz-border-radius:7px; -webkit-border-radius:7px; border-radius:7px;}
 .fl-widget-titlebar,
 .fl-widget-content,
@@ -117,11 +118,25 @@
 .up button, 
 .up .button,
 .up input[type="submit"],
-.up input[type="button"] {border-width:1px; border-style:solid; border-color:#000; background:#336699 url(../common/images/button_bkd.png) top left repeat-x; color:#fff; font-size:11px; font-weight:bold; font-family:"lucida grande",tahoma,verdana,arial,sans-serif; text-transform:capitalize; text-shadow:0 -1px 1px rgba(0,0,0,.5); -webkit-box-shadow:0 1px 2px rgba(0,0,0,.5); -moz-box-shadow:0 1px 2px rgba(0,0,0,.5); box-shadow:0 1px 2px rgba(0,0,0,.5);}
+.up input[type="button"] {
+	border-width:1px;
+	border-style:solid;
+	border-color:#000;
+	background:#336699 url(../common/images/button_bkd.png) top left repeat-x;
+	color:#fff;
+	font-size:11px;
+	font-weight:bold;
+	font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
+	text-transform:capitalize;
+	text-shadow:0 -1px 1px rgba(0,0,0,.5);
+	-webkit-box-shadow:0 1px 2px rgba(0,0,0,.5);
+	-moz-box-shadow:0 1px 2px rgba(0,0,0,.5);
+	box-shadow:0 1px 2px rgba(0,0,0,.5);
+}
 .up a.button {color:#fff !important;  text-decoration:none !important;}
 .up .buttons {border-top:0.2em solid #ccc;}
-.up .buttons .button {background-color:#F0F0F0; border-color:#000; color:#000;}
-.up .buttons .primary {background-color:#336699; color:#fff;}
+.up .buttons .button {background-color:#F0F0F0; border-color:#000; color:#000; text-shadow:none;}
+.up .buttons .primary {background-color:#336699; color:#fff; text-shadow:0 -1px 1px rgba(0,0,0,.5);}
 .up .buttons a.button {color:#000 !important;}
 .up .buttons a.primary {color:#fff !important;}
 .up .button:hover,
@@ -140,7 +155,7 @@
 
 /* Page */
 .up {font-family:Verdana, Arial, Helvetica, sans-serif; color:#333;}
-.up h1, .up h2, .up h3, .up h4, .up h5, .up h6 {font-family:Arial, Helvetica, sans-serif;}
+.up h1, .up h2, .up h3, .up h4, .up h5, .up h6 {font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif}
 .up #portalPage {background-color:#fff;}
 
 /* Portal Page Bar */
@@ -169,7 +184,7 @@
 
 /* Navigation */
 .up #portalNavigation {background:#98b6c1 url(images/nav_bkd_btm.gif) bottom right repeat-x; border-top:1px solid #44626a;}
-.up #portalNavigationInner {background:transparent url(images/nav_bkd_top.gif) top right repeat-x; border-top:1px solid #44626a; border-bottom:1px solid #4b6f7d;}
+.up #portalNavigationInner {background:transparent url(images/nav_bkd_top.gif) top right repeat-x; border-top:1px solid #44626a;}
 .up #portalNavigation .fl-tabs,
 .up #portalNavigation .fl-tabs li,
 .up #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:transparent;}
@@ -206,9 +221,10 @@
 .up .sidebar-right-200 #portalPageBodyTitleRow,
 .up .sidebar-right-250 #portalPageBodyTitleRow,
 .up .sidebar-right-300 #portalPageBodyTitleRow {background:transparent url(images/page_corner_topright.png) top right no-repeat;}
-.up #portalPageBodyTitleRow h1 {padding:0.2em 0 0.2em 0.5em; color:#333; font-size:200%; border:none;}
+.up #portalPageBodyTitleRow {padding-top:2em;}
+.up #portalPageBodyTitleRow h1 {/*padding:0.2em 0 0.2em 0.5em; color:#333; font-size:200%; border:none;*/ display:none;}
 /* Focused */
-.up #portalPageBodyBreadcrumb {font-size:90%; color:#ddd;}
+.up #portalPageBodyBreadcrumb {/*font-size:90%; color:#ddd;*/ display:none;}
 .up #portalPageBodyBreadcrumb a {font-weight:normal;}
 
 /* Columns */
@@ -220,7 +236,8 @@
 .up #portalSidebarInner {background:transparent url(../common/images/rounded_corner_bottomright.png) bottom right no-repeat;}
 /* Sidebar Widgets */
 .up #portalSidebar .fl-widget {padding:7px; font-size:85%; background:transparent url(../common/images/light_top_100px_30.png) 0 0 repeat-x; border:1px solid #ACC9E6;}
-.up #portalSidebar .fl-widget .fl-widget-titlebar h2 {color:#eee;}
+.up #portalSidebar .fl-widget .fl-widget-titlebar {margin:0;}
+.up #portalSidebar .fl-widget .fl-widget-titlebar h2 {color:#eee; font-size:1em; font-weight:bold; border:none;}
 .up #portalSidebar .fl-widget-content,
 .up #portalSidebar .fl-widget .fl-listmenu {background-color:#336699;}
 .up #portalSidebar .fl-widget .fl-listmenu {border-width:0px; border-bottom-width:1px;}
@@ -278,12 +295,12 @@
 
 /* Portlets */
 /* The styling here is for the portlet container or "chrome" that uPortal renders.  CSS that directly styles portlet content is specified in portlet.css. */
-.up .dashboard .up-portlet-wrapper-top,
-.up .dashboard .up-portlet-wrapper-bottom {display:none;}
-.up .dashboard .up-portlet-titlebar  {white-space:nowrap;}
-.up .dashboard .up-portlet-titlebar h2 {padding-left:0.5em; font-size:120%;}
-.up .dashboard .up-portlet-titlebar h2 a {color:#808080 !important; text-decoration:none;}
-.up .dashboard .up-portlet-controls {top:2px; padding-right:0.5em;}
+.up .up-portlet-wrapper-top,
+.up .up-portlet-wrapper-bottom {display:none;}
+.up .up-portlet-titlebar  {white-space:nowrap;}
+.up .up-portlet-titlebar h2 {padding-left:0.5em; font-size:100%; text-transform:uppercase;}
+.up .up-portlet-titlebar h2 a {color:#808080 !important; text-decoration:none;}
+.up .up-portlet-controls {top:2px; padding-right:0.5em;}
 .up .up-portlet-controls .up-portlet-control {display:block; float:left; height:16px; width:16px; padding:0; font-size:90%; background:transparent url(images/portlet_icons_flat.png) no-repeat 0 0;}
 .up .up-portlet-controls .focus:hover {background-position:0 -16px;}
 .up .up-portlet-controls .edit {background-position:-16px 0;}
@@ -297,7 +314,7 @@
 .up .up-portlet-controls .up-portlet-control span {display:none;}
 .up .up-portlet-controls .add {background-position:-80px 0;}
 .up .up-portlet-controls .add:hover {background-position:-80px -16px;}
-.up .dashboard .up-portlet-content-wrapper {border:1px solid #ccc;}
+.up .up-portlet-content-wrapper {border:1px solid #ccc;}
 /* No Chrome */
 .up .no-chrome .up-portlet-content-wrapper {padding:1em; border-radius:7px; -moz-border-radius:7px; -webkit-border-radius:7px;}
 /* Alternate */
@@ -310,10 +327,10 @@
 .up .dashboard .locked {background:#e5e5e5;}
 .up .dashboard .locked .up-portlet-titlebar {padding:0.2em 0.5em; background:#e5e5e5; border:1px solid #ccc;}
 .up .dashboard .locked .up-portlet-content-wrapper {border:none; padding:0;}
-/* Focused */
+/* Focused
 .up .focused .up-portlet-wrapper { padding:0; border:none; background:#fff;}
 .up .focused .up-portlet-titlebar h2 {font-size:300%;}
-.up .focused .up-portlet-titlebar h2 a {color:#333 !important; text-decoration:none;}
+.up .focused .up-portlet-titlebar h2 a {color:#333 !important; text-decoration:none;} */
 .up .focused .up-portlet-controls .up-portlet-control {height:auto; width:auto; padding-left:18px; margin-left:1.5em;}
 .up .focused .up-portlet-controls .up-portlet-control span {display:inline;}
 .up .focused .up-portlet-controls .return {background:transparent url(images/portlet_icon_return_flat.png) no-repeat 0 0;}
@@ -341,14 +358,6 @@
 .up .fl-reorderer-dropMarker {height:200px !important; background-color:#D1F0E0; border:1px dashed #009900; margin-bottom:1em;}
 .up .drop-warning {position:absolute; top:50px; left:10px; border:2px solid red; background-color:#ffd7d7; display:none; padding:10px; margin:5px; z-index:65535;}
 .up .drop-warning p {margin:0em; padding:0.5em 1em;}
-
-/* Fluid Pager */
-.up .fl-pager ul.fl-pager-ui {text-align:right}
-.up .fl-pager .fl-pager-ui li {list-style-type:none; display:inline; padding-left:5px}
-.up .fl-pager .fl-pager-ui a.fl-pager-disabled,
-.up .fl-pager .fl-pager-ui .fl-pager-disabled a { color: #777777; border: 0; text-decoration: none; cursor: default; }
-.up .fl-pager .fl-pager-ui a.fl-pager-currentPage,
-.up .fl-pager .fl-pager-ui .fl-pager-currentPage a { color: #000000; border: 0; text-decoration: none; cursor: default;}
 
 /* Focus */
 .up :focus{outline-width:0px;}
