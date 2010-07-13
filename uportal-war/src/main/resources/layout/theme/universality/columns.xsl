@@ -27,7 +27,8 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:dlm="http://www.uportal.org/layout/dlm">
   
   
   <!-- ========== TEMPLATE: BODY COLUMNS ========== -->
@@ -63,7 +64,34 @@
             <xsl:otherwise><xsl:value-of select="floor(substring-before(@width,'%'))" /></xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
-        <div id="column_{@ID}" class="portal-page-column {$POSITION} fl-col-flex{$COLUMN_WIDTH}"> <!-- Unique column_ID needed for drag and drop. -->
+        <xsl:variable name="MOVABLE">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="DELETABLE">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:deleteAllowed='false')">deletable</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="EDITABLE">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:editAllowed='false')">editable</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="CAN_ADD_CHILDREN">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:deleteAllowed='false')">canAddChildren</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <div id="column_{@ID}" class="portal-page-column {$POSITION} fl-col-flex{$COLUMN_WIDTH} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}"> <!-- Unique column_ID needed for drag and drop. -->
+          <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+            <div><a class="portal-column-permissions-link" href="javascript:;">Permissions</a></div>
+          </xsl:if>
           <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
             <xsl:apply-templates select="channel"/> <!-- Render the column's portlets.  -->
           </div>

@@ -72,7 +72,7 @@
    
    <xsl:when test="not(//focused)">
   
-    <div id="dojoMenus" style="display:none;">
+    <div id="dojoMenus" class="dialogs" style="display:none;">
      <!-- Add Channel Menu -->
      <div id="contentAddingDialog" title="{$TOKEN[@name='AJAX_ADD_PORTLET_DIALOG_TITLE']}">
         <div id="channelAddingTabs">
@@ -141,6 +141,111 @@
       </div>
       </div>
            
+     <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+     
+         <div class="edit-page-permissions-dialog" title="Edit Page Permissions">
+            <div class="fl-widget portlet">
+                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+                    <h2 class="title" role="heading"><xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/></h2>
+                </div>
+            
+                <div class="fl-widget-content content portlet-content" role="main">
+                    <div class="portlet-section" role="region">
+                        <div class="titlebar">
+                            <h3 class="title" role="heading">Allow users to:</h3>
+                        </div>
+                        <div class="content">
+                            <form>
+                                <p>
+                                    <input type="hidden" name="nodeId" value="{/layout/navigation/tab[@activeTab='true']/@ID}"/>
+                                    <input type="checkbox" name="movable">
+                                        <xsl:if test="not(/layout/navigation/tab[@activeTab='true']/@dlm:moveAllowed='false')">
+                                            <xsl:attribute name="checked">checked</xsl:attribute>
+                                        </xsl:if>
+                                    </input> Move this page<br />
+                                    <input type="checkbox" name="editable">
+                                        <xsl:if test="not(/layout/navigation/tab[@activeTab='true']/@dlm:editAllowed='false')">
+                                            <xsl:attribute name="checked">checked</xsl:attribute>
+                                        </xsl:if>
+                                    </input> Edit page properties<br />
+                                    <input type="checkbox" name="addChildAllowed">
+                                        <xsl:if test="not(/layout/navigation/tab[@activeTab='true']/@dlm:addChildAllowed='false')">
+                                            <xsl:attribute name="checked">checked</xsl:attribute>
+                                        </xsl:if>
+                                    </input> Add columns<br />
+                                    <input type="checkbox" name="deletable">
+                                        <xsl:if test="not(/layout/navigation/tab[@activeTab='true']/@dlm:deleteAllowed='false')">
+                                            <xsl:attribute name="checked">checked</xsl:attribute>
+                                        </xsl:if>
+                                    </input> Delete this page<br />
+                                </p>
+                        
+                            
+                                <div class="buttons">
+                                    <input type="submit" class="button primary portlet-form-button" value="Update Permissions"/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+             </div>
+         </div>
+         
+         <div class="edit-column-permissions-dialog" title="Edit Column Permissions">
+            <div class="fl-widget portlet">
+                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+                    <h2 class="title" role="heading"></h2>
+                </div>
+            
+                <div class="fl-widget-content content portlet-content" role="main">
+                    <form>
+                        <p>Allow users to:</p>
+                        <p>
+                            <input type="hidden" name="nodeId" value=""/>
+                            <input type="checkbox" name="movable"/> Move this column<br />
+                            <input type="checkbox" name="editable"/> Edit column properties<br />
+                            <input type="checkbox" name="addChildAllowed"/> Add portlets to this column<br />
+                            <input type="checkbox" name="deletable"/> Delete this column<br />
+                        </p>
+                        
+                        <div class="buttons">
+                            <input type="submit" class="button primary portlet-form-button" value="Update Permissions"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+         </div>
+         
+         <div class="edit-portlet-permissions-dialog" title="Edit Portlet Permissions">
+            <div class="fl-widget portlet">
+                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+                    <h2 class="title" role="heading"></h2>
+                </div>
+            
+                <div class="fl-widget-content content portlet-content" role="main">
+                    <div class="portlet-section" role="region">
+                        <div class="titlebar">
+                            <h3 class="title" role="heading">Allow users to:</h3>
+                        </div>
+                        <div class="content">
+                            <form>
+                                <p>
+                                    <input type="hidden" name="nodeId"/>
+                                    <input type="checkbox" name="movable"/> Move this portlet<br />
+                                    <input type="checkbox" name="deletable"/> Delete this portlet<br />
+                                </p>
+                                
+                                <div class="buttons">
+                                    <input type="submit" class="button primary portlet-form-button" value="Update Permissions"/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+     </xsl:if>
+
      <div id="pageLayoutDialog" title="{$TOKEN[@name='AJAX_EDIT_PAGE_DIALOG_TITLE']}">
          <xsl:call-template name="layoutForm"/>
      </div>	

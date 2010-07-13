@@ -243,6 +243,8 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-portlet-titlebar {position:relative;}
 .up-portlet-titlebar h2 {margin:0; padding:2px 20px 3px 20px;}
 .up-portlet-controls {position:absolute; top:4px; right:0;}
+.up .up-portlet-controls .up-portlet-control.remove {display:none}
+.up .portal-page-column-inner .deletable .up-portlet-controls .up-portlet-control.remove {display:block}
 .dashboard .up-portlet-controls .up-portlet-control {padding-right:1em;}
 .up-portlet-content-wrapper {padding:1em;}
 /* No chrome */
@@ -338,3 +340,12 @@ table.purpose-layout td {margin:0; padding:0;}
 #skinList .fl-widget-content {padding:1em;}
 
 .fragment-disabled .add-fragment-link { display:none }
+
+#portalNavigation .portal-flyout-container .portal-subnav-list #movePageLeftLink,
+#portalNavigation .portal-flyout-container .portal-subnav-list #movePageRightLink,
+#portalNavigation .portal-flyout-container .portal-subnav-list #editPageLink,
+#portalNavigation .portal-flyout-container .portal-subnav-list #deletePageLink { display: none; }
+#portalNavigation .movable .portal-subnav-list #movePageLeftLink,
+#portalNavigation .movable .portal-subnav-list #movePageRightLink,
+#portalNavigation .editable .portal-subnav-list #editPageLink,
+#portalNavigation .deletable .portal-subnav-list #deletePageLink { display: list-item; }

@@ -44,8 +44,15 @@
     <xsl:variable name="PORTLET_LOCKED"> <!-- Test to determine if the portlet is locked in the layout. -->
       <xsl:choose> 
         <xsl:when test="@dlm:moveAllowed='false'">locked</xsl:when> 
-        <xsl:otherwise>moveable</xsl:otherwise> 
+        <xsl:otherwise>movable</xsl:otherwise> 
       </xsl:choose> 
+    </xsl:variable>
+
+    <xsl:variable name="DELETABLE">
+      <xsl:choose>
+        <xsl:when test="not(@dlm:deleteAllowed='false')">deletable</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
     
     <xsl:variable name="PORTLET_CHROME"> <!-- Test to determine if the portlet has been given the highlight flag. -->
@@ -73,7 +80,7 @@
     <xsl:if test="not(./parameter[@name='removeFromLayout']/@value='true') and not(./parameter[@name='PORTLET.removeFromLayout']/@value='true')">
     
     <!-- ****** PORTLET CONTAINER ****** -->
-    <div id="portlet_{@ID}" class="fl-widget up-portlet-wrapper {@fname} {$PORTLET_LOCKED} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
+    <div id="portlet_{@ID}" class="fl-widget up-portlet-wrapper {@fname} {$PORTLET_LOCKED} {$DELETABLE} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
           
         <!-- PORTLET CHROME CHOICE -->
         <xsl:choose>
@@ -169,7 +176,7 @@
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_MAXIMIZE_LABEL']"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'"> <!-- Remove. -->
+      <xsl:if test="(not(@dlm:deleteAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'"> <!-- Remove. -->
       	<a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$BASE_ACTION_URL}?uP_remove_target={@ID}" class="up-portlet-control remove">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_REMOVE_LABEL']"/></span>
         </a>
@@ -182,6 +189,11 @@
       <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
         <a id="focusedContentDialogLink" href="javascript:;" title="{$TOKEN[@name='PORTLET_ADD_LONG_LABEL']}" class="up-portlet-control add">
           <span><xsl:value-of select="$TOKEN[@name='PORTLET_ADD_LABEL']"/></span>
+        </a>
+      </xsl:if>
+      <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+        <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;" title="{$TOKEN[@NAME='PORTLET_SET_PERMISSIONS_LONG_LABEL']}">
+            <span><xsl:value-of select="$TOKEN[@name='PORTLET_SET_PERMISSIONS']"/></span>
         </a>
       </xsl:if>
     </div>

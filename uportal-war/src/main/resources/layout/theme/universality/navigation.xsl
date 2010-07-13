@@ -307,7 +307,25 @@
    | This template renders the tab preferences menu for the active tab when flyout menus are used.
   -->
   <xsl:template name="preferences.editpage">
-      <div id="portalFlyoutNavigation_{@ID}" class="portal-flyout-container" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
+      <xsl:variable name="MOVABLE"> <!-- Test to determine if the portlet is locked in the layout. -->
+        <xsl:choose> 
+          <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when> 
+        </xsl:choose> 
+      </xsl:variable>
+      <xsl:variable name="DELETABLE">
+        <xsl:choose>
+          <xsl:when test="not(@dlm:deleteAllowed='false')">deletable</xsl:when>
+          <xsl:otherwise></xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:variable name="EDITABLE">
+        <xsl:choose>
+          <xsl:when test="not(@dlm:editAllowed='false')">editable</xsl:when>
+          <xsl:otherwise></xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+  
+      <div id="portalFlyoutNavigation_{@ID}" class="portal-flyout-container {$MOVABLE} {$DELETABLE} {$EDITABLE}" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
         
         <div id="portalFlyoutNavigationInner_{@ID}" class="portal-flyout-container-inner">  <!-- Inner div for additional presentation/formatting options. -->
           <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
@@ -316,7 +334,7 @@
                 <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
               </a>
             </li>
-            <xsl:if test="not(@dlm:moveAllowed='false')">
+            <xsl:if test="not(@dlm:moveAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
               <li id="movePageLeftLink" class="portal-subnav">
                 <xsl:if test="position()=1">
                   <xsl:attribute name="style">display: none;</xsl:attribute>
@@ -334,10 +352,17 @@
                 </a>
               </li>
             </xsl:if>
-            <xsl:if test="not(@dlm:deleteAllowed='false')">
+            <xsl:if test="not(@dlm:deleteAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
               <li id="deletePageLink" class="portal-subnav">
               <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_DELETE_TAB_LONG_LABEL']}">
                 <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_DELETE_TAB_LABEL']"/></span>
+              </a>
+              </li>
+            </xsl:if>
+            <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+              <li id="editPagePermissionsLink" class="portal-subnav">
+              <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_EDIT_TAB_PERMISSIONS_LONG_LABEL']}">
+                <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_EDIT_TAB_PERMISSIONS_LABEL']"/></span>
               </a>
               </li>
             </xsl:if>

@@ -757,7 +757,57 @@ public class UpdatePreferencesServlet implements InitializingBean {
         return new ModelAndView("jsonView", model);
 
 	}
-	
+
+    @RequestMapping(method = RequestMethod.POST, params = "action=updatePermissions")
+    public ModelAndView updatePermissions(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        
+        IUserInstance ui = userInstanceManager.getUserInstance(request);
+        IPerson per = getPerson(ui, response);
+        UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+        IUserLayoutManager ulm = upm.getUserLayoutManager();
+
+        String elementId = request.getParameter("elementID");
+        IUserLayoutNodeDescription node = ulm.getNode(elementId);
+        
+        if (node == null){
+            log.warn("Failed to locate node for permissions update");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return null;
+        }
+        
+        String deletable = request.getParameter("deletable");
+        if (!StringUtils.isBlank(deletable)) {
+            node.setDeleteAllowed(Boolean.valueOf(deletable));
+        }
+
+        String movable = request.getParameter("movable");
+        if (!StringUtils.isBlank(movable)) {
+            node.setMoveAllowed(Boolean.valueOf(movable));
+        }
+
+        String editable = request.getParameter("editable");
+        if (!StringUtils.isBlank(editable)) {
+            node.setEditAllowed(Boolean.valueOf(editable));
+        }
+        
+        String canAddChildren = request.getParameter("addChildAllowed");
+        if (!StringUtils.isBlank(canAddChildren)) {
+            node.setAddChildAllowed(Boolean.valueOf(canAddChildren));
+        }
+        
+        ulm.updateNode(node);
+        
+        try {
+            // save the user's layout
+            saveLayout(per, ulm, upm, null);
+        } catch (Exception e) {
+            log.warn("Error saving layout", e);
+        }
+
+        return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+
+    }
+    
     protected void removeSubscription(IPerson per, String elementId, IUserLayoutManager ulm) {
         
         // get the fragment owner's ID from the element string
@@ -785,7 +835,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
     
     }
 
-    private List<String> updateColumns(String tabId, String[] newcolumns, IPerson per, UserPreferencesManager upm, IUserLayoutManager ulm) throws IOException, PortalException {
+    protected List<String> updateColumns(String tabId, String[] newcolumns, IPerson per, UserPreferencesManager upm, IUserLayoutManager ulm) throws IOException, PortalException {
 
         int columnNumber = newcolumns.length;
         @SuppressWarnings("unchecked")

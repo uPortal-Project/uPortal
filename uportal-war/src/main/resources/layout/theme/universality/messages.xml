@@ -121,6 +121,8 @@
         <token name="PREFERENCES_LINK_MOVE_TAB_RIGHT_LONG_LABEL">To move this tab to the right</token>
         <token name="PREFERENCES_LINK_DELETE_TAB_LABEL">Delete tab</token>
         <token name="PREFERENCES_LINK_DELETE_TAB_LONG_LABEL">To remove this tab from your layout</token>
+        <token name="PREFERENCES_LINK_EDIT_TAB_PERMISSIONS_LABEL">Edit Permissions</token>
+        <token name="PREFERENCES_LINK_EDIT_TAB_PERMISSIONS_LONG_LABEL">To edit user permissions for this page</token>
         <!-- Preferences Target Links -->
         <token name="CANCEL_TAB_MOVE_LABEL">Cancel Tab Move</token>
         <token name="CANCEL_TAB_MOVE_LONG_LABEL">To cancel the request to move the Tab</token>
@@ -289,6 +291,8 @@
         <token name="PORTLET_DETACH_LONG_LABEL">To detach this portlet into a separate browser window</token>
         <token name="PORTLET_ADD_LABEL">Add to my layout</token>
         <token name="PORTLET_ADD_LONG_LABEL">Add this portlet to my layout</token>
+        <token name="PORTLET_SET_PERMISSIONS">Permissions</token>
+        <token name="PORTLET_SET_PERMISSIONS_LONG_LABEL">Set user permissions for this portlet</token>
         <!-- Footer Links -->
         <token name="JASIG_LABEL">JA-SIG Home</token>
         <token name="JASIG_LONG_LABEL">To go to the Java Architectures Special Interest Group Home</token>

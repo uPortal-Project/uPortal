@@ -183,6 +183,12 @@
   </xsl:param>
   <xsl:param name="COLUMNS" select="count(//content/column)"/>
   <xsl:variable name="TOKEN" select="document($MESSAGE_DOC_URL)/theme-messages/tokens[lang($USER_LANG) and (@institution=$INSTITUTION or not(@institution))]/token"/> <!-- Tells the theme how to find appropriate localized token. -->  
+  <xsl:variable name="IS_FRAGMENT_ADMIN_MODE">
+    <xsl:choose>
+        <xsl:when test="//channel[@fname = 'fragment-admin-exit']">true</xsl:when>
+        <xsl:otherwise>false</xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
   
   
   <!-- ****** INSTITUTION SETTINGS ****** -->
