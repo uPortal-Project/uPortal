@@ -1501,6 +1501,68 @@ public class RDBMDistributedLayoutStore
                                                        profileId,
                                                        stylesheetId ) );
     }
+    
+    private Map<Integer, String> getOriginIds(Connection con, int userId, int profileId, int stylesheetType, int stylesheetId) throws SQLException {
+        /*
+         * Now we need to load in the folder and channel attributes from
+        * the up_ss_user_atts table. But before doing so to avoid using
+        * an outer join and to work around an oracle restriction of
+        * having only on LONG type returned per result set we first
+        * load dlm:origin IDs for the corresponding nodes it any. These
+        * origin IDs indicate that the node whose attribute is being
+        * overridden came from a fragment and that origin ID must then
+        * be used for the node id when setting them on the structure
+        * stylesheet user preferences object.
+        */
+        
+        /*
+         * the list of origin Ids if any for nodes having overridden
+         * structure stylesheet attributes.
+         */
+        String originIdQuery = "SELECT struct_id, struct_parm_val "
+                                        + "FROM up_layout_param "
+                                        + "WHERE user_id=?"
+                                        + " AND layout_id = 1 and "
+                                        + "(struct_parm_nm=?"
+                                        + " OR struct_parm_nm=?"
+                                        + ") AND struct_id IN ("
+                                            + "SELECT struct_id FROM up_ss_user_atts "
+                                            + "WHERE user_id=?"
+                                            + " AND profile_id=?"
+                                            + " AND ss_type=?"
+                                            + " AND ss_id=?)";
+
+        final PreparedStatement pstmt = con.prepareStatement(originIdQuery);
+        
+        pstmt.setInt(1,userId);
+        pstmt.setString(2,Constants.ATT_ORIGIN);
+        pstmt.setString(3,Constants.LEGACY_ATT_ORIGIN);
+        // for structIdsWithCustomUserValues select
+        pstmt.setInt(4,userId);
+        pstmt.setInt(5,profileId);
+        pstmt.setInt(6,stylesheetType);
+        pstmt.setInt(7,stylesheetId);
+        final ResultSet rs = pstmt.executeQuery();
+        Map<Integer, String> originIds = null;
+        try {
+            while (rs.next()) {
+                if (originIds == null)
+                        originIds = new HashMap<Integer, String>();
+                // get the LONG column first so Oracle doesn't toss a
+                // java.sql.SQLException: Stream has already been closed
+                String originId = rs.getString(2);
+                int structId = rs.getInt(1);
+                originIds.put(new Integer(structId), originId);
+            }
+        }
+        finally
+        {
+            rs.close();
+            pstmt.close();
+        }
+        
+        return originIds;
+    }
 
     private StructureStylesheetUserPreferences _getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
         int userId = person.getID();
@@ -1618,75 +1680,8 @@ public class RDBMDistributedLayoutStore
                     pstmt.close();
                 }
 
-                /*
-                 * Now we need to load in the folder and channel attributes from
-                * the up_ss_user_atts table. But before doing so to avoid using
-                * an outer join and to work around an oracle restriction of
-                * having only on LONG type returned per result set we first
-                * load dlm:origin IDs for the corresponding nodes it any. These
-                * origin IDs indicate that the node whose attribute is being
-                * overridden came from a fragment and that origin ID must then
-                * be used for the node id when setting them on the structure
-                * stylesheet user preferences object.
-                */
-
-                /*
-                 * the list of structure stylesheet attributes that have user
-                 * overrides to the default values specified by the stylesheet's
-                 * .sdf file
-                 */
-                String structIdsWithCustomUserValues = "SELECT struct_id FROM up_ss_user_atts "
-                                        + "WHERE user_id="
-                                        + "?"
-                                        + " AND profile_id="
-                                        + "?"
-                                        + " AND ss_type=1"
-                                        + " AND ss_id="
-                                        + "?";
-
-                /*
-                 * the list of origin Ids if any for nodes having overridden
-                 * structure stylesheet attributes.
-                 */
-                String originIdQuery = "SELECT struct_id, struct_parm_val "
-                                                + "FROM up_layout_param "
-                                                + "WHERE user_id="
-                                                + "?"
-                                                + " AND layout_id = 1 and "
-                                                + "(struct_parm_nm="
-                                                + "?"
-                                                + " OR struct_parm_nm="
-                                                + "?"
-                                                + ") AND struct_id IN ("
-                                                + structIdsWithCustomUserValues + ")";
-
-                pstmt = con.prepareStatement(originIdQuery);
                 
-                pstmt.setInt(1,userId);
-                pstmt.setString(2,Constants.ATT_ORIGIN);
-                pstmt.setString(3,Constants.LEGACY_ATT_ORIGIN);
-                // for structIdsWithCustomUserValues select
-                pstmt.setInt(4,userId);
-                pstmt.setInt(5,profileId);
-                pstmt.setInt(6,stylesheetId);
-                rs = pstmt.executeQuery();
-                Map<Integer, String> originIds = null;
-                try {
-                    while (rs.next()) {
-                        if (originIds == null)
-                                originIds = new HashMap<Integer, String>();
-                        // get the LONG column first so Oracle doesn't toss a
-                        // java.sql.SQLException: Stream has already been closed
-                        String originId = rs.getString(2);
-                        int structId = rs.getInt(1);
-                        originIds.put(new Integer(structId), originId);
-                    }
-                }
-                finally
-                {
-                    rs.close();
-                    pstmt.close();
-                    }
+                Map<Integer, String> originIds = getOriginIds(con, userId, profileId, 1, stylesheetId);
 
                 /*
                  * now go get the overridden values and compare them against the
@@ -1890,6 +1885,8 @@ public class RDBMDistributedLayoutStore
                 {
                     rs.close();
                 }
+                
+                Map<Integer, String> originIds = getOriginIds(con, userId, profileId, 2, stylesheetId);
 
                 // Now load in the channel attributes preferences from the
                 // up_ss_user_atts table
@@ -1922,6 +1919,10 @@ public class RDBMDistributedLayoutStore
                             param_type = 0;
                         }
                         int structId = rs.getInt(4);
+                        String originId = null;
+                        if (originIds != null)
+                                originId = originIds.get(new Integer(structId));
+                        
                         if (rs.wasNull())
                         {
                             structId = 0;
@@ -1939,8 +1940,12 @@ public class RDBMDistributedLayoutStore
                         if (param_type == 3)
                         {
                             // channel attribute
-                            tsup.setChannelAttributeValue(getStructId(structId,
-                                    chanId), rs.getString(2), rs.getString(3));
+                            String channelStructId = null;
+                            if ( originId != null )
+                                channelStructId = originId;
+                            else
+                                channelStructId = getStructId(structId,chanId);
+                            tsup.setChannelAttributeValue(channelStructId, rs.getString(2), rs.getString(3));
                         }
                     }
                 } finally
@@ -2401,9 +2406,13 @@ public class RDBMDistributedLayoutStore
             PreparedStatement parmStmt)
             throws Exception
         {
-            if (node == null || node.getNodeName().equals("parameter"))
-            { // No more or parameter node
+            if (node == null)
+            { // No more
                 return 0;
+            }
+            if (node.getNodeName().equals("parameter")) {
+                //parameter, skip it and go on to the next node
+                return saveStructure(node.getNextSibling(), structStmt, parmStmt);
             }
             Element structure = (Element) node;
 

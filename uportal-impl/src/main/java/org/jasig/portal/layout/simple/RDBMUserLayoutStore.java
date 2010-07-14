@@ -571,9 +571,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
             structure.setIdAttribute("ID", true);
         }
 
-        if (!ls.isChannel()) {          // Folder
-          createLayout(layoutStructure, doc,  structure, ls.getChildId());
-        }
+        createLayout(layoutStructure, doc,  structure, ls.getChildId());
         structId = ls.getNextId();
       }
   }

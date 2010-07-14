@@ -606,12 +606,14 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                     this.encodeAndAppend(url.append("&"), encoding, "uP_tcattr", "minimized");
                     this.encodeAndAppend(url.append("&"), encoding, "minimized_channelId", channelSubscribeId);
                     this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "false");
+                    this.encodeAndAppend(url.append("&"), encoding, "uP_save", "all");
                 }
                 else if (WindowState.MINIMIZED.equals(windowState)) {
                     this.encodeAndAppend(url.append("&"), encoding, "uP_root", IUserLayout.ROOT_NODE_NAME);
                     this.encodeAndAppend(url.append("&"), encoding, "uP_tcattr", "minimized");
                     this.encodeAndAppend(url.append("&"), encoding, "minimized_channelId", channelSubscribeId);
                     this.encodeAndAppend(url.append("&"), encoding, "minimized_" + channelSubscribeId + "_value", "true");
+                    this.encodeAndAppend(url.append("&"), encoding, "uP_save", "all");
                 }
                 else if (IPortletAdaptor.DETACHED.equals(windowState)) {
                     this.encodeAndAppend(url.append("&"), encoding, "uP_detach_target", channelSubscribeId);
