@@ -21,6 +21,7 @@ package org.jasig.portal.spring.web.servlet.view;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +48,7 @@ public class XmlView extends AbstractView {
 	 * Construct a new XmlView instance.
 	 */
 	public XmlView() {
-		setContentType("text/xml");
+		setContentType("text/xml;charset=ISO-8859-1");
 	}
 
 	private String xmlKey = "xml";
@@ -73,7 +74,8 @@ public class XmlView extends AbstractView {
 
 		response.setContentType(getContentType());
 		
-		OutputStream out = response.getOutputStream();
+		OutputStream output = response.getOutputStream();
+		OutputStreamWriter out = new OutputStreamWriter(output , "ISO-8859-1");
 
 		Object obj = model.get(xmlKey);
 		
@@ -94,7 +96,7 @@ public class XmlView extends AbstractView {
 		// if the object is a String, just send it straight to the output
 		else if (obj instanceof String) {
 			String xml = (String) model.get(xmlKey);
-			out.write(xml.getBytes());
+			out.write(xml);
 			out.flush();
 		}
 
