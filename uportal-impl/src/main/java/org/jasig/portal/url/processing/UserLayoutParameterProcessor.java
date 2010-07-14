@@ -42,11 +42,13 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
+import org.jasig.portal.layout.dlm.UserPrefsHandler;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Required;
+import org.w3c.dom.Element;
 
 /**
  * This helper class processes HttpServletRequests for parameters relating to
@@ -240,6 +242,14 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                         }
                         
                         if ("minimized".equals(themeChannelAttrName)) {
+                            final Element channel = userLayoutManager.getUserLayoutDOM().getElementById(channelId);
+                            try {
+                                UserPrefsHandler.setUserPreference(channel, themeChannelAttrName, person);
+                            }
+                            catch (Exception e) {
+                                logger.warn("Failed to set 'minimized' attribute on channel '" + channelId + "' with element: " + channel, e);
+                            }
+                            
                             final PortalEvent event;
                             if ("true".equals(themeChannelAttrValue)) {
                                 event = PortalEvent.MINIMIZE;

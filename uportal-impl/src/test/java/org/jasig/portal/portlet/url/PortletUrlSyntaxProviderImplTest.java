@@ -140,7 +140,7 @@ public class PortletUrlSyntaxProviderImplTest extends TestCase {
         portletUrl.setParameters(parameters);
         
         urlString = portletUrlSyntaxProvider.generatePortletUrl(request, portletWindow, portletUrl);
-    	assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type_windowId1=RENDER&pltc_state_windowId1=minimized&uP_root=root&uP_tcattr=minimized&minimized_channelId=entityId1&minimized_entityId1_value=true&pltc_mode_windowId1=edit&pltp_windowId1_key1=value1.1&pltp_windowId1_key1=value1.2&pltp_windowId1_key2=value2.1&pltp_windowId1_key3=#entityId1", urlString);
+    	assertEquals("/uPortal/base/action.url?pltc_target=windowId1&pltc_type_windowId1=RENDER&pltc_state_windowId1=minimized&uP_root=root&uP_tcattr=minimized&minimized_channelId=entityId1&minimized_entityId1_value=true&uP_save=all&pltc_mode_windowId1=edit&pltp_windowId1_key1=value1.1&pltp_windowId1_key1=value1.2&pltp_windowId1_key2=value2.1&pltp_windowId1_key3=#entityId1", urlString);
 
         portletUrl.setRequestType(RequestType.ACTION);
         portletUrl.setWindowState(WindowState.MAXIMIZED);

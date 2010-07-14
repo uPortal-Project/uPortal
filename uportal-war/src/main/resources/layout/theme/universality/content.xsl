@@ -164,17 +164,29 @@
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_PRINT_LABEL']"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="not(//focused)"> <!-- Focus. -->
+      <xsl:if test="not(//focused) and @minimized='false'"> <!-- Focus. -->
+        <!-- UNCOMMENT FOR MINIMIZE CONTROL
+        <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true&amp;uP_save=all" title="{$TOKEN[@name='PORTLET_MINIMIZE_LONG_LABEL']}" class="up-portlet-control minimize">
+          <span><xsl:value-of select="$TOKEN[@name='PORTLET_MINIMIZE_LABEL']"/></span>
+        </a>
+        -->
       	<a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{$TOKEN[@name='PORTLET_MAXIMIZE_LONG_LABEL']}" class="up-portlet-control focus">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_MAXIMIZE_LABEL']"/></span>
         </a>
+      </xsl:if>
+      <xsl:if test="@minimized='true'"> <!-- Return from Minimized. -->
+        <!-- UNCOMMENT FOR UNMINIMIZE CONTROL
+        <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false&amp;uP_save=all" title="{$TOKEN[@name='PORTLET_RETURN_LONG_LABEL']}" class="up-portlet-control return">
+          <span><xsl:value-of select="$TOKEN[@name='PORTLET_RETURN_LABEL']"/></span>
+        </a>
+        -->
       </xsl:if>
       <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'"> <!-- Remove. -->
       	<a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$BASE_ACTION_URL}?uP_remove_target={@ID}" class="up-portlet-control remove">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_REMOVE_LABEL']"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="//focused"> <!-- Return. -->
+      <xsl:if test="//focused"> <!-- Return from Focused. -->
         <a href="{$HOME_ACTION_URL}" title="{$TOKEN[@name='PORTLET_RETURN_LONG_LABEL']}" class="up-portlet-control return">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_RETURN_LABEL']"/></span>
         </a>
