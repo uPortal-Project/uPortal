@@ -21,6 +21,7 @@ package org.jasig.portal.portlets.portletadmin;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -43,6 +44,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.OptionalContainerServices;
 import org.apache.pluto.PortletContainerException;
+import org.apache.pluto.descriptors.common.DisplayNameDD;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.apache.pluto.descriptors.portlet.SupportsDD;
 import org.apache.pluto.internal.impl.PortletContextImpl;
@@ -84,6 +86,7 @@ import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.webflow.context.ExternalContext;
@@ -545,8 +548,44 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		List<PortletContextImpl> contexts = new ArrayList<PortletContextImpl>();
 		for (Iterator iter = portletRegistryService.getRegisteredPortletApplications(); iter.hasNext();) {
 			PortletContextImpl context = (PortletContextImpl) iter.next();
+			
+			final List<PortletDD> portlets = context.getPortletApplicationDefinition().getPortlets();
+			Collections.sort(portlets, new ComparableExtractingComparator<PortletDD, String>(String.CASE_INSENSITIVE_ORDER) {
+	            @Override
+	            protected String getComparable(PortletDD o) {
+                    final List<DisplayNameDD> displayNames = o.getDisplayNames();
+                    if (displayNames != null && displayNames.size() > 0) {
+                        return displayNames.get(0).getDisplayName();
+                    }
+                    
+                    return o.getPortletName();
+	            }
+	        });
+			
 			contexts.add(context);
 		}
+		
+		
+		Collections.sort(contexts, new ComparableExtractingComparator<PortletContextImpl, String>(String.CASE_INSENSITIVE_ORDER) {
+            @Override
+            protected String getComparable(PortletContextImpl o) {
+                final String portletContextName = o.getPortletContextName();
+                if (portletContextName != null) {
+                    return portletContextName;
+                }
+                
+                final String applicationName = o.getApplicationName();
+                if ("/".equals(applicationName)) {
+                    return "ROOT";
+                }
+                
+                if (applicationName.startsWith("/")) {
+                    return applicationName.substring(1);
+                }
+                
+                return applicationName;
+            }
+        });
 		return contexts;
 	}
 	
