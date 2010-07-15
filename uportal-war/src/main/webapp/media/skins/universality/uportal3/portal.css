@@ -106,7 +106,7 @@
 .up input:not([type="button"]) {background-color:#fff; background-image:-webkit-gradient(linear, 0% 0%, 0% 12%, from(#ccc), to(#fff)); background-image:-moz-linear-gradient(0% 12% 90deg, #fff, #ccc);}
 .up select:focus,
 .up input[type="text"]:focus,
-.up textarea:focus {-webkit-box-shadow:0 0 12px rgba(51,204,255,.9); -moz-box-shadow:0 0 12px rgba(51,204,255,.9); box-shadow:0 0 12px rgba(51,204,255,.9);}
+.up textarea:focus {-webkit-box-shadow:0 0 12px rgba(51,204,255,.9); -moz-box-shadow:0 0 12px rgba(51,204,255,.9); box-shadow:0 0 12px rgba(51,204,255,.9); outline:none;}
 
 /* Buttons */
 /*
@@ -146,7 +146,7 @@
 .up input[type="submit"]:hover,
 .up input[type="submit"]:focus,
 .up input[type="button"]:hover,
-.up input[type="button"]:focus {background-color:#5a95cf !important; color:#fff !important; cursor:pointer;}
+.up input[type="button"]:focus {background-color:#5a95cf !important; color:#fff !important; cursor:pointer; outline:none;}
 .up button[disabled="disabled"],
 .up .button[disabled="disabled"],
 .up input[disabled="disabled"],
@@ -194,21 +194,31 @@
 *:first-child+html .up #portalNavigation .fl-tabs,
 *:first-child+html .up #portalNavigation .fl-tabs li.portal-navigation {padding:0;} /* hack needed for IE7 */
 .up #portalNavigation .fl-tabs li.portal-navigation:hover,
+.up #portalNavigation .fl-tabs li.portal-navigation:focus,
 .up #portalNavigation .fl-tabs li.portal-navigation:hover a,
-.up #portalNavigation .fl-tabs li.portal-navigation a:hover {background:#608695 url(images/nav_tab_bkd.gif) 0px -300px repeat-x}
+.up #portalNavigation .fl-tabs li.portal-navigation:focus a,
+.up #portalNavigation .fl-tabs li.portal-navigation a:hover,
+.up #portalNavigation .fl-tabs li.portal-navigation a:focus {background:#608695 url(images/nav_tab_bkd.gif) 0px -300px repeat-x}
 .up #portalNavigation .fl-tabs li.portal-navigation.fl-tabs-active a.portal-navigation-link,
 .up #portalNavigation .fl-tabs li.portal-navigation.fl-tabs-active a.portal-navigation-link:hover {background:#2e5579 url(images/nav_tab_bkd.gif) top left repeat-x; border-left:1px solid #1e3851; border-right:1px solid #1e3851; color:#fff;}
 .up #portalNavigation .fl-tab-content {background-color:#fff; color:#000;}
 .up #portalNavigationSubrow.fl-tab-content {text-align:center; background:#336699 url(images/nav_subrow_bkd.gif) top right repeat-x;}
 .up #portalNavigationSubrow a {text-decoration:none; color:#acc9e6 !important; text-shadow:1px 1px 1px rgba(0,0,0,.5);}
-.up #portalNavigationSubrow a:hover {color:#eee !important;}
+.up #portalNavigationSubrow a:hover,
+.up #portalNavigationSubrow a:focus {color:#eee !important;}
 
 /* Flyout Navigation */
 .up #portalNavigation .portal-flyout-container {padding:0 3px 3px 0; background:transparent url(../common/images/drop_shadow.png) bottom right no-repeat;}
 .up #portalNavigation .portal-flyout-container-inner {padding:2px; background-color:#336699;}
 .up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav {border-bottom:1px solid #336699;}
 .up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link {padding:4px 10px 4px 25px; color:#336699 !important; font-weight:bold; font-size:100%; background-color:#98b6c1; background-position:5px 3px; background-repeat:no-repeat; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); text-decoration:none; text-align:left; display:block; border:none; text-shadow:1px 1px 1px rgba(0,0,0,.2);}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:hover {color:#fff !important; background-color:#5a95cf;}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .edit a.portal-subnav-link {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/layout_content.png);}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .delete a.portal-subnav-link {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/cross.png);}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .move-left a.portal-subnav-link {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/arrow_left.png);}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .move-right a.portal-subnav-link {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/arrow_right.png);}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .permissions a.portal-subnav-link {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/key.png);}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:hover,
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:focus {color:#fff !important; background-color:#5a95cf;}
 
 /* Body */
 .up .sidebar-left-100 #portalPageBodyTitleRow,
@@ -245,7 +255,9 @@
 .up #portalSidebar .fl-widget .fl-listmenu li,
 .up #portalSidebar .fl-widget .fl-listmenu li a {background-color:#336699 !important; color:#ACC9E6 !important;}
 .up #portalSidebar .fl-widget .fl-listmenu li:hover,
-.up #portalSidebar .fl-widget .fl-listmenu li a:hover {color:#fff !important; background-color:#5a95cf !important;}
+.up #portalSidebar .fl-widget .fl-listmenu li:focus,
+.up #portalSidebar .fl-widget .fl-listmenu li a:hover,
+.up #portalSidebar .fl-widget .fl-listmenu li a:focus {color:#fff !important; background-color:#5a95cf !important; outline:none;}
 
 /* Login */
 .up #portalLogin {}
@@ -277,21 +289,18 @@
 .up #portletNavigation h3 {color:#fff;}
 
 /* Fragment Administration */
-.up #portalFragAdminExit {margin:0; border:none; border-bottom:1px solid #ff6600; -moz-border-radius:0px; -webkit-border-radius:0px; border-radius:0px;}
+.up #portalFragAdminExit {margin:0; background:#ffffcc; border:none; border-bottom:1px solid #ff6600; -moz-border-radius:0px; -webkit-border-radius:0px; border-radius:0px;}
 .up #portalFragAdminExit h2 {color:#ff6600; font-size:150%;}
 .up #portalFragAdminExit .fl-widget-content {background:#ffffcc;}
 .up #portalFragAdminExit #exitFragment {font-weight:bold; color:#fff; background-color:#FF6600; background-image:none; border-top:1px solid #FFCA95; border-left:1px solid #FFCA95; border-bottom:1px solid #884400; border-right:1px solid #884400;}
-.up #portalFragAdminExit #exitFragment:hover {background-color:#FF3300; cursor:pointer;}
-.up .sidebar-left-100 #portalFragAdminExit,
-.up .sidebar-left-150 #portalFragAdminExit,
-.up .sidebar-left-200 #portalFragAdminExit,
-.up .sidebar-left-250 #portalFragAdminExit,
-.up .sidebar-left-300 #portalFragAdminExit {background:#ffffcc url(images/page_corner_topleft.png) top left no-repeat;}
-.up .sidebar-right-100 #portalFragAdminExit,
-.up .sidebar-right-150 #portalFragAdminExit,
-.up .sidebar-right-200 #portalFragAdminExit,
-.up .sidebar-right-250 #portalFragAdminExit,
-.up .sidebar-right-300 #portalFragAdminExit {background:#ffffcc url(images/page_corner_topright.png) top right no-repeat;}
+.up #portalFragAdminExit #exitFragment:hover {background-color:#FF3300 !important; cursor:pointer;}
+.up .column-permissions {margin-bottom:0.5em;}
+.up .column-permissions a {text-decoration:none; display:block; padding:0.2em 0.5em; border-top:1px dotted #ccc; border-bottom:1px dotted #ccc;}
+.up .column-permissions a .icon {display:inline-block; height:16px; width:16px; padding:0; background:transparent url(images/portlet_icons_flat.png) no-repeat -96px 0;}
+.up .column-permissions a:hover,
+.up .column-permissions a:focus {border-top:1px solid #369; border-bottom:1px solid #369;}
+.up .column-permissions a:hover .icon,
+.up .column-permissions a:focus .icon {background-position:-96px -16px;}
 
 /* Portlets */
 /* The styling here is for the portlet container or "chrome" that uPortal renders.  CSS that directly styles portlet content is specified in portlet.css. */
@@ -302,18 +311,27 @@
 .up .up-portlet-titlebar h2 a {color:#808080 !important; text-decoration:none;}
 .up .up-portlet-controls {top:2px; padding-right:0.5em;}
 .up .up-portlet-controls .up-portlet-control {display:block; float:left; height:16px; width:16px; padding:0; font-size:90%; background:transparent url(images/portlet_icons_flat.png) no-repeat 0 0;}
-.up .up-portlet-controls .focus:hover {background-position:0 -16px;}
+.up .up-portlet-controls .focus:hover,
+.up .up-portlet-controls .focus:focus {background-position:0 -16px;}
 .up .up-portlet-controls .edit {background-position:-16px 0;}
-.up .up-portlet-controls .edit:hover {background-position:-16px -16px;}
+.up .up-portlet-controls .edit:hover,
+.up .up-portlet-controls .edit:focus {background-position:-16px -16px;}
 .up .up-portlet-controls .info {background-position:-32px 0;}
-.up .up-portlet-controls .info:hover {background-position:-32px -16px;}
+.up .up-portlet-controls .info:hover,
+.up .up-portlet-controls .info:focus {background-position:-32px -16px;}
 .up .up-portlet-controls .help {background-position:-48px 0;}
-.up .up-portlet-controls .help:hover {background-position:-48px -16px;}
+.up .up-portlet-controls .help:hover,
+.up .up-portlet-controls .help:focus {background-position:-48px -16px;}
 .up .up-portlet-controls .remove {background-position:-64px 0;}
-.up .up-portlet-controls .remove:hover {background-position:-64px -16px;}
-.up .up-portlet-controls .up-portlet-control span {display:none;}
+.up .up-portlet-controls .remove:hover,
+.up .up-portlet-controls .remove:focus {background-position:-64px -16px;}
 .up .up-portlet-controls .add {background-position:-80px 0;}
-.up .up-portlet-controls .add:hover {background-position:-80px -16px;}
+.up .up-portlet-controls .add:hover,
+.up .up-portlet-controls .add:focus {background-position:-80px -16px;}
+.up .up-portlet-controls .permissions {background-position:-96px 0;}
+.up .up-portlet-controls .permissions:hover,
+.up .up-portlet-controls .permissions:focus {background-position:-96px -16px;}
+.up .up-portlet-controls .up-portlet-control span {display:none;}
 .up .up-portlet-content-wrapper {border:1px solid #ccc;}
 /* No Chrome */
 .up .no-chrome .up-portlet-content-wrapper {padding:1em; border-radius:7px; -moz-border-radius:7px; -webkit-border-radius:7px;}
@@ -360,8 +378,8 @@
 .up .drop-warning p {margin:0em; padding:0.5em 1em;}
 
 /* Focus */
-.up :focus{outline-width:0px;}
+.up :focus{outline:1px dotted #f68922;}
 .up .fl-reorderer-movable-selected:focus,
-.up .fl-reorderer-movable-dragging:focus {outline: 2px solid #f68922;}
+.up .fl-reorderer-movable-dragging:focus {outline:2px solid #f68922;}
 
-.fragment-disabled, .fragment-disabled h2.fragment-title { color: #666; }
+.fragment-disabled, .fragment-disabled h2.fragment-title {color:#666;}

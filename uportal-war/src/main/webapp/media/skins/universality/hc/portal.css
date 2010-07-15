@@ -212,9 +212,14 @@
 .up #changeColumns img {vertical-align:middle; padding:3px;}
 
 /* Fragment Administration */
-.up #portalFragAdminExit {border-bottom:1px solid #000;}
+.up #portalFragAdminExit {border:0.2em solid #ff0000;}
 .up #portalFragAdminExit #exitFragment {font-weight:bold; color:#fff; background-color:#000; background-image:none; border:1px solid #000;}
 .up #portalFragAdminExit #exitFragment:hover {cursor:pointer;}
+.up .column-permissions {margin-bottom:1em;}
+.up .column-permissions a {display:block; padding:0.5em; border:1px solid #000; color:#fff;}
+.up .column-permissions a .icon {display:none;}
+.up .column-permissions a:hover,
+.up .column-permissions a:focus {border-top:1px solid #369; border-bottom:1px solid #369;}
 
 .focused .portal-page-column-inner {padding-top:2em; padding-bottom:2em;}
 #portalPageBodyColumns .portal-page-column-inner {padding-top:2em; padding-bottom:2em;}

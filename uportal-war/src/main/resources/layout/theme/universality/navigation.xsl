@@ -329,13 +329,13 @@
         
         <div id="portalFlyoutNavigationInner_{@ID}" class="portal-flyout-container-inner">  <!-- Inner div for additional presentation/formatting options. -->
           <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
-            <li id="editPageLink" class="portal-subnav">
+            <li id="editPageLink" class="portal-subnav edit">
               <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
                 <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
               </a>
             </li>
             <xsl:if test="not(@dlm:moveAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
-              <li id="movePageLeftLink" class="portal-subnav">
+              <li id="movePageLeftLink" class="portal-subnav move-left">
                 <xsl:if test="position()=1">
                   <xsl:attribute name="style">display: none;</xsl:attribute>
                 </xsl:if>
@@ -343,7 +343,7 @@
                   <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_LEFT_LABEL']"/></span>
                 </a>
               </li>
-              <li id="movePageRightLink" class="portal-subnav">
+              <li id="movePageRightLink" class="portal-subnav move-right">
                 <xsl:if test="position()=last()">
                   <xsl:attribute name="style">display: none;</xsl:attribute>
                 </xsl:if>
@@ -353,14 +353,14 @@
               </li>
             </xsl:if>
             <xsl:if test="not(@dlm:deleteAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
-              <li id="deletePageLink" class="portal-subnav">
+              <li id="deletePageLink" class="portal-subnav delete">
               <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_DELETE_TAB_LONG_LABEL']}">
                 <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_DELETE_TAB_LABEL']"/></span>
               </a>
               </li>
             </xsl:if>
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-              <li id="editPagePermissionsLink" class="portal-subnav">
+              <li id="editPagePermissionsLink" class="portal-subnav permissions">
               <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_EDIT_TAB_PERMISSIONS_LONG_LABEL']}">
                 <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_EDIT_TAB_PERMISSIONS_LABEL']"/></span>
               </a>

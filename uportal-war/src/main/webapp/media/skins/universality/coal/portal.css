@@ -84,7 +84,7 @@
 .up input:not([type="button"]) {background-color:#fff; background-image:-webkit-gradient(linear, 0% 0%, 0% 12%, from(#ccc), to(#fff)); background-image:-moz-linear-gradient(0% 12% 90deg, #fff, #ccc);}
 .up select:focus,
 .up input[type="text"]:focus,
-.up textarea:focus {-webkit-box-shadow:0 0 12px rgba(51,204,255,.9); -moz-box-shadow:0 0 12px rgba(51,204,255,.9); box-shadow:0 0 12px rgba(51,204,255,.9);}
+.up textarea:focus {-webkit-box-shadow:0 0 12px rgba(51,204,255,.9); -moz-box-shadow:0 0 12px rgba(51,204,255,.9); box-shadow:0 0 12px rgba(51,204,255,.9); outline:none;}
 #webSearchContainer div{overflow:hidden;}
 
 /* Buttons */
@@ -152,6 +152,7 @@
 	-webkit-box-shadow:0 0 15px rgba(246,153,45,1);
 	-moz-box-shadow:0 0 15px rgba(246,153,45,1); 
 	box-shadow:0 0 15px rgba(246,153,45,1);
+	outline:none;
 }
 .up button[disabled="disabled"],
 .up .button[disabled="disabled"],
@@ -283,7 +284,7 @@ html,
 .up #portalSidebar .fl-listmenu li,
 .up #portalSidebar .fl-listmenu li a {background-color:transparent; color:#999 !important;}
 .up #portalSidebar .fl-listmenu li a:hover,
-.up #portalSidebar .fl-listmenu li a:focus {background-color:#333; color:#fff !important;}
+.up #portalSidebar .fl-listmenu li a:focus {background-color:#333; color:#fff !important; outline:none;}
 .up #portalSidebar #portletNavigation .fl-widget-content {}
 .up #portalSidebar #portalFragAdminList .fl-widget-content {padding:0.3em;}
 .up #portalSidebar #portletNavigation h3 {font-size:85%; color:#44626a;}
@@ -294,22 +295,32 @@ html,
 .up #portalLogin #portalLoginButton,
 .up #portalLogin #portalCASLoginLink {display:block; padding:0.5em 1em; text-decoration:none; text-align:center; font-weight:bold; color:#fff; background-color:#FF6600; background-image:none; border-top:1px solid #FFCA95; border-left:1px solid #FFCA95; border-bottom:1px solid #884400; border-right:1px solid #884400;}
 .up #portalLogin #portalLoginButton:hover,
-.up #portalLogin #portalCASLoginLink:hover {background-color:#FF3300; cursor:pointer;}
+.up #portalLogin #portalLoginButton:focus,
+.up #portalLogin #portalCASLoginLink:hover,
+.up #portalLogin #portalCASLoginLink:focus {background-color:#FF3300; cursor:pointer;}
 .up #portalLogin #portalLoginButton {padding:0.3em 1em;}
 .up .via-cas {color:#FFCC66;}
 .up #portalLogin p {margin:1em 0 0 0;}
 .up #portalLogin #portalLoginForgot,
 .up #portalLogin #portalLoginErrorForgot {font-weight:normal;}
 .up #portalLogin a#portalLoginErrorForgot {color:#FF6600;}
-.up #portalLogin a#portalLoginErrorForgot:hover {color:#000;}
+.up #portalLogin a#portalLoginErrorForgot:hover,
+.up #portalLogin a#portalLoginErrorForgot:focus {color:#000;}
 
 /* Portlet Navigation (focused view) */
 .up #portletNavigation h3 {margin:0; padding:0.5em; background-color: #333; color:#999 !important;}
 
 /* Fragment Administration */
-.up #portalFragAdminExit {background:#ffffcc; border:1px solid #ff6600; margin:0 2em 1em 2em; -webkit-box-shadow:0 0 12px rgba(0,0,0,.5); -moz-box-shadow:0 0 12px rgba(0,0,0,.5); }
+.up #portalFragAdminExit {background:#ffffcc; border:1px solid #ff6600;}
 .up #portalFragAdminExit h2 {color:#ff6600;}
 .up #portalFragAdminExit .fl-widget-content {background:#ffffcc;}
+.up .column-permissions {margin-bottom:0.5em;}
+.up .column-permissions a {text-decoration:none; display:block; padding:0.2em 0.5em; border:1px solid #000; background-color:#333; color:#fff;}
+.up .column-permissions a .icon {display:inline-block; height:16px; width:16px; padding:0; background:transparent url(../common/images/portlet_icons_flat.png) no-repeat -96px 0;}
+.up .column-permissions a:hover,
+.up .column-permissions a:focus {border:1px solid #f68922;}
+.up .column-permissions a:hover .icon,
+.up .column-permissions a:focus .icon {background-position:-96px -16px;}
 
 /* Portlets */
 /* The styling here is for the portlet container or "chrome" that uPortal renders.  CSS that directly styles portlet content is specified in portlet.css. */
@@ -319,20 +330,30 @@ html,
 .up .up-portlet-titlebar  {white-space:nowrap;}
 .up .up-portlet-titlebar h2 {padding-left:0.5em; font-size:120%; text-transform:uppercase; text-shadow:1px -1px 1px rgba(0,0,0,.5);}
 .up .up-portlet-titlebar a {text-decoration:none; color:#ccc !important;}
-.up .up-portlet-titlebar a:hover {color:#fff !important;}
+.up .up-portlet-titlebar a:hover,
+.up .up-portlet-titlebar a:focus {color:#fff !important;}
 .up .up-portlet-controls {top:0px; padding-right:0.5em;}
 .up .up-portlet-controls .up-portlet-control {display:block; float:left; height:16px; width:16px; padding:0; font-size:90%; background:transparent url(images/portlet_icons_flat.png) no-repeat 0 0;}
-.up .up-portlet-controls .focus:hover {background-position:0 -16px;}
+.up .up-portlet-controls .focus:hover,
+.up .up-portlet-controls .focus:focus {background-position:0 -16px;}
 .up .up-portlet-controls .edit {background-position:-16px 0;}
-.up .up-portlet-controls .edit:hover {background-position:-16px -16px;}
+.up .up-portlet-controls .edit:hover,
+.up .up-portlet-controls .edit:focus {background-position:-16px -16px;}
 .up .up-portlet-controls .info {background-position:-32px 0;}
-.up .up-portlet-controls .info:hover {background-position:-32px -16px;}
+.up .up-portlet-controls .info:hover,
+.up .up-portlet-controls .info:focus {background-position:-32px -16px;}
 .up .up-portlet-controls .help {background-position:-48px 0;}
-.up .up-portlet-controls .help:hover {background-position:-48px -16px;}
+.up .up-portlet-controls .help:hover,
+.up .up-portlet-controls .help:focus {background-position:-48px -16px;}
 .up .up-portlet-controls .remove {background-position:-64px 0;}
-.up .up-portlet-controls .remove:hover {background-position:-64px -16px;}
+.up .up-portlet-controls .remove:hover,
+.up .up-portlet-controls .remove:focus {background-position:-64px -16px;}
 .up .up-portlet-controls .add {background-position:-80px 0;}
-.up .up-portlet-controls .add:hover {background-position:-80px -16px;}
+.up .up-portlet-controls .add:hover,
+.up .up-portlet-controls .add:focus {background-position:-80px -16px;}
+.up .up-portlet-controls .permissions {background-position:-96px 0;}
+.up .up-portlet-controls .permissions:hover,
+.up .up-portlet-controls .permissions:focus {background-position:-96px -16px;}
 .up .up-portlet-controls .up-portlet-control span {display:none;}
 /* No Chrome */
 .up .no-chrome .up-portlet-content-wrapper {padding:1em; background-color:#fff; border:1px solid #333;}
@@ -347,7 +368,8 @@ html,
 .up .focused .up-portlet-controls .up-portlet-control {height:auto; width:auto; padding-left:18px; margin-left:1.5em;}
 .up .focused .up-portlet-controls .up-portlet-control span {display:inline;}
 .up .focused .up-portlet-controls .return {background:transparent url(images/portlet_icon_return_flat.png) no-repeat 0 0;}
-.up .focused .up-portlet-controls .return:hover {background-position:0 -16px;}
+.up .focused .up-portlet-controls .return:hover,
+.up .focused .up-portlet-controls .return:focus {background-position:0 -16px;}
 
 /* Footer */
 .up #portalPageFooter {padding-top:0; text-align:center; color:#666; background:#333 url(../common/images/shadow_top_5px_50.png) repeat-x 0 0; border-top:1px solid #000;}
@@ -359,7 +381,8 @@ html,
 .up #portalPageFooter #portalProductAndVersion a,
 .up #portalPageFooter #portalCopyright a,
 .up #portalPageFooter #silkIconsAttribution a {color:#666 !important;}
-.up #portalPageFooter a:hover {color:#eee !important;}
+.up #portalPageFooter a:hover,
+.up #portalPageFooter a:focus {color:#eee !important;}
 
 /* Fluid Layout Customizer (drag and drop) */
 .up .fl-reorderer-movable-hover {cursor:move;}
@@ -381,7 +404,7 @@ html,
 .up .fl-pager .fl-pager-ui .fl-pager-currentPage a { color: #000000; border: 0; text-decoration: none; cursor: default;}
 
 /* Focus */
-:focus{outline-width:0px !important;}
+.up :focus{outline:1px dotted #f68922;}
 .up .fl-reorderer-movable-selected:focus,
 .up .fl-reorderer-movable-dragging:focus {outline: 2px solid #f68922;}
 

@@ -115,7 +115,8 @@
               
               </xsl:when>
               <xsl:otherwise> <!-- Otherwise, default. -->
-								
+				
+                <xsl:call-template name="alert.block"/>			
                 <xsl:apply-templates select="header"/>
                 <xsl:call-template name="main.navigation"/>
                 <xsl:apply-templates select="content"/>
@@ -125,6 +126,9 @@
                 </xsl:if>
                 <xsl:if test="($USE_AJAX='true' and $AUTHENTICATED='true')">
                   <xsl:call-template name="preferences"/>
+                </xsl:if>
+                <xsl:if test="$SIDEBAR_CLASS"> <!-- Script to fix content height when a sidebar is present. -->
+                    <xsl:call-template name="js.content.height"/>
                 </xsl:if>
                 
               </xsl:otherwise>
@@ -423,6 +427,38 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <!-- ============================================ -->  
-		
+  <!-- ============================================ --> 
+    
+  
+  <!-- ==================================================== -->
+  <!-- ========== TEMPLATE: JAVSCRIPT CONTENT HEIGHT ========== -->
+  <!-- ==================================================== -->
+  <!-- 
+   | YELLOW
+   | This template outputs a script to ensure that when a sidebar is used, all columns of the content contaier are the same height (fixes collapsed content area due to floated sidebar, which sometimes has a greater height). The issue only occurs when there is a floated sidebar, so the script is set to run only when a sidebar is present.
+  -->
+  <xsl:template name="js.content.height">
+		<script type="text/javascript" language="javascript">
+            // Run function when document is ready (fully loaded).
+            up.jQuery(document).ready(function(){
+                // set function for determining and setting height.
+                contentHeight = function() {
+                    // delcare and set vars.
+                    var contentLoc, sidebarLoc, contentHt, sidebarHt;
+                    var contentLoc = up.jQuery('#portalPageBodyLayout');
+                    var sidebarLoc = up.jQuery('#portalSidebarInner');
+                    var contentHt = contentLoc.height();
+                    var sidebarHt = sidebarLoc.height();
+                    // compare and set height.
+                    if (contentHt > sidebarHt) {
+                        sidebarLoc.height(contentHt);
+                    }
+					window.console.log("contentLoc:", contentLoc, " sidebarLoc:" , sidebarLoc, " contentHt:" , contentHt, " sidebarHt:" , sidebarHt);
+                }
+				contentHeight();
+            });
+        </script>
+  </xsl:template>
+  <!-- ==================================================== -->
+
 </xsl:stylesheet>

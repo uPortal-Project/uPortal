@@ -203,6 +203,7 @@ table.purpose-layout td {margin:0; padding:0;}
 
 
 /* header */
+#portalPageHeader {position:relative;}
 #portalPageBar h2 {margin:0; padding:0.5em 0 0 1em; position:absolute; top:0; left:0;}
 #portalPageBarLinks {padding:0.5em 1em 0.5em 0;}
 #portalPageBarLinks a {padding:0 0.5em;}
@@ -243,8 +244,6 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-portlet-titlebar {position:relative;}
 .up-portlet-titlebar h2 {margin:0; padding:2px 20px 3px 20px;}
 .up-portlet-controls {position:absolute; top:4px; right:0;}
-.up .up-portlet-controls .up-portlet-control.remove {display:none}
-.up .portal-page-column-inner .deletable .up-portlet-controls .up-portlet-control.remove {display:block}
 .dashboard .up-portlet-controls .up-portlet-control {padding-right:1em;}
 .up-portlet-content-wrapper {padding:1em;}
 /* No chrome */
@@ -325,8 +324,11 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* Fragment Administration */
 #fragmentAdminForm {margin:0; padding:0;}
-#portalFragAdminExit h2 {margin:0; padding:0.5em 1em 0em 1em;}
-#portalFragAdminExit form {margin:0; padding:0 1em 1em 1em;}
+#portalFragAdminExit {padding:0.5em 1em;}
+#portalFragAdminExit h2,
+#portalFragAdminExit .block-content,
+#portalFragAdminExit form {display:inline;}
+#portalFragAdminExit h2 {padding-right:1em;}
 #portalFragAdminExit #exitFragment {margin-left:1em; padding:0.3em 1em;}
 
 /* Portlet Navigation */

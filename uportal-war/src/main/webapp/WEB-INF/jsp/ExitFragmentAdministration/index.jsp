@@ -30,7 +30,7 @@
     <div class="block-content">
       <form name="fragmentAdminExitForm" action="${loginUrl}">
       	<label for="exitFragment">You are currently logged in as <strong><c:out value="${USERNAME}"/></strong> for DLM fragment administration</label>
-      	<input id="exitFragment" type="Submit" value="Exit Fragment"/>
+      	<input id="exitFragment" type="Submit" value="Exit"/>
       </form>
     </div>
   </div>

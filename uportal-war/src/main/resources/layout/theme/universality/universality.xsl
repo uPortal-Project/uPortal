@@ -328,6 +328,18 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   
+  <!-- ========== TEMPLATE: ALERT BLOCK ========== -->
+  <!-- ============================================ -->
+  <!-- 
+   | GREEN
+   | This template renders content into an alert section at the very top of the page.
+  -->
+  	<xsl:template name="alert.block">
+    	<!-- Fragment Administration mode banner and exit link. -->
+    	<xsl:copy-of select="//channel[@fname = 'fragment-admin-exit']"/>
+    </xsl:template>
+  <!-- ============================================ -->
+  
   
   <!-- ========== TEMPLATE: HEADER BLOCK ========== -->
   <!-- ============================================ -->
@@ -599,9 +611,6 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="content.top.block">
-  	<!-- Fragment Administration mode banner and exit link. -->
-    <xsl:copy-of select="//channel[@fname = 'fragment-admin-exit']"/>
-  
   	<!-- SAMPLE:
     <div id="portalContentTopBlock">
     	<p>CUSTOM CONTENTS.</p>

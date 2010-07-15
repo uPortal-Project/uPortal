@@ -49,6 +49,9 @@
         </xsl:choose>
       </xsl:attribute>
       <xsl:for-each select="column">
+      	<xsl:variable name="NUMBER">
+        	<xsl:value-of select="position()" />
+        </xsl:variable>
         <xsl:variable name="POSITION"> <!-- Determine column place in the layout and add appropriate class. -->
           <xsl:choose>
             <xsl:when test="position()=1 and position()=last()">single</xsl:when>
@@ -89,10 +92,10 @@
           </xsl:choose>
         </xsl:variable>
         <div id="column_{@ID}" class="portal-page-column {$POSITION} fl-col-flex{$COLUMN_WIDTH} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}"> <!-- Unique column_ID needed for drag and drop. -->
-          <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-            <div><a class="portal-column-permissions-link" href="javascript:;">Permissions</a></div>
-          </xsl:if>
           <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
+            <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+            	<div class="column-permissions"><a class="portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span>Column <xsl:value-of select="$NUMBER"/> Permissions</a></div>
+            </xsl:if>
             <xsl:apply-templates select="channel"/> <!-- Render the column's portlets.  -->
           </div>
         </div>

@@ -46,7 +46,10 @@
   <!-- Visual style for the portal. -->
   <css>portal.css</css>
   
-  <!-- Visual style for portlet content. -->
+  <!-- Default visual style for portlet content. -->
+  <css>../common/css/portlet.css</css>
+  
+  <!-- Local skin override for visual style for portlet content. -->
   <css>portlet.css</css>
 
   <!-- Support for legacy uPortal css classes. -->

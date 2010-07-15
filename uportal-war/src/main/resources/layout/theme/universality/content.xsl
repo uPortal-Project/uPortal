@@ -204,7 +204,7 @@
         </a>
       </xsl:if>
       <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-        <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;" title="{$TOKEN[@NAME='PORTLET_SET_PERMISSIONS_LONG_LABEL']}">
+        <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;" title="{$TOKEN[@name='PORTLET_SET_PERMISSIONS_LONG_LABEL']}">
             <span><xsl:value-of select="$TOKEN[@name='PORTLET_SET_PERMISSIONS']"/></span>
         </a>
       </xsl:if>
