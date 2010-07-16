@@ -1553,35 +1553,43 @@ protected static void rollback(Connection conn) throws java.sql.SQLException
 
         try {
             conn = RDBMServices.getConnection();
-            switch(method){
-              case IS:
-                ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroups);
-                break;
-              case STARTS_WITH:
-                query = query+"%";
-                ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartial);
-                break;
-              case ENDS_WITH:
-                query = "%"+query;
-                ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartial);
-                break;
-              case CONTAINS:
-                query = "%"+query+"%";
-                ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartial);
-                break;
-              default:
-                throw new GroupsException("Unknown search type");
+           
+           	switch(method){
+           	case IS:
+           		ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroups);
+           		break;
+           	case STARTS_WITH:
+           		query = query+"%";
+           		ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartial);
+           		break;
+           	case ENDS_WITH:
+           		query = "%"+query;
+           		ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartial);
+           		break;
+           	case CONTAINS:
+           		query = "%"+query+"%";
+           		ps = conn.prepareStatement(RDBMEntityGroupStore.searchGroupsPartial);
+           		break;
+           	default:
+           		throw new GroupsException("Unknown search type");
+           	}
+           	try {
+            	ps.clearParameters();
+            	ps.setInt(1,type);
+            	ps.setString(2,query);
+            	ResultSet rs = ps.executeQuery();
+            	try {
+            		//System.out.println(ps.toString());
+            		while (rs.next()){
+            			//System.out.println("result");
+            			ar.add(new EntityIdentifier(rs.getString(1), org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE));
+            		}
+            	} finally {
+            		close(rs);
+            	}
+            } finally {
+            	close(ps);
             }
-            ps.clearParameters();
-            ps.setInt(1,type);
-            ps.setString(2,query);
-            ResultSet rs = ps.executeQuery();
-            //System.out.println(ps.toString());
-            while (rs.next()){
-              //System.out.println("result");
-              ar.add(new EntityIdentifier(rs.getString(1), org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE));
-            }
-            ps.close();
         } catch (Exception e) {
             log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps, e);
         } finally {
@@ -1695,5 +1703,21 @@ public void updateMembers(IEntityGroup eg) throws GroupsException
             { throw new GroupsException(sqle); }
         finally { RDBMServices.releaseConnection(conn); }
     }
+}
+
+private static final void close(final Statement statement) {
+	try {
+		statement.close();
+	} catch (SQLException e) {
+		log.warn("problem closing statement", e);
+	}
+}
+
+private static final void close(final ResultSet resultset) {
+	try {
+		resultset.close();
+	} catch (SQLException e) {
+		log.warn("problem closing resultset", e);
+	}
 }
 }

@@ -22,6 +22,7 @@ package org.jasig.portal.tools.versioning;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -63,18 +64,25 @@ public class VersionsManager
         try
         {
             con = RDBMServices.getConnection();
-            Statement sql = con.createStatement();
-            sql.execute(
-                "SELECT FNAME, DESCRIPTION, MAJOR, MINOR, MICRO FROM UP_VERSIONS");
-            ResultSet rs = sql.getResultSet();
-            while(rs.next())
-            {
-                list.add(new Version( 
-                rs.getString(1),
-                rs.getString(2),
-                rs.getInt(3),
-                rs.getInt(4),
-                rs.getInt(5)));
+            final Statement sql = con.createStatement();
+            try {
+            	sql.execute(
+            		"SELECT FNAME, DESCRIPTION, MAJOR, MINOR, MICRO FROM UP_VERSIONS");
+            	final ResultSet rs = sql.getResultSet();
+            	try {
+            	    while(rs.next()) {
+            	        list.add(new Version( 
+            	                rs.getString(1),
+            	                rs.getString(2),
+            	                rs.getInt(3),
+            	                rs.getInt(4),
+            	                rs.getInt(5)));
+            	    }
+            	} finally {
+            	    close(rs);
+            	}
+            } finally {
+            	close(sql);
             }
         }
         catch (Exception e)
@@ -175,13 +183,15 @@ public class VersionsManager
             PreparedStatement sql = con.prepareStatement(
                 "DELETE FROM UP_VERSIONS " +
                 "WHERE FNAME=? AND MAJOR=? AND MINOR=? AND MICRO=?");
-            sql.setString(1, v.getFname());
-            sql.setInt(2,v.getMajor());    
-            sql.setInt(3,v.getMinor());    
-            sql.setInt(4,v.getMicro());
-            int modifiedCount = sql.executeUpdate();
-            
-            return modifiedCount >= 1;
+            try {
+            	sql.setString(1, v.getFname());
+            	sql.setInt(2,v.getMajor());    
+            	sql.setInt(3,v.getMinor());    
+            	sql.setInt(4,v.getMicro());
+            	return sql.executeUpdate() >= 1;
+            } finally {
+            	close(sql);
+            }
         }
         catch (Exception e)
         {
@@ -258,23 +268,27 @@ public class VersionsManager
             PreparedStatement sql = con.prepareStatement(
                 "UPDATE UP_VERSIONS SET MAJOR=?, MINOR=?, MICRO=?, DESCRIPTION=? " +
                 "WHERE FNAME=? AND MAJOR=? AND MINOR=? AND MICRO=?");
-            sql.setInt(1,next.getMajor());    
-            sql.setInt(2,next.getMinor());    
-            sql.setInt(3,next.getMicro());    
-            sql.setString(4,next.getDescription());    
-            sql.setString(5, old.getFname());
-            sql.setInt(6,old.getMajor());    
-            sql.setInt(7,old.getMinor());    
-            sql.setInt(8,old.getMicro());
-            int modifiedCount = sql.executeUpdate();
-            
-            if (modifiedCount > 1)
-                log.error( 
+            try {
+            	sql.setInt(1,next.getMajor());    
+            	sql.setInt(2,next.getMinor());    
+            	sql.setInt(3,next.getMicro());    
+            	sql.setString(4,next.getDescription());    
+            	sql.setString(5, old.getFname());
+            	sql.setInt(6,old.getMajor());    
+            	sql.setInt(7,old.getMinor());    
+            	sql.setInt(8,old.getMicro());
+            	int modifiedCount = sql.executeUpdate();
+            	if (modifiedCount > 1) {
+            		log.error( 
                     "Warning: Multiple version entries detected in UP_VERSION"
                     + " table. Primary keys must be used in this table when "
                     + "coordinating version information from multiple portals "
                     + "running against the same database.");
-            return modifiedCount >= 1;
+            	}
+            	return modifiedCount >= 1;
+            } finally {
+            	close(sql);
+            }
         }
         catch (Exception e)
         {
@@ -318,14 +332,16 @@ public class VersionsManager
                 con.prepareStatement(
                     "INSERT INTO UP_VERSIONS (FNAME, DESCRIPTION, MAJOR, MINOR, MICRO) "
                         + "VALUES (?,?,?,?,?)");
-            sql.setString(1, fname);
-            sql.setString(2, description);
-            sql.setInt(3, major);
-            sql.setInt(4, minor);
-            sql.setInt(5, micro);
-            int modifiedCount = sql.executeUpdate();
-
-            return modifiedCount == 1;
+            try {
+            	sql.setString(1, fname);
+            	sql.setString(2, description);
+            	sql.setInt(3, major);
+            	sql.setInt(4, minor);
+            	sql.setInt(5, micro);
+                return sql.executeUpdate() == 1;
+            } finally {
+            	close(sql);
+            }
         }
         catch( Exception e)
         {
@@ -338,5 +354,20 @@ public class VersionsManager
             RDBMServices.releaseConnection(con);
         }
         return false;
+    }
+
+	private static void close(final Statement statement) {
+		try {
+			statement.close();
+		} catch (SQLException e) {
+			log.warn("failed to close statement", e);
+		}		
+	}
+    private static void close(ResultSet rs) {
+        try {
+            rs.close();
+        } catch (SQLException e) {
+            log.warn("failed to close resultset", e);
+        }
     }
 }
