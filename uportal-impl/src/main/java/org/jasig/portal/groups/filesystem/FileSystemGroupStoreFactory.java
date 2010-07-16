@@ -51,10 +51,12 @@ public IEntityStore newEntityStore() throws GroupsException
  * Return an instance of the entity group store implementation.
  * @return IEntityGroupStore
  * @exception GroupsException
+ * @deprecated needs to be fixed, don't call
  */
+@Deprecated()
 public IEntityGroupStore newGroupStore() throws GroupsException
 {
-    return newGroupStore(null);
+	throw new UnsupportedOperationException("unimplemented method called");
 }
 /**
  * Return an instance of the entity group store implementation.
