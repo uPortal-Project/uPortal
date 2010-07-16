@@ -134,7 +134,7 @@
     
     <portlet>
         <portlet-name>RegisterPortalPortlet</portlet-name>
-        <display-name xml:lang="en">Attribute Swapper Portlet</display-name>
+        <display-name xml:lang="en">Register uPortal</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
