@@ -41,7 +41,9 @@ public class HttpClientManager {
     private static final int HOST_CONNECTIONS = PropertiesManager.getPropertyAsInt("org.jasig.portal.services.HttpClientManager.hostConnections", 2);
     private static final int DEFAULT_CONNECTION_TIMEOUT = PropertiesManager.getPropertyAsInt("org.jasig.portal.services.HttpClientManager.connectionTimeout",5000); // five seconds
     private static final int DEFAULT_READ_TIMEOUT = PropertiesManager.getPropertyAsInt("org.jasig.portal.services.HttpClientManager.readTimeout", 2000); // five seconds
-
+    private static final String PROXY_HOST = PropertiesManager.getProperty("org.jasig.portal.services.HttpClientManager.proxyHost", null);
+    private static final int PROXY_PORT = PropertiesManager.getPropertyAsInt("org.jasig.portal.services.HttpClientManager.proxyPort", 8080);
+    
 	private static final MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
 	static {
 		final HttpConnectionManagerParams pars = connectionManager.getParams();
@@ -53,7 +55,13 @@ public class HttpClientManager {
 	}
 
 	public static HttpClient getNewHTTPClient() {
-		return new HttpClient(connectionManager);
+		if(PROXY_HOST == null) {
+			return new HttpClient(connectionManager);
+		} else {
+			HttpClient result = new HttpClient(connectionManager);
+			result.getHostConfiguration().setProxy(PROXY_HOST, PROXY_PORT);
+			return result;
+		}
 	}
 
 	public static int getActiveConnections() {
