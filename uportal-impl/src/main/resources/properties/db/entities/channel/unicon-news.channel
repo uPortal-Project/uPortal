@@ -1,14 +1,14 @@
 
-<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
   <title>Unicon News</title>
   <name>Unicon News</name>
   <fname>unicon-news</fname>
   <desc>Unicon News Recent RSS</desc>
-  <type>Portlet</type>
-  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
-  <timeout>60000</timeout>
-  <hasedit>Y</hasedit>
-  <hashelp>Y</hashelp>
+  <type>RSS</type>
+  <class>org.jasig.portal.channels.CSyndFeed</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
   <hasabout>N</hasabout>
   <secure>N</secure>
   <locale>en_US</locale>
@@ -19,37 +19,18 @@
     <group>Everyone</group>
   </groups>
   <parameters>
-    <parameter>
-      <name>portletApplicationId</name>
-      <value>/NewsReaderPortlet</value> 
+    <parameter> 
+      <name>viewNum</name>  
+      <value>5</value>  
       <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
-    <parameter>
-      <name>portletName</name>
-      <value>single-feed-news</value> 
+    <parameter> 
+      <name>xmlUri</name>  
+      <value>http://www.unicon.net/publish/uniconnews.rss</value>  
       <description/>  
-      <ovrd>N</ovrd>
-    </parameter>
-    <parameter>
-      <name>disableDynamicTitle</name>
-      <value>true</value> 
-      <description/>  
-      <ovrd>N</ovrd>
+      <ovrd>N</ovrd> 
     </parameter>
   </parameters>
-  <portletPreferences>
-    <portletPreference> 
-      <name>name</name>
-      <values><value>Unicon News</value></values>
-    </portletPreference>
-    <portletPreference> 
-      <name>url</name>
-      <values><value>http://www.unicon.net/publish/uniconnews.rss</value></values>
-    </portletPreference>
-    <portletPreference> 
-      <name>summaryView</name>
-      <values><value>full</value></values>
-    </portletPreference>
-  </portletPreferences>
+  <portletPreferences/>
 </channel-definition>
