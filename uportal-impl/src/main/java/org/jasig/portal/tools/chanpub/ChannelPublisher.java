@@ -876,6 +876,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
     public static IChannelPublisher getChannelArchiveInstance() throws Exception
     {
         final ChannelPublisher publisher = new ChannelPublisher(false);
+        publisher.setOverride(true);
         return wrapChannelPublisher(publisher);
     }
     
