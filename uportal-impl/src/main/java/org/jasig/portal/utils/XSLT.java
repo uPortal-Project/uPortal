@@ -389,8 +389,9 @@ public class XSLT {
         	return temp;
         }	else {
             Document xsl = null;
+            URL url;
             try {
-                URL url = ResourceLoader.getResourceAsURL(DocumentFactory.class, stylesheetURI);
+                url = ResourceLoader.getResourceAsURL(DocumentFactory.class, stylesheetURI);
                 xsl = DocumentFactory.getDocumentFromStream(
                                    new BufferedInputStream(url.openStream(),2048), url.toExternalForm());
             }
@@ -398,7 +399,7 @@ public class XSLT {
                 throw new ResourceMissingException(stylesheetURI, "Stylesheet", "Unable to read stylesheet from the specified location. Please check the stylesheet URL");
             }
             addLocalization(xsl, l18n);
-            Source src = new DOMSource(xsl);
+            Source src = new DOMSource(xsl, url.toExternalForm()); // Set SystemId for xsl imports
             TransformerFactory tFactory = TransformerFactory.newInstance();
             temp = tFactory.newTemplates(src);
             if(stylesheetRootCacheEnabled) {
