@@ -8,6 +8,8 @@ package org.jasig.portal.services.entityproperties;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 
 import org.apache.commons.logging.Log;
@@ -79,14 +81,17 @@ public class RDBMPropertyStore
       try {
          conn = this.getConnection();
          ps = conn.prepareStatement(insertProperty);
-         ps.clearParameters();
-         ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
-         ps.setString(2, entityID.getKey());
-         ps.setString(3, name);
-         ps.setString(4, value);
-         ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
-         ps.executeUpdate();
-         ps.close();
+         try {
+        	 ps.clearParameters();
+        	 ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
+        	 ps.setString(2, entityID.getKey());
+        	 ps.setString(3, name);
+        	 ps.setString(4, value);
+        	 ps.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+        	 ps.executeUpdate();
+         } finally {
+        	 close(ps);
+         }
          clearCache(entityID);
       } catch (Exception e) {
          log.error( "RDBMPropertyStore.storeProperty "
@@ -102,12 +107,15 @@ public class RDBMPropertyStore
       try {
          conn = this.getConnection();
          ps = conn.prepareStatement(deleteProperty);
-         ps.clearParameters();
-         ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
-         ps.setString(2, entityID.getKey());
-         ps.setString(3, name);
-         ps.executeUpdate();
-         ps.close();
+         try {
+        	 ps.clearParameters();
+        	 ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
+        	 ps.setString(2, entityID.getKey());
+        	 ps.setString(3, name);
+        	 ps.executeUpdate();
+         } finally {
+        	close(ps);
+         }
          clearCache(entityID);
       } catch (Exception e) {
          log.error( "RDBMPropertyStore.unStoreProperty "
@@ -132,20 +140,26 @@ public class RDBMPropertyStore
          Connection conn = null;
          PreparedStatement ps = null;
          try {
-            conn = this.getConnection();
+        	conn = this.getConnection();
             ps = conn.prepareStatement(selectProperties);
-            ps.clearParameters();
-            ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
-            ps.setString(2, entityID.getKey());
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-               ep.setProperty(rs.getString(NAME_COL), rs.getString(VALUE_COL));
+            try {
+            	ps.clearParameters();
+            	ps.setInt(1, org.jasig.portal.EntityTypes.getEntityTypeID(entityID.getType()).intValue());
+            	ps.setString(2, entityID.getKey());
+            	ResultSet rs = ps.executeQuery();
+            	try {
+            		while (rs.next()) {
+            			ep.setProperty(rs.getString(NAME_COL), rs.getString(VALUE_COL));
+            		}
+            		addToCache(ep);
+            	} finally {
+            		close(rs);
+            	}
+            } finally {
+            	close(ps);
             }
-            addToCache(ep);
-            rs.close();
-            ps.close();
          } catch (Exception e) {
-            log.error( "RDBMPropertyStore.getPropertyNames: " + ps, e);
+            log.error( "RDBMPropertyStore.getCachedProperties: " + ps, e);
          } finally {
             this.releaseConnection(conn);
          }
@@ -160,5 +174,21 @@ public class RDBMPropertyStore
    protected void addToCache(EntityProperties ep) {
       EntityPropertyRegistry.instance().addToCache(ep);
    }
+
+	private static final void close(final Statement statement) {
+		try {
+			statement.close();
+		} catch (SQLException e) {
+			log.warn("problem closing statement", e);
+		}
+	}
+
+	private static final void close(final ResultSet resultset) {
+		try {
+			resultset.close();
+		} catch (SQLException e) {
+			log.warn("problem closing resultset", e);
+		}
+	}
 
 }

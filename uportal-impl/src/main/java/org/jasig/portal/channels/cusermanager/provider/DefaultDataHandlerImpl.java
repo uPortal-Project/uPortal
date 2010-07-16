@@ -7,6 +7,8 @@ package org.jasig.portal.channels.cusermanager.provider;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.text.MessageFormat;
 import java.util.Enumeration;
@@ -122,30 +124,46 @@ public class DefaultDataHandlerImpl implements IDataHandler {
      LOG.debug("Issuing: " + updsql.toString() );
 
      Connection C = getDBConn();
-     C.createStatement().executeUpdate( updsql.toString());
-     releaseConn( C );
-
+     try {
+    	 final Statement statement= C.createStatement();
+    	 try {
+    		 statement.executeUpdate( updsql.toString());
+    	 } finally {
+    		 close(statement);
+    	 }
+     } finally {
+    	 releaseConn( C );
+     }
   }// setUserInformation
 
-  public void addUser( IPerson AnIndividual ) throws Exception {
+  
+public void addUser( IPerson AnIndividual ) throws Exception {
 
     // first see if the username exists and throw if ot does.
     boolean preexisting = false;
 
     Connection C = getDBConn();
-    ResultSet R =  C.createStatement().executeQuery(
-
-      MessageFormat.format(
+    try {
+    	final Statement statement= C.createStatement();
+    	try {
+    		final ResultSet R =  statement.executeQuery(
+    		MessageFormat.format(
          COUNTUSERS, new Object[] { SINGLEQUOTE
               + AnIndividual.getAttribute( Constants.UNFIELD ) + SINGLEQUOTE } )
-
-      );
-
-    R.next();
-    if( R.getInt( "cnt" ) > 0 )
-      preexisting = true;
-
-    releaseConn( R, C );
+              );
+    		try {
+    		    R.next();
+    		    if( R.getInt( "cnt" ) > 0 )
+    		        preexisting = true;
+    		} finally {
+    		    close(R);
+    		}
+    	} finally {
+    		close(statement);
+    	}
+    } finally {
+    	releaseConn(C);
+    }
 
     if( preexisting )
       throw new Exception(
@@ -172,14 +190,18 @@ public class DefaultDataHandlerImpl implements IDataHandler {
     values.setLength( values.length() -2 );
 
     C = getDBConn();
-    C.createStatement().execute(
-
-      MessageFormat.format(
-         ADDUSER, new Object[] { fields.toString(), values.toString() } )
-
-      );
-
-    releaseConn( C );
+    try {
+    	final Statement statement= C.createStatement();
+    	try {
+    		statement.execute( MessageFormat.format(
+    		         ADDUSER, new Object[] { fields.toString(), values.toString() } )
+    	      );
+    	} finally {
+    		close(statement);
+    	}
+    } finally {
+    	releaseConn(C);
+    }
 
   }// addUser
 
@@ -199,19 +221,22 @@ public class DefaultDataHandlerImpl implements IDataHandler {
             (String)AnIndividual.getAttribute( Constants.ENCRYPTPWDFIELD ));
 
       Connection C = getDBConn();
+      try {
+    	  final Statement statement= C.createStatement();
+    	  try {
+    		  statement.execute(MessageFormat.format(
+    		           UPDPWD, new Object[] {
+    		                   SINGLEQUOTE + newpwd + SINGLEQUOTE,
+    		                   RDBMServices.getDbMetaData().sqlTimeStamp(new java.util.Date()),
+    		                   SINGLEQUOTE + (String)AnIndividual.getAttribute( Constants.UNFIELD ) + SINGLEQUOTE
 
-      C.createStatement().execute(
-
-        MessageFormat.format(
-           UPDPWD, new Object[] {
-             SINGLEQUOTE + newpwd + SINGLEQUOTE,
-             RDBMServices.getDbMetaData().sqlTimeStamp(new java.util.Date()),
-             SINGLEQUOTE + (String)AnIndividual.getAttribute( Constants.UNFIELD ) + SINGLEQUOTE
-
-         } ));
-
-     releaseConn( C );
-
+    		               } ));
+    	  } finally {
+    		  close(statement);
+    	  }
+      } finally {
+    	  releaseConn(C);
+      }
   }// setUserPassword
 
   public void removeUser( IPerson AnIndividual ) throws Exception {
@@ -256,11 +281,6 @@ public class DefaultDataHandlerImpl implements IDataHandler {
 
   private Connection getDBConn(){ return  RDBMServices.getConnection(); }
 
-  private void releaseConn( ResultSet R, Connection C ) throws Exception {
-     R.close();
-     releaseConn( C );
-  } // releaseConn
-
   private void releaseConn( Connection C ){ RDBMServices.releaseConnection( C ); }
 
   private IPerson[] runQuery( String Query ) throws Exception {
@@ -269,18 +289,29 @@ public class DefaultDataHandlerImpl implements IDataHandler {
 
   private IPerson[] runQuery( String Query, String Conditional ) throws Exception {
 
+	IPerson[] result= null;
+	
     Connection C = getDBConn();
-    ResultSet R = C.createStatement().executeQuery(
-      (Conditional == null? Query :
-        MessageFormat.format( Query, new Object[] {
-                              SINGLEQUOTE + Conditional + SINGLEQUOTE } )));
+    try {
+    	final Statement statement= C.createStatement();
+    	try {
+    		final ResultSet R = statement.executeQuery(
+    			      (Conditional == null? Query :
+    			        MessageFormat.format( Query, new Object[] {
+    			                              SINGLEQUOTE + Conditional + SINGLEQUOTE } )));
+    		try {
+    		    result = mkIPeople( R );
+    		} finally {
+    		    close(R);
+    		}
+    	} finally {
+    		close(statement);
+    	}
+    } finally {
+    	releaseConn(C);
+    }
 
-    IPerson[] people = mkIPeople( R );
-
-    // be good doobies
-    releaseConn( R, C );
-
-    return people;
+    return result;
   }// runQuery
 
   private IPerson[] mkIPeople( ResultSet R ) throws Exception {
@@ -334,4 +365,18 @@ public class DefaultDataHandlerImpl implements IDataHandler {
      return people;
   }// mkIPerson
 
+  private static void close(final Statement statement) {
+      try {
+          statement.close();
+      } catch (SQLException e) {
+          LOG.warn("failed to close statement", e);
+      }
+  }
+  private static void close(final ResultSet resultSet) {
+      try {
+          resultSet.close();
+      } catch (SQLException e) {
+          LOG.warn("failed to close resultset", e);
+      }
+  }
 }// eoc

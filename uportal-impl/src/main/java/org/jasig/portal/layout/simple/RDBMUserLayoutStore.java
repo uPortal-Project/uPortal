@@ -1776,13 +1776,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
           + "'";
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      stmt.execute(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=3 AND PARAM_NAME='"
           + pName + "'";
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      stmt.execute(sQuery);
     } finally {
       stmt.close();
     }
@@ -1801,13 +1801,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
           + "'";
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      stmt.execute(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=2 AND PARAM_NAME='"
           + pName + "'";
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      stmt.execute(sQuery);
     } finally {
       stmt.close();
     }
@@ -1865,13 +1865,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
           + "'";
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      stmt.execute(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_SS_USER_PARM WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=1 AND PARAM_NAME='"
           + pName + "'";
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      stmt.execute(sQuery);
     } finally {
       stmt.close();
     }
@@ -1890,13 +1890,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
           + "'";
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::removeThemeChannelAttribute() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      stmt.execute(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_TYPE=3 AND PARAM_NAME='"
           + pName + "'";
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      stmt.execute(sQuery);
     } finally {
       stmt.close();
     }
@@ -1967,13 +1967,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
           + "'";
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      stmt.execute(sQuery);
       // clean up user preference tables
       sQuery = "DELETE FROM UP_SS_USER_PARM WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_TYPE=1 AND PARAM_NAME='"
           + pName + "'";
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
-      stmt.executeQuery(sQuery);
+      stmt.execute(sQuery);
     } finally {
       stmt.close();
     }

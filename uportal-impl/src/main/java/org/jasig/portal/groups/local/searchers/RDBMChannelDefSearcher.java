@@ -8,6 +8,8 @@ package org.jasig.portal.groups.local.searchers;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
@@ -61,17 +63,24 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
                 break;
               default:
                 throw new GroupsException("Unknown search type");
+            } 
+            try {
+            	ps.clearParameters();
+            	ps.setString(1,query);
+            	ps.setString(2,query);
+            	ResultSet rs = ps.executeQuery();
+            	try {
+            		//System.out.println(ps.toString());
+            		while (rs.next()){
+            			//System.out.println("result");
+            			ar.add(new EntityIdentifier(rs.getString(1),chanDef));
+            		} 
+            	} finally {
+            		close(rs);	
+            		}
+            } finally {
+            	close(ps);
             }
-            ps.clearParameters();
-            ps.setString(1,query);
-            ps.setString(2,query);
-            ResultSet rs = ps.executeQuery();
-            //System.out.println(ps.toString());
-            while (rs.next()){
-              //System.out.println("result");
-              ar.add(new EntityIdentifier(rs.getString(1),chanDef));
-            }
-            ps.close();
         } catch (Exception e) {
             log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps, e);
         } finally {
@@ -79,7 +88,22 @@ public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
         }
       return (EntityIdentifier[]) ar.toArray(r);
   }
+  
   public Class getType() {
     return chanDef;
+  }
+  private static final void close(final Statement statement) {
+	  try {
+		  statement.close();
+	  } catch (SQLException e) {
+		  log.warn("problem closing statement", e);
+	  }
+  }
+  private static final void close(final ResultSet resultset) {
+	  try {
+		  resultset.close();
+	  } catch (SQLException e) {
+		  log.warn("problem closing resultset", e);
+	  }
   }
 }
