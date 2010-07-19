@@ -98,7 +98,7 @@ public class LocaleManager implements Serializable {
     public static void setJvmLocale(Locale jvmLocale) { LocaleManager.jvmLocale = jvmLocale; }
     public static void setPortalLocales(Locale[] portalLocales) { LocaleManager.portalLocales = portalLocales; }
     public void setBrowserLocales(Locale[] browserLocales) { this.browserLocales = browserLocales; }
-    public void setUserLocales(Locale[] userLocales) { this.userLocales = userLocales; }
+    public void setUserLocales(Locale[] userLocales) { this.userLocales = userLocales; this.sessionLocales = userLocales; }
     public void setSessionLocales(Locale[] sessionLocales) { this.sessionLocales = sessionLocales; }
     
     /**
