@@ -565,6 +565,17 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
     chanState = state;
   }
 
+  protected static final String appendReqParams(final String xmlUri, final String reqParameters) {
+    if (reqParameters == null) return xmlUri;
+    int fragmentIndex = xmlUri.indexOf('#');
+    final StringBuffer sb = new StringBuffer();
+    sb.append((fragmentIndex >= 0) ? xmlUri.substring(0, fragmentIndex) : xmlUri);
+    sb.append((xmlUri.indexOf('?') == -1) ? "?" : "&");
+    sb.append(reqParameters);
+    if (fragmentIndex >= 0) sb.append(xmlUri.substring(fragmentIndex));
+    return sb.toString();
+  }
+
   /**
    * Passes ChannelRuntimeData to the channel.
    * This function is called prior to the renderXML() call.
@@ -735,8 +746,7 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
          {
            if ((state.reqParameters!=null) && (!state.reqParameters.trim().equals("")))
            {
-             appendchar = (state.xmlUri.indexOf('?') == -1) ? "?" : "&";
-             state.fullxmlUri = state.fullxmlUri+appendchar+state.reqParameters;
+             state.fullxmlUri = appendReqParams(state.xmlUri, state.reqParameters);
            }
            state.reqParameters = null;
          }
