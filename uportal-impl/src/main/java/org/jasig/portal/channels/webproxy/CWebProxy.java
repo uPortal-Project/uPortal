@@ -764,7 +764,6 @@ public class CWebProxy implements IChannel, ICacheable, IMimeResponse
            {
              state.fullxmlUri = appendReqParams(state.xmlUri, state.reqParameters);
            }
-           state.reqParameters = null;
          }
 
          //log.debug("CWebProxy: fullxmlUri now: " + state.fullxmlUri);
