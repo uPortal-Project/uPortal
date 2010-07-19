@@ -1376,8 +1376,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
     Connection con = RDBMServices.getConnection();
     LocaleManager localeManager = profile.getLocaleManager();
 
-    RDBMServices.setAutoCommit(con, false);          // May speed things up, can't hurt
-
     try {
       Document doc = DocumentFactory.getNewDocument();
       Element root = doc.createElement("layout");
@@ -1393,56 +1391,67 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
         int layoutId = this.getLayoutID(userId, profile.getProfileId());
 
        if (layoutId == 0) { // First time, grab the default layout for this user
-          String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
-          rs = stmt.executeQuery(sQuery);
+          RDBMServices.setAutoCommit(con, false);          // May speed things up, can't hurt
           try {
-            boolean hasRow = rs.next();
-            userId = rs.getInt(1);
-            layoutId = rs.getInt(2);
-          } finally {
-            rs.close();
+              String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+              rs = stmt.executeQuery(sQuery);
+              try {
+                boolean hasRow = rs.next();
+                userId = rs.getInt(1);
+                layoutId = rs.getInt(2);
+              } finally {
+                rs.close();
+              }
+    
+              // Make sure the next struct id is set in case the user adds a channel
+              sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
+              if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+              int nextStructId;
+              rs = stmt.executeQuery(sQuery);
+              try {
+                boolean hasRow = rs.next();
+                nextStructId = rs.getInt(1);
+              } finally {
+                rs.close();
+              }
+    
+              int realNextStructId = 0;
+    
+              if (realUserId != userId) {
+                // But never make the existing value SMALLER, change it only to make it LARGER
+                // (so, get existing value)
+                sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + realUserId;
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                rs = stmt.executeQuery(sQuery);
+                try {
+                  boolean hasRow = rs.next();
+                  realNextStructId = rs.getInt(1);
+                } finally {
+                  rs.close();
+                }
+              }
+    
+              if (nextStructId > realNextStructId) {
+                sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
+                if (log.isDebugEnabled())
+                    log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                stmt.executeUpdate(sQuery);
+              }
+    
+              RDBMServices.commit(con); // Make sure it appears in the store
           }
-
-          // Make sure the next struct id is set in case the user adds a channel
-          sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
-          int nextStructId;
-          rs = stmt.executeQuery(sQuery);
-          try {
-            boolean hasRow = rs.next();
-            nextStructId = rs.getInt(1);
-          } finally {
-            rs.close();
+          catch (Exception e) {
+              RDBMServices.rollback(con);
+              throw e;
           }
-
-          int realNextStructId = 0;
-
-          if (realUserId != userId) {
-            // But never make the existing value SMALLER, change it only to make it LARGER
-            // (so, get existing value)
-            sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + realUserId;
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
-            rs = stmt.executeQuery(sQuery);
-            try {
-              boolean hasRow = rs.next();
-              realNextStructId = rs.getInt(1);
-            } finally {
-              rs.close();
-            }
+          finally {
+              //Reset commit state
+              RDBMServices.setAutoCommit(con, true);
           }
-
-          if (nextStructId > realNextStructId) {
-            sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
-            stmt.executeUpdate(sQuery);
-          }
-
-          RDBMServices.commit(con); // Make sure it appears in the store
         }
 
         int firstStructId = -1;
