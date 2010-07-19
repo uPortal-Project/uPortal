@@ -118,6 +118,7 @@ public class DescriptorHandler
         {
             is = jarFile.getInputStream( entry );
             parser = SAXParserFactory.newInstance().newSAXParser();
+            doParse(jarFile, handler, parser, is);
         }
         catch( ZipException ze )
         {
@@ -172,7 +173,11 @@ public class DescriptorHandler
                             " Details: " + sxe );
         }
         
-        try
+    }
+
+	private void doParse(JarFile jarFile, ComponentTagHandler handler,
+			SAXParser parser, InputStream is) {
+		try
         {
             // can throw SAXException, IOException
             parser.parse( is, handler );
@@ -211,7 +216,7 @@ public class DescriptorHandler
                         "Unable to close inputStream", ioe);
             }
         }
-    }
+	}
 
     /////// Methods for use by CarResources to aquire descriptor info.
 
