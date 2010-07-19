@@ -217,6 +217,10 @@ public class RDBMServices {
      * @param rs a database ResultSet object
      */
     public static void closeResultSet(final ResultSet rs) {
+        if (rs == null) {
+            return;
+        }
+        
         try {
             rs.close();
         }
@@ -231,6 +235,10 @@ public class RDBMServices {
      * @param st a database Statement object
      */
     public static void closeStatement(final Statement st) {
+        if (st == null) {
+            return;
+        }
+        
         try {
             st.close();
         }
@@ -248,6 +256,10 @@ public class RDBMServices {
      * @param connection
      */
     static final public void commit(final Connection connection) {
+        if (connection == null) {
+            return;
+        }
+        
         try {
             connection.commit();
         }
