@@ -61,7 +61,7 @@ var uportal = uportal || {};
      */
     var search = function(that, searchTerm) {
         var entities = that.entityBrowser.searchEntities(that.options.entityTypes, searchTerm);
-        var list = that.locate("searchResults").html("");
+        var list = $(that.options.selectors.searchResults).html("");
         $(entities).each(function(){
             var link = $(document.createElement("a")).attr("href", "javascript:;")
                 .html("<span>" + this.name + "</span>").attr("key", this.entityType + ":" + this.id)
@@ -70,10 +70,10 @@ var uportal = uportal || {};
         });
         
         // if there are no members overall, display the no contents message
-        that.locate("browsingResultNoMembers").css("display", list.find("li").size() > 0 ? "block" : "none");
+        $(that.options.selectors.searchResultsNoMembers).css("display", list.find("li").size() > 0 ? "none" : "block");
 
         if (that.searchInitialized) {
-            that.locate("searchDialog").dialog('open');
+            $(that.options.selectors.searchDialog).dialog('open');
         } else { 
             that.locate("searchDialog").dialog({ width:550, modal:true });
             that.searchInitialized = true;
