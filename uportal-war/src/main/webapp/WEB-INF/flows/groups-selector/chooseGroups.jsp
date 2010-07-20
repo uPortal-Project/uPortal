@@ -165,7 +165,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: 2 panel -->
 
 	<div id="${n}searchDialog" title="<spring:message code="chooseGroups.searchResultsTitle"/>">
-	    <p id="${n}searchResultNoMembers" style="display:none"><spring:message code="chooseGroups.noResults"/></p>
+	    <p id="${n}searchResultsNoMembers" style="display:none"><spring:message code="chooseGroups.noResults"/></p>
 	    <ul id="${n}searchResults"></ul>
 	</div>
 
@@ -180,6 +180,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 		$(document).ready(function(){
 			uportal.entityselection("#${n}chooseGroupsBody", {
+                findEntityUrl: "<c:url value="mvc/findEntity/>",
+                searchEntitiesUrl: "<c:url value="/mvc/searchEntities/>",
 		        entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
 		        selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
 		        initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',

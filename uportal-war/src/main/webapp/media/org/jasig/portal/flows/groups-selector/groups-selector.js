@@ -186,7 +186,10 @@ var uportal = uportal || {};
         
         // assign a new entity browser for retrieving groups, categories, and person
         // information from the portal
-        that.entityBrowser = $.groupbrowser({});
+        that.entityBrowser = $.groupbrowser({
+            findEntityUrl: that.settings.findEntityUrl,
+            searchEntitiesUrl: that.settings.searchEntitiesUrl
+        });
         
         // initialize the search form and selection basket onclick events
         that.searchInitialized = false;
@@ -203,6 +206,8 @@ var uportal = uportal || {};
     fluid.defaults("uportal.entityselection", {
         entityTypes: [],
         selected: [],
+        findEntityUrl: "mvc/findEntity",
+        searchEntitiesUrl: "mvc/searchEntities",
         initialFocusedEntity: 'group:local.0',
         selectButtonMessage: '',
         deselectButtonMessage: '',

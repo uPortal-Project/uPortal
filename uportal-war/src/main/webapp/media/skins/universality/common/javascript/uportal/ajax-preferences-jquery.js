@@ -36,6 +36,7 @@
 		    mediaPath: null,
 		    currentSkin: null,
 		    isFocusMode: false,
+		    isFragmentMode: false,
 		    messages: {}
 	    }, callerSettings||{});
 
@@ -46,34 +47,6 @@
 
 		// Initialization tasks for non-focused mode
 		var initportal = function() {
-
-		    // tabs permissions manager
-		    uportal.LayoutManager("body", {
-		        elementExtractor: function(that, link){
-		            return $(link).parents(".portal-flyout-container"); 
-		        },
-		        titleExtractor: function(element){ return "tab"; },
-		        selectors: {
-    	            permissionsLink: "#editPagePermissionsLink a",
-    	            permissionsDialog: ".edit-page-permissions-dialog",
-                    formTitle: ".edit-page-permissions-dialog h2"
-		        }
-		    });
-
-		    // columns permissions manager
-            uportal.LayoutManager("body", {
-                elementExtractor: function(that, link){
-                    return $(link).parents(".portal-page-column"); 
-                },
-                titleExtractor: function(element){ 
-                    return "Column " + ($(".portal-page-column").index(element) + 1); 
-                },
-                selectors: {
-                    permissionsLink: ".portal-column-permissions-link",
-                    permissionsDialog: ".edit-column-permissions-dialog",
-                    formTitle: ".edit-column-permissions-dialog h2"
-                }
-            });
 
 		    settings.columnCount = $("#portalPageBodyColumns [id^=column_]").size(); 
 		    if ($("#portalNavigationList li.active").size() > 0) {
@@ -103,30 +76,63 @@
 		    };
 		    settings.myReorderer = up.fluid.reorderLayout ("#portalPageBodyColumns",options);
 
-            uportal.LayoutManager("body", {
-                elementExtractor: function(that, link){
-                    return $(link).parents(".up-portlet-wrapper"); 
-                },
-                titleExtractor: function(element){ return element.find(".up-portlet-wrapper-inner h2 a").text(); },
-                selectors: {
-                    permissionsLink: ".portlet-permissions-link",
-                    permissionsDialog: ".edit-portlet-permissions-dialog",
-                    formTitle: ".edit-portlet-permissions-dialog h2"
-                },
-                listeners: {
-                    onUpdatePermissions: function(element, newPermissions) {
-                        if (!newPermissions.movable) {
-                            element.addClass("locked").removeClass("fl-reorderer-movable-default");
-                            element.find("[id*=toolbar_]").removeClass("ui-draggable");
-                        } else {
-                            element.removeClass("locked").addClass("fl-reorderer-movable-default");
-                            element.find("[id*=toolbar_]").addClass("ui-draggable");
-                        }
-                        settings.myReorderer.refresh();
-                        console.log(settings.myReorderer);
+		    if (settings.isFragmentMode) {
+                // tabs permissions manager
+                uportal.LayoutManager("body", {
+                    savePermissionsUrl: settings.preferencesUrl,
+                    elementExtractor: function(that, link){
+                        return $(link).parents(".portal-flyout-container"); 
+                    },
+                    titleExtractor: function(element){ return "tab"; },
+                    selectors: {
+                        permissionsLink: "#editPagePermissionsLink a",
+                        permissionsDialog: ".edit-page-permissions-dialog",
+                        formTitle: ".edit-page-permissions-dialog h2"
                     }
-                }
-            });
+                });
+    
+                // columns permissions manager
+                uportal.LayoutManager("body", {
+                    savePermissionsUrl: settings.preferencesUrl,
+                    elementExtractor: function(that, link){
+                        return $(link).parents(".portal-page-column"); 
+                    },
+                    titleExtractor: function(element){ 
+                        return "Column " + ($(".portal-page-column").index(element) + 1); 
+                    },
+                    selectors: {
+                        permissionsLink: "#pageDialogLink",
+                        permissionsDialog: ".edit-column-permissions-dialog",
+                        formTitle: ".edit-column-permissions-dialog h2"
+                    }
+                });
+    
+                // portlet permissions manager
+                uportal.LayoutManager("body", {
+                    savePermissionsUrl: settings.preferencesUrl,
+                    elementExtractor: function(that, link){
+                        return $(link).parents(".up-portlet-wrapper"); 
+                    },
+                    titleExtractor: function(element){ return element.find(".up-portlet-wrapper-inner h2 a").text(); },
+                    selectors: {
+                        permissionsLink: ".portlet-permissions-link",
+                        permissionsDialog: ".edit-portlet-permissions-dialog",
+                        formTitle: ".edit-portlet-permissions-dialog h2"
+                    },
+                    listeners: {
+                        onUpdatePermissions: function(element, newPermissions) {
+                            if (!newPermissions.movable) {
+                                element.addClass("locked").removeClass("fl-reorderer-movable-default");
+                                element.find("[id*=toolbar_]").removeClass("ui-draggable");
+                            } else {
+                                element.removeClass("locked").addClass("fl-reorderer-movable-default");
+                                element.find("[id*=toolbar_]").addClass("ui-draggable");
+                            }
+                            settings.myReorderer.refresh();
+                        }
+                    }
+                });
+		    }
 
 
 		    // add onclick events for portlet delete buttons
@@ -194,6 +200,7 @@
 				.unbind('click', initializeContentAddingMenu)
 				.click(function(){$("#contentAddingDialog").dialog('open');});
 			settings.channelBrowser = $.channelbrowser({
+		        channelXmlUrl: settings.channelListUrl,
 				onDataLoad: function(categories) {
 					var categorySelect = $("#categorySelectMenu");
 					$(categories).each(function(i, val) {
@@ -544,7 +551,7 @@
             if (settings.subscriptionsSupported == 'true') {
                 uportal.FragmentBrowser($("#subscribeTab-tab-1"), 
                     {
-                        fragmentServiceUrl: "mvc/tabList",
+                        fragmentServiceUrl: settings.subscriptionListUrl,
                         listeners: { 
                             onFragmentSelect: function(fragment) {
                                 var tab = $("#portalNavigation_" + settings.tabId);
