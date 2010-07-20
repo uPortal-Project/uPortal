@@ -20,13 +20,12 @@
 package org.jasig.portal.portlet.session;
 
 import javax.portlet.PortletContext;
-import javax.portlet.PortletSession;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.internal.InternalPortletWindow;
-import org.apache.pluto.internal.impl.PortletSessionImpl;
+import org.apache.pluto.container.PortletWindow;
+import org.apache.pluto.container.impl.PortletSessionImpl;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 
 /**
@@ -40,8 +39,8 @@ public class ScopingPortletSessionImpl extends PortletSessionImpl {
 
     private final IPortletEntityId portletEntityId;
 
-    public ScopingPortletSessionImpl(IPortletEntityId portletEntityId, PortletContext portletContext, InternalPortletWindow internalPortletWindow, HttpSession httpSession) {
-        super(portletContext, internalPortletWindow, httpSession);
+    public ScopingPortletSessionImpl(IPortletEntityId portletEntityId, PortletContext portletContext, PortletWindow portletWindow, HttpSession httpSession) {
+        super(portletContext, portletWindow, httpSession);
         this.portletEntityId = portletEntityId;
     }
 

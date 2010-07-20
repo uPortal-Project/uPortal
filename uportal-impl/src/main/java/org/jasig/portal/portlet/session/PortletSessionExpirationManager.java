@@ -32,9 +32,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.PortletWindow;
-import org.apache.pluto.spi.optional.PortletInvocationEvent;
-import org.apache.pluto.spi.optional.PortletInvocationListener;
+import org.apache.pluto.container.driver.PortletInvocationEvent;
+import org.apache.pluto.container.driver.PortletInvocationListener;
 import org.jasig.portal.spring.web.context.support.HttpSessionDestroyedEvent;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,8 +99,7 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
                 }
             }
             
-            final PortletWindow portletWindow = event.getPortletWindow();
-            final String contextPath = portletWindow.getContextPath();
+            final String contextPath = portletRequest.getContextPath();
             portletSessions.put(contextPath, portletSession);
         }
     }

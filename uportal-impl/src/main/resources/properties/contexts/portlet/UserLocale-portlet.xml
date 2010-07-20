@@ -21,13 +21,12 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
-    http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
-    
-    <!-- Enables FlowHandlers -->
-    <bean class="org.springframework.webflow.mvc.portlet.FlowHandlerAdapter">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+           
+     <!-- Enables FlowHandlers -->
+    <bean class="org.jasig.portal.webflow.portlet.FlowHandlerAdapter">
         <property name="flowExecutor" ref="flowExecutor"/>
     </bean>
     

@@ -27,13 +27,11 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.PortletWindow;
-import org.apache.pluto.descriptors.portlet.PortletAppDD;
-import org.apache.pluto.descriptors.portlet.UserAttributeDD;
-import org.apache.pluto.internal.InternalPortletRequest;
-import org.apache.pluto.internal.InternalPortletWindow;
-import org.apache.pluto.spi.optional.UserInfoService;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.PortletWindow;
+import org.apache.pluto.container.UserInfoService;
+import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
+import org.apache.pluto.container.om.portlet.UserAttribute;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -127,21 +125,6 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-    
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest)
-     */
-    @Deprecated
-    public Map<String, String> getUserInfo(final PortletRequest request) throws PortletContainerException {
-        if (!(request instanceof InternalPortletRequest)) {
-            throw new IllegalArgumentException("The PersonDirectoryUserInfoServices requires the PortletRequest parameter to implement the '" + InternalPortletRequest.class.getName() + "' interface.");
-        }
-        final InternalPortletRequest internalRequest = (InternalPortletRequest)request;
-        final InternalPortletWindow internalPortletWindow = internalRequest.getInternalPortletWindow();
-
-        return this.getUserInfo(request, internalPortletWindow);
-    }
 
     /* (non-Javadoc)
      * @see org.apache.pluto.spi.optional.UserInfoService#getUserInfo(javax.portlet.PortletRequest, org.apache.pluto.PortletWindow)
@@ -174,7 +157,7 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
         if (personAttributes == null) {
             return Collections.emptyMap();
         }
-        final List<UserAttributeDD> expectedUserAttributes = this.getExpectedUserAttributes(httpServletRequest, portletWindow);
+        final List<? extends UserAttribute> expectedUserAttributes = this.getExpectedUserAttributes(httpServletRequest, portletWindow);
         
         final Map<String, String> portletUserAttributes = this.generateUserInfo(personAttributes, expectedUserAttributes, httpServletRequest);
         return portletUserAttributes;
@@ -187,12 +170,12 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      * @param expectedUserAttributes The attributes the portlet expects to get
      * @return The Map to use for the USER_INFO attribute
      */
-    protected Map<String, String> generateUserInfo(final IPersonAttributes personAttributes, final List<UserAttributeDD> expectedUserAttributes,HttpServletRequest httpServletRequest) {
+    protected Map<String, String> generateUserInfo(final IPersonAttributes personAttributes, final List<? extends UserAttribute> expectedUserAttributes,HttpServletRequest httpServletRequest) {
         final Map<String, String> portletUserAttributes = new HashMap<String, String>(expectedUserAttributes.size());
         
         //Copy expected attributes to the USER_INFO Map
         final Map<String, List<Object>> attributes = personAttributes.getAttributes();
-        for (final UserAttributeDD userAttributeDD : expectedUserAttributes) {
+        for (final UserAttribute userAttributeDD : expectedUserAttributes) {
             final String attributeName = userAttributeDD.getName();
             
             //TODO a personAttributes.hasAttribute(String) API is needed here, if hasAttribute and null then put the key with no value in the returned map
@@ -235,11 +218,10 @@ public class PersonDirectoryUserInfoService implements UserInfoService {
      * @return The List of expected user attributes for the portlet
      * @throws PortletContainerException If expected attributes cannot be determined
      */
-    @SuppressWarnings("unchecked")
-    protected List<UserAttributeDD> getExpectedUserAttributes(HttpServletRequest request, final IPortletWindow portletWindow) throws PortletContainerException {
+    protected List<? extends UserAttribute> getExpectedUserAttributes(HttpServletRequest request, final IPortletWindow portletWindow) throws PortletContainerException {
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindow.getPortletWindowId());
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
-        final PortletAppDD portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
+        final PortletApplicationDefinition portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
         
         return portletApplicationDescriptor.getUserAttributes();
     }

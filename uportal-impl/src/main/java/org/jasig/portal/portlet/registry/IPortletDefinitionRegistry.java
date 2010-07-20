@@ -19,12 +19,13 @@
 
 package org.jasig.portal.portlet.registry;
 
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.descriptors.portlet.PortletAppDD;
-import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.utils.Tuple;
+import org.springframework.dao.DataRetrievalFailureException;
 
 /**
  * Provides methods for creating and accessing {@link IPortletDefinition} and related objects.
@@ -95,8 +96,9 @@ public interface IPortletDefinitionRegistry {
      * @param portletDefinitionId The definition ID to get the parent descriptor for.
      * @return The parent portlet descriptor for the definition, null if no definition exists for the id. 
      * @throws IllegalArgumentException if portletDefinitionId is null
+     * @throws DataRetrievalFailureException if the {@link PortletDefinition} cannot be found for the {@link IPortletDefinition}
      */
-    public PortletDD getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException;
+    public PortletDefinition getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId);
 
     /**
      * Gets the parent portlet application descriptor for the entity specified by the definition id.
@@ -104,8 +106,9 @@ public interface IPortletDefinitionRegistry {
      * @param portletDefinitionId The definition ID to get the parent application descriptor for.
      * @return The parent portlet descriptor for the application definition, null if no definition exists for the id. 
      * @throws IllegalArgumentException if portletDefinitionId is null
+     * @throws DataRetrievalFailureException if the {@link PortletApplicationDefinition} cannot be found for the {@link IPortletDefinition}
      */
-    public PortletAppDD getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException;
+    public PortletApplicationDefinition getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId);
     
     /**
      * Get the portletApplicationId and portletName for the specified portlet definition. The portletApplicationId

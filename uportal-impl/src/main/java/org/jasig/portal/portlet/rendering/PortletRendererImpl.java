@@ -36,15 +36,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.PortletContainer;
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.descriptors.common.SecurityRoleRefDD;
-import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.apache.pluto.container.PortletContainer;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.apache.pluto.container.om.portlet.SecurityRoleRef;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.channels.portlet.InconsistentPortletModelException;
 import org.jasig.portal.channels.portlet.PortletDispatchException;
 import org.jasig.portal.channels.portlet.PortletHttpServletRequestWrapper;
@@ -60,13 +59,14 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener;
-import org.jasig.portal.portlet.url.IPortletRequestParameterManager;
-import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletPortalUrl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -84,34 +84,30 @@ public class PortletRendererImpl implements IPortletRenderer {
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
     private PortletContainer portletContainer;
-    private IPortletRequestParameterManager portletRequestParameterManager;
+    private IPortalUrlProvider portalUrlProvider;
     private PortletDelegationLocator portletDelegationLocator;
     
-    @Autowired(required=true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletContainer(PortletContainer portletContainer) {
         this.portletContainer = portletContainer;
     }
-    @Autowired(required=true)
-    public void setPortletRequestParameterManager(IPortletRequestParameterManager portletRequestParameterManager) {
-        this.portletRequestParameterManager = portletRequestParameterManager;
-    }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
         this.portletDelegationLocator = portletDelegationLocator;
     }
@@ -164,17 +160,11 @@ public class PortletRendererImpl implements IPortletRenderer {
      * @see org.jasig.portal.channels.portlet.IPortletRenderer#doAction(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public void doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+    public long doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //Load the parameters to provide to the portlet with the request and update the state and mode
-        Map<String, List<String>> parameters = null;
-        final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
-        if (portletUrl != null) {
-            parameters = portletUrl.getParameters();
-            
-            this.setupPortletWindow(httpServletRequest, portletWindow, portletUrl);
-        }
+        final Map<String, String[]> parameters = portletWindow.getRequestParameters();
         
         httpServletRequest = this.setupPortletRequest(httpServletRequest, portletWindow, parameters);
         
@@ -183,6 +173,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             this.logger.debug("Executing portlet action for window '" + portletWindow + "'");
         }
         
+        final long start = System.currentTimeMillis();
         try {
             this.portletContainer.doAction(portletWindow, httpServletRequest, httpServletResponse);
         }
@@ -195,29 +186,15 @@ public class PortletRendererImpl implements IPortletRenderer {
         catch (IOException ioe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action.", portletWindow, ioe);
         }
+        
+        return System.currentTimeMillis() - start;
     }
 
     @Override
     public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer printWriter) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
-        //Load the parameters to provide with the request
-        final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
-        
-        Map<String, List<String>> parameters;
-        //Current portlet isn't targeted, use parameters from previous request
-        if (portletUrl == null) {
-            parameters = portletWindow.getRequestParameters();
-        }
-        //Current portlet is targeted, set parameters and update state/mode
-        else {
-            parameters = portletUrl.getParameters();
-            if (parameters != null) {
-                portletWindow.setRequestParameters(parameters);
-            }
-            
-            this.setupPortletWindow(httpServletRequest, portletWindow, portletUrl);
-        }
+        final Map<String, String[]> parameters = portletWindow.getRequestParameters();
         
         //Setup the request and response
         httpServletRequest = this.setupPortletRequest(httpServletRequest, portletWindow, parameters);
@@ -231,6 +208,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             this.logger.debug("Rendering portlet for window '" + portletWindow + "'");
         }
 
+        final long start = System.currentTimeMillis();
         try {
             this.portletContainer.doRender(portletWindow, httpServletRequest, portletHttpServletResponseWrapper);
             portletHttpServletResponseWrapper.flushBuffer();
@@ -246,12 +224,12 @@ public class PortletRendererImpl implements IPortletRenderer {
         }
         
         
-        final String title = (String)httpServletRequest.getAttribute(IPortletAdaptor.ATTRIBUTE__PORTLET_TITLE);
+        final String title = (String)httpServletRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE);
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Retrieved title '" + title + "' from request for: " + portletWindow);
         }
         
-        return new PortletRenderResult(title);
+        return new PortletRenderResult(title, System.currentTimeMillis() - start);
     }
     
     @Override
@@ -291,7 +269,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         
     }
 
-    protected HttpServletRequest setupPortletRequest(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, Map<String, List<String>> parameters) {
+    protected HttpServletRequest setupPortletRequest(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, Map<String, String[]> parameters) {
         if (parameters == null) {
             parameters = Collections.emptyMap();
         }
@@ -301,18 +279,18 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         //Load the portlet descriptor for the request
         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-        final List<SecurityRoleRefDD> securityRoleRefs;
+        final List<? extends SecurityRoleRef> securityRoleRefs;
         try {
             final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindowId);
             final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
-            final PortletDD portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
+            final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
             if (portletDescriptor == null) {
                 throw new InconsistentPortletModelException("Could not retrieve PortletDD for portlet window '" + portletWindowId + "', this usually means the Portlet application is not deployed correctly.", portletWindowId);
             }
             
             securityRoleRefs = portletDescriptor.getSecurityRoleRefs();
         }
-        catch (PortletContainerException pce) {
+        catch (DataRetrievalFailureException pce) {
             throw new InconsistentPortletModelException("Could not retrieve PortletDD for portlet window '" + portletWindowId + "' to provide the required SecurityRoleRefDD List to the PortletHttpRequestWrapper.", portletWindowId, pce);
         }
         
@@ -323,10 +301,10 @@ public class PortletRendererImpl implements IPortletRenderer {
         return portletHttpServletRequestWrapper;
     }
 
-    protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, PortletUrl portletUrl) {
+    protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, IPortletPortalUrl portletUrl) {
         final PortletMode portletMode = portletUrl.getPortletMode();
         if (portletMode != null) {
-            if (IPortletAdaptor.CONFIG.equals(portletMode)) {
+            if (IPortletRenderer.CONFIG.equals(portletMode)) {
                 final IPerson person = this.personManager.getPerson(httpServletRequest);
                 
                 final EntityIdentifier ei = person.getEntityIdentifier();

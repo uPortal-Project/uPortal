@@ -51,16 +51,27 @@
 <!-- ============================================= -->
 <!-- 
  | RED
- | This statement defines this document as XSL.
+ | This statement defines this document as XSL and declares the Xalan extension
+ | elements used for URL generation and permissions checks.
+ |
+ | If a change is made to this section it MUST be copied to all other XSL files
+ | used by the theme
 -->
 <xsl:stylesheet 
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:skin="http://www.jasig.org/uportal/web/skin"
-  version="1.0" >
-<!-- ============================================= -->
-
-
-	<!-- ============================= -->
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xalan="http://xml.apache.org/xalan" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
+    xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
+    xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
+    xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:skin="http://www.jasig.org/uportal/web/skin"
+    extension-element-prefixes="portal portlet layout skin" 
+    exclude-result-prefixes="xalan portal portlet layout upAuth upGroup skin" 
+    version="1.0">
+  
+  <!-- ============================= -->
   <!-- ========== IMPORTS ========== -->
   <!-- ============================= -->
   <!-- 
@@ -76,6 +87,17 @@
   <xsl:import href="content.xsl" />     <!-- Templates for content structure (i.e. portlets) -->
   <xsl:import href="preferences.xsl" /> <!-- Templates for preferences-specific structures -->
   <!-- ============================= -->
+
+    <xalan:component prefix="portal" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
+    </xalan:component>
+    <xalan:component prefix="portlet" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
+    </xalan:component>
+    <xalan:component prefix="layout" elements="url param">
+        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
+    </xalan:component>
+<!-- ============================================= -->
   
   
   <!-- ========================================= -->
@@ -106,11 +128,13 @@
    | Skin Settings can be used to change the location of skin files.
   -->
   <xsl:param name="skin">uportal3</xsl:param>
+  <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
   <xsl:variable name="SKIN" select="$skin"/>
-  <xsl:variable name="MEDIA_PATH">media/skins/universality</xsl:variable>
-  <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
+  <xsl:variable name="MEDIA_PATH">/media/skins/universality</xsl:variable>
+  <xsl:variable name="SKIN_RESOURCES_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
+  <xsl:variable name="SKIN_PATH" select="concat($CONTEXT_PATH,$MEDIA_PATH,'/',$SKIN)"/>
   <xsl:variable name="PORTAL_SHORTCUT_ICON">favicon.ico</xsl:variable>
-  <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$SKIN_PATH,'/skin.xml')"/>
+  <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
   <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/skin:resources/css[@type='fss-theme']/@name"/>
   <xsl:variable name="FLUID_THEME_CLASS">
     <xsl:choose>

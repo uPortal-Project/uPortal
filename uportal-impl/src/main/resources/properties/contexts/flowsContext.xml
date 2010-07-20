@@ -25,9 +25,9 @@
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:util="http://www.springframework.org/schema/util"       
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
            
     <!-- Generic Web-Flow helper beans -->
     <bean id="portletUrlFlowHelper" class="org.jasig.portal.portlets.flow.PortletUrlFlowHelper" />
@@ -92,8 +92,6 @@
         <property name="dataSource" ref="PortalDb"/>
     </bean>   
     
-    
-    <!-- Executes flows: the central entry point into the Spring Web Flow system -->
     <webflow:flow-executor id="flowExecutor">
         <webflow:flow-execution-attributes>
             <webflow:always-redirect-on-pause value="false" />
@@ -106,6 +104,10 @@
     </webflow:flow-registry>
     
     <!-- The flow-builder-service to set our custom conversion service -->
-    <webflow:flow-builder-services id="flowBuilderServices"
-        conversion-service="portalConversionService"/>
+    <webflow:flow-builder-services id="flowBuilderServices" 
+        view-factory-creator="viewFactoryCreator"
+        conversion-service="portalConversionService" />
+        
+    <!-- Custom view factory creator that allows us to configure the flow beans in the top level application context -->
+    <bean id="viewFactoryCreator" class="org.jasig.portal.utils.web.flow.RuntimeMvcViewFactoryCreator" />
 </beans>

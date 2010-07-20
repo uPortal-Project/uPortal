@@ -1,60 +1,48 @@
 /**
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
-/**
  * 
  */
 package org.jasig.portal.url;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathExpression;
 
-import org.easymock.EasyMock;
+import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
+import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
+import org.jasig.portal.mock.portlet.om.MockPortletWindow;
+import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
-import org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.junit.Assert;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -65,978 +53,822 @@ import org.springframework.mock.web.MockHttpServletRequest;
  *
  */
 public class PortalUrlProviderImplTest {
+    private PortalUrlProviderImpl portalUrlProvider;
+    private IUserInstanceManager userInstanceManager;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IPortletEntityRegistry portletEntityRegistry;
+    private IPortletWindowRegistry portletWindowRegistry;
+    private IUserInstance userInstance;
+    private IUserPreferencesManager userPreferencesManager;
+    private IUserLayoutManager userLayoutManager;
+    private IUserLayout userLayout;
+    private IUserLayoutNodeDescription userLayoutNodeDescription;
+    private IPerson person;
+    private IPortalRequestUtils portalRequestUtils;
+    private IChannelDefinition channelDefinition;
+    private IPortletDefinition portletDefinition;
+    private IPortletEntity portletEntity;
+    private IPortletWindow portletWindow;
     
-    /**
-     * {@link PortalUrlProviderImpl#getPortalRequestInfo(HttpServletRequest)} will cache the
-     * {@link IPortalRequestInfo} as a request attribute - verify this behavior.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoAlreadyAnAttribute() throws Exception {
-        PortalRequestInfoImpl requestInfo = new PortalRequestInfoImpl();
-        requestInfo.setAction(false);
-        requestInfo.setTargetedChannelSubscribeId("1");
-        requestInfo.setTargetedLayoutNodeId("home");
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        replay(mockPortletWindowId);
-        requestInfo.setTargetedPortletWindowId(mockPortletWindowId);
-        requestInfo.setUrlState(UrlState.NORMAL);
-        
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setAttribute(PortalUrlProviderImpl.class.getName() + ".PORTAL_REQUEST_INFO", requestInfo);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        IPortalRequestInfo retrieved = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(requestInfo, retrieved);
-        
-        verify(mockPortletWindowId);
-    }
+    private Object[] mockObjects;
     
-    /**
-     * Verify expected results for:
-     <pre>
-     /uPortal/home/normal/weather.31/render.uP
-     </pre>
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoControl() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/home/normal/weather.31/render.uP");
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("weather");
-        replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
-        Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
-        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertFalse(requestInfo.isAction());
-        
-        verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * Verify expected results for:
-     <pre>
-     /uPortal/home/normal/weather.31/
-     </pre>
-     * The missing "render.uP" is still valid - assert requestInfo.isAction still returns false.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoDefaultIsRender() throws Exception {
-         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-         mockRequest.setContextPath("/uPortal/");
-         mockRequest.setRequestURI("/uPortal/home/normal/weather.31/");
-         
-         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-         expect(mockPortletWindowId.getStringId()).andReturn("weather");
-         replay(mockPortletWindowId);
-         ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-         expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-         replay(mockPortletWindowRegistry);
-         
-         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-         Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-         Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
-         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
-         Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
-         Assert.assertFalse(requestInfo.isAction());
-         
-         verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * * Verify expected results for:
-     <pre>
-     /uPortal/home/normal/weather/
-     </pre>
-     * Key points:
-     <ul>
-     <li>The missing "render.uP" is still valid - assert requestInfo.isAction still returns false.</li>
-     <li>No subscribe id</li>
-     </ul>
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoNoSubscribeId() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/home/normal/weather/");
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("weather");
-        replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
-        Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
-        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertFalse(requestInfo.isAction());
-        
-        verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * Verify expected results for:
-     <pre>
-     /uPortal/home/normal/
-     </pre>
-     * Key points:
-     <ul>
-     <li>The missing "render.uP" is still valid - assert requestInfo.isAction still returns false.</li>
-     <li>No subscribe id</li>
-     <li>No targeted channel</li>
-     </ul>
-     * 
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoNoTargetedChannel() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/home/normal/");
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        replay(mockPortletWindowRegistry);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
-        Assert.assertEquals(null, requestInfo.getTargetedPortletWindowId());
-        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertFalse(requestInfo.isAction());
-        
-        verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    
-    /**
-     * Verify expected results for:
-     <pre>
-     /uPortal/home/
-     </pre>
-     * Key points:
-     <ul>
-     <li>The missing "render.uP" is still valid - assert requestInfo.isAction still returns false.</li>
-     <li>No subscribe id</li>
-     <li>No targeted channel</li>
-     <li>No window state</li>
-     </ul>
-     * 
-     * TODO is this a valid test? if so, our regex isn't capable of handling a URL without normal|max|legacy etc.
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoOnlyHomeFolder() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/home/");
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        replay(mockPortletWindowRegistry);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
-        Assert.assertEquals(null, requestInfo.getTargetedPortletWindowId());
-        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertFalse(requestInfo.isAction());
-        
-        verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * Verify expected results for example 4:
-     <pre>
-     /uPortal/max/weather/render.uP
-     </pre>
-     * No folder here - just a maximized window state and a channel with no subscriber id.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestMaxWeather() throws Exception {
-         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-         mockRequest.setContextPath("/uPortal/");
-         mockRequest.setRequestURI("/uPortal/max/weather/render.uP");
-         
-         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-         expect(mockPortletWindowId.getStringId()).andReturn("weather");
-         replay(mockPortletWindowId);
-         ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-         expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-         replay(mockPortletWindowRegistry);
-         
-         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-         Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
-         Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
-         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
-         Assert.assertEquals(null, requestInfo.getTargetedLayoutNodeId());
-         Assert.assertFalse(requestInfo.isAction());
-         
-         verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * Verify expected results for a modified example 4:
-     <pre>
-     /uPortal/max/weather/
-     </pre>
-     * No folder here - just a maximized window state and a channel with no subscriber id.
-     * "render.uP" is not here either - assert not an action.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestMaxWeatherMissingRender() throws Exception {
-         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-         mockRequest.setContextPath("/uPortal/");
-         mockRequest.setRequestURI("/uPortal/max/weather/");
-         
-         IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-         expect(mockPortletWindowId.getStringId()).andReturn("weather");
-         replay(mockPortletWindowId);
-         ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-         expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-         replay(mockPortletWindowRegistry);
-         
-         PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-         provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-         IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-         Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
-         Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
-         Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
-         Assert.assertEquals(null, requestInfo.getTargetedLayoutNodeId());
-         Assert.assertFalse(requestInfo.isAction());
-         
-         verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * Verify expected results for example 5:
-     <pre>
-     /uPortal/max/bookmarks.ctf1/render.uP
-     </pre>
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestMaxBookmarksTransientSubscribeId() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/max/bookmarks.ctf1/render.uP");
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("bookmarks");
-        replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("bookmarks")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
-        Assert.assertEquals("ctf1", requestInfo.getTargetedChannelSubscribeId());
-        Assert.assertEquals("bookmarks", requestInfo.getTargetedPortletWindowId().getStringId());
-        Assert.assertEquals(null, requestInfo.getTargetedLayoutNodeId());
-        Assert.assertFalse(requestInfo.isAction());
-        
-        verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * Verify expected results for:
-     <pre>
-     /uPortal/home/normal/weather.31/action.uP
-     </pre>
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoControlAction() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/home/normal/weather.31/action.uP");
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("weather");
-        replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
-        Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
-        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertTrue(requestInfo.isAction());
-        
-        verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * Verify expected results for:
-     <pre>
-     /uPortal/home/max/weather.31/render.uP
-     </pre>
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoControlMaximized() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/home/max/weather.31/render.uP");
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("weather");
-        replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(UrlState.MAX, requestInfo.getUrlState());
-        Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
-        Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
-        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertFalse(requestInfo.isAction());
-        
-        verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * Verify expected results for:
-     <pre>
-     /uPortal/home/exclusive/weather.31/render.uP
-     </pre>
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoControlExclusive() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/home/exclusive/weather.31/render.uP");
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("weather");
-        replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(UrlState.EXCLUSIVE, requestInfo.getUrlState());
-        Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
-        Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
-        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertFalse(requestInfo.isAction());
-        
-        verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * Verify expected results for:
-     <pre>
-     /uPortal/home/subtab1/subtab2/normal/weather.31/render.uP
-     </pre>
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoSubtabs() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/home/subtab1/subtab2/normal/weather.31/render.uP");
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("weather");
-        replay(mockPortletWindowId);
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindowId("weather")).andReturn(mockPortletWindowId);
-        replay(mockPortletWindowRegistry);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals("31", requestInfo.getTargetedChannelSubscribeId());
-        Assert.assertEquals("weather", requestInfo.getTargetedPortletWindowId().getStringId());
-        // needs to match "deepest" folder
-        Assert.assertEquals("subtab2", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertFalse(requestInfo.isAction());
-        
-        verify(mockPortletWindowId, mockPortletWindowRegistry);
-    }
-    
-    /**
-     * Verify expected results for:
-     <pre>
-     /uPortal/home/normal/render.uP
-     </pre>
-     * @throws Exception
-     */
-    @Test
-    public void testGetPortalRequestInfoNoChannel() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
-        mockRequest.setRequestURI("/uPortal/home/normal/render.uP");
-        
-        //IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        //expect(mockPortletWindowId.getStringId()).andReturn(null);
-        //replay(mockPortletWindowId);
-        //ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        //expect(mockPortletWindowRegistry.getPortletWindowId(null)).andReturn(mockPortletWindowId);
-        //replay(mockPortletWindowRegistry);
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        //provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        IPortalRequestInfo requestInfo = provider.getPortalRequestInfo(mockRequest);
-        Assert.assertEquals(UrlState.NORMAL, requestInfo.getUrlState());
-        Assert.assertEquals(null, requestInfo.getTargetedChannelSubscribeId());
-        Assert.assertEquals(null, requestInfo.getTargetedPortletWindowId());
-        Assert.assertEquals("home", requestInfo.getTargetedLayoutNodeId());
-        Assert.assertFalse(requestInfo.isAction());
-    }
-    
-    /**
-     * Pass null input into {@link PortalUrlProviderImpl#generatePortletUrl(javax.servlet.http.HttpServletRequest, IPortalPortletUrl, org.jasig.portal.portlet.om.IPortletWindowId)},
-     * verify expected {@link IllegalArgumentException} thrown.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testGeneratePortletUrlNullArguments() throws Exception {
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        
-        // arguments are HttpServletRequest, IPortalPortletUrl, IPortletWindowId
-        try {
-            provider.generatePortletUrl(null, null, null);
-            Assert.fail("expected IllegalArgumentException for null HttpServletRequest");
-        } catch (IllegalArgumentException e) {
-            // success
-        }
-        
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        try {
-            provider.generatePortletUrl(mockRequest, null, null);
-            Assert.fail("expected IllegalArgumentException for null IPortalPortletUrl");
-        } catch (IllegalArgumentException e) {
-            // success
-        }
-        
-        IPortalPortletUrl mockPortletUrl = createMock(IPortalPortletUrl.class);
-        replay(mockPortletUrl);
-        
-        try {
-            provider.generatePortletUrl(mockRequest, mockPortletUrl, null);
-            Assert.fail("expected IllegalArgumentException for null IPortletWindowId");
-        } catch (IllegalArgumentException e) {
-            // success
-        }
-        verify(mockPortletUrl);    
-    }
-    
-    /**
-     * From http://www.ja-sig.org/wiki/display/UPC/Consistent+Portal+URLs
-     * Tests "Example Url" #3:
-     <pre>
-     Renders a maximized portlet with fname weather and subscribe id 31 that exists on the home folder
-    
-    /uPortal/home/max/weather.31/render.uP?pltc_target=target
-     </pre>
-     *
-     * context path: /uPortal/
-     * channel fname: weather
-     * channel subscribe id: 31
-     * portlet window state: max
-     * @throws Exception
-     */
-    @Test
-    public void testGeneratePortletUrlHomeMaxWeather() throws Exception {
+    @Before
+    public void setupPortletUrlProvider() {
+        this.portalUrlProvider = new PortalUrlProviderImpl();
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
+        this.userInstanceManager = createMock(IUserInstanceManager.class);
+        this.portalUrlProvider.setUserInstanceManager(this.userInstanceManager);
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
-        expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);
-        expect(mockPortalPortletUrl.isAction()).andReturn(false);
-        expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
-        expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
-        replay(mockPortalPortletUrl);
+        this.portletEntityRegistry = createMock(IPortletEntityRegistry.class);
+        this.portalUrlProvider.setPortletEntityRegistry(portletEntityRegistry);
         
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("target");
-        replay(mockPortletWindowId);
+        this.portletWindowRegistry = createMock(IPortletWindowRegistry.class);
+        this.portalUrlProvider.setPortletWindowRegistry(this.portletWindowRegistry);
         
-        ProviderSetupDetails details = new ProviderSetupDetails();
-        details.setChannelFName("weather");
-        details.setChannelId("31");
-        details.setFolderName("home");
-        details.setHttpServletRequest(mockRequest);
-        details.setPortletMode(PortletMode.VIEW);
-        details.setPortletWindowId(mockPortletWindowId);
-        details.setWindowState(WindowState.MAXIMIZED);
-        PortalUrlProviderImpl provider = generateMockProvider(details);
+        this.portletDefinitionRegistry = createMock(IPortletDefinitionRegistry.class);
+        this.portalUrlProvider.setPortletDefinitionRegistry(this.portletDefinitionRegistry);
         
-        String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
-        Assert.assertEquals("/uPortal/home/max/weather.31/render.uP?pltc_target=target", result);
+        this.portalRequestUtils = createMock(IPortalRequestUtils.class);
+        this.portalUrlProvider.setPortalRequestUtils(this.portalRequestUtils);
         
-        verify(mockPortalPortletUrl, mockPortletWindowId);
+        this.userInstance = createMock(IUserInstance.class);
+        this.userPreferencesManager = createMock(IUserPreferencesManager.class);
+        this.userLayoutManager = createMock(IUserLayoutManager.class);
+        this.userLayout = createMock(IUserLayout.class);
+        this.userLayoutNodeDescription = createMock(IUserLayoutNodeDescription.class);
+        this.person = createMock(IPerson.class);
+        this.channelDefinition = createMock(IChannelDefinition.class);
+        this.portletDefinition = createMock(IPortletDefinition.class);
+        this.portletEntity = createMock(IPortletEntity.class);
+        this.portletWindow = createMock(IPortletWindow.class);
+        
+        this.mockObjects = new Object[] {
+                this.userInstanceManager, this.portletEntityRegistry, this.portletWindowRegistry, this.userInstance, 
+                this.userPreferencesManager, this.userLayoutManager, this.person, this.portletEntity, this.portletWindow,
+                this.userLayout, this.portalRequestUtils, this.portletDefinitionRegistry, this.channelDefinition,
+                this.portletDefinition, this.userLayoutNodeDescription
+        };
     }
     
-    /**
-     * From http://www.ja-sig.org/wiki/display/UPC/Consistent+Portal+URLs
-     * Tests "Example Url" #3:
-     <pre>
-     Renders a maximized portlet with fname weather and subscribe id 31 that exists on the home folder
+    @After
+    public void tearDownPortletUrlProvider() {
+        this.portalUrlProvider = null;
+        this.userInstanceManager = null;
+        this.portletDefinitionRegistry = null;
+        this.portletEntityRegistry = null;
+        this.portletWindowRegistry = null;
+        this.userInstance = null;
+        this.userPreferencesManager = null;
+        this.userLayoutManager = null;
+        this.userLayout = null;
+        this.userLayoutNodeDescription = null;
+        this.person = null;
+        this.portalRequestUtils = null;
+        this.channelDefinition = null;
+        this.portletDefinition = null;
+        this.portletEntity = null;
+        this.portletWindow = null;
+        
+        this.mockObjects = null;
+    }
     
-    /uPortal/home/max/weather.31/render.uP?pltc_target=target
-     </pre>
-     *
-     * context path: /uPortal/
-     * channel fname: weather
-     * channel subscribe id: 31
-     * portlet window state: max
-     * @throws Exception
-     */
-    @Test
-    public void testGeneratePortletUrlHomeMaxWeatherAlternateContextPath() throws Exception {
+    private void replayAll(Object... objects) {
+        replay(this.mockObjects);
+        
+        if (objects != null) {
+            replay(objects);
+        }
+    }
+    
+    private void verifyAll(Object... objects) {
+        verify(this.mockObjects);
+        
+        if (objects != null) {
+            verify(objects);
+        }
+    }
+    
+    private void testFolderUrlHelper(String uri, IPortalRequestInfo expected) throws Exception {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+        mockRequest.setRequestURI(uri);
+        
+        this.replayAll();
+        
+        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
+        
+        this.verifyAll();
 
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/p/");
-        
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
-        expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);
-        expect(mockPortalPortletUrl.isAction()).andReturn(false);
-        expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
-        expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
-        replay(mockPortalPortletUrl);
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("target");
-        replay(mockPortletWindowId);
-        
-        ProviderSetupDetails details = new ProviderSetupDetails();
-        details.setChannelFName("weather");
-        details.setChannelId("31");
-        details.setFolderName("home");
-        details.setHttpServletRequest(mockRequest);
-        details.setPortletMode(PortletMode.VIEW);
-        details.setPortletWindowId(mockPortletWindowId);
-        details.setWindowState(WindowState.MAXIMIZED);
-        PortalUrlProviderImpl provider = generateMockProvider(details);
-        
-        String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
-        Assert.assertEquals("/p/home/max/weather.31/render.uP?pltc_target=target", result);
-        
-        verify(mockPortalPortletUrl, mockPortletWindowId);
+        assertEquals(expected.getTargetedLayoutNodeId(), requestInfo.getTargetedLayoutNodeId());
+        assertEquals(expected.getLayoutParameters(), requestInfo.getLayoutParameters());
+        assertEquals(expected.getPortalParameters(), requestInfo.getPortalParameters());
+        assertEquals(expected.getUrlState(), requestInfo.getUrlState());
+        assertEquals(expected.getUrlType(), requestInfo.getUrlType());
     }
     
-    /**
-     * /uPortal/home/normal/weather.31/render.uP?pltc_target=target
-     * 
-     * @throws Exception
-     */
     @Test
-    public void testGeneratePortletUrlHomeNormalWeather() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
+    public void testNoPathNoSlash() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
-        expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
-        expect(mockPortalPortletUrl.isAction()).andReturn(false);
-        expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
-        expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
-        replay(mockPortalPortletUrl);
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("target");
-        replay(mockPortletWindowId);
-        
-        ProviderSetupDetails details = new ProviderSetupDetails();
-        details.setChannelFName("weather");
-        details.setChannelId("31");
-        details.setFolderName("home");
-        details.setHttpServletRequest(mockRequest);
-        details.setPortletMode(PortletMode.VIEW);
-        details.setPortletWindowId(mockPortletWindowId);
-        details.setWindowState(WindowState.NORMAL);
-        PortalUrlProviderImpl provider = generateMockProvider(details);
-        
-        String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
-        Assert.assertEquals("/uPortal/home/normal/weather.31/render.uP?pltc_target=target", result);
-        
-        verify(mockPortalPortletUrl, mockPortletWindowId);
+        this.testFolderUrlHelper("/uPortal", expected);
     }
     
-    /**
-     * /uPortal/home/normal/weather.31/render.uP?pltc_target=target&pltc_mode=help
-     * 
-     * @throws Exception
-     */
     @Test
-    public void testGeneratePortletUrlHomeNormalWeatherHelp() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
+    public void testNoPathWithSlash() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
-        expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
-        expect(mockPortalPortletUrl.isAction()).andReturn(false);
-        expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.HELP);
-        expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
-        replay(mockPortalPortletUrl);
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("target");
-        replay(mockPortletWindowId);
-        
-        ProviderSetupDetails details = new ProviderSetupDetails();
-        details.setChannelFName("weather");
-        details.setChannelId("31");
-        details.setFolderName("home");
-        details.setHttpServletRequest(mockRequest);
-        details.setPortletMode(PortletMode.VIEW);
-        details.setPortletWindowId(mockPortletWindowId);
-        details.setWindowState(WindowState.NORMAL);
-        PortalUrlProviderImpl provider = generateMockProvider(details);
-        
-        String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
-        Assert.assertEquals("/uPortal/home/normal/weather.31/render.uP?pltc_target=target&pltc_mode=help", result);
-        
-        verify(mockPortalPortletUrl, mockPortletWindowId);
+        this.testFolderUrlHelper("/uPortal/", expected);
     }
     
-    /**
-     * From http://www.ja-sig.org/wiki/display/UPC/Consistent+Portal+URLs
-     * Tests "Example Url" #5:
-     <pre>
-     Renders a maximized portlet with fname weather and subscribe id 31 that exists on the home folder
-    
-    /uPortal/max/weather.ctf31/render.uP?pltc_target=target
-     </pre>
-     *
-     * context path: /uPortal/
-     * channel fname: weather
-     * channel subscribe id: ctf31
-     * portlet window state: max
-     * @throws Exception
-     */
     @Test
-    public void testGeneratePortletUrlTransientWeather() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
+    public void testNoPathWithState() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
-        expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.MAXIMIZED);
-        expect(mockPortalPortletUrl.isAction()).andReturn(false);
-        expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
-        expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(new HashMap<String, List<String>>());
-        replay(mockPortalPortletUrl);
-        
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("target");
-        replay(mockPortletWindowId);
-        
-        ProviderSetupDetails details = new ProviderSetupDetails();
-        details.setChannelFName("weather");
-        details.setChannelId("ctf31");
-        details.setFolderName(null);
-        details.setHttpServletRequest(mockRequest);
-        details.setPortletMode(PortletMode.VIEW);
-        details.setPortletWindowId(mockPortletWindowId);
-        details.setWindowState(WindowState.MAXIMIZED);
-        PortalUrlProviderImpl provider = generateMockProvider(details);
-        
-        String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
-        Assert.assertEquals("/uPortal/max/weather.ctf31/render.uP?pltc_target=target", result);
-        
-        verify(mockPortalPortletUrl, mockPortletWindowId);
+        this.testFolderUrlHelper("/uPortal/max", expected);
     }
     
-    /**
-     * From http://www.ja-sig.org/wiki/display/UPC/Consistent+Portal+URLs
-     * Tests "Example Url" #7:
-     <pre>
-    Action URL for the weather portlet on a normal view of the home tab that is passing two parameters, action and zip. Since this is an action it would redirect to a normal URL rendering the home tab.
+    @Test
+    public void testNoPathWithType() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        
+        this.testFolderUrlHelper("/uPortal/action.uP", expected);
+    }
+    
+    @Test
+    public void testSingleFolderUrlNoSlash() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        
+        this.testFolderUrlHelper("/uPortal/f/folderName", expected);
+    }
+    
+    @Test
+    public void testSingleFolderUrlWithSlash() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        
+        this.testFolderUrlHelper("/uPortal/f/folderName/", expected);
+    }
+    
+    @Test
+    public void testSingleFolderUrlWithState() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "max";
+        
+        this.testFolderUrlHelper("/uPortal/f/folderName/max", expected);
+    }
+    
+    @Test
+    public void testSingleFolderUrlWithType() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        
+        this.testFolderUrlHelper("/uPortal/f/folderName/action.uP", expected);
+    }
+    
+    @Test
+    public void testSingleFolderUrlWithStateType() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "n2";
+        expected.urlState = UrlState.NORMAL;
+        expected.urlType = UrlType.RENDER;
+        
+        this.testFolderUrlHelper("/uPortal/f/n2/normal/render.uP", expected);
+    }
+    
+    @Test
+    public void testSingleFolderUrlWithStateTypeGeneration() throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+        
+        final String nodeId = "n2";
+        
+        expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance).times(2);
+        expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager).times(2);
+        expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager).times(2);
+        expect(this.userLayoutManager.getNode(nodeId)).andReturn(this.userLayoutNodeDescription).times(2);
+        expect(this.userLayoutNodeDescription.getId()).andReturn(nodeId).times(2);
+        
+        this.replayAll();
+        
+        final ILayoutPortalUrl folderUrl = this.portalUrlProvider.getFolderUrlByNodeId(mockRequest, nodeId);
+        
+        final String urlString = folderUrl.getUrlString();
+        
+        this.verifyAll();
+        
+        assertEquals("/uPortal/f/n2/normal/render.uP", urlString);
+    }
+    
+    @Test
+    public void testSingleFolderUrlFromMaxGeneration() throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+        mockRequest.setRequestURI("/uPortal/f/n2/p/weather.s3/max/render.uP");
+        
+        final String nodeId = "n2";
+        
+        expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance).times(2);
+        expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager).times(2);
+        expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager).times(2);
+        expect(this.userLayoutManager.getNode(nodeId)).andReturn(this.userLayoutNodeDescription).times(2);
+        expect(this.userLayoutNodeDescription.getId()).andReturn(nodeId).times(2);
+        
+        this.replayAll();
+        
+        final ILayoutPortalUrl folderUrl = this.portalUrlProvider.getFolderUrlByNodeId(mockRequest, nodeId);
+        
+        final String urlString = folderUrl.getUrlString();
+        
+        this.verifyAll();
+        
+        assertEquals("/uPortal/f/n2/normal/render.uP", urlString);
+    }
+    
+    @Test
+    public void testMultipleFolderUrlNoSlash() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName2";
+        
+        this.testFolderUrlHelper("/uPortal/f/folderName/folderName2", expected);
+    }
+    
+    @Test
+    public void testMultipleFolderUrlWithSlash() throws Exception {
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName2";
+        
+        this.testFolderUrlHelper("/uPortal/f/folderName/folderName2/", expected);
+    }
+    
+    private void testFolderPortletFnameUrlHelper(String uri, String subscribeId, IPortalRequestInfo expected) throws Exception {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+        mockRequest.setRequestURI(uri);
+        
+        final MockPortletEntityId portletEntityId = new MockPortletEntityId(subscribeId);
+        final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
 
-    /uPortal/normal/home/weather.31/action.uP?pltc_target=target&pltp_pp_action=addCity&pltp_pp_zip=53706
-     </pre>
-     *
-     * context path: /uPortal/
-     * channel fname: weather
-     * channel subscribe id: 31
-     * portlet window state: normal
-     * @throws Exception
-     */
-    @Test
-    public void testGeneratePortletUrlWeatherAction() throws Exception {
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setContextPath("/uPortal/");
+        expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
+        expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager);
+        expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager);
+        expect(this.userLayoutManager.getSubscribeId("portletName")).andReturn(subscribeId);
+        expect(this.userInstance.getPerson()).andReturn(this.person);
+        expect(this.person.getID()).andReturn(1337);
+        expect(this.portletEntityRegistry.getPortletEntity(subscribeId, 1337)).andReturn(this.portletEntity);
+        expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
+        expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
         
-        IPortalPortletUrl mockPortalPortletUrl = createMock(IPortalPortletUrl.class);
-        expect(mockPortalPortletUrl.getWindowState()).andReturn(WindowState.NORMAL);
-        expect(mockPortalPortletUrl.isAction()).andReturn(true);
-        expect(mockPortalPortletUrl.getPortletMode()).andReturn(PortletMode.VIEW);
-        expect(mockPortalPortletUrl.getPortalParameters()).andReturn(new HashMap<String, List<String>>());
-        Map<String, List<String>> portletParameters = new HashMap<String, List<String>>();
-        List<String> ppActionValues = new ArrayList<String>();
-        ppActionValues.add("addCity");
-        portletParameters.put("pp_action", ppActionValues);
-        List<String> ppZipValues = new ArrayList<String>();
-        ppZipValues.add("53706");
-        portletParameters.put("pp_zip", ppZipValues);
-        expect(mockPortalPortletUrl.getPortletParameters()).andReturn(portletParameters);
-        replay(mockPortalPortletUrl);
+        this.replayAll();
         
-        IPortletWindowId mockPortletWindowId = createMock(IPortletWindowId.class);
-        expect(mockPortletWindowId.getStringId()).andReturn("target");
-        replay(mockPortletWindowId);
+        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
         
-        ProviderSetupDetails details = new ProviderSetupDetails();
-        details.setChannelFName("weather");
-        details.setChannelId("31");
-        details.setFolderName("home");
-        details.setHttpServletRequest(mockRequest);
-        details.setPortletMode(PortletMode.VIEW);
-        details.setPortletWindowId(mockPortletWindowId);
-        details.setWindowState(WindowState.NORMAL);
-        PortalUrlProviderImpl provider = generateMockProvider(details);
-        
-        String result = provider.generatePortletUrl(mockRequest, mockPortalPortletUrl, mockPortletWindowId);
-        Assert.assertEquals("/uPortal/home/normal/weather.31/action.uP?pltc_target=target&pltp_pp_action=addCity&pltp_pp_zip=53706", result);
-        
-        verify(mockPortalPortletUrl, mockPortletWindowId);
-    }
-    
-    
-    
-    /**
-     * Not a test case.
-     * Internal method to mock up a {@link PortalUrlProviderImpl}.
-     * 
-     * @param request
-     * @param portletWindowId
-     * @return
-     */
-    protected PortalUrlProviderImpl generateMockProvider(ProviderSetupDetails details) {
-        // BEGIN transient mock objects
-        String expressionText = "/layout/folder/folder[descendant::channel[@ID='" + details.getChannelId() + "']]/@ID";
-        
-        IUserLayout mockUserLayout = createMock(IUserLayout.class);
-        // we have to tell EasyMock to expect ANY instance of XPathExpression as XPathExpression equals is based on instance equality
-        expect(mockUserLayout.findNodeId(EasyMock.isA(XPathExpression.class))).andReturn(expressionText);
-        replay(mockUserLayout);
-        
-        // BEGIN only expect IUserLayoutNodeDescription calls if folderName is defined
-        IUserLayoutNodeDescription mockUserLayoutNodeDescription = createMock(IUserLayoutNodeDescription.class);
-        if(null != details.getFolderName()) {
-            expect(mockUserLayoutNodeDescription.getType()).andReturn(IUserLayoutNodeDescription.FOLDER);
-            expect(mockUserLayoutNodeDescription.getId()).andReturn(details.getFolderName());
-        }
-        replay(mockUserLayoutNodeDescription);
-        // END only expect IUserLayoutNodeDescription calls if folderName is defined
-        
-        IUserLayoutManager mockUserLayoutManager = createMock(IUserLayoutManager.class);
-        expect(mockUserLayoutManager.getUserLayout()).andReturn(mockUserLayout);
-        expect(mockUserLayoutManager.getNode(expressionText)).andReturn(mockUserLayoutNodeDescription);
-        replay(mockUserLayoutManager);
-        IUserPreferencesManager mockUserPreferencesManager = createMock(IUserPreferencesManager.class);
-        expect(mockUserPreferencesManager.getUserLayoutManager()).andReturn(mockUserLayoutManager).times(2);
-        replay(mockUserPreferencesManager);
-        IUserInstance mockUser = createMock(IUserInstance.class);
-        expect(mockUser.getPreferencesManager()).andReturn(mockUserPreferencesManager).times(2);
-        replay(mockUser);
-        IPortletEntityId mockPortletEntityId = createMock(IPortletEntityId.class);
-        expect(mockPortletEntityId.getStringId()).andReturn(details.getChannelId());
-        replay(mockPortletEntityId);
-        IPortletWindow mockPortletWindow = createMock(IPortletWindow.class);
-        expect(mockPortletWindow.getPortletEntityId()).andReturn(mockPortletEntityId);
-        expect(mockPortletWindow.getWindowState()).andReturn(details.getWindowState());
-        expect(mockPortletWindow.getPortletMode()).andReturn(details.getPortletMode());
-        replay(mockPortletWindow);
-        
-        IPortletDefinitionId mockPortletDefinitionId = createMock(IPortletDefinitionId.class);
-        replay(mockPortletDefinitionId);
-        IChannelDefinition mockChannelDefinition = createMock(IChannelDefinition.class);
-        expect(mockChannelDefinition.getFName()).andReturn(details.getChannelFName());
-        replay(mockChannelDefinition);
-        IPortletDefinition mockPortletDefinition = createMock(IPortletDefinition.class);
-        expect(mockPortletDefinition.getChannelDefinition()).andReturn(mockChannelDefinition);
-        replay(mockPortletDefinition);
-        IPortletEntity mockPortletEntity = createMock(IPortletEntity.class);
-        expect(mockPortletEntity.getChannelSubscribeId()).andReturn(details.getChannelId()).times(2);
-        expect(mockPortletEntity.getPortletDefinitionId()).andReturn(mockPortletDefinitionId);
-        replay(mockPortletEntity);
-        // END transient mock objects
+        this.verifyAll();
 
-        // BEGIN mock dependencies for PortalUrlProviderImpl
-        IUserInstanceManager mockUserInstanceManager= createMock(IUserInstanceManager.class);
-        expect(mockUserInstanceManager.getUserInstance(details.getHttpServletRequest())).andReturn(mockUser).times(2);
-        replay(mockUserInstanceManager);
-    
-        IPortletDefinitionRegistry mockPortletDefinitionRegistry = createMock(IPortletDefinitionRegistry.class);
-        expect(mockPortletDefinitionRegistry.getPortletDefinition(mockPortletDefinitionId)).andReturn(mockPortletDefinition);
-        replay(mockPortletDefinitionRegistry);
-    
-        IPortletEntityRegistry mockPortletEntityRegistry = createMock(IPortletEntityRegistry.class);
-        expect(mockPortletEntityRegistry.getPortletEntity(mockPortletEntityId)).andReturn(mockPortletEntity);
-        replay(mockPortletEntityRegistry);
+        assertEquals(expected.getTargetedLayoutNodeId(), requestInfo.getTargetedLayoutNodeId());
+        assertEquals(expected.getLayoutParameters(), requestInfo.getLayoutParameters());
+        assertEquals(expected.getPortalParameters(), requestInfo.getPortalParameters());
+        assertEquals(expected.getUrlState(), requestInfo.getUrlState());
+        assertEquals(expected.getUrlType(), requestInfo.getUrlType());
         
-        ITransientPortletWindowRegistry mockPortletWindowRegistry = createMock(ITransientPortletWindowRegistry.class);
-        expect(mockPortletWindowRegistry.getPortletWindow(details.getHttpServletRequest(), details.getPortletWindowId())).andReturn(mockPortletWindow);
-        replay(mockPortletWindowRegistry);
-        // END mock dependencies for PortalUrlProviderImpl
-        
-        PortalUrlProviderImpl provider = new PortalUrlProviderImpl();
-        provider.setUserInstanceManager(mockUserInstanceManager);
-        provider.setPortletDefinitionRegistry(mockPortletDefinitionRegistry);
-        provider.setPortletEntityRegistry(mockPortletEntityRegistry);
-        provider.setPortletWindowRegistry(mockPortletWindowRegistry);
-        
-        return provider;
+        final IPortletRequestInfo expectedPortletRequestInfo = expected.getPortletRequestInfo();
+        final IPortletRequestInfo portletRequestInfo = requestInfo.getPortletRequestInfo();
+        assertRequestInfoEquals(expectedPortletRequestInfo, portletRequestInfo);
     }
     
-    /**
-     * Inner bean to hold all of the various settings needed
-     * for setting up a mock {@link PortalUrlProviderImpl}.
-     * 
-     * @author Nicholas Blair, nblair@doit.wisc.edu
-     *
-     */
-    protected static class ProviderSetupDetails {
-        private HttpServletRequest httpServletRequest;
-        private IPortletWindowId portletWindowId;
-        private String folderName;
-        private String channelId;
-        private String channelFName;
-        private WindowState windowState;
-        private PortletMode portletMode;
-        /**
-         * @return the httpServletRequest
-         */
-        public HttpServletRequest getHttpServletRequest() {
-            return httpServletRequest;
-        }
-        /**
-         * @param httpServletRequest the httpServletRequest to set
-         */
-        public void setHttpServletRequest(HttpServletRequest httpServletRequest) {
-            this.httpServletRequest = httpServletRequest;
-        }
-        /**
-         * @return the portletWindowId
-         */
-        public IPortletWindowId getPortletWindowId() {
-            return portletWindowId;
-        }
-        /**
-         * @param portletWindowId the portletWindowId to set
-         */
-        public void setPortletWindowId(IPortletWindowId portletWindowId) {
-            this.portletWindowId = portletWindowId;
-        }
-        /**
-         * @return the folderName
-         */
-        public String getFolderName() {
-            return folderName;
-        }
-        /**
-         * @param folderName the folderName to set
-         */
-        public void setFolderName(String folderName) {
-            this.folderName = folderName;
-        }
-        /**
-         * @return the channelId
-         */
-        public String getChannelId() {
-            return channelId;
-        }
-        /**
-         * @param channelId the channelId to set
-         */
-        public void setChannelId(String channelId) {
-            this.channelId = channelId;
-        }
-        /**
-         * @return the channelFName
-         */
-        public String getChannelFName() {
-            return channelFName;
-        }
-        /**
-         * @param channelFName the channelFName to set
-         */
-        public void setChannelFName(String channelFName) {
-            this.channelFName = channelFName;
-        }
-        /**
-         * @return the windowState
-         */
-        public WindowState getWindowState() {
-            return windowState;
-        }
-        /**
-         * @param windowState the windowState to set
-         */
-        public void setWindowState(WindowState windowState) {
-            this.windowState = windowState;
-        }
-        /**
-         * @return the portletMode
-         */
-        public PortletMode getPortletMode() {
-            return portletMode;
-        }
-        /**
-         * @param portletMode the portletMode to set
-         */
-        public void setPortletMode(PortletMode portletMode) {
-            this.portletMode = portletMode;
-        }
+    @Test
+    public void testSingleFolderPortletFnameUrlNoSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        
+        testFolderPortletFnameUrlHelper("/uPortal/f/folderName/p/portletName", "n42", expected);
     }
     
+    @Test
+    public void testSingleFolderPortletFnameUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        
+        testFolderPortletFnameUrlHelper("/uPortal/f/folderName/p/portletName/", "n42", expected);
+    }
+    
+    private void testFolderPortletFnameSubscribeIdUrlHelper(String uri, String subscribeId, IPortalRequestInfo expected) throws Exception {
+        this.testFolderPortletFnameSubscribeIdUrlHelper(uri, null, subscribeId, expected);
+    }
+    private void testFolderPortletFnameSubscribeIdUrlHelper(String uri, Map<String, String[]> params, String subscribeId, IPortalRequestInfo expected) throws Exception {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+        mockRequest.setRequestURI(uri);
+        mockRequest.setParameters(params == null ? Collections.EMPTY_MAP : params);
+        
+        final MockPortletEntityId portletEntityId = new MockPortletEntityId(subscribeId);
+        final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
+
+        expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
+        expect(this.userInstance.getPerson()).andReturn(this.person);
+        expect(this.person.getID()).andReturn(1337);
+        expect(this.portletEntityRegistry.getPortletEntity(expected.getPortletRequestInfo().getTargetWindowId().getStringId(), 1337)).andReturn(this.portletEntity);
+        expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
+        expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
+        
+        this.replayAll();
+        
+        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
+        
+        this.verifyAll();
+
+        assertEquals(expected.getTargetedLayoutNodeId(), requestInfo.getTargetedLayoutNodeId());
+        assertEquals(expected.getLayoutParameters(), requestInfo.getLayoutParameters());
+        assertEquals(expected.getPortalParameters(), requestInfo.getPortalParameters());
+        assertEquals(expected.getUrlState(), requestInfo.getUrlState());
+        assertEquals(expected.getUrlType(), requestInfo.getUrlType());
+        
+        final IPortletRequestInfo expectedPortletRequestInfo = expected.getPortletRequestInfo();
+        final IPortletRequestInfo portletRequestInfo = requestInfo.getPortletRequestInfo();
+        assertRequestInfoEquals(expectedPortletRequestInfo, portletRequestInfo);
+    }
+
+    private MockPortletWindowId setPortletUrlGenerationByPortletId(MockHttpServletRequest mockRequest, MockPortletWindow mockPortletWindow, String nodeId, String subscribeId) {
+        final MockPortletWindowId portletWindowId = new MockPortletWindowId("pw1");
+        final MockPortletEntityId portletEntityId = new MockPortletEntityId("pe1");
+        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("pd1");
+        
+        mockPortletWindow.setPortletWindowId(portletWindowId);
+        mockPortletWindow.setPortletEntityId(portletEntityId);
+        
+        expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance).times(2);
+        expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager).times(2);
+        expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager).times(2);
+        expect(this.userLayoutManager.getUserLayout()).andReturn(this.userLayout);
+        expect(this.portletWindowRegistry.getPortletWindow(mockRequest, portletWindowId)).andReturn(mockPortletWindow).times(2);
+        expect(this.portletEntityRegistry.getPortletEntity(portletEntityId)).andReturn(this.portletEntity);
+        expect(this.portletEntity.getChannelSubscribeId()).andReturn(subscribeId);
+        expect(this.userLayout.findNodeId(isA(XPathExpression.class))).andReturn(nodeId);
+        expect(this.userLayoutManager.getNode(nodeId)).andReturn(this.userLayoutNodeDescription);
+        expect(this.portalRequestUtils.getOriginalPortalRequest(mockRequest)).andReturn(mockRequest);
+        expect(this.userLayoutNodeDescription.getId()).andReturn(nodeId);
+        expect(this.portletEntity.getPortletDefinitionId()).andReturn(portletDefinitionId);
+        expect(this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId)).andReturn(this.portletDefinition);
+        expect(this.portletDefinition.getChannelDefinition()).andReturn(this.channelDefinition);
+        expect(this.channelDefinition.getFName()).andReturn("fname");
+        
+        return portletWindowId;
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdUrlNoSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42", "n42", expected);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/", "n42", expected);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdMaximizedUrlNoSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max", "n42", expected);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdMaximizedUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max/", "n42", expected);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdInvalidStateUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/invalid/", "n42", expected);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdUrl() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("s3");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "n2";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.NORMAL;
+        expected.urlType = UrlType.RENDER;
+        
+        final Map<String, String[]> params = new ParameterMap();
+        params.put("pltC_t", new String[] { "fname.s3" });
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/n2/normal/render.uP", params, "s3", expected);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdUrlGeneration() throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+        
+        final MockPortletWindow portletWindow = new MockPortletWindow();
+        
+        final String nodeId = "n2";
+        final String subscribeId = "s3";
+        final MockPortletWindowId portletWindowId = this.setPortletUrlGenerationByPortletId(mockRequest, portletWindow, nodeId, subscribeId);
+        
+        this.replayAll();
+        
+        final IPortletPortalUrl portletUrl = this.portalUrlProvider.getPortletUrl(TYPE.RENDER, mockRequest, portletWindowId);
+        
+        final String urlString = portletUrl.getUrlString();
+        
+        this.verifyAll();
+        
+        assertEquals("/uPortal/f/n2/normal/render.uP?pltC_t=fname.s3", urlString);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdMaximizedActionUrl() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("s3");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "n2";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+        expected.urlType = UrlType.ACTION;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/n2/p/fname.s3/max/action.uP", "s3", expected);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdMaximizedActionUrlGeneration() throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+
+        final MockPortletWindow portletWindow = new MockPortletWindow();
+        
+        final String nodeId = "n2";
+        final String subscribeId = "s3";
+        final MockPortletWindowId portletWindowId = this.setPortletUrlGenerationByPortletId(mockRequest, portletWindow, nodeId, subscribeId);
+        
+        this.replayAll();
+        
+        final IPortletPortalUrl portletUrl = this.portalUrlProvider.getPortletUrl(TYPE.ACTION, mockRequest, portletWindowId);
+        
+        portletUrl.setWindowState(WindowState.MAXIMIZED);
+        
+        final String urlString = portletUrl.getUrlString();
+        
+        this.verifyAll();
+        
+        assertEquals("/uPortal/f/n2/p/fname.s3/max/action.uP", urlString);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdMinimizedRenderUrl() throws Exception {
+        final Map<String, List<String>> portletParams = new LinkedHashMap<String, List<String>>();
+        portletParams.put("action", Arrays.asList("dashboard"));
+        
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("s3");
+        expectedPortletRequestInfo.windowState = WindowState.MINIMIZED;
+        expectedPortletRequestInfo.setPortletParameters(portletParams);
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "n2";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.NORMAL;
+        expected.urlType = UrlType.RENDER;
+        
+        final Map<String, String[]> params = new ParameterMap();
+        params.put("pltC_t", new String[] { "fname.s3" });
+        params.put("pltC_s", new String[] { "minimized" });
+        params.put("pltP_action", new String[] { "dashboard" });
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/n2/normal/render.uP", params, "s3", expected);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdMinimizedRenderUrlGeneration() throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+        
+        final MockPortletWindow portletWindow = new MockPortletWindow();
+        
+        final String nodeId = "n2";
+        final String subscribeId = "s3";
+        final MockPortletWindowId portletWindowId = this.setPortletUrlGenerationByPortletId(mockRequest, portletWindow, nodeId, subscribeId);
+        
+        this.replayAll();
+        
+        final IPortletPortalUrl portletUrl = this.portalUrlProvider.getPortletUrl(TYPE.RENDER, mockRequest, portletWindowId);
+        
+        portletUrl.setWindowState(WindowState.MINIMIZED);
+        portletUrl.setPortletParameter("action", "dashboard");
+        
+        final String urlString = portletUrl.getUrlString();
+        
+        this.verifyAll();
+        
+        assertEquals("/uPortal/f/n2/normal/render.uP?pltC_t=fname.s3&pltC_s=minimized&pltP_action=dashboard", urlString);
+    }
+    
+    @Test
+    public void testSingleFolderPortletMaximizedActionUrlGeneration() throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+        mockRequest.setRequestURI("/uPortal/f/n2/p/weather.u24l1n10/max/render.uP");
+        mockRequest.setParameter("pltC_m", "edit");
+        
+        final MockPortletWindow portletWindow = new MockPortletWindow();
+        portletWindow.setWindowState(WindowState.MAXIMIZED);
+
+        final String nodeId = "n2";
+        final String subscribeId = "s3";
+        final MockPortletWindowId portletWindowId = this.setPortletUrlGenerationByPortletId(mockRequest, portletWindow, nodeId, subscribeId);
+        
+        this.replayAll();
+        
+        final IPortletPortalUrl portletUrl = this.portalUrlProvider.getPortletUrl(TYPE.ACTION, mockRequest, portletWindowId);
+        
+        portletUrl.setPortletParameter("action", "saveOrder");
+        
+        final String urlString = portletUrl.getUrlString();
+        
+        this.verifyAll();
+        
+        assertEquals("/uPortal/f/n2/p/fname.s3/max/action.uP?pltP_action=saveOrder", urlString);
+    }
+    
+    @Test
+    public void testSingleFolderPortletMaximizedRenderUrlGeneration() throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+        mockRequest.setRequestURI("/uPortal/f/n2/p/fname.s3/max/action.uP");
+        mockRequest.setParameter("pltP_action", "saveOrder");
+        
+        final MockPortletWindow portletWindow = new MockPortletWindow();
+        portletWindow.setWindowState(WindowState.MAXIMIZED);
+
+        final String nodeId = "n2";
+        final String subscribeId = "s3";
+        final MockPortletWindowId portletWindowId = this.setPortletUrlGenerationByPortletId(mockRequest, portletWindow, nodeId, subscribeId);
+        
+        this.replayAll();
+        
+        final IPortletPortalUrl portletUrl = this.portalUrlProvider.getPortletUrl(TYPE.RENDER, mockRequest, portletWindowId);
+        
+        final String urlString = portletUrl.getUrlString();
+        
+        this.verifyAll();
+        
+        assertEquals("/uPortal/f/n2/p/fname.s3/max/render.uP", urlString);
+    }
+    
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdMaximizedInvalidTypeUrl() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max/invalid.uP", "n42", expected);
+    }
+    
+    @Test
+    public void testMultipleFolderPortletFnameSubscribeIdUrlNoSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42", "n42", expected);
+    }
+    
+    @Test
+    public void testMultipleFolderPortletFnameSubscribeIdUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/", "n42", expected);
+    }
+    
+    @Test
+    public void testMultipleFolderPortletFnameSubscribeIdMaximizedUrlNoSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max", "n42", expected);
+    }
+    
+    @Test
+    public void testMultipleFolderPortletFnameSubscribeIdMaximizedUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max/", "n42", expected);
+    }
+    
+    @Test
+    public void testMultipleFolderPortletFnameSubscribeIdInvalidStateUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/invalid/", "n42", expected);
+    }
+    
+    @Test
+    public void testMultipleFolderPortletFnameSubscribeIdMaximizedActionUrl() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+        expected.urlType = UrlType.ACTION;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max/action.uP", "n42", expected);
+    }
+    
+    @Test
+    public void testMultipleFolderPortletFnameSubscribeIdMaximizedInvalidTypeUrl() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = "folderName";
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max/invalid.uP", "n42", expected);
+    }
+    
+    @Test
+    public void testNoFolderPortletFnameSubscribeIdUrlNoSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42", "n42", expected);
+    }
+    
+    @Test
+    public void testNoFolderPortletFnameSubscribeIdUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/", "n42", expected);
+    }
+    
+    @Test
+    public void testNoFolderPortletFnameSubscribeIdMaximizedUrlNoSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max", "n42", expected);
+    }
+    
+    @Test
+    public void testNoFolderPortletFnameSubscribeIdMaximizedUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max/", "n42", expected);
+    }
+    
+    @Test
+    public void testNoFolderPortletFnameSubscribeIdInvalidStateUrlWithSlash() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/invalid/", "n42", expected);
+    }
+    
+    @Test
+    public void testNoFolderPortletFnameSubscribeIdMaximizedActionUrl() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+        expected.urlType = UrlType.ACTION;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max/action.uP", "n42", expected);
+    }
+    
+    @Test
+    public void testNoFolderPortletFnameSubscribeIdMaximizedInvalidTypeUrl() throws Exception {
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max/invalid.uP", "n42", expected);
+    }
+    
+    private void assertRequestInfoEquals(final IPortletRequestInfo expectedPortletRequestInfo, final IPortletRequestInfo portletRequestInfo) {
+        if (expectedPortletRequestInfo != null) {
+            assertNotNull(portletRequestInfo);
+            assertEquals(expectedPortletRequestInfo.getTargetWindowId(), portletRequestInfo.getTargetWindowId());
+            assertEquals(expectedPortletRequestInfo.getPortletMode(), portletRequestInfo.getPortletMode());
+            assertEquals(expectedPortletRequestInfo.getWindowState(), portletRequestInfo.getWindowState());
+            assertEquals(expectedPortletRequestInfo.getPortletParameters(), portletRequestInfo.getPortletParameters());
+            assertEquals(expectedPortletRequestInfo.getPortletParameters(), portletRequestInfo.getPortletParameters());
+            
+            final IPortletRequestInfo expectedDelegatePortletRequestInfo = expectedPortletRequestInfo.getDelegatePortletRequestInfo();
+            final IPortletRequestInfo delegatePortletRequestInfo = portletRequestInfo.getDelegatePortletRequestInfo();
+            if (expectedDelegatePortletRequestInfo != null) {
+                this.assertRequestInfoEquals(expectedDelegatePortletRequestInfo, delegatePortletRequestInfo);
+            }
+            else {
+                assertNull(delegatePortletRequestInfo);
+            }
+        }
+        else {
+            assertNull(portletRequestInfo);
+        }
+    }
 }

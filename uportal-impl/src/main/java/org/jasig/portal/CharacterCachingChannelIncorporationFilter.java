@@ -20,15 +20,18 @@
 package org.jasig.portal;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.MarkupSerializer;
 import org.jasig.portal.utils.SAX2FilterImpl;
@@ -72,7 +75,8 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
      */
     private String insideElement = null;
     
-    ChannelManager cm;
+    private final PortletExecutionManager portletExecutionManager;
+    private final IUserLayoutManager userLayoutManager;
 
     /**
      * ChannelSubscribeId of the currently-being-incorporated channel, if any.
@@ -90,28 +94,22 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
     private final boolean ccaching;
     private final CachingSerializer ser;
 
-    private List<CacheEntry> cacheEntries;
+    private final List<CacheEntry> cacheEntries;
 
     // constructors
 
     /**
      * Downward chaining constructor.
      */
-    public CharacterCachingChannelIncorporationFilter(ContentHandler handler, ChannelManager chanm, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
+    public CharacterCachingChannelIncorporationFilter(CachingSerializer handler, PortletExecutionManager portletExecutionManager, IUserLayoutManager userLayoutManager, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
         super(handler);
 
-        if (handler instanceof CachingSerializer) {
-            this.ccaching = ccaching;
-            this.ser = (CachingSerializer) handler;
-            this.cacheEntries = new LinkedList<CacheEntry>();
-        }
-        else {
-            this.ccaching = false;
-            this.ser = null;
-            this.cacheEntries = null;
-        }
+        this.ccaching = ccaching;
+        this.ser = handler;
+        this.cacheEntries = new LinkedList<CacheEntry>();
 
-        this.cm = chanm;
+        this.userLayoutManager = userLayoutManager;
+        this.portletExecutionManager = portletExecutionManager;
         this.request = request;
         this.response = response;
     }
@@ -258,12 +256,16 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
                         // in transient layout manager if not
                         try
                         {
-                            this.channelSubscribeId = cm.getSubscribeId(fname);
+                            this.channelSubscribeId = this.userLayoutManager.getSubscribeId(fname);
                         } catch (PortalException e)
                         {
                             log.error("Unable to obtain subscribe id for " +
                                     "channel with functional name '" + fname +
                                 "'.", e);
+                        }
+                        
+                        if (this.channelSubscribeId == null) {
+                            log.error("Could not find channelSubscribeId for: " + fname);
                         }
                     }
                 }
@@ -308,13 +310,23 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
             if (qName.equals ("channel") && this.insideElement.equals("channel")) {
 
             	try {
-            	    ContentHandler contentHandler = getContentHandler();
-					if (contentHandler != null) {
+            	    if (channelSubscribeId == null) {
+            	        log.error("null channelSubscribeId prevents outputting channel with subscribe id = " + channelSubscribeId);
+            	    }
+            	    else if (this.ser != null) {
 						if (ccaching) {
 							cacheEntries.add(new ChannelContentCacheEntry(channelSubscribeId));
 						}
 						this.flush();
-						cm.outputChannel(this.request, this.response, this.channelSubscribeId, contentHandler);
+						try {
+						    final StringWriter output = new StringWriter();
+    						this.portletExecutionManager.outputPortlet(this.channelSubscribeId, request, response, output);
+    						this.ser.printRawCharacters(output.toString());
+						}
+						catch (IOException ioe) {
+						    //TODO better error handling
+						    this.logger.error("Failed to incorporate channel " + this.channelSubscribeId, ioe);
+						}
 						this.flush();
 						if (ccaching) {
                             startCaching();

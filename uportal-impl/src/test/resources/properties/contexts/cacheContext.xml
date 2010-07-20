@@ -21,29 +21,15 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     
     <!-- ******************** WARNING ********************  -+
      | This file is here for supporting legacy unit tests,   |
      | no new configuration should be added to this file.    |
      +-  ************************************************* -->
-
-    <!--
-     | Factory used by portal code to retrieve caches.
-     +-->
-    <bean id="cacheFactory" class="org.jasig.portal.utils.cache.CacheProviderFactory">
-        <property name="cacheProviderFacade" ref="cacheProviderFacade" />
-        <property name="cacheModelFactory" ref="cacheModelFactory" />
-    </bean>
     
-
-    <!-- Support classes for the cacheFactory and cacheProvider -->    
-
-    <bean id="cacheModelFactory" class="org.jasig.portal.utils.cache.EhCacheModelFactory" />
-
-    <bean id="cacheProviderFacade" class="org.jasig.portal.utils.cache.EhCacheFacade">
+    <bean id="cacheFactory" class="org.jasig.portal.utils.cache.CacheProviderFactory">
         <property name="cacheManager" ref="cacheManager" />
-        <property name="createMissingCaches" value="true" />
     </bean>
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">

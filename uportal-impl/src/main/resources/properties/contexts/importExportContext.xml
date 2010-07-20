@@ -23,7 +23,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans" 
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
     <!-- 
@@ -497,7 +497,6 @@
             <util:map>
                 <entry key="Attributes.CACHE">
                     <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                        <property name="cacheFactory" ref="cacheFactory" />
                         <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
                     </bean>
                 </entry>
@@ -522,7 +521,6 @@
             <util:map>
                 <entry key="Attributes.CACHE">
                     <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                        <property name="cacheFactory" ref="cacheFactory" />
                         <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
                     </bean>
                 </entry>

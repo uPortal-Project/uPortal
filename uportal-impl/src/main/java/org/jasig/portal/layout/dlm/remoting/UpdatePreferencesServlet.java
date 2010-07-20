@@ -45,7 +45,6 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferencesManager;
-import org.jasig.portal.UserProfile;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
@@ -65,7 +64,6 @@ import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.url.PortalHttpServletRequestWrapper;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,11 +81,11 @@ import org.w3c.dom.NodeList;
  */
 @Controller
 @RequestMapping("/layout")
-public class UpdatePreferencesServlet implements InitializingBean {
+public class UpdatePreferencesServlet {
 
 	protected final Log log = LogFactory.getLog(getClass());
 	
-    private IUserLayoutStore ulStore;
+    private IUserLayoutStore userLayoutStore;
 
 	private IChannelRegistryStore channelRegistryStore;
 	
@@ -120,6 +118,14 @@ public class UpdatePreferencesServlet implements InitializingBean {
 	// default tab name
 	protected final static String DEFAULT_TAB_NAME = "New Tab";
 	protected final static String ACTIVE_TAB_PARAM = "activeTab";
+	
+	private IUserLayoutStore getUserLayoutStore() {
+	    if (this.userLayoutStore == null) {
+	        this.userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+	    }
+	    
+	    return this.userLayoutStore;
+	}
 
 
 	/**
@@ -246,7 +252,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
         // get the user layout for the currently-authenticated user
         int uid = userStore.getPortalUID(fragmentOwner, false);
-        Document userLayout = ulStore.getUserLayout(per, upm.getUserPreferences().getProfile());
+        Document userLayout = userLayoutStore.getUserLayout(per, upm.getUserPreferences().getProfile());
 
         // attempt to find the new subscribed tab in the layout so we can
         // move it
@@ -630,7 +636,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
         ThemeStylesheetUserPreferences themePrefs = upm.getUserPreferences().getThemeStylesheetUserPreferences();
         themePrefs.putParameterValue("skin",skinName);
 		try {
-			ulStore.setThemeStylesheetUserPreferences(per, upm
+		    userLayoutStore.setThemeStylesheetUserPreferences(per, upm
 					.getUserPreferences().getProfile().getProfileId(), themePrefs);
 		} catch (Exception e) {
 			log.error("Error storing user skin preferences", e);
@@ -931,7 +937,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
             // This is a brute force save of the new attributes. It requires
             // access to the layout store. -SAB
-            ulStore.setStructureStylesheetUserPreferences(person, profileId,
+            userLayoutStore.setStructureStylesheetUserPreferences(person, profileId,
                     ssup);
 		    
 		}
@@ -971,9 +977,4 @@ public class UpdatePreferencesServlet implements InitializingBean {
 			throws PortalException {
 		return isTab(ulm, ulm.getParentId(folderId));
 	}
-
-    public void afterPropertiesSet() throws Exception {
-        ulStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-    }
-
 }

@@ -27,7 +27,7 @@ import javax.portlet.PortletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.spi.optional.AdministrativeRequestListener;
+import org.apache.pluto.container.driver.AdministrativeRequestListener;
 
 /**
  * AdministrativeRequestListener that delegates to another AdministrativeRequestListener based on
@@ -81,7 +81,7 @@ import org.apache.pluto.spi.optional.AdministrativeRequestListener;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class AdministrativeRequestListenerController implements AdministrativeRequestListener {
+public class AdministrativeRequestListenerController implements org.apache.pluto.container.driver.AdministrativeRequestListener {
     public static final String DEFAULT_LISTENER_KEY_ATTRIBUTE = AdministrativeRequestListenerController.class.getName() + ".LISTENER_KEY";
     
     protected final Log logger = LogFactory.getLog(this.getClass());

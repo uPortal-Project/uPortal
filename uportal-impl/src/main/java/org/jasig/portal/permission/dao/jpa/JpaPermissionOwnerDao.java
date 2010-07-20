@@ -39,7 +39,7 @@ public class JpaPermissionOwnerDao implements IPermissionOwnerDao {
      * @param entityManager
      *            the entityManager to set
      */
-    @PersistenceContext
+    @PersistenceContext(unitName="uPortalPersistence")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

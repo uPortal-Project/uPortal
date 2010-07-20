@@ -43,6 +43,8 @@ import org.apache.commons.lang.Validate;
  * @version $Revision$
  */
 public abstract class AbstractHttpServletRequestWrapper implements HttpServletRequest {
+    public static final String PORTAL_ATTRIBUTE_PREFIX = "org.jasig.portal.";
+    
     private final HttpServletRequest httpServletRequest;
     
     public AbstractHttpServletRequestWrapper(HttpServletRequest httpServletRequest) {

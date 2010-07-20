@@ -21,6 +21,8 @@ package org.jasig.portal.portlet.rendering;
 
 import java.io.Writer;
 
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,7 +36,22 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @version $Revision$
  */
 public interface IPortletRenderer {
-    /**
+    public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
+	public static final WindowState DETACHED = new WindowState("DETACHED");
+	public static final PortletMode ABOUT = new PortletMode("ABOUT");
+	public static final PortletMode CONFIG = new PortletMode("CONFIG");
+	/**
+	 * Name of the {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor
+	 * will store a Map of user info attributes that has support for multi-valued attributes.
+	 */
+	public static final String MULTIVALUED_USERINFO_MAP_ATTRIBUTE = "org.jasig.portlet.USER_INFO_MULTIVALUED";
+	/**
+	 * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the title the portlet
+	 * dynamically sets under.
+	 */
+	public static final String ATTRIBUTE__PORTLET_TITLE = IPortletRenderer.class.getName() + ".PORTLET_TITLE";
+
+	/**
      * Initializes the portlet within the portlet container
      * 
      * @param portletEntity The portlet entity to base the window on
@@ -52,7 +69,7 @@ public interface IPortletRenderer {
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
      */
-    public void doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+    public long doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
     
     /**
      * Executes a render in a portlet, handles all the request and response setup and teardown

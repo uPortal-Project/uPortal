@@ -24,14 +24,12 @@ import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.pluto.PortletContainer;
-import org.apache.pluto.core.DefaultPortletEnvironmentService;
-import org.apache.pluto.internal.InternalPortletWindow;
-import org.apache.pluto.spi.optional.PortletEnvironmentService;
+import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.session.ScopingPortletSessionImpl;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,9 +40,9 @@ import org.springframework.stereotype.Service;
  * @version $Revision$
  */
 @Service("portletEnvironmentService")
-public class PortletEnvironmentServiceImpl extends DefaultPortletEnvironmentService implements PortletEnvironmentService {
+public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.impl.PortletEnvironmentServiceImpl {
     private IPortletWindowRegistry portletWindowRegistry;
-    
+    private IPortalRequestUtils portalRequestUtils;
     /**
      * @return the portletWindowRegistry
      */
@@ -58,17 +56,32 @@ public class PortletEnvironmentServiceImpl extends DefaultPortletEnvironmentServ
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-
-
-    @Override
-    public PortletSession createPortletSession(PortletContainer container, 
-                                               HttpServletRequest servletRequest,
-                                               PortletContext portletContext, 
-                                               HttpSession httpSession, 
-                                               InternalPortletWindow internalPortletWindow) {
+    /**
+	 * @return the portalRequestUtils
+	 */
+	public IPortalRequestUtils getPortalRequestUtils() {
+		return portalRequestUtils;
+	}
+	/**
+	 * @param portalRequestUtils the portalRequestUtils to set
+	 */
+	@Autowired(required=true)
+	public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+		this.portalRequestUtils = portalRequestUtils;
+	}
+	/*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.impl.PortletEnvironmentServiceImpl#createPortletSession(javax.portlet.PortletContext, org.apache.pluto.container.PortletWindow, javax.servlet.http.HttpSession)
+     */
+	@Override
+	public PortletSession createPortletSession(PortletContext portletContext, PortletWindow portletWindow, HttpSession session) {
+		// TODO pluto 1.1 PortletEnvironmentService#createPortletSession passed in the request; now use IPortalRequestUtils#getCurrentPortalRequest()?
+		final HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
+		final IPortletWindow internalPortletWindow = this.portletWindowRegistry.convertPortletWindow(request, portletWindow);
+        final IPortletEntityId portletEntityId = internalPortletWindow.getPortletEntityId();
         
-        final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(servletRequest, internalPortletWindow);
-        final IPortletEntityId portletEntityId = portletWindow.getPortletEntityId();
-        return new ScopingPortletSessionImpl(portletEntityId, portletContext, internalPortletWindow, httpSession);
-    }
+		return new ScopingPortletSessionImpl(portletEntityId, portletContext, internalPortletWindow, session);
+	}
+    
+    
 }

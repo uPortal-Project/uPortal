@@ -30,19 +30,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
-import org.apache.pluto.OptionalContainerServices;
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.PortletWindow;
-import org.apache.pluto.core.DefaultRequestAttributeService;
-import org.apache.pluto.descriptors.portlet.PortletAppDD;
-import org.apache.pluto.descriptors.portlet.UserAttributeDD;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.PortletWindow;
+import org.apache.pluto.container.driver.OptionalContainerServices;
+import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
+import org.apache.pluto.container.om.portlet.UserAttribute;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -52,7 +51,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class RequestAttributeServiceImpl extends DefaultRequestAttributeService {
+public class RequestAttributeServiceImpl  {
+	private OptionalContainerServices optionalContainerServices;
     private IPersonAttributeDao personAttributeDao;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
@@ -78,16 +78,15 @@ public class RequestAttributeServiceImpl extends DefaultRequestAttributeService 
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
-    @Override
+
     @Autowired(required=true)
 	public void setOptionalContainerServices(
 			OptionalContainerServices optionalContainerServices) {
-		super.setOptionalContainerServices(optionalContainerServices);
+		this.optionalContainerServices = optionalContainerServices;
 	}
     
-	@Override
     public Object getAttribute(PortletRequest portletRequest, HttpServletRequest httpServletRequest, PortletWindow plutoPortletWindow, String name) {
-        if (IPortletAdaptor.MULTIVALUED_USERINFO_MAP_ATTRIBUTE.equals(name)) {
+        if (IPortletRenderer.MULTIVALUED_USERINFO_MAP_ATTRIBUTE.equals(name)) {
             httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
             
             //Get the list of user attributes the portal knows about the user
@@ -102,13 +101,13 @@ public class RequestAttributeServiceImpl extends DefaultRequestAttributeService 
             }
             
             final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
-            final List<UserAttributeDD> expectedUserAttributes = this.getExpectedUserAttributes(httpServletRequest, portletWindow);
+            final List<? extends UserAttribute> expectedUserAttributes = this.getExpectedUserAttributes(httpServletRequest, portletWindow);
             
             final Map<String, List<Object>> portletMultivaluedAttributes = new HashMap<String, List<Object>>(expectedUserAttributes.size());
             
             //Copy expected attributes to the USER_INFO Map
             final Map<String, List<Object>> attributes = personAttributes.getAttributes();
-            for (final UserAttributeDD userAttributeDD : expectedUserAttributes) {
+            for (final UserAttribute userAttributeDD : expectedUserAttributes) {
                 final String attributeName = userAttributeDD.getName();
 
                 //containsKey check to handle attributes with a single null value
@@ -120,13 +119,14 @@ public class RequestAttributeServiceImpl extends DefaultRequestAttributeService 
             
             return Collections.unmodifiableMap(portletMultivaluedAttributes);
         }
-
-        return super.getAttribute(portletRequest, httpServletRequest, plutoPortletWindow, name);
+        // no super anymore, just return null?
+        //return super.getAttribute(portletRequest, httpServletRequest, plutoPortletWindow, name);
+        return null;
     }
 
-    @Override
+
     public Enumeration getAttributeNames(PortletRequest portletRequest, HttpServletRequest httpServletRequest, PortletWindow portletWindow) {
-        final Enumeration<String> attributeNamesEnum = super.getAttributeNames(portletRequest, httpServletRequest, portletWindow);
+        final Enumeration<String> attributeNamesEnum = getAttributeNames(portletRequest, httpServletRequest, portletWindow);
         
         final String remoteUser = portletRequest.getRemoteUser();
         if (remoteUser == null) {
@@ -134,7 +134,7 @@ public class RequestAttributeServiceImpl extends DefaultRequestAttributeService 
         }
         
         final List<String> attributeNames = EnumerationUtils.toList(attributeNamesEnum);
-        attributeNames.add(IPortletAdaptor.MULTIVALUED_USERINFO_MAP_ATTRIBUTE);
+        attributeNames.add(IPortletRenderer.MULTIVALUED_USERINFO_MAP_ATTRIBUTE);
         return new IteratorEnumeration(attributeNames.iterator());
     }
 
@@ -146,17 +146,10 @@ public class RequestAttributeServiceImpl extends DefaultRequestAttributeService 
      * @return The List of expected user attributes for the portlet
      * @throws PortletContainerException If expected attributes cannot be determined
      */
-    @SuppressWarnings("unchecked")
-    protected List<UserAttributeDD> getExpectedUserAttributes(HttpServletRequest request, final IPortletWindow portletWindow) {
+    protected List<? extends UserAttribute> getExpectedUserAttributes(HttpServletRequest request, final IPortletWindow portletWindow) {
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindow.getPortletWindowId());
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
-        final PortletAppDD portletApplicationDescriptor;
-        try {
-            portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
-        }
-        catch (PortletContainerException e) {
-            throw new RuntimeException(e);
-        }
+        final PortletApplicationDefinition portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
         
         return portletApplicationDescriptor.getUserAttributes();
     }

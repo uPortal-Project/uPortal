@@ -19,12 +19,15 @@
 
 package org.jasig.portal.portlet.om;
 
-import org.apache.pluto.internal.InternalPortletPreference;
+import org.apache.pluto.container.PortletPreference;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletPreference extends InternalPortletPreference {
-
+public interface IPortletPreference extends PortletPreference {
+    /**
+     * Sets the read only state of the preference
+     */
+    void setReadOnly(boolean readOnly);
 }

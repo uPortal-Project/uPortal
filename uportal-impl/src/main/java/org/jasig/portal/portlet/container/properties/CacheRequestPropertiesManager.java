@@ -25,8 +25,7 @@ import java.util.Map;
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.descriptors.portlet.PortletDD;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -35,6 +34,7 @@ import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -103,10 +103,13 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
         Integer expirationCache = portletWindow.getExpirationCache();
         
         if (expirationCache == null) {
-            final PortletDD portletDeployment = this.getPortletDeployment(httpServletRequest, portletWindow);
+            final PortletDefinition portletDeployment = this.getPortletDeployment(httpServletRequest, portletWindow);
             final int descriptorExpirationCache = portletDeployment.getExpirationCache();
             
-            if (PortletDD.EXPIRATION_CACHE_UNSET != descriptorExpirationCache) {
+            // only set if greater than 0
+            // in Portlet 2.0, -1 means cache does not expire (not defined as a constant) (see PLT 22.1)
+            // Pluto 1.1.7 had a constant named EXPIRATION_CACHE_UNSET, which was Integer.MIN_VALUE
+            if (descriptorExpirationCache >= 0) {
                 expirationCache = descriptorExpirationCache;
             }
         }
@@ -126,11 +129,13 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
         
         if (RenderResponse.EXPIRATION_CACHE.equals(property)) {
-            final PortletDD portletDeployment = this.getPortletDeployment(httpServletRequest, portletWindow);
+            final PortletDefinition portletDeployment = this.getPortletDeployment(httpServletRequest, portletWindow);
             final int descriptorExpirationCache = portletDeployment.getExpirationCache();
             
-            //Only set the cache expiration if the descriptor has a cache expiration set (PLT.18.1)
-            if (PortletDD.EXPIRATION_CACHE_UNSET != descriptorExpirationCache) {
+            // only set if greater than 0
+            // in Portlet 2.0, -1 means cache does not expire (not defined as a constant) (see PLT 22.1)
+            // Pluto 1.1.7 had a constant named EXPIRATION_CACHE_UNSET, which was Integer.MIN_VALUE
+            if (descriptorExpirationCache >= 0) {
                 Integer cacheExpiration = portletWindow.getExpirationCache();
                 try {
                     cacheExpiration = Integer.valueOf(value);
@@ -161,14 +166,14 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
      * @return The parent portlet descriptor for the window
      * @throws PortalException if the PortletDD fails to load.
      */
-    protected PortletDD getPortletDeployment(HttpServletRequest httpServletRequest, IPortletWindow portletWindow) {
+    protected PortletDefinition getPortletDeployment(HttpServletRequest httpServletRequest, IPortletWindow portletWindow) {
         final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletWindow.getPortletEntityId());
         
         try {
             return this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
         }
-        catch (PortletContainerException pce) {
-            throw new PortalException("Failed to retrieve the PortletDD for portlet window: " + portletWindow, pce);
+        catch (DataRetrievalFailureException e) {
+            throw new PortalException("Failed to retrieve the PortletDD for portlet window: " + portletWindow, e);
         }
     }
 }

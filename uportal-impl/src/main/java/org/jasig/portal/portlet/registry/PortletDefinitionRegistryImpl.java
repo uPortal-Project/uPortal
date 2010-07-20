@@ -24,11 +24,11 @@ import javax.servlet.ServletContext;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.OptionalContainerServices;
-import org.apache.pluto.PortletContainerException;
-import org.apache.pluto.descriptors.portlet.PortletAppDD;
-import org.apache.pluto.descriptors.portlet.PortletDD;
-import org.apache.pluto.spi.optional.PortletRegistryService;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.driver.PortalDriverContainerServices;
+import org.apache.pluto.container.driver.PortletRegistryService;
+import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
@@ -57,7 +57,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     
     private IChannelRegistryStore channelRegistryStore;
     private IPortletDefinitionDao portletDefinitionDao;
-    private OptionalContainerServices optionalContainerServices;
+    private PortalDriverContainerServices portalDriverContainerServices;
     private ServletContext servletContext;
     
     /**
@@ -73,22 +73,23 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
         this.portletDefinitionDao = portletDefinitionDao;
     }
-    
     /**
-     * @return the optionalContainerServices
+     * 
+     * @return
      */
-    public OptionalContainerServices getOptionalContainerServices() {
-        return this.optionalContainerServices;
-    }
+    public PortalDriverContainerServices getPortalDriverContainerServices() {
+		return portalDriverContainerServices;
+	}
     /**
-     * @param optionalContainerServices the optionalContainerServices to set
+     * 
+     * @param portalDriverContainerServices
      */
     @Autowired(required=true)
-    public void setOptionalContainerServices(OptionalContainerServices optionalContainerServices) {
-        this.optionalContainerServices = optionalContainerServices;
-    }
-    
-    /**
+	public void setPortalDriverContainerServices(
+			PortalDriverContainerServices portalDriverContainerServices) {
+		this.portalDriverContainerServices = portalDriverContainerServices;
+	}
+	/**
      * @return the channelRegistryStore
      */
     public IChannelRegistryStore getChannelRegistryStore() {
@@ -159,7 +160,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletApplicationDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
-    public PortletAppDD getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException {
+    public PortletApplicationDefinition getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) {
         final IPortletDefinition portletDefinition = this.getPortletDefinition(portletDefinitionId);
         if (portletDefinition == null) {
             return null;
@@ -167,14 +168,19 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         
         final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(portletDefinition);
         
-        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
-        return portletRegistryService.getPortletApplicationDescriptor(portletDescriptorKeys.first);
+        final PortletRegistryService portletRegistryService = this.portalDriverContainerServices.getPortletRegistryService();
+        try {
+            return portletRegistryService.getPortletApplication(portletDescriptorKeys.first);
+        }
+        catch (PortletContainerException e) {
+            throw new DataRetrievalFailureException("No portlet application descriptor could be found for the portlet definition: " + portletDefinition, e);
+        }
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
-    public PortletDD getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) throws PortletContainerException {
+    public PortletDefinition getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) {
         final IPortletDefinition portletDefinition = this.getPortletDefinition(portletDefinitionId);
         if (portletDefinition == null) {
             return null;
@@ -182,8 +188,13 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         
         final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(portletDefinition);
         
-        final PortletRegistryService portletRegistryService = this.optionalContainerServices.getPortletRegistryService();
-        return portletRegistryService.getPortletDescriptor(portletDescriptorKeys.first, portletDescriptorKeys.second);
+        final PortletRegistryService portletRegistryService = this.portalDriverContainerServices.getPortletRegistryService();
+        try {
+            return portletRegistryService.getPortlet(portletDescriptorKeys.first, portletDescriptorKeys.second);
+        }
+        catch (PortletContainerException e) {
+            throw new DataRetrievalFailureException("No portlet descriptor could be found for the portlet definition: " + portletDefinition, e);
+        }
     }
     
     /**
@@ -201,7 +212,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         else {
             final IChannelParameter portletApplicaitonIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
             if (portletApplicaitonIdParam == null) {
-                throw new DataRetrievalFailureException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "'. ChannelDefinition=" + channelDefinition);
+                throw new NotAPortletException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "'. ChannelDefinition=" + channelDefinition);
             }
             
             portletApplicationId = portletApplicaitonIdParam.getValue();
@@ -209,7 +220,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         
         final IChannelParameter portletNameParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
         if (portletNameParam == null) {
-            throw new DataRetrievalFailureException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "'. ChannelDefinition=" + channelDefinition);
+            throw new NotAPortletException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "'. ChannelDefinition=" + channelDefinition);
         }
         final String portletName = portletNameParam.getValue();
         

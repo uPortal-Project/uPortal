@@ -21,12 +21,14 @@ package org.jasig.portal.portlet.container;
 
 import javax.servlet.ServletContext;
 
-import org.apache.pluto.OptionalContainerServices;
-import org.apache.pluto.PortletContainer;
-import org.apache.pluto.RequiredContainerServices;
-import org.apache.pluto.core.PortletContainerImpl;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
+import org.apache.pluto.container.PortletContainer;
+import org.apache.pluto.container.driver.OptionalContainerServices;
+import org.apache.pluto.container.driver.PlutoServices;
+import org.apache.pluto.container.driver.PortalDriverContainerServices;
+import org.apache.pluto.container.driver.PortalDriverServices;
+import org.apache.pluto.container.driver.RequiredContainerServices;
+import org.apache.pluto.container.impl.PortletContainerImpl;
+import org.jasig.portal.portlet.container.services.LocalPortalDriverServicesImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Service;
@@ -42,14 +44,12 @@ import org.springframework.web.context.ServletContextAware;
  * @version $Revision$
  */
 @Service("portletContainer")
-public class PortletContainerFactoryBean extends AbstractFactoryBean implements ServletContextAware, InitializingBean, DisposableBean {
-    private PortletContainerImpl portletContainer;
-    
+public class PortletContainerFactoryBean extends AbstractFactoryBean<PortletContainer> implements ServletContextAware {
     private ServletContext servletContext;
     private RequiredContainerServices requiredContainerServices;
     private OptionalContainerServices optionalContainerServices;
+    private PortalDriverContainerServices driverContainerServices;
     private String portletContainerName = null;
-    
 
     /**
      * @return the portletContainerName
@@ -63,41 +63,28 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean implements 
     public void setPortletContainerName(String portletContainerName) {
         this.portletContainerName = portletContainerName;
     }
+	/**
+	 * @param requiredContainerServices the requiredContainerServices to set
+	 */
+	@Autowired(required=true)
+	public void setRequiredContainerServices(
+			RequiredContainerServices requiredContainerServices) {
+		this.requiredContainerServices = requiredContainerServices;
+	}
+	/**
+	 * @param optionalContainerServices the optionalContainerServices to set
+	 */
+	@Autowired(required=true)
+	public void setOptionalContainerServices(
+			OptionalContainerServices optionalContainerServices) {
+		this.optionalContainerServices = optionalContainerServices;
+	}
     
-    /**
-     * @return the requiredContainerServices
-     */
-    public RequiredContainerServices getRequiredContainerServices() {
-        return this.requiredContainerServices;
+	@Autowired(required=true)
+    public void setDriverContainerServices(PortalDriverContainerServices driverContainerServices) {
+        this.driverContainerServices = driverContainerServices;
     }
-    /**
-     * @param requiredContainerServices the requiredContainerServices to set
-     */
-    @Autowired(required=true)
-    public void setRequiredContainerServices(RequiredContainerServices requiredContainerServices) {
-        this.requiredContainerServices = requiredContainerServices;
-    }
-
-    /**
-     * @return the optionalContainerServices
-     */
-    public OptionalContainerServices getOptionalContainerServices() {
-        return this.optionalContainerServices;
-    }
-    /**
-     * @param optionalContainerServices the optionalContainerServices to set
-     */
-    @Autowired(required=true)
-    public void setOptionalContainerServices(OptionalContainerServices optionalContainerServices) {
-        this.optionalContainerServices = optionalContainerServices;
-    }
-
-    /**
-     * @return the servletContext
-     */
-    public ServletContext getServletContext() {
-        return this.servletContext;
-    }
+    
     /* (non-Javadoc)
      * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
      */
@@ -109,21 +96,23 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean implements 
      * @see org.springframework.beans.factory.config.AbstractFactoryBean#createInstance()
      */
     @Override
-    protected Object createInstance() throws Exception {
+    protected PortletContainer createInstance() throws Exception {
         final String containerName = this.getContainerName();
+        final PortalDriverServices containerServices = new LocalPortalDriverServicesImpl(this.requiredContainerServices, this.optionalContainerServices, this.driverContainerServices);
+        final PlutoServices plutoServices = new PlutoServices(containerServices);
+        final PortletContainer portletContainer = new PortletContainerImpl(containerName, plutoServices);
         
-        this.portletContainer = new PortletContainerImpl(containerName, this.requiredContainerServices, this.optionalContainerServices);
-        this.portletContainer.init(this.servletContext);
+        portletContainer.init();
         
-        return this.portletContainer;
+        return portletContainer;
     }
 
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.config.AbstractFactoryBean#destroyInstance(java.lang.Object)
      */
     @Override
-    protected void destroyInstance(Object instance) throws Exception {
-        ((PortletContainer)instance).destroy();
+    protected void destroyInstance(PortletContainer instance) throws Exception {
+        instance.destroy();
     }
 
     /* (non-Javadoc)

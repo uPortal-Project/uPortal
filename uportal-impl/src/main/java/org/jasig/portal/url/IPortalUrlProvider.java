@@ -1,26 +1,14 @@
 /**
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright (c) 2000-2009, Jasig, Inc.
+ * See license distributed with this file and available online at
+ * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
 
 package org.jasig.portal.url;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
@@ -56,10 +44,7 @@ public interface IPortalUrlProvider {
      * @return Folder targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified ID doesn't exist for a folder in the users layout.
      */
-    public IBasePortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId);
-    
-//    public IPortalChannelUrl getChannelUrlByNodeId(HttpServletRequest request, String channelNodeId);
-//    public IPortalChannelUrl getChannelUrlByFName(HttpServletRequest request, String channelFName);
+    public ILayoutPortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId);
     
     /**
      * @param request The current portal request
@@ -67,7 +52,9 @@ public interface IPortalUrlProvider {
      * @return Portlet targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified ID doesn't exist for a channel in the users layout.
      */
-    public IPortalPortletUrl getPortletUrl(HttpServletRequest request, IPortletWindowId portletWindowId);
+    public IPortletPortalUrl getPortletUrl(TYPE type, HttpServletRequest request, IPortletWindowId portletWindowId);
+    
+    public IPortletResourcePortalUrl getPortletResourceUrl(HttpServletRequest request, IPortletWindowId portletWindowId);
     
     /**
      * @param request The current portal request
@@ -75,7 +62,7 @@ public interface IPortalUrlProvider {
      * @return Portlet targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified ID doesn't exist for a channel in the users layout.
      */
-    public IPortalPortletUrl getPortletUrlByNodeId(HttpServletRequest request, String portletNodeId);
+    public IPortletPortalUrl getPortletUrlByNodeId(TYPE type, HttpServletRequest request, String portletNodeId);
     
     /**
      * @param request The current portal request
@@ -83,5 +70,5 @@ public interface IPortalUrlProvider {
      * @return Portlet targeted {@link IBasePortalUrl}
      * @throws IllegalArgumentException If the specified fname does not exist.
      */
-    public IPortalPortletUrl getPortletUrlByFName(HttpServletRequest request, String portletFName);
+    public IPortletPortalUrl getPortletUrlByFName(TYPE type, HttpServletRequest request, String portletFName);
 }

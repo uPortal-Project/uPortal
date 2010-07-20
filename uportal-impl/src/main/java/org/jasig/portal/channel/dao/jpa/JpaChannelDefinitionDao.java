@@ -58,7 +58,7 @@ public class JpaChannelDefinitionDao implements IChannelDefinitionDao {
     /**
      * @param entityManager the entityManager to set
      */
-    @PersistenceContext
+    @PersistenceContext(unitName="uPortalPersistence")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

@@ -19,11 +19,13 @@
 
 package org.jasig.portal.channels.portlet;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,7 +34,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.pluto.descriptors.common.SecurityRoleRefDD;
+import org.apache.pluto.container.om.portlet.SecurityRoleRef;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -54,26 +56,27 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
      */
     public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortletHttpServletRequestWrapper.class.getName() + ".PORTLET_HTTP_SERVLET_REQUEST";
     
+    private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
     private final Map<String, String[]> parameters;
     private final IPerson person;
-    private final List<SecurityRoleRefDD> securityRoleRefs;
+    private final List<? extends SecurityRoleRef> securityRoleRefs;
     
-    public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest, Map<String, List<String>> parameters, IPerson person, List<SecurityRoleRefDD> securityRoleRefs) {
+    public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest, Map<String, String[]> parameters, IPerson person, List<? extends SecurityRoleRef> securityRoleRefs) {
         super(httpServletRequest);
         Validate.notNull(parameters, "parameters can not be null");
         Validate.notNull(person, "person can not be null");
         Validate.notNull(securityRoleRefs, "securityRoleRefs can not be null");
         
         this.parameters = new LinkedHashMap<String, String[]>();
-        for (final Map.Entry<String, List<String>> parameterEntry : parameters.entrySet()) {
+        for (final Map.Entry<String, String[]> parameterEntry : parameters.entrySet()) {
             final String name = parameterEntry.getKey();
-            final List<String> values = parameterEntry.getValue();
+            final String[] values = parameterEntry.getValue();
             
             if (values == null) {
                 this.parameters.put(name, null);
             }
             else {
-                this.parameters.put(name, values.toArray(new String[values.size()]));
+                this.parameters.put(name, Arrays.copyOf(values, values.length));
             }
         }
         
@@ -87,7 +90,32 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
             return this;
         }
         
-        return super.getAttribute(name);
+        final Object attribute = this.attributes.get(name);
+        if (attribute != null) {
+            return attribute;
+        }
+        
+        if (name.startsWith(PORTAL_ATTRIBUTE_PREFIX)) {
+            return super.getAttribute(name);
+        }
+        
+        return null;
+    }
+
+    @Override
+    public Enumeration<String> getAttributeNames() {
+        final Set<String> attributeNames = this.attributes.keySet();
+        return Collections.enumeration(attributeNames);
+    }
+
+    @Override
+    public void removeAttribute(String name) {
+        this.attributes.remove(name);
+    }
+
+    @Override
+    public void setAttribute(String name, Object o) {
+        this.attributes.put(name, o);
     }
 
     /* (non-Javadoc)
@@ -155,7 +183,7 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
         final IGroupMember personGroupMember = GroupService.getGroupMember(personEntityId);
 
         //Find the role link for the role
-        final SecurityRoleRefDD securityRoleRef = getSecurityRoleRef(role);
+        final SecurityRoleRef securityRoleRef = getSecurityRoleRef(role);
         if (securityRoleRef == null) {
             return false;
         }
@@ -174,8 +202,8 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
     /**
      * Gets a SecurityRoleRefDD for the specified role name;
      */
-    private SecurityRoleRefDD getSecurityRoleRef(String role) {
-        for (final SecurityRoleRefDD securityRoleRef : this.securityRoleRefs) {
+    private SecurityRoleRef getSecurityRoleRef(String role) {
+        for (final SecurityRoleRef securityRoleRef : this.securityRoleRefs) {
             final String roleRefName = securityRoleRef.getRoleName();
             if (role.equals(roleRefName)) {
                 return securityRoleRef;

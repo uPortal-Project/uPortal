@@ -43,7 +43,7 @@ public class JpaUserFragmentSubscriptionDaoImpl implements IUserFragmentSubscrip
     /**
      * @param entityManager the entityManager to set
      */
-    @PersistenceContext
+    @PersistenceContext(unitName="uPortalPersistence")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }

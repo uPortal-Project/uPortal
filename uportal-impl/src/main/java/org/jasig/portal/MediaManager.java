@@ -31,14 +31,13 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingHTMLSerializer;
 import org.jasig.portal.serialize.CachingXHTMLSerializer;
 import org.jasig.portal.serialize.OutputFormat;
-import org.jasig.portal.serialize.XMLSerializer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -365,17 +364,7 @@ public class MediaManager {
    * @return the serializer
    */
   public BaseMarkupSerializer getSerializerByName (String serializerName, java.io.Writer out) {
-    if (serializerName != null && serializerName.equals("WML")) {
-      OutputFormat frmt = new OutputFormat("wml", "UTF-8", true);
-      frmt.setDoctype(WMLPublicId, WMLSystemId);
-      return  new XMLSerializer(out, frmt);
-    } /* else if (serializerName != null && serializerName.equals("PalmHTML")) {
-      OutputFormat frmt = new OutputFormat("HTML", "UTF-8", true);
-      return  new PalmHTMLSerializer(out, frmt);
-      } */ else if (serializerName != null && serializerName.equals("XML")) {
-      OutputFormat frmt = new OutputFormat("XML", "UTF-8", true);
-      return  new XMLSerializer(out, frmt);
-    } else if (serializerName != null && serializerName.equals("XHTML")) {
+    if (serializerName != null && serializerName.equals("XHTML")) {
       OutputFormat frmt = new OutputFormat("XHTML", "UTF-8", true);
       frmt.setPreserveSpace(true);
       frmt.setIndenting(outputIndenting);

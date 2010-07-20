@@ -21,10 +21,9 @@ package org.jasig.portal.portlets.sqlquery;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -91,14 +90,14 @@ public class SqlQueryPortletController extends AbstractController {
 		// Execute the SQL query and build a results object.  This result
 		// will consist of one rowname -> rowvalue map for each row in the
 		// result set
-		Collection<Map<?,?>> results = 
-			(Collection<Map<?,?>>) template.query(sqlQuery, new ColumnMapRowMapper());
+
+		List<Map<String, Object>> results = template.query(sqlQuery, new ColumnMapRowMapper());
 		
 		// build the model
-		Map<Object,Object> model = new HashMap<Object,Object>();
-		model.put("results", results);
 		
-		return new ModelAndView(viewName, model);
+		ModelAndView modelandview = new ModelAndView(viewName);
+		modelandview.addObject("results", results);
+		return modelandview;
 	}
 
 }

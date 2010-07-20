@@ -19,11 +19,6 @@
 
 package org.jasig.portal.portlet.rendering;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.jasig.portal.api.portlet.DelegateState;
 
 /**
  * The result of rendering a portlet
@@ -33,9 +28,11 @@ import org.jasig.portal.api.portlet.DelegateState;
  */
 public class PortletRenderResult {
     private final String title;
+    private final long renderTime;
 
-    public PortletRenderResult(String title) {
+    public PortletRenderResult(String title, long renderTime) {
         this.title = title;
+        this.renderTime = renderTime;
     }
 
     /**
@@ -44,42 +41,51 @@ public class PortletRenderResult {
     public String getTitle() {
         return title;
     }
-
     
     /**
-     * @see java.lang.Object#equals(Object)
+     * @return The time it took the portlet to render.
      */
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof DelegateState)) {
-            return false;
-        }
-        PortletRenderResult rhs = (PortletRenderResult) object;
-        return new EqualsBuilder()
-            .append(this.title, rhs.getTitle())
-            .isEquals();
+    public long getRenderTime() {
+        return this.renderTime;
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(1445247369, -1009176817)
-            .append(this.title)
-            .toHashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (this.renderTime ^ (this.renderTime >>> 32));
+        result = prime * result + ((this.title == null) ? 0 : this.title.hashCode());
+        return result;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        PortletRenderResult other = (PortletRenderResult) obj;
+        if (this.renderTime != other.renderTime) {
+            return false;
+        }
+        if (this.title == null) {
+            if (other.title != null) {
+                return false;
+            }
+        }
+        else if (!this.title.equals(other.title)) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("title", this.title)
-            .toString();
+        return "PortletRenderResult [renderTime=" + this.renderTime + ", title=" + this.title + "]";
     }
 }

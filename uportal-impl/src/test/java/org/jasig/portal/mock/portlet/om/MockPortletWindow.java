@@ -24,7 +24,6 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -35,10 +34,12 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.pluto.PortletWindowID;
+import org.apache.pluto.container.PortletWindowID;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.url.ParameterMap;
 
 /**
  * Implementation of the {@link IPortletWindow} interface that tracks the current
@@ -55,8 +56,9 @@ public class MockPortletWindow implements IPortletWindow {
     private String contextPath;
     private String portletName;
     private IPortletWindowId delegationParent;
+    private PortletDefinition portletDefinition;
     
-    private Map<String, List<String>> requestParameters = new HashMap<String, List<String>>();
+    private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
     private transient PortletMode portletMode = PortletMode.VIEW;
     private transient WindowState windowState = WindowState.NORMAL;
     private Integer expirationCache = null;
@@ -69,6 +71,17 @@ public class MockPortletWindow implements IPortletWindow {
         this.delegationParent = null;
     }
     
+    /**
+     * Creates a new PortletWindow with the default settings
+     */
+    public MockPortletWindow(IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, String contextPath, String portletName, IPortletWindowId delegateParent, PortletDefinition portletDefinition) {
+        this.portletWindowId = portletWindowId;
+        this.portletEntityId = portletEntityId;
+        this.contextPath = contextPath;
+        this.portletName = portletName;
+        this.delegationParent = delegateParent;
+        this.portletDefinition = portletDefinition;
+    }
     /**
      * Creates a new PortletWindow with the default settings
      */
@@ -93,8 +106,8 @@ public class MockPortletWindow implements IPortletWindow {
     public MockPortletWindow(IPortletWindowId portletWindowId, IPortletWindow portletWindow) {
         this.portletWindowId = portletWindowId;
         this.portletEntityId = portletWindow.getPortletEntityId();
-        this.contextPath = portletWindow.getContextPath();
-        this.portletName = portletWindow.getPortletName();
+        //this.contextPath = portletWindow.getContextPath();
+        //this.portletName = portletWindow.getPortletName();
         this.portletMode = portletWindow.getPortletMode();
         this.windowState = portletWindow.getWindowState();
     }
@@ -166,15 +179,20 @@ public class MockPortletWindow implements IPortletWindow {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#getRequestParameers()
      */
-    public Map<String, List<String>> getRequestParameers() {
+    public Map<String, String[]> getRequestParameers() {
         return this.requestParameters;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
      */
-    public void setRequestParameters(Map<String, List<String>> requestParameters) {
-        this.requestParameters = requestParameters;
+    public void setRequestParameters(Map<String, String[]> requestParameters) {
+        if (requestParameters == null) {
+            this.requestParameters = null;
+        }
+        else {
+            this.requestParameters = new ParameterMap(requestParameters);
+        }
     }
     
     /* (non-Javadoc)
@@ -194,7 +212,7 @@ public class MockPortletWindow implements IPortletWindow {
     /**
      * @return the requestParameters
      */
-    public Map<String, List<String>> getRequestParameters() {
+    public Map<String, String[]> getRequestParameters() {
         return requestParameters;
     }
 
@@ -290,7 +308,7 @@ public class MockPortletWindow implements IPortletWindow {
         if (!(object instanceof IPortletWindow)) {
             return false;
         }
-        IPortletWindow rhs = (IPortletWindow) object;
+        MockPortletWindow rhs = (MockPortletWindow) object;
         return new EqualsBuilder()
             .append(this.portletWindowId, rhs.getId())
             .append(this.contextPath, rhs.getContextPath())
@@ -336,4 +354,13 @@ public class MockPortletWindow implements IPortletWindow {
             .append("delegationParent", this.delegationParent)
             .toString();
     }
+
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletWindow#getPortletDefinition()
+     */
+	@Override
+	public PortletDefinition getPortletDefinition() {
+		return this.portletDefinition;
+	}
 }

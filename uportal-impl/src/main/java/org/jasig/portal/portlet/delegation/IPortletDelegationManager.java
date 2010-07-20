@@ -23,7 +23,7 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.url.PortletUrl;
+import org.jasig.portal.url.IPortletPortalUrl;
 
 /**
  * Provides some utility methods for dealing with delegate rendering of portlets
@@ -39,7 +39,7 @@ public interface IPortletDelegationManager {
      * 
      * @param parentPortletUrl The parent URL data
      */
-    public void setParentPortletUrl(HttpServletRequest request, PortletUrl parentPortletUrl);
+    public void setParentPortletUrl(HttpServletRequest request, IPortletPortalUrl parentPortletUrl);
     
     /**
      * Get the URL data to use for the delegation parent window
@@ -47,7 +47,7 @@ public interface IPortletDelegationManager {
      * @param parentPortletWindowId The ID of the portlet window to get the PortletUrl for
      * @return The PortletUrl for the parent window, null if no base URL data is provided
      */
-    public PortletUrl getParentPortletUrl(HttpServletRequest request, IPortletWindowId parentPortletWindowId);
+    public IPortletPortalUrl getParentPortletUrl(HttpServletRequest request, IPortletWindowId parentPortletWindowId);
     
     /**
      * Pass the url generated after a delegates processAction 
@@ -55,17 +55,17 @@ public interface IPortletDelegationManager {
      * @param request The portlet adaptor request for the delegate
      * @param portletUrl The URL to pass to the delegation dispatcher
      */
-    public void setDelegatePortletActionRedirectUrl(HttpServletRequest request, PortletUrl portletUrl);
+    public void setDelegatePortletActionRedirectUrl(HttpServletRequest request, IPortletPortalUrl portletUrl);
     
     /**
      * @param request The portlet adapter request for the delgate parent
      * @return The URL generated after the delegates processAction completes
      */
-    public PortletUrl getDelegatePortletActionRedirectUrl(HttpServletRequest request);
+    public IPortletPortalUrl getDelegatePortletActionRedirectUrl(HttpServletRequest request);
     
     /**
      * @param request The portlet adapter request for the delgate parent
      * @return The URL generated after the delegates processAction completes
      */
-    public PortletUrl getDelegatePortletActionRedirectUrl(PortletRequest request);
+    public IPortletPortalUrl getDelegatePortletActionRedirectUrl(PortletRequest request);
 }

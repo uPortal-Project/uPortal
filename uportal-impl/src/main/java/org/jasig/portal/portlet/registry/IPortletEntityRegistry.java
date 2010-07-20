@@ -25,6 +25,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.jasig.portal.user.IUserInstance;
 
 /**
  * Provides methods for creating and accessing {@link IPortletEntity} and related objects.
@@ -82,13 +83,18 @@ public interface IPortletEntityRegistry {
     public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId);
     
     /**
-     * Convience for {@link #getPortletEntity(String, int)} and {@link #createPortletEntity(IPortletDefinitionId, String, int)}.
+     * Convenience for {@link #getPortletEntity(String, int)} and {@link #createPortletEntity(IPortletDefinitionId, String, int)}.
      * If the get returns null the entity will be created and returned.
      * 
      * @see #getPortletEntity(String, int)
      * @see #createPortletEntity(IPortletDefinitionId, String, int)
      */
     public IPortletEntity getOrCreatePortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId);
+    
+    /**
+     * Convenience that looks up the portlet definition by subscribe ID then gets or creates the portlet entity for the subscription
+     */
+    public IPortletEntity getOrCreatePortletEntity(IUserInstance userInstance, String channelSubscribeId);
     
     /**
      * Stores changes made to an existing portlet entity

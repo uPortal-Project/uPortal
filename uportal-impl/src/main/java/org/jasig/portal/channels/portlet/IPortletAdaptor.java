@@ -19,8 +19,6 @@
 
 package org.jasig.portal.channels.portlet;
 
-import javax.portlet.PortletMode;
-import javax.portlet.WindowState;
 
 import org.jasig.portal.ICacheable;
 import org.jasig.portal.ICharacterChannel;
@@ -41,23 +39,11 @@ import org.jasig.portal.PortalException;
  */
 @Deprecated
 public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, ICharacterChannel, ICacheable, IDirectResponse {
-    public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
-    public static final WindowState DETACHED = new WindowState("DETACHED");
-    
-    public static final PortletMode ABOUT = new PortletMode("ABOUT");
-    public static final PortletMode CONFIG = new PortletMode("CONFIG");
-    
     /**
      * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the current
      * {@link org.jasig.portal.ChannelRuntimeData} under.
      */
     public static final String ATTRIBUTE__RUNTIME_DATA = IPortletAdaptor.class.getName() + ".RUNTIME_DATA";
-    
-    /**
-     * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the title the portlet
-     * dynamically sets under.
-     */
-    public static final String ATTRIBUTE__PORTLET_TITLE = IPortletAdaptor.class.getName() + ".PORTLET_TITLE";
     
     /**
      * Name of the {@link org.jasig.portal.ChannelDefinition} parameter the name of the
@@ -80,12 +66,6 @@ public interface IPortletAdaptor extends IResetableChannel, IPrivilegedChannel, 
      * if the portlet application ID should be set to the context path of the portal.
      */
     public static final String CHANNEL_PARAM__IS_FRAMEWORK_PORTLET = "isFrameworkPortlet";
-    
-    /**
-     * Name of the {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor
-     * will store a Map of user info attributes that has support for multi-valued attributes.
-     */
-    public static final String MULTIVALUED_USERINFO_MAP_ATTRIBUTE = "org.jasig.portlet.USER_INFO_MULTIVALUED";
     
     /**
      * {@link org.jasig.portal.IChannel#setStaticData(org.jasig.portal.ChannelStaticData)},

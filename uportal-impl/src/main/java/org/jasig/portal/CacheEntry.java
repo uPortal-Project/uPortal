@@ -22,6 +22,7 @@ package org.jasig.portal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 import org.jasig.portal.serialize.CachingSerializer;
 
 /**
@@ -30,6 +31,6 @@ import org.jasig.portal.serialize.CachingSerializer;
  */
 public interface CacheEntry {
     public CacheType getCacheType();
-    public void replayCache(CachingSerializer serializer, ChannelManager cm,
+    public void replayCache(CachingSerializer serializer, PortletExecutionManager portletExecutionManager,
         HttpServletRequest req, HttpServletResponse res) throws PortalException;
 }
