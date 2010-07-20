@@ -29,7 +29,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -38,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelManager;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
@@ -61,7 +59,6 @@ import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
-import org.jasig.portal.url.PortalHttpServletRequestWrapper;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -592,12 +589,6 @@ public class UpdatePreferencesServlet {
 		}
 
 		String nodeId = node.getId();
-
-		// instantiate the channel in the user's layout
-		// TODO: This code will be removed upon integration with Pluto 2.0
-		final HttpSession session = request.getSession(false);
-        ChannelManager cm = new ChannelManager(upm, session);
-		cm.instantiateChannel(new PortalHttpServletRequestWrapper(request, response, userInstanceManager), response, channel.getId());
 
 		try {
 			// save the user's layout
