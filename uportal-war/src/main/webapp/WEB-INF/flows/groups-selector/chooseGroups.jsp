@@ -171,7 +171,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: 2 panel -->
 
 	<div id="${n}searchDialog" title="<spring:message code="chooseGroups.searchResultsTitle"/>">
-	    <p id="${n}searchResultNoMembers" style="display:none"><spring:message code="chooseGroups.noResults"/></p>
+	    <p id="${n}searchResultsNoMembers" style="display:none"><spring:message code="chooseGroups.noResults"/></p>
 	    <ul id="${n}searchResults"></ul>
 	</div>
 
