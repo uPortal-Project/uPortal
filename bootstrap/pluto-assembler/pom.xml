@@ -26,16 +26,15 @@
 
     <parent>
         <groupId>org.jasig.portal</groupId>
-        <artifactId>uportal-parent</artifactId>
+        <artifactId>bootstrap</artifactId>
         <version>3.3.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal</groupId>
     <artifactId>pluto-assembler</artifactId>
     <packaging>jar</packaging>
 
-    <name>uPortal 3 - Pluto Assebler Dependencies</name>
+    <name>Bootstrap - Pluto Assembler Dependencies</name>
 
     <dependencies>
         <dependency>

@@ -105,7 +105,6 @@
      | Properties that describe the maven project
      +-->
     <property name="bootstrap.dir" value="${basedir}/bootstrap" />
-    <property name="bootstrap-pom.dir" value="${bootstrap.dir}/pom" />
     <property name="uportal-impl.dir" value="${basedir}/uportal-impl" />
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
     <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
@@ -380,7 +379,7 @@
             </if>
                 
             <artifact:dependencies pathid="uportal-ant" settingsFile="${maven.settings}">
-                <pom file="${bootstrap-pom.dir}/uportal-ant-tasks-pom.xml" />
+                <pom file="${bootstrap.dir}/uportal-ant-tasks/pom.xml" />
             </artifact:dependencies>
             
             <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
@@ -433,7 +432,7 @@
 
         <uportal-parent-macro>
             <artifact:dependencies pathid="pluto-ant" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap-pom.dir}/pluto-assembler-pom.xml" settingsFile="${maven.settings}" />
+                <artifact:pom file="${bootstrap.dir}/pluto-assembler/pom.xml" settingsFile="${maven.settings}" />
             </artifact:dependencies>
     
             <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
@@ -543,7 +542,7 @@
             
         <uportal-parent-macro>
             <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap-pom.dir}/hsqldb-pom.xml" settingsFile="${maven.settings}" />
+                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" />
             </artifact:dependencies>
     
             <property name="database" value="${basedir}/data/uP3_uPortal" />
@@ -565,7 +564,7 @@
     <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
         <uportal-parent-macro>
             <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap-pom.dir}/hsqldb-pom.xml" settingsFile="${maven.settings}" />
+                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" />
             </artifact:dependencies>
     
             <echo message="Stopping HSQL" />
@@ -1070,27 +1069,5 @@
             <arg value="${goal8}" />
             <arg value="${goal9}" />
         </artifact:mvn>
-    </target>
-    
-    <target name="ehcache-remote-debug" description="Imports the specified XML file or files">
-        <uportal-impl-macro>
-            <artifact:dependencies pathid="ehcache-debug.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap-pom.dir}/ehcache-debug-pom.xml" settingsFile="${maven.settings}" />
-            </artifact:dependencies>
-            
-            <property name="cache" value=""/>
-
-            <!-- Invoke Cernunnos specifying script and parameters -->
-            <java fork="true" failonerror="true" dir="${basedir}" classname="net.sf.ehcache.distribution.RemoteDebugger">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                <classpath refid="uportal-impl-full.classpath" />
-                <classpath>
-                    <path refid="uportal-impl-full.classpath"/>
-                    <path refid="ehcache-debug.classpath"/>
-                </classpath>
-                <arg value="${basedir}/uportal-impl/src/main/resources/properties/ehcache.xml" />
-                <arg value="${cache}"/>
-            </java>
-        </uportal-impl-macro>
     </target>
 </project>
