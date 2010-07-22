@@ -178,6 +178,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final String requestPath = this.urlPathHelper.getPathWithinApplication(request);
         final String[] requestPathParts = SLASH_PATTERN.split(requestPath);
         
+        UrlState requestedUrlState = null;
         ParseStep parseStep = ParseStep.FOLDER;
         for (int pathPartIndex = 0; pathPartIndex < requestPathParts.length; pathPartIndex++) {
             String pathPart = requestPathParts[pathPartIndex];
@@ -254,17 +255,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                         break;
                     }
                     
-                    final UrlState urlState = UrlState.valueOfIngoreCase(pathPart, null);
-                    
-                    //If a portlet is targeted but no layout node is targeted must be maximized
-                    if (requestInfoBuilder.getTargetedLayoutNodeId() == null && (urlState == null || urlState == UrlState.NORMAL)) {
-                        requestInfoBuilder.setUrlState(UrlState.MAX);
-                        break;
-                    }
-                    
+                    requestedUrlState = UrlState.valueOfIngoreCase(pathPart, null);
+
                     //Set the URL state
-                    if (urlState != null) {
-                        requestInfoBuilder.setUrlState(urlState);
+                    if (requestedUrlState != null) {
+                        requestInfoBuilder.setUrlState(requestedUrlState);
                         break;
                     }
                 }
@@ -288,6 +283,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 }
             }
         }
+        
         
         final Map<String, String[]> portalParameters = new ParameterMap();
         final Map<String, String[]> portletParameters = new ParameterMap();
@@ -324,8 +320,14 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 portletRequestInfoBuilder.setPortletMode(new PortletMode(portletModeName));
             }
             
+            //If a portlet is targeted but no layout node is targeted must be maximized
+            if (requestInfoBuilder.getTargetedLayoutNodeId() == null && (requestedUrlState == null || requestedUrlState == UrlState.NORMAL)) {
+                requestInfoBuilder.setUrlState(UrlState.MAX);
+            }
+            
             //Set window state based on URL State first then look for the window state parameter
-            switch (requestInfoBuilder.getUrlState()) {
+            final UrlState urlState = requestInfoBuilder.getUrlState();
+            switch (urlState) {
                 case MAX: {
                     portletRequestInfoBuilder.setWindowState(WindowState.MAXIMIZED);
                 }
@@ -401,8 +403,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             subscribeId = targetedPortletString.substring(seperatorIndex + 1);
         }
         
-        final IPerson person = userInstance.getPerson();
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(subscribeId, person.getID());
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, subscribeId);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
         
         portletRequestInfoBuilder = new PortletRequestInfoImpl(portletWindow.getPortletWindowId());

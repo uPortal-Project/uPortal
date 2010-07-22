@@ -314,9 +314,7 @@ public class PortalUrlProviderImplTest {
         expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager);
         expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager);
         expect(this.userLayoutManager.getSubscribeId("portletName")).andReturn(subscribeId);
-        expect(this.userInstance.getPerson()).andReturn(this.person);
-        expect(this.person.getID()).andReturn(1337);
-        expect(this.portletEntityRegistry.getPortletEntity(subscribeId, 1337)).andReturn(this.portletEntity);
+        expect(this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, subscribeId)).andReturn(this.portletEntity);
         expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
         expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
         expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
@@ -375,9 +373,7 @@ public class PortalUrlProviderImplTest {
         final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
 
         expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
-        expect(this.userInstance.getPerson()).andReturn(this.person);
-        expect(this.person.getID()).andReturn(1337);
-        expect(this.portletEntityRegistry.getPortletEntity(expected.getPortletRequestInfo().getTargetWindowId().getStringId(), 1337)).andReturn(this.portletEntity);
+        expect(this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, expected.getPortletRequestInfo().getTargetWindowId().getStringId())).andReturn(this.portletEntity);
         expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
         expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
         expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
@@ -585,6 +581,23 @@ public class PortalUrlProviderImplTest {
         this.testTransientPortletUrlHelper("/uPortal/p/foobar/render.uP", new ParameterMap(), subscribeId, expected);
     }
     
+    @Test
+    public void testTransientPortletFnameNoTypeUrl() throws Exception {
+        final String subscribeId = TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX + "2";
+        
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId(subscribeId);
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = subscribeId;
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+        expected.urlType = UrlType.RENDER;
+        
+        this.testTransientPortletUrlHelper("/uPortal/p/foobar", new ParameterMap(), subscribeId, expected);
+    }
+    
     private void testTransientPortletUrlHelper(String uri, Map<String, String[]> params, String subscribeId, IPortalRequestInfo expected) throws Exception {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal");
@@ -595,12 +608,10 @@ public class PortalUrlProviderImplTest {
         final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
 
         expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
-        expect(this.userInstance.getPerson()).andReturn(this.person);
         expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager);
         expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager);
         expect(this.userLayoutManager.getSubscribeId("foobar")).andReturn(subscribeId);
-        expect(this.person.getID()).andReturn(1337);
-        expect(this.portletEntityRegistry.getPortletEntity(expected.getPortletRequestInfo().getTargetWindowId().getStringId(), 1337)).andReturn(this.portletEntity);
+        expect(this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, expected.getPortletRequestInfo().getTargetWindowId().getStringId())).andReturn(this.portletEntity);
         expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
         expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
         expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
@@ -834,9 +845,11 @@ public class PortalUrlProviderImplTest {
     public void testNoFolderPortletFnameSubscribeIdUrlNoSlash() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
         
         this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42", "n42", expected);
     }
@@ -845,9 +858,11 @@ public class PortalUrlProviderImplTest {
     public void testNoFolderPortletFnameSubscribeIdUrlWithSlash() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
 
         this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/", "n42", expected);
     }

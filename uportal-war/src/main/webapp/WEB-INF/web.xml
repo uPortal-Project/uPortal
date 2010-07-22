@@ -310,6 +310,8 @@
     <servlet-mapping>
         <servlet-name>uPortal</servlet-name>
         <url-pattern>*.uP</url-pattern>
+        <url-pattern>/f/*</url-pattern>
+        <url-pattern>/p/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
