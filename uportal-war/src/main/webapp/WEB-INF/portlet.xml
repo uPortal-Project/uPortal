@@ -166,12 +166,6 @@
         <portlet-info> 
             <title>ExitFragmentAdministration</title> 
         </portlet-info> 
-        <portlet-preferences> 
-            <preference> 
-                <name>loginUrl</name>  
-                <value>Login</value> 
-            </preference> 
-        </portlet-preferences> 
     </portlet>
 
     <portlet> 
@@ -189,12 +183,6 @@
         <portlet-info>
             <title>FragmentAdministration</title> 
         </portlet-info>
-        <portlet-preferences> 
-            <preference>
-                <name>loginUrl</name>  
-                <value>Login</value>
-            </preference>
-        </portlet-preferences> 
     </portlet>
 
     <portlet> 
