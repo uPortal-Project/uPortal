@@ -31,7 +31,7 @@ import org.jasig.portal.url.IPortletPortalUrl;
  */
 public class PortletStateAwareResponseContextImpl extends PortletResponseContextImpl implements PortletStateAwareResponseContext {
     private final List<Event> events = new LinkedList<Event>();
-    private final IPortletPortalUrl portletUrl;
+    protected final IPortletPortalUrl portletUrl;
 
     public PortletStateAwareResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,

@@ -40,7 +40,19 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
     }
 
     public ParameterMap(Map<? extends String, ? extends String[]> m) {
-        super(m);
+        super(m.size());
+        
+        for (final Map.Entry<? extends String, ? extends String[]> parameterEntry : m.entrySet()) {
+            final String name = parameterEntry.getKey();
+            final String[] values = parameterEntry.getValue();
+            
+            if (values == null) {
+                this.put(name, null);
+            }
+            else {
+                this.put(name, values.clone());
+            }
+        }
     }
     
     public Map<String, List<String>> toListMap() {

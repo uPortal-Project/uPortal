@@ -19,7 +19,6 @@
 
 package org.jasig.portal.channels.portlet;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -41,6 +40,7 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.url.AbstractHttpServletRequestWrapper;
+import org.jasig.portal.url.ParameterMap;
 
 /**
  * Scopes set request attributes to just this request. Attribute retrieval methods fall through
@@ -67,19 +67,7 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
         Validate.notNull(person, "person can not be null");
         Validate.notNull(securityRoleRefs, "securityRoleRefs can not be null");
         
-        this.parameters = new LinkedHashMap<String, String[]>();
-        for (final Map.Entry<String, String[]> parameterEntry : parameters.entrySet()) {
-            final String name = parameterEntry.getKey();
-            final String[] values = parameterEntry.getValue();
-            
-            if (values == null) {
-                this.parameters.put(name, null);
-            }
-            else {
-                this.parameters.put(name, Arrays.copyOf(values, values.length));
-            }
-        }
-        
+        this.parameters = new ParameterMap(parameters);
         this.person = person;
         this.securityRoleRefs = securityRoleRefs;
     }

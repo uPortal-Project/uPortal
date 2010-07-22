@@ -42,12 +42,11 @@ public class PortletActionResponseContextImpl extends PortletStateAwareResponseC
             
             //if not redirect or there is a render url parameter name
             if (!redirect || renderURLParamName != null) {
-                final IPortletPortalUrl portletUrl = this.portalUrlProvider.getPortletUrl(TYPE.RENDER, this.containerRequest, this.portletWindow.getPortletWindowId());
                 if (redirect) {
                     try {
                         return this.redirectLocation + "?" + 
                             URLEncoder.encode(renderURLParamName, "UTF-8") + "=" + 
-                            URLEncoder.encode(portletUrl.toURL(), "UTF-8");
+                            URLEncoder.encode(this.portletUrl.toURL(), "UTF-8");
                     }
                     catch (UnsupportedEncodingException e) {
                         // Cannot happen: UTF-8 is a built-in/required encoder
