@@ -38,14 +38,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.pluto</groupId>
+            <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-ant-tasks</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.pluto</groupId>
+            <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-util</artifactId>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
