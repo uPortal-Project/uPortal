@@ -188,7 +188,7 @@
 			$("#channelDescription").text(channel.description);
 			$("#addChannelId").attr("value", channel.id);
 			$("#previewChannelLink").unbind("click").click(function(){ 
-				window.location = settings.portalUrl + "?uP_fname=" + channel.fname;
+				window.location = "/uPortal/p/" + channel.fname;
 			});
 		};
 
