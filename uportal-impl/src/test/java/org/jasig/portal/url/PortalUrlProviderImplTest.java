@@ -27,6 +27,7 @@ import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
@@ -453,6 +454,7 @@ public class PortalUrlProviderImplTest {
     public void testSingleFolderPortletFnameSubscribeIdMaximizedUrlNoSlash() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.targetedLayoutNodeId = "folderName";
@@ -466,6 +468,7 @@ public class PortalUrlProviderImplTest {
     public void testSingleFolderPortletFnameSubscribeIdMaximizedUrlWithSlash() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.targetedLayoutNodeId = "folderName";
@@ -530,6 +533,7 @@ public class PortalUrlProviderImplTest {
     public void testSingleFolderPortletFnameSubscribeIdMaximizedActionUrl() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("s3");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.targetedLayoutNodeId = "n2";
@@ -563,6 +567,60 @@ public class PortalUrlProviderImplTest {
         
         assertEquals("/uPortal/f/n2/p/fname.s3/max/action.uP", urlString);
     }
+    
+    @Test
+    public void testTransientPortletFnameRenderUrl() throws Exception {
+        final String subscribeId = TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX + "2";
+        
+        MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
+        expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId(subscribeId);
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
+        
+        MockPortalRequestInfo expected = new MockPortalRequestInfo();
+        expected.targetedLayoutNodeId = subscribeId;
+        expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
+        expected.urlType = UrlType.RENDER;
+        
+        this.testTransientPortletUrlHelper("/uPortal/p/foobar/render.uP", new ParameterMap(), subscribeId, expected);
+    }
+    
+    private void testTransientPortletUrlHelper(String uri, Map<String, String[]> params, String subscribeId, IPortalRequestInfo expected) throws Exception {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setContextPath("/uPortal");
+        mockRequest.setRequestURI(uri);
+        mockRequest.setParameters(params == null ? Collections.EMPTY_MAP : params);
+        
+        final MockPortletEntityId portletEntityId = new MockPortletEntityId(subscribeId);
+        final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
+
+        expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
+        expect(this.userInstance.getPerson()).andReturn(this.person);
+        expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager);
+        expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager);
+        expect(this.userLayoutManager.getSubscribeId("foobar")).andReturn(subscribeId);
+        expect(this.person.getID()).andReturn(1337);
+        expect(this.portletEntityRegistry.getPortletEntity(expected.getPortletRequestInfo().getTargetWindowId().getStringId(), 1337)).andReturn(this.portletEntity);
+        expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
+        expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
+        expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
+        
+        this.replayAll();
+        
+        final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
+        
+        this.verifyAll();
+
+        assertEquals(expected.getLayoutParameters(), requestInfo.getLayoutParameters());
+        assertEquals(expected.getPortalParameters(), requestInfo.getPortalParameters());
+        assertEquals(expected.getUrlState(), requestInfo.getUrlState());
+        assertEquals(expected.getUrlType(), requestInfo.getUrlType());
+        
+        final IPortletRequestInfo expectedPortletRequestInfo = expected.getPortletRequestInfo();
+        final IPortletRequestInfo portletRequestInfo = requestInfo.getPortletRequestInfo();
+        assertRequestInfoEquals(expectedPortletRequestInfo, portletRequestInfo);
+    }
+    
     
     @Test
     public void testSingleFolderPortletFnameSubscribeIdMinimizedRenderUrl() throws Exception {
@@ -669,6 +727,7 @@ public class PortalUrlProviderImplTest {
     public void testSingleFolderPortletFnameSubscribeIdMaximizedInvalidTypeUrl() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.targetedLayoutNodeId = "folderName";
@@ -706,6 +765,7 @@ public class PortalUrlProviderImplTest {
     public void testMultipleFolderPortletFnameSubscribeIdMaximizedUrlNoSlash() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.targetedLayoutNodeId = "folderName";
@@ -719,6 +779,7 @@ public class PortalUrlProviderImplTest {
     public void testMultipleFolderPortletFnameSubscribeIdMaximizedUrlWithSlash() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.targetedLayoutNodeId = "folderName";
@@ -744,6 +805,7 @@ public class PortalUrlProviderImplTest {
     public void testMultipleFolderPortletFnameSubscribeIdMaximizedActionUrl() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.targetedLayoutNodeId = "folderName";
@@ -758,6 +820,7 @@ public class PortalUrlProviderImplTest {
     public void testMultipleFolderPortletFnameSubscribeIdMaximizedInvalidTypeUrl() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.targetedLayoutNodeId = "folderName";
@@ -793,6 +856,7 @@ public class PortalUrlProviderImplTest {
     public void testNoFolderPortletFnameSubscribeIdMaximizedUrlNoSlash() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.portletRequestInfo = expectedPortletRequestInfo;
@@ -805,6 +869,7 @@ public class PortalUrlProviderImplTest {
     public void testNoFolderPortletFnameSubscribeIdMaximizedUrlWithSlash() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.portletRequestInfo = expectedPortletRequestInfo;
@@ -817,9 +882,11 @@ public class PortalUrlProviderImplTest {
     public void testNoFolderPortletFnameSubscribeIdInvalidStateUrlWithSlash() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.portletRequestInfo = expectedPortletRequestInfo;
+        expected.urlState = UrlState.MAX;
 
         this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/invalid/", "n42", expected);
     }
@@ -828,6 +895,7 @@ public class PortalUrlProviderImplTest {
     public void testNoFolderPortletFnameSubscribeIdMaximizedActionUrl() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.portletRequestInfo = expectedPortletRequestInfo;
@@ -841,6 +909,7 @@ public class PortalUrlProviderImplTest {
     public void testNoFolderPortletFnameSubscribeIdMaximizedInvalidTypeUrl() throws Exception {
         MockPortletRequestInfo expectedPortletRequestInfo = new MockPortletRequestInfo();
         expectedPortletRequestInfo.targetWindowId = new MockPortletWindowId("n42");
+        expectedPortletRequestInfo.windowState = WindowState.MAXIMIZED;
         
         MockPortalRequestInfo expected = new MockPortalRequestInfo();
         expected.portletRequestInfo = expectedPortletRequestInfo;

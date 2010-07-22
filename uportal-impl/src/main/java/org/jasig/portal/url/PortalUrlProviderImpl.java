@@ -255,6 +255,14 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                     }
                     
                     final UrlState urlState = UrlState.valueOfIngoreCase(pathPart, null);
+                    
+                    //If a portlet is targeted but no layout node is targeted must be maximized
+                    if (requestInfoBuilder.getTargetedLayoutNodeId() == null && (urlState == null || urlState == UrlState.NORMAL)) {
+                        requestInfoBuilder.setUrlState(UrlState.MAX);
+                        break;
+                    }
+                    
+                    //Set the URL state
                     if (urlState != null) {
                         requestInfoBuilder.setUrlState(urlState);
                         break;
@@ -316,9 +324,29 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 portletRequestInfoBuilder.setPortletMode(new PortletMode(portletModeName));
             }
             
-            final String windowStateName = request.getParameter(PARAM_WINDOW_STATE);
-            if (windowStateName != null) {
-                portletRequestInfoBuilder.setWindowState(new WindowState(windowStateName));
+            //Set window state based on URL State first then look for the window state parameter
+            switch (requestInfoBuilder.getUrlState()) {
+                case MAX: {
+                    portletRequestInfoBuilder.setWindowState(WindowState.MAXIMIZED);
+                }
+                break;
+
+                case DETACHED: {
+                    portletRequestInfoBuilder.setWindowState(IPortletRenderer.DETACHED);
+                }
+                break;
+
+                case EXCLUSIVE: {
+                    portletRequestInfoBuilder.setWindowState(IPortletRenderer.EXCLUSIVE);
+                }
+                break;
+                
+                default: {
+                    final String windowStateName = request.getParameter(PARAM_WINDOW_STATE);
+                    if (windowStateName != null) {
+                        portletRequestInfoBuilder.setWindowState(new WindowState(windowStateName));
+                    }
+                }
             }
             
             //TODO delegation parsing
