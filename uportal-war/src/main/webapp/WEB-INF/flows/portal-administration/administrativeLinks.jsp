@@ -40,16 +40,16 @@
         <div class="content">
             <ul>
                 <li>
-                    <a href="render.userLayoutRootNode.uP?uP_fname=IdentitySwapper">Swap identity</a>
+                    <a href="<c:url value="/p/IdentitySwapper"/>">Swap identity</a>
                 </li>
                 <li>
-                    <a href="render.userLayoutRootNode.uP?uP_fname=AttributeSwapper">Swap attributes</a>
+                    <a href="<c:url value="/p/AttributeSwapper"/>">Swap attributes</a>
                 </li>
                 <li>
-                    <a href="render.userLayoutRootNode.uP?uP_fname=passwordmgr">Manage passwords</a>
+                    <a href="<c:url value="/p/passwordmgr"/>">Manage passwords</a>
                 </li>
                 <li>
-                    <a href="render.userLayoutRootNode.uP?uP_fname=reset-user-layout">Reset a user's layout</a>
+                    <a href="<c:url value="/p/reset-user-layout"/>">Reset a user's layout</a>
                 </li>
             </ul>
         </div>
@@ -63,13 +63,13 @@
         <div class="content">
             <ul>
                 <li>
-                    <a href="render.userLayoutRootNode.uP?uP_fname=portlet-admin">Manage portlets</a>
+                    <a href="<c:url value="/p/portlet-admin"/>">Manage portlets</a>
                 </li>
                 <li>
-                    <a href="render.userLayoutRootNode.uP?uP_fname=groupsmanager">Manage groups</a>
+                    <a href="<c:url value="/p/groupsmanager"/>">Manage groups</a>
                 </li>
                 <li>
-                    <a href="render.userLayoutRootNode.uP?uP_fname=permissionsmanager">Manage permissions</a>
+                    <a href="<c:url value="/p/permissionsmanager"/>">Manage permissions</a>
                 </li>
             </ul>
         </div>
@@ -83,10 +83,10 @@
         <div class="content">
             <ul>
                 <li>
-                    <a href="render.userLayoutRootNode.uP?uP_fname=cache-manager">Manage Cache instances</a>
+                    <a href="<c:url value="/p/cache-manager"/>">Manage Cache instances</a>
                 </li>
                 <li>
-                    <a href="render.userLayoutRootNode.uP?uP_fname=toggle-resources-aggregation">Toggle JS/CSS Aggregation</a>
+                    <a href="<c:url value="/p/toggle-resources-aggregation"/>">Toggle JS/CSS Aggregation</a>
                 </li>
             </ul>
         </div>
@@ -100,7 +100,7 @@
         <div class="content">
             <ul>
                 <li>
-                    <a href="render.userLayoutRootNode.uP?uP_fname=ImportExportPortlet">Import, Export, and Delete Entities</a>
+                    <a href="<c:url value="/p/ImportExportPortlet"/>">Import, Export, and Delete Entities</a>
                 </li>
             </ul>
         </div>  
