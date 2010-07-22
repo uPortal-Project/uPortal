@@ -61,6 +61,7 @@ import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,7 +79,7 @@ import org.w3c.dom.NodeList;
  */
 @Controller
 @RequestMapping("/layout")
-public class UpdatePreferencesServlet {
+public class UpdatePreferencesServlet implements InitializingBean {
 
 	protected final Log log = LogFactory.getLog(getClass());
 	
@@ -115,15 +116,10 @@ public class UpdatePreferencesServlet {
 	// default tab name
 	protected final static String DEFAULT_TAB_NAME = "New Tab";
 	protected final static String ACTIVE_TAB_PARAM = "activeTab";
-	
-	private IUserLayoutStore getUserLayoutStore() {
-	    if (this.userLayoutStore == null) {
-	        this.userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-	    }
-	    
-	    return this.userLayoutStore;
-	}
 
+    public void afterPropertiesSet() throws Exception {
+        this.userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+    }
 
 	/**
 	 * Remove an element from the layout.
