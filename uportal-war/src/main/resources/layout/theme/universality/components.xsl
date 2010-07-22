@@ -595,7 +595,7 @@
                     <xsl:call-template name="portal.pipe"/>
                   </li>
                   <li id="portalCustomizationLinksChangeLayout">
-                    <a id="layoutDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
+                    <a id="layoutDialogLink" class="edit-page-link" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
                       <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
                     </a>
                     <xsl:call-template name="portal.pipe"/>

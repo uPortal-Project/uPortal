@@ -176,7 +176,7 @@
         <token name="AJAX_ADD_PORTLET_DETAILS_TITLE">Portlet details</token>
         <token name="AJAX_ADD_PORTLET_ADD_BUTTON">Add to my page</token>
         <token name="AJAX_ADD_PORTLET_USE_BUTTON">Use it now</token>
-        <token name="AJAX_EDIT_PAGE_DIALOG_TITLE">Change Layout</token>
+        <token name="AJAX_EDIT_PAGE_DIALOG_TITLE">Page Options</token>
         <token name="AJAX_EDIT_PAGE_PAGE_NAME">Page name:</token>
         <token name="AJAX_EDIT_PAGE_PAGE_LAYOUT">Page layout:</token>
         <token name="AJAX_EDIT_PAGE_COLUMN_TITLE_1">1 Column</token>
@@ -201,6 +201,7 @@
 
         <token name="AJAX_ADD_TAB_SUBSCRIBE_TAB_TITLE">Pre-made</token>
         <token name="AJAX_ADD_TAB_CUSTOM_TAB_TITLE">Custom</token>
+        <token name="AJAX_ADD_TAB_SUBMIT_BUTTON">Add tab</token>
         
         <!-- Column Width Adjustments -->
         <token name="WIDTH_INCREMENT_TITLE">Expand this column by 5%</token>

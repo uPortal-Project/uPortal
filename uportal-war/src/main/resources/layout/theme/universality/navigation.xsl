@@ -375,7 +375,7 @@
         <div id="portalFlyoutNavigationInner_{@ID}" class="portal-flyout-container-inner">  <!-- Inner div for additional presentation/formatting options. -->
           <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
             <li id="editPageLink" class="portal-subnav edit">
-              <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
+              <a href="javascript:;" class="portal-subnav-link edit-page-link" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
                 <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
               </a>
             </li>

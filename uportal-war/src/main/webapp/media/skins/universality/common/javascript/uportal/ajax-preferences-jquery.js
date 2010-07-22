@@ -55,7 +55,6 @@
 		
 			// initialize dialog menus
 			$("#contentDialogLink").click(initializeContentAddingMenu);
-			$("#layoutDialogLink").click(initializeLayoutMenu);
 			$("#skinDialogLink").click(initializeSkinMenu);
 		
 			// set up the Fluid reorderer to control portlet drag and drop
@@ -75,6 +74,28 @@
 		         }
 		    };
 		    settings.myReorderer = up.fluid.reorderLayout ("#portalPageBodyColumns",options);
+
+		    
+		    $("#pageLayoutDialog").dialog({ width: 550, modal: true, autoOpen: false });
+		    
+		    $(".edit-page-link").click(function(){
+		        $("#pageLayoutDialog").dialog("open");
+		    });
+            
+          uportal.PageManager("#pageLayoutDialog", {
+              currentPageName: $("#tabLink_" + settings.tabId + " > span").text(),
+              isDefault: true,
+              currentLayout: getCurrentLayout(),
+              savePermissionsUrl: settings.preferencesUrl,
+              imagePath: settings.mediaPath + "/" + settings.currentSkin + "/images/",
+              selectors: {
+              },
+              listeners: {
+                  onUpdateLayout: changeColumns,
+                  onUpdatePageName: updatePageName,
+                  onUpdateIsDefault: null
+              }
+          });
 
 		    if (settings.isFragmentMode) {
                 // tabs permissions manager
@@ -141,7 +162,6 @@
 			// set click handlers for tab moving and editing links
             $("#addTabLink").click(initializeSubscribeTabMenu);
 			$("#deletePageLink").click(function(){deleteTab()});
-			$("#editPageLink").click(initializeLayoutMenu);
 			$("#movePageLeftLink").click(function(){moveTab('left')});
 			$("#movePageRightLink").click(function(){moveTab('right')});
 			initTabEditLinks();
@@ -228,41 +248,16 @@
 		    $("#focusedContentAddingDialog form").submit(function(){return addFocusedChannel(this);});
 		};
 		
-		var initializeLayoutMenu = function() {
-			// using defaultChecked attribute to compensate for IE radio button bug
-			$("#pageLayoutDialog .changeColumns").find("img")
-				.click(function(){
-					$("#pageLayoutDialog .changeColumns").find("input").removeAttr("checked").attr("defaultChecked");
-					$(this).prev().attr("checked", "checked").attr("defaultChecked","defaultChecked");
-				})
-				.end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
-			if ($("#pageLayoutDialog .changeColumns").find("input:checked").length == 0) {
-			   $("#pageLayoutDialog .changeColumns").find("tr:eq(1)").find("td:eq(" + (settings.columnCount-1) + ")").find("input").attr("checked", true).attr("defaultChecked","defaultChecked");
-			}
-			$("#pageLayoutDialog").dialog({ width:400, modal:true });
-		
-			$("#layoutDialogLink")
-				.unbind('click', initializeLayoutMenu)
-				.click(function(){$("#pageLayoutDialog").dialog('open');});
-			$("#editPageLink")
-				.unbind('click', initializeLayoutMenu)
-				.click(function(){$("#pageLayoutDialog").dialog('open');});
-				
-		    $("#pageLayoutDialog form").submit(function(){return updatePage(this);});
-		
-		};
-		var getCurrentLayoutString = function() {
-			var str = "";
-			$('#portalPageBodyColumns > [id^=column_]').each(function(){
-				var flClass = $(this).get(0).className.match("fl-col-flex[0-9]+");
-				if (flClass != null) {
-					if (str != '')
-						str += '-';
-					str += flClass[0].match("[0-9]+")[0];
-				}
-			});
-			if (str == '') str = '100';
-			return str;
+		var getCurrentLayout = function() {
+            var layouts = [];
+            $('#portalPageBodyColumns > [id^=column_]').each(function(){
+                var flClass = $(this).get(0).className.match("fl-col-flex[0-9]+");
+                if (flClass != null) {
+                    layouts.push(Number(flClass[0].match("[0-9]+")[0]));
+                }
+            });
+            if (layouts.length == 0) layouts.push(100);
+            return layouts;
 		};
 		var updatePage = function(form) {
 			var name = form.pageName.value;
@@ -328,7 +323,7 @@
 			    	// buttons and re-apply them to the current value to compensate
 			    	// for IE radio button bug
 			    	$("#pageLayoutDialog .changeColumns").find("input").removeAttr("checked").removeAttr("defaultChecked");
-			    	$("#pageLayoutDialog .changeColumns").find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
+			    	$("#pageLayoutDialog .changeColumns").find("input[value=" + newcolumns.join("-") + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
 					
 				}
 			);
@@ -546,7 +541,6 @@
 		};
 		
         var initializeSubscribeTabMenu = function() {
-            initializeChangeColumns();
             $("#subscribeTabTabs").tabs();
             if (settings.subscriptionsSupported == 'true') {
                 uportal.FragmentBrowser($("#subscribeTab-tab-1"), 
@@ -579,34 +573,29 @@
         
             // using defaultChecked attribute to compensate for IE radio button bug
             $("#subscribeTabDialog").dialog({ width:500, modal:true });
+            uportal.PageManager("#subscribeTab-tab-2", {
+                currentPageName: "My Page",
+                isDefault: false,
+                currentLayout: [ 50, 50 ],
+                savePermissionsUrl: settings.preferencesUrl,
+                imagePath: settings.mediaPath + "/" + settings.currentSkin + "/images/",
+                selectors: {
+                },
+                listeners: {
+                    onSaveOptions: function(data){
+                        addTab(data.pageName, data.layout);
+                    }
+                }
+            });
+
             $("#addTabLink")
-                .unbind('click', initializeSubscribeTabMenu)
+                .unbind("click")
                 .click(function(){
                     $("#subscribeTabDialog").dialog('open');
                  });
                 
-            $("#subscribeTab-tab-2 form").submit(function(){
-                var form = $(this);
-                var name = form.find(".page-name-input").val();
-                var layout = form.find("input[name='layoutChoice']").filter(":checked").val();
-                var columns = layout.split("-");
-                addTab(name, columns);
-                return false;
-            });
-
         };
         
-        var initializeChangeColumns=function() {
-            // using defaultChecked attribute to compensate for IE radio button bug
-            $("#pageLayoutDialog .changeColumns").find("img")
-            .click(function(){
-                $("#pageLayoutDialog .changeColumns").find("input").removeAttr("checked").attr("defaultChecked");
-                $(this).prev().attr("checked", "checked").attr("defaultChecked","defaultChecked");
-            })
-            .end().find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
-
-        }
-
         var updateLayout = function(data, success) {
             $.ajax({
                 url: settings.preferencesUrl,
