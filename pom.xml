@@ -106,6 +106,13 @@
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
+        <pluginRepository>            
+            <id>apache-snapshots</id>
+            <name>Apache Snapshots</name>
+            <url>http://repository.apache.org/snapshots</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </pluginRepository>
     </pluginRepositories>
 
 
@@ -1079,7 +1086,7 @@
                 <plugin>
                     <groupId>org.jasig.portal</groupId>
                     <artifactId>maven-uportal-plugin</artifactId>
-                    <version>1.0.1</version>
+                    <version>1.0.0-M3</version>
                 </plugin>
             </plugins>
         </pluginManagement>
