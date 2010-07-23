@@ -26,16 +26,15 @@
 
     <parent>
         <groupId>org.jasig.portal</groupId>
-        <artifactId>uportal-parent</artifactId>
+        <artifactId>bootstrap</artifactId>
         <version>3.2.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-ant-tasks-bootstrap</artifactId>
     <packaging>jar</packaging>
 
-    <name>uPortal 3 - Ant Tasks Dependencies</name>
+    <name>Bootstrap - Ant Tasks Dependencies</name>
 
     <dependencies>
         <dependency>

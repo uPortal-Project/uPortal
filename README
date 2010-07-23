@@ -11,8 +11,8 @@ JDK 1.6 - Just a JRE is not sufficent, a full JDK is required
 Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration
     changes that must be made for Tomcat 6.0 which are documented in the uPortal
     manual. http://jasig.org/wiki/display/UPM31/01+Tomcat
-Maven 2.0.8 or later
-Ant 1.7.1 or later
+Maven 2.2.1 or later
+Ant 1.7.1
     
     
 +------------------------------------------------------------------------------+
@@ -22,7 +22,7 @@ uPortal uses Maven for its project configuration and build system. An Ant
 build.xml is also provided which handles the initialization and deployment
 related tasks. As a uPortal deployer you will likely only ever need to use the
 Ant tasks. Note that Ant 1.7.0 has a SERIOUS bug and will NOT work with uPortal,
-use Ant 1.7.1 or 1.6.5 instead.
+use Ant 1.7.1.
 
 Ant tasks:
     hsql - Starts a HSQL database instance. The default uPortal configuration
@@ -99,7 +99,3 @@ approach (log via XML to a ChainSaw instance, say).
 Database configuration
 --------------------------------------
 Database configuration is configured in /uportal-impl/src/main/resources/properties/rdbm.properties. 
-
-
-
-This README is Copyright Java Architectures Special Interest Group, 2005-2007, and is licensed for your use as per ./license.txt.

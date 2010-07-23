@@ -201,6 +201,7 @@
         <module>uportal-war</module>
         <module>uportal-ear</module>
         <module>uportal-portlets-overlay</module>
+        <module>bootstrap</module>
     </modules>
 
     <dependencyManagement>
