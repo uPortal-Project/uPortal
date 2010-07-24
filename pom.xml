@@ -53,20 +53,6 @@
     </ciManagement>
 
     <repositories>
-        <repository>            
-            <id>sonatype-nexus-releases</id>
-            <name>Sonatype Nexus Releases</name>
-            <url>http://oss.sonatype.org/content/repositories/releases</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-        <repository>
-            <id>maven2-repository.dev.java.net</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
         <repository>
             <id>jasig-3rd-party</id>
             <name>Jasig 3rd Party Repository</name>
@@ -74,14 +60,6 @@
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
-        <repository>
-            <id>jasig-m2</id>
-            <name>Jasig Maven2 Repository</name>
-            <url>http://developer.jasig.org/repo/content/repositories/m2</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-
         <repository>            
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
@@ -90,16 +68,6 @@
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>sonatype-nexus-releases</id>
-            <name>Sonatype Nexus Releases</name>
-            <url>http://oss.sonatype.org/content/repositories/releases</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </pluginRepository>
-    </pluginRepositories>
 
 
     <properties>
@@ -175,7 +143,7 @@
         <portlet-api.version>1.0</portlet-api.version>
         <quartz.version>1.6.1</quartz.version>
         <resource-server.version>1.0.10</resource-server.version>
-        <rome.version>1.0</rome.version>
+        <rome.version>0.9</rome.version>
         <servlet-api.version>2.5</servlet-api.version>
         <slf4j.version>1.6.1</slf4j.version>
         <spring-framework.version>2.5.6</spring-framework.version>
