@@ -1058,8 +1058,10 @@
                     <links>
                         <link>http://java.sun.com/javase/6/docs/api/</link>
                         <link>http://java.sun.com/javaee/5/docs/api/</link>
-                        <link>http://portals.apache.org/pluto/portlet-1.0-apidocs/</link>
-                        <link>http://static.springsource.org/spring/docs/2.5.x/api/</link>
+                        <link>http://portals.apache.org/pluto/portlet-2.0-apidocs/</link>
+                        <link>http://portals.apache.org/pluto/pluto-container/apidocs/</link>
+                        <link>http://portals.apache.org/pluto/pluto-descriptor-api/apidocs/</link>
+                        <link>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</link>
                         <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>
                         <link>http://developer.jasig.org/projects/person-directory/1.5.0-RC2/apidocs/</link>
                     </links>
