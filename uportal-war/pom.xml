@@ -219,7 +219,7 @@
             </activation>
             
             <properties>
-                <war-plugin-webxml-source>${pom.basedir}/target/jspweb.xml</war-plugin-webxml-source>
+                <war-plugin-webxml-source>${project.basedir}/target/jspweb.xml</war-plugin-webxml-source>
             </properties>
             
             <build>

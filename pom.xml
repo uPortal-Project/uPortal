@@ -569,7 +569,7 @@
             <dependency>
                 <groupId>org.jasig.portal</groupId>
                 <artifactId>uportal-impl</artifactId>
-                <version>${pom.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.resourceserver</groupId>
