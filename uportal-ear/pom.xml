@@ -83,7 +83,7 @@
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>SimpleContentPortlet</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
