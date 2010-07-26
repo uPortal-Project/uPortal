@@ -25,6 +25,7 @@
         <module>jasig-widget-portlets</module>
         <module>pluto-testsuite</module>
         <module>RssPortlet</module>
+        <module>SimpleContentPortlet</module>
         <module>WeatherPortlet</module>
         <module>WebProxyPortlet</module>
     </modules>
