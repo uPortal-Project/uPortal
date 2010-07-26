@@ -98,4 +98,4 @@ approach (log via XML to a ChainSaw instance, say).
 
 Database configuration
 --------------------------------------
-Database configuration is configured in /uportal-impl/src/main/resources/properties/rdbm.properties. 
+Database configuration is configured in /uportal-war/src/main/resources/properties/rdbm.properties. 

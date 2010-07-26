@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="uportal-impl/target/classes" path="uportal-impl/src/main/java"/>
-	<classpathentry excluding="**" kind="src" output="uportal-impl/target/classes" path="uportal-impl/src/main/resources"/>
-	<classpathentry kind="src" output="uportal-impl/target/test-classes" path="uportal-impl/src/test/java"/>
-	<classpathentry excluding="**" kind="src" output="uportal-impl/target/test-classes" path="uportal-impl/src/test/resources"/>
+	<classpathentry kind="src" output="uportal-war/target/classes" path="uportal-war/src/main/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-war/target/classes" path="uportal-war/src/main/resources"/>
+	<classpathentry kind="src" output="uportal-war/target/test-classes" path="uportal-war/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="uportal-war/target/test-classes" path="uportal-war/src/test/resources"/>
 	<classpathentry excluding="**" kind="src" output="uportal-portlets-overlay/BookmarksPortlet/target/classes" path="uportal-portlets-overlay/BookmarksPortlet/src/main/resources"/>
 	<classpathentry kind="src" output="uportal-portlets-overlay/cas/target/classes" path="uportal-portlets-overlay/cas/src/main/java"/>
 	<classpathentry excluding="**" kind="src" output="uportal-portlets-overlay/cas/target/classes" path="uportal-portlets-overlay/cas/src/main/resources"/>

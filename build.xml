@@ -105,7 +105,6 @@
      | Properties that describe the maven project
      +-->
     <property name="bootstrap.dir" value="${basedir}/bootstrap" />
-    <property name="uportal-impl.dir" value="${basedir}/uportal-impl" />
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
     <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
     <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
@@ -144,11 +143,11 @@
     </target>
     
     <target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
-        <uportal-impl-macro>
-            <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DataSourceSchemaExportRunner">
+        <uportal-war-macro>
+            <java fork="true" failonerror="true" dir="${uportal-war.dir}" classname="org.jasig.portal.tools.dbloader.DataSourceSchemaExportRunner">
                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                 
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
 
                 <arg value="-b" />
                 <arg value="portalDbHibernateExport" />
@@ -156,15 +155,15 @@
                 <arg value="-d" />
                 <arg value="-c" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
     
     <target name="db-hibernate-stats" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for the database backed portal statistics">
-        <uportal-impl-macro>
-            <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DataSourceSchemaExportRunner">
+        <uportal-war-macro>
+            <java fork="true" failonerror="true" dir="${uportal-war.dir}" classname="org.jasig.portal.tools.dbloader.DataSourceSchemaExportRunner">
                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                 
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
 
                 <arg value="-b" />
                 <arg value="statsDbHibernateExport" />
@@ -173,11 +172,11 @@
                 <arg value="-c" />
                 <arg value="-i" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="db" depends="prodPrompt" description="Loads database tables and data">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <property name="usetable" value="-t" />
             <property name="tablefile" value="/properties/db/tables.xml" />
             <property name="usedata" value="-d" />
@@ -188,10 +187,10 @@
             <property name="populatetables" value="-P" />
 
             <echo message="Invoking DbLoader" />
-            <java fork="true" failonerror="true" dir="${uportal-impl.dir}" classname="org.jasig.portal.tools.dbloader.DbLoaderRunner">
+            <java fork="true" failonerror="true" dir="${uportal-war.dir}" classname="org.jasig.portal.tools.dbloader.DbLoaderRunner">
                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                 
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
 
                 <arg value="${usetable}" />
                 <arg value="${tablefile}" />
@@ -202,7 +201,7 @@
                 <arg value="${createtables}" />
                 <arg value="${populatetables}" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="i18n-db" depends="prodPrompt" description="Loads internationalization tables and data">
@@ -221,11 +220,11 @@
     <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
         <echo message="Importing data" />
         <antcall target="crn-import">
-            <param name="dir" value="${basedir}/uportal-impl/src/main/data/required_entities" />
+            <param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
             <param name="noprompt" value="true" />
         </antcall>
     	<!-- Use build.properties to override the entities.location setting -->
-    	<property name="entities.location" value="uportal-impl/src/main/data/default_entities" />
+    	<property name="entities.location" value="uportal-war/src/main/data/default_entities" />
         <antcall target="crn-import">
             <param name="dir" value="${basedir}/${entities.location}" />
             <param name="noprompt" value="true" />
@@ -233,18 +232,18 @@
     </target>
 
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <echo message="Invoking DbTest" />
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                                 
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="regchantype" depends="prodPrompt" description="Registers a new channel type">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <property name="class" value=" " />
             <property name="name" value=" " />
             <property name="description" value=" " />
@@ -252,18 +251,18 @@
 
             <echo message="Invoking RegisterChannelType" />
             <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
 
                 <arg value="${class}" />
                 <arg value="${name}" />
                 <arg value="${description}" />
                 <arg value="${uri}" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
     
     <target name="crn-export" description="Exports the specified entity or entities to XML on the file system">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <!-- Three properties control the export:  dir, type, and sysid -->
             <fail unless="type">
                 You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  all, layout,
@@ -277,17 +276,17 @@
             <!-- Invoke Cernunnos specifying script and parameters -->
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
                 <arg value="classpath://org/jasig/portal/io/export.crn" />
                 <arg value="${dir}" />
                 <arg value="${type}" />
                 <arg value="${sysid}" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="crn-import" depends="prodPrompt" description="Imports the specified XML file or files">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <!-- Two properties control the import:  dir and pattern -->
             <property name="dir" value="." />
             <property name="pattern" value="org.jasig.portal.FilePatternPhrase.USE_DEFAULT_VALUE"/>
@@ -296,17 +295,17 @@
             <!-- Invoke Cernunnos specifying script and parameters -->
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
                 <arg value="classpath://org/jasig/portal/io/import.crn" />
                 <arg value="${dir}" />
                 <arg value="${pattern}" />
                 <arg value="${noprompt}" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="crn-delete" depends="prodPrompt" description="Deletes the specified entity">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <fail unless="type">
                 You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  layout, channel,
                 group, user.
@@ -319,23 +318,23 @@
 
             <!-- Invoke Cernunnos specifying script and parameters -->
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
                 <arg value="classpath://org/jasig/portal/io/delete.crn" />
                 <arg value="${type}" />
                 <arg value="${sysid}" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="crn-make-data-xml" description="Runs the DbUnload tool against all tables listed in data.xml">
-        <uportal-impl-macro>
+        <uportal-war-macro>
 
             <!-- Invoke Cernunnos specifying script and parameters -->
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
                 <arg value="classpath://org/jasig/portal/tools/dbloader/dbunload.crn" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
     
     <target name="clean-shared" depends="checkForTomcat" description="Removes the ALL shared libraries from the container.">
@@ -350,7 +349,7 @@
     <target name="clean-tomcat" depends="checkForTomcat" description="Removes the deployed uPortal from the container">
         <uportal-parent-macro>
             <!-- Clean out uPortal from Tomcat -->
-            <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" settingsFile="${maven.settings}"/>
+            <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
             <property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
             <echo>Deleting '${destDir}'</echo>
             <delete dir="${destDir}" />
@@ -432,7 +431,7 @@
 
         <uportal-parent-macro>
             <artifact:dependencies pathid="pluto-ant" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/pluto-assembler/pom.xml" settingsFile="${maven.settings}" />
+                <artifact:pom file="${bootstrap.dir}/pluto-assembler/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
             </artifact:dependencies>
     
             <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
@@ -453,51 +452,51 @@
 
 
     <target name="md5passwd" depends="prodPrompt" description="Creates a user in the UP_PERSON_DIR table">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <property name="username" value=" " />
 
             <echo message="Invoking Md5Passwd" />
             <java dir="${basedir}" classname="org.jasig.portal.security.Md5Passwd">
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
 
                 <arg value="-c" />
                 <arg value="${username}" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="deluser" depends="prodPrompt" description="Delete traces of a user from the portal database">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <property name="user" value=" " />
 
             <echo message="Invoking DeleteUser" />
             <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser" fork="true">
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
 
                 <arg value="${user}" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="addstylesheet" depends="prodPrompt" description="Registers a new theme or structure">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <property name="stylesheetType" value=" " />
             <property name="stylesheetUri" value=" " />
             <property name="descriptionUri" value=" " />
 
             <echo message="Invoking RegisterStylesheet (add)" />
             <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
 
                 <arg value="${stylesheetType}" />
                 <arg value="${stylesheetUri}" />
                 <arg value="${descriptionUri}" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="modstylesheet" depends="prodPrompt" description="Modifies an existing theme or structure">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <property name="stylesheetType" value=" " />
             <property name="stylesheetUri" value=" " />
             <property name="descriptionUri" value=" " />
@@ -505,7 +504,7 @@
 
             <echo message="Invoking RegisterStylesheet (modify)" />
             <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
 
                 <arg value="${stylesheetType}" />
                 <arg value="-u" />
@@ -513,23 +512,23 @@
                 <arg value="${descriptionUri}" />
                 <arg value="${stylesheetId}" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="delstylesheet" depends="prodPrompt" description="Deletes an existing theme or structure">
-        <uportal-impl-macro>
+        <uportal-war-macro>
             <property name="stylesheetType" value=" " />
             <property name="stylesheetId" value=" " />
 
             <echo message="Invoking RegisterStylesheet (delete)" />
             <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-impl-full.classpath" />
+                <classpath refid="uportal-war-full.classpath" />
 
                 <arg value="${stylesheetType}" />
                 <arg value="-d" />
                 <arg value="${stylesheetId}" />
             </java>
-        </uportal-impl-macro>
+        </uportal-war-macro>
     </target>
 
     <target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
@@ -542,7 +541,7 @@
             
         <uportal-parent-macro>
             <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" />
+                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
             </artifact:dependencies>
     
             <property name="database" value="${basedir}/data/uP3_uPortal" />
@@ -564,7 +563,7 @@
     <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
         <uportal-parent-macro>
             <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" />
+                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
             </artifact:dependencies>
     
             <echo message="Stopping HSQL" />
@@ -784,7 +783,7 @@
     </macrodef>
     
     <target name="install-parent-pom">
-        <artifact:pom file="${basedir}/pom.xml" id="uportal-parent.pom" settingsFile="${maven.settings}" />
+        <artifact:pom file="${basedir}/pom.xml" id="uportal-parent.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
         <artifact:install file="${basedir}/pom.xml" pomrefid="uportal-parent.pom" settingsFile="${maven.settings}" />
     </target>
     
@@ -810,9 +809,9 @@
             <!--
              | Load the pom & classpath
              +-->
-            <artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" settingsFile="${maven.settings}" />
+            <artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
             <artifact:dependencies pathid="@{project-name}.classpath" settingsFile="${maven.settings}">
-                <artifact:pom refid="@{project-name}.pom" settingsFile="${maven.settings}" />
+                <artifact:pom refid="@{project-name}.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
             </artifact:dependencies>
 
             <!--
@@ -883,49 +882,13 @@
             <sub-tasks />
         </sequential>
     </macrodef>
-
-    <!--
-     | Provides a wrapper for tasks that need a classpath that includes the uPortal source
-     | and all of its dependencies. The task also ensures the uportal-impl JAR exists and
-     | is up to date.
-     |
-     | The following are available in the impl-sub-tasks element:
-     | pom object   - uportal-impl.pom                      - The Maven POM object for the uportal-impl pom
-     | property     - uportal-impl.artifact                 - The full path to the uportal-impl JAR
-     | path         - uportal-impl.classpath                - The uportal-impl classpath not including the uportal-impl JAR
-     | path         - uportal-impl-full.classpath           - The uportal-impl classpath including the uportal-impl JAR
-     +-->
-    <macrodef name="uportal-impl-macro">
-        <element name="impl-sub-tasks" optional="false" implicit="true" />
-
-        <sequential>
-            <uportal-parent-macro>
-                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
-                
-                <maven-artifact-macro project-name="uportal-impl" project-path="${uportal-impl.dir}" checkfilesid="uportal-parent.pom.fsid">
-                    <!--
-                     | Include the uportal-impl JAR in the final classpath
-                     +-->
-                    <path id="uportal-impl-full.classpath">
-                        <path refid="uportal-impl.classpath" />
-                        <pathelement location="${uportal-impl.artifact}" />
-                    </path>
     
-                    <!--
-                     | Execute the impl-sub-tasks
-                     +-->
-                    <impl-sub-tasks />
-                </maven-artifact-macro>
-            </uportal-parent-macro>
-        </sequential>
-    </macrodef>
-
     <!--
      | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
      | dependencies. The task also ensures the uportal-war WAR exists and is up to date.
      |
      | The following are available in the war-sub-tasks element:
-     | properties from the uportal-impl-macro macrodef
+     | properties from the uportal-parent-macro macrodef
      | pom object   - uportal-war.pom                       - The Maven POM object for the uportal-war pom
      | property     - uportal-war.artifact                  - The full path to the uportal-war WAR
      | path         - uportal-war.classpath                 - The uportal-war classpath not including the uportal-war WAR
@@ -934,15 +897,28 @@
         <element name="war-sub-tasks" optional="false" implicit="true" />
 
         <sequential>
-            <uportal-impl-macro>
-                <fileset id="uportal-impl-artifacts" file="${uportal-impl.artifact}" />
-                <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-impl-artifacts">
+            <uportal-parent-macro>
+                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+                
+                <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
+                    <artifact:dependencies pathid="uportal-war-classes.classpath" settingsFile="${maven.settings}">
+                        <artifact:dependency groupId="${uportal-war.pom.groupId}" artifactId="${uportal-war.pom.artifactId}" version="${uportal-war.pom.version}" classifier="classes" scope="provided" />
+                    </artifact:dependencies>
+                            
+                    <!--
+                     | Include the uportal-war-classes JAR in the final classpath
+                     +-->
+                    <path id="uportal-war-full.classpath">
+                        <path refid="uportal-war-classes.classpath" />
+                        <path refid="uportal-war.classpath" />
+                    </path>
+
                     <!--
                      | Execute the war-sub-tasks
                      +-->
                     <war-sub-tasks />
                 </maven-artifact-macro>
-            </uportal-impl-macro>
+            </uportal-parent-macro>
         </sequential>
     </macrodef>
 
@@ -959,7 +935,7 @@
                 <!--
                  | Install the overlay parent project pom
                  +-->
-                <artifact:pom file="${uportal-portlets-overlay.dir}/pom.xml" id="uportal-portlets-overlay.pom" settingsFile="${maven.settings}" />
+                <artifact:pom file="${uportal-portlets-overlay.dir}/pom.xml" id="uportal-portlets-overlay.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
                 <artifact:install file="${uportal-portlets-overlay.dir}/pom.xml" pomrefid="uportal-portlets-overlay.pom" settingsFile="${maven.settings}" />
                 
                 <fileset id="uportal-portlets-overlay.pom.fsid" dir="${basedir}">

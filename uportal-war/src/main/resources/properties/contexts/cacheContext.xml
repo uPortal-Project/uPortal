@@ -27,7 +27,7 @@
 
     
     <!-- 
-     | The per-cache settings are configured in /uportal-impl/src/main/resources/properties/ehcache.xml
+     | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml
      | This file is specified by the cacheManager bean at the bottom of this document
      +-->
 	
