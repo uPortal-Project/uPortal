@@ -30,7 +30,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.jndi.IJndiManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
@@ -38,9 +37,7 @@ import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.spring.locator.JndiManagerLocator;
 import org.jasig.portal.utils.PropsMatcher;
-import org.w3c.dom.Document;
 
 
 /**
@@ -196,19 +193,6 @@ public class UserPreferencesManager implements IUserPreferencesManager {
 
                 if (completeUserPreferences != null) {
                     session.setAttribute(USER_PREFERENCES_KEY, completeUserPreferences);
-                }
-
-                try {
-                    final IJndiManager jndiManager = JndiManagerLocator.getJndiManager();
-                    
-                    // Initialize the JNDI context for this user
-                    final String userId = Integer.toString(this.person.getID());
-                    final String layoutId = Integer.toString(userProfile.getLayoutId());
-                    final Document userLayoutDom = userLayoutManager.getUserLayoutDOM();
-                    jndiManager.initializeSessionContext(session, userId, layoutId, userLayoutDom);
-                }
-                catch(PortalException ipe) {
-                  logger.error( "UserPreferencesManager(): Could not properly initialize user context", ipe);
                 }
             }
             else {

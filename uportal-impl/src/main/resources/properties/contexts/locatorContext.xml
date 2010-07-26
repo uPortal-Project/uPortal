@@ -39,16 +39,6 @@
      | They exist to support legacy code that is not managed by spring
      +-->
     
-    <bean id="org.jasig.portal.spring.locator.JndiManagerLocator"
-            class="org.jasig.portal.spring.locator.JndiManagerLocator">
-        <constructor-arg index="0" ref="jndiManager" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.ChannelRequestParameterManagerLocator"
-            class="org.jasig.portal.spring.locator.ChannelRequestParameterManagerLocator">
-        <constructor-arg index="0" ref="channelRequestParameterManager" />
-    </bean>
-    
     <bean id="org.jasig.portal.spring.locator.ChannelRegistryStoreLocator"
             class="org.jasig.portal.spring.locator.ChannelRegistryStoreLocator">
         <constructor-arg index="0" ref="channelRegistryStore" />
