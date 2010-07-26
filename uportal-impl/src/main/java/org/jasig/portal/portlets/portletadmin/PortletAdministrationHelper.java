@@ -59,7 +59,6 @@ import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelPublishingService;
 import org.jasig.portal.channel.IChannelType;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -647,8 +646,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		    
 	    form.setTitle(portletDD.getPortletName());
 		form.setName(portletDD.getPortletName());
-		form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID, new Attribute(application));
-		form.getParameters().put(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME, new Attribute(portletDD.getPortletName()));
+		form.getParameters().put(IPortletRenderer.CHANNEL_PARAM__PORTLET_APPLICATION_ID, new Attribute(application));
+		form.getParameters().put(IPortletRenderer.CHANNEL_PARAM__PORTLET_NAME, new Attribute(portletDD.getPortletName()));
 		for (Supports supports : portletDD.getSupports()) {
 			for (String mode : supports.getPortletModes()) {
 				if ("edit".equals(mode)) {
@@ -737,9 +736,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	protected Tuple<String, String> getPortletDescriptorKeys(ChannelDefinitionForm form) {
 	    final Map<String, Attribute> parameters = form.getParameters();
 	    
-	    final Attribute frameworkPortletAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
-        final Attribute portletAppIdAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
-        final Attribute portletNameAttribute = parameters.get(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
+	    final Attribute frameworkPortletAttribute = parameters.get(IPortletRenderer.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
+        final Attribute portletAppIdAttribute = parameters.get(IPortletRenderer.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+        final Attribute portletNameAttribute = parameters.get(IPortletRenderer.CHANNEL_PARAM__PORTLET_NAME);
         if ((portletAppIdAttribute == null && frameworkPortletAttribute == null) || portletNameAttribute == null) {
             return null;
         }

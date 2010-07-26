@@ -56,8 +56,6 @@ public class UserInstance implements IUserInstance {
 
     // manages layout and preferences
     private final IUserPreferencesManager preferencesManager;
-    // manages channel instances and channel rendering
-    private final ChannelManager channelManager;
     // manages locale
     private final LocaleManager localeManager;
 
@@ -82,11 +80,9 @@ public class UserInstance implements IUserInstance {
 
         //Initialize the ChannelManager
         final HttpSession session = request.getSession(false);
-        this.channelManager = new ChannelManager(this.preferencesManager, session);
         
         //Register the channel manager as a layout event listener
         final IUserLayoutManager userLayoutManager = this.preferencesManager.getUserLayoutManager();
-        userLayoutManager.addLayoutEventListener(this.channelManager);
         
         //Create the rendering lock for the user
         this.renderingLock = new Object();
@@ -114,13 +110,6 @@ public class UserInstance implements IUserInstance {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.IUserInstance#getChannelManager()
-     */
-    public ChannelManager getChannelManager() {
-        return this.channelManager;
-    }
-
-    /* (non-Javadoc)
      * @see org.jasig.portal.IUserInstance#getLocaleManager()
      */
     public LocaleManager getLocaleManager() {
@@ -141,15 +130,6 @@ public class UserInstance implements IUserInstance {
      * @see org.jasig.portal.user.IUserInstance#destroySession(javax.servlet.http.HttpSession)
      */
     public void destroySession(HttpSession session) {
-        if (this.channelManager != null) {
-            this.channelManager.finishedSession(session);
-            
-            if (this.preferencesManager != null) {
-                final IUserLayoutManager userLayoutManager = this.preferencesManager.getUserLayoutManager();
-                userLayoutManager.removeLayoutEventListener(this.channelManager);
-            }
-        }
-        
         if (this.preferencesManager != null) {
             this.preferencesManager.finishedSession(session);
         }

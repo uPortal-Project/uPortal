@@ -21,7 +21,6 @@ package org.jasig.portal.user;
 
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.ChannelManager;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
@@ -42,11 +41,6 @@ public interface IUserInstance {
      * @return The user preferences manager for the user instance
      */
     public IUserPreferencesManager getPreferencesManager();
-
-    /**
-     * @return the channelManager for the user instance
-     */
-    public ChannelManager getChannelManager();
 
     /**
      * @return the localeManager for the user instance

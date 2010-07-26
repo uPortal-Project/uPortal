@@ -480,11 +480,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
      * @return The session for the current request, will not return null.
      */
     protected HttpSession getSession(HttpServletRequest request) {
-        final HttpSession session = request.getSession(false);
-        if (session == null) {
-            throw new IllegalStateException("A HttpSession must already exist for the PortletWindowRegistryImpl to function");
-        }
-        return session;
+        return request.getSession();
     }
     
     @SuppressWarnings("unchecked")

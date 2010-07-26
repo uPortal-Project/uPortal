@@ -33,7 +33,6 @@ import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -55,7 +54,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     String title=null;
     String description=null;
     String className=null;
-    Class channelClass=null;
     String channelPublishId=null;
     String channelTypeId=null;
     String functionalName=null;
@@ -253,12 +251,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * @return the channel type for portlet / not portlet
      */
     public boolean isPortlet() {
-        /*
-         * We believe we are a portlet if the channel class implements 
-         * IPortletAdaptor.
-         */
-
-        return this.channelClass != null && IPortletAdaptor.class.isAssignableFrom(this.channelClass);
+        return true;
     }
 
     /**
@@ -339,16 +332,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      */
     public void setClassName(String  v) {
         this.className = v;
-
-        //Don't bother with a className that is null, empty or just spaces.
-        if (!StringUtils.isBlank(this.className)) {
-            try {
-                this.channelClass = Class.forName(this.className);
-            }
-            catch (ClassNotFoundException e) {
-                log.error("Unable to load class for name '" + this.className + "' for channel with pubId='" + this.channelPublishId + "', fname='" + this.functionalName + "'.", e);
-            }
-        }
     }
 
     /**

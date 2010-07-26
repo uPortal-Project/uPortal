@@ -71,7 +71,6 @@ import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.XmlGeneratingBaseChannelDefinition;
-import org.jasig.portal.channels.error.ErrorCode;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
@@ -2269,10 +2268,11 @@ public class RDBMDistributedLayoutStore
         if (channelDef != null) {
             missingChannel = channelDef.getName();
         }
-        structure = MissingChannelDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId(),
-                "The '" + missingChannel + "' channel is no longer available. " +
-                "Please remove it from your layout.",
-                ErrorCode.CHANNEL_MISSING_EXCEPTION.getCode());
+        structure = MissingChannelDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId());
+//        structure = MissingChannelDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId(),
+//                "The '" + missingChannel + "' channel is no longer available. " +
+//                "Please remove it from your layout.",
+//                -1);
     }
   } else
         {

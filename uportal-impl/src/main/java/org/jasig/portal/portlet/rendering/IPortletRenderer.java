@@ -50,6 +50,28 @@ public interface IPortletRenderer {
 	 * dynamically sets under.
 	 */
 	public static final String ATTRIBUTE__PORTLET_TITLE = IPortletRenderer.class.getName() + ".PORTLET_TITLE";
+	
+    /**
+     * Name of the {@link org.jasig.portal.ChannelDefinition} parameter used to determine
+     * if the portlet application ID should be set to the context path of the portal.
+     */
+    public static final String CHANNEL_PARAM__IS_FRAMEWORK_PORTLET = "isFrameworkPortlet";
+
+    /**
+     * Name of the {@link org.jasig.portal.ChannelDefinition} parameter the name of the
+     * {@link org.apache.pluto.descriptors.portlet.PortletAppDD} is defined in.
+     * 
+     * @see org.apache.pluto.spi.optional.PortletRegistryService#getPortletApplicationDescriptor(String)
+     */
+    public static final String CHANNEL_PARAM__PORTLET_APPLICATION_ID = "portletApplicationId";
+
+    /**
+     * Name of the {@link org.jasig.portal.ChannelDefinition} parameter the name of the
+     * {@link org.apache.pluto.descriptors.portlet.PortletDD} is defined in.
+     * 
+     * @see org.apache.pluto.descriptors.portlet.PortletAppDD#getPortlets()
+     */
+    public static final String CHANNEL_PARAM__PORTLET_NAME = "portletName";
 
 	/**
      * Initializes the portlet within the portlet container

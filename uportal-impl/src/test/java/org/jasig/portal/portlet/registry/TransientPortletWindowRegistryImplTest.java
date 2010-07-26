@@ -64,7 +64,7 @@ public class TransientPortletWindowRegistryImplTest extends TestCase {
         portletWindowMap.put(sourcePortletWindowId, sourcePortletWindow);
         
         EasyMock.expect(sourcePortletWindowId.getStringId()).andReturn("pwid1");
-        EasyMock.expect(request.getSession(false)).andReturn(session);
+        EasyMock.expect(request.getSession()).andReturn(session);
         EasyMock.expect(session.getAttribute(WebUtils.SESSION_MUTEX_ATTRIBUTE)).andReturn(session);
         EasyMock.expect(session.getAttribute(PortletWindowRegistryImpl.PORTLET_WINDOW_MAP_ATTRIBUTE)).andReturn(portletWindowMap);
         EasyMock.expect(sourcePortletWindow.getPortletEntityId()).andReturn(portletEntityId);

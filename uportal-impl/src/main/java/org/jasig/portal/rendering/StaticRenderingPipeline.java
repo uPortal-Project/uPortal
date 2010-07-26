@@ -33,7 +33,6 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -46,14 +45,11 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.CacheEntry;
 import org.jasig.portal.CacheType;
 import org.jasig.portal.ChannelContentCacheEntry;
-import org.jasig.portal.ChannelManager;
 import org.jasig.portal.ChannelRenderingBuffer;
 import org.jasig.portal.ChannelSAXStreamFilter;
 import org.jasig.portal.CharacterCachingChannelIncorporationFilter;
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.IWorkerRequestProcessor;
 import org.jasig.portal.MediaManager;
-import org.jasig.portal.PortalControlStructures;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.StructureStylesheetDescription;
@@ -64,7 +60,6 @@ import org.jasig.portal.UPFileSpec;
 import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.car.CarResources;
 import org.jasig.portal.events.support.PageRenderTimePortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.io.ChannelTitleIncorporationWiterFilter;
@@ -76,7 +71,6 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.serialize.CachingSerializer;
@@ -184,7 +178,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     
     private IPortletWindowRegistry portletWindowRegistry;
     private ApplicationEventPublisher applicationEventPublisher;
-    private CarResources carResources;
     private ResourcesDao resourcesDao;
     private PortletExecutionManager portletExecutionManager;
     private IPortalUrlProvider portalUrlProvider;
@@ -197,13 +190,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         this.portletWindowRegistry = portletWindowRegistry;
     }
     
-    /**
-     * @param carResources the carResources to set
-     */
-    @Autowired
-    public void setCarResources(CarResources carResources) {
-        this.carResources = carResources;
-    }
 	/**
 	 * @param resourcesDao the resourcesDao to set
 	 */
@@ -234,7 +220,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        this.carResources.getWorkers(workerProperties);        
     }
     
     /* (non-Javadoc)
@@ -797,78 +782,6 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
         }
         
         return null;
-    }
-
-
-    /**
-     * A method will determine if current request is a worker dispatch, and if so process it appropriately
-     * 
-     * @return true if a worker was successfully dispatched to, false if no worker dispatch was requested.
-     * @exception PortalException if an error occurs while dispatching
-     */
-    protected boolean processWorkerDispatchIfNecessary(HttpServletRequest req, HttpServletResponse res, IUserPreferencesManager uPreferencesManager, ChannelManager cm) throws PortalException {
-        final HttpSession session = req.getSession(false);
-        if (session == null) {
-            return false;
-        }
-
-        // determine uPFile
-        final UPFileSpec upfs;
-        try {
-            upfs = new UPFileSpec(req);
-        }
-        catch (IndexOutOfBoundsException iobe) {
-            // ill-constructed URL
-            return false;
-        }
-        
-        // is this a worker method ?
-        if (UPFileSpec.WORKER_URL_ELEMENT.equals(upfs.getMethod())) {
-            // this is a worker dispatch, process it
-            // determine worker type
-
-            final String workerName = upfs.getMethodNodeId();
-            if (workerName == null) {
-                throw new PortalException("Unable to determine worker type for name '" + workerName + "', uPFile='" + upfs.getUPFile() + "'.");
-            }
-            
-            final String dispatchClassName = workerProperties.getProperty(workerName);
-            if (dispatchClassName == null) {
-                throw new PortalException("Unable to find processing class for the worker type '" + workerName + "'. Please check worker.properties");
-            }
-            
-            // try to instantiate a worker class
-            try {
-                final ClassLoader carClassLoader = this.carResources.getClassLoader();
-                final Class<? extends IWorkerRequestProcessor> dispatcherClass = (Class<IWorkerRequestProcessor>)carClassLoader.loadClass(dispatchClassName);
-                final IWorkerRequestProcessor wrp = dispatcherClass.newInstance();
-
-                // invoke processor
-                try {
-                    final PortalControlStructures portalControlStructures = new PortalControlStructures(req, res, cm, uPreferencesManager);
-                    wrp.processWorkerDispatch(portalControlStructures);
-                }
-                catch (PortalException pe) {
-                    throw pe;
-                }
-                catch (RuntimeException re) {
-                    throw new PortalException(re);
-                }
-            }
-            catch (ClassNotFoundException cnfe) {
-                throw new PortalException("Unable to find processing class '" + dispatchClassName + "' for the worker type '" + workerName + "'. Please check worker.properties", cnfe);
-            }
-            catch (InstantiationException ie) {
-                throw new PortalException("Unable to instantiate processing class '" + dispatchClassName + "' for the worker type '" + workerName + "'. Please check worker.properties", ie);
-            }
-            catch (IllegalAccessException iae) {
-                throw new PortalException("Unable to access processing class '" + dispatchClassName + "' for the worker type '" + workerName + "'. Please check worker.properties", iae);
-            }
-
-            return true;
-        }
-
-        return false;
     }
     
     protected String constructCacheKey(IUserPreferencesManager uPreferencesManager, String rootNodeId) throws PortalException {

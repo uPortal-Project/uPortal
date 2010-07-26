@@ -33,12 +33,12 @@ import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.dao.jpa.JpaChannelDefinitionDao;
 import org.jasig.portal.channel.dao.jpa.JpaChannelTypeDao;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.springframework.test.jpa.AbstractJpaTests;
 
 /**
@@ -96,7 +96,7 @@ public class JpaPortletDaoTest extends AbstractJpaTests {
         this.checkPoint();
         
         //Create a definition
-        final IChannelDefinition chanDef1 = this.jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname1", IPortletAdaptor.class.getName(), "Test Portlet 1", "Test Portlet 1 Title");
+        final IChannelDefinition chanDef1 = this.jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname1", IPortletRenderer.class.getName(), "Test Portlet 1", "Test Portlet 1 Title");
         final IPortletDefinition portDef1 = chanDef1.getPortletDefinition();
         this.checkPoint();
         
@@ -105,7 +105,7 @@ public class JpaPortletDaoTest extends AbstractJpaTests {
         assertEquals(portDef1, portDef1a);
         
         //Create a second definition with the same app/portlet
-        final IChannelDefinition chanDef2 = this.jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname2", IPortletAdaptor.class.getName(), "Test Portlet 2", "Test Portlet 2 Title");
+        final IChannelDefinition chanDef2 = this.jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname2", IPortletRenderer.class.getName(), "Test Portlet 2", "Test Portlet 2 Title");
         IPortletDefinition portDef2 = chanDef2.getPortletDefinition();
         this.checkPoint();
         
@@ -157,7 +157,7 @@ public class JpaPortletDaoTest extends AbstractJpaTests {
         this.checkPoint();
         
         //Create a definition
-        final IChannelDefinition chanDef1 = this.jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname1", IPortletAdaptor.class.getName(), "Test Portlet 1", "Test Portlet 1 Title");
+        final IChannelDefinition chanDef1 = this.jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname1", IPortletRenderer.class.getName(), "Test Portlet 1", "Test Portlet 1 Title");
         IPortletDefinition portDef1 = chanDef1.getPortletDefinition();
         this.checkPoint();
         

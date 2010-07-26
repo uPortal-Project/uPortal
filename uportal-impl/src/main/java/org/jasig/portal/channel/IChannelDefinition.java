@@ -219,11 +219,7 @@ public interface IChannelDefinition extends IBasicEntity {
 	 *            the parameter name
 	 */
 	public void removeParameter(String name);
-
-	@Deprecated
-	public Element getDocument(Document doc, String idTag, String statusMsg,
-			int errorId);
-
+	
 	/**
 	 * return an xml representation of this channel
 	 */

@@ -32,10 +32,10 @@ import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -205,22 +205,22 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
         
         final String portletApplicationId;
-        final IChannelParameter isFrameworkPortletParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
+        final IChannelParameter isFrameworkPortletParam = channelDefinition.getParameter(IPortletRenderer.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
         if (isFrameworkPortletParam != null && Boolean.valueOf(isFrameworkPortletParam.getValue())) {
             portletApplicationId = this.servletContext.getContextPath();
         }
         else {
-            final IChannelParameter portletApplicaitonIdParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
+            final IChannelParameter portletApplicaitonIdParam = channelDefinition.getParameter(IPortletRenderer.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
             if (portletApplicaitonIdParam == null) {
-                throw new NotAPortletException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "'. ChannelDefinition=" + channelDefinition);
+                throw new NotAPortletException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletRenderer.CHANNEL_PARAM__PORTLET_APPLICATION_ID + "'. ChannelDefinition=" + channelDefinition);
             }
             
             portletApplicationId = portletApplicaitonIdParam.getValue();
         }
         
-        final IChannelParameter portletNameParam = channelDefinition.getParameter(IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME);
+        final IChannelParameter portletNameParam = channelDefinition.getParameter(IPortletRenderer.CHANNEL_PARAM__PORTLET_NAME);
         if (portletNameParam == null) {
-            throw new NotAPortletException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletAdaptor.CHANNEL_PARAM__PORTLET_NAME + "'. ChannelDefinition=" + channelDefinition);
+            throw new NotAPortletException("The specified ChannelDefinition does not provide the needed channel parameter '" + IPortletRenderer.CHANNEL_PARAM__PORTLET_NAME + "'. ChannelDefinition=" + channelDefinition);
         }
         final String portletName = portletNameParam.getValue();
         

@@ -49,8 +49,6 @@ public class GuestUserInstance implements IUserInstance {
     
     protected final Log log = LogFactory.getLog(this.getClass());
 
-    // manages channel instances and channel rendering
-    private final ChannelManager channelManager;
     // manages locale
     private final LocaleManager localeManager;
 
@@ -82,9 +80,6 @@ public class GuestUserInstance implements IUserInstance {
         
         this.userPreferencesManager = new GuestUserPreferencesManagerWrapper(preferencesManager, sessionId);
         
-        //Initialize the ChannelManager
-        this.channelManager = new ChannelManager(this.userPreferencesManager, session);
-        
         //Create the rendering lock for the user
         this.renderingLock = new Object();
         
@@ -101,13 +96,6 @@ public class GuestUserInstance implements IUserInstance {
     
     
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.IUserInstance#getChannelManager()
-     */
-    public ChannelManager getChannelManager() {
-        return this.channelManager;
-    }
-    
     /* (non-Javadoc)
      * @see org.jasig.portal.IUserInstance#getLocaleManager()
      */
@@ -143,8 +131,6 @@ public class GuestUserInstance implements IUserInstance {
         if (log.isDebugEnabled()) {
             log.debug("unbinding session '" + session.getId() + "'");
         }
-        
-        this.channelManager.finishedSession(session);
         
         this.userPreferencesManager.finishedSession(session);
 

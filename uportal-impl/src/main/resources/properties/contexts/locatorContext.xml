@@ -89,11 +89,6 @@
         <constructor-arg index="0" ref="PortalDB.metadata" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.CarResourcesLocator" 
-            class="org.jasig.portal.spring.locator.CarResourcesLocator">
-        <constructor-arg index="0" ref="carResources" />
-    </bean>
-    
     <bean id="org.jasig.portal.spring.locator.DbLoaderLocator" 
             class="org.jasig.portal.spring.locator.DbLoaderLocator">
         <constructor-arg index="0" ref="dbLoader" />
@@ -107,11 +102,6 @@
     <bean id="org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator" 
             class="org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator">
         <!--  autowired -->
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.ThrowableToElementLocator" 
-            class="org.jasig.portal.spring.locator.ThrowableToElementLocator">
-        <constructor-arg index="0" ref="throwableToElement" />
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.ConfigurationLoaderLocator" 

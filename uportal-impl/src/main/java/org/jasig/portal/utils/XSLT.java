@@ -56,7 +56,6 @@ import org.jasig.portal.GeneralRenderingException;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.StylesheetSet;
-import org.jasig.portal.car.ResourceResolver;
 import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.spring.locator.CacheFactoryLocator;
@@ -167,7 +166,6 @@ public class XSLT {
     if (saxTFactory == null) {
       // attempt to instantiate a sax transformer factory
       TransformerFactory tFactory = TransformerFactory.newInstance();
-      tFactory.setURIResolver(new ResourceResolver());
       if (tFactory instanceof SAXTransformerFactory) {
         saxTFactory = ((SAXTransformerFactory)tFactory);
       }

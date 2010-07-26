@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.easymock.EasyMock;
-import org.jasig.portal.channels.portlet.PortletHttpServletRequestWrapper;
+import org.jasig.portal.portlet.PortletHttpServletRequestWrapper;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.mock.web.MockHttpServletRequest;

@@ -56,6 +56,4 @@ public interface FrameworkMBean {
 
   // Threads
   public long getThreadCount();
-  public long getChannelRendererActiveThreads();
-  public long getChannelRendererMaxActiveThreads();
 }

@@ -83,8 +83,6 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
 	protected final Log log = LogFactory.getLog(getClass());
 	
-    private IUserLayoutStore userLayoutStore;
-
 	private IChannelRegistryStore channelRegistryStore;
 	
 	@Autowired(required = true)
@@ -118,9 +116,8 @@ public class UpdatePreferencesServlet implements InitializingBean {
 	protected final static String ACTIVE_TAB_PARAM = "activeTab";
 
     public void afterPropertiesSet() throws Exception {
-        this.userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
     }
-
+    
 	/**
 	 * Remove an element from the layout.
 	 * 
@@ -245,6 +242,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
         // get the user layout for the currently-authenticated user
         int uid = userStore.getPortalUID(fragmentOwner, false);
+        final IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
         Document userLayout = userLayoutStore.getUserLayout(per, upm.getUserPreferences().getProfile());
 
         // attempt to find the new subscribed tab in the layout so we can
@@ -623,6 +621,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
         ThemeStylesheetUserPreferences themePrefs = upm.getUserPreferences().getThemeStylesheetUserPreferences();
         themePrefs.putParameterValue("skin",skinName);
 		try {
+		    final IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
 		    userLayoutStore.setThemeStylesheetUserPreferences(per, upm
 					.getUserPreferences().getProfile().getProfileId(), themePrefs);
 		} catch (Exception e) {
@@ -924,6 +923,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
             // This is a brute force save of the new attributes. It requires
             // access to the layout store. -SAB
+            final IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
             userLayoutStore.setStructureStylesheetUserPreferences(person, profileId,
                     ssup);
 		    

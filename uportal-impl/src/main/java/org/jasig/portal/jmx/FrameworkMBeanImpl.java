@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.jasig.portal.ChannelManager;
 import org.jasig.portal.GuestUserInstance;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.PortalSessionManager;
@@ -178,13 +177,5 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
     // Threads
     public long getThreadCount() {
         return PortalSessionManager.getThreadGroup().activeCount();
-    }
-
-    public long getChannelRendererActiveThreads() {
-        return ChannelManager.getActiveRenderers();
-    }
-
-    public long getChannelRendererMaxActiveThreads() {
-        return ChannelManager.getMaxRenderThreads();
     }
 }

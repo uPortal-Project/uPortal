@@ -25,9 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelManager;
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.PortalEvent;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
@@ -83,7 +81,6 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(request);
         
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final ChannelManager channelManager = userInstance.getChannelManager();
         
         final IPerson person = userInstance.getPerson();
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
@@ -154,27 +151,5 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         }
         
         return "none";
-    }
-
-    /**
-     * Passes the specified event to all channel IDs specified by the parameter.
-     */
-    protected void parseMultiTargetEvent(IWritableHttpServletRequest request, HttpServletResponse response, String parameterName, PortalEvent event, ChannelManager channelManager) {
-        final String[] channelIds = request.getParameterValues(parameterName);
-        if (channelIds != null) {
-            for (final String channelId : channelIds) {
-                channelManager.passPortalEvent(request, response, channelId, event);
-            }
-        }
-    }
-    
-    /**
-     * Passes the specified event to the first channel ID specified by the parameter.
-     */
-    protected void parseSingleTargetEvent(IWritableHttpServletRequest request, HttpServletResponse response, String parameterName, PortalEvent event, ChannelManager channelManager) {
-        final String channelId = request.getParameter(parameterName);
-        if (channelId != null) {
-            channelManager.passPortalEvent(request, response, channelId, event);
-        }
     }
 }

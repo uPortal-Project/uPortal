@@ -41,14 +41,7 @@
     <subtasks>
         <sql-transaction>
             <groovy>
-                <!-- 
-                 | We want to be sure that the specified Java class (i.e. ${valueOf(type)}) is 
-                 | present in the classpath.  This implementation will yield a simple stack 
-                 | trace if the test fails. 
-                 +-->
                 <script>
-                    Class.forName(CHANNEL_TYPE);
-                    
                     chanType = channelRegistryStore.getOrCreateChannelType(CHANNEL_NAME, CHANNEL_TYPE, CHANNEL_URI);
                     chanType.setJavaClass(CHANNEL_TYPE);
                     chanType.setCpdUri(CHANNEL_URI);

@@ -189,7 +189,9 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      * otherwise.
      * @return true if the described channel is a JSR-168 portlet, 
      * false otherwise
+     * @deprecated everything is a portlet now
      */
+    @Deprecated
     public boolean isPortlet();    
     
     // channel parameter methods

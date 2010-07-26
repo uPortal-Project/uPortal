@@ -11,6 +11,8 @@ import java.util.List;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xalan.extensions.XSLProcessorContext;
 import org.apache.xalan.templates.ElemExtensionCall;
 import org.apache.xalan.transformer.TransformerImpl;
@@ -28,6 +30,8 @@ import org.w3c.dom.Node;
  * @version $Revision$
  */
 public abstract class BaseUrlXalanElements<T extends IBasePortalUrl> {
+    protected final Log logger = LogFactory.getLog(this.getClass());
+    
     public static final String PORTAL_URL_PROVIDER_PARAMETER = IPortalUrlProvider.class.getName();
     public static final String CURRENT_PORTAL_URL = BaseUrlXalanElements.class.getName() + ".CURRENT_PORTAL_URL";
     public static final String CURRENT_PORTAL_REQUEST = BaseUrlXalanElements.class.getName() + ".CURRENT_PORTAL_REQUEST";
@@ -49,9 +53,10 @@ public abstract class BaseUrlXalanElements<T extends IBasePortalUrl> {
     public String url(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
         final TransformerImpl transformer = context.getTransformer();
         
+        T url = null;
         try {
             // retrieve configuration
-            final T url = this.createUrl(context, elem);
+            url = this.createUrl(context, elem);
             
             this.transform(url, transformer, elem);
             
@@ -59,11 +64,29 @@ public abstract class BaseUrlXalanElements<T extends IBasePortalUrl> {
             
             return url.getUrlString();
         }
-        catch (Throwable t) {
-            if (t instanceof NotAPortletException) {
-                return "NOT_A_PORTLET";
+        catch (NotAPortletException e) {
+            return "NOT_A_PORTLET";
+        }
+        catch (IllegalArgumentException e) {
+            if (url != null) {
+                if (this.logger.isDebugEnabled()) {
+                    this.logger.debug("Failed to create URL String for: " + url, e);
+                }
+                else {
+                    this.logger.warn("Failed to create URL String for: " + url + " - enable DEBUG for stack trace - " + e.getMessage());
+                }
             }
-            
+            else {
+                if (this.logger.isDebugEnabled()) {
+                    this.logger.debug("Failed to create URL", e);
+                }
+                else {
+                    this.logger.warn("Failed to create URL - enable DEBUG for stack trace - " + e.getMessage());
+                }
+            }
+            return "";
+        }
+        catch (Throwable t) {
             if (t instanceof TransformerException) {
                 final TransformerException te = (TransformerException)t;
                 transformer.setExceptionThrown(te);

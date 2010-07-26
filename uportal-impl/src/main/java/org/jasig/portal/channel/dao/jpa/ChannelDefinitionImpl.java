@@ -41,14 +41,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -66,7 +61,6 @@ import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channel.IChannelType;
 import org.jasig.portal.channel.XmlGeneratingBaseChannelDefinition;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
@@ -166,31 +160,6 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 	@Transient
 	private String locale; // this probably shouldn't be a channel property?
 	
-	@Transient
-	private boolean isPortlet = false;
-	
-	
-    /**
-     * Used to initialize fields after persistence actions.
-     */
-    @PostLoad
-    @PostPersist
-    @PostUpdate
-    @PostRemove
-    private void initClass() {
-        if (!StringUtils.isBlank(this.clazz)) {
-            try {
-                final Class<?> channelClazz = Class.forName(this.clazz);
-                this.isPortlet = IPortletAdaptor.class.isAssignableFrom(channelClazz);
-                return;
-            }
-            catch (ClassNotFoundException e) {
-            }
-        }
-        
-        this.isPortlet = false;
-    }
-
 	/*
 	 * Internal, for hibernate
 	 */
@@ -219,8 +188,6 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
         this.fname = fname;
         this.title = title;
         this.clazz = clazz;
-        
-        this.initClass();
     }
     
     public ChannelLifecycleState getLifecycleState() {
@@ -245,7 +212,6 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
     public void setJavaClass(String javaClass) {
         Validate.notNull(javaClass);
         this.clazz = javaClass;
-        initClass();
     }
 
     public void setName(String name) {
@@ -430,7 +396,7 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 	}
 
 	public boolean isPortlet() {
-		return isPortlet;
+		return true;
 	}
 
 	public boolean isSecure() {
@@ -602,7 +568,6 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
             .append("parameters", this.parameters)
             .append("clazz", this.clazz)
             .append("type", this.channelType)
-            .append("isPortlet", this.isPortlet)
             .append("fname", this.fname)
             .append("timeout", this.timeout)
             .append("publishDate", this.publishDate)

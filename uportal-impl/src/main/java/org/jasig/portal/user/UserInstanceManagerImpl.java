@@ -111,10 +111,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
             throw new PortalSecurityException("PersonManager returned null person for this request.  With no user, there's no UserInstance.  Is PersonManager misconfigured?  RDBMS access misconfigured?");
         }
 
-        final HttpSession session = request.getSession(false);
-        if (session == null) {
-            throw new IllegalStateException("An existing HttpSession is required while retrieving a UserInstance for a HttpServletRequest");
-        }
+        final HttpSession session = request.getSession();
 
         // Return the UserInstance object if it's in the session
         UserInstanceHolder userInstanceHolder = getUserInstanceHolder(session);

@@ -28,13 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LazyMap;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
-import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
@@ -335,15 +333,7 @@ public class ChannelDefinitionForm implements Serializable {
 	}
 
 	public boolean isPortlet() {
-		if (!StringUtils.isBlank(this.javaClass)) {
-			try {
-				final Class<?> channelClazz = Class.forName(this.javaClass);
-				return IPortletAdaptor.class.isAssignableFrom(channelClazz);
-			} catch (ClassNotFoundException e) {
-				log.info("Failed to find class " + this.javaClass + " for portlet");
-			}
-		}
-		return false;
+		return true;
 	}
 
 	public int getTimeout() {

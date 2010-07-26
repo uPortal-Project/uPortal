@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.channels.error.CError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -124,22 +123,6 @@ public abstract class XmlGeneratingBaseChannelDefinition implements IChannelDefi
                 channel.appendChild(parameter);
             }
         }
-    }
-
-    /**
-     * Display a message where this channel should be
-     * @deprecated
-     */
-    @Deprecated
-    public Element getDocument(Document doc, String idTag, String statusMsg,
-            int errorId) {
-        Element channel = getBase(doc, idTag, CError.class.getName(), false,
-                false, false);
-        addParameters(doc, channel);
-        channel.appendChild(nodeParameter(doc, "CErrorMessage", statusMsg));
-        channel.appendChild(nodeParameter(doc, "CErrorChanId", idTag));
-        channel.appendChild(nodeParameter(doc, "CErrorErrorId", errorId));
-        return channel;
     }
 
     /**

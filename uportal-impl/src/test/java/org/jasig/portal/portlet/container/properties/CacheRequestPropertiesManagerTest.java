@@ -27,10 +27,10 @@ import junit.framework.TestCase;
 
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.easymock.EasyMock;
-import org.jasig.portal.channels.portlet.PortletHttpServletRequestWrapper;
 import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindow;
+import org.jasig.portal.portlet.PortletHttpServletRequestWrapper;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
