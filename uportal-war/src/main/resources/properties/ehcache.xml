@@ -21,7 +21,7 @@
 -->
 
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://ehcache.svn.sourceforge.net/viewvc/*checkout*/ehcache/branches/ehcache-1.4.0/core/src/main/config/ehcache.xsd?revision=579">
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false">
 
     <!--
      | Please see http://ehcache.sourceforge.net/documentation/configuration.html for detailed information on
@@ -32,7 +32,7 @@
     <diskStore path="java.io.tmpdir/uPortal" />
     
     <defaultCache eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- ******************** uPortal Framework Caches ******************** -->
     
@@ -43,7 +43,7 @@
      +-->
     <cache name="org.jasig.portal.web.skin.Resources"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
      | Caches Skin Resource DocumentFragment instances, the XML chunk added to the <head>
@@ -52,7 +52,7 @@
      +-->
     <cache name="org.jasig.portal.web.skin.Resources_DocumentFragment"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches AuthorizationPrincipalImpl instances
@@ -63,7 +63,7 @@
      +-->
     <cache name="org.jasig.portal.security.provider.AuthorizationImpl.AUTH_PRINCIPAL_CACHE"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches containing group keys for a permissions target
@@ -72,7 +72,7 @@
      +-->
     <cache name="org.jasig.portal.security.provider.AuthorizationImpl.ENTITY_PARENTS_CACHE"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches parsed composite group name strings (ex: "pags.root" to "pags" & "root")
@@ -81,7 +81,7 @@
      +-->
     <cache name="org.jasig.portal.groups.CompositeEntityIdentifier.NAME_PARSE_CACHE"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches remote data for CGenericXSLT and CWebProxy
@@ -91,7 +91,7 @@
      +-->
     <cache name="org.jasig.portal.channels.CONTENT_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches layout DOM
@@ -100,7 +100,7 @@
      +-->
     <cache name="org.jasig.portal.layout.dlm.LAYOUT_CACHE"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="7200" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="7200" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
      | Caches layout node reference resolution, only used during import and export
@@ -109,7 +109,7 @@
      +-->
     <cache name="org.jasig.portal.layout.dlm.NODEREF_CACHE"
         eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="180" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="180" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
      | Caches resolved resource URLs
@@ -118,7 +118,7 @@
      +-->
     <cache name="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches failed resource URL resolution
@@ -127,7 +127,7 @@
      +-->
     <cache name="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_NOT_FOUND_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
      | Caches parsed CPD files
@@ -136,7 +136,7 @@
      +-->
     <cache name="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches IChannel output marked as system wide
@@ -145,7 +145,7 @@
      +-->
     <cache name="org.jasig.portal.ChannelRenderer.SYSTEM_WIDE_CHANNEL_CACHE"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- ******************** Per-Datasource Person Directory Caches ******************** -->
     <!-- 
@@ -156,7 +156,7 @@
      +-->
     <cache name="org.jasig.services.persondir.USER_INFO.merged"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="5" timeToLiveSeconds="10" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="5" timeToLiveSeconds="10" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
      | Caches queries against the local UP_USER table
@@ -165,7 +165,7 @@
      +-->
     <cache name="org.jasig.services.persondir.USER_INFO.up_user"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
      | Caches queries against the local UP_PERSON_DIR table
@@ -174,7 +174,7 @@
      +-->
     <cache name="org.jasig.services.persondir.USER_INFO.up_person_dir"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
 
     <!-- ******************** uPortal IBasicEntity Caches ******************** -->
@@ -186,7 +186,7 @@
      +-->
     <cache name="org.jasig.portal.groups.IEntityGroup"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches IEntity objects
@@ -195,7 +195,7 @@
      +-->
     <cache name="org.jasig.portal.groups.IEntity"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches IPermissionSet objects
@@ -204,7 +204,7 @@
      +-->
     <cache name="org.jasig.portal.security.IPermissionSet"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- ******************** Hibernate Caches ******************** -->
     
@@ -215,21 +215,21 @@
      +-->
     <cache name="org.jasig.portal.layout.dlm.Evaluator"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!--
      | Query cache for Evaluator subclass FragmentDefinition
      | - unique query, no parameters
      +-->
     <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.query.GET_ALL_FRAGMENTS"
         eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!--
      | Query cache for Evaluator subclass FragmentDefinition
      | - 1 x per DLM layout fragment
      +-->
     <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.query.FIND_FRAGMENT_BY_NAME"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
      | Caches ChannelType objects
@@ -238,21 +238,21 @@
      +-->
     <cache name="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
      | Query cache for ChannelType
      | - 1 x channel type
      +-->
     <cache name="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl.query.FIND_CHAN_TYPE_BY_NAME"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
      | Query cache for ChannelType
      | - unique query that gets all channel types
      +-->
     <cache name="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl.query.FIND_ALL_CHAN_TYPE"
         eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
      | Caches ChannelDefinition objects
@@ -261,28 +261,28 @@
      +-->
     <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
      | Query cache for ChannelDefinition
      | - unique query, no parameters
      +-->
     <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl.query.FIND_ALL_CHANNEL_DEFS"
         eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
      | Query cache for ChannelDefinition
      | - 1 x channel definition
      +-->
     <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl.query.FIND_CHANNEL_DEF_BY_FNAME"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
      | Query cache for ChannelDefinition
      | - 1 x channel definition search
      +-->
     <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl.query.FIND_CHANNEL_DEF_BY_NAME"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches PortletDefinitionImpl objects
@@ -291,7 +291,7 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
     
     <!-- 
      | Caches PortletEntityImpl objects
@@ -300,7 +300,7 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl"
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
      | Caches queries by user & subscribe ID for PortletEntityImpl objects
      | - 1 x subscribed portlet x user
@@ -308,7 +308,7 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.query.FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER"
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
      | Caches queries by portlet definition id for PortletEntityImpl objects
      | - 1 x portlet definition
@@ -316,7 +316,7 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.query.FIND_PORTLET_ENTS_BY_PORTLET_DEF"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
      | Caches queries by user id for PortletEntityImpl objects
      | - 1 x user
@@ -324,7 +324,7 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.query.FIND_PORTLET_ENTS_BY_USER_ID"
         eternal="false" maxElementsInMemory="1500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches PortletPreferencesImpl objects
@@ -334,7 +334,7 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl"
         eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches PortletPreferencesImpl's list of preference objects
@@ -344,7 +344,7 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences"
         eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches PortletPreferenceImpl
@@ -353,7 +353,7 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl"
         eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches PortletPreferenceImpl's list of values
@@ -362,7 +362,7 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values"
         eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     
     <!-- 
@@ -372,7 +372,7 @@
      +-->
     <cache name="org.hibernate.cache.UpdateTimestampsCache"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
      | Caches SQL query level results for entity queries that don't specify an explicit cache region
@@ -381,7 +381,7 @@
      +-->
     <cache name="org.hibernate.cache.StandardQueryCache"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     
     <!-- Portal Stats Hibernate Caches -->
@@ -393,7 +393,7 @@
      +-->
     <cache name="PortalStats.org.jasig.portal.events.EventType"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches stats StatsSession objects
@@ -402,7 +402,7 @@
      +-->
     <cache name="PortalStats.org.jasig.portal.events.handlers.db.StatsSession"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="7200" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="900" timeToLiveSeconds="7200" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches last updated timestamp for each hibernate managed table
@@ -411,7 +411,7 @@
      +-->
     <cache name="PortalStats.org.hibernate.cache.UpdateTimestampsCache"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
      | Caches SQL query level results for entity queries that don't specify an explicit cache region
@@ -420,14 +420,14 @@
      +-->
     <cache name="PortalStats.org.hibernate.cache.StandardQueryCache"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
 
     <!-- Portal javascript and css gzipping filter cache -->
 
     <cache name="org.jasig.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- XSLT caches -->
     <!-- 
@@ -436,10 +436,10 @@
      +-->
     <cache name="org.jasig.portal.utils.XSLT.STYLESHEET_ROOT_CACHE"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <cache name="org.jasig.portal.utils.XSLT.STYLESHEET_SET_CACHE"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
 </ehcache>

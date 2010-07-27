@@ -106,7 +106,10 @@
     <!-- The flow-builder-service to set our custom conversion service -->
     <webflow:flow-builder-services id="flowBuilderServices" 
         view-factory-creator="viewFactoryCreator"
-        conversion-service="portalConversionService" />
+        conversion-service="portalConversionService"
+        expression-parser="expressionParser" />
+
+    <bean id="expressionParser" class="org.springframework.webflow.expression.WebFlowOgnlExpressionParser" />
         
     <!-- Custom view factory creator that allows us to configure the flow beans in the top level application context -->
     <bean id="viewFactoryCreator" class="org.jasig.portal.utils.web.flow.RuntimeMvcViewFactoryCreator" />
