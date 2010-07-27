@@ -107,18 +107,19 @@
         <jasig-widget-portlets.version>1.0.0-RC2</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
         <RssPortlet.version>1.0.0</RssPortlet.version>
+        <SimpleContentPortlet.version>0.1</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.0.6</WeatherPortlet.version>
-        <WebProxyPortlet.version>1.1.0-RC1</WebProxyPortlet.version>
+        <WebProxyPortlet.version>1.1.1</WebProxyPortlet.version>
 
         <!-- Project Dependency Version Properties -->
         <aopalliance.version>1.0</aopalliance.version>
         <activation.version>1.1</activation.version>
         <ant.version>1.7.1</ant.version>
-        <aspectjrt.version>1.6.8</aspectjrt.version>
-        <aspectjweaver.version>1.6.8</aspectjweaver.version>
+        <aspectjrt.version>1.6.9</aspectjrt.version>
+        <aspectjweaver.version>1.6.9</aspectjweaver.version>
         <casclient.version>3.1.10</casclient.version>
         <ccpp.version>1.0</ccpp.version>
-        <cernunnos.version>1.2.0</cernunnos.version>
+        <cernunnos.version>1.2.1</cernunnos.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-codec.version>1.4</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
@@ -131,9 +132,9 @@
         <commons-logging-api.version>1.1</commons-logging-api.version>
         <commons-pool.version>1.5.4</commons-pool.version>
         <dom4j.version>1.6.1</dom4j.version>
-        <easymock.version>2.5.2</easymock.version>
+        <easymock.version>3.0</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
-        <ehcache.version>2.0.0</ehcache.version>
+        <ehcache.version>2.2.0</ehcache.version>
         <ehcache-web.version>2.0.0</ehcache-web.version>
         <hibernate-annotations.version>3.3.1.GA</hibernate-annotations.version>
         <hibernate-commons-annotations.version>3.3.0.ga</hibernate-commons-annotations.version>
@@ -143,17 +144,17 @@
         <hsqldb.version>1.8.0.7</hsqldb.version>
         <icu4j.version>3.8</icu4j.version>
         <javassist.version>3.8.0.GA</javassist.version> 
-        <jasypt.version>1.5</jasypt.version>
+        <jasypt.version>1.6</jasypt.version>
         <jdom.version>1.0</jdom.version>
         <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
         <jsp-api.version>2.1</jsp-api.version>
         <jstl.version>1.1.2</jstl.version>
         <jtidy.version>4aug2000r7-dev</jtidy.version>
         <junit.version>4.8.1</junit.version>
-        <log4j.version>1.2.15</log4j.version>
+        <log4j.version>1.2.16</log4j.version>
         <mail.version>1.4.1</mail.version>
         <ognl.version>2.7.3</ognl.version>
-        <org.springframework.webflow.version>2.0.9.RELEASE</org.springframework.webflow.version>
+        <org.springframework.webflow.version>2.1.1.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
         <person-directory.version>1.5.0-RC6</person-directory.version>
@@ -163,7 +164,7 @@
         <resource-server.version>1.0.10</resource-server.version>
         <rome.version>0.9</rome.version>
         <servlet-api.version>2.5</servlet-api.version>
-        <slf4j.version>1.5.11</slf4j.version>
+        <slf4j.version>1.6.1</slf4j.version>
         <spring-framework.version>3.0.1.RELEASE</spring-framework.version>
         <spring-ldap.version>1.2.1</spring-ldap.version>
         <spring-modules.version>0.8a</spring-modules.version>
@@ -172,7 +173,7 @@
         <tyrex.version>1.0.1</tyrex.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
         <xalan.version>2.7.1</xalan.version>
-        <xercesImpl.version>2.8.1</xercesImpl.version>
+        <xercesImpl.version>2.9.1</xercesImpl.version>
         <xml-apis.version>1.0.b2</xml-apis.version>
         <xml-resolver.version>1.2-JASIG_PATCH</xml-resolver.version>
         <xmlParserAPIs.version>2.6.2</xmlParserAPIs.version>
