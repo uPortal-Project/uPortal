@@ -35,7 +35,6 @@
      | Properties that describe the maven project
      +-->
     <property name="bootstrap.dir" value="${basedir}/bootstrap" />
-    <property name="bootstrap-pom.dir" value="${bootstrap.dir}/pom" />
     <property name="uportal-impl.dir" value="${basedir}/uportal-impl" />
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
     <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
@@ -340,7 +339,7 @@
 
         <uportal-parent-macro>
             <artifact:dependencies pathid="pluto-ant" verbose="false">
-                <pom file="${bootstrap-pom.dir}/pluto-assembler-pom.xml" />
+                <pom file="${bootstrap.dir}/pluto-assembler/pom.xml" />
             </artifact:dependencies>
     
             <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
@@ -450,7 +449,7 @@
             
         <uportal-parent-macro>
             <artifact:dependencies pathid="hsql.classpath" verbose="false">
-                <pom file="${bootstrap-pom.dir}/hsqldb-pom.xml" />
+                <pom file="${bootstrap.dir}/hsqldb/pom.xml" />
             </artifact:dependencies>
     
             <property name="database" value="${basedir}/data/uP3_uPortal" />
@@ -472,7 +471,7 @@
     <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
         <uportal-parent-macro>
             <artifact:dependencies pathid="hsql.classpath" verbose="false">
-                <pom file="${bootstrap-pom.dir}/hsqldb-pom.xml" />
+                <pom file="${bootstrap.dir}/hsqldb/pom.xml" />
             </artifact:dependencies>
     
             <echo message="Stopping HSQL" />

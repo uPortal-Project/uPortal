@@ -28,6 +28,12 @@
 
     <build>
         <finalName>pluto-testsuite</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <!-- No pluto assembly since this portlet is already pluto-assembled -->
     </build>
 </project>

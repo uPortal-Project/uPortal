@@ -22,7 +22,7 @@ uPortal uses Maven for its project configuration and build system. An Ant
 build.xml is also provided which handles the initialization and deployment
 related tasks. As a uPortal deployer you will likely only ever need to use the
 Ant tasks. Note that Ant 1.7.0 has a SERIOUS bug and will NOT work with uPortal,
-use Ant 1.7.1 instead.
+use Ant 1.7.1.
 
 Ant tasks:
     hsql - Starts a HSQL database instance. The default uPortal configuration
