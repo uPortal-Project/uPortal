@@ -73,6 +73,10 @@
                     <if test="${groovy(MEMBERSHIPS.size() > 0)}">
                         <for-each items="${MEMBERSHIPS}" attribute-name="CURRENT_MEMBER">
                             <choose>
+                                <when test="${groovy(CURRENT_MEMBER == null)}">
+                                    <echo-ln>WARNING:  The definition for channel ${FNAME} contained an orphaned record in its SUBSCRIBE permissions, which will be ignored.</echo-ln>
+                                    <log logger-name="org.jasig.portal.io.export-channel" level="warn">The definition for channel ${FNAME} contained an orphaned record in its SUBSCRIBE permissions, which will be ignored.</log>
+                                </when>
                                 <when test="${groovy(CURRENT_MEMBER.isGroup())}">
                                     <with-attribute key="GROUP_NAME" value="${groovy(org.jasig.portal.services.EntityNameFinderService.instance().getNameFinder(CURRENT_MEMBER.getType()).getName(CURRENT_MEMBER.getKey()))}">
                                         <append-node parent="${singleNode(groups)}">
