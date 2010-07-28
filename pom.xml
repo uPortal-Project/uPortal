@@ -1069,4 +1069,16 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <profiles>
+        <profile>
+            <id>ci-local-site</id>
+            <distributionManagement>
+                <site>
+                    <id>ci-local-site</id>
+                    <url>${jasig-site-ci-dist-base}${project-site-path}</url>
+                </site>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>
