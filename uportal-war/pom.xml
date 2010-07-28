@@ -142,7 +142,7 @@
         <profile>
             <id>jspc-tomcat6</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             
             <properties>
