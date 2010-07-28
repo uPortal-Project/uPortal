@@ -132,7 +132,7 @@
 
         <dependency>
             <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
+            <artifactId>ehcache-core</artifactId>
             <scope>compile</scope>
         </dependency>
         
@@ -398,6 +398,11 @@
         
         
         <!-- ===== Runtime Dependencies ======================================= -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jcl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         
         
         <!-- ===== Test Dependencies ========================================== -->

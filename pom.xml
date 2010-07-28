@@ -93,35 +93,35 @@
     
     
         <!-- Portlet WAR Dependency Version Properties -->
-        <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
-        <FunctionalTestsPortlet.version>1.0.1</FunctionalTestsPortlet.version>
+        <BookmarksPortlet.version>1.0.10</BookmarksPortlet.version>
+        <FunctionalTestsPortlet.version>1.0.2</FunctionalTestsPortlet.version>
         <googleportlet.version>0.4</googleportlet.version>
         <RssPortlet.version>1.0.0</RssPortlet.version>
-        <WebProxyPortlet.version>1.0.0</WebProxyPortlet.version>
+        <WebProxyPortlet.version>1.1.1</WebProxyPortlet.version>
 
         <!-- Project Dependency Version Properties -->
         <activation.version>1.1</activation.version>
         <ant.version>1.7.1</ant.version>
-        <aspectjrt.version>1.6.1</aspectjrt.version>
-        <aspectjweaver.version>1.6.1</aspectjweaver.version>
+        <aspectjrt.version>1.6.9</aspectjrt.version>
+        <aspectjweaver.version>1.6.9</aspectjweaver.version>
         <casclient.version>2.2.0-M3</casclient.version>
         <cas-server.version>3.3.1</cas-server.version>
-        <cernunnos.version>1.1.0</cernunnos.version>
-        <commons-cli.version>1.1</commons-cli.version>
-        <commons-codec.version>1.3</commons-codec.version>
+        <cernunnos.version>1.2.1</cernunnos.version>
+        <commons-cli.version>1.2</commons-cli.version>
+        <commons-codec.version>1.4</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
-        <commons-dbcp.version>1.2.2</commons-dbcp.version>
+        <commons-dbcp.version>1.4</commons-dbcp.version>
         <commons-fileupload>1.2.1</commons-fileupload>
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-io.version>1.4</commons-io.version>
-        <commons-lang.version>2.4</commons-lang.version>
+        <commons-lang.version>2.5</commons-lang.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <commons-logging-api.version>1.1</commons-logging-api.version>
-        <commons-pool.version>1.4</commons-pool.version>
+        <commons-pool.version>1.5.4</commons-pool.version>
         <dom4j.version>1.6.1</dom4j.version>
-        <easymock.version>2.4</easymock.version>
+        <easymock.version>3.0</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
-        <ehcache.version>1.5.0</ehcache.version>
+        <ehcache.version>2.2.0</ehcache.version>
         <hibernate-annotations.version>3.3.1.GA</hibernate-annotations.version>
         <hibernate-commons-annotations.version>3.3.0.ga</hibernate-commons-annotations.version>
         <hibernate-entitymanager.version>3.3.2.GA</hibernate-entitymanager.version>
@@ -131,8 +131,8 @@
         <jdom.version>1.0</jdom.version>
         <jstl.version>1.1.2</jstl.version>
         <jtidy.version>4aug2000r7-dev</jtidy.version>
-        <junit.version>4.4</junit.version>
-        <log4j.version>1.2.15</log4j.version>
+        <junit.version>4.8.1</junit.version>
+        <log4j.version>1.2.16</log4j.version>
         <ognl.version>2.7.3</ognl.version>
         <org.springframework.webflow.version>2.0.5.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
@@ -144,6 +144,7 @@
         <resource-server.version>1.0.5</resource-server.version>
         <rome.version>0.9</rome.version>
         <servlet-api.version>2.5</servlet-api.version>
+        <slf4j.version>1.6.1</slf4j.version>
         <spring-framework.version>2.5.6</spring-framework.version>
         <spring-ldap.version>1.2.1</spring-ldap.version>
         <spring-modules.version>0.8a</spring-modules.version>
@@ -323,7 +324,7 @@
             </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
+                <artifactId>ehcache-core</artifactId>
                 <version>${ehcache.version}</version>
             </dependency>
             <dependency>
@@ -410,6 +411,12 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate</artifactId>
                 <version>${hibernate.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>ehcache</artifactId>
+                        <groupId>net.sf.ehcache</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -461,6 +468,16 @@
                 <groupId>org.jasig.service</groupId>
                 <artifactId>person-directory-impl</artifactId>
                 <version>${person-directory.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jcl</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -813,18 +830,6 @@
                     <version>2.3.1</version>
                 </plugin>
                 <plugin>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.5</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-pmd-plugin</artifactId>
-                    <version>2.5</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>2.2</version>
-                </plugin>
-                <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>2.4.3</version>
                 </plugin>
@@ -855,44 +860,9 @@
                     <version>${pluto.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>changelog-maven-plugin</artifactId>
-                    <version>2.0-beta-1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>2.3.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>jdepend-maven-plugin</artifactId>
-                    <version>2.0-beta-2</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>jxr-maven-plugin</artifactId>
-                    <version>2.0-beta-1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>surefire-report-maven-plugin</artifactId>
-                    <version>2.0-beta-1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>taglist-maven-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
-                <plugin>
                     <groupId>org.jasig.portal</groupId>
                     <artifactId>maven-uportal-plugin</artifactId>
-                    <version>1.0.1</version>
+                    <version>1.0.0-M3</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -902,21 +872,26 @@
         <plugins>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.2</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>surefire-report-maven-plugin</artifactId>
+                <version>2.0-beta-1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jxr-maven-plugin</artifactId>
+                <version>2.0-beta-1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.4</version>
             </plugin>
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
+                <version>2.5</version>
                 <configuration>
                     <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
@@ -927,17 +902,21 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>changelog-maven-plugin</artifactId>
+                <version>2.0-beta-1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>taglist-maven-plugin</artifactId>
+                <version>2.4</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.3.1</version>
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.5</version>
                 <configuration>
                     <source>1.5</source>
                     <maxmemory>512m</maxmemory>
@@ -954,6 +933,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
+                <version>2.0-beta-2</version>
             </plugin>
         </plugins>
     </reporting>
