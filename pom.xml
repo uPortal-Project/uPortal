@@ -884,30 +884,27 @@
             <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
+                <version>1.7.0</version>
                 <configuration>
                     <basedir>${basedir}</basedir>  
                     <header>${jasig-short-license-url}</header>
                     <aggregate>true</aggregate>
+                    <encoding>UTF-8</encoding>
                     <excludes>
                         <exclude>LICENSE</exclude>
+                        <exclude>NOTICE</exclude>
+                        <exclude>README</exclude>
+                        <exclude>.*</exclude>
+                        <exclude>build.properties.sample</exclude>
                         <exclude>license.txt</exclude>
                         <exclude>docs/licenses/**</exclude>
                         <exclude>jquery.css</exclude>
                         <exclude>data/*</exclude>
                         <exclude>**/fluid/fluid.*.css</exclude>
-                        <exclude>**/*.channel</exclude>
-                        <exclude>**/*.channel-type</exclude>
-                        <exclude>**/*.entity-type</exclude>
-                        <exclude>**/*.fragment-layout</exclude>
-                        <exclude>**/*.group_membership</exclude>
-                        <exclude>**/*.layout</exclude>
-                        <exclude>**/*.permission</exclude>
-                        <exclude>**/*.permission_set</exclude>
-                        <exclude>**/*.profile</exclude>
-                        <exclude>**/*.structure</exclude>
-                        <exclude>**/*.theme</exclude>
-                        <exclude>**/*.user</exclude>
-                        <exclude>**/*.template-user</exclude>
+                        <exclude>**/*.psd</exclude>
+                        <exclude>**/dtd/*.ent</exclude>
+                        <exclude>**/*.res</exclude>
+                        <exclude>**/*.example</exclude>
                     </excludes>
                     <mapping>
                         <crn>XML_STYLE</crn>
@@ -917,6 +914,23 @@
                         <tld>XML_STYLE</tld>
                         <tag>DYNASCRIPT_STYLE</tag>
                         <inc>DYNASCRIPT_STYLE</inc>
+                        <mappings>SCRIPT_STYLE</mappings>
+                        <rc>SCRIPT_STYLE</rc>
+                        
+                        <channel>XML_STYLE</channel>
+                        <channel-type>XML_STYLE</channel-type>
+                        <entity-type>XML_STYLE</entity-type>
+                        <fragment-layout>XML_STYLE</fragment-layout>
+                        <group_membership>XML_STYLE</group_membership>
+                        <layout>XML_STYLE</layout>
+                        <permission>XML_STYLE</permission>
+                        <permission_set>XML_STYLE</permission_set>
+                        <permission_owner>XML_STYLE</permission_owner>
+                        <profile>XML_STYLE</profile>
+                        <structure>XML_STYLE</structure>
+                        <user>XML_STYLE</user>
+                        <template-user>XML_STYLE</template-user>
+                        <theme>XML_STYLE</theme>
                     </mapping>
                     <properties>
                         <jasig-license-url>${jasig-license-url}</jasig-license-url>

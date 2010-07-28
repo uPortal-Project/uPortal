@@ -1,3 +1,22 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 .fl-font-size-70,.fl-font-size-70 body,.fl-font-size-70 input,.fl-font-size-70 select,.fl-font-size-70 textarea{font-size:.7em!important;line-height:1em!important;}
 .fl-font-size-80,.fl-font-size-80 body,.fl-font-size-80 input,.fl-font-size-80 select,.fl-font-size-80 textarea{font-size:.8em!important;line-height:1.1em!important;}
 .fl-font-size-90,.fl-font-size-90 body,.fl-font-size-90 input,.fl-font-size-90 select,.fl-font-size-90 textarea{font-size:.9em!important;line-height:1.2em!important;}
