@@ -20,9 +20,9 @@
     <url>${jasig-site-base}/uportal/${project.version}</url>
     
     <scm>
-        <connection>scm:svn:https://www.ja-sig.org/svn/uPortal/branches/rel-3-1-patches</connection>
-        <developerConnection>scm:svn:https://www.ja-sig.org/svn/uPortal/branches/rel-3-1-patches</developerConnection>
-        <url>http://developer.jasig.org/source/browse/jasigsvn/uPortal/branches/rel-3-1-patches</url>
+        <connection>scm:svn:https://source.jasig.org/uPortal/branches/rel-3-1-patches</connection>
+        <developerConnection>scm:svn:https://source.jasig.org/uPortal/branches/rel-3-1-patches</developerConnection>
+        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/branches/rel-3-1-patches</url>
     </scm>
     
     <distributionManagement>
