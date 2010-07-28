@@ -15,12 +15,16 @@
     <fileset id="sourceFilesSvn" dir="${uportal.source.dir}" defaultexcludes="false">
         <exclude name="build.properties" />
         <exclude name="data/**" />
-        <exclude name="**/target/**" />
+        <exclude name="target/**" />
+        <exclude name="*/target/**" />
+        <exclude name="*/*/target/**" />
     </fileset>
     <fileset id="sourceFiles" dir="${uportal.source.dir}" defaultexcludes="true">
         <exclude name="build.properties" />
         <exclude name="data/**" />
-        <exclude name="**/target/**" />
+        <exclude name="target/**" />
+        <exclude name="*/target/**" />
+        <exclude name="*/*/target/**" />
     </fileset>
     
     <target name="all" description="Generates all assemblies by running clean, source, and quickstart">
@@ -39,15 +43,25 @@
     </target>
 
     <target name="source" depends="prepare" description="Exports and packages a buildable source distribution of the project">
+        <property name="source.dir" value="${target.dir}/${uportal.finalName}" />
         <property name="source.file.tar.gz" value="${target.dir}/${uportal.finalName}.tar.gz" />
+        
+        <!-- copy uPortal source export into quickstart folder -->
+        <mkdir dir="${source.dir}" />
+        <copy todir="${source.dir}" preservelastmodified="true">
+            <fileset refid="sourceFiles" />
+        </copy>
+        
+        <!-- Update the uPortal release notes --> 
+        <copy file="${uportal.source.dir}/releaseNotes.html" tofile="${source.dir}/releaseNotes.html" overwrite="true">
+            <filterset begintoken="$${" endtoken="}">
+                <filter token="uportal.version" value="${uportal.version}" />
+            </filterset>
+        </copy>
 
         <!-- tar.gz source distribution -->
         <tar destfile="${source.file.tar.gz}" longfile="gnu" compression="gzip">
-            <tarfileset prefix="${uportal.finalName}" dir="${uportal.source.dir}" defaultexcludes="true">
-                <exclude name="build.properties" />
-                <exclude name="data/**" />
-                <exclude name="**/target/**" />
-            </tarfileset>
+            <tarfileset prefix="${uportal.finalName}" dir="${source.dir}" />
         </tar>
         <checksum file="${source.file.tar.gz}" algorithm="md5" />
         <checksum file="${source.file.tar.gz}" algorithm="sha1" />
@@ -146,7 +160,14 @@
             </filterset>
         </copy>
         <replace file="${uportal.dir}/build.properties" token="#maven.home=" value="maven.home=$${basedir}/../${dl.maven.finalName}" summary="true" />
-
+        
+        <!-- Update the uPortal release notes --> 
+        <copy file="${uportal.source.dir}/releaseNotes.html" tofile="${uportal.dir}/releaseNotes.html" overwrite="true">
+            <filterset begintoken="$${" endtoken="}">
+                <filter token="project.version" value="${uportal.version}" />
+            </filterset>
+        </copy>
+        
         <!-- start quickstart hsql isntance -->
         <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
             <property name="spawn" value="true" />

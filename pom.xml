@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>18</version>
+        <version>21</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -60,21 +60,18 @@
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
-        <repository>
-            <id>jasig-m2</id>
-            <name>Jasig Maven2 Repository</name>
-            <url>http://developer.jasig.org/repo/content/repositories/m2</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
+        
         <repository>            
-            <id>sonatype-nexus-releases</id>
-            <name>Sonatype Nexus Releases</name>
-            <url>http://oss.sonatype.org/content/repositories/releases</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
+    
+    <pluginRepositories>
+    </pluginRepositories>
 
     <properties>
         <!-- The final name of the uPortal web-application -->
@@ -171,6 +168,7 @@
         <module>uportal-ear-deployer</module>
         <module>uportal-ant-tasks</module>
         <module>uportal-portlets-overlay</module>
+        <module>bootstrap</module>
     </modules>
 
     <build>
@@ -191,7 +189,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
@@ -293,10 +290,6 @@
                         <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
                         <link>http://java.sun.com/javaee/5/docs/api/</link>
                         <link>http://portals.apache.org/pluto/portlet-1.0-apidocs/</link>
-                        <!-- Pluto apidocs are for 2.0 now
-                        <link>http://portals.apache.org/pluto/pluto-container/apidocs/</link>
-                        <link>http://portals.apache.org/pluto/pluto-descriptor-api/apidocs/</link>
-                        -->
                         <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
                         <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>
                         <link>http://developer.jasig.org/projects/person-directory/1.1.2/apidocs/</link>
@@ -377,6 +370,15 @@
                     <url>http://people.apache.org/builds/portals-pluto/m2-staging-repository</url>
                 </pluginRepository>
             </pluginRepositories>
+        </profile>
+        <profile>
+            <id>ci-local-site</id>
+            <distributionManagement>
+                <site>
+                    <id>ci-local-site</id>
+                    <url>${jasig-site-ci-dist-base}${project-site-path}</url>
+                </site>
+            </distributionManagement>
         </profile>
     </profiles>
 </project>

@@ -20,49 +20,49 @@
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uportal-war</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>cas</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>BookmarksPortlet</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>googleportlet</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>RssPortlet</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>pluto-testsuite</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>FunctionalTestsPortlet</artifactId>
-            <version>${pom.parent.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
@@ -143,7 +143,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
                 <version>${maven-ear-plugin.version}</version>
                 <configuration>
