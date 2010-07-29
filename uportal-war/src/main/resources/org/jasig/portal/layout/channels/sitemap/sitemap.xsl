@@ -42,14 +42,17 @@
     <xsl:variable name="POSITION" select="position()"/>
     <xsl:if test="($POSITION - 1) mod 4 = 0">
         <div class="fl-col-flex4">
-          <xsl:apply-templates select="../folder[@type='regular' and @hidden='false' and position()&lt;$POSITION+4 and (position()=$POSITION or position()&gt;$POSITION)]" mode="tab"/>
+          <xsl:apply-templates select="../folder[@type='regular' and @hidden='false' and position()&lt;$POSITION+4 and (position()=$POSITION or position()&gt;$POSITION)]" mode="tab">
+            <xsl:with-param name="MAX_PREVIOUS_INDEX" select="$POSITION - 1"/>
+          </xsl:apply-templates>
         </div>
     </xsl:if>
   </xsl:template>
 
   <xsl:template match="folder" mode="tab">
+    <xsl:param name="MAX_PREVIOUS_INDEX">1</xsl:param>
     <div class="fl-col">
-        <h2><a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}"><xsl:value-of select="@name"/></a></h2>
+        <h2><a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={$MAX_PREVIOUS_INDEX + position()}"><xsl:value-of select="@name"/></a></h2>
         <ul>
             <xsl:apply-templates select="folder" mode="column"/>
         </ul>
