@@ -24,7 +24,7 @@
   <xsl:template match="folder" mode="tab">
       <td valign="top">
           <p class="uportal-label">Tab <xsl:value-of select="position()"/>: 
-          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=focusedTabID&amp;focusedTabID={@ID}"><xsl:value-of select="@name"/></a><br/></p>
+          <a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}"><xsl:value-of select="@name"/></a><br/></p>
           <xsl:apply-templates select="folder" mode="column"/>
       </td>
       <xsl:if test="position() &lt; last()">
