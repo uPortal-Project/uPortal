@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.jasig.parent</groupId>
@@ -12,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
-    <version>3.0.6-SNAPSHOT</version>
+    <version>3.0.6</version>
     <packaging>pom</packaging>
 
     <name>uPortal</name>
@@ -20,9 +18,9 @@
     <url>${jasig-site-base}/uportal/${project.version}</url>
     
     <scm>
-        <connection>${jasig-scm-base-mvn}/uPortal/branches/rel-3-0-patches</connection>
-        <developerConnection>${jasig-scm-base-mvn}/uPortal/branches/rel-3-0-patches</developerConnection>
-        <url>${jasig-scm-view-base}/uPortal/branches/rel-3-0-patches</url>
+        <connection>scm:svn:https://source.jasig.org/uPortal/tags/rel-3-0-6</connection>
+        <developerConnection>scm:svn:https://source.jasig.org/uPortal/tags/rel-3-0-6</developerConnection>
+        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/tags/rel-3-0-6</url>
     </scm>
     
     <distributionManagement>
