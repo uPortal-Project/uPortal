@@ -86,8 +86,8 @@
     
         
         <!-- Portlet WAR Dependency Version Properties -->
-        <BookmarksPortlet.version>1.0.8</BookmarksPortlet.version>
-        <FunctionalTestsPortlet.version>1.0.1</FunctionalTestsPortlet.version>
+        <BookmarksPortlet.version>1.0.10</BookmarksPortlet.version>
+        <FunctionalTestsPortlet.version>1.0.2</FunctionalTestsPortlet.version>
         <googleportlet.version>0.3</googleportlet.version>
         <RssPortlet.version>1.0.0</RssPortlet.version>
 
@@ -96,7 +96,7 @@
         <ant.version>1.6.5</ant.version>
         <casclient.version>2.2.0-M3</casclient.version>
         <cas-server.version>3.2</cas-server.version>
-        <cernunnos.version>1.1.0-M3</cernunnos.version>
+        <cernunnos.version>1.2.1</cernunnos.version>
         <collections-generic.version>4.01</collections-generic.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-codec.version>1.4</commons-codec.version>
@@ -109,7 +109,7 @@
         <commons-pool.version>1.5.4</commons-pool.version>
         <cos.version>05Nov2002</cos.version>
         <easymock.version>3.0</easymock.version>
-        <ehcache.version>2.1.0</ehcache.version>
+        <ehcache.version>2.2.0</ehcache.version>
         <hibernate-annotations.version>3.3.1.GA</hibernate-annotations.version>
         <hibernate-commons-annotations.version>3.3.0.ga</hibernate-commons-annotations.version>
         <hibernate-entitymanager.version>3.3.2.GA</hibernate-entitymanager.version>
@@ -128,7 +128,7 @@
         <portlet-api.version>1.0</portlet-api.version>
         <rome.version>0.8</rome.version>
         <servlet-api.version>2.4</servlet-api.version>
-        <slf4j.version>1.5.11</slf4j.version>
+        <slf4j.version>1.6.1</slf4j.version>
         <spring-framework.version>2.5.6</spring-framework.version>
         <spring-ldap.version>1.2.1</spring-ldap.version>
         <spring-modules.version>0.8a</spring-modules.version>
