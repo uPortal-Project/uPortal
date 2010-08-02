@@ -23,8 +23,12 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <p align="center">${ caption }</p>
 <p align="center">
-  <a href="${ link }">
+  <c:if test="${not empty link}">
+    <a href="${ link }">
+  </c:if>
     <img src="${ uri }" alt="${ alt }" width="${ width }" height="${ height }" border="${ border }"/>
-  </a>
+  <c:if test="${not empty link}">
+    </a>
+  </c:if>
 </p>
 <p align="center"><font size="2">${ subcaption }</font></p>

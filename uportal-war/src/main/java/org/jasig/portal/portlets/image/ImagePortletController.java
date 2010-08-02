@@ -26,6 +26,9 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.mvc.AbstractController;
 
@@ -48,26 +51,37 @@ import org.springframework.web.portlet.mvc.AbstractController;
  * @version $Revision$
  */
 public class ImagePortletController extends AbstractController {
+    private final ExpressionParser expressionParser = new SpelExpressionParser();
 
-	@Override
+    @Override
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request,
 			RenderResponse response) throws Exception {
-		Map<String,Object> model = new HashMap<String,Object>();
+		
+		final Map<String,Object> model = new HashMap<String,Object>();
 		
 		// retrieve configuration information about the image from the portlet
 		// preferences
-		PortletPreferences preferences = request.getPreferences();
-		model.put("uri", preferences.getValue("img-uri", null));
-		model.put("width", preferences.getValue("img-width", null));
-		model.put("height", preferences.getValue("img-height", null));
-		model.put("border", preferences.getValue("img-border", null));
-		model.put("link", preferences.getValue("img-link", null));
-		model.put("caption", preferences.getValue("caption", null));
-		model.put("subcaption", preferences.getValue("subcaption", null));
-		model.put("alt", preferences.getValue("alt-text", null));
+		model.put("uri", getPreference("img-uri", request));
+		model.put("width", getPreference("img-width", request));
+		model.put("height", getPreference("img-height", request));
+		model.put("border", getPreference("img-border", request));
+		model.put("link", getPreference("img-link", request));
+		model.put("caption", getPreference("caption", request));
+		model.put("subcaption", getPreference("subcaption", request));
+		model.put("alt", getPreference("alt-text", request));
 		
 		return new ModelAndView("/jsp/Image/imagePortlet", model);
 	}
 
-	
+    protected String getPreference(String name, RenderRequest request) {
+        final PortletPreferences preferences = request.getPreferences();
+        
+        final String spelValue = preferences.getValue(name + "-spel", null);
+        if (spelValue != null) {
+            final Expression expression = this.expressionParser.parseExpression(spelValue);
+            return expression.getValue(request, String.class);
+        }
+        
+        return preferences.getValue(name, null);
+    }
 }
