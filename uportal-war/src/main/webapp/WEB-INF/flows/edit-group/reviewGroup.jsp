@@ -56,31 +56,20 @@
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><c:out value="${ group.name }"/></h2>
-        <p>Created by ${ group.creatorId }</p>
+        <h3 class="subtitle">${ group.description }</h3>
+        <div class="details">Created by ${ group.creatorId }</div>
+        <div class="toolbar">
+        	<ul>
+            	<li><a class="button" href="${ editDetailsUrl }">Edit</a></li>
+                <li><a class="button" href="${ permissionsUrl }">View Permissions</a></li>
+                <li><a class="button" href="${ deleteUrl }">Delete</a></li>
+                <li><a class="button" href="${ createMemberUrl }">Create new member group</a></li>
+            </ul>
+        </div>
     </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main">
-    
-        <!-- Portlet Section -->
-        <div class="portlet-section" role="region">
-            <div class="titlebar">
-                <h3 class="title" role="heading">Description</h3>
-                <div class="options">
-                    <a href="${ editDetailsUrl }"><span>Edit Name and Description</span></a>
-                </div>
-            </div>
-            <div class="content">
-                <p>${ group.description }</p>
-                <c:if test="${ not empty group.key }">
-                    <p>
-                        <a href="${ permissionsUrl }">View Permissions</a>
-                        <a href="${ deleteUrl }">Delete</a>
-                        <a href="${ createMemberUrl }">Create new member group</a>
-                    </p>
-                </c:if>
-            </div>
-        </div>
         
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">

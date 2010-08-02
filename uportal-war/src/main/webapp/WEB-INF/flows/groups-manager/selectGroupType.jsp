@@ -37,6 +37,39 @@
     
     <!-- Portlet Content -->
     <div class="fl-widget-content content portlet-content" role="main">
+    
+    	<div class="panel-list icon-large group-types">
+        	<div class="panel type-categories">
+            	<div class="titlebar">
+                	<h2 class="title">
+                    	<a href="{ $typeUrl }"><spring:message code="groups-manager.type.categories"/></a>
+                    </h2>
+                    <h3 class="subtitle"><spring:message code="groups-manager.type.categories.description"/></h3>
+                </div>
+                <div class="content">
+                	<span class="link-list">
+                    	<c:forEach items="${ groups.categories }">
+                        	<a href="${ groupUrl }">${ group.name }</a>${ status.last ? "" : ", " }
+                        </c:forEach>
+                    </span>
+                </div>
+            </div>
+            <div class="panel type-people">
+            	<div class="titlebar">
+                	<h2 class="title">
+                    	<a href="{ $typeUrl }"><spring:message code="groups-manager.type.people"/></a>
+                    </h2>
+                    <h3 class="subtitle"><spring:message code="groups-manager.type.people.description"/></h3>
+                </div>
+                <div class="content">
+                	<span class="link-list">
+                    	<c:forEach items="${ groups.people }">
+                        	<a href="${ groupUrl }">${ group.name }</a>${ status.last ? "" : ", " }
+                        </c:forEach>
+                    </span>
+                </div>
+            </div>
+        </div>
         
         <div class="portlet-form">
             <form action="${ formUrl }" method="POST">  

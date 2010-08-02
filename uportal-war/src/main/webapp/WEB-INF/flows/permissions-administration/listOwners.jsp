@@ -47,7 +47,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content" role="main">
   	<!-- Panel list -->
-    <div class="fl-col-flex2 panel-list"> 
+    <div class="fl-col-flex2 panel-list icon-large"> 
     
         <!-- 2 column layout -->
         <div class="fl-col fl-force-left">
@@ -55,7 +55,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <c:set var="split" value="${ numOwners / 2 }" />
             <c:forEach items="${ owners }" var="owner" varStatus="ownerStatus">
             	<!-- Panel -->
-                <div class="permission-owner ${ owner.fname } panel icon-large">
+                <div class="permission-owner ${ owner.fname } panel">
                 	<div class="titlebar">
                         <h2 class="title">
                             <portlet:actionURL var="ownerUrl">
@@ -68,7 +68,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <h3 class="subtitle">${ owner.description }</h3>
                     </div>
                     <div class="content">
-                        <span class="perm-list">
+                        <span class="link-list">
                             <c:forEach items="${ owner.activities }" var="activity" varStatus="status">
                                 <portlet:actionURL var="activityUrl">
                                     <portlet:param name="execution" value="${ flowExecutionKey }"/>

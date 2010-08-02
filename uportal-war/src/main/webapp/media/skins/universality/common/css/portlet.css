@@ -224,9 +224,10 @@
  * A section has a Titlebar (with Options), and Content.
  */
 .portlet .portlet-section {}
+.portlet .portlet-section > .titlebar {margin-bottom:0.5em;}
 .portlet .portlet-section > .titlebar .title {border-bottom:0.1em solid #ddd;}
-.portlet .portlet-section > .titlebar .options {background-color:#fff; font-size:85%;}
-.portlet .portlet-section > .titlebar .options a {text-decoration:none; color:#666; border-bottom:1px solid #ddd;}
+.portlet .portlet-section > .titlebar .options {position:absolute; top:1em; right:0; font-size:85%;}
+.portlet .portlet-section > .titlebar .options a {text-decoration:none; color:#666;}
 .portlet .portlet-section > .titlebar .options a:hover,
 .portlet .portlet-section > .titlebar .options a:focus {text-decoration:none; background-color:#dfefff; color:#000;}
 .portlet .portlet-section > .content {}
@@ -258,8 +259,37 @@
  * For lists of boxed panels of like content. Larger and more visual than normal un/ordered lists.
  */
 .portlet .panel-list .panel {
+	margin-right: 2em;
 	margin-bottom:1em;
 	padding:0.5em 1em;
+	background:none;
+	border:1px solid #fff;
+	border-bottom:1px dotted #ccc;
+}
+.portlet .panel-list .panel:hover,
+.portlet .panel-list .panel:focus {border:1px solid #999;}
+.portlet .panel-list .panel > .titlebar {margin-bottom:0.5em;}
+.portlet .panel-list .panel > .titlebar .title {margin:0;}
+.portlet .panel-list .panel > .titlebar .title a {font-weight:bold; text-decoration:none;}
+.portlet .panel-list .panel > .titlebar .title a:hover,
+.portlet .panel-list .panel > .titlebar .title a:focus {text-decoration:underline;}
+.portlet .panel-list .panel > .titlebar .subtitle {margin:0;}
+.portlet .panel-list .panel > .content {padding:0;}
+.portlet .panel-list .panel > .content .link-list {font-size:80%;}
+/* Large icons */
+.portlet .panel-list.icon-large .panel {padding-left:4em; background:transparent url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/categories/applications-other.png) 1em 0.5em no-repeat;}
+.portlet .panel-list.icon-large .type-categories {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/apps/system-file-manager.png);}
+.portlet .panel-list.icon-large .type-people {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/apps/system-users.png);}
+.portlet .panel-list.icon-large .UP_ERROR_CHAN {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/status/dialog-warning.png);}
+.portlet .panel-list.icon-large .UP_FRAGMENT {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/apps/preferences-system-windows.png);}
+.portlet .panel-list.icon-large .UP_USERS {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/apps/system-users.png);}
+/*
+.portlet .panel-list.icon-large .UP_GROUPS {background-image:url(images/icons/system-groups.png);}
+.portlet .panel-list.icon-large .UP_PORTLET_PUBLISH {background-image:url(images/icons/window-publish.png);}
+.portlet .panel-list.icon-large .UP_PORTLET_SUBSCRIBE {background-image:url(images/icons/window-add.png);}
+*/
+/* Rounded panel with gradient. */
+.portlet .panel-list.rounded .panel {
 	background:#eee url(../images/light_top_100px_70.png) 0 0 repeat-x;
 	background:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#eee), to(#fff)); 
 	background:-moz-linear-gradient(0% 50% 90deg, #eee, #fff);
@@ -268,22 +298,13 @@
 	-webkit-border-radius:7px;
 	border-radius:7px;
 }
-.portlet .panel-list .panel:hover,
-.portlet .panel-list .panel:focus {
+.portlet .panel-list.rounded .panel:hover,
+.portlet .panel-list.rounded .panel:focus {
 	border-color:#333;
 	-webkit-box-shadow:4px 4px 4px rgba(0,0,0,.25); 
 	-moz-box-shadow:4px 4px 4px rgba(0,0,0,.25);
 	box-shadow:4px 4px 4px rgba(0,0,0,.25);
 }
-.portlet .panel-list .icon-large {padding-left:4em;}
-.portlet .panel-list .panel > .titlebar {margin-bottom:0.5em;}
-.portlet .panel-list .panel > .titlebar .title {margin:0;}
-.portlet .panel-list .panel > .titlebar .title a {font-weight:bold; text-decoration:none;}
-.portlet .panel-list .panel > .titlebar .title a:hover,
-.portlet .panel-list .panel > .titlebar .title a:focus {text-decoration:underline;}
-.portlet .panel-list .panel > .titlebar .subtitle {margin:0;}
-.portlet .panel-list .panel > .content {padding:0;}
-.portlet .panel-list .panel > .content .perm-list {font-size:80%;}
 
 
 /* Tables */
@@ -436,27 +457,6 @@
 .override-preference td {color:graytext; text-decoration:line-through;}
 
 /* Permissions Administration */
-.prm-mgr .panel-list .panel {
-	margin-right: 2em;
-	padding-bottom:1em;
-	background:none;
-	border:1px solid #fff;
-	border-bottom:1px dotted #ccc;
-	-moz-border-radius:0px;
-	-webkit-border-radius:0px;
-	border-radius:0px;
-}
-.prm-mgr .panel-list .panel:hover,
-.prm-mgr .panel-list .panel:focus {border:1px solid #999;}
-.prm-mgr .panel-list .icon-large.permission-owner {background:transparent url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/categories/applications-other.png) 1em 0.5em no-repeat;}
-.prm-mgr .panel-list .icon-large.UP_ERROR_CHAN {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/status/dialog-warning.png);}
-.prm-mgr .panel-list .icon-large.UP_FRAGMENT {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/apps/preferences-system-windows.png);}
-.prm-mgr .panel-list .icon-large.UP_USERS {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/apps/system-users.png);}
-/*
-.prm-mgr .panel-list .icon-large.UP_GROUPS {background-image:url(images/icons/system-groups.png);}
-.prm-mgr .panel-list .icon-large.UP_PORTLET_PUBLISH {background-image:url(images/icons/window-publish.png);}
-.prm-mgr .panel-list .icon-large.UP_PORTLET_SUBSCRIBE {background-image:url(images/icons/window-add.png);}
-*/
 .prm-mgr.view-editperm form ul {margin:0;}
 .prm-mgr.view-editperm form ul li {list-style-type:none; border-top:1px dotted #ccc;}
 .prm-mgr.view-editperm form ul li span {display:block; padding:0.5em 0em 0.5em 2em;}
