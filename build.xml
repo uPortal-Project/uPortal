@@ -933,39 +933,12 @@
         <sequential>
             <uportal-parent-macro>
                 <!--
-                 | Install the overlay parent project pom
+                 | Install the overlay module and all child modules
                  +-->
-                <artifact:pom file="${uportal-portlets-overlay.dir}/pom.xml" id="uportal-portlets-overlay.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
-                <artifact:install file="${uportal-portlets-overlay.dir}/pom.xml" pomrefid="uportal-portlets-overlay.pom" settingsFile="${maven.settings}" />
-                
-                <fileset id="uportal-portlets-overlay.pom.fsid" dir="${basedir}">
-                    <filename name="${basedir}/pom.xml"/>
-                    <filename name="${uportal-portlets-overlay.dir}/pom.xml"/>
-                </fileset>
-                
-                <!--
-                 | Iterate over the child projects and run the artifact macro on each of them
-                 +-->
-                <for param="portlet-overlay-dir">
-                    <path>
-                        <dirset dir="${uportal-portlets-overlay.dir}">
-                            <include name="*"/>
-                        </dirset>
-                    </path>
-                    <sequential>
-                        <if>
-                            <available file="@{portlet-overlay-dir}/pom.xml" />
-                            <then>
-                                <basename file="@{portlet-overlay-dir}" property="@{portlet-overlay-dir}-name" />
-                                <maven-artifact-macro project-name="${@{portlet-overlay-dir}-name}" project-path="@{portlet-overlay-dir}" checkfilesid="uportal-portlets-overlay.pom.fsid" />
-                            </then>
-                        </if>
-                    </sequential>
-                </for>
-                
-                <fileset id="portletWars.fsid" dir="${uportal-portlets-overlay.dir}">
-                    <include name="*/target/*.war"/>
-                </fileset>
+                <antcall target="mvn">
+                    <param name="pomDir" value="${uportal-portlets-overlay.dir}" />
+                    <param name="goal" value="install" />
+                </antcall>
                 
                 <!--
                  | Execute the overlay-sub-tasks
