@@ -24,59 +24,23 @@
 
 <xsl:stylesheet version="1.0" xmlns:dlm="http://www.uportal.org/layout/dlm" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-<xsl:param name="activeTab">1</xsl:param>
 <xsl:param name="userLayoutRoot">root</xsl:param>
 <xsl:param name="focusedTabID">none</xsl:param>
 
-  <xsl:variable name="activeTabIdx">
+  <xsl:variable name="activeTabIDx">
     <!-- if the activeTab is a number then it is the active tab index -->
     <!-- otherwise it is the ID of the active tab. If it is the ID -->
     <!-- then check to see if that tab is still in the layout and -->
     <!-- if so use its index. if not then default to an index of 1. -->
-
-   <xsl:choose>
-   <xsl:when test="$focusedTabID='none'">
     <xsl:choose>
-     <xsl:when test="string( number( $activeTab ) )='NaN'">
-
-      <xsl:choose>
-       <!-- Determine if the specified activeTab is an externalId attribute -->
-       <xsl:when test="/layout/folder/folder[@externalId=$activeTab and
-                                      @type='regular' and
-                                      @hidden='false']">
-        <xsl:value-of select="count(/layout/folder/folder[@externalId=$activeTab]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
-       </xsl:when>
-       <xsl:when test="/layout/folder/folder[@ID=$activeTab and
-                                      @type='regular' and
-                                      @hidden='false']">
-        <xsl:value-of select="count(/layout/folder/folder[@ID=$activeTab]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
-       </xsl:when>
-       <xsl:otherwise>1</xsl:otherwise> <!-- if not found, use first tab -->
-      </xsl:choose>
-
-     </xsl:when>
- 	
- 	 <!-- if the tab index number is greater than the number of tabs, use the first tab -->
-     <xsl:when test="$activeTab &gt; count(/layout/folder/folder[@type='regular' and @hidden='false'])">1</xsl:when>
-     <xsl:otherwise>
-       <xsl:value-of select="$activeTab"/>
-     </xsl:otherwise>
-    </xsl:choose>
-   </xsl:when>
-   <xsl:otherwise>
-      <xsl:choose>
-       <xsl:when test="/layout/folder/folder[@ID=$focusedTabID and
-                                      @type='regular' and
-                                      @hidden='false']">
+      <xsl:when test="$focusedTabID!='none' and /layout/folder/folder[@ID=$focusedTabID and @type='regular' and @hidden='false']">
         <xsl:value-of select="count(/layout/folder/folder[@ID=$focusedTabID]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
-       </xsl:when>
-       <xsl:otherwise>1</xsl:otherwise> <!-- if not found, use first tab -->
-      </xsl:choose>
-   </xsl:otherwise>
-   </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise>1</xsl:otherwise> <!-- if not found, use first tab -->
+    </xsl:choose>
   </xsl:variable>
 
-  <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIdx]/@ID"/>
+  <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIDx]/@ID"/>
 
 <!-- document fragment template. See structure stylesheet for more comments -->
 <xsl:template match="layout_fragment">

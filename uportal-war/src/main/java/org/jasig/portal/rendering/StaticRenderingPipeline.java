@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +52,6 @@ import org.jasig.portal.MediaManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureAttributesIncorporationFilter;
 import org.jasig.portal.StructureStylesheetDescription;
-import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeAttributesIncorporationFilter;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.UPFileSpec;
@@ -607,7 +605,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     tst.setParameter(BaseUrlXalanElements.PORTAL_URL_PROVIDER_PARAMETER, this.portalUrlProvider);
                     tst.setParameter(BaseUrlXalanElements.CURRENT_PORTAL_REQUEST, req);
                     tst.setParameter(PortletUrlXalanElements.PORTLET_WINDOW_REGISTRY_PARAMETER, this.portletWindowRegistry);
-                    tst.setParameter("CONTEXT_PATH", req.getContextPath() + "/");
+                    tst.setParameter("CONTEXT_PATH", req.getContextPath());
 
                     // set up of the parameters
                     tst.setParameter("baseActionURL", uPElement.getUPFile());
@@ -743,45 +741,24 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                 //Get the user's profile
                 final UserProfile userProfile = uPreferencesManager.getCurrentProfile();
                 
-                //Find the activeTab index
-                final UserPreferences userPreferences = uPreferencesManager.getUserPreferences();
-                final StructureStylesheetUserPreferences structureStylesheetUserPreferences = userPreferences.getStructureStylesheetUserPreferences();
-                String activeTab = structureStylesheetUserPreferences.getParameterValue("activeTab");
-                if (activeTab == null) {
-                    // if the active tab is not set yet for this session, 
-                    // initialize it to the default tab value
-                    activeTab = structureStylesheetUserPreferences.getParameterValue("defaultTab");
-                }
-                final int activeTabIndex = org.apache.commons.lang.math.NumberUtils.toInt(activeTab, 1);
-                
-                //Get the user's layout and find the targeted folder (tab)
                 final IUserLayoutManager userLayoutManager = uPreferencesManager.getUserLayoutManager();
-                final IUserLayoutFolderDescription targetedNode = this.getActiveTab(userLayoutManager, activeTabIndex);
+                
+                final String targetedLayoutNodeId = requestInfo.getTargetedLayoutNodeId();
+                IUserLayoutFolderDescription targetedNode = null;
+                if (targetedLayoutNodeId != null) {
+                    try {
+                        targetedNode = (IUserLayoutFolderDescription)userLayoutManager.getNode(targetedLayoutNodeId);
+                    }
+                    catch (PortalException e) {
+                        //ignore
+                    }
+                }
                 
                 //Create and publish the event.
                 final PageRenderTimePortalEvent pageRenderTimePortalEvent = new PageRenderTimePortalEvent(this, person, userProfile, targetedNode, pageRenderTime);
                 this.applicationEventPublisher.publishEvent(pageRenderTimePortalEvent);
             }
         }
-    }
-
-    protected IUserLayoutFolderDescription getActiveTab(final IUserLayoutManager userLayoutManager, final int activeTabIndex) {
-        final String rootFolderId = userLayoutManager.getRootFolderId();
-        final Enumeration<String> rootsChildren = userLayoutManager.getChildIds(rootFolderId);
-        
-        int tabIndex = 0;
-        for (String topNodeId = rootsChildren.nextElement(); rootsChildren.hasMoreElements(); topNodeId = rootsChildren.nextElement()) {
-            final IUserLayoutNodeDescription topNode = userLayoutManager.getNode(topNodeId);
-            
-            if (!topNode.isHidden() && IUserLayoutNodeDescription.FOLDER == topNode.getType() && IUserLayoutFolderDescription.REGULAR_TYPE == ((IUserLayoutFolderDescription)topNode).getFolderType()) {
-                tabIndex++;
-                if (tabIndex == activeTabIndex) {
-                    return (IUserLayoutFolderDescription)topNode;
-                }
-            }
-        }
-        
-        return null;
     }
     
     protected String constructCacheKey(IUserPreferencesManager uPreferencesManager, String rootNodeId) throws PortalException {

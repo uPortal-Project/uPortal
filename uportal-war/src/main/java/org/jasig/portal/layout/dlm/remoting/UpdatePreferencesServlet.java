@@ -113,7 +113,6 @@ public class UpdatePreferencesServlet implements InitializingBean {
     
 	// default tab name
 	protected final static String DEFAULT_TAB_NAME = "New Tab";
-	protected final static String ACTIVE_TAB_PARAM = "activeTab";
 
     public void afterPropertiesSet() throws Exception {
     }

@@ -112,6 +112,9 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
         }
 
         final HttpSession session = request.getSession();
+        if (session == null) {
+            throw new IllegalStateException("HttpServletRequest.getSession() returned a null session for request: " + request);
+        }
 
         // Return the UserInstance object if it's in the session
         UserInstanceHolder userInstanceHolder = getUserInstanceHolder(session);

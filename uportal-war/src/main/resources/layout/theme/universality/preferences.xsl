@@ -92,9 +92,9 @@
           portalUrl: '',
           mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
           currentSkin: '<xsl:value-of select="$SKIN"/>',
-          preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>mvc/layout',
-          channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>mvc/channelList?xml=true',
-          subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>mvc/tabList',
+          preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
+          channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList?xml=true',
+          subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
           isFocusMode: true
        });
      });
@@ -355,13 +355,13 @@
        up.jQuery(document).ready(function(){
           up.jQuery.uportal.UportalLayoutManager(
             {
-              portalUrl: '<xsl:value-of select="$BASE_ACTION_URL"/>',
+              portalUrl: '<portal:url/>',
               mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
               currentSkin: '<xsl:value-of select="$SKIN"/>',
               subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
-              preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>mvc/layout',
-              channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>mvc/channelList?xml=true',
-              subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>mvc/tabList',
+              preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
+              channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList?xml=true',
+              subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
               isFragmentMode: '<xsl:choose><xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>',
               messages: { 
                   confirmRemoveTab: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE']"/>', 

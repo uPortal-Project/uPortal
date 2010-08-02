@@ -144,7 +144,10 @@
   -->
   <xsl:template name="portal.page.bar.link.home">
   	<span id="portalPageBarHome">
-      <a href="{$HOME_ACTION_URL}">
+      <xsl:variable name="homeUrl">
+        <portal:url/>
+      </xsl:variable>
+      <a href="{$homeUrl}">
         <xsl:attribute name="title">
           <xsl:choose>
             <xsl:when test="//focused">
@@ -259,7 +262,7 @@
   <xsl:template name="portal.page.bar.link.logout">
     <xsl:if test="$AUTHENTICATED='true'">
     	<span id="portalPageBarLogout">
-        <a href="Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}">
+        <a href="{$CONTEXT_PATH}/Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}">
           <span><xsl:value-of select="$TOKEN[@name='LOGOFF_LABEL']"/></span>
         </a>
         <xsl:call-template name="portal.pipe" />
@@ -276,7 +279,10 @@
   -->
   <xsl:template name="logo">  
     <div id="portalLogo">
-      <a href="{$HOME_ACTION_URL}" title="{$TOKEN[@name='LOGO_TITLE']}">
+      <xsl:variable name="homeUrl">
+        <portal:url/>
+      </xsl:variable>
+      <a href="{$homeUrl}" title="{$TOKEN[@name='LOGO_TITLE']}">
         <xsl:choose>
           <xsl:when test="//focused">
             <!-- ****** LOGO FOCUSED BLOCK ****** -->
@@ -363,7 +369,7 @@
       <div id="portalWelcome">
         <div id="portalWelcomeInner">
           <p><xsl:value-of select="$TOKEN[@name='WELCOME_PRE']"/><xsl:value-of select="$USER_NAME"/><xsl:value-of select="$TOKEN[@name='WELCOME_POST']"/>
-          <span class="logout-label"><a href="Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='LOGOFF_LABEL']"/></a></span>
+          <span class="logout-label"><a href="{$CONTEXT_PATH}/Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='LOGOFF_LABEL']"/></a></span>
           </p>
         </div>
       </div>
@@ -560,7 +566,10 @@
   -->
   <xsl:template name="back.to.home">
   	<xsl:if test="//focused">
-      <a href="{$HOME_ACTION_URL}" id="portalBackToHome" title="{$TOKEN[@name='BACK_HOME_LONG_LABEL']}">
+      <xsl:variable name="homeUrl">
+        <portal:url/>
+      </xsl:variable>
+      <a href="{$homeUrl}" id="portalBackToHome" title="{$TOKEN[@name='BACK_HOME_LONG_LABEL']}">
         <span><xsl:value-of select="$TOKEN[@name='BACK_HOME_LABEL']"/></span>
       </a>
   	  <xsl:if test="//focused[@in-user-layout='no'] and $USE_AJAX='true' and $AUTHENTICATED">

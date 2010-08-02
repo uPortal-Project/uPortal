@@ -57,44 +57,20 @@
 
 
 <!--=====START: PARAMETERS & VARIABLES=====-->
-    <xsl:param name="activeTab">1</xsl:param>
     <xsl:param name="userLayoutRoot">root</xsl:param>
     <xsl:param name="focusedTabID">none</xsl:param>
     <xsl:param name="useSelectDropDown">true</xsl:param>
     
-    <xsl:variable name="activeTabIdx">
+    <xsl:variable name="activeTabIDx">
         <xsl:choose>
-            <xsl:when test="$focusedTabID='none'">
-                <xsl:choose>
-                    <xsl:when test="string( number( $activeTab ) )='NaN'">
-                        <xsl:choose>
-                            <xsl:when test="/layout/folder/folder[@ID=$activeTab and @type='regular' and @hidden='false']">
-                            	<xsl:value-of select="count(/layout/folder/folder[@ID=$activeTab]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
-                            </xsl:when>
-                            <xsl:otherwise>1</xsl:otherwise> <!-- if not found, use first tab -->
-                        </xsl:choose>
-                    </xsl:when>
-                    
-                    <!-- if the tab index number is greater than the number of tabs, use the first tab -->
-                    <xsl:when test="$activeTab &gt; count(/layout/folder/folder[@type='regular' and @hidden='false'])">1</xsl:when>
-                    
-                    <xsl:otherwise>
-                    	<xsl:value-of select="$activeTab"/>
-                    </xsl:otherwise>
-                </xsl:choose>
+            <xsl:when test="$focusedTabID!='none' and /layout/folder/folder[@ID=$focusedTabID and @type='regular' and @hidden='false']">
+            	<xsl:value-of select="count(/layout/folder/folder[@ID=$focusedTabID]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
             </xsl:when>
-            <xsl:otherwise>
-                <xsl:choose>
-                    <xsl:when test="/layout/folder/folder[@ID=$focusedTabID and @type='regular' and @hidden='false']">
-                    	<xsl:value-of select="count(/layout/folder/folder[@ID=$focusedTabID]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
-                    </xsl:when>
-                    <xsl:otherwise>1</xsl:otherwise> <!-- if not found, use first tab -->
-                </xsl:choose>
-            </xsl:otherwise>
+            <xsl:otherwise>1</xsl:otherwise> <!-- if not found, use first tab -->
         </xsl:choose>
     </xsl:variable>
     
-    <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIdx]/@ID"/>
+    <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIDx]/@ID"/>
 <!--=====END: PARAMETERS & VARIABLES=====-->
 
 

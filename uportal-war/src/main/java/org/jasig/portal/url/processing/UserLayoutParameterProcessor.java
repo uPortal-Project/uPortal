@@ -120,11 +120,7 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
             default:
                 final String tabId = portalRequestInfo.getTargetedLayoutNodeId();
                 if (tabId != null) {
-                    final String tabIndex = this.findTabIndex(userLayoutManager, tabId);
-                    structureStylesheetUserPreferences.putParameterValue("activeTab", tabIndex);
-                }
-                else {
-                    //TODO setup default activeTab?
+                    structureStylesheetUserPreferences.putParameterValue("focusedTabID", tabId);
                 }
                 structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
             break;

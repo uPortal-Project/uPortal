@@ -197,7 +197,10 @@
         <div class="fl-widget-content">
         	<ul class="fl-listmenu">
           	<li id="portletNavigationLinkHome">
-            	<a href="{$HOME_ACTION_URL}" title="{$TOKEN[@name='HOME_LONG_LABEL']}">
+                <xsl:variable name="homeUrl">
+                  <portal:url/>
+                </xsl:variable>
+            	<a href="{$homeUrl}" title="{$TOKEN[@name='HOME_LONG_LABEL']}">
               	<span>
                 	<xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/>
                 </span>

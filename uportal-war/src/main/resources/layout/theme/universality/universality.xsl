@@ -131,10 +131,10 @@
   <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
   <xsl:variable name="SKIN" select="$skin"/>
   <xsl:variable name="MEDIA_PATH">media/skins/universality</xsl:variable>
-  <xsl:variable name="ABSOLUTE_MEDIA_PATH"><xsl:value-of select="$CONTEXT_PATH"/>media/skins/universality</xsl:variable>
+  <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($MEDIA_PATH,'/',$MEDIA_PATH)"/>
   <xsl:variable name="SKIN_RESOURCES_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
-  <xsl:variable name="SKIN_PATH" select="concat($CONTEXT_PATH,$MEDIA_PATH,'/',$SKIN)"/>
-  <xsl:variable name="PORTAL_SHORTCUT_ICON">favicon.ico</xsl:variable>
+  <xsl:variable name="SKIN_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH,'/',$SKIN)"/>
+  <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
   <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
   <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/skin:resources/css[@type='fss-theme']/@name"/>
   <xsl:variable name="FLUID_THEME_CLASS">
@@ -181,9 +181,6 @@
   <xsl:param name="subscriptionsSupported">true</xsl:param>
   <xsl:param name="uP_productAndVersion">uPortal</xsl:param>
   <xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
-  <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
-  <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
-  <xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param>
   <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
   <xsl:param name="PORTAL_VIEW">
   	<xsl:choose>
