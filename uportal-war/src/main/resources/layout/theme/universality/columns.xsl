@@ -119,7 +119,7 @@
         </xsl:variable>
         <xsl:variable name="CAN_ADD_CHILDREN">
           <xsl:choose>
-            <xsl:when test="not(@dlm:deleteAllowed='false')">canAddChildren</xsl:when>
+            <xsl:when test="not(@dlm:addChildAllowed='false')">canAddChildren</xsl:when>
             <xsl:otherwise></xsl:otherwise>
           </xsl:choose>
         </xsl:variable>

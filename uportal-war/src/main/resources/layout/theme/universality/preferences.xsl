@@ -216,28 +216,11 @@
                             <form>
                                 <p>
                                     <input type="hidden" name="nodeId" value="{/layout/navigation/tab[@activeTab='true']/@ID}"/>
-                                    <input type="checkbox" name="movable">
-                                        <xsl:if test="not(/layout/navigation/tab[@activeTab='true']/@dlm:moveAllowed='false')">
-                                            <xsl:attribute name="checked">checked</xsl:attribute>
-                                        </xsl:if>
-                                    </input> Move this page<br />
-                                    <input type="checkbox" name="editable">
-                                        <xsl:if test="not(/layout/navigation/tab[@activeTab='true']/@dlm:editAllowed='false')">
-                                            <xsl:attribute name="checked">checked</xsl:attribute>
-                                        </xsl:if>
-                                    </input> Edit page properties<br />
-                                    <input type="checkbox" name="addChildAllowed">
-                                        <xsl:if test="not(/layout/navigation/tab[@activeTab='true']/@dlm:addChildAllowed='false')">
-                                            <xsl:attribute name="checked">checked</xsl:attribute>
-                                        </xsl:if>
-                                    </input> Add columns<br />
-                                    <input type="checkbox" name="deletable">
-                                        <xsl:if test="not(/layout/navigation/tab[@activeTab='true']/@dlm:deleteAllowed='false')">
-                                            <xsl:attribute name="checked">checked</xsl:attribute>
-                                        </xsl:if>
-                                    </input> Delete this page<br />
+                                    <input type="checkbox" name="movable"/> Move this page<br />
+                                    <input type="checkbox" name="editable"/> Edit page properties<br />
+                                    <input type="checkbox" name="addChildAllowed"/> Add columns<br />
+                                    <input type="checkbox" name="deletable"/> Delete this page<br />
                                 </p>
-                        
                             
                                 <div class="buttons">
                                     <input type="submit" class="button primary portlet-form-button" value="Update Permissions"/>

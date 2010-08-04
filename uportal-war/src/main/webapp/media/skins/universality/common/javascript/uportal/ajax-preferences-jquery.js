@@ -23,6 +23,12 @@
 
 */
 (function($){
+    
+    var availableLayouts = [ [ 100 ],
+                      [ 40, 60 ], [ 50, 50 ], [ 60, 40 ],
+                      [ 33, 34, 33 ], [ 25, 50, 25 ],
+                      [ 25, 25, 25, 25 ] ];
+
 	
     // if the uPortal scope is not available, add it
     $.uportal = $.uportal || {};
@@ -86,6 +92,7 @@
               currentPageName: $("#tabLink_" + settings.tabId + " > span").text(),
               isDefault: true,
               currentLayout: getCurrentLayout(),
+              allowedLayouts: getPermittedLayouts(),
               savePermissionsUrl: settings.preferencesUrl,
               imagePath: settings.mediaPath + "/" + settings.currentSkin + "/images/",
               selectors: {
@@ -122,7 +129,7 @@
                         return "Column " + ($(".portal-page-column").index(element) + 1); 
                     },
                     selectors: {
-                        permissionsLink: "#pageDialogLink",
+                        permissionsLink: ".portal-column-permissions-link",
                         permissionsDialog: ".edit-column-permissions-dialog",
                         formTitle: ".edit-column-permissions-dialog h2"
                     }
@@ -154,7 +161,6 @@
                     }
                 });
 		    }
-
 
 		    // add onclick events for portlet delete buttons
 			$('a[id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
@@ -259,72 +265,138 @@
             if (layouts.length == 0) layouts.push(100);
             return layouts;
 		};
-		var updatePage = function(form) {
-			var name = form.pageName.value;
-			var layout = $(form.layoutChoice).filter(":checked").val();
-			var columns = layout.split("-");
-			if (name != $("#portalPageBodyTitle").text())
-				updatePageName(name);
-			if (layout != getCurrentLayoutString())
-				changeColumns(columns);
-			$("#pageLayoutDialog").dialog('close');
-			return false;
+		
+		var getDeletableColumns = function() {
+            var columns = $('#portalPageBodyColumns > [id^=column_]');
+            
+            // a deletable column must be marked deletable and contain no locked
+            // children
+            var deletableColumns = columns.filter(".deletable:not(:has(.locked))");
+
+            var contentColumns = deletableColumns.filter(":has(.up-portlet-wrapper)");
+            if (contentColumns.size() > 0) {
+                var acceptorColumns = columns.filter(".canAddChildren");
+                // if there are no acceptor columns, mark any columns that 
+                // have content as undeletable
+                if (acceptorColumns.size() == 0) {
+                    deletableColumns = deletableColumns.filter(":not(:has(.up-portlet-wrapper))");
+                }
+            }
+
+            return deletableColumns;
 		};
+		
+		var getPermittedLayouts = function() {
+            var canAddColumns = $("#portalFlyoutNavigation_" + settings.tabId).hasClass("canAddChildren");
+		    var columns = $('#portalPageBodyColumns > [id^=column_]');
+		    
+		    // a deletable column must be marked deletable and contain no locked
+		    // children
+            var deletableColumns = columns.filter(".deletable:not(:has(.locked))");
+            
+		    // set the minimum number of columns according to how
+		    // many deletable columns the layout currently contains
+            var minColumns = columns.length - deletableColumns.length;
+		    
+		    var contentColumns = deletableColumns.filter(":has(.up-portlet-wrapper)");
+		    if (contentColumns.size() > 0) {
+	            var acceptorColumns = columns.filter(".canAddChildren");
+	            // if there are no acceptor columns, mark any columns that 
+	            // have content as undeletable
+	            if (acceptorColumns.size() == 0) {
+	                deletableColumns = deletableColumns.filter(":not(:has(.up-portlet-wrapper))");
+	                minColumns = columns.length - deletableColumns.length;
+	            } else {
+	                var separateAcceptor = false;
+	                for (var i = 0; i < acceptorColumns.length; i++) {
+	                    if ($.inArray(acceptorColumns[i], deletableColumns) < 0) {
+	                        separateAcceptor = true;
+	                        break;
+	                    }
+	                }
+	                if (!separateAcceptor) minColumns++;
+	            }
+		    }
+		    		    
+		    var permitted = [];
+		    $(availableLayouts).each(function(idx, layout){
+		        if (
+		            (canAddColumns || layout.length <= columns.length) &&
+		            (layout.length >= minColumns)
+		           ) {
+		            permitted.push(layout);
+		        }
+		    });
+		    return permitted;
+		};
+		
 		var updatePageName = function(name) {
 			$("#tabLink_" + settings.tabId + " > span").text(name);
 			$("#portalPageBodyTitle").text(name);
 			updateLayout({action: 'renameTab', tabId: settings.tabId, tabName: name});
 			return false;
 		};
+		
 		// Column editing persistence functions
 		var changeColumns = function(newcolumns) {
+		    
+		    var post = {action: 'changeColumns', tabId: settings.tabId, widths: newcolumns};
+		    
+		    if (newcolumns.length < settings.columnCount) {
+		        var deletables = getDeletableColumns();
+                var deletes = deletables.filter(":gt(" + (newcolumns.length -1) + ")");
+                post.deleted = [];
+                $(deletes).each(function(idx, deletable){
+                    post.deleted.push($(deletable).attr("id").split("_")[1]);
+                });
+		        
+                var acceptors = $("#portalPageBodyColumns > [id^=column_].canAddChildren");
+		        var acceptor = acceptors.filter(":first");
+		        post.acceptor = $(acceptor).attr("id").split("_")[1];
+		    }
+		    
 		    settings.columnCount = newcolumns.length;
-			updateLayout({action: 'changeColumns', tabId: settings.tabId, columns: newcolumns}, 
+		    
+			updateLayout(post, 
 				function(data) { 
-				    var columns = $('#portalPageBodyColumns > [id^=column_]');
-				    if (columns.length < newcolumns.length) {
-				    	$(data.newColumnIds).each(function(){
-				    	    var id = this;
-				    		$("#portalPageBodyColumns")
-				    			.append(
-				    				$(document.createElement('div')).attr("id", 'column_' + id)
-				    					.addClass("portal-page-column")
-				    					.append(
-				    						$(document.createElement('div'))
-				    							.attr("id", 'inner-column_' + id)
-				    							.addClass("portal-page-column-inner")
-										)
-				    			);
-				    	});
+			    
+			        // add any new columns to the page
+			    	$(data.newColumnIds).each(function(){
+			    	    var id = this;
+			    		$("#portalPageBodyColumns")
+			    			.append(
+			    				$(document.createElement('div')).attr("id", 'column_' + id)
+			    					.addClass("portal-page-column movable deletable editable canAddChildren")
+			    					.html("<div id=\"inner-column_" + id + "\" class=\"portal-page-column-inner\"></div>")
+			    			);
+			    	});
 				    	
-				    } else if(columns.length > newcolumns.length) {
-				    	for (var i = newcolumns.length; i < columns.length; i++) {
-				    		var lastColumn = $("#inner-column_" + $(columns[newcolumns.length-1]).attr("id").split("_")[1]);
-				    		var portlets = $(columns[i]).find("div[id*=portlet_]")
-					    		.each(function(){
-					    			$(this).appendTo(lastColumn);
-					    		})
-				    			.end().remove();
-				    	}
-		
-				    }
+			    	// remove any deleted columns from the page
+			        $(deletes).each(function(idx, del){
+			            $(this).find("div[id*=portlet_]").each(function(idx, portlet){
+			                $(portlet).appendTo(acceptor);
+			            });
+			            $(this).remove();
+			        });
 				    
-				    $("#portalPageBodyTitleRow").attr("colspan", newcolumns.length);
+			        // update the widths and CSS classnames for each column
+			        // on the page
 				    $('#portalPageBodyColumns > [id^=column_]').each(function(i){
-				    	$(this).removeClass().addClass("portal-page-column fl-col-flex"+newcolumns[i]);
-				    	if (newcolumns.length == 1) $(this).addClass("single");
-				    	else if (i == 0) $(this).addClass("left");
-				    	else if (i == newcolumns.length - 1) $(this).addClass("right");
+				        
+				        var column = $(this).removeClass("single left right");
+				        $(this.className.split(" ")).each(function(idx, className){
+				            if (className.match("fl-col-flex")) $(column).removeClass(className);
+				        });
+				        
+				        var newclasses = "fl-col-flex" + newcolumns[i];
+				    	if (newcolumns.length == 1) newclasses += " single";
+				    	else if (i == 0) newclasses += " left";
+				    	else if (i == newcolumns.length - 1) newclasses += " right";
+				    	else newclasses += " middle";
+                        $(column).addClass(newclasses);
 				    });
 				    
 			    	settings.myReorderer.refresh();
-			    	
-			    	// remove the checked and default checked attributes from all radio
-			    	// buttons and re-apply them to the current value to compensate
-			    	// for IE radio button bug
-			    	$("#pageLayoutDialog .changeColumns").find("input").removeAttr("checked").removeAttr("defaultChecked");
-			    	$("#pageLayoutDialog .changeColumns").find("input[value=" + newcolumns.join("-") + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
-					
 				}
 			);
 		};
@@ -354,7 +426,7 @@
 		
 		// Tab editing persistence functions
 		var addTab = function(name, columns) {
-			updateLayout({action: 'addTab', tabName: name, columns: columns}, 
+			updateLayout({action: 'addTab', tabName: name, widths: columns}, 
 			    function(data) {
 			        window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + ($("#portalNavigationList > li").length + 1);
 			    }
@@ -576,6 +648,7 @@
             uportal.PageManager("#subscribeTab-tab-2", {
                 currentPageName: "My Page",
                 isDefault: false,
+                allowedLayouts: availableLayouts,
                 currentLayout: [ 50, 50 ],
                 savePermissionsUrl: settings.preferencesUrl,
                 imagePath: settings.mediaPath + "/" + settings.currentSkin + "/images/",
@@ -611,10 +684,6 @@
             });
         };
         
-        var handleServerError = function(xml) {
-		    alert($("message", xml).text());
-		};
-
 		// initialize our portal code
 		if (settings.isFocusMode) initfocusedportal(); else initportal();
 

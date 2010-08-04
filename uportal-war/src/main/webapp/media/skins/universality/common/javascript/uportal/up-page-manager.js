@@ -147,10 +147,7 @@ var uportal = uportal || {};
     // defaults
     fluid.defaults("uportal.PageManager", {
         currentLayout: [ 50, 50 ],
-        allowedLayouts: [ [ 100 ],
-            [ 40, 60 ], [ 50, 50 ], [ 60, 40 ],
-            [ 33, 34, 33 ], [ 25, 50, 25 ],
-            [ 25, 25, 25, 25 ] ],
+        allowedLayouts: null,
         currentPageName: null,
         isDefault: false,
         savePermissionsUrl: "mvc/layout",

@@ -372,8 +372,14 @@
           <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
+        <xsl:variable name="CAN_ADD_CHILDREN">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:deleteAllowed='false')">canAddChildren</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
   
-      <div id="portalFlyoutNavigation_{@ID}" class="portal-flyout-container {$MOVABLE} {$DELETABLE} {$EDITABLE}" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
+      <div id="portalFlyoutNavigation_{@ID}" class="portal-flyout-container {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
         
         <div id="portalFlyoutNavigationInner_{@ID}" class="portal-flyout-container-inner">  <!-- Inner div for additional presentation/formatting options. -->
           <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->

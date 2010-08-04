@@ -483,7 +483,6 @@
                     if (contentHt > sidebarHt) {
                         sidebarLoc.height(contentHt);
                     }
-					window.console.log("contentLoc:", contentLoc, " sidebarLoc:" , sidebarLoc, " contentHt:" , contentHt, " sidebarHt:" , sidebarHt);
                 }
 				contentHeight();
             });
