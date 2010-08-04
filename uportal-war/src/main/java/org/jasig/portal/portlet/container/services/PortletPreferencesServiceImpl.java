@@ -327,7 +327,6 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             this.addPreferencesToMap(definitionPreferencesList, basePreferences);
         }
 
-        //Get the currently stored preferences list to be modified, this is needed to reduce DB updates at the ORM layer
         final List<IPortletPreference> preferencesList = new ArrayList<IPortletPreference>(newPreferences.size());
         
         for (final PortletPreference internalPreference : newPreferences.values()) {
