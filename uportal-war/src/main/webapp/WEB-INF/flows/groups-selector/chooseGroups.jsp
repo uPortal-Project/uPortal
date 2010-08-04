@@ -172,7 +172,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-content -->
 </div> <!-- end: portlet -->
 
-<script src="media/org/jasig/portal/flows/groups-selector/groups-selector.min.js" language="JavaScript" type="text/javascript"></script>
+<script src="<c:url value="/media/org/jasig/portal/flows/groups-selector/groups-selector.min.js"/>" language="JavaScript" type="text/javascript"></script>
 
 <script type="text/javascript">
 	up.jQuery(function() {
@@ -180,8 +180,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 		$(document).ready(function(){
 			uportal.entityselection("#${n}chooseGroupsBody", {
-                findEntityUrl: "<c:url value="mvc/findEntity/>",
-                searchEntitiesUrl: "<c:url value="/mvc/searchEntities/>",
+                findEntityUrl: "<c:url value="/mvc/findEntity"/>",
+                searchEntitiesUrl: "<c:url value="/mvc/searchEntities"/>",
 		        entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
 		        selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
 		        initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',

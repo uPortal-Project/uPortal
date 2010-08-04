@@ -187,8 +187,8 @@ var uportal = uportal || {};
         // assign a new entity browser for retrieving groups, categories, and person
         // information from the portal
         that.entityBrowser = $.groupbrowser({
-            findEntityUrl: that.settings.findEntityUrl,
-            searchEntitiesUrl: that.settings.searchEntitiesUrl
+            findEntityUrl: that.options.findEntityUrl,
+            searchEntitiesUrl: that.options.searchEntitiesUrl
         });
         
         // initialize the search form and selection basket onclick events
