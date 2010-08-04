@@ -122,9 +122,9 @@
 <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
 <xsl:variable name="SKIN" select="$skin"/>
 <xsl:variable name="MEDIA_PATH">/media/skins/universality</xsl:variable>
-<xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($MEDIA_PATH,'/',$MEDIA_PATH)"/>
+<xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
 <xsl:variable name="SKIN_RESOURCES_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
-<xsl:variable name="SKIN_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH,'/',$SKIN)"/>
+<xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
 <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
 <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$SKIN_PATH,'/skin.xml')"/>
 <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/s:resources/css[@type='fss-theme']/@name"/>

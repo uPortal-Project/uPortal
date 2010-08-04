@@ -487,7 +487,7 @@
         </div>
         <div class="fl-widget-content">
 					<script language="JavaScript" type="text/javascript">
-            var skinPath='<xsl:value-of select="$SKIN_PATH"/>/<xsl:value-of select="$SKIN"/>/';
+            var skinPath='<xsl:value-of select="$SKIN_PATH"/>/';
           </script>
           <script type="text/javascript">
             up.research = new up.ResearchObject();

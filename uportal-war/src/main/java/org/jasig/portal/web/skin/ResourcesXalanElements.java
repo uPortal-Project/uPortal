@@ -94,7 +94,10 @@ public class ResourcesXalanElements {
 		}
 		
 		final ResourcesDao resourcesDao = (ResourcesDao) transformer.getParameter(SKIN_RESOURCESDAO_PARAMETER_NAME);
-		final String portalContextPath = (String) transformer.getParameter("CONTEXT_PATH");
+		String portalContextPath = (String) transformer.getParameter("CONTEXT_PATH");
+		if (!portalContextPath.endsWith("/")) {
+		    portalContextPath = portalContextPath + "/";
+		}
 		
         DocumentFragment headFragment = resourcesDao.getResourcesFragment(primaryPath, portalContextPath + relativeRoot);
 		if(null == headFragment) {		
