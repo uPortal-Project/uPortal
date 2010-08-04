@@ -81,29 +81,8 @@
 		    };
 		    settings.myReorderer = up.fluid.reorderLayout ("#portalPageBodyColumns",options);
 
+		    initializePageLayoutDialog();
 		    
-		    $("#pageLayoutDialog").dialog({ width: 550, modal: true, autoOpen: false });
-		    
-		    $(".edit-page-link").click(function(){
-		        $("#pageLayoutDialog").dialog("open");
-		    });
-            
-          uportal.PageManager("#pageLayoutDialog", {
-              currentPageName: $("#tabLink_" + settings.tabId + " > span").text(),
-              isDefault: true,
-              currentLayout: getCurrentLayout(),
-              allowedLayouts: getPermittedLayouts(),
-              savePermissionsUrl: settings.preferencesUrl,
-              imagePath: settings.mediaPath + "/" + settings.currentSkin + "/images/",
-              selectors: {
-              },
-              listeners: {
-                  onUpdateLayout: changeColumns,
-                  onUpdatePageName: updatePageName,
-                  onUpdateIsDefault: null
-              }
-          });
-
 		    if (settings.isFragmentMode) {
                 // tabs permissions manager
                 uportal.LayoutManager("body", {
@@ -172,6 +151,36 @@
 			$("#movePageRightLink").click(function(){moveTab('right')});
 			initTabEditLinks();
 		
+		};
+		
+		var initializePageLayoutDialog = function() {
+	          // initialize the page layout modal dialog
+            $("#pageLayoutDialog").dialog({ width: 550, modal: true, autoOpen: false });
+            
+            // initialize the page layout editing component within the just-created
+            // modal dialog
+            uportal.PageManager("#pageLayoutDialog", {
+                // set the configured page name to the name of the current tab
+                currentPageName: $("#tabLink_" + settings.tabId + " > span").text(),
+                isDefault: true,
+                currentLayout: getCurrentLayout(),
+                allowedLayouts: getPermittedLayouts(),
+                savePermissionsUrl: settings.preferencesUrl,
+                imagePath: settings.mediaPath + "/" + settings.currentSkin + "/images/",
+                selectors: { },
+                listeners: {
+                    onUpdateLayout: changeColumns,
+                    onUpdatePageName: updatePageName,
+                    onUpdateIsDefault: null
+                }
+            });
+
+            // configure the new page editing dialog to launch when either of
+            // the relevant page editing links are clicked
+            $(".edit-page-link").click(function(){
+              $("#pageLayoutDialog").dialog("open");
+            });
+
 		};
 		
 		var chooseCategory = function(categoryId) {
