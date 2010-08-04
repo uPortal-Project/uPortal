@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.container.services;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -327,23 +328,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         }
 
         //Get the currently stored preferences list to be modified, this is needed to reduce DB updates at the ORM layer
-        final List<IPortletPreference> preferencesList;
-        if (configMode) {
-            preferencesList = definitionPreferences.getPortletPreferences();
-        }
-        else if (this.isStoreInEntity(portletRequest)) {
-            final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
-            preferencesList = entityPreferences.getPortletPreferences();
-        }
-        else {
-            preferencesList = new LinkedList<IPortletPreference>();
-        }
-        
-        //Build map of existing preferences for tracking which preferences have been removed
-        final Map<String, IPortletPreference> oldPreferences = new HashMap<String, IPortletPreference>();
-        for (final IPortletPreference preference : preferencesList) {
-            oldPreferences.put(preference.getName(), preference);
-        }
+        final List<IPortletPreference> preferencesList = new ArrayList<IPortletPreference>(newPreferences.size());
         
         for (final PortletPreference internalPreference : newPreferences.values()) {
             //Ignore preferences with null names
@@ -361,22 +346,10 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
                 continue;
             }
             
-            //Remove the existing preference from the map since it is supposed to be persisted 
-            final IPortletPreference existingPreference = oldPreferences.remove(name);
-            if (existingPreference == null) {
-                //New preference, add it to the list
-                preferencesList.add(preference);
-            }
-            else {
-                //Existing preference, update the fields
-                existingPreference.setValues(preference.getValues());
-                existingPreference.setReadOnly(preference.isReadOnly());
-            }
+            //New preference, add it to the list
+            preferencesList.add(preference);
         }
         
-        //Remove any old preferences that were not in the new preferences list
-        preferencesList.removeAll(oldPreferences.values());
-
         //If in config mode store the preferences on the definition
         if (configMode) {
             definitionPreferences.setPortletPreferences(preferencesList);
