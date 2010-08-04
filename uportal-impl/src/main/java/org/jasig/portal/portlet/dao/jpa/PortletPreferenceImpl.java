@@ -37,7 +37,6 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 @Entity
 @Table(name = "UP_PORTLET_PREF")
 public class PortletPreferenceImpl implements IPortletPreference {
-    @SuppressWarnings("unused")
     @Id
     @GeneratedValue
     @Column(name = "PORTLET_PREF_ID")
@@ -115,6 +114,13 @@ public class PortletPreferenceImpl implements IPortletPreference {
      */
     public boolean isReadOnly() {
         return this.readOnly;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.om.IPortletPreference#setReadOnly(boolean)
+     */
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
     /* (non-Javadoc)

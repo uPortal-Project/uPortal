@@ -13,4 +13,8 @@ import org.apache.pluto.internal.InternalPortletPreference;
  */
 public interface IPortletPreference extends InternalPortletPreference {
 
+    /**
+     * Sets the read only state of the preference
+     */
+    void setReadOnly(boolean readOnly);
 }

@@ -6,7 +6,9 @@
 package org.jasig.portal.portlet.dao.jpa;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,7 +37,6 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
 @Entity
 @Table(name = "UP_PORTLET_PREFS")
 class PortletPreferencesImpl implements IPortletPreferences {
-    @SuppressWarnings("unused")
     @Id
     @GeneratedValue
     @Column(name = "PORTLET_PREFS_ID")
@@ -63,15 +64,36 @@ class PortletPreferencesImpl implements IPortletPreferences {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletPreferences#replacePortletPreferences(java.util.List)
      */
-    public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+    public void setPortletPreferences(List<IPortletPreference> newPreferences) {
         Validate.notNull(portletPreferences);
         
         if (this.portletPreferences == null) {
-            this.portletPreferences = portletPreferences;
+            this.portletPreferences = newPreferences;
         }
-        else {
+        else if (this.portletPreferences != newPreferences) {
+            //Build map of existing preferences for tracking which preferences have been removed
+            final Map<String, IPortletPreference> oldPreferences = new LinkedHashMap<String, IPortletPreference>();
+            for (final IPortletPreference preference : this.portletPreferences) {
+                oldPreferences.put(preference.getName(), preference);
+            }
             this.portletPreferences.clear();
-            this.portletPreferences.addAll(portletPreferences);
+
+            for (final IPortletPreference preference : newPreferences) {
+                final String name = preference.getName();
+
+                //Remove the existing preference from the map since it is supposed to be persisted 
+                final IPortletPreference existingPreference = oldPreferences.remove(name);
+                if (existingPreference == null) {
+                    //New preference, add it to the list
+                    this.portletPreferences.add(preference);
+                }
+                else {
+                    //Existing preference, update the fields
+                    existingPreference.setValues(preference.getValues());
+                    existingPreference.setReadOnly(preference.isReadOnly());
+                    this.portletPreferences.add(existingPreference);
+                }
+            }
         }
     }
 
