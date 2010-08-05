@@ -34,6 +34,14 @@
     </bean>
 
     <!--
+     | Period, in seconds, after which SmartLdap will drop and re-init the groups 
+     | tree.  A value of zero or less (negative) disables this feature.
+     +-->
+    <bean id="groupsTreeRefreshIntervalSeconds" class="java.lang.Long">
+        <constructor-arg><value>900</value></constructor-arg>
+    </bean>
+
+    <!--
      | BaseDn that will be passed to the search (not to the context).
      |
      | WARNING:  If you get an error like this...
