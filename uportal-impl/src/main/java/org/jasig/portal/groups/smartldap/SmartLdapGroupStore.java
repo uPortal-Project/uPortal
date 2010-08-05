@@ -55,40 +55,43 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 		
     // Instance Members.
     private ApplicationContext spring_context = null;
+    
+    /**
+     * Period after which SmartLdap will drop and rebuild the groups tree.  May 
+     * be overridden in SmartLdapGroupStoreConfix.xml.  A value of zero or less 
+     * (negative) disables this feature.
+     */
+    private long groupsTreeRefreshIntervalSeconds = 900;  // default
+
+    /**
+     * Timestamp (milliseconds) of the last tree refresh.
+     */
+    private volatile long lastTreeRefreshTime = 0;
+
     private final ScriptRunner runner;
     private final Task initTask;
     private final Log log = LogFactory.getLog(getClass());
-    private boolean initialized;
     
     /*
      * Indexed Collections.
      */
     
     /**
-     * Map of all groups keyed by 'key' (DN).  Includes ROOT_GROUP.
+     * Single-object abstraction that contains all knowledge of SmartLdap groups:
+     * <ul>
+     *   <li>Map of all groups keyed by 'key' (DN).  Includes ROOT_GROUP.</li>
+     *   <li>Map of all parent relationships keyed by the 'key' (DN) of the child;  
+     *       the values are lists of the 'keys' (DNs) of its parents.  
+     *       Includes ROOT_GROUP.</li>
+     *   <li>Map of all child relationships keyed by the 'key' (DN) of the parent;  
+     *       the values are lists of the 'keys' (DNs) of its children.  
+     *       Includes ROOT_GROUP.</li>
+     *   <li>Map of all 'keys' (DNs) of SmartLdap managed groups indexed by group 
+     *       name in upper case.  Includes ROOT_GROUP.</li>
+     * </ul>
      */
-    private Map<String,IEntityGroup> groups;
-    
-    /**
-     * Map of all parent relationships keyed by the 'key' (DN) of the child;  
-     * the values are lists of the 'keys' (DNs) of its parents.  
-     * Includes ROOT_GROUP.
-     */
-    private Map<String,List<String>> parents;
-    
-    /**
-     * Map of all child relationships keyed by the 'key' (DN) of the parent;  
-     * the values are lists of the 'keys' (DNs) of its children.  
-     * Includes ROOT_GROUP.
-     */
-    private Map<String,List<String>> children;
-    
-    /**
-     * Map of all 'keys' (DNs) of SmartLdap managed groups indexed by group 
-     * name in upper case.  Includes ROOT_GROUP.
-     */
-    private Map<String,List<String>> keysByUpperCaseName;
-    
+    private GroupsTree groupsTree;
+
     /*
      * Public API.
      */
@@ -119,8 +122,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
      */
     public IEntityGroup find(String key) throws GroupsException {
     	
-    	if (!initialized) {
-    		init();
+    	if (isTreeRefreshRequired()) {
+    		refreshTree();
     	}
 
     	if (log.isDebugEnabled()) {
@@ -129,7 +132,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
     	
     	// All of our groups (incl. ROOT_GROUP) 
     	// are indexed in the 'groups' map by key...
-    	return groups.get(key);
+    	return groupsTree.getGroups().get(key);
     
     }
 
@@ -141,19 +144,19 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
      */
     public Iterator findContainingGroups(IGroupMember gm) throws GroupsException {
     	
-    	if (!initialized) {
-    		init();
+    	if (isTreeRefreshRequired()) {
+    		refreshTree();
     	}
 
     	List<IEntityGroup> rslt = new LinkedList<IEntityGroup>();
     	if (gm.isGroup()) {		
     	    // Check the local indeces...
     		IEntityGroup group = (IEntityGroup) gm;
-    		List<String> list = parents.get(group.getLocalKey());
+    		List<String> list = groupsTree.getParents().get(group.getLocalKey());
     		if (list != null) {
     			// should only reach this code if its a SmartLdap managed group...
         		for (String s : list) {
-        			rslt.add(groups.get(s));
+        			rslt.add(groupsTree.getGroups().get(s));
         		}
     		}
     	} else if (gm.isEntity() && gm.getEntityType().equals(ROOT_GROUP.getEntityType())) {	
@@ -192,8 +195,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                     }
 
                     for (String s : list) {
-                        if (groups.containsKey(s)) {
-                            rslt.add(groups.get(s));
+                        if (groupsTree.getGroups().containsKey(s)) {
+                            rslt.add(groupsTree.getGroups().get(s));
                         }
                     }
                 }
@@ -214,8 +217,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
     public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException {
         
 
-    	if (!initialized) {
-    		init();
+    	if (isTreeRefreshRequired()) {
+    		refreshTree();
     	}
 
     	if (log.isDebugEnabled()) {
@@ -245,8 +248,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
      */
     public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
 
-    	if (!initialized) {
-    		init();
+    	if (isTreeRefreshRequired()) {
+    		refreshTree();
     	}
 
     	if (log.isDebugEnabled()) {
@@ -272,8 +275,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
      */
     public Iterator findMemberGroups(IEntityGroup group) throws GroupsException {
 
-    	if (!initialized) {
-    		init();
+    	if (isTreeRefreshRequired()) {
+    		refreshTree();
     	}
 
     	if (log.isDebugEnabled()) {
@@ -282,11 +285,11 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
     	List<IEntityGroup> rslt = new LinkedList<IEntityGroup>();
     	
-    	List<String> list = children.get(group.getLocalKey());
+    	List<String> list = groupsTree.getChildren().get(group.getLocalKey());
     	if (list != null) {
 			// should only reach this code if its a SmartLdap managed group...
     		for (String s : list) {
-    			rslt.add(groups.get(s));
+    			rslt.add(groupsTree.getGroups().get(s));
     		}
     	}
     	
@@ -301,8 +304,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
     public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
 
-    	if (!initialized) {
-    		init();
+    	if (isTreeRefreshRequired()) {
+    		refreshTree();
     	}
 
     	if (log.isDebugEnabled()) {
@@ -358,7 +361,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
     	}
     	
     	List<EntityIdentifier> rslt = new LinkedList<EntityIdentifier>(); 
-    	for (Map.Entry<String,List<String>> y : keysByUpperCaseName.entrySet()) {
+    	for (Map.Entry<String,List<String>> y : groupsTree.getKeysByUpperCaseName().entrySet()) {
     		if (y.getKey().matches(regex)) {
     			List<String> keys = y.getValue();
     			for (String k : keys) {
@@ -380,30 +383,101 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         log.warn("Unsupported method accessed:  SmartLdapGroupStore.updateMembers");
         throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
     }
+
+    /*
+     * Implementation.
+     */
     
-    public synchronized void init() {
-    	
-    	if (initialized) {
-    		return;
-    	}
-    	
-    	// Replace the old with the new...
-        InitBundle bundle = prepareInitBundle();
-        this.groups = bundle.getGroups();
-        this.parents = bundle.getParents();
-        this.children = bundle.getChildren();
-        this.keysByUpperCaseName = bundle.getKeysByUpperCaseName();
+    private static IEntityGroup createRootGroup() {
         
-        // Set the 'initialized' flag...
-        this.initialized = true;
+        IEntityGroup rslt = new EntityTestingGroupImpl(ROOT_KEY, IPerson.class);
+        rslt.setCreatorID("System");
+        rslt.setName(ROOT_KEY);
+        rslt.setDescription(ROOT_DESC);
+        
+        return rslt;
 
     }
 
-    /*
-     * Package API.
-     */
+    private SmartLdapGroupStore() {
+        
+    	// Spring tech...
+    	URL u = getClass().getResource("/properties/groups/SmartLdapGroupStoreConfig.xml");
+		spring_context = new FileSystemXmlApplicationContext(u.toExternalForm());
+		
+		// Interval between tree rebuilds
+		if (spring_context.containsBean("groupsTreeRefreshIntervalSeconds")) {
+		    groupsTreeRefreshIntervalSeconds = (Long) spring_context.getBean("groupsTreeRefreshIntervalSeconds");
+		}
+
+		// Cernunnos tech...
+		runner = new ScriptRunner();
+        initTask = runner.compileTask(getClass().getResource("init.crn").toExternalForm());
+
+    }
     
-    InitBundle prepareInitBundle() {
+    private boolean isTreeRefreshRequired() {
+        
+        if (groupsTree == null) {
+            // Of course we need it
+            return true;
+        }
+        
+        if (groupsTreeRefreshIntervalSeconds <= 0) {
+            // SmartLdap refresh feature may be disabled by setting 
+            // groupsTreeRefreshIntervalSeconds to zero or negative.
+            return false;
+        }
+        
+        // The 'lastTreeRefreshTime' member variable is volatile.  As of JDK 5, 
+        // this fact should make reads of this variable dependable in a multi-
+        // threaded environment.
+        final long treeExpiresTimestamp = lastTreeRefreshTime + (groupsTreeRefreshIntervalSeconds * 1000L);
+        return System.currentTimeMillis() > treeExpiresTimestamp;
+
+    }
+
+    /**
+     * Verifies that the collection of groups needs rebuilding and, if so, 
+     * spawns a new worker <code>Thread</code> for that purpose.
+     */
+    private synchronized void refreshTree() {
+        
+        if (!isTreeRefreshRequired()) {
+            // The groupsTree was already re-built while 
+            // we were waiting to enter this method.
+            return;
+        }
+        
+        // We must join the builder thread if
+        // we don't have an existing groupsTree.
+        final boolean doJoin = groupsTree == null;
+        
+        // In most cases, re-build the tree in a separate thread;  the current 
+        // request can proceed with the newly-expired groupsTree.
+        Thread refresh = new Thread("SmartLdap Refresh Worker") {
+            public void run() {
+                // Replace the old with the new...
+                groupsTree = buildGroupsTree();
+            }
+        };
+        refresh.setDaemon(true);
+        refresh.run();
+        if (doJoin) {
+            try {
+                refresh.join();
+            } catch (InterruptedException ie) {
+                throw new RuntimeException(ie);
+            }
+        }
+        
+        // Even if the refresh thread failed, don't try 
+        // again for another groupsTreeRefreshIntervalSeconds.
+        lastTreeRefreshTime = System.currentTimeMillis();
+
+    }
+
+    private GroupsTree buildGroupsTree() {
         
         // Prepare the new local indeces...
         Map<String,IEntityGroup> new_groups = Collections.synchronizedMap(new HashMap<String,IEntityGroup>());
@@ -567,37 +641,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             
         }
 
-        return new InitBundle(new_groups, new_parents, new_children, new_keysByUpperCaseName);
-
-    }
-
-    /*
-     * Implementation.
-     */
-    
-    private static IEntityGroup createRootGroup() {
-        
-        IEntityGroup rslt = new EntityTestingGroupImpl(ROOT_KEY, IPerson.class);
-        rslt.setCreatorID("System");
-        rslt.setName(ROOT_KEY);
-        rslt.setDescription(ROOT_DESC);
-        
-        return rslt;
-
-    }
-
-    private SmartLdapGroupStore() {
-        
-    	// Spring tech...
-    	URL u = getClass().getResource("/properties/groups/SmartLdapGroupStoreConfig.xml");
-		spring_context = new FileSystemXmlApplicationContext(u.toExternalForm());
-
-		// Cernunnos tech...
-		runner = new ScriptRunner();
-        initTask = runner.compileTask(getClass().getResource("init.crn").toExternalForm());
-        
-        // SmartLdapGroupStore will be initialized on first use...
-        initialized = false;
+        return new GroupsTree(new_groups, new_parents, new_children, new_keysByUpperCaseName);
 
     }
 
@@ -623,7 +667,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
     
     }
     
-    private static final class InitBundle {
+    private static final class GroupsTree {
         
         // Instance Members.
         private final Map<String,IEntityGroup> groups;
@@ -635,7 +679,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
          * Public API.
          */
         
-        public InitBundle(Map<String,IEntityGroup> groups, Map<String,List<String>> parents, 
+        public GroupsTree(Map<String,IEntityGroup> groups, Map<String,List<String>> parents, 
                                 Map<String,List<String>> children, 
                                 Map<String,List<String>> keysByUpperCaseName) {
             
