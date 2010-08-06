@@ -1892,7 +1892,7 @@ public class RDBMDistributedLayoutStore
                     final ResultSet rs2 = pstmt2.executeQuery();
                     try {
                         while (rs2.next()) {
-                            String pName = rs.getString(1);
+                            String pName = rs2.getString(1);
                             if (tsd.containsParameterName(pName))
                             	tsup.putParameterValue(pName, rs2.getString(2));
                         }
