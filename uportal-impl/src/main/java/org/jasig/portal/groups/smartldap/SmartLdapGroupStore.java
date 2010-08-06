@@ -462,9 +462,10 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             }
         };
         refresh.setDaemon(true);
-        refresh.run();
+        refresh.start();
         if (doJoin) {
             try {
+                log.info("Joining the SmartLdap Refresh Worker Thread");
                 refresh.join();
             } catch (InterruptedException ie) {
                 throw new RuntimeException(ie);
