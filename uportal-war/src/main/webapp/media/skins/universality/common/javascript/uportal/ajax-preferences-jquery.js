@@ -84,7 +84,6 @@
 		    initializePageLayoutDialog();
 		    
 		    if (settings.isFragmentMode) {
-		        console.log("fragment mode");
                 // tabs permissions manager
 	            $(".edit-page-permissions-dialog").dialog({ width: 550, modal: true, autoOpen: false });
                 settings.pagePermissionsManager = uportal.FragmentPermissionsManager(".edit-page-permissions-dialog", {
