@@ -19,10 +19,6 @@
 
 var uportal = uportal || {};
 
-uportal.defaultNodeIdExtractor = function(that, element) {
-    return element.attr("id").split("_")[1];
-};
-
 (function($, fluid){
     
     /**
@@ -36,7 +32,7 @@ uportal.defaultNodeIdExtractor = function(that, element) {
 
         // set the hidden portlet ID attribute
         var form = that.locate("permissionsDialog").find("form");
-        form.find("[name=nodeId]").val(that.options.nodeIdExtractor(that, element));
+        form.find("[name=nodeId]").val(that.options.nodeIdExtractor(element));
         
         // set the movable permission
         if (element.hasClass(that.options.cssClassNames.movable)) {
@@ -162,18 +158,17 @@ uportal.defaultNodeIdExtractor = function(that, element) {
         }
     };
     
-    uportal.LayoutManager = function(container, options) {
-        var that = fluid.initView("uportal.LayoutManager", container, options);
+    uportal.FragmentPermissionsManager = function(container, options) {
+        var that = fluid.initView("uportal.FragmentPermissionsManager", container, options);
         
         that.state = {};
 
-        that.launchEditDialog = function(link) {
+        that.refresh = function(link) {
             var element = that.options.elementExtractor(that, link);
             populateForm(that, element);
-            that.locate("permissionsDialog").dialog("open"); 
             
             // initialize the permission form submission actions
-            that.locate("permissionsDialog").find("form").unbind("submit")
+            that.locate("permissionsForm").unbind("submit")
                 .submit(function(){
                     return updatePermissions(that, element);
                 }
@@ -182,25 +177,16 @@ uportal.defaultNodeIdExtractor = function(that, element) {
             return false;
         };
         
-        that.locate("permissionsLink").click(function(){
-            that.locate("permissionsDialog").dialog({ width: 550, modal: true });
-            $(this).unbind("click").click(function(){ 
-                that.launchEditDialog(this); 
-            });
-            that.launchEditDialog(this);
-            return false;
-        });
-        
         return that;
     };
 
     
     // defaults
-    fluid.defaults("uportal.LayoutManager", {
+    fluid.defaults("uportal.FragmentPermissionsManager", {
         savePermissionsUrl: "mvc/layout",
         elementExtractor: null,
         titleExtractor: null,
-        nodeIdExtractor: uportal.defaultNodeIdExtractor,
+        nodeIdExtractor: up.defaultNodeIdExtractor,
         cssClassNames: {
             movable: "movable",
             editable: "editable",
@@ -208,8 +194,6 @@ uportal.defaultNodeIdExtractor = function(that, element) {
             addChildAllowed: "canAddChildren"
         },
         selectors: {
-            permissionsLink: null,
-            permissionsDialog: null,
             formTitle: null
         },
         listeners: {

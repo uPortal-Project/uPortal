@@ -84,22 +84,27 @@
 		    initializePageLayoutDialog();
 		    
 		    if (settings.isFragmentMode) {
+		        console.log("fragment mode");
                 // tabs permissions manager
-                uportal.LayoutManager("body", {
+	            $(".edit-page-permissions-dialog").dialog({ width: 550, modal: true, autoOpen: false });
+                settings.pagePermissionsManager = uportal.FragmentPermissionsManager(".edit-page-permissions-dialog", {
                     savePermissionsUrl: settings.preferencesUrl,
                     elementExtractor: function(that, link){
                         return $(link).parents(".portal-flyout-container"); 
                     },
                     titleExtractor: function(element){ return "tab"; },
                     selectors: {
-                        permissionsLink: "#editPagePermissionsLink a",
-                        permissionsDialog: ".edit-page-permissions-dialog",
-                        formTitle: ".edit-page-permissions-dialog h2"
+                        formTitle: "h2"
                     }
+                });
+                $("#editPagePermissionsLink a").click(function(){
+                    settings.pagePermissionsManager.refresh($(this));
+                    $(".edit-page-permissions-dialog").dialog("open");
                 });
     
                 // columns permissions manager
-                uportal.LayoutManager("body", {
+                $(".edit-column-permissions-dialog").dialog({ width: 550, modal: true, autoOpen: false });
+                settings.columnPermissionsManager = uportal.FragmentPermissionsManager(".edit-column-permissions-dialog", {
                     savePermissionsUrl: settings.preferencesUrl,
                     elementExtractor: function(that, link){
                         return $(link).parents(".portal-page-column"); 
@@ -108,23 +113,24 @@
                         return "Column " + ($(".portal-page-column").index(element) + 1); 
                     },
                     selectors: {
-                        permissionsLink: ".portal-column-permissions-link",
-                        permissionsDialog: ".edit-column-permissions-dialog",
-                        formTitle: ".edit-column-permissions-dialog h2"
+                        formTitle: "h2"
                     }
+                });
+                $(".portal-column-permissions-link").click(function(){
+                    settings.columnPermissionsManager.refresh($(this));
+                    $(".edit-column-permissions-dialog").dialog("open");
                 });
     
                 // portlet permissions manager
-                uportal.LayoutManager("body", {
+                $(".edit-portlet-permissions-dialog").dialog({ width: 550, modal: true, autoOpen: false });
+                settings.portletPermissionsManager = uportal.FragmentPermissionsManager(".edit-portlet-permissions-dialog", {
                     savePermissionsUrl: settings.preferencesUrl,
                     elementExtractor: function(that, link){
                         return $(link).parents(".up-portlet-wrapper"); 
                     },
                     titleExtractor: function(element){ return element.find(".up-portlet-wrapper-inner h2 a").text(); },
                     selectors: {
-                        permissionsLink: ".portlet-permissions-link",
-                        permissionsDialog: ".edit-portlet-permissions-dialog",
-                        formTitle: ".edit-portlet-permissions-dialog h2"
+                        formTitle: "h2"
                     },
                     listeners: {
                         onUpdatePermissions: function(element, newPermissions) {
@@ -138,6 +144,10 @@
                             settings.myReorderer.refresh();
                         }
                     }
+                });
+                $(".portlet-permissions-link").click(function(){
+                    settings.portletPermissionsManager.refresh($(this));
+                    $(".edit-portlet-permissions-dialog").dialog("open");
                 });
 		    }
 

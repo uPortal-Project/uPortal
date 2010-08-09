@@ -345,7 +345,7 @@
               preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
               channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList?xml=true',
               subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
-              isFragmentMode: '<xsl:choose><xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>',
+              isFragmentMode: <xsl:choose><xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>,
               messages: { 
                   confirmRemoveTab: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE']"/>', 
                   confirmRemovePortlet: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_PORTLET_CONFIRMATION_MESSAGE']"/>' 
