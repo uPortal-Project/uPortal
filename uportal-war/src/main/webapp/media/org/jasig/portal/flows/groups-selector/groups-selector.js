@@ -20,12 +20,22 @@
 var uportal = uportal || {};
 
 (function($, fluid){
+    
+    var getTypeFromKey = function(key) {
+        var separatorIndex = key.indexOf(":");
+        return key.substring(0, separatorIndex);
+    };
+    
+    var getKey = function(key) {
+        var separatorIndex = key.indexOf(":");
+        return key.substring(separatorIndex + 1, key.length);
+    };
 
     /**
      * Browse to a particular entity.
      */
     var browseEntity = function(that, key) {
-        var entity = that.entityBrowser.getEntity(key.split(":")[0], key.split(":")[1]);
+        var entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
         that.currentEntity = entity;
         
         updateBreadcrumbs(that, entity);
@@ -88,7 +98,7 @@ var uportal = uportal || {};
         if ($.inArray(key, that.options.selected) < 0) {
             // add the key to our selected list
             that.options.selected.push(key);
-            var entity = that.entityBrowser.getEntity(key.split(":")[0], key.split(":")[1]);
+            var entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
             
             // add a element to the user-visible select list
             var li = $(document.createElement("li"));
