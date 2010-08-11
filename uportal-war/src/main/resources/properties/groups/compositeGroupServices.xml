@@ -105,6 +105,7 @@ This list of component group services is processed by the composite, or "root" s
  | on a Grouper server and makes them available in the portal.  You can read about 
  | this technology here:  http://www.ja-sig.org/wiki/x/3QPI   
  +-->
+<!-- 
   <service>
     <name>grouper</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
@@ -114,5 +115,6 @@ This list of component group services is processed by the composite, or "root" s
     <internally_managed>false</internally_managed>
     <caching_enabled>true</caching_enabled>
   </service>
+-->
 
 </servicelist>
