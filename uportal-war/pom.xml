@@ -103,6 +103,11 @@
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>edu.internet2.middleware.grouper</groupId>
+            <artifactId>grouperClient</artifactId>
+        </dependency>
         
         <dependency>
             <groupId>javax.activation</groupId>
@@ -627,6 +632,11 @@
                                 <version>2.0-alpha-3</version>
                             </dependency>
                         </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo.javascript</groupId>
+                        <artifactId>maven-javascript-report-plugin</artifactId>
+                        <extensions>true</extensions>
                     </plugin>
                 </plugins>
             </build>

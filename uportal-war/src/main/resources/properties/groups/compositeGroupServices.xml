@@ -97,4 +97,22 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 -->
 
+<!--  
+ | Uncomment to configure a Grouper group service component.  Be sure to edit 
+ | grouper.client.properties and grouper.lib.properties to apply your settings.
+ |
+ | GrouperEntityGroupStore is a GaP implementation that recognizes groups defined 
+ | on a Grouper server and makes them available in the portal.  You can read about 
+ | this technology here:  http://www.ja-sig.org/wiki/x/3QPI   
+ +-->
+  <service>
+    <name>grouper</name>
+    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.jasig.portal.groups.grouper.GrouperEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.grouper.GrouperEntityGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.grouper.GrouperEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>true</caching_enabled>
+  </service>
+
 </servicelist>
