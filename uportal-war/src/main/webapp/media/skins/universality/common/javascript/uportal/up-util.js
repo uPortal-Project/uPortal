@@ -75,9 +75,34 @@ var up = up || {};
         };
     };
     
+    /**
+     * Escape special character in preparation for using the supplied string
+     * in a JavaScript RegExp.
+     * 
+     * @param str {String} String to be cleaned
+     */
     up.escapeSpecialChars = function(str){
         var specials = new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"); // .*+?|()[]{}\
         return str.replace(specials, "\\$&");
+    };
+    
+    /**
+     * Refresh a Fluid pager with a new data model.  This method will also 
+     * return the pager to the first page
+     * 
+     * @param pager  {Object}  pager to be refreshed
+     * @param data   {Object}  new data model
+     */
+    up.refreshPager = function(pager, data) {
+        var newModel = fluid.copy(pager.model);
+        newModel.totalRange = data.length;
+        newModel.pageIndex = 0;
+        newModel.pageCount = Math.max(1, Math.floor((newModel.totalRange - 1)/ newModel.pageSize) + 1);
+        fluid.clear(pager.options.dataModel);
+        fluid.model.copyModel(pager.options.dataModel, data);
+        pager.permutation = undefined;
+        pager.events.onModelChange.fire(newModel, pager.model, pager);
+        fluid.model.copyModel(pager.model, newModel)
     };
 
 })(jQuery, fluid);

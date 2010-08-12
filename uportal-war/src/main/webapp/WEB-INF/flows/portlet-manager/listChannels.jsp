@@ -56,8 +56,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
     
 <!-- Portlet -->
-<div class="fl-widget portlet ptl-mgr view-home" role="section">
-	<form id="${n}portletSelectionForm">
+<div id="${n}portletBrowser" class="fl-widget portlet ptl-mgr view-home" role="section">
   
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
@@ -68,9 +67,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <li><a class="button" href="${ newPortletUrl }" title="<spring:message code="listChannels.newPortletButton"/>"><span><spring:message code="listChannels.newPortletButton"/></span></a></li>
         </ul>
       </div>
-      <div class="fl-col fl-text-align-right">
-        <input id="${n}channelSearch"/>
-        <input type="submit" value="<spring:message code="listChannels.searchSubmitButton"/>"/>
+      <div class="fl-col fl-text-align-right portlet-search-view">
+        <form class="portlet-search-form" style="display:inline">
+            <input class="portlet-search-input"/>
+            <input type="submit" value="<spring:message code="listChannels.searchSubmitButton"/>"/>
+        </form>
       </div>
     </div>
   </div>
@@ -152,98 +153,191 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<script type="text/javascript">
 	 up.jQuery(function() {
         var $ = up.jQuery;
-        var channelBrowser;
+        var fluid = up.fluid;
         var editUrl = "${ editPortletUrl }";
         var removeUrl = "${ removePortletUrl }";
-        var pager;
 
         var channelTypes = { };
         <c:forEach items="${channelTypes}" var="type">channelTypes[${type.id}] = '${type.name}';</c:forEach>
+        
+        up.PortletAdministrationCategoryListView = function(container, overallThat, options) {
 
-        var searchChannels = function() {
-            var searchTerm = $("#${n}channelSearch").val();
-            var categoryId = $("#${n}categorySelectMenu").val();
-            var channels;
-            if (searchTerm == null || searchTerm == "") {
-                channels = channelBrowser.getChannelsForCategory(categoryId);
-            } else {
-                channels = channelBrowser.searchChannels(searchTerm, categoryId);
-            }
-            $(channels).each(function() {
-                this.type = channelTypes[this.typeId]; 
+            // construct the new component
+            var that = fluid.initView("up.PortletAdministrationCategoryListView", container, options);
+
+            // initialize a state map for this component
+            that.state = {};
+
+            // Build an array of all categories containing at least
+            // one deep member, sorted by name
+            var categories = [];
+            categories.push({
+                id: "",
+                name: "All",
+                description: "All Categories",
+                categories: [],
+                deepCategories: [],
+                portlets: [],
+                deepPortlets: []
             });
-            return channels;
-        }
-
-        var updateTable = function() {
-            var newChannels = searchChannels();
-            var newModel = up.fluid.copy(pager.model);
-            newModel.totalRange = newChannels.length;
-            newModel.pageIndex = 0;
-            newModel.pageCount = Math.max(1, Math.floor((newModel.totalRange - 1)/ newModel.pageSize) + 1);
-            up.fluid.clear(pager.options.dataModel);
-            up.fluid.model.copyModel(pager.options.dataModel, newChannels);
-            pager.permutation = undefined;
-            pager.events.onModelChange.fire(newModel, pager.model, pager);
-            up.fluid.model.copyModel(pager.model, newModel)
-        }
-
-        $(document).ready(function() {
-            channelBrowser = $.channelbrowser({
-                channelXmlUrl: "<c:url value="/mvc/channelList?xml=true&type=manage"/>",
-                onDataLoad: function(categories) {
-                    var categorySelect = $("#${n}categorySelectMenu");
-                    $(categories).each(function(i, val) {
-                        categorySelect.get(0).options[i+1] = new Option(this.name, this.id);
-                    });
-                    $("#${n}loadingMessage").css("display", "none");
-
-                    var selectorPrefix = "${ n }categoriesTable";
-
-                    var options = {
-                        dataModel: searchChannels(),
-                        columnDefs: [
-	                        { key: "name", valuebinding: "*.name", sortable: true },
-                            { key: "type", valuebinding: "*.type", sortable: true },
-                            { key: "state", valuebinding: "*.state", sortable: true },
-                            { key: "editLink", valuebinding: "*.id",
-                                components: {
-                                    target: editUrl.replace("PORTLETID", '${"${*.id}"}'),
-                                    linktext: "<spring:message code="listChannels.editLink"/>"
-                                    }
-                                },
-                            { key: "deleteLink", valuebinding: "*.id",
-                                components: {
-                                    target: removeUrl.replace("PORTLETID", '${"${*.id}"}'),
-                                    linktext: "<spring:message code="listChannels.deleteLink"/>"
-                                    }
-                                }
-                        ],
-                        bodyRenderer: {
-                          type: "fluid.pager.selfRender",
-                          options: {
-                              selectors: {
-                                 root: "#${n}categoriesTable1"
-                              },
-                              row: "row:"
-                            }
-                            
-                        },
-                        pagerBar: {type: "fluid.pager.pagerBar", options: {
-                          pageList: {type: "fluid.pager.renderedPageList",
-                            options: { 
-                              linkBody: "a"
-                            }
-                          }
-                        }}
-                    };
-                    pager = up.fluid.pager("#${n}channelAddingTabs", options);
-                    categorySelect.change(updateTable);
-                    $("#${n}portletSelectionForm").submit(updateTable);
-                    $("#${n}channelSearch").keyup(updateTable);
+            $(overallThat.registry.getAllCategories()).each(function(idx, category){
+                if (category.deepPortlets.length > 0 && category.id != "local.1") {
+                    categories.push(category);
                 }
             });
+            categories.sort(up.getStringPropertySortFunction("name", "<spring:message code="listChannels.categoryFilterAllCategories"/>"));
+
+            var tree = { children: [] };
             
+            var s = overallThat.state.currentCategory || "";
+            var selection = { 
+                ID: "categorySelect", 
+                selection: s, 
+                optionlist: [], 
+                optionnames: [],
+                decorators: [
+                    { type: "jQuery", func: "change",
+                        args: function(){
+                            var category;
+                            if ($(this).val() == "") {
+                                category = {
+                                    id: "",
+                                    name: "<spring:message code="listChannels.categoryFilterAllCategories"/>",
+                                    description: "All Categories",
+                                    categories: [],
+                                    deepCategories: [],
+                                    portlets: [],
+                                    deepPortlets: []
+                                };
+                            } else {
+                                category = overallThat.registry.getCategory($(this).val());
+                            }
+                            overallThat.events.onCategorySelect.fire(overallThat, category);
+                        }
+                    }
+                ]
+            };
+            
+            $(categories).each(function(idx, category){
+                selection.optionlist.push(category.id);
+                selection.optionnames.push(category.name);
+            });
+            
+            tree.children.push(selection);
+
+            var cutpoints = [ { id: "categorySelect", selector: "#${n}categorySelectMenu" } ];
+            // render the component 
+            that.state.templates = fluid.selfRender($(container).find(".view-filter"), tree, 
+                { cutpoints: cutpoints });
+
+            that.refresh = function() {
+            };
+
+            return that;
+        };
+
+        up.PortletAdministrationPortletListView = function(container, overallThat, options) {
+
+            // construct the new component
+            var that = fluid.initView("up.PortletAdministrationCategoryListView", container, options);
+
+            // initialize a state map for this component
+            that.state = {};
+
+            // Build a list of all portlets that are a deep member of the
+            // currently-selected category, sorted by title
+            var portlets = [];
+            var members = (overallThat.state.currentCategory && overallThat.state.currentCategory != "" ) ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
+            $(members).each(function(idx, portlet){
+                if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.title) || overallThat.state.portletRegex.test(portlet.description)) {
+                    portlets.push(portlet);
+                }
+            });
+            portlets.sort(up.getStringPropertySortFunction("title"));
+
+            var options = {
+                dataModel: portlets,
+                columnDefs: [
+                    { key: "name", valuebinding: "*.title", sortable: true },
+                    { key: "type", valuebinding: "*.type", sortable: true,
+                        components: function(row) {
+                                return { value: channelTypes[row.type] };
+                            }
+                        },
+                    { key: "state", valuebinding: "*.state", sortable: true,
+                        components: function(row) {
+                                return { value: row.state.toLowerCase() }
+                            }
+                        },
+                    { key: "editLink", valuebinding: "*.id",
+                        components: {
+                            target: editUrl.replace("PORTLETID", '${"${*.id}"}'),
+                            linktext: "Edit"
+                            }
+                        },
+                    { key: "deleteLink", valuebinding: "*.id",
+                        components: {
+                            target: removeUrl.replace("PORTLETID", '${"${*.id}"}'),
+                            linktext: "Delete"
+                            }
+                        }
+                ],
+                bodyRenderer: {
+                  type: "fluid.pager.selfRender",
+                  options: {
+                      selectors: {
+                         root: "#${n}categoriesTable1"
+                      },
+                      row: "row:"
+                    }
+                    
+                },
+                pagerBar: {type: "fluid.pager.pagerBar", options: {
+                  pageList: {type: "fluid.pager.renderedPageList",
+                    options: { 
+                      linkBody: "a"
+                    }
+                  }
+                }}
+            };
+            that.state.pager = fluid.pager("#${n}channelAddingTabs", options);
+
+            that.refresh = function() {
+                portlets = [];
+                var members = overallThat.state.currentCategory ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
+                $(members).each(function(idx, portlet){
+                    if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.title) || overallThat.state.portletRegex.test(portlet.description)) {
+                        portlets.push(portlet);
+                    }
+                });
+                portlets.sort(up.getStringPropertySortFunction("title"));
+                up.refreshPager(that.state.pager, portlets);
+            };
+
+            return that;
+        };
+    
+        $(document).ready(function() {
+            var browser = up.PortletBrowser("#${n}portletBrowser", 
+                { 
+                    portletRegistry: { 
+                        type: "up.PortletRegistry",
+                        options: { portletListUrl: "<c:url value="/mvc/channelList?xml=false"/>" } 
+                    },
+                    categoryListView: {
+                        type: "up.PortletAdministrationCategoryListView"
+                    },
+                    portletListView: {
+                        type: "up.PortletAdministrationPortletListView"
+                    },
+                    listeners: {
+                        onLoad: function(that) {
+                            $("#${n}loadingMessage").hide();
+                        }
+                    }
+                }
+            );
         });
+
    	  });
     </script>
