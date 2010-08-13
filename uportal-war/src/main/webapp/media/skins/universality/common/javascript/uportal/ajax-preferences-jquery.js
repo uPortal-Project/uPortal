@@ -61,6 +61,7 @@
 		
 			// initialize dialog menus
 			$("#contentDialogLink").click(initializeContentAddingMenu);
+            $("#usePortletDialogLink").click(initializeUsePortletMenu);
 			$("#skinDialogLink").click(initializeSkinMenu);
 		
 			// set up the Fluid reorderer to control portlet drag and drop
@@ -154,8 +155,8 @@
 			$('a[id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});	
 		
 			// set click handlers for tab moving and editing links
-            $("#addTabLink").click(initializeSubscribeTabMenu);
-			$("#deletePageLink").click(function(){deleteTab()});
+            $("#addTabLink").click(addTab);
+			$("#deletePageLink").click(deleteTab);
 			$("#movePageLeftLink").click(function(){moveTab('left')});
 			$("#movePageRightLink").click(function(){moveTab('right')});
 			initTabEditLinks();
@@ -192,76 +193,104 @@
 
 		};
 		
-		var chooseCategory = function(categoryId) {
-			var select = $("#channelSelectMenu").html("");
-			var channels = settings.channelBrowser.getChannelsForCategory(categoryId);
-			$(channels).each(function(i, val) {
-				select.get(0).options[i] = new Option(this.name, this.id);
-			});
-
-			select
-				.change(function(){ chooseChannel(this.value); })
-				.children("option:first").attr("selected", true);
-			chooseChannel(select.val());
-			
-		};
-
-		var chooseChannel = function(chanId) {
-			var channel = settings.channelBrowser.getChannel(chanId);
-			$("#channelTitle").text(channel.name);
-			$("#channelDescription").text(channel.description);
-			$("#addChannelId").attr("value", channel.id);
-			$("#previewChannelLink").unbind("click").click(function(){ 
-				window.location = "/uPortal/p/" + channel.fname;
-			});
-		};
-
-		var searchChannels = function(searchTerm) {
-			var results = $("#addChannelSearchResults").html("");
-			var channels = settings.channelBrowser.searchChannels(searchTerm);
-			$(channels).each(function(i){
-				results.append(
-					$(document.createElement('li')).append(
-						$(document.createElement('a'))
-							.attr("id", this.id).attr("href", "javascript:;")
-							.click(function(){ chooseChannel(this.id); })
-							.text(this.name)
-					)
-				 );
-			});
-			
-		};
-
 		// Initialization tasks for focus mode
 		var initfocusedportal = function() {
 			$("#focusedContentDialogLink").click(initializeFocusedContentMenu);
 		};
 		
 		var initializeContentAddingMenu = function() {
+		    
+		    // initialize the modal container dialog and tabs
             $("#channelAddingTabs").tabs();
 			$("#contentAddingDialog").dialog({ width:550, modal:true});
 			$("#contentDialogLink")
 				.unbind('click', initializeContentAddingMenu)
 				.click(function(){$("#contentAddingDialog").dialog('open');});
-			settings.channelBrowser = $.channelbrowser({
-		        channelXmlUrl: settings.channelListUrl,
-				onDataLoad: function(categories) {
-					var categorySelect = $("#categorySelectMenu");
-					$(categories).each(function(i, val) {
-						categorySelect.get(0).options[i] = new Option(this.name, this.id);
-					});
-					categorySelect.change(function(){chooseCategory(this.value)})
-						.children("option:first").attr("selected", true);
-					$("#addChannelSearchTerm").keyup(function(){
-						searchChannels($(this).val());
-					});
-					chooseCategory(categorySelect.val());
-			   		$("#channelLoading").css("display", "none");
-			   		$("#categorySelectMenu").css("background-image", "none");
-			   		$("#channelSelectMenu").css("background-image", "none");
-				}
-			});
-			$("#addChannelLink").click(function(){addPortlet()});
+			
+			// initialize the portlet browser in the first tab
+	        settings.addPortletsBrowser = up.PortletBrowser("#channel-tab-1 .portlet-browser", 
+                { 
+                    portletRegistry: { 
+                        type: "up.PortletRegistry",
+                        options: { portletListUrl: settings.channelListUrl } 
+                    },
+                    categoryListView: {
+                        type: "up.AjaxLayoutCategoryListView"
+                    },
+                    portletListView: {
+                        type: "up.AjaxLayoutPortletListView"
+                    },
+                    listeners: {
+                        onPortletSelect: function(that, portlet) {
+                            var options = { action: 'addPortlet', channelID: portlet.id };
+                            var firstChannel = $("div[id*=portlet_]:not(.locked)");
+                            if (firstChannel.size() == 0) {
+                                options['elementID'] = settings.tabId;
+                            } else {
+                                options['elementID'] = firstChannel.attr("id").split("_")[1];
+                                options['position'] = 'insertBefore';
+                            }
+                            updateLayout(options,
+                               function(data) {
+                                  window.location = settings.portalUrl; 
+                               }
+                            );
+                        }
+                    }
+                }
+	        );
+
+	        // initialize the DLM subscribe tab dialog in the second tab
+            settings.fragmentBrowser = uportal.FragmentBrowser($("#channel-tab-2"), 
+                {
+                    fragmentServiceUrl: settings.subscriptionListUrl,
+                    listeners: { 
+                        onFragmentSelect: function(fragment) {
+                            var tab = $("#portalNavigation_" + settings.tabId);
+                            var tabPosition = 1;
+                            var targetId = null;
+                            // figure out what the current tab's number is
+                            $("[id*=portalNavigation_]").each(function(i){
+                                if ($(this).attr("id") == tab.attr("id"))tabPosition = i+1;
+                                targetId = $(this).attr("id").split("_")[1];
+                            });
+        
+                            var subscribeToTabVal = $("#subscribeTabId").val();
+                            updateLayout({action: "subscribeToTab" ,sourceID: fragment.ownerID,method: 'appendAfter', tabPosition: tabPosition, elementID: targetId  }, function(xml) {
+                                window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
+                                        ($("#portalNavigationList > li").length + 1);
+                            });
+                        }
+                    }
+                }
+            );
+		}
+
+        var initializeUsePortletMenu = function() {
+            $("#usePortletDialog").dialog({ width:550, modal:true});
+            $("#usePortletDialogLink")
+                .unbind('click', initializeUsePortletMenu)
+                .click(function(){$("#usePortletDialog").dialog('open');});
+            
+            settings.usePortletsBrowser = up.PortletBrowser("#usePortletDialog", 
+                { 
+                    portletRegistry: { 
+                        type: "up.PortletRegistry",
+                        options: { portletListUrl: settings.channelListUrl } 
+                    },
+                    categoryListView: {
+                        type: "up.AjaxLayoutCategoryListView"
+                    },
+                    portletListView: {
+                        type: "up.AjaxLayoutPortletListView"
+                    },
+                    listeners: {
+                        onPortletSelect: function(that, portlet) {
+                            window.location = "/uPortal/p/" + portlet.fname;
+                        }
+                    }
+                }
+            );
 		};
 		
 		var initializeFocusedContentMenu = function() {
@@ -420,21 +449,6 @@
 		};
 		
 		// Portlet editing persistence functions
-		var addPortlet = function(chanId) {
-		    var options = { action: 'addPortlet', channelID: $("#addChannelId").attr("value") };
-		    var firstChannel = $("div[id*=portlet_]:not(.locked)");
-		    if (firstChannel.size() == 0) {
-		        options['elementID'] = settings.tabId;
-		    } else {
-		        options['elementID'] = firstChannel.attr("id").split("_")[1];
-		        options['position'] = 'insertBefore';
-		    }
-			updateLayout(options,
-			   function(data) {
-			      window.location = settings.portalUrl; 
-			   }
-			);
-		};
 		var deletePortlet = function(id) {
 			if (!confirm(settings.messages.confirmRemovePortlet)) return false;
 			$('#portlet_'+id).remove();
@@ -443,8 +457,8 @@
 		
 		
 		// Tab editing persistence functions
-		var addTab = function(name, columns) {
-			updateLayout({action: 'addTab', tabName: name, widths: columns}, 
+		var addTab = function() {
+			updateLayout({action: 'addTab', tabName: "My Tab", widths: [50, 50]}, 
 			    function(data) {
 			        window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + ($("#portalNavigationList > li").length + 1);
 			    }
@@ -630,55 +644,32 @@
 			return false;
 		};
 		
-        var initializeSubscribeTabMenu = function() {
-            $("#subscribeTabTabs").tabs();
-            if (settings.subscriptionsSupported == 'true') {
-                uportal.FragmentBrowser($("#subscribeTab-tab-1"), 
-                    {
-                        fragmentServiceUrl: settings.subscriptionListUrl,
-                        listeners: { 
-                            onFragmentSelect: function(fragment) {
-                                var tab = $("#portalNavigation_" + settings.tabId);
-                                var tabPosition = 1;
-                                var targetId = null;
-                                // figure out what the current tab's number is
-                                $("[id*=portalNavigation_]").each(function(i){
-                                    if ($(this).attr("id") == tab.attr("id"))tabPosition = i+1;
-                                    targetId = $(this).attr("id").split("_")[1];
-                                });
-            
-                                var subscribeToTabVal = $("#subscribeTabId").val();
-                                updateLayout({action: "subscribeToTab" ,sourceID: fragment.ownerID,method: 'appendAfter', tabPosition: tabPosition, elementID: targetId  }, function(xml) {
-                                    window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
-                                            ($("#portalNavigationList > li").length + 1);
-                                });
-                            }
+        var initializeFragmentBrowserMenu = function() {
+            uportal.FragmentBrowser($("#subscribeTab-tab-1"), 
+                {
+                    fragmentServiceUrl: settings.subscriptionListUrl,
+                    listeners: { 
+                        onFragmentSelect: function(fragment) {
+                            var tab = $("#portalNavigation_" + settings.tabId);
+                            var tabPosition = 1;
+                            var targetId = null;
+                            // figure out what the current tab's number is
+                            $("[id*=portalNavigation_]").each(function(i){
+                                if ($(this).attr("id") == tab.attr("id"))tabPosition = i+1;
+                                targetId = $(this).attr("id").split("_")[1];
+                            });
+        
+                            var subscribeToTabVal = $("#subscribeTabId").val();
+                            updateLayout({action: "subscribeToTab" ,sourceID: fragment.ownerID,method: 'appendAfter', tabPosition: tabPosition, elementID: targetId  }, function(xml) {
+                                window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
+                                        ($("#portalNavigationList > li").length + 1);
+                            });
                         }
                     }
-                );
-                $("#subscribeTabLoading").css("display", "none");
-            } else {
-                if ($("#subscribeTabTabs").tabs('length') > 1) $("#subscribeTabTabs").tabs('remove',0);
-            }
-        
-            // using defaultChecked attribute to compensate for IE radio button bug
-            $("#subscribeTabDialog").dialog({ width:500, modal:true });
-            uportal.PageManager("#subscribeTab-tab-2", {
-                currentPageName: "My Page",
-                isDefault: false,
-                allowedLayouts: availableLayouts,
-                currentLayout: [ 50, 50 ],
-                savePermissionsUrl: settings.preferencesUrl,
-                imagePath: settings.mediaPath + "/" + settings.currentSkin + "/images/",
-                selectors: {
-                },
-                listeners: {
-                    onSaveOptions: function(data){
-                        addTab(data.pageName, data.layout);
-                    }
                 }
-            });
-
+            );
+            $("#subscribeTabLoading").css("display", "none");
+        
             $("#addTabLink")
                 .unbind("click")
                 .click(function(){

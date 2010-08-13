@@ -239,7 +239,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         up.PortletAdministrationPortletListView = function(container, overallThat, options) {
 
             // construct the new component
-            var that = fluid.initView("up.PortletAdministrationCategoryListView", container, options);
+            var that = fluid.initView("up.PortletAdministrationPortletListView", container, options);
 
             // initialize a state map for this component
             that.state = {};

@@ -67,7 +67,7 @@
   <js>../common/javascript/uportal/search.js</js>
   <js>../common/javascript/uportal/up-portlet-registry.js</js>
   <js>../common/javascript/uportal/up-portlet-browser.js</js>
-  <js>../common/javascript/uportal/up-channel-browser.js</js>
+  <js>../common/javascript/uportal/up-layout-gallery.js</js>
   <js>../common/javascript/uportal/up-fragment-permissions-manager.js</js>
   <js>../common/javascript/uportal/up-subscription-browser.js</js>
   <js>../common/javascript/uportal/up-page-manager.js</js>
