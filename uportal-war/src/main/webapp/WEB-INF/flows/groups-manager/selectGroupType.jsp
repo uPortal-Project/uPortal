@@ -23,6 +23,16 @@
 <portlet:renderURL var="formUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:renderURL>
+<portlet:renderURL var="peopleUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}"/>
+    <portlet:param name="groupType" value="group"/>
+    <portlet:param name="_eventId" value="next"/>
+</portlet:renderURL>
+<portlet:renderURL var="portletUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}"/>
+    <portlet:param name="groupType" value="category"/>
+    <portlet:param name="_eventId" value="next"/>
+</portlet:renderURL>
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
@@ -42,7 +52,7 @@
         	<div class="panel type-categories">
             	<div class="titlebar">
                 	<h2 class="title">
-                    	<a href="{ $typeUrl }"><spring:message code="groups-manager.type.categories"/></a>
+                    	<a href="${ portletUrl }"><spring:message code="groups-manager.type.categories"/></a>
                     </h2>
                     <h3 class="subtitle"><spring:message code="groups-manager.type.categories.description"/></h3>
                 </div>
@@ -57,7 +67,7 @@
             <div class="panel type-people">
             	<div class="titlebar">
                 	<h2 class="title">
-                    	<a href="{ $typeUrl }"><spring:message code="groups-manager.type.people"/></a>
+                    	<a href="${ peopleUrl }"><spring:message code="groups-manager.type.people"/></a>
                     </h2>
                     <h3 class="subtitle"><spring:message code="groups-manager.type.people.description"/></h3>
                 </div>
@@ -69,33 +79,6 @@
                     </span>
                 </div>
             </div>
-        </div>
-        
-        <div class="portlet-form">
-            <form action="${ formUrl }" method="POST">  
-            	<h3><spring:message code="groups-manager.selectGroupType.Note" /></h3>
-                <ul>
-                    <li>
-                        <input id="${n}groupTypeCategory" type="radio" name="groupType" value="category"/>
-                        <label for="${n}groupTypeCategory">
-                            <spring:message code="groups-manager.type.categories"/>
-                        </label>
-                    </li>
-                    <li>
-                        <input id="${n}groupTypePerson" type="radio" name="groupType" value="group"/>
-                        <label for="${n}groupTypePerson">
-                            <spring:message code="groups-manager.type.groups"/>
-                        </label>
-                    </li>
-                </ul>
-                
-                <div class="buttons">
-                    <input class="button primary" type="submit" 
-                        value="<spring:message code="groups-manager.next"/>" 
-                        name="_eventId_next"/>
-    
-                </div>
-            </form>
         </div>
         
     </div>
