@@ -27,6 +27,15 @@
       </description>
     
         <parameter modify="publish-only">
+            <name>iconUrl</name>
+            <label>Display icon for this portlet</label>
+            <type base="string" input="text" display="text">
+                <length>50</length>
+            </type>
+            <defaultValue>true</defaultValue>
+        </parameter>
+    
+        <parameter modify="publish-only">
             <name>showChrome</name>
             <label>Show Portlet Window Chrome</label>
             <type base="string" input="single-choice" display="drop-down">
