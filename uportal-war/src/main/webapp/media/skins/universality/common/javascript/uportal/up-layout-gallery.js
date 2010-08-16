@@ -106,7 +106,8 @@ var up = up || {};
             { id: "portlet:", selector: ".portlet-choice" },
             { id: "portletLink", selector: ".portlet-choice-link" },
             { id: "portletTitle", selector: ".portlet-choice-title" },
-            { id: "portletDescription", selector: ".portlet-choice-description" }
+            { id: "portletDescription", selector: ".portlet-choice-description" },
+            { id: "portletIcon", selector: ".portlet-choice-icon" }
         ];
         
         that.refresh = function() {
@@ -119,13 +120,22 @@ var up = up || {};
             var members = (overallThat.state.currentCategory && overallThat.state.currentCategory != "" ) ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
             $(members).each(function(idx, portlet){
                 if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.title) || overallThat.state.portletRegex.test(portlet.description)) {
+                    for (var i = 0; i < portlet.parameters.length; i++) {
+                        var parameter = portlet.parameters[i];
+                        if (parameter.name == "iconUrl") {
+                            console.log("found icon!");
+                            portlet.iconUrl = parameter.value;
+                            console.log(portlet);
+                            break;
+                        }
+                    }
                     portlets.push(portlet);
                 }
             });
             portlets.sort(up.getStringPropertySortFunction("title"));
 
             $(portlets).each(function(idx, portlet){
-                tree.children.push({
+                var subtree = {
                     ID: "portlet:",
                     children: [
                         { ID: "portletLink", decorators: [
@@ -139,9 +149,18 @@ var up = up || {};
                         { ID: "portletTitle", value: portlet.title },
                         { ID: "portletDescription", value: portlet.description }
                     ]
-                });
+                };
+                if (portlet.iconUrl) {
+                    subtree.children.push(
+                        { ID: "portletIcon", decorators: [
+                                { type: "attrs", attributes: { src: portlet.iconUrl } }
+                            ]
+                        }
+                    );
+                }
+                tree.children.push(subtree);
             });
-            
+                
             if (that.state.templates) {
                 fluid.reRender(that.state.templates, $(container).find(".portlet-choice-list"), tree, { cutpoints: cutpoints });
             } else {

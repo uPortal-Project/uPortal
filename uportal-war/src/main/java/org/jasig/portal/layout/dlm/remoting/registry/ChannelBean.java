@@ -242,5 +242,9 @@ public class ChannelBean implements Serializable {
 	public void setTypeId(int typeId) {
 		this.typeId = typeId;
 	}
+	
+	public List<ChannelParameterBean> getParameters() {
+	    return this.parameters;
+	}
 
 }
