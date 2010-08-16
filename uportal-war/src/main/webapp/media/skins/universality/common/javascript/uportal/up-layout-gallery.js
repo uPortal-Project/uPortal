@@ -123,9 +123,7 @@ var up = up || {};
                     for (var i = 0; i < portlet.parameters.length; i++) {
                         var parameter = portlet.parameters[i];
                         if (parameter.name == "iconUrl") {
-                            console.log("found icon!");
                             portlet.iconUrl = parameter.value;
-                            console.log(portlet);
                             break;
                         }
                     }
