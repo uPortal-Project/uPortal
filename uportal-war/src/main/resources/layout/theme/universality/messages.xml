@@ -42,6 +42,7 @@
         <token name="PORTAL_PAGE_TITLE">uPortal by JA-SIG</token>
         <token name="PORTAL_META_DESCRIPTION">uPortal by JA-SIG: The academic open source portal built for higher education by higher education</token>
         <token name="PORTAL_META_KEYWORDS">portal, uPortal, academic, higher education, open source, enterprise, JA-SIG, JASIG</token>
+        
         <!-- Accessibility -->
         <token name="SKIP_TO_NAV">Skip to page navigation</token>
         <token name="SKIP_TO_NAV_TITLE">Skip to page navigation</token>
@@ -191,7 +192,7 @@
         <token name="AJAX_EDIT_PAGE_LAYOUT_OPTION_60_40">One wide and one narrow column</token>
         <token name="AJAX_EDIT_PAGE_LAYOUT_OPTION_25_50_25">Narrow, wide, narrow</token>
         <token name="AJAX_EDIT_PAGE_SUBMIT_BUTTON">Update</token>
-        <token name="AJAX_SELECT_SKIN_DIALOG_TITLE">Add Content</token>
+        <token name="AJAX_SELECT_SKIN_DIALOG_TITLE">Select a Skin</token>
         <token name="AJAX_SELECT_SKIN_LOADING_MESSAGE">Loading skin list . . .</token>
         <token name="AJAX_SELECT_SKIN_TITLE">Choose a skin for your portal view:</token>
         <token name="AJAX_SELECT_SKIN_SUBMIT_BUTTON">Choose</token>

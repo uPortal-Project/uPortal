@@ -315,19 +315,16 @@
         </fieldset>
     </form>
    </div>	
-  
-     <div id="skinChoosingDialog" title="{$TOKEN[@name='AJAX_SELECT_SKIN_DIALOG_TITLE']}">
-      <form>
-       <h4 id="skinLoading"><xsl:value-of select="$TOKEN[@name='AJAX_SELECT_SKIN_LOADING_MESSAGE']"/></h4>
-       <p class="portlet-form-label">
-        <xsl:value-of select="$TOKEN[@name='AJAX_SELECT_SKIN_TITLE']"/>
-       </p>
-       <div id="skinList"></div>
-       <p>
-        <input type="submit" value="{$TOKEN[@name='AJAX_SELECT_SKIN_SUBMIT_BUTTON']}" class="portlet-form-button"/>&#160;
-       </p>
-      </form>
-     </div>
+    
+    <!--start: skin selector dialog-->
+    <div id="skinSelectorDialog" class="skin-selector-dialog" title="{$TOKEN[@name='AJAX_SELECT_SKIN_DIALOG_TITLE']}" role="dialog">
+        <form method="post" action="/" role="form">
+            <div class="skin-list">&#160;</div>
+            <input type="submit" value="{$TOKEN[@name='AJAX_SELECT_SKIN_SUBMIT_BUTTON']}" class="portlet-form-button"/>
+            <div class="loader" title="{$TOKEN[@name='AJAX_SELECT_SKIN_LOADING_MESSAGE']}">&#160;</div>
+        </form>
+    </div>
+    <!--end: skin selector dialog-->
      
      <div id="portalDropWarning" style="display:none;">
       <p><xsl:value-of select="$TOKEN[@name='AJAX_PORTAL_DROP_WARNING_MESSAGE']"/></p>
