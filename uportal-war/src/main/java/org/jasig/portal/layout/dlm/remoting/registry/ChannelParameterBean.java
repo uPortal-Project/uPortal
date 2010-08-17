@@ -21,32 +21,21 @@ package org.jasig.portal.layout.dlm.remoting.registry;
 
 import java.io.Serializable;
 
-import org.jasig.portal.channel.IChannelParameter;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-
-@XStreamAlias("parameter")
 public class ChannelParameterBean implements Serializable {
 	
-   	@XStreamAsAttribute
 	private String name;
-	
-   	@XStreamAsAttribute
-	private String override;
-	
-   	@XStreamAsAttribute
 	private String value;
-	
-   	@XStreamAsAttribute
 	private String description;
+    private boolean override;
+    
+    public ChannelParameterBean() { }
 
-	public ChannelParameterBean(IChannelParameter param) {
-		this.name = param.getName();
-		this.override = param.getOverride() ? "yes" : "no";
-		this.value = param.getValue();
-		this.description = param.getDescription();
-	}
+    public ChannelParameterBean(String name, String value, String description, boolean override) {
+        this.name = name;
+        this.override = override;
+        this.value = value;
+        this.description = description;
+    }
 
 	public String getName() {
 		return this.name;
@@ -56,11 +45,11 @@ public class ChannelParameterBean implements Serializable {
 		this.name = name;
 	}
 
-	public String getOverride() {
+	public boolean getOverride() {
 		return this.override;
 	}
 
-	public void setOverride(String override) {
+	public void setOverride(boolean override) {
 		this.override = override;
 	}
 

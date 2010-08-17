@@ -29,24 +29,18 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-@XStreamAlias("category")
 public class ChannelCategoryBean implements Serializable {
 	
-   	@XStreamAlias("ID")
-   	@XStreamAsAttribute
 	private String id;
-
-   	@XStreamAsAttribute
    	private String name;
-	
-   	@XStreamAsAttribute
    	private String description;
-   	
-   	@XStreamImplicit(itemFieldName="category")
    	private List<ChannelCategoryBean> categories;
-   	
-   	@XStreamImplicit(itemFieldName="channel")
    	private List<ChannelBean> channels;
+   	
+   	public ChannelCategoryBean() {
+   	    channels = new ArrayList<ChannelBean>();
+   	    categories = new ArrayList<ChannelCategoryBean>();
+   	}
    	
    	public ChannelCategoryBean(ChannelCategory category) {
    		this.id = category.getId();

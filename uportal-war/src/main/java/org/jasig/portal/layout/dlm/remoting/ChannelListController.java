@@ -19,7 +19,10 @@
 
 package org.jasig.portal.layout.dlm.remoting;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,22 +30,22 @@ import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
-import org.jasig.portal.layout.dlm.remoting.registry.ChannelRegistryBean;
-import org.jasig.portal.security.AdminEvaluator;
+import org.jasig.portal.layout.dlm.remoting.registry.ChannelParameterBean;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * <p>A Spring controller that returns a JSON or XML view of channels.  For
@@ -67,6 +70,7 @@ public class ChannelListController {
 
 	private IChannelRegistryStore channelRegistryStore;
 	private IPersonManager personManager;
+	private IPortalSpELService spELService;
 	private static final String TYPE_SUBSCRIBE = "subscribe";
 	private static final String TYPE_MANAGE = "manage";
 	
@@ -78,35 +82,31 @@ public class ChannelListController {
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView listChannels(HttpServletRequest request,  @RequestParam("xml") boolean asXml, @RequestParam(value="type",required=false) String type) {
+	public ModelAndView listChannels(WebRequest webRequest, HttpServletRequest request, @RequestParam(value="type",required=false) String type) {
 		if(type == null || (!type.equals(TYPE_MANAGE))) {
 			type = TYPE_SUBSCRIBE;
 		}
 		IPerson user = personManager.getPerson(request);
 
-		ChannelRegistryBean registry = getRegistry(user, type);
+		Map<String,Object> registry = getRegistry(webRequest, user, type);
 
-		if(asXml) {
-			XStream stream = new XStream();
-			stream.processAnnotations(ChannelRegistryBean.class);
-			String xml = stream.toXML(registry);
-			return new ModelAndView("xmlView", "xml", xml);
-		} else {
-			return new ModelAndView("jsonView", "registry", registry);
-		}
+		return new ModelAndView("jsonView", "registry", registry);
 	}
 	
-	private ChannelRegistryBean getRegistry(IPerson user, String type) {
+	private Map<String,Object> getRegistry(WebRequest request, IPerson user, String type) {
 		
 		// get a list of all channels 
 		List<IChannelDefinition> allChannels = channelRegistryStore.getChannelDefinitions();
 
 		// construct a new channel registry
-		ChannelRegistryBean registry = new ChannelRegistryBean();
+		Map<String,Object> registry = new HashMap<String,Object>();
+	    List<ChannelCategoryBean> categories = new ArrayList<ChannelCategoryBean>();
+	    List<ChannelBean> channels = new ArrayList<ChannelBean>();
+
 		
 		// add the root category and all its children to the registry
 		ChannelCategory rootCategory = channelRegistryStore.getTopLevelChannelCategory();
-		registry.addCategory(addChildren(rootCategory, allChannels, user, type));
+		categories.add(addChildren(request, rootCategory, allChannels, user, type));
 
 	    /*
 	     * uPortal historically has provided for a convention that channels
@@ -124,15 +124,18 @@ public class ChannelListController {
 	    if (type.equals(TYPE_MANAGE)) {
 	        for (IChannelDefinition channel : allChannels) {
 	            if (ap.canManage(channel.getId())) {
-	                registry.addChannel(new ChannelBean(channel));
+	                channels.add(getChannel(channel, request));
 	            }
 	        }
 	    }
 		
+	    registry.put("channels", channels);
+	    registry.put("categories", categories);
+	    
 		return registry;
 	}
 	
-	private ChannelCategoryBean addChildren(ChannelCategory category, List<IChannelDefinition> allChannels, IPerson user, String type) {
+	private ChannelCategoryBean addChildren(WebRequest request, ChannelCategory category, List<IChannelDefinition> allChannels, IPerson user, String type) {
 		
 		// construct a new channel category bean for this category
 		ChannelCategoryBean categoryBean = new ChannelCategoryBean(category);
@@ -148,7 +151,7 @@ public class ChannelListController {
 		for(IChannelDefinition channelDef : channels) {
 			
 			// construct a new channel bean from this channel
-			ChannelBean channel = new ChannelBean(channelDef);
+			ChannelBean channel = getChannel(channelDef, request);
 			categoryBean.addChannel(channel);
 			
 			// remove the channel of the list of all channels
@@ -157,13 +160,41 @@ public class ChannelListController {
 
 		/* Now add child categories. */
 		for(ChannelCategory childCategory : channelRegistryStore.getChildCategories(category)) {
-			ChannelCategoryBean childCategoryBean = addChildren(childCategory, allChannels, user, type);
+			ChannelCategoryBean childCategoryBean = addChildren(request, childCategory, allChannels, user, type);
 			
 			categoryBean.addCategory(childCategoryBean);
 		}
 		
 		return categoryBean;
 		
+	}
+	
+	private ChannelBean getChannel(IChannelDefinition definition, WebRequest request) {
+	    ChannelBean channel = new ChannelBean();
+	    channel.setChanId(definition.getId());
+        channel.setJavaClass(definition.getJavaClass());
+        channel.setDescription(definition.getDescription());
+        channel.setEditable(definition.isEditable());
+        channel.setFname(definition.getFName());
+        channel.setHasAbout(definition.hasAbout());
+        channel.setHasHelp(definition.hasHelp());
+        channel.setPortlet(definition.isPortlet());
+        channel.setLocale(definition.getLocale());
+        channel.setName(definition.getName());
+        channel.setSecure(definition.isSecure());
+        channel.setTimeout(definition.getTimeout());
+        channel.setState(definition.getLifecycleState().toString());
+        channel.setTitle(definition.getTitle());
+        channel.setTypeId(definition.getType().getId());
+	        
+        for (IChannelParameter param : definition.getParameters()) {
+            ChannelParameterBean parameter = new ChannelParameterBean(param
+                    .getName(), spELService.parseString(param.getValue(),
+                    request), param.getDescription(), param.getOverride());
+            channel.addParameter(parameter);
+        }
+
+        return channel;
 	}
 	
 	/**
@@ -181,5 +212,10 @@ public class ChannelListController {
 	@Autowired(required=true)
 	public void setPersonManager(IPersonManager personManager) {
 		this.personManager = personManager;
+	}
+	
+	@Autowired(required=true)
+	public void setPortalSpELProvider(IPortalSpELService spELProvider) {
+	    this.spELService = spELProvider;
 	}
 }

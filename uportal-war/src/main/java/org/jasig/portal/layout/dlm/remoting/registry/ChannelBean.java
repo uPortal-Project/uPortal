@@ -23,94 +23,28 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.IChannelParameter;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
-@XStreamAlias("channel")
 public class ChannelBean implements Serializable {
 	
-	@XStreamAlias("ID")
-   	@XStreamAsAttribute
 	private String id;
-	
-	@XStreamAlias("chanID")
-   	@XStreamAsAttribute
 	private int chanId;
-	
-   	@XStreamAsAttribute
 	private String javaClass;
-	
-   	@XStreamAsAttribute
 	private String description;
-	
-   	@XStreamAsAttribute
 	private boolean editable;
-	
-   	@XStreamAsAttribute
 	private String fname;
-
-   	@XStreamAsAttribute
 	private boolean hasAbout;
-	
-   	@XStreamAsAttribute
 	private boolean hasHelp;
-	
-   	@XStreamAsAttribute
 	private boolean isPortlet;
-	
-   	@XStreamAsAttribute
 	private String locale;
-	
-   	@XStreamAsAttribute
 	private String name;
-	
-   	@XStreamAsAttribute
 	private boolean secure;
-	
-   	@XStreamAsAttribute
 	private int timeout;
-	
-   	@XStreamAsAttribute
 	private String state;
-	
-   	@XStreamAsAttribute
 	private String title;
-	
-	@XStreamAlias("typeID")
-   	@XStreamAsAttribute
 	private int typeId;
+   	private List<ChannelParameterBean> parameters = new ArrayList<ChannelParameterBean>();
+   	
+   	public ChannelBean() { }
 
-   	@XStreamImplicit(itemFieldName="parameter")
-   	private List<ChannelParameterBean> parameters;
-
-	public ChannelBean(IChannelDefinition channel) {
-		this.id = "chan" + channel.getId();
-		this.chanId = channel.getId();
-		this.javaClass = channel.getJavaClass();
-		this.description = channel.getDescription();
-		this.editable = channel.isEditable();
-		this.fname = channel.getFName();
-		this.hasAbout = channel.hasAbout();
-		this.hasHelp = channel.hasHelp();
-		this.isPortlet = channel.isPortlet();
-		this.locale = channel.getLocale();
-		this.name = channel.getName();
-		this.secure = channel.isSecure();
-		this.timeout = channel.getTimeout();
-		this.state = channel.getLifecycleState().toString();
-		this.title = channel.getTitle();
-		this.typeId = channel.getType().getId();
-		this.parameters = new ArrayList<ChannelParameterBean>();
-		for(IChannelParameter param : channel.getParameters()) {
-			ChannelParameterBean parameter = new ChannelParameterBean(param);
-			this.addParameter(parameter);
-		}
-	}
-	
 	public void addParameter(ChannelParameterBean parameter) {
 		this.parameters.add(parameter);
 	}
