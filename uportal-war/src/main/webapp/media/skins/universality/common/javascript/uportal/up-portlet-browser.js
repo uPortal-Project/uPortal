@@ -205,7 +205,7 @@ var up = up || {};
         portletRegistry: {
             type: "up.PortletRegistry",
             options: {
-                portletListUrl: null,               
+                portletListUrl: null,
             }
         },
         searchView: {

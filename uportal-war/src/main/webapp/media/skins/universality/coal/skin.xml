@@ -67,6 +67,7 @@
   <js>/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
   <js>/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.min.js</js>
   
+  <js>../common/javascript/uportal/up-util.js</js>
   <js>../common/javascript/uportal/ajax-preferences-jquery.js</js>
   <js>../common/javascript/uportal/search.js</js>
   <js>../common/javascript/uportal/up-portlet-registry.js</js>
@@ -76,6 +77,7 @@
   <js>../common/javascript/uportal/up-subscription-browser.js</js>
   <js>../common/javascript/uportal/up-page-manager.js</js>
   <js>../common/javascript/uportal/up-group-browser.js</js>
+  <js>../common/javascript/uportal/up-skin-selector.js</js>
   <js>../common/javascript/uportal/flyout-nav.js</js>
   <js>../common/javascript/jquery.tokeninput.js</js>
 </s:resources>

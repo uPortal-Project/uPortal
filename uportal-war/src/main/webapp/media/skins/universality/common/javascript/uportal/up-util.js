@@ -104,6 +104,27 @@ var up = up || {};
         pager.events.onModelChange.fire(newModel, pager.model, pager);
         fluid.model.copyModel(pager.model, newModel)
     };
-
+    
+    /**
+     * Fades a loading screen down based upon the selector and 
+     * duration passed.
+     * 
+     * @param {Object} selector - reference to jQuery selector.
+     * @param {Number} duration - time delay in milliseconds.
+     */
+    up.hideLoader = function (selector, duration) {
+        var t;
+        
+        // Duration constraint.
+        if (duration === undefined || duration === "") {
+            duration = 2000;
+        }
+        
+        // Fade out loading screen.
+        t = setTimeout(function () {
+            selector.fadeOut();
+        }, duration);
+    };//end:function.
+    
 })(jQuery, fluid);
 
