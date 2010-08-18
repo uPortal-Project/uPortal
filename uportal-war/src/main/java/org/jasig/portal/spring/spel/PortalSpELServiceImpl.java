@@ -23,8 +23,8 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
      * Expression regex designed to match SpEL expressions contained in 
      * a ${ } block
      */
-    protected final static Pattern expressionRegex = Pattern.compile("\\$\\{([^\\}]*)\\}"); 
-
+    protected final static Pattern expressionRegex = Pattern.compile("\\$\\{([^\\}]*)\\}");
+    
     /*
      * (non-Javadoc)
      * @see org.jasig.portal.spring.spel.IPortalSpELService#parseString(java.lang.String, org.springframework.web.context.request.WebRequest)
@@ -32,7 +32,7 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
     public String parseString(String string, WebRequest request){
         
         // evaluate the supplied string against our expression regex
-        Matcher m = expressionRegex.matcher(string);
+        final Matcher m = expressionRegex.matcher(string);
         
         // Attempt to find the first match against the expression regex.  
         // If the supplied string has no matches, just return the supplied 
@@ -42,21 +42,20 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
         }
 
         // get a SpEL parser and context for the supplied request
-        ExpressionParser parser = getParser(request);
-        EvaluationContext context = getEvaluationContext(request);
+        final ExpressionParser parser = getParser(request);
+        final EvaluationContext context = getEvaluationContext(request);
 
         // iterate through the list of matches, replacing each match in the 
         // string with the SpEL-evaluated value
         do {
             
-            // parse the current matched group to get the contents of the 
-            // ${ } block
-            String match = m.group();
-            String expressionString = match.substring(2, match.length()-1);
+            // find the current match
+            final String match = m.group();
             
             // parse the expression block
-            Expression expression = parser.parseExpression(expressionString);
-            String value = expression.getValue(context, String.class);
+            final String expressionString = m.group(1);
+            final Expression expression = parser.parseExpression(expressionString);
+            final String value = expression.getValue(context, String.class);
             
             // replace the current matched group in the string with the 
             // parsed expression
@@ -74,7 +73,8 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
      * @return
      */
     protected EvaluationContext getEvaluationContext(WebRequest request) {
-        return new StandardEvaluationContext(request);
+        final SpELEnvironmentRoot root = new SpELEnvironmentRoot(request);
+        return new StandardEvaluationContext(root);
     }
 
     /**
@@ -85,6 +85,37 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
      */
     protected ExpressionParser getParser(WebRequest request) {
         return new SpelExpressionParser();
+    }
+    
+    /**
+     * Limited-use POJO representing the root of a SpEL environment.  At the
+     * current moment, we're only using the request object in the evaluation
+     * context, but we'd like to be able to add additional objects in the 
+     * future.
+     */
+    protected class SpELEnvironmentRoot {
+        
+        private final WebRequest request;
+        
+        /**
+         * Create a new SpEL environment root for use in a SpEL evaluation
+         * context.
+         * 
+         * @param request  web request
+         */
+        protected SpELEnvironmentRoot(WebRequest request) {
+            this.request = request;
+        }
+
+        /**
+         * Get the request associated with this environment root.
+         * 
+         * @return
+         */
+        public WebRequest getRequest() {
+            return request;
+        }
+
     }
 
 }
