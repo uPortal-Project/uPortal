@@ -319,8 +319,20 @@
     <!--start: skin selector dialog-->
     <div id="skinSelectorDialog" class="skin-selector-dialog" title="{$TOKEN[@name='AJAX_SELECT_SKIN_DIALOG_TITLE']}" role="dialog">
         <form method="post" action="/" role="form">
-            <div class="skin-list">&#160;</div>
-            <input type="submit" value="{$TOKEN[@name='AJAX_SELECT_SKIN_SUBMIT_BUTTON']}" class="portlet-form-button"/>
+            <ul class="skin-list">
+                <li class="list-item">
+                    <div class="fl-widget widget">
+                        <div class="fl-widget-titlebar">
+                            <h2 class="skin-name" title="Skin Name">Skin Name</h2>
+                            <input type="hidden" name="skinCoice" value="Skin Key" class="skin-key" />
+                        </div>
+                        <div class="fl-widget-content widget-content">
+                            <p class="skin-description">Skin Description</p>
+                            <img class="skin-thumbnail" src="{$ABSOLUTE_MEDIA_PATH}/common/images/thumb.gif" alt="Thumbnail"/>
+                        </div>
+                    </div>
+                </li>
+            </ul>
             <div class="loader" title="{$TOKEN[@name='AJAX_SELECT_SKIN_LOADING_MESSAGE']}">&#160;</div>
         </form>
     </div>
