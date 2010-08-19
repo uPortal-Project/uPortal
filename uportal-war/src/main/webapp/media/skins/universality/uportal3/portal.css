@@ -357,8 +357,12 @@
 /* Dialogs */
 /* Skin Selector Dialog */
 .up .skin-selector-dialog {position: relative; margin:.31em 0em;}
-.up .skin-selector-dialog .skin-list {height: 350px; overflow-x: hidden; overflow-y: auto; border: 1px solid #EFEFEF; padding: .63em .63em;
+.up .skin-selector-dialog .skin-list {margin: 0em; height: 375px; overflow-x: hidden; overflow-y: auto; border: 1px solid #EFEFEF; padding: .63em .63em;
     -webkit-border-radius: 7px; -moz-border-radius: 7px; border-radius: 7px; margin-bottom: .75em;}
+.up .skin-selector-dialog .list-item {cursor: pointer;}
+.up .skin-selector-dialog .widget-content {padding: .63em;}
+.up .skin-selector-dialog .skin-description {margin-bottom: .63em;}
+.up .skin-selector-dialog .skin-active {border-color: #F68923;}
 .up .skin-selector-dialog .loader {position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px;
     background:#FFF url("images/loading.gif") 50% 50% no-repeat; -webkit-border-radius: 7px; -moz-border-radius: 7px; border-radius: 7px;}
 
