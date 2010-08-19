@@ -61,7 +61,6 @@
 var up = up || {};
 
 (function ($, fluid) {
-    
     /**
      * SkinSelector creator function for the SkinSelector component.
      * 
@@ -69,7 +68,7 @@ var up = up || {};
      * @param {Object} options - reference to object containing all configurations.
      */
     up.SkinSelector = function (container, options) {
-        var that, selectSkin, buildSkinListTempate, parseSkinListXML, initUI, initialize;
+        var that;
         that = fluid.initView("up.SkinSelector", container, options);
         
         /**
@@ -84,49 +83,149 @@ var up = up || {};
         };//end:function.
         
         /**
-         * Captures the skin selected when skin selector form is submitted.
-         * Also, fires the onSelectSkin() function and passes the skin selected
-         * to any function listening for the onSelectSkin event.
-         */
-        selectSkin = function () {
-            var selected, skinList;
-            
-            // Capture selected skin.
-            skinList = that.locate("skinList");
-            selected = skinList.find("input:checked").val();
-            if (selected === undefined || selected === "") {
-                return false;
-            }
-            
-            // Fire onSelectSkin event.
-            that.events.onSelectSkin.fire(selected);
-        };//end:function.
-        
-        /**
-         * Builds mark-up template for the SkinSelector component.
-         * Returns a mark-up snippet.
+         * Builds and returns dataModel object based upon parsed
+         * skinList.xml values.
          * 
          * @param {String} key - references the value of the <skin-key> node, found within the skinList.xml file.
          * @param {String} name - references the value of the <skin-name> node, found within the skinList.xml file.
          * @param {String} description - references the value of the <skin-description> node, found within the skinList.xml file.
-         * @param {String} imagePath - references the media path to the skin's thumbnail image.
+         * @param {String} thumbnailPath - references the media path to the skin's thumbnail image.
          */
-        buildSkinListTempate = function (key, name, description, imagePath) {
-            var template;
+        var buildDataModel = function (key, name, description, thumbnailPath) {
+            return {
+                key: key,
+                name: name,
+                description: description,
+                thumbnailPath: thumbnailPath,
+                thumbnailAlt: (name + " Thumbnail")
+            };
+        };//end:function.
+        
+        /**
+         * Build the cutpoints array, which defines renderer IDs
+         * for each HTML element that will be rendered.
+         */
+        var buildCutPoints = function () {
+            return [
+                {id: "listItem-row:", selector: that.options.selectors.itemList},
+                {id: "skinWidget", selector: that.options.selectors.skinWidget},
+                {id: "skinName", selector: that.options.selectors.skinName},
+                {id: "skinKey", selector: that.options.selectors.skinKey},
+                {id: "skinDescription", selector: that.options.selectors.skinDescription},
+                {id: "skinThumbnail", selector: that.options.selectors.skinThumbnail}
+            ];
+        };//end:function.
+        
+        /**
+         * Build skin list component subtree.
+         */
+        var buildSkinListTree = function () {
+            var treeChildren, skinRows;
             
-            template = 
-                '<div class="fl-widget">' + 
-                    '<div class="fl-widget-titlebar fl-fix">' + 
-                        '<input type="radio" name="skinChoice" value="' + key + '" class="fl-force-left">' + 
-                        '<h2 class="fl-force-left">' + name + '</h2>' + 
-                    '</div>' + 
-                    '<div class="fl-widget-content">' + 
-                        '<p>' + description + '</p>' +
-                        '<img src="' + imagePath + '">' + 
-                    '</div>' + 
-                '</div>';
-                
-            return template;
+            treeChildren = [];
+            skinRows = fluid.transform(that.model, function (obj, index) {
+                return {
+                    ID: "listItem-row:",
+                    children: [
+                        {
+                            ID: "skinWidget",
+                            decorators: [
+                                {
+                                    type: "jQuery", func: "click",
+                                    args: function () {
+                                        var skinList, li, active;
+                                        
+                                        // Remove 'skin-active' class from previous.
+                                        skinList = that.locate("skinList");
+                                        skinList.find("." + that.options.activeSkin).removeClass(that.options.activeSkin);
+                                        
+                                        // Apply 'skin-active' class to current.
+                                        li = $(this);
+                                        li.addClass(that.options.activeSkin);
+                                        
+                                        // Capture value of hidden field.
+                                        active = li.find('input[type="hidden"]').val();
+                                        
+                                        // Fire onSelectSkin event.
+                                        that.events.onSelectSkin.fire(active);
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            ID: "skinName", value: obj.name,
+                            decorators: [
+                                {
+                                    type: "attrs",
+                                    attributes: {
+                                        title: obj.name
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            ID: "skinKey", value: obj.key,
+                            decorators: [
+                                {
+                                    type: "attrs",
+                                    attributes: {
+                                        value: obj.key
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            ID: "skinDescription", value: obj.description
+                        },
+                        {
+                            ID: "skinThumbnail", 
+                            decorators: [
+                                {
+                                    type: "attrs",
+                                    attributes: {
+                                        src: obj.thumbnailPath,
+                                        alt: obj.thumbnailAlt
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                };
+            });
+            return treeChildren.concat(skinRows);
+        };//end:function.
+        
+        /**
+         * Builds component tree utilized by the fluid.renderer component.
+         */
+        var buildComponentTree = function () {
+            return {
+                children: buildSkinListTree()
+            };
+        };//end:function.
+        
+        /**
+         * Configues & executes the fluid.renderer component.
+         */
+        var doRender = function () {
+            var skinList, loader, current, options;
+            
+            skinList = that.locate("skinList");
+            loader = that.locate("loader");
+            options = {
+                cutpoints: buildCutPoints(),
+                model: that.model,
+                autoBind: true
+            };
+            
+            // Run renderer.
+            that.renderer = fluid.selfRender(skinList, buildComponentTree(), options);
+            
+            // Highlight active skin.
+            skinList.find('input[value="' + that.settings.currentSkin + '"]').parents(".widget").addClass(that.options.activeSkin);
+            
+            // Remove loading screen.
+            up.hideLoader(loader);
         };//end:function.
         
         /**
@@ -135,49 +234,36 @@ var up = up || {};
          * buildSkinListTempate() function. Once all mark-up has been built, it is added to the .skin-list DOM container, housed within the 
          * .skin-selector-dialog container.
          */
-        parseSkinListXML = function () {
-            var settings, skinURL;
-            
-            settings = that.options.settings;
-            skinURL = (settings.mediaPath + "/skinList.xml?noCache=" + new Date().getTime());
-            
+        var parseSkinListXML = function () {
             // Obtain skinList.xml.
             $.ajax({
-                url: skinURL,
+                url: (that.settings.mediaPath + "/skinList.xml?noCache=" + new Date().getTime()),
                 async: true,
                 dataType: "xml",
                 type: "GET",
                 success: function (xml) {
-                    var root, skinNodes, template, skinList, loader;
+                    var root, skinNodes, skinList;
                     
                     root = $(xml);
                     skinNodes = root.find("skin");
                     skinList = that.locate("skinList");
-                    loader = that.locate("loader");
-                    template = "";
                     
                     // Parse skinList.xml & construct ui.
                     $.each(skinNodes, function (idx, obj) {
-                        var skin, key, name, description, imagePath;
+                        var skin, key, name, description, thumbnailPath;
                         
                         skin = $(obj);
                         key = skin.children("skin-key").text();
                         name = skin.children("skin-name").text();
                         description = skin.children("skin-description").text();
-                        imagePath = (settings.mediaPath + "/" + key + "/" + "thumb.gif");
+                        thumbnailPath = (that.settings.mediaPath + "/" + key + "/" + "thumb.gif");
                         
-                        // Build template.
-                        template += buildSkinListTempate(key, name, description, imagePath);
+                        // Build data model.
+                        that.model.push(buildDataModel(key, name, description, thumbnailPath));
                     });//end:loop.
                     
-                    // Add to DOM.
-                    skinList.html(template);
-                    
-                    // Set current skin.
-                    skinList.find('input[value=' + settings.currentSkin + ']').attr("checked", "checked");
-                    
-                    // Remove loading screen.
-                    up.hideLoader(loader);
+                    // Render UI.
+                    doRender();
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     if (console) {
@@ -192,20 +278,19 @@ var up = up || {};
          * the .skin-list DOM container, calls the parseSkinListXML() function
          * and registers the submit event for the SkinSelector form.
          */
-        initUI = function () {
-            var skinList, form;
+        var initUI = function () {
+            var form;
             
-            // Clear skinList.
-            skinList = that.locate("skinList");
-            skinList.html("");
+            // Cache common resources.
+            that.model = that.options.model;
+            that.settings = that.options.settings;
             
             // Parse skinList.xml
             parseSkinListXML();
             
-            // Mange form submit.
+            // Disable form submission.
             form = that.container.find("form");
             form.submit(function () {
-                selectSkin();
                 return false;
             });
         };//end:function.
@@ -213,7 +298,7 @@ var up = up || {};
         /**
          * Private. Entry point for the SkinSelector component.
          */
-        initialize = function () {
+        var initialize = function () {
             initUI();
         };//end:function.
         
@@ -228,11 +313,19 @@ var up = up || {};
     fluid.defaults("up.SkinSelector", {
         selectors: {
             skinList: ".skin-list",
+            listItem: ".list-item",
+            skinWidget: ".widget",
+            skinName: ".skin-name",
+            skinKey: ".skin-key",
+            skinDescription: ".skin-description",
+            skinThumbnail: ".skin-thumbnail",
             loader: ".loader"
         },
         events: {
             onSelectSkin: null
         },
-        settings: null
+        settings: null,
+        model: [],
+        activeSkin: "skin-active"
     });
 })(jQuery, fluid);
