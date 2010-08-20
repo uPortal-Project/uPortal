@@ -606,7 +606,9 @@
                         });
                     }
                 },
-                settings: settings
+                currentSkin: settings.currentSkin,
+                skinListURL: (settings.mediaPath + "/skinList.xml?noCache=" + new Date().getTime()),
+                mediaPath: settings.mediaPath
             });
             
             // Unbind click event listener for skinDialogLink.
