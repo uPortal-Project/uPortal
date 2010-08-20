@@ -596,26 +596,6 @@
             </div>
             <div class="fl-widget-content">
               <ul class="fl-listmenu">
-                <xsl:if test="count(//navigation/tab) > 0">
-                  <li id="portalCustomizationLinksAddContent">
-                    <a id="contentDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LONG_LABEL']}">
-                      <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_CONTENT_LABEL']"/></span>
-                    </a>
-                    <xsl:call-template name="portal.pipe"/>
-                  </li>
-                  <li id="portalCustomizationLinksChangeLayout">
-                    <a id="layoutDialogLink" class="edit-page-link" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
-                      <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
-                    </a>
-                    <xsl:call-template name="portal.pipe"/>
-                  </li>
-                </xsl:if>
-                <li id="portalCustomizationLinksChooseSkin">
-                  <a id="skinDialogLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_SKINS_LONG_LABEL']}">
-                    <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_SKINS_LABEL']"/></span>
-                  </a>
-                  <xsl:call-template name="portal.pipe"/>
-                </li>
                 <li id="portalCustomizationLinksAddTab">
                   <a id="addTabLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LONG_LABEL']}">
                     <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LABEL']"/></span>

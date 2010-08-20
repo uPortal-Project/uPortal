@@ -264,7 +264,7 @@ var up = up || {};
     
     // defaults
     fluid.defaults("up.PortletRegistry", {
-        portletListUrl: null,
+        portletListUrl: null
     });
     
 })(jQuery, fluid);

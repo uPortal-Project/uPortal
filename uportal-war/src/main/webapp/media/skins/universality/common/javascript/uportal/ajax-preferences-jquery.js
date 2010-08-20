@@ -51,16 +51,128 @@
     
     // Initialization tasks for non-focused mode.
     var initportal = function() {
-        
+
         settings.columnCount = $("#portalPageBodyColumns [id^=column_]").size();
         if ($("#portalNavigationList li.active").size() > 0) {
             settings.tabId = $("#portalNavigationList li.active").attr("id").split("_")[1];
         }
         
-        // Initialize dialog menus.
-        $("#contentDialogLink").click(initializeContentAddingMenu);
-        $("#usePortletDialogLink").click(initializeUsePortletMenu);
-        $("#skinDialogLink").click(initializeSkinMenu);
+        up.PortalGallery(
+            ".up-gallery", 
+            {
+                browseContentPane: {
+                    options: {
+                        portletBrowser: {
+                            options: {
+                                portletRegistry: {
+                                    options: { portletListUrl: settings.channelListUrl }
+                                },
+                                listeners: {
+                                    onPortletSelect: function(that, portlet) {
+                                        var options = { action: 'addPortlet', channelID: portlet.id };
+                                        var firstChannel = $("div[id*=portlet_]:not(.locked)");
+                                        if (firstChannel.size() == 0) {
+                                            options['elementID'] = settings.tabId;
+                                        } else {
+                                            options['elementID'] = firstChannel.attr("id").split("_")[1];
+                                            options['position'] = 'insertBefore';
+                                        }
+                                        updateLayout(options,
+                                           function(data) {
+                                              window.location = settings.portalUrl; 
+                                           }
+                                        );
+                                    }
+                                }
+                            }
+                        },
+                        fragmentBrowser: {
+                            options: {
+                                fragmentServiceUrl: settings.subscriptionListUrl,
+                                listeners: { 
+                                    onFragmentSelect: function(that, fragment) {
+                                        var tab = $("#portalNavigation_" + settings.tabId);
+                                        var tabPosition = 1;
+                                        var targetId = null;
+                                        // figure out what the current tab's number is
+                                        $("[id*=portalNavigation_]").each(function(i){
+                                            if ($(this).attr("id") == tab.attr("id"))tabPosition = i+1;
+                                            targetId = $(this).attr("id").split("_")[1];
+                                        });
+                    
+                                        var subscribeToTabVal = $("#subscribeTabId").val();
+                                        updateLayout({action: "subscribeToTab" ,sourceID: fragment.ownerID,method: 'appendAfter', tabPosition: tabPosition, elementID: targetId  }, function(xml) {
+                                            window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
+                                                    ($("#portalNavigationList > li").length + 1);
+                                        });
+                                    }
+                                }
+                            }
+                        },
+                    }
+                },
+                useContentPane: {
+                    options: {
+                        listeners: {
+                            onInitialize: function (overallThat) {
+                                up.PortletBrowser(".use-content", {
+                                    portletRegistry: {
+                                        options: { portletListUrl: settings.channelListUrl }
+                                    },
+                                    categoryListView: {
+                                        type: "up.AjaxLayoutCategoryListView"
+                                    },
+                                    portletListView: {
+                                        type: "up.AjaxLayoutPortletListView"
+                                    },
+                                    listeners: {
+                                        onPortletSelect: function(that, portlet) {
+                                            window.location = "/uPortal/p/" + portlet.fname;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                },
+                skinPane: {
+                    options: {
+                        listeners: {
+                            onInitialize: function (overallThat) {
+                                up.SkinSelector(".skins", {
+                                    listeners: {
+                                        onSelectSkin: function (skin) {
+                                            updateLayout({action: 'chooseSkin', skinName: skin.key}, function (data) {
+                                                window.location = settings.portalUrl;
+                                            });
+                                        }
+                                    },
+                                    currentSkin: settings.currentSkin,
+                                    skinListURL: (settings.mediaPath + "/skinList.xml?noCache=" + new Date().getTime()),
+                                    mediaPath: settings.mediaPath
+                                });
+                            }
+                        }
+                    }
+                },
+                layoutPane: {
+                    options: {
+                        listeners: {
+                            onInitialize: function (overallThat) {
+                                up.LayoutSelector(".layouts-list", {
+                                    currentLayout: getCurrentLayout(),
+                                    imagePath: settings.mediaPath + "/common/images/",
+                                    listeners: {
+                                        onLayoutSelect: changeColumns
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        );
+
         
         // Set up the Fluid reorderer to control portlet drag and drop
         var options = {
@@ -79,8 +191,6 @@
              }
         };
         settings.myReorderer = up.fluid.reorderLayout ("#portalPageBodyColumns",options);
-        
-        initializePageLayoutDialog();
         
         if (settings.isFragmentMode) {
             // tabs permissions manager
@@ -160,133 +270,11 @@
         initTabEditLinks();
     };
         
-        var initializePageLayoutDialog = function() {
-              // initialize the page layout modal dialog
-            $("#pageLayoutDialog").dialog({ width: 550, modal: true, autoOpen: false });
-            
-            // initialize the page layout editing component within the just-created
-            // modal dialog
-            uportal.PageManager("#pageLayoutDialog", {
-                // set the configured page name to the name of the current tab
-                currentPageName: $("#tabLink_" + settings.tabId + " > span").text(),
-                isDefault: true,
-                currentLayout: getCurrentLayout(),
-                allowedLayouts: getPermittedLayouts(),
-                savePermissionsUrl: settings.preferencesUrl,
-                imagePath: settings.mediaPath + "/" + settings.currentSkin + "/images/",
-                selectors: { },
-                listeners: {
-                    onUpdateLayout: changeColumns,
-                    onUpdatePageName: updatePageName,
-                    onUpdateIsDefault: null
-                }
-            });
 
-            // configure the new page editing dialog to launch when either of
-            // the relevant page editing links are clicked
-            $(".edit-page-link").click(function(){
-              $("#pageLayoutDialog").dialog("open");
-            });
-
-        };
         
         // Initialization tasks for focus mode
         var initfocusedportal = function() {
             $("#focusedContentDialogLink").click(initializeFocusedContentMenu);
-        };
-        
-        var initializeContentAddingMenu = function() {
-            
-            // initialize the modal container dialog and tabs
-            $("#channelAddingTabs").tabs();
-            $("#contentAddingDialog").dialog({ width:550, modal:true});
-            $("#contentDialogLink")
-                .unbind('click', initializeContentAddingMenu)
-                .click(function(){$("#contentAddingDialog").dialog('open');});
-            
-            // initialize the portlet browser in the first tab
-            settings.addPortletsBrowser = up.PortletBrowser("#channel-tab-1 .portlet-browser", 
-                { 
-                    portletRegistry: { 
-                        type: "up.PortletRegistry",
-                        options: { portletListUrl: settings.channelListUrl } 
-                    },
-                    categoryListView: {
-                        type: "up.AjaxLayoutCategoryListView"
-                    },
-                    portletListView: {
-                        type: "up.AjaxLayoutPortletListView"
-                    },
-                    listeners: {
-                        onPortletSelect: function(that, portlet) {
-                            var options = { action: 'addPortlet', channelID: portlet.id };
-                            var firstChannel = $("div[id*=portlet_]:not(.locked)");
-                            if (firstChannel.size() == 0) {
-                                options['elementID'] = settings.tabId;
-                            } else {
-                                options['elementID'] = firstChannel.attr("id").split("_")[1];
-                                options['position'] = 'insertBefore';
-                            }
-                            updateLayout(options,
-                               function(data) {
-                                  window.location = settings.portalUrl; 
-                               }
-                            );
-                        }
-                    }
-                }
-            );
-            // initialize the DLM subscribe tab dialog in the second tab
-            settings.fragmentBrowser = uportal.FragmentBrowser($("#channel-tab-2"), 
-                {
-                    fragmentServiceUrl: settings.subscriptionListUrl,
-                    listeners: { 
-                        onFragmentSelect: function(fragment) {
-                            var tab = $("#portalNavigation_" + settings.tabId);
-                            var tabPosition = 1;
-                            var targetId = null;
-                            // figure out what the current tab's number is
-                            $("[id*=portalNavigation_]").each(function(i){
-                                if ($(this).attr("id") == tab.attr("id"))tabPosition = i+1;
-                                targetId = $(this).attr("id").split("_")[1];
-                            });
-        
-                            var subscribeToTabVal = $("#subscribeTabId").val();
-                            updateLayout({action: "subscribeToTab" ,sourceID: fragment.ownerID,method: 'appendAfter', tabPosition: tabPosition, elementID: targetId  }, function(xml) {
-                                window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
-                                        ($("#portalNavigationList > li").length + 1);
-                            });
-                        }
-                    }
-                }
-            );
-        }
-
-        var initializeUsePortletMenu = function() {
-            $("#usePortletDialog").dialog({ width:550, modal:true});
-            $("#usePortletDialogLink")
-                .unbind('click', initializeUsePortletMenu)
-                .click(function(){$("#usePortletDialog").dialog('open');});
-            
-            settings.usePortletsBrowser = up.PortletBrowser("#usePortletDialog", 
-                { 
-                    portletRegistry: { 
-                        type: "up.PortletRegistry",
-                        options: { portletListUrl: settings.channelListUrl } 
-                    },
-                    categoryListView: {
-                        type: "up.AjaxLayoutCategoryListView"
-                    },
-                    portletListView: {
-                        type: "up.AjaxLayoutPortletListView"
-                    },
-                    listeners: {
-                        onPortletSelect: function(that, portlet) {
-                            window.location = "/uPortal/p/" + portlet.fname;
-                        }
-                    }
-                }
-            );
         };
         
         var initializeFocusedContentMenu = function() {
@@ -381,7 +369,8 @@
         };
         
         // Column editing persistence functions
-        var changeColumns = function(newcolumns) {
+        var changeColumns = function(layout, that) {
+            var newcolumns = layout.layout;
             
             var post = {action: 'changeColumns', tabId: settings.tabId, widths: newcolumns};
             
@@ -575,81 +564,6 @@
             );
             return false;
         
-        };
-        
-        /**
-         * Initializes the skin selector dialog window. This function
-         * configures the jQuery dialog widget for the skin selector dialog
-         * and initializes the up.SkinSelector component. The up.SkinSelector
-         * component manages the actual selection of a skin.
-         */
-        var initializeSkinMenu = function () {
-            var skin, skinDialogLink, skinSelector;
-            
-            // Cache resources & configure skinSelectorDialog.
-            skin = $("#skinSelectorDialog").dialog({
-                height: 475,
-                width: 500,
-                minWidth: 500,
-                minHeight: 475,
-                modal:true,
-                dialogClass: "up"
-            });
-            skinDialogLink = $("#skinDialogLink");
-            
-            // Initialize SkinSelector component.
-            skinSelector = up.SkinSelector(skin, {
-                listeners: {
-                    onSelectSkin: function (skin) {
-                        updateLayout({action: 'chooseSkin', skinName: skin}, function (data) {
-                            window.location = settings.portalUrl;
-                        });
-                    }
-                },
-                currentSkin: settings.currentSkin,
-                skinListURL: (settings.mediaPath + "/skinList.xml?noCache=" + new Date().getTime()),
-                mediaPath: settings.mediaPath
-            });
-            
-            // Unbind click event listener for skinDialogLink.
-            // Re-purpose click event to open the skinSelector dialog.
-            skinDialogLink.unbind("click", initializeSkinMenu).click(function () {
-                skinSelector.open(skin);
-            });
-        };//end:function.
-        
-        var initializeFragmentBrowserMenu = function() {
-            uportal.FragmentBrowser($("#subscribeTab-tab-1"), 
-                {
-                    fragmentServiceUrl: settings.subscriptionListUrl,
-                    listeners: { 
-                        onFragmentSelect: function(fragment) {
-                            var tab = $("#portalNavigation_" + settings.tabId);
-                            var tabPosition = 1;
-                            var targetId = null;
-                            // figure out what the current tab's number is
-                            $("[id*=portalNavigation_]").each(function(i){
-                                if ($(this).attr("id") == tab.attr("id"))tabPosition = i+1;
-                                targetId = $(this).attr("id").split("_")[1];
-                            });
-                            
-                            var subscribeToTabVal = $("#subscribeTabId").val();
-                            updateLayout({action: "subscribeToTab" ,sourceID: fragment.ownerID,method: 'appendAfter', tabPosition: tabPosition, elementID: targetId  }, function(xml) {
-                                window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
-                                        ($("#portalNavigationList > li").length + 1);
-                            });
-                        }
-                    }
-                }
-            );
-            $("#subscribeTabLoading").css("display", "none");
-            
-            $("#addTabLink")
-                .unbind("click")
-                .click(function(){
-                    $("#subscribeTabDialog").dialog('open');
-                 });
-                
         };
         
         var updateLayout = function(data, success) {

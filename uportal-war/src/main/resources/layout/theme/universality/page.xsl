@@ -149,6 +149,9 @@
                 <xsl:call-template name="alert.block"/>			
                 <xsl:apply-templates select="header"/>
                 <xsl:call-template name="main.navigation"/>
+                <xsl:if test="not(//focused)">
+                    <xsl:call-template name="gallery"/>
+                </xsl:if>
                 <xsl:apply-templates select="content"/>
                 <xsl:apply-templates select="footer"/>
                 <xsl:if test="$USE_FLYOUT_MENUS='true'">

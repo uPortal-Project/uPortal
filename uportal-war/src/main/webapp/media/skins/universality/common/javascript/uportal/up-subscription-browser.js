@@ -17,7 +17,7 @@
  * under the License.
  */
 
-var uportal = uportal || {};
+var up = up || {};
 
 /**
  * The FragmentBrowser component provides a user interface for viewing and
@@ -136,14 +136,14 @@ var uportal = uportal || {};
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
-    uportal.FragmentBrowser = function(container, options) {
+    up.FragmentBrowser = function(container, options) {
         
         // construct the new component
-        var that = fluid.initView("uportal.FragmentBrowser", container, options);
+        var that = fluid.initView("up.FragmentBrowser", container, options);
 
         // initialize the cutpoints to match the configured selectors
         var cutpoints = [
-            { id: "~fragmentContainer:", selector: that.options.selectors.fragmentContainer },
+            { id: "fragmentContainer:", selector: that.options.selectors.fragmentContainer },
             { id: "fragment", selector: that.options.selectors.fragment },
             { id: "fragmentTitle", selector: that.options.selectors.fragmentTitle },
             { id: "fragmentDescription", selector: that.options.selectors.fragmentDescription },
@@ -153,29 +153,85 @@ var uportal = uportal || {};
         // collect the defined DLM fragments for the current user
         findFragments(that);
         
-        // get a chunk of component tree markup for the defined DLM fragment array
-        var tree = getComponentTree(that);
-        
-        // render the component 
-        that.state.templates = fluid.selfRender(container, tree, 
-            { cutpoints: cutpoints });
+        that.refresh = function() {
+            
+            if (that.state.pager) {
+                that.state.pager.refresh(fragments);
+            } else {
 
+                var columnDefs = [
+                    { key: "fragment", valuebinding: "*.owner",
+                        components: function(row) {
+                            return { decorators: [
+                                { type: "addClass", classes: row.subscribed ? "fragment-disabled" : "" }
+                            ] }
+                        }
+                    },
+                    { key: "fragmentTitle", valuebinding: "*.name" },
+                    { key: "fragmentDescription", valuebinding: "*.description" },
+                    { key: "selectFragmentLink", valuebinding: "*.owner",
+                        components: function(row) {
+                            return { decorators: [
+                                { type: "jQuery", func: "click", args: function() {
+                                        that.events.onFragmentSelect.fire(that, row);
+                                    } 
+                                }
+                            ] };
+                        }
+                    }
+                ];
+                
+                // set the other pager options
+                var pagerOptions = {
+                    dataModel: that.state.fragments,
+                    columnDefs: columnDefs,
+                    bodyRenderer: {
+                      type: "fluid.pager.selfRender",
+                      options: {
+                          selectors: {
+                             root: that.options.selectors.pagerRoot
+                          },
+                          row: "fragmentContainer:",
+                          renderOptions: {
+                              cutpoints: cutpoints
+                          }
+                        }
+
+                    },
+                    pagerBar: {type: "fluid.pager.pagerBar", options: {
+                      pageList: {type: "fluid.pager.renderedPageList",
+                        options: { 
+                          linkBody: "a"
+                        }
+                      }
+                    }}
+                };
+                
+                that.state.pager = fluid.pager($(container).find(".package-results"), pagerOptions);
+                that.state.pager.events.initiatePageSizeChange.fire(8);
+            }
+        }
+
+        that.refresh();
+        that.events.onLoad.fire(that);
         return that;
     };
 
     
     // defaults
-    fluid.defaults("uportal.FragmentBrowser", {
+    fluid.defaults("up.FragmentBrowser", {
         fragmentServiceUrl: null,
         selectors: {
-            fragmentContainer: ".fragment-container",
-            fragment: ".fragment-choice",
-            fragmentTitle: ".fragment-title",
-            fragmentDescription: ".fragment-description",
-            selectFragmentLink: ".add-fragment-link"
+            fragmentContainer: ".package",
+            fragment: ".package-wrapper",
+            fragmentTitle: ".package-titlebar",
+            fragmentDescription: ".package-description",
+            selectFragmentLink: ".package-link",
+            pagerRoot: ".package-list"
         },
         listeners: {
-            onFragmentSelect: null
+            onFragmentSelect: null,
+            onLoad: null
         }
     });
     

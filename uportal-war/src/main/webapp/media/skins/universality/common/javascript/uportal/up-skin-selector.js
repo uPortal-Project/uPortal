@@ -45,22 +45,9 @@
  *         :Reference to <h2> DOM container with the .skin-name class name, which is housed in the
  *          <ul class="skin-list"> container.
  *         
- * skinKey
- *         :Reference to <input type="hidden"> form element with the .skin-key class name, which is
- *          housed under the <ul class="skin-list"> container.
- *         
- * skinDescription
- *         :Reference to <p> DOM container with the .skin-description class name, which is housed
- *          under the <ul class="skin-list"> container.
- *         
  * skinThumbnail
  *         :Reference to <img> DOM container with the .skin-thumbnail class name, which is housed
  *          under the <ul class="skin-list"> container.
- *         
- * loader
- *         :Reference to DOM container acting as a loading screen. In particular, the loader
- *          selector references the .loader DOM container housed under the
- *          <div class="skin-selector-dialog"> container.
  *         
  * ----------------
  * Available events
@@ -118,11 +105,10 @@ var up = up || {};
      */
     var buildCutPoints = function (that) {
         return [
-            {id: "listItem-row:", selector: that.options.selectors.itemList},
-            {id: "skinWidget", selector: that.options.selectors.skinWidget},
+            {id: "listItem-row:", selector: that.options.selectors.listItem},
+            {id: "skinWrapper", selector: that.options.selectors.skinWrapper},
+            {id: "skinLink", selector: that.options.selectors.skinLink},
             {id: "skinName", selector: that.options.selectors.skinName},
-            {id: "skinKey", selector: that.options.selectors.skinKey},
-            {id: "skinDescription", selector: that.options.selectors.skinDescription},
             {id: "skinThumbnail", selector: that.options.selectors.skinThumbnail}
         ];
     };//end:function.
@@ -141,7 +127,13 @@ var up = up || {};
                 ID: "listItem-row:",
                 children: [
                     {
-                        ID: "skinWidget",
+                        ID: "skinWrapper",
+                        decorators: [
+                            { type: "addClass", classes: obj.key === that.options.currentSkin ? that.options.activeSkin : "" }
+                        ]
+                    },
+                    {
+                        ID: "skinLink",
                         decorators: [
                             {
                                 type: "jQuery", func: "click",
@@ -156,11 +148,8 @@ var up = up || {};
                                     li = $(this);
                                     li.addClass(that.options.activeSkin);
                                     
-                                    // Capture value of hidden field.
-                                    active = li.find('input[type="hidden"]').val();
-                                    
                                     // Fire onSelectSkin event.
-                                    that.events.onSelectSkin.fire(active);
+                                    that.events.onSelectSkin.fire(obj);
                                 }
                             }
                         ]
@@ -175,20 +164,6 @@ var up = up || {};
                                 }
                             }
                         ]
-                    },
-                    {
-                        ID: "skinKey", value: obj.key,
-                        decorators: [
-                            {
-                                type: "attrs",
-                                attributes: {
-                                    value: obj.key
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        ID: "skinDescription", value: obj.description
                     },
                     {
                         ID: "skinThumbnail", 
@@ -225,10 +200,9 @@ var up = up || {};
      * @param {Object} that - reference to up.SkinSelector component.
      */
     var doRender = function (that) {
-        var skinList, loader, options;
+        var skinList, options;
         
         skinList = that.locate("skinList");
-        loader = that.locate("loader");
         options = {
             cutpoints: buildCutPoints(that),
             model: that.state.model,
@@ -241,8 +215,6 @@ var up = up || {};
         // Highlight active skin.
         skinList.find('input[value="' + that.options.currentSkin + '"]').parents(".widget").addClass(that.options.activeSkin);
         
-        // Remove loading screen.
-        up.hideLoader(loader);
     };//end:function.
     
     /**
@@ -308,11 +280,6 @@ var up = up || {};
         // Parse skinList.xml
         parseSkinListXML(that);
         
-        // Disable form submission.
-        form = that.container.find("form");
-        form.submit(function () {
-            return false;
-        });
     };//end:function.
     
     /**
@@ -324,17 +291,6 @@ var up = up || {};
     up.SkinSelector = function (container, options) {
         var that;
         that = fluid.initView("up.SkinSelector", container, options);
-        
-        /**
-         * The open() function is passed a jQuery dialog
-         * instance. The open() method is then invoked on the 
-         * passed instance.
-         * 
-         * @param {Object} instance - jQuery dialog instance.
-         */
-        that.open = function (instance) {
-            instance.dialog("open");
-        };//end:function.
         
         /**
          * Refresh.
@@ -361,14 +317,12 @@ var up = up || {};
      ---------------------------------*/
     fluid.defaults("up.SkinSelector", {
         selectors: {
-            skinList: ".skin-list",
-            listItem: ".list-item",
-            skinWidget: ".widget",
-            skinName: ".skin-name",
-            skinKey: ".skin-key",
-            skinDescription: ".skin-description",
-            skinThumbnail: ".skin-thumbnail",
-            loader: ".loader"
+            skinList: ".skins-list",
+            listItem: ".skin",
+            skinWrapper: ".skins-wrapper",
+            skinLink: ".skin-link",
+            skinName: ".skin-titlebar",
+            skinThumbnail: ".skin-image"
         },
         events: {
             onSelectSkin: null
@@ -376,6 +330,6 @@ var up = up || {};
         currentSkin: null,
         skinListURL: null,
         mediaPath: null,
-        activeSkin: "skin-active"
+        activeSkin: "selected"
     });
 })(jQuery, fluid);

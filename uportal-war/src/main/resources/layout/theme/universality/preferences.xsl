@@ -61,7 +61,256 @@
     <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
   </xalan:component>
 <!-- ============================================= -->
-  
+
+    <!-- Gallery "Add Stuff" Pane -->
+    <xsl:template name="gallery-add-content-pane">
+        <div class="add-content fl-fix fl-col-mixed fl-col-mixed2">
+            <div class="content-filters-wrapper fl-col-fixed fl-force-left">
+                <div class="categories-column active">
+                    <h3 class="portlet-list-link">Browse Stuff</h3>
+                    <div class="categories-wrapper active">
+                        <div class="portlet-search-view">
+                            <form class="portlet-search-form">
+                                <input class="portlet-search-input"/>
+                            </form>
+                        </div>
+                        <div class="categories">
+                            <h4>Categories</h4>
+                            <ul>
+                                <div class="category-choice-container">
+                                    <li class="category-choice">
+                                        <a href="javascript:;" class="category-choice-link"><span class="category-choice-name"></span></a>
+                                    </li>
+                                </div>
+                            </ul>
+                            <div class="clear-float"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="packages-column">
+                    <h3 class="package-list-link">Packaged Stuff</h3>
+                </div>
+            </div>
+            <div class="content-results-wrapper fl-col-main">
+                <div class="column-inner">
+                    <div class="results-wrapper fl-col-mixed2">
+                        <div class="pager-column fl-col-side fl-force-right">
+                            <div class="column-inner">
+                            </div>
+                        </div>
+                        <div class="results-column fl-col-main fl-fix">
+                            <xsl:call-template name="gallery-add-content-pane-portlet-list"/>
+                            <xsl:call-template name="gallery-add-content-pane-fragment-list"/>
+                        </div>
+                        <div class="clear-float"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xsl:template>
+    <!-- // end Gallery "Add Stuff" Pane -->
+
+    <!-- Gallery "Use Stuff" Pane -->
+    <xsl:template name="gallery-use-content-pane">
+        <div class="use-content fl-fix fl-col-mixed fl-col-mixed2" style="display:none">
+            <div class="content-filters-wrapper fl-col-fixed fl-force-left">
+                <div class="categories-column active">
+                    <h3 class="portlet-list-link">Browse Stuff</h3>
+                    <div class="categories-wrapper active">
+                        <div class="portlet-search-view">
+                            <form class="portlet-search-form">
+                                <input class="portlet-search-input"/>
+                            </form>
+                        </div>
+                        <div class="categories">
+                            <h4>Categories</h4>
+                            <ul>
+                                <div class="category-choice-container">
+                                    <li class="category-choice">
+                                        <a href="javascript:;" class="category-choice-link"><span class="category-choice-name"></span></a>
+                                    </li>
+                                </div>
+                            </ul>
+                            <div class="clear-float"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-results-wrapper fl-col-main">
+                <div class="column-inner">
+                    <div class="results-wrapper fl-col-mixed2">
+                        <div class="pager-column fl-col-side fl-force-right">
+                            <div class="column-inner">
+                            </div>
+                        </div>
+                        <div class="results-column fl-col-main fl-fix">
+                            <xsl:call-template name="gallery-add-content-pane-portlet-list"/>
+                        </div>
+                        <div class="clear-float"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xsl:template>    
+    <!-- // end Gallery "Add Stuff" Pane -->
+    
+    <xsl:template name="gallery-add-content-pane-portlet-list">
+        <div class="results-wrapper portlet-results fl-col-mixed2">
+            <div class="pager-column fl-col-side fl-force-right">
+                <div class="column-inner">
+                    <xsl:call-template name="gallery-pager"/>
+                </div>
+            </div>
+            <div class="results-column fl-col-main fl-fix">
+                <ul class="portlet-list">
+                    <li class="portlet">
+                        <div class="portlet-wrapper">
+                            <a href="javascript:;" class="portlet-link"><span>Add</span></a>
+                            <div class="portlet-titlebar"></div>
+                            <img class="portlet-icon"/>
+                            <div class="portlet-description"></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </xsl:template>
+    
+    <xsl:template name="gallery-add-content-pane-fragment-list">
+        <div class="results-wrapper package-results fl-col-mixed2" style="display:none">
+            <div class="pager-column fl-col-side fl-force-right">
+                <div class="column-inner">
+                    <xsl:call-template name="gallery-pager"/>
+                </div>
+            </div>
+            <div class="results-column fl-col-main fl-fix">
+                <ul class="package-list">
+                    <li class="package">
+                       <div class="package-wrapper">
+                           <a href="javascript:;" class="package-link"><span>Subscribe</span></a>
+                           <div class="package-titlebar"></div>
+                           <img class="package-icon"/>
+                           <div class="package-description"></div>
+                       </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </xsl:template>
+    
+    <xsl:template name="gallery-pager">
+        <div class="pager flc-pager-top">
+            <div class="pager-button-up flc-pager-previous">
+                <a class="pager-button-up-inner" href="javascript:;">
+                    <span>up</span>
+                </a>
+            </div>
+            <li style="display:none">
+                <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
+                    <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
+                    <li class="flc-pager-pageLink-disabled">2</li>
+                    <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
+                </ul>
+            </li>
+            <div class="pager-pagination"></div>
+            <div class="pager-button-down flc-pager-next">
+                <a class="pager-button-down-inner" href="javascript:;">
+                    <span>down</span>
+                </a>
+            </div>
+            <li style="display:none">
+                <span class="flc-pager-summary">show</span>
+                <span><select class="pager-page-size flc-pager-page-size">
+                </select></span>
+            </li>
+        </div>
+    </xsl:template>
+
+    <xsl:template name="gallery-skin-pane">
+        <div class="skins" style="display:none">
+            <div class="content-results-wrapper">
+                <div class="column-inner">
+                    <div class="results-wrapper">
+                        <ul class="skins-list">
+                            <li class="skin">
+                                <div class="skins-wrapper">
+                                    <a class="skin-link" href="javascript:;">
+                                        <div class="skin-titlebar"></div>
+                                        <div class="skin-thumb">
+                                            <img class="skin-image"/>
+                                        </div>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xsl:template>
+
+    <xsl:template name="gallery-layout-pane">
+        <div class="layout" style="display:none">
+            <div class="content-results-wrapper">
+                <div class="column-inner">
+                    <div class="results-wrapper">
+                        <ul class="layouts-list">
+                            <li class="layout">
+                                <div class="layout-wrapper">
+                                    <a class="layout-link" href="javascript:;">
+                                        <div class="layout-titlebar"></div>
+                                        <div class="layout-thumb">
+                                            <img class="layout-image"/>
+                                        </div>
+                                        <div class="layout-description"></div>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xsl:template>
+
+    <xsl:template name="gallery">
+        <div class="up-gallery">
+            <h2 class="handle">
+                <a><span class="handle-arrow-up">Customize</span></a>
+            </h2>
+            <div class="gallery-inner fl-fix fl-col-mixed fl-col-mixed2" style="display:none">
+                <div class="menu-wrapper fl-col-side fl-force-left">
+                    <ul class="menu" role="menu">
+                        <li class="add-content-link active" role="tab">
+                            <a href="javascript:;"><span>Add Stuff</span></a>
+                        </li>
+                        <li class="use-content-link" role="tab">
+                            <a href="javascript:;"><span>Use It</span></a>
+                        </li>
+                        <li class="skin-link" role="tab">
+                            <a href="javascript:;"><span>Colors</span></a>
+                        </li>
+                        <li class="layout-link last" role="tab">
+                            <a href="javascript:;"><span>Layout</span></a>
+                        </li>
+                    </ul>
+                    <div class="close-button">
+                        <a><span>I'm Done</span></a>
+                    </div>
+                </div>
+                <div class="content-wrapper fl-col-main" role="tabpanel">
+                    <div class="content fl-fix">
+                        <xsl:call-template name="gallery-add-content-pane"/>
+                        <xsl:call-template name="gallery-use-content-pane"/>
+                        <xsl:call-template name="gallery-skin-pane"/>
+                        <xsl:call-template name="gallery-layout-pane"/>
+                    </div>
+                    <div class="content-modal"></div>
+                </div>
+            </div>
+        </div>
+    </xsl:template>
+
  <xsl:template name="preferences">
   
   <xsl:choose>
@@ -93,7 +342,7 @@
           mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
           currentSkin: '<xsl:value-of select="$SKIN"/>',
           preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
-          channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList?xml=true',
+          channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList?xml=false',
           subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
           isFocusMode: true
        });
@@ -105,99 +354,6 @@
    <xsl:when test="not(//focused)">
   
     <div id="dojoMenus" class="dialogs" style="display:none;">
-     <!-- Add Channel Menu -->
-     <div id="contentAddingDialog" title="{$TOKEN[@name='AJAX_ADD_PORTLET_DIALOG_TITLE']}">
-        <div id="channelAddingTabs">
-         <ul>
-          <li><a href="#channel-tab-1"><span><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_BROWSE']"/></span></a></li>
-          <li><a href="#channel-tab-2"><span><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_SEARCH']"/></span></a></li>
-         </ul>
-         <div id="channel-tab-1">
-          <h4 id="channelLoading"><xsl:value-of select="$TOKEN[@name='AJAX_LOADING_PORTLET_LIST']"/></h4>
-         <table cellspacing="0" cellpadding="0" border="0">
-          <tr>
-           <td class="portlet-section-subheader"><label for="categorySelectMenu"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_CATEGORY_COLUMN']"/></label></td>
-           <td class="portlet-section-subheader"><label for="channelSelectMenu"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_CATEGORY_PORTLET']"/></label></td>
-          </tr>
-          <tr>
-           <td><select id="categorySelectMenu" size="14" style="width: 150px; background: url({$SKIN_PATH}/images/loading.gif) no-repeat center center"></select></td>
-           <td><select id="channelSelectMenu" size="14" style="width: 300px; background: url({$SKIN_PATH}/images/loading.gif) no-repeat center center"></select></td>
-          </tr>
-         </table>
-         </div>
-         <div id="channel-tab-2">
-         <p>
-          <label class="portlet-form-field-label" for="addChannelSearchTerm"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_SEARCH_LABEL']"/></label>&#160;
-          <input id="addChannelSearchTerm" type="text"/>
-         </p>
-         <h3><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_SEARCH_RESULTS_TITLE']"/></h3>
-         <ul id="addChannelSearchResults" style="list-style-type: none; list-style-image: none; padding: 0px; margin-left: 5px; max-height:15em; min-height:15em; overflow: auto"></ul>
-         </div>
-        </div>
-      <h3 class="portal-section-header"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_DETAILS_TITLE']"/></h3>
-      <h4 id="channelTitle" class="portal-section-subheader"></h4>
-      <p id="channelDescription"></p>
-      <p style="padding-top: 10px;">
-       <input id="addChannelId" type="hidden"/>
-       <button id="addChannelLink" class="portlet-form-button"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_ADD_BUTTON']"/></button>&#160;
-       <button id="previewChannelLink" class="portlet-form-button"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_USE_BUTTON']"/></button>&#160;
-      </p>
-     </div>
-
-     <div id="subscribeTabDialog" title="{$TOKEN[@name='PREFERENCES_ADD_TAB_LABEL']}">
-      <div id="subscribeTabTabs">
-       <ul>
-        <li><a href="#subscribeTab-tab-1"><span><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_SUBSCRIBE_TAB_TITLE']"/></span></a></li>
-        <li><a href="#subscribeTab-tab-2"><span><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_CUSTOM_TAB_TITLE']"/></span></a></li>
-       </ul>
-       <div id="subscribeTab-tab-1">
-         <h4 id="subscribeTabLoading"><xsl:value-of select="$TOKEN[@name='AJAX_LOADING_TAB_LIST']"/></h4>
-         <div class="fragment-container">
-             <div class="fragment-choice fl-widget">
-                <div class="fl-widget-titlebar">
-        			<h2 class="fragment-title"></h2>
-                </div>
-                <div class="fl-widget-content">
-                    <p class="fragment-description"></p>
-                    <p><a class="add-fragment-link" href="javascript:;">add</a></p>
-                </div>
-             </div>
-         </div>
-         <p>
-         If a selection is grayed out, it is already included in your layout.
-         </p>
-       </div>
-       <div id="subscribeTab-tab-2">     
-        <form>
-            <p class="page-name-container">
-                <label class="portlet-form-label"><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_PAGE_NAME']"/></label>
-                <span class="flc-inlineEditable">
-                    <span class="page-name-input flc-inlineEdit-text"></span>
-                </span>
-            </p>
-            <p>
-                <input type="checkbox" class="is-default-selector" name="isDefault"/>
-                <label class="portlet-form-label">default page</label>
-            </p>
-            <hr/>
-            <fieldset class="page-layout-options-container">
-                <legend><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_PAGE_LAYOUT']"/></legend>
-                <div class="page-layout-options fl-container-flex fl-fix content">
-                    <div class="fl-col layout-option-group">
-                        <div class="layout-option-header"></div>
-                        <div class="layout-option">
-                            <a class="layout-option-link" href="javascript:;">
-                                <img class="layout-image"/>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-            <input type="submit" value="{$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']}" class="portlet-form-button"/>
-        </form>
-       </div>
-      </div>
-      </div>
            
      <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
      
@@ -286,58 +442,7 @@
             </div>
          </div>
      </xsl:if>
-
-  <div id="pageLayoutDialog" title="{$TOKEN[@name='AJAX_EDIT_PAGE_DIALOG_TITLE']}">
-    <form>
-        <p class="page-name-container">
-            <label class="portlet-form-label"><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_PAGE_NAME']"/></label>
-            <span class="flc-inlineEditable">
-                <span class="page-name-input flc-inlineEdit-text"></span>
-            </span>
-        </p>
-        <p>
-            <input type="checkbox" class="is-default-selector" name="isDefault"/>
-            <label class="portlet-form-label">default page</label>
-        </p>
-        <hr/>
-        <fieldset class="page-layout-options-container">
-            <legend><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_PAGE_LAYOUT']"/></legend>
-            <div class="page-layout-options fl-container-flex fl-fix content">
-                <div class="fl-col layout-option-group">
-                    <div class="layout-option-header"></div>
-                    <div class="layout-option">
-                        <a class="layout-option-link" href="javascript:;">
-                            <img class="layout-image"/>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </fieldset>
-    </form>
-   </div>	
     
-    <!--start: skin selector dialog-->
-    <div id="skinSelectorDialog" class="skin-selector-dialog" title="{$TOKEN[@name='AJAX_SELECT_SKIN_DIALOG_TITLE']}" role="dialog">
-        <form method="post" action="/" role="form">
-            <ul class="skin-list">
-                <li class="list-item">
-                    <div class="fl-widget widget">
-                        <div class="fl-widget-titlebar">
-                            <h2 class="skin-name" title="Skin Name">Skin Name</h2>
-                            <input type="hidden" name="skinCoice" value="Skin Key" class="skin-key" />
-                        </div>
-                        <div class="fl-widget-content widget-content">
-                            <p class="skin-description">Skin Description</p>
-                            <img class="skin-thumbnail" src="{$ABSOLUTE_MEDIA_PATH}/common/images/thumb.gif" alt="Thumbnail"/>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-            <div class="loader" title="{$TOKEN[@name='AJAX_SELECT_SKIN_LOADING_MESSAGE']}">&#160;</div>
-        </form>
-    </div>
-    <!--end: skin selector dialog-->
-     
      <div id="portalDropWarning" style="display:none;">
       <p><xsl:value-of select="$TOKEN[@name='AJAX_PORTAL_DROP_WARNING_MESSAGE']"/></p>
      </div>
@@ -352,7 +457,7 @@
               currentSkin: '<xsl:value-of select="$SKIN"/>',
               subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
               preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
-              channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList?xml=true',
+              channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList?xml=false',
               subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
               isFragmentMode: <xsl:choose><xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>,
               messages: { 
