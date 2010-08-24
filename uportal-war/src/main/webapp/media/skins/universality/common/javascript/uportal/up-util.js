@@ -17,13 +17,14 @@
  * under the License.
  */
 
+"use strict";
 var up = up || {};
 
 /**
  * This file contains a number of general utility methods for use within 
  * uPortal.
  */
-(function($, fluid){
+(function ($, fluid) {
     
     /**
      * Extracts a uPortal DLM element ID from an HTML node.  This default 
@@ -34,7 +35,7 @@ var up = up || {};
      * @param element HTML element for which to determine the ID
      * @return {String} DLM node ID associated with the supplied HTML node
      */
-    up.defaultNodeIdExtractor = function(element) {
+    up.defaultNodeIdExtractor = function (element) {
         return element.attr("id").split("_")[1];
     };
     
@@ -50,8 +51,8 @@ var up = up || {};
      * @param firstValue {String} property value which should always be sorted
      *          first.  May be left undefined.
      */
-    up.getStringPropertySortFunction = function(propertyName, firstValue) {
-        return function(a, b) {
+    up.getStringPropertySortFunction = function (propertyName, firstValue) {
+        return function (a, b) {
             
             // get the values for the configured property from 
             // each object and transform them to lower case
@@ -59,19 +60,27 @@ var up = up || {};
             var bprop = b[propertyName].toLowerCase();
             
             // if the values are identical, indicate an equals
-            if (aprop == bprop) return 0;
+            if (aprop === bprop) {
+                return 0;
+            }
             
             // if the firstValue property has been specified, 
             // test each object to determine whether it matches
             if (firstValue) {
                 firstValue = firstValue.toLowerCase();
-                if (aprop == firstValue) return -1;
-                else if (bprop == firstValue) return 1;
+                if (aprop === firstValue) {
+                    return -1;
+                } else if (bprop === firstValue) {
+                    return 1;
+                }
             }
             
             // otherwise perform a normal alphabetic sort
-            if (aprop > bprop) return 1;
-            else return -1;
+            if (aprop > bprop) {
+                return 1;
+            } else {
+                return -1;
+            }
         };
     };
     
@@ -81,7 +90,7 @@ var up = up || {};
      * 
      * @param str {String} String to be cleaned
      */
-    up.escapeSpecialChars = function(str){
+    up.escapeSpecialChars = function (str) {
         var specials = new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"); // .*+?|()[]{}\
         return str.replace(specials, "\\$&");
     };
@@ -93,38 +102,17 @@ var up = up || {};
      * @param pager  {Object}  pager to be refreshed
      * @param data   {Object}  new data model
      */
-    up.refreshPager = function(pager, data) {
+    up.refreshPager = function (pager, data) {
         var newModel = fluid.copy(pager.model);
         newModel.totalRange = data.length;
         newModel.pageIndex = 0;
-        newModel.pageCount = Math.max(1, Math.floor((newModel.totalRange - 1)/ newModel.pageSize) + 1);
+        newModel.pageCount = Math.max(1, Math.floor((newModel.totalRange - 1) / newModel.pageSize) + 1);
         fluid.clear(pager.options.dataModel);
         fluid.model.copyModel(pager.options.dataModel, data);
         pager.permutation = undefined;
         pager.events.onModelChange.fire(newModel, pager.model, pager);
-        fluid.model.copyModel(pager.model, newModel)
+        fluid.model.copyModel(pager.model, newModel);
     };
-    
-    /**
-     * Fades a loading screen down based upon the selector and 
-     * duration passed.
-     * 
-     * @param {Object} selector - reference to jQuery selector.
-     * @param {Number} duration - time delay in milliseconds.
-     */
-    up.hideLoader = function (selector, duration) {
-        var t;
-        
-        // Duration constraint.
-        if (duration === undefined || duration === "") {
-            duration = 2000;
-        }
-        
-        // Fade out loading screen.
-        t = setTimeout(function () {
-            selector.fadeOut();
-        }, duration);
-    };//end:function.
     
 })(jQuery, fluid);
 

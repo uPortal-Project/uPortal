@@ -89,6 +89,12 @@
                 </div>
                 <div class="packages-column">
                     <h3 class="package-list-link">Packaged Stuff</h3>
+                    <div class="packages-wrapper">
+                        <div class="packages">
+                            <span>Loading a package creates a new tab and populates
+                            it with multiple portlets.</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="content-results-wrapper fl-col-main">
@@ -106,6 +112,7 @@
                     </div>
                 </div>
             </div>
+            <div class="content-modal content-loading"></div>
         </div>
     </xsl:template>
     <!-- // end Gallery "Add Stuff" Pane -->
@@ -250,7 +257,7 @@
     </xsl:template>
 
     <xsl:template name="gallery-layout-pane">
-        <div class="layout" style="display:none">
+        <div class="layouts" style="display:none">
             <div class="content-results-wrapper">
                 <div class="column-inner">
                     <div class="results-wrapper">
@@ -305,7 +312,7 @@
                         <xsl:call-template name="gallery-skin-pane"/>
                         <xsl:call-template name="gallery-layout-pane"/>
                     </div>
-                    <div class="content-modal"></div>
+                    <div class="content-modal gallery-loading"></div>
                 </div>
             </div>
         </div>
@@ -317,21 +324,34 @@
    
    <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')">
     <div id="ajaxMenus" style="display:none;">
-     <!-- Add Channel Menu -->
-     <div id="focusedContentAddingDialog" title="{$TOKEN[@name='AJAX_ADD_FOCUSED_PORTLET_DIALOG_TITLE']}">
-      <form>
-       <fieldset>
-        <legend><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_TO_LAYOUT']"/></legend>
-        <xsl:for-each select="/layout/navigation/tab">
-         <input name="targetTab" id="targetTab{@ID}" value="{@ID}" type="radio"/> <label for="targetTab{@ID}" class="portlet-form-field-label"><xsl:value-of select="@name"/></label><br/>
-        </xsl:for-each>
-       </fieldset>
-       <p>
-        <input name="channelId" type="hidden" value="{//focused/channel/@chanID}"/>
-        <input type="submit" value="{$TOKEN[@name='AJAX_ADD_FOCUSED_PORTLET_SUBMIT_BUTTON']}" class="portlet-form-button"/>&#160;
-       </p>
-      </form>
-     </div>
+        <!-- Add Channel Menu -->
+        <div class="focused-content-dialog"
+            title="{$TOKEN[@name='AJAX_ADD_FOCUSED_PORTLET_DIALOG_TITLE']}">
+            <form>
+                <fieldset>
+                    <legend>
+                        <xsl:value-of
+                            select="$TOKEN[@name='AJAX_ADD_PORTLET_TO_LAYOUT']" />
+                    </legend>
+                    <xsl:for-each select="/layout/navigation/tab">
+                        <input name="targetTab" id="targetTab{@ID}"
+                            value="{@ID}" type="radio" />
+                        <label for="targetTab{@ID}" class="portlet-form-field-label">
+                            <xsl:value-of select="@name" />
+                        </label>
+                        <br />
+                    </xsl:for-each>
+                </fieldset>
+                <p>
+                    <input name="portletId" type="hidden"
+                        value="{//focused/channel/@chanID}" />
+                    <input type="submit"
+                        value="{$TOKEN[@name='AJAX_ADD_FOCUSED_PORTLET_SUBMIT_BUTTON']}"
+                        class="portlet-form-button" />
+                    &#160;
+                </p>
+            </form>
+        </div>
     </div>
     <script type="text/javascript">
      
@@ -342,7 +362,7 @@
           mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
           currentSkin: '<xsl:value-of select="$SKIN"/>',
           preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
-          channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList?xml=false',
+          channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList',
           subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
           isFocusMode: true
        });
@@ -457,7 +477,7 @@
               currentSkin: '<xsl:value-of select="$SKIN"/>',
               subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
               preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
-              channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList?xml=false',
+              channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList',
               subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
               isFragmentMode: <xsl:choose><xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>,
               messages: { 

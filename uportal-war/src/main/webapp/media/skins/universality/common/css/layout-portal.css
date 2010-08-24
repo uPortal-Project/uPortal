@@ -368,11 +368,11 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .add-content, .up-gallery .use-content {border: 1px solid #424243;}
 .up-gallery .content-wrapper .content-filters-wrapper {background:#424243;}
 .up-gallery .content-wrapper .skins .content-filters-wrapper {background:#333;}
-.up-gallery .content-wrapper .layout .content-filters-wrapper {background:#333;}
+.up-gallery .content-wrapper .layouts .content-filters-wrapper {background:#333;}
 
 .up-gallery .content-results-wrapper {padding:0px;}
 .up-gallery .skins .content-results-wrapper,
-.up-gallery .layout .content-results-wrapper {margin-left:0px; margin-right:0px;}
+.up-gallery .layouts .content-results-wrapper {margin-left:0px; margin-right:0px;}
 
 .up-gallery .results-wrapper {overflow:hidden;}
 .up-gallery .fl-col-mixed2 .fl-col-main {padding-left:0px;}
@@ -419,10 +419,10 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .packages span{display:block; padding:8px; color:#ddd;}
 .up-gallery .categories-column h4 {color:#666; padding:3px 0 3px 8px; font-size:10px; border-bottom:1px solid #666;}
 
-.up-gallery .categories ul, .up-gallery .categories li {list-style:none; margin:0; padding:0; color:#aaa; font-size:10px;}
+.up-gallery .categories ul, .up-gallery .categories li, .up-gallery .categories a {list-style:none; margin:0; padding:0; color:#aaa; font-size:10px;}
 .up-gallery .categories li {float:left; width:85px; padding:1px 0 1px 10px;  text-align:left; cursor:pointer;}
-.up-gallery .categories li:hover, .up-gallery .categories-wrapper li.active {color:#fff; text-decoration:underline;}
-.up-gallery .categories li.active {color:#fff;}
+.up-gallery .categories li a:hover, .up-gallery .categories-wrapper li a.active {color:#fff; text-decoration:underline;}
+.up-gallery .categories li.active a {color:#fff;}
 
 /* ---------- CSS Styles for Pager ---------- */
 .up-gallery .content-pager-wrapper {background:#424243;}

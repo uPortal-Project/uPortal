@@ -17,9 +17,10 @@
  * under the License.
  */
 
+"use strict";
 var up = up || {};
 
-(function($, fluid){
+(function ($, fluid) {
 
     /**
      * Instantiate a PortletBrowser component
@@ -27,34 +28,37 @@ var up = up || {};
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
-    up.DefaultPortletSearchView = function(container, overallThat, options) {
+    up.DefaultPortletSearchView = function (container, overallThat, options) {
+        var that, cutpoints, tree;
         
         // construct the new component
-        var that = fluid.initView("up.DefaultPortletSearchView", container, options);
+        that = fluid.initView("up.DefaultPortletSearchView", container, options);
 
         // initialize a state map for this component
         that.state = {};
 
         // define the renderer cutpoints based on the configured selectors
-        var cutpoints = [
+        cutpoints = [
             { id: "searchForm", selector: that.options.selectors.searchForm },
             { id: "searchInput", selector: that.options.selectors.searchInput }
         ];
 
-        var tree = { children: [
-                { ID: "searchForm",  
+        tree = { children: [
+                { 
+                    ID: "searchForm",  
                     decorators: [
                         { type: "jQuery", func: "submit", args: 
-                            function() { 
+                            function () { 
                                 overallThat.events.onPortletSearch.fire(overallThat, that.locate("searchInput").val(), true); 
                                 return false;
                             } 
                         }
                     ] 
                 },
-                { ID: "searchInput",
+                { 
+                    ID: "searchInput",
                     decorators: [{ type: "jQuery", func: "keyup", args: 
-                        function(){ 
+                        function () { 
                             overallThat.events.onPortletSearch.fire(overallThat, $(this).val(), false);
                         }
                     }]
@@ -65,16 +69,8 @@ var up = up || {};
         // render the component 
         that.state.templates = fluid.selfRender(that.locate("portletSearchView"), tree, { cutpoints: cutpoints });
         
-        /**
-         * 
-         */
-        that.refresh = function() {
-            fluid.reRender(that.state.templates, that.locate("portletSearchView"), tree, { cutpoints: cutpoints });
-        };
-
         return that;
     };
-
     
     // defaults
     fluid.defaults("up.DefaultPortletSearchView", {
@@ -84,92 +80,6 @@ var up = up || {};
             searchInput: ".portlet-search-input"
         }
     });
-    
-    var getCategoriesComponentTree = function(overallThat, that) {
-        // initialize the new component tree
-        var tree = { children: [] };
-
-        // Build an array of all categories containing at least
-        // one deep member, sorted by name
-        var categories = [];
-        categories.push({
-            id: "",
-            name: that.options.allCategoriesName,
-            description: "All Categories",
-            categories: [],
-            deepCategories: [],
-            portlets: [],
-            deepPortlets: []
-        });
-        $(overallThat.registry.getAllCategories()).each(function(idx, category){
-            if (category.deepPortlets.length > 0 && that.options.excludedCategories.indexOf(category.id) < 0 ) {
-                categories.push(category);
-            }
-        });
-        categories.sort(up.getStringPropertySortFunction("name", that.options.allCategoriesName));
-        
-        // add each category to the component tree
-        $(categories).each(function(idx, category){
-            tree.children.push({ 
-                ID: "category:",
-                children: [
-                    {
-                        ID: "categoryLink",
-                        decorators: [
-                            { type: "jQuery", func: "click", 
-                                args: function(){
-                                    overallThat.events.onCategorySelect.fire(overallThat, category);
-                                }
-                            }
-                        ]
-                    },
-                    { ID: "categoryTitle", value: category.name }
-                ]
-            });
-        });
-
-        return tree;
-    }
-
-    var getPortletsComponentTree = function(that) {
-        // initialize the new component tree
-        var tree = { children: [] };
-        
-        // Build a list of all portlets that are a deep member of the
-        // currently-selected category, sorted by title
-        var portlets = [];
-        
-        var members = (that.state.currentCategory && that.state.currentCategory != "") ? that.registry.getMemberPortlets(that.state.currentCategory, true) : that.registry.getAllPortlets();
-        $(members).each(function(idx, portlet){
-            if (!that.state.portletRegex || that.state.portletRegex.test(portlet.title) || that.state.portletRegex.test(portlet.description)) {
-                portlets.push(portlet);
-            }
-        });
-        portlets.sort(up.getStringPropertySortFunction("title"));
-
-        // add each portlet to the component tree
-        $(portlets).each(function(idx, portlet){
-            tree.children.push({
-                ID: "portlet:",
-                children: [
-                    {
-                        ID: "portletLink",
-                        decorators: [
-                            { type: "jQuery", func: "click",
-                                args: function(){
-                                    that.events.onPortletSelect.fire(that, portlet);
-                                }
-                            }
-                        ]
-                    },
-                    { ID: "portletTitle", value: portlet.title }
-                ]
-            });
-        });
-
-        return tree;
-        
-    }
 
     /**
      * Instantiate a PortletBrowser component
@@ -177,7 +87,7 @@ var up = up || {};
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
-    up.PortletBrowser = function(container, options) {
+    up.PortletBrowser = function (container, options) {
         
         // construct the new component
         var that = fluid.initView("up.PortletBrowser", container, options);
@@ -188,12 +98,12 @@ var up = up || {};
         // initialize a state map for this component
         that.state = {};
 
+        // initialize the view subcomponents
         that.categoryListView = fluid.initSubcomponent(that, "categoryListView", [container, that, fluid.COMPONENT_OPTIONS]);
-
         that.searchView = fluid.initSubcomponent(that, "searchView", [container, that, fluid.COMPONENT_OPTIONS]);
-
         that.portletListView = fluid.initSubcomponent(that, "portletListView", [container, that, fluid.COMPONENT_OPTIONS]);
 
+        // indicate to the caller that the component has been successfully loaded
         that.events.onLoad.fire(that);
         
         return that;
@@ -205,7 +115,7 @@ var up = up || {};
         portletRegistry: {
             type: "up.PortletRegistry",
             options: {
-                portletListUrl: null,
+                portletListUrl: null
             }
         },
         searchView: {
@@ -213,17 +123,17 @@ var up = up || {};
         },
         listeners: {
             onLoad: null,
-            onCategorySelect: function(that, category) {
+            onCategorySelect: function (that, category) {
                 that.state.currentCategory = category.id;
                 that.categoryListView.refresh();
                 that.portletListView.refresh();
             },
-            onPortletSearch: function(that, searchTerm, submitted) {
+            onPortletSearch: function (that, searchTerm, submitted) {
                 searchTerm = searchTerm.trim();
                 that.state.portletRegex = searchTerm.length > 0 ? new RegExp(up.escapeSpecialChars(searchTerm), "i") : undefined;
                 that.portletListView.refresh();
             },
-            onPortletSelect: function(that, portlet) {
+            onPortletSelect: function (that, portlet) {
                 that.portletListView.refresh();
             }
         }

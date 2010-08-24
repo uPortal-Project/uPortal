@@ -25,11 +25,12 @@ var up = up || {};
     var getComponentTree = function (that) {
         var currentLayoutString, tree;
 
+        // construct a string representing the current layout
         currentLayoutString = that.options.currentLayout.join("-");
 
         tree = { children: [ ] };
         $(that.options.allowedLayouts).each(function (idx, layout) {
-            var layoutString = layout.layout.join("-");
+            var layoutString = layout.columns.join("-");
             
             tree.children.push({
                 ID: "layoutContainer:",
@@ -45,12 +46,15 @@ var up = up || {};
                         decorators: [
                             { type: "jQuery", func: "click", 
                                 args: function () {
+                                    console.log(layout.columns);
+                                    that.options.currentLayout = layout.columns;
+                                    that.refresh();
                                     that.events.onLayoutSelect.fire(layout, that);
                                 } 
                             }
                         ]
                     },
-                    { ID: "layoutTitle", value: layout.layout.length + " Column" },
+                    { ID: "layoutTitle", value: layout.columns.length + " Column" },
                     { ID: "layoutDescription", value: layout.name },
                     {
                         ID: "layoutImage", 
@@ -81,16 +85,16 @@ var up = up || {};
             { id: "layoutImage", selector: that.options.selectors.layoutImage }
         ];
         
-        that.render = function () {
+        /**
+         * Refresh the rendered skin selector view
+         */
+        that.refresh = function () {
             var tree = getComponentTree(that);
-            if (that.templates) {
-                fluid.reRender(that.templates, $(container), tree, { cutpoints: cutpoints });
-            } else {
-                that.templates = fluid.selfRender($(container), tree, { cutpoints: cutpoints });
-            }
+            fluid.reRender(that.templates, $(container), tree, { cutpoints: cutpoints });
         };
-
-        that.render();
+        
+        that.templates = fluid.selfRender($(container), getComponentTree(that), { cutpoints: cutpoints });
+        
         return that;
     };
 
@@ -99,13 +103,13 @@ var up = up || {};
     fluid.defaults("up.LayoutSelector", {
         currentLayout: [ 50, 50 ],
         allowedLayouts: [ 
-            { name: "Full-width", layout: [ 100 ] },
-            { name: "Narrow, wide", layout: [ 40, 60 ] },
-            { name: "Even", layout: [ 50, 50 ] },
-            { name: "Wide, narrow", layout: [ 60, 40 ] },
-            { name: "Even", layout: [ 33, 34, 33 ] },
-            { name: "Narrow, wide, narrow", layout: [ 25, 50, 25 ] },
-            { name: "Even", layout: [ 25, 25, 25, 25 ] }
+            { name: "Full-width", columns: [ 100 ] },
+            { name: "Narrow, wide", columns: [ 40, 60 ] },
+            { name: "Even", columns: [ 50, 50 ] },
+            { name: "Wide, narrow", columns: [ 60, 40 ] },
+            { name: "Even", columns: [ 33, 34, 33 ] },
+            { name: "Narrow, wide, narrow", columns: [ 25, 50, 25 ] },
+            { name: "Even", columns: [ 25, 25, 25, 25 ] }
         ],
         imagePath: "test/",
         selectors: {

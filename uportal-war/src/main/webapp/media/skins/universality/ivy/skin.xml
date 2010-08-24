@@ -71,7 +71,7 @@
   <js>../common/javascript/uportal/up-layout-gallery.js</js>
   <js>../common/javascript/uportal/up-fragment-permissions-manager.js</js>
   <js>../common/javascript/uportal/up-subscription-browser.js</js>
-  <js>../common/javascript/uportal/up-page-manager.js</js>
+  <js>../common/javascript/uportal/up-layout-selector.js</js>
   <js>../common/javascript/uportal/up-group-browser.js</js>
   <js>../common/javascript/uportal/up-skin-selector.js</js>
   <js>../common/javascript/uportal/flyout-nav.js</js>

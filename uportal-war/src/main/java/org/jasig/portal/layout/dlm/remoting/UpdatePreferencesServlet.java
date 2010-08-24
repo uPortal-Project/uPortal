@@ -211,9 +211,30 @@ public class UpdatePreferencesServlet implements InitializingBean {
         try {
             ulm.loadUserLayout(true);
 
-            moveSubscribedTab(per, upm, ulm, fragmentOwner, request,
-                    response);
-            return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+            // get the target node this new tab should be moved after
+            String destinationId = request.getParameter("elementID");
+
+            // get the user layout for the currently-authenticated user
+            int uid = userStore.getPortalUID(fragmentOwner, false);
+            final IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+            Document userLayout = userLayoutStore.getUserLayout(per, upm.getUserPreferences().getProfile());
+
+            // attempt to find the new subscribed tab in the layout so we can
+            // move it
+            StringBuilder expression = new StringBuilder("//folder[@type='root']/folder[starts-with(@ID,'")
+                                       .append(Constants.FRAGMENT_ID_USER_PREFIX)
+                                       .append(uid)
+                                       .append("')]");
+            XPathFactory fac = XPathFactory.newInstance();
+            XPath xpath = fac.newXPath();
+            NodeList nodes = (NodeList) xpath.evaluate(expression.toString(), userLayout,  XPathConstants.NODESET);
+            String sourceId = nodes.item(0).getAttributes().getNamedItem("ID").getTextContent();
+            ulm.moveNode(sourceId, ulm.getParentId(destinationId), destinationId);
+
+            saveLayout(per, ulm, upm, null);
+
+            return new ModelAndView("jsonView", Collections.singletonMap("tabId", sourceId));
+            
         } catch (Exception e) {
             log.warn("Error subscribing to fragment owned by "
                     + fragmentOwnerName, e);
@@ -221,49 +242,6 @@ public class UpdatePreferencesServlet implements InitializingBean {
             return null;
         }
 
-    }
-
-    /**
-     * Move a tab left or right.
-     * 
-     * @param per
-     * @param upm
-     * @param ulm
-     * @param request
-     * @param response
-     * @throws PortalException
-     * @throws IOException
-     */
-    private void moveSubscribedTab(IPerson per, UserPreferencesManager upm,
-            IUserLayoutManager ulm, IPerson fragmentOwner, HttpServletRequest request,
-            HttpServletResponse response) throws PortalException, IOException, Exception {
-
-        // get the target node this new tab should be moved after
-        String destinationId = request.getParameter("elementID");
-
-        // get the user layout for the currently-authenticated user
-        int uid = userStore.getPortalUID(fragmentOwner, false);
-        final IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-        Document userLayout = userLayoutStore.getUserLayout(per, upm.getUserPreferences().getProfile());
-
-        // attempt to find the new subscribed tab in the layout so we can
-        // move it
-        StringBuilder expression = new StringBuilder("//folder[@type='root']/folder[starts-with(@ID,'")
-                                   .append(Constants.FRAGMENT_ID_USER_PREFIX)
-                                   .append(uid)
-                                   .append("')]");
-        XPathFactory fac = XPathFactory.newInstance();
-        XPath xpath = fac.newXPath();
-        NodeList nodes = (NodeList) xpath.evaluate(expression.toString(), userLayout,  XPathConstants.NODESET);
-
-        // move the node as requested and save the layout
-        for (int i = 0; i < nodes.getLength(); i++) {
-            String sourceId = nodes.item(i).getAttributes().getNamedItem("ID").getTextContent();
-            ulm.moveNode(sourceId, ulm.getParentId(destinationId), destinationId);
-        }
-
-        saveLayout(per, ulm, upm, null);
-        
     }
     
 	/**

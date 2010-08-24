@@ -209,43 +209,60 @@ var up = up || {};
     up.BrowseContentPane = function (container, overallThat, options) {
         
         var that = fluid.initView("up.BrowseContentPane", container, options);
-
-        var initialized = false;
         
+        var initialized = false;
+
         that.showPane = function () {
             if (!initialized) {
                 overallThat.showLoading();
-                that.events.onInitialize.fire(that);
                 initialized = true;
+                that.portletBrowser = fluid.initSubcomponent(that, "portletBrowser", [that.locate("pane"), fluid.COMPONENT_OPTIONS]);
                 overallThat.hideLoading();
             }
+            // show the pane and mark the pane link as active
             that.locate("pane").show();
             that.locate("paneLink").addClass("active");
+            that.events.onShow.fire(that);
         };
-        
+
         that.hidePane = function () {
             that.locate("pane").hide();
             that.locate("paneLink").removeClass("active");
         };
+
+        that.showLoading = function () {
+            that.locate("ui").hide();
+            that.locate("loading").show();
+        };
         
+        that.hideLoading = function () {
+            that.locate("loading").hide();
+            that.locate("ui").show();
+        };
+
         that.showPortletList = function () {
-            if (!that.portletBrowser) {
-                overallThat.showLoading();
-                that.portletBrowser = fluid.initSubcomponent(that, "portletBrowser", [that.locate("pane"), fluid.COMPONENT_OPTIONS]);
-                overallThat.hideLoading();
-            }
             that.locate("portletList").show();
             that.locate("fragmentList").hide();
+            that.locate("fragmentMenuDetail").slideUp(300, function () {
+                that.locate("portletMenu").addClass("active");
+                that.locate("fragmentMenu").removeClass("active");
+                that.locate("portletMenuDetail").slideDown(300);
+            });
         };
         
         that.showFragmentList = function () {
-            if (!that.fragmentBrowser) {
-                overallThat.showLoading();
-                that.fragmentBrowser = fluid.initSubcomponent(that, "fragmentBrowser", [that.locate("pane"), fluid.COMPONENT_OPTIONS]);
-                overallThat.hideLoading();
-            }
             that.locate("portletList").hide();
             that.locate("fragmentList").show();
+            that.locate("portletMenuDetail").slideUp(300, function () {
+                that.locate("portletMenu").removeClass("active");
+                that.locate("fragmentMenu").addClass("active");
+                that.locate("fragmentMenuDetail").slideDown(300);
+            });
+            if (!that.fragmentBrowser) {
+                that.showLoading();
+                that.fragmentBrowser = fluid.initSubcomponent(that, "fragmentBrowser", [that.locate("pane"), fluid.COMPONENT_OPTIONS]);
+                that.hideLoading();
+            }
         };
 
         that.locate("paneLink").click(function () { 
@@ -284,45 +301,61 @@ var up = up || {};
         selectors: {
             pane: ".add-content",
             paneLink: ".add-content-link",
+            ui: ".content-results-wrapper",
+            loading: ".content-loading",
     
-            portletMenu: ".categories-column",
-            portletListLink: ".portlet-list-link",
-            portletList: ".portlet-results",
+            portletMenu: ".add-content .categories-column",
+            portletMenuDetail: ".add-content .categories-wrapper",
+            portletListLink: ".add-content .portlet-list-link",
+            portletList: ".add-content .portlet-results",
                         
             fragmentMenu: ".packages-column",
+            fragmentMenuDetail: ".packages-wrapper",
             fragmentListLink: ".package-list-link",
             fragmentList: ".package-results"
         },
         listeners: {
-            onInitialize: function (that) {
-                that.showPortletList();
-            },
+            onInitialize: null,
             onShow: null
         }
     });
 
     up.PortalGalleryPane = function (container, overallThat, options) {
+        var that, initialized;
         
-        var that = fluid.initView("up.PortalGalleryPane", container, options);
+        that = fluid.initView("up.PortalGalleryPane", container, options);
         
-        var initialized = false;
+        initialized = false;
         
+        /**
+         * Show this pane.  If the initialization method has not yet been 
+         * called, show the loading screen, initialize the pane, and then
+         * hide the loading pane when done.
+         */
         that.showPane = function () {
+            // if the pane has not yet been initialized, show the loading
+            // screen while we initialize it
             if (!initialized) {
                 overallThat.showLoading();
                 that.events.onInitialize.fire(that);
                 initialized = true;
                 overallThat.hideLoading();
             }
+            // show the pane and mark the pane link as active
             that.locate("pane").show();
             that.locate("paneLink").addClass("active");
+            that.events.onShow.fire(that);
         };
         
+        /**
+         * Hide this pane
+         */
         that.hidePane = function () {
             that.locate("pane").hide();
             that.locate("paneLink").removeClass("active");
         };
         
+        // wire the pane link to display the appropriate pane
         that.locate("paneLink").click(function () { 
             overallThat.showPane(that.options.key); 
         });
@@ -446,7 +479,7 @@ var up = up || {};
             options: {
                 key: "layout",
                 selectors: {
-                    pane: ".layout",
+                    pane: ".layouts",
                     paneLink: ".layout-link"
                 },
                 listeners: {
@@ -461,7 +494,7 @@ var up = up || {};
             galleryInner: ".gallery-inner",
             galleryHandle: ".handle span",
             closeLink: ".close-button",
-            loading: ".content-modal",
+            loading: ".gallery-loading",
             ui: ".content-wrapper .content"
         }
     });

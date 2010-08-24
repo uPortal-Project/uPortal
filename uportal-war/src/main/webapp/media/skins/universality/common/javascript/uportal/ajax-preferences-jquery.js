@@ -25,17 +25,21 @@
     
     $.uportal = $.uportal || {};
     
-    var availableLayouts = 
-    [ 
-        [100],[40, 60], [50, 50], [60, 40],
-        [33, 34, 33], [25, 50, 25],[25, 25, 25, 25]
+    var availableLayouts = [ 
+        { name: "Full-width", columns: [ 100 ] },
+        { name: "Narrow, wide", columns: [ 40, 60 ] },
+        { name: "Even", columns: [ 50, 50 ] },
+        { name: "Wide, narrow", columns: [ 60, 40 ] },
+        { name: "Even", columns: [ 33, 34, 33 ] },
+        { name: "Narrow, wide, narrow", columns: [ 25, 50, 25 ] },
+        { name: "Even", columns: [ 25, 25, 25, 25 ] }
     ];
     
     // Merge all options into callerSettings object.
     $.uportal.UportalLayoutManager = function(callerSettings) {
         var settings = $.extend({
             preferencesUrl: 'mvc/layout',
-            channelListUrl: 'mvc/channelList?xml=true',
+            channelListUrl: 'mvc/channelList',
             subscriptionListUrl: 'mvc/tabList',
             portalUrl: null,
             mediaPath: null,
@@ -69,11 +73,24 @@
                                 },
                                 listeners: {
                                     onPortletSelect: function(that, portlet) {
-                                        var options = { action: 'addPortlet', channelID: portlet.id };
-                                        var firstChannel = $("div[id*=portlet_]:not(.locked)");
+                                        var options, firstChannel;
+                                    
+                                        // set the main options for this persistence
+                                        // request
+                                        options = { action: 'addPortlet', channelID: portlet.id };
+                                        
+                                        // get the first channel element that's
+                                        // unlocked
+                                        firstChannel = $("div[id*=column].canAddChildren div[id*=portlet_].movable)");
+                                        
+                                        // if the page has no content just add
+                                        //  the new portlet to the tab
                                         if (firstChannel.size() == 0) {
                                             options['elementID'] = settings.tabId;
-                                        } else {
+                                        } 
+                                        
+                                        // otherwise 
+                                        else {
                                             options['elementID'] = firstChannel.attr("id").split("_")[1];
                                             options['position'] = 'insertBefore';
                                         }
@@ -91,20 +108,27 @@
                                 fragmentServiceUrl: settings.subscriptionListUrl,
                                 listeners: { 
                                     onFragmentSelect: function(that, fragment) {
-                                        var tab = $("#portalNavigation_" + settings.tabId);
-                                        var tabPosition = 1;
-                                        var targetId = null;
-                                        // figure out what the current tab's number is
-                                        $("[id*=portalNavigation_]").each(function(i){
-                                            if ($(this).attr("id") == tab.attr("id"))tabPosition = i+1;
-                                            targetId = $(this).attr("id").split("_")[1];
-                                        });
-                    
-                                        var subscribeToTabVal = $("#subscribeTabId").val();
-                                        updateLayout({action: "subscribeToTab" ,sourceID: fragment.ownerID,method: 'appendAfter', tabPosition: tabPosition, elementID: targetId  }, function(xml) {
-                                            window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
-                                                    ($("#portalNavigationList > li").length + 1);
-                                        });
+                                        var lastTab, targetId;
+                                        
+                                        // use the current last tab as the target id
+                                        lastTab = $("[id*=portalNavigation_]:last");
+                                        targetId = up.defaultNodeIdExtractor(lastTab);
+
+                                        // update the layout with the new
+                                        // tab subscription
+                                        updateLayout(
+                                            {
+                                                action: "subscribeToTab",
+                                                sourceID: fragment.ownerID,
+                                                method: 'appendAfter', 
+                                                elementID: targetId  
+                                            }, 
+                                            function(data) {
+                                                // redirect the browser to the
+                                                // new tab
+                                                window.location = "/uPortal/f/" + data.tabId + '/normal/render.uP';
+                                            }
+                                        );
                                     }
                                 }
                             }
@@ -272,19 +296,6 @@
         
 
         
-        // Initialization tasks for focus mode
-        var initfocusedportal = function() {
-            $("#focusedContentDialogLink").click(initializeFocusedContentMenu);
-        };
-        
-        var initializeFocusedContentMenu = function() {
-            $("#focusedContentAddingDialog").dialog({ width:500, modal:true});
-            $("#focusedContentDialogLink")
-                .unbind('click', initializeFocusedContentMenu)
-                .click(function(){$("#focusedContentAddingDialog").dialog('open');});
-            $("#focusedContentAddingDialog form").submit(function(){return addFocusedChannel(this);});
-        };
-        
         var getCurrentLayout = function() {
             var layouts = [];
             $('#portalPageBodyColumns > [id^=column_]').each(function(){
@@ -352,8 +363,8 @@
             var permitted = [];
             $(availableLayouts).each(function(idx, layout){
                 if (
-                    (canAddColumns || layout.length <= columns.length) &&
-                    (layout.length >= minColumns)
+                    (canAddColumns || layout.columns.length <= columns.length) &&
+                    (layout.columns.length >= minColumns)
                    ) {
                     permitted.push(layout);
                 }
@@ -370,7 +381,7 @@
         
         // Column editing persistence functions
         var changeColumns = function(layout, that) {
-            var newcolumns = layout.layout;
+            var newcolumns = layout.columns;
             
             var post = {action: 'changeColumns', tabId: settings.tabId, widths: newcolumns};
             
@@ -445,7 +456,8 @@
         var addTab = function() {
             updateLayout({action: 'addTab', tabName: "My Tab", widths: [50, 50]}, 
                 function(data) {
-                    window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + ($("#portalNavigationList > li").length + 1);
+                    // redirect the browser to the new tab
+                    window.location = "/uPortal/f/" + data.tabId + '/normal/render.uP';
                 }
             );
         };
@@ -538,33 +550,51 @@
            var columns = $('#portalPageBodyColumns > [id^=column_]');
            updateLayout({ action: 'movePortlet', method: method, elementID: $(target).attr('id').split('_')[1], sourceID: $(movedNode).attr('id').split('_')[1]});
         };
-        
-        var addFocusedChannel = function(form) {
-        
-            var channelId = form.channelId.value;
-            var tabPosition, elementId;
+
+
+        /**
+         * Initialize all required components for the focused view of the portal.
+         */
+        var initfocusedportal = function () {
             
-            $("#focusedContentAddingDialog input[name=targetTab]").each(function(i){
-                if ($(this).is(":checked")) {
-                    tabPosition = i+1;
-                    elementId = $(this).val();
-                }
+            // initialize the focused content adding dialog link
+            $("#focusedContentDialogLink").click(function () {
+                
+                // initialize the dialog
+                $(".focused-content-dialog").dialog({ width: 500, modal: true });
+                
+                // wire the form to persist portlet addition
+                $(".focused-content-dialog form").submit(function () {                    
+                    var portletId, tabId, form;
+                    
+                    // collect form data
+                    form = this;
+                    portletId = form.portletId.value;
+                    tabId = $(form).find("[name=targetTab]:checked").val();
+                    
+                    // persist the portlet addition
+                    updateLayout(
+                        {
+                            action: "addPortlet",
+                            channelID: portletId,
+                            position: "insertBefore",
+                            elementID: tabId
+                        },
+                        function(xml) {
+                            window.location = "/uPortal/f/" + tabId + "/normal/render.uP";
+                        }
+                    );
+                    return false;
+                });
+                
+                // re-wire the form to open the initialized dialog
+                $(this).unbind("click").click(function () {
+                    $(".focused-content-dialog").dialog("open");
+                });
             });
-            
-            updateLayout(
-                {
-                    action: 'addPortlet',
-                    channelID: channelId,
-                    position: 'insertBefore',
-                    elementID: elementId
-                },
-                function(xml) {
-                    window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + tabPosition;
-                }
-            );
-            return false;
-        
         };
+        
+
         
         var updateLayout = function(data, success) {
             $.ajax({
