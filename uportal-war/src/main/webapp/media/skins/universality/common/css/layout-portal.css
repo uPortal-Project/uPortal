@@ -390,6 +390,7 @@ table.purpose-layout td {margin:0; padding:0;}
 *:first-child+html .up-gallery .menu li {height:25px;}
 
 .up-gallery .close-button {width:84px; padding:1px 5px 1px 5px; position:absolute; left:28px; bottom:3px; background-color:#F68A25; background-image:-moz-linear-gradient(90deg,#F68A25,#fcf8d9); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#FCF8D9), to(#F68A25)); cursor:pointer; border:1px solid #000; text-align:center; }
+.up-gallery .close-button a {color: #000;}
 .up-gallery .close-button:hover {color:#fff;}
 .up-gallery .close-button span{font-weight:bold; font-size:13px;}
 
