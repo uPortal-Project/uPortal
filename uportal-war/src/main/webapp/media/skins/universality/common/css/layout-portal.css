@@ -404,7 +404,7 @@ table.purpose-layout td {margin:0; padding:0;}
 /* ---------- CSS Styles for search area ---------- */
 .up-gallery .search-label {display:none;}
 .up-gallery .search {padding-left:8px;}
-.up-gallery .search input {padding:0; width:175px; background:#e6e6e6; color:#000; border:1px solid #000; -moz-box-shadow: inset 0px 1px 3px #000000; box-shadow: inset 0 0 10px #000000;}
+.up .up-gallery .search input {padding:0; width:175px; background:#e6e6e6; color:#666; border:1px solid #000; -moz-box-shadow: inset 0px 1px 3px #000000; box-shadow: inset 0 0 10px #000000;}
 .up-gallery .search-wrapper {padding:5px 10px; position:relative;}
 .up-gallery .categories-column,.up-gallery .packages-column {padding:0;}
 .up-gallery .categories,.up-gallery .packages {height:98px;}

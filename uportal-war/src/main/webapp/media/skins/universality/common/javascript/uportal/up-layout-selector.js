@@ -29,8 +29,18 @@ var up = up || {};
         currentLayoutString = that.options.currentLayout.join("-");
 
         tree = { children: [ ] };
-        $(that.options.allowedLayouts).each(function (idx, layout) {
-            var layoutString = layout.columns.join("-");
+        $(that.options.layouts).each(function (idx, layout) {
+            var classes, layoutString;
+            layoutString = layout.columns.join("-");
+            classes = "";
+            
+            if (layout.columns.join("-") === currentLayoutString) {
+                classes += "selected"
+            }
+            
+            if (layout.disabled) {
+                classes += " disabled";
+            }
             
             tree.children.push({
                 ID: "layoutContainer:",
@@ -38,7 +48,7 @@ var up = up || {};
                     {
                         ID: "layout",
                         decorators: [
-                            { type: "addClass", classes: layoutString === currentLayoutString ? "selected" : "" }
+                            { type: "addClass", classes: classes }
                         ]
                     },
                     {
@@ -46,7 +56,6 @@ var up = up || {};
                         decorators: [
                             { type: "jQuery", func: "click", 
                                 args: function () {
-                                    console.log(layout.columns);
                                     that.options.currentLayout = layout.columns;
                                     that.refresh();
                                     that.events.onLayoutSelect.fire(layout, that);
@@ -102,7 +111,7 @@ var up = up || {};
     // defaults
     fluid.defaults("up.LayoutSelector", {
         currentLayout: [ 50, 50 ],
-        allowedLayouts: [ 
+        layouts: [ 
             { name: "Full-width", columns: [ 100 ] },
             { name: "Narrow, wide", columns: [ 40, 60 ] },
             { name: "Even", columns: [ 50, 50 ] },

@@ -56,12 +56,29 @@ var up = up || {};
                     ] 
                 },
                 { 
-                    ID: "searchInput",
-                    decorators: [{ type: "jQuery", func: "keyup", args: 
-                        function () { 
-                            overallThat.events.onPortletSearch.fire(overallThat, $(this).val(), false);
+                    ID: "searchInput", 
+                    value: that.options.searchInvitationMessage,
+                    decorators: [
+                        { type: "jQuery", func: "keyup", args: 
+                            function () { 
+                                overallThat.events.onPortletSearch.fire(overallThat, $(this).val(), false);
+                            }
+                        },
+                        { type: "jQuery", func: "focus", args:
+                            function () {
+                                if ($(this).val() === that.options.searchInvitationMessage) {
+                                    $(this).val("");
+                                }
+                            }
+                        },
+                        { type: "jQuery", func: "blur", args:
+                            function () {
+                                if ($(this).val().trim() === "") {
+                                    $(this).val(that.options.searchInvitationMessage);
+                                }
+                            }
                         }
-                    }]
+                    ]
                 }
             ] 
         };
@@ -74,6 +91,7 @@ var up = up || {};
     
     // defaults
     fluid.defaults("up.DefaultPortletSearchView", {
+        searchInvitationMessage: "Search for stuff to add...",
         selectors: {
             portletSearchView: ".portlet-search-view",
             searchForm: ".portlet-search-form",

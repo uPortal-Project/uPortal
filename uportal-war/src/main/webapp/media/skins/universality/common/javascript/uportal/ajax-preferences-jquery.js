@@ -25,7 +25,7 @@
     
     $.uportal = $.uportal || {};
     
-    var availableLayouts = [ 
+    var layouts = [ 
         { name: "Full-width", columns: [ 100 ] },
         { name: "Narrow, wide", columns: [ 40, 60 ] },
         { name: "Even", columns: [ 50, 50 ] },
@@ -185,6 +185,7 @@
                             onInitialize: function (overallThat) {
                                 up.LayoutSelector(".layouts-list", {
                                     currentLayout: getCurrentLayout(),
+                                    layouts: getPermittedLayouts(),
                                     imagePath: settings.mediaPath + "/common/images/",
                                     listeners: {
                                         onLayoutSelect: changeColumns
@@ -297,15 +298,15 @@
 
         
         var getCurrentLayout = function() {
-            var layouts = [];
+            var columns = [];
             $('#portalPageBodyColumns > [id^=column_]').each(function(){
                 var flClass = $(this).get(0).className.match("fl-col-flex[0-9]+");
                 if (flClass != null) {
-                    layouts.push(Number(flClass[0].match("[0-9]+")[0]));
+                    columns.push(Number(flClass[0].match("[0-9]+")[0]));
                 }
             });
-            if (layouts.length == 0) layouts.push(100);
-            return layouts;
+            if (columns.length == 0) columns.push(100);
+            return columns;
         };
         
         var getDeletableColumns = function() {
@@ -360,13 +361,13 @@
                 }
             }
                         
-            var permitted = [];
-            $(availableLayouts).each(function(idx, layout){
+            var permitted = layouts.slice();
+            $(permitted).each(function(idx, layout){
                 if (
-                    (canAddColumns || layout.columns.length <= columns.length) &&
-                    (layout.columns.length >= minColumns)
+                    (!canAddColumns && layout.columns.length > columns.length) ||
+                    (layout.columns.length < minColumns)
                    ) {
-                    permitted.push(layout);
+                    layout.disabled = true;
                 }
             });
             return permitted;
