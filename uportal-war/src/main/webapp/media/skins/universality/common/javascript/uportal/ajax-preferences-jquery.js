@@ -222,7 +222,7 @@
             settings.pagePermissionsManager = uportal.FragmentPermissionsManager(".edit-page-permissions-dialog", {
                 savePermissionsUrl: settings.preferencesUrl,
                 elementExtractor: function(that, link){
-                    return $(link).parents(".portal-flyout-container"); 
+                    return $(link).parents(".portal-navigation:first"); 
                 },
                 titleExtractor: function(element){ return "tab"; },
                 selectors: {
@@ -504,7 +504,7 @@
         };
         var initTabEditLinks = function() {
             var tab = $("#portalNavigation_" + settings.tabId);
-            if (tab.not(":first-child") && tab.prev().hasClass("movable-tab"))
+            if (tab.not(":first-child") && tab.prev().hasClass("movable"))
                 $("#movePageLeftLink").css("display", "block");
             else 
                 $("#movePageLeftLink").css("display", "none");

@@ -150,12 +150,30 @@
     </xsl:variable>
     <xsl:variable name="NAV_MOVABLE"> <!-- Determine whether the navigation tab is movable and add a css hook. -->
       <xsl:choose>
-        <xsl:when test="not(@dlm:moveAllowed='false')">movable-tab</xsl:when>
+        <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="NAV_DELETABLE">
+      <xsl:choose>
+        <xsl:when test="not(@dlm:deleteAllowed='false')">deletable</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="NAV_EDITABLE">
+      <xsl:choose>
+        <xsl:when test="not(@dlm:editAllowed='false')">editable</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="NAV_CAN_ADD_CHILDREN">
+      <xsl:choose>
+        <xsl:when test="not(@dlm:deleteAllowed='false')">canAddChildren</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     
-    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
         <layout:url layoutId="{@ID}"/>
       </xsl:variable>
@@ -355,39 +373,10 @@
    | This template renders the tab preferences menu for the active tab when flyout menus are used.
   -->
   <xsl:template name="preferences.editpage">
-      <xsl:variable name="MOVABLE"> <!-- Test to determine if the portlet is locked in the layout. -->
-        <xsl:choose> 
-          <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when> 
-        </xsl:choose> 
-      </xsl:variable>
-      <xsl:variable name="DELETABLE">
-        <xsl:choose>
-          <xsl:when test="not(@dlm:deleteAllowed='false')">deletable</xsl:when>
-          <xsl:otherwise></xsl:otherwise>
-        </xsl:choose>
-      </xsl:variable>
-      <xsl:variable name="EDITABLE">
-        <xsl:choose>
-          <xsl:when test="not(@dlm:editAllowed='false')">editable</xsl:when>
-          <xsl:otherwise></xsl:otherwise>
-        </xsl:choose>
-      </xsl:variable>
-        <xsl:variable name="CAN_ADD_CHILDREN">
-          <xsl:choose>
-            <xsl:when test="not(@dlm:deleteAllowed='false')">canAddChildren</xsl:when>
-            <xsl:otherwise></xsl:otherwise>
-          </xsl:choose>
-        </xsl:variable>
-  
-      <div id="portalFlyoutNavigation_{@ID}" class="portal-flyout-container {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
+      <div id="portalFlyoutNavigation_{@ID}" class="portal-flyout-container" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
         
         <div id="portalFlyoutNavigationInner_{@ID}" class="portal-flyout-container-inner">  <!-- Inner div for additional presentation/formatting options. -->
           <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
-            <li id="editPageLink" class="portal-subnav edit">
-              <a href="javascript:;" class="portal-subnav-link edit-page-link" title="{$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LONG_LABEL']}">
-                <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_LAYOUT_LABEL']"/></span>
-              </a>
-            </li>
             <xsl:if test="not(@dlm:moveAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
               <li id="movePageLeftLink" class="portal-subnav move-left">
                 <xsl:if test="position()=1">
