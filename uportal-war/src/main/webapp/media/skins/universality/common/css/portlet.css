@@ -277,12 +277,12 @@
 .portlet .panel-list .panel > .content {padding:0;}
 .portlet .panel-list .panel > .content .link-list {font-size:80%;}
 /* Large icons */
-.portlet .panel-list.icon-large .panel {padding-left:4em; background:transparent url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/categories/applications-other.png) 1em 0.5em no-repeat;}
-.portlet .panel-list.icon-large .type-categories {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/apps/system-file-manager.png);}
-.portlet .panel-list.icon-large .type-people {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/apps/system-users.png);}
-.portlet .panel-list.icon-large .UP_ERROR_CHAN {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/status/dialog-warning.png);}
-.portlet .panel-list.icon-large .UP_FRAGMENT {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/apps/preferences-system-windows.png);}
-.portlet .panel-list.icon-large .UP_USERS {background-image:url(/ResourceServingWebapp/rs/Tango/tango-icon-theme-0.8.90/32x32/apps/system-users.png);}
+.portlet .panel-list.icon-large .panel {padding-left:4em; background:transparent url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png) 1em 0.5em no-repeat;}
+.portlet .panel-list.icon-large .type-categories {background-image:url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/system-file-manager.png);}
+.portlet .panel-list.icon-large .type-people {background-image:url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/system-users.png);}
+.portlet .panel-list.icon-large .UP_ERROR_CHAN {background-image:url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/status/dialog-warning.png);}
+.portlet .panel-list.icon-large .UP_FRAGMENT {background-image:url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-system-windows.png);}
+.portlet .panel-list.icon-large .UP_USERS {background-image:url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/system-users.png);}
 /*
 .portlet .panel-list.icon-large .UP_GROUPS {background-image:url(images/icons/system-groups.png);}
 .portlet .panel-list.icon-large .UP_PORTLET_PUBLISH {background-image:url(images/icons/window-publish.png);}
