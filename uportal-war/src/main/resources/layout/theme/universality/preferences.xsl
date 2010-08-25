@@ -71,7 +71,9 @@
                     <div class="categories-wrapper active">
                         <div class="portlet-search-view">
                             <form class="portlet-search-form">
-                                <input class="portlet-search-input"/>
+                                <div class="search">
+                                    <input class="portlet-search-input"/>
+                                </div>
                             </form>
                         </div>
                         <div class="categories">
@@ -126,7 +128,9 @@
                     <div class="categories-wrapper active">
                         <div class="portlet-search-view">
                             <form class="portlet-search-form">
-                                <input class="portlet-search-input"/>
+                                <div class="search">
+                                    <input class="portlet-search-input"/>
+                                </div>
                             </form>
                         </div>
                         <div class="categories">

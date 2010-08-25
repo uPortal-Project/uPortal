@@ -81,7 +81,7 @@
                                         
                                         // get the first channel element that's
                                         // unlocked
-                                        firstChannel = $("div[id*=column].canAddChildren div[id*=portlet_].movable)");
+                                        firstChannel = $("div[id*=portlet_].movable:first");
                                         
                                         // if the page has no content just add
                                         //  the new portlet to the tab
