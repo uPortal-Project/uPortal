@@ -45,6 +45,7 @@ public class JsonEntityBean implements Serializable {
 	private String name;
 	private String creatorId;
 	private String description;
+    private String principalString;
 	private List children = new ArrayList();
 	private boolean childrenInitialized = false;
 		
@@ -104,6 +105,15 @@ public class JsonEntityBean implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+    
+    public String getPrincipalString() {
+        return principalString;
+    }
+
+    public void setPrincipalString(String principalString) {
+        this.principalString = principalString;
+    }
+    
 	public List getChildren() {
 		return children;
 	}

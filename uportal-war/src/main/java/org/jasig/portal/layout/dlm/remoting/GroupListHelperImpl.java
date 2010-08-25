@@ -79,15 +79,8 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		for(int i=0;i<identifiers.length;i++) {
 			if(identifiers[i].getType().equals(identifierType)) {
 				IGroupMember entity = GroupService.getGroupMember(identifiers[i]);
-				if(entity instanceof IEntityGroup) {
-					/* Don't look up the children for a search. */
-					JsonEntityBean jsonBean = new JsonEntityBean((IEntityGroup) entity, getEntityType(entity));
-					results.add(jsonBean);
-				} else {
-					JsonEntityBean jsonBean = new JsonEntityBean(entity, getEntityType(entity));
-					jsonBean.setName(lookupEntityName(jsonBean));
-					results.add(jsonBean);
-				}
+                JsonEntityBean jsonBean = getEntity(entity);
+                results.add(jsonBean);
 			}
 		}
 		
@@ -169,6 +162,10 @@ public class GroupListHelperImpl implements IGroupListHelper {
 					Iterator<IGroupMember> members = (Iterator<IGroupMember>) entity.getMembers();
 					jsonBean = populateChildren(jsonBean, members);
 				}
+                if (EntityEnum.GROUP.toString().equals(jsonBean.getEntityType()) || EntityEnum.PERSON.toString().equals(jsonBean.getEntityType())) {
+                    IAuthorizationPrincipal principal = getPrincipalForEntity(jsonBean);
+                    jsonBean.setPrincipalString(principal.getPrincipalString());
+                }
 				return jsonBean;
 			}
 		} 
@@ -184,6 +181,10 @@ public class GroupListHelperImpl implements IGroupListHelper {
 			// the group member interface doesn't include the entity name, so
 			// we'll need to look that up manually
 			jsonBean.setName(lookupEntityName(jsonBean));
+            if (EntityEnum.GROUP.toString().equals(jsonBean.getEntityType()) || EntityEnum.PERSON.toString().equals(jsonBean.getEntityType())) {
+                IAuthorizationPrincipal principal = getPrincipalForEntity(jsonBean);
+                jsonBean.setPrincipalString(principal.getPrincipalString());
+            }
 			return jsonBean;
 		}
 		
@@ -211,6 +212,11 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		if (entity.getName() == null) {
 			entity.setName(lookupEntityName(entity));
 		}
+        
+        if (EntityEnum.GROUP.toString().equals(entity.getEntityType()) || EntityEnum.PERSON.toString().equals(entity.getEntityType())) {
+            IAuthorizationPrincipal principal = getPrincipalForEntity(entity);
+            entity.setPrincipalString(principal.getPrincipalString());
+        }
 		return entity;
 	}
 	
