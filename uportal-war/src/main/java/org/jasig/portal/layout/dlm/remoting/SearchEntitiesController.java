@@ -72,7 +72,7 @@ public class SearchEntitiesController {
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView doSearch(HttpServletRequest request, 
-			@RequestParam("searchTerm") String searchTerm, @RequestParam("entityType") String [] entityTypes) {
+			@RequestParam("searchTerm") String searchTerm, @RequestParam("entityType[]") String [] entityTypes) {
 		/* Make sure the user is an admin. */
 		IPerson person = personManager.getPerson(request);
 		if(!AdminEvaluator.isAdmin(person)) {
