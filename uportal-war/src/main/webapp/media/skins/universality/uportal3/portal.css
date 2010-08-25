@@ -154,18 +154,27 @@
 .up input[disabled="disabled"]:focus {background:#ddd !important; border:1px solid #999 !important; color:#999 !important; text-shadow:none; cursor:default;}
 
 /* Page */
-.up {font-family:Verdana, Arial, Helvetica, sans-serif; color:#333;}
+.up {font-family:Verdana, Arial, Helvetica, sans-serif; background-color:#fff; color:#333;}
 .up h1, .up h2, .up h3, .up h4, .up h5, .up h6 {font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif}
-.up #portalPage {background-color:#fff;}
+.up #portalPageHeaderInner,
+.up #portalNavigationInner,
+.up #portalPageBodyInner,
+.up #portalPageFooterInner {padding:0 2em;}
 
 /* Portal Page Bar */
-.up #portalPageBarLinks {float:right; margin-left:250px; padding-right:15px;}
+.up #portalPageBar {text-align:right; text-transform:uppercase;}
+.up #portalPageBarLinks {float:right;}
+.up #portalPageBarLinks,
+.up #portalPageBarLinks a {color:#B3CCE1; text-decoration:none;}
+.up #portalPageBarLinks a:hover,
+.up #portalPageBarLinks a:focus {color:#fff; text-decoration:underline;}
+.up #portalPageBarLinks .portal-pipe {color:rgba(255,255,255,.25);}
 .up .logged-in #portalPageBarLogout .portal-pipe {display:none;}
 .up .not-logged-in #portalPageBarHelp .portal-pipe {display:none;}
 
 /* Header */
-.up #portalPageHeader {background:transparent url(images/header_bkd.jpg) bottom left repeat-x;}
-.up #portalLogo {padding:20px 50px;}
+.up #portalPageHeader {background-color:#4065AF;}
+.up #portalLogo {padding-bottom:20px;}
 .up .focused #portalLogo {padding:10px 30px;}
 
 /* Welcome
@@ -173,68 +182,64 @@
  Set the left width to the width of your logo (plus logo margins).
  This margin prevents it from colliding with the logo if the browser window is shrunk down. 
 */
-.up #portalWelcome {top:3.5em; left:250px;}
+.up #portalWelcome {color:#B3CCE1;}
+.up #portalWelcome .user-name {color:#fff;}
 
 /* Web Search */
 .up #portalPageHeader #webSearchContainer,
 .up #portalPageHeader #webSearchContainer .fl-widget-content {margin:0; padding:0; background:transparent; border:none;} {background:transparent; border:none;}
 .up #webSearchContainer select {display:none;}
-.up #webSearchContainer #webSearchSubmit {background:#000 url(images/btn_bkd.gif) top left repeat-x; border:1px solid #000; color:#333; font-size:90%; font-weight:bold; padding:0.1em 0.5em; text-shadow:0 -1px 1px rgba(0,0,0,.2);}
-.up #webSearchContainer #webSearchSubmit:hover {background-position:0 -200px; cursor:pointer;}
+#portalPageHeader #webSearchContainer input {margin-left:0; float:left; border:1px solid #375695;}
+#portalPageHeader #webSearchContainer input:focus {border-color:#F90;}
+.up #webSearchContainer #webSearchSubmit {background-color:#ccc; background-image:-moz-linear-gradient(19% 100% 90deg,#CCCCCC, #EEEEEE, #FFFFFF 50%); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), to(#CCCCCC), color-stop(.5,#FFFFFF)); color:#375695; font-size:80%; text-transform:uppercase; padding:0.1em 0.3em; text-shadow:none;}
+.up #webSearchContainer #webSearchSubmit:hover,
+.up #webSearchContainer #webSearchSubmit:focus { cursor:pointer; color:#000 !important; border-color:#F90; }
 
 /* Navigation */
-.up #portalNavigation {background:#98b6c1 url(images/nav_bkd_btm.gif) bottom right repeat-x; border-top:1px solid #44626a;}
-.up #portalNavigationInner {background:transparent url(images/nav_bkd_top.gif) top right repeat-x; border-top:1px solid #44626a;}
+.up #portalNavigation {background-color:#375695;}
+.up #portalNavigationInner {}
 .up #portalNavigation .fl-tabs,
 .up #portalNavigation .fl-tabs li,
 .up #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:transparent;}
-.up #portalNavigation .fl-tabs {padding:0.4em 0; text-align:center; border:none;}
-.up #portalNavigation .fl-tabs li.portal-navigation {position:relative; padding:0.4em 0;}
-.up #portalNavigation .fl-tabs li.portal-navigation a {padding:0.4em 2em; font-size:120%; font-weight:bold; color:#fff !important; text-decoration:none; text-shadow:1px 1px 1px rgba(0,0,0,.5);}
+.up #portalNavigation .fl-tabs {padding:0.5em 0; text-align:left; border:none; border-left:1px solid rgba(0,0,0,0.25);}
+.up #portalNavigation .fl-tabs > li {position:relative; padding:0.5em 0; border-left:1px solid rgba(255,255,255,0.25); border-right:1px solid rgba(0,0,0,0.25);}
+.up #portalNavigation .fl-tabs > li > a {padding:0.5em 2em; font-weight:bold; color:#fff !important; text-decoration:none; text-shadow:1px 1px 1px rgba(0,0,0,.5);}
 *:first-child+html .up #portalNavigation .fl-tabs,
 *:first-child+html .up #portalNavigation .fl-tabs li.portal-navigation {padding:0;} /* hack needed for IE7 */
-.up #portalNavigation .fl-tabs li.portal-navigation:hover,
-.up #portalNavigation .fl-tabs li.portal-navigation:focus,
-.up #portalNavigation .fl-tabs li.portal-navigation:hover a,
-.up #portalNavigation .fl-tabs li.portal-navigation:focus a,
-.up #portalNavigation .fl-tabs li.portal-navigation a:hover,
-.up #portalNavigation .fl-tabs li.portal-navigation a:focus {background:#608695 url(images/nav_tab_bkd.gif) 0px -300px repeat-x}
-.up #portalNavigation .fl-tabs li.portal-navigation.fl-tabs-active a.portal-navigation-link,
-.up #portalNavigation .fl-tabs li.portal-navigation.fl-tabs-active a.portal-navigation-link:hover {background:#2e5579 url(images/nav_tab_bkd.gif) top left repeat-x; border-left:1px solid #1e3851; border-right:1px solid #1e3851; color:#fff;}
-.up #portalNavigation .fl-tab-content {background-color:#fff; color:#000;}
-.up #portalNavigationSubrow.fl-tab-content {text-align:center; background:#336699 url(images/nav_subrow_bkd.gif) top right repeat-x;}
-.up #portalNavigationSubrow a {text-decoration:none; color:#acc9e6 !important; text-shadow:1px 1px 1px rgba(0,0,0,.5);}
-.up #portalNavigationSubrow a:hover,
-.up #portalNavigationSubrow a:focus {color:#eee !important;}
+.up #portalNavigation .fl-tabs > li:hover,
+.up #portalNavigation .fl-tabs > li:focus,
+.up #portalNavigation .fl-tabs > li:hover a,
+.up #portalNavigation .fl-tabs > li:focus a,
+.up #portalNavigation .fl-tabs > li a:hover,
+.up #portalNavigation .fl-tabs > li a:focus {background-color:#333;}
+.up #portalNavigation .fl-tabs > .fl-tabs-active a,
+.up #portalNavigation .fl-tabs > .fl-tabs-active a:hover {background-color:#5E7EC4; background-image:-moz-linear-gradient(0% 100% 90deg,#3E61A8, #4065AF, #4065AF 50%,#5e7ec4 0%); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#5E7EC4), to(#3E61A8), color-stop(.5,#5e7ec4),color-stop(.5,#4065AF)); text-shadow:-1px -1px 1px rgba(0,0,0,.7);}
 
 /* Flyout Navigation */
-.up #portalNavigation .portal-flyout-container {padding:0 3px 3px 0; background:transparent url(../common/images/drop_shadow.png) bottom right no-repeat;}
-.up #portalNavigation .portal-flyout-container-inner {padding:2px; background-color:#336699;}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav {border-bottom:1px solid #336699;}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link {padding:4px 10px 4px 25px; color:#336699 !important; font-weight:bold; font-size:100%; background-color:#98b6c1; background-position:5px 3px; background-repeat:no-repeat; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); text-decoration:none; text-align:left; display:block; border:none; text-shadow:1px 1px 1px rgba(0,0,0,.2);}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .edit a.portal-subnav-link {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/layout_content.png);}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .delete a.portal-subnav-link {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/cross.png);}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .move-left a.portal-subnav-link {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/arrow_left.png);}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .move-right a.portal-subnav-link {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/arrow_right.png);}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .permissions a.portal-subnav-link {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/key.png);}
+.up #portalNavigation .portal-flyout-container {
+	background-color:#333;
+	padding-bottom:1px;
+	border:4px solid #333;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	-webkit-box-shadow:4px 4px 8px rgba(0,0,0,.5); 
+	-moz-box-shadow:4px 4px 8px rgba(0,0,0,.5);
+	box-shadow:4px 4px 8px rgba(0,0,0,.5);
+}
+.up #portalNavigation .fl-tabs .portal-flyout-container li a {padding:0.7em 2em; border-top:1px solid #333; background-color:#fff; color:#666; font-size:85%; }
+.up #portalNavigation .fl-tabs .portal-flyout-container li:first-child a {border:none;}
 .up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:hover,
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:focus {color:#fff !important; background-color:#5a95cf;}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:focus {color:#fff !important; background-color:#4065AF;}
 
 /* Body */
-.up .sidebar-left-100 #portalPageBodyTitleRow,
-.up .sidebar-left-150 #portalPageBodyTitleRow,
-.up .sidebar-left-200 #portalPageBodyTitleRow,
-.up .sidebar-left-250 #portalPageBodyTitleRow,
-.up .sidebar-left-300 #portalPageBodyTitleRow {background:transparent url(images/page_corner_topleft.png) top left no-repeat;}
-.up .sidebar-right-100 #portalPageBodyTitleRow,
-.up .sidebar-right-150 #portalPageBodyTitleRow,
-.up .sidebar-right-200 #portalPageBodyTitleRow,
-.up .sidebar-right-250 #portalPageBodyTitleRow,
-.up .sidebar-right-300 #portalPageBodyTitleRow {background:transparent url(images/page_corner_topright.png) top right no-repeat;}
-.up #portalPageBodyTitleRow {padding-top:2em;}
-.up #portalPageBodyTitleRow h1 {/*padding:0.2em 0 0.2em 0.5em; color:#333; font-size:200%; border:none;*/ display:none;}
+.up #portalPageBodyInner {padding:2.5em 2em;}
+.up #portalPageBodyTitleRow h1 {display:none;}
 /* Focused */
-.up #portalPageBodyBreadcrumb {/*font-size:90%; color:#ddd;*/ display:none;}
+.up #portalPageBodyBreadcrumb {display:none;}
 .up #portalPageBodyBreadcrumb a {font-weight:normal;}
 
 /* Columns */
@@ -352,7 +357,8 @@
 .up .focused .up-portlet-controls .up-portlet-control {height:auto; width:auto; padding-left:18px; margin-left:1.5em;}
 .up .focused .up-portlet-controls .up-portlet-control span {display:inline;}
 .up .focused .up-portlet-controls .return {background:transparent url(images/portlet_icon_return_flat.png) no-repeat 0 0;}
-.up .focused .up-portlet-controls .return:hover {background-position:0 -16px;}
+.up .focused .up-portlet-controls .return:hover,
+.up .focused .up-portlet-controls .return:focus {background-position:0 -16px;}
 
 /* Dialogs */
 /* Skin Selector Dialog */
@@ -367,17 +373,18 @@
     background:#FFF url("images/loading.gif") 50% 50% no-repeat; -webkit-border-radius: 7px; -moz-border-radius: 7px; border-radius: 7px;}
 
 /* Footer */
-.up #portalPageFooter {text-align:center; color:#999;}
-.up #portalPageFooterInner {border-top:1px solid #e5e5e5; border-bottom:1px solid #e5e5e5;}
-.up #portalPageFooter #portalProductAndVersion,
-.up #portalPageFooter #portalCopyright,
-.up #portalPageFooter #silkIconsAttribution {font-size:80%;}
-.up #portalPageFooter #portalProductAndVersion a,
+.up #portalPageFooter {color:#999; border-top:1px dotted #e5e5e5; font-size:80%;}
+.up #portalPageFooterInner {padding-top:1em;}
+.up #portalPageFooter p {margin:0 0 0.4em 0;}
+.up #portalPageFooter #portalProductAndVersion a {color:#666 !important;}
+.up #portalPageFooter #portalProductAndVersion a:hover,
+.up #portalPageFooter #portalProductAndVersion a:focus {color:#333 !important;}
 .up #portalPageFooter #portalCopyright a,
 .up #portalPageFooter #silkIconsAttribution a {color:#999 !important;}
-.up #portalPageFooter #portalProductAndVersion a:hover,
 .up #portalPageFooter #portalCopyright a:hover,
-.up #portalPageFooter #silkIconsAttribution a:hover {color:#5a95cf !important;}
+.up #portalPageFooter #portalCopyright a:focus,
+.up #portalPageFooter #silkIconsAttribution a:hover,
+.up #portalPageFooter #silkIconsAttribution a:focus {color:#666 !important;}
 
 /* Fluid Layout Customizer (drag and drop) */
 .up .fl-reorderer-movable-hover {cursor:move;}

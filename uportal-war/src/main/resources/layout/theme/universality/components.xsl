@@ -367,11 +367,7 @@
   <xsl:template name="welcome">  
     <xsl:if test="$AUTHENTICATED='true'"> <!-- Welcome only displays if the user is logged in. -->
       <div id="portalWelcome">
-        <div id="portalWelcomeInner">
-          <p><xsl:value-of select="$TOKEN[@name='WELCOME_PRE']"/><xsl:value-of select="$USER_NAME"/><xsl:value-of select="$TOKEN[@name='WELCOME_POST']"/>
-          <span class="logout-label"><a href="{$CONTEXT_PATH}/Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='LOGOFF_LABEL']"/></a></span>
-          </p>
-        </div>
+          <xsl:value-of select="$TOKEN[@name='WELCOME_PRE']"/><span class="user-name"><xsl:value-of select="$USER_NAME"/></span><xsl:value-of select="$TOKEN[@name='WELCOME_POST']"/>
       </div>
     </xsl:if>
   </xsl:template>

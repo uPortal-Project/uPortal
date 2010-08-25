@@ -204,8 +204,8 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* header */
 #portalPageHeader {position:relative;}
+#portalPageBar {padding:0.5em 0;}
 #portalPageBar h2 {margin:0; padding:0.5em 0 0 1em; position:absolute; top:0; left:0;}
-#portalPageBarLinks {padding:0.5em 1em 0.5em 0;}
 #portalPageBarLinks a {padding:0 0.5em;}
 #portalSkipNav a, 
 #portalSkipNav a:hover, 
@@ -213,8 +213,7 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalSkipNav a:active, 
 #portalSkipNav a:focus {position:static; width:auto; height:auto;} /* This sets the skip-to links to be completely hidden until a user tabs to the link. */
 #portalLogo {}
-#portalWelcome {position:absolute; top:3em; left:195px;} /* Keep the top value relative to the text size so that the top position remains good when the browser text size is increased. Set the left width to the width of your logo (plus logo margins). This margin prevents it from colliding with the logo if the browser window is shrunk down. */
-#portalWelcome .logout-label {padding-left: 0.5em;} /* Gives a bit of space between the welcome statement and the logout link. */
+#portalWelcome {display:inline; padding-right:2em;}
 .focused #portalPageBar img {float:left; margin:3px 0 0 10px}
 
 
@@ -223,11 +222,11 @@ table.purpose-layout td {margin:0; padding:0;}
 .breadcrumb-separator {padding:0 0.5em;}
 #portalPageBodyTitleRow h1 {margin:0;}
 /* Columns */
-.portal-page-column-inner {padding-top:2px; padding-left:1em; padding-bottom:2em; min-height:100px;}
+.portal-page-column-inner {padding-left:1em; min-height:100px;}
 #portalPageBodyColumns .single .portal-page-column-inner, 
-#portalPageBodyColumns .right .portal-page-column-inner {padding-right:2em;}
+#portalPageBodyColumns .right .portal-page-column-inner {}
 #portalPageBodyColumns .single .portal-page-column-inner, 
-#portalPageBodyColumns .left .portal-page-column-inner {padding-left:2em;}
+#portalPageBodyColumns .left .portal-page-column-inner {padding-left:0;}
 /* focused */
 .focused #portalPageBodyTitleRow {padding:1em 1em 0 1em;}
 #portalPageBodyBreadcrumb {margin-bottom:0.5em;}
@@ -252,8 +251,8 @@ table.purpose-layout td {margin:0; padding:0;}
 .fl-widget.no-chrome .up-portlet-content-wrapper {padding:0; border:none; background:none;}
 
 /* footer */
-#portalPageFooter {padding-top:2em;}
-#portalPageFooterInner {padding:1em;}
+#portalPageFooter {}
+#portalPageFooterInner {}
 #portalProductAndVersion {margin-top:1em;}
 
 /* login */
@@ -287,23 +286,6 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Add Tab */
 #portalNavigation .add-tab {display:inline-block;}
 
-/* Customization Links */
-/* 
- | When rendered in the Title Row (with the Page Title).
- | Turns the list into a row and positions it to the top right corner. 
-*/
-#portalPageBodyTitleRow #portalCustomizationLinks {position:absolute; top:0; right:0; text-align:right; margin:0 0 0 250px;}
-#portalPageBodyTitleRow .fl-widget {margin:0;}
-#portalPageBodyTitleRow .fl-widget .fl-widget-titlebar,
-#portalPageBodyTitleRow .fl-widget .fl-widget-titlebar h2, 
-#portalPageBodyTitleRow .fl-widget .fl-widget-content, 
-#portalPageBodyTitleRow #portalCustomizationLinks ul,
-#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu,
-#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu li,
-#portalPageBodyTitleRow #portalCustomizationLinks .fl-listmenu a {display:inline; border:none;}
-#portalPageBodyTitleRow #portalCustomizationLinks h2 {margin:0; padding-right:1em;}
-#portalPageBodyTitleRow #portalCustomizationLinks ul.fl-listmenu {margin:0;}
-
 /* quicklinks */	
 #portalQuicklinks {}
 
@@ -311,10 +293,10 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalQuicklinks li {margin:0; padding:0;}
 
 /* web search */
-#webSearchContainer form {padding:1em;}
+#webSearchContainer form {}
 #webSearchContainer input, 
 #webSearchContainer select {margin-bottom:0.5em;}
-#portalPageHeader #webSearchContainer {position:absolute; top:3em; right:0;}
+#portalPageHeader #webSearchContainer {position:absolute; top:3em; right:2em;}
 #portalPageHeader #webSearchContainer h2 {display:none;}
 #portalPageHeader #webSearchContainer input,
 #portalPageHeader #webSearchContainer select {margin-left:0.3em;}

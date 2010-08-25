@@ -238,12 +238,7 @@
    | Values are 'true' or 'false'
   -->
   <!-- Use the INSTITUTION parameter to configure the subnavigation row on a per skin/institution basis. -->
-  <xsl:param name="USE_SUBNAVIGATION_ROW">
-    <xsl:choose>
-      <xsl:when test="$INSTITUTION='uportal'">true</xsl:when>
-      <xsl:otherwise>false</xsl:otherwise>
-    </xsl:choose>
-  </xsl:param>
+  <xsl:param name="USE_SUBNAVIGATION_ROW" select="false" />
   
   <!-- ****** LAYOUT SETTINGS ****** -->
   <!-- 
@@ -267,7 +262,7 @@
   <xsl:param name="USE_SIDEBAR">
     <xsl:choose>
       <xsl:when test="$INSTITUTION='ivy'">false</xsl:when>
-      <xsl:otherwise>true</xsl:otherwise>
+      <xsl:otherwise>false</xsl:otherwise>
     </xsl:choose>
   </xsl:param>
   
@@ -396,30 +391,6 @@
     <xsl:call-template name="logo"/>
     <!-- Logo -->
     
-    <!-- ****** LOGIN ****** -->
-    <!--
-     | Use one of the login options: the login template (uP3 preferred), the login channel (from uP2.6), or CAS login.
-     | By default, the login is rendered into the sidebar below.
-    -->
-    <!-- Login
-    <xsl:call-template name="login"/> -->
-    <!-- Login -->
-    
-    <!-- Login Channel -->
-    <xsl:if test="$AUTHENTICATED='true'">
-    	<xsl:call-template name="welcome"/> <!-- This login call is needed to render the welcome/logout statement into the header. -->
-    </xsl:if>
-    <!-- Login Channel -->
-    
-    <!-- CAS Login
-    <xsl:call-template name="cas.login"/> -->
-    <!-- CAS Login -->
-    <!-- ****** LOGIN ****** -->
-    
-    <!-- Welcome
-    <xsl:call-template name="welcome"/> -->
-    <!-- Welcome -->
-    
     <!-- Web Search -->
     <xsl:if test="$INSTITUTION != 'ivy'">
     	<xsl:call-template name="web.search"/>
@@ -448,6 +419,12 @@
   -->
   <xsl:template name="portal.page.bar.title.block">
   	<!-- <h2><xsl:copy-of select="$TOKEN[@name='PORTAL_PAGE_TITLE']"/></h2> -->
+    
+    <!-- Login Channel -->
+    <xsl:if test="$AUTHENTICATED='true'">
+    	<xsl:call-template name="welcome"/> <!-- This login call is needed to render the welcome/logout statement into the header. -->
+    </xsl:if>
+    <!-- Login Channel -->
   </xsl:template>
   <!-- =========================================================== -->
     
@@ -670,12 +647,6 @@
   	<!-- PAGE TITLE -->
     <xsl:call-template name="page.title"/>
     <!-- PAGE TITLE -->
-    
-    <!-- CUSTOMIZE LINKS: For these links to function, AJAX must be enabled by setting the USE_AJAX parameter above to 'true'. -->
-    <xsl:if test="$USE_SIDEBAR != 'true' and $USE_AJAX='true'">
-    	<xsl:call-template name="customize.links"/>
-    </xsl:if>
-    <!-- CUSTOMIZE LINKS -->
   </xsl:template>
   <!-- =================================================== -->
   
@@ -865,6 +836,14 @@
         <xsl:call-template name="portal.pipe"/>
         <a href="http://www.jasig.org/uportal/community" target="_blank" title="{$TOKEN[@name='UPORTAL_COMMUNITY_LONG_LABEL']}">
           <xsl:value-of select="$TOKEN[@name='UPORTAL_COMMUNITY_LABEL']"/>
+        </a>
+        <xsl:call-template name="portal.pipe"/>
+        <a href="http://www.jasig.org/uportal/privacy" target="_blank" title="{$TOKEN[@name='UPORTAL_PRIVACY_LONG_LABEL']}">
+          <xsl:value-of select="$TOKEN[@name='UPORTAL_PRIVACY_LABEL']"/>
+        </a>
+        <xsl:call-template name="portal.pipe"/>
+        <a href="http://www.jasig.org/uportal/accessibility" target="_blank" title="{$TOKEN[@name='UPORTAL_ACCESSIBILITY_LONG_LABEL']}">
+          <xsl:value-of select="$TOKEN[@name='UPORTAL_ACCESSIBILITY_LABEL']"/>
         </a>
       </div>
       

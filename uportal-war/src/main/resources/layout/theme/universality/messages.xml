@@ -54,7 +54,7 @@
 		    <!-- Main Navigation -->
         <token name="MAIN_NAVIGATION_LABEL">Navigation</token>
         <!-- Welcome Message -->
-        <token name="WELCOME_PRE">Welcome </token>
+        <token name="WELCOME_PRE">You are signed in as </token>
         <token name="WELCOME_POST">.</token>
         <token name="WELCOME_LOGIN_HEADER">Sign in to uPortal</token>
         <token name="WELCOME_LOGIN_LEGEND">Portal Credentials:</token>
@@ -296,14 +296,18 @@
         <token name="PORTLET_SET_PERMISSIONS">Permissions</token>
         <token name="PORTLET_SET_PERMISSIONS_LONG_LABEL">Set user permissions for this portlet</token>
         <!-- Footer Links -->
-        <token name="JASIG_LABEL">JA-SIG Home</token>
-        <token name="JASIG_LONG_LABEL">To go to the Java Architectures Special Interest Group Home</token>
-        <token name="UPORTAL_LABEL">uPortal Home</token>
-        <token name="UPORTAL_LONG_LABEL">To go to the uPortal Home</token>
-        <token name="UPORTAL_DOWNLOAD_LABEL">Download</token>
-        <token name="UPORTAL_DOWNLOAD_LONG_LABEL">To go to the uPortal download page</token>
-        <token name="UPORTAL_COMMUNITY_LABEL">Community</token>
-        <token name="UPORTAL_COMMUNITY_LONG_LABEL">To go to the uPortal community page</token>
+        <token name="JASIG_LABEL">Jasig.org</token>
+        <token name="JASIG_LONG_LABEL">Go to Jasig.org site</token>
+        <token name="UPORTAL_LABEL">uPortal.org</token>
+        <token name="UPORTAL_LONG_LABEL">Go to uPortal.org site</token>
+        <token name="UPORTAL_DOWNLOAD_LABEL">Download uPortal</token>
+        <token name="UPORTAL_DOWNLOAD_LONG_LABEL">Go to uPortal.org download page</token>
+        <token name="UPORTAL_COMMUNITY_LABEL">uPortal Community</token>
+        <token name="UPORTAL_COMMUNITY_LONG_LABEL">Go to uPortal.org community page</token>
+		<token name="UPORTAL_PRIVACY_LABEL">Privacy Policy</token>
+        <token name="UPORTAL_PRIVACY_LONG_LABEL">View uPortal's privacy policy</token>
+		<token name="UPORTAL_ACCESSIBILITY_LABEL">Accessibility</token>
+        <token name="UPORTAL_ACCESSIBILITY_LONG_LABEL">View uPortal's accessibility information</token>
         <!-- Message Texts -->
         <token name="MESSAGE_CONTENT_ADD_FAILED">Unable to add portlet content to this tab.</token>
     </tokens>
