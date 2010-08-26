@@ -22,6 +22,7 @@ package org.jasig.portal.layout;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.stream.XMLEventReader;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserPreferences;
@@ -61,6 +62,7 @@ public interface IUserLayoutManager {
      * @param ch a <code>ContentHandler</code> value
      * @exception PortalException if an error occurs
      */
+    @Deprecated
     public void getUserLayout(ContentHandler ch) throws PortalException;
 
     /**
@@ -71,7 +73,10 @@ public interface IUserLayoutManager {
      * @param ch a <code>ContentHandler</code> value
      * @exception PortalException if an error occurs
      */
+    @Deprecated
     public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException;
+    
+    public XMLEventReader getUserLayoutReader();
 
     /**
      * Set a user layout store implementation.

@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -42,7 +43,6 @@ import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SAX2FilterImpl;
 import org.w3c.dom.Document;
@@ -145,7 +145,12 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
           }
         }
     }
-
+    
+    @Override
+    public XMLEventReader getUserLayoutReader() {
+        final XMLEventReader userLayoutReader = man.getUserLayoutReader();
+        return new TransientUserLayoutXMLEventReader(this, userLayoutReader);
+    }
 
     public void setLayoutStore(IUserLayoutStore ls) {
         man.setLayoutStore(ls);
@@ -371,6 +376,10 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     {
         return (String)mSubIdMap.get(subId);
     }
+    
+    public boolean isTransientChannel(String subId) {
+        return mSubIdMap.containsKey(subId);
+    }
 
 
     /**
@@ -574,7 +583,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                                                       "" + chanDef.getTypeId());
                             channelAttrs.addAttribute("","hidden","hidden","CDATA","false");
                             channelAttrs.addAttribute("","editable","editable","CDATA",
-                                                      CommonUtils.boolToStr(chanDef.isEditable()));
+                                                      Boolean.toString(chanDef.isEditable()));
                             channelAttrs.addAttribute("","unremovable","unremovable","CDATA","true");
                             channelAttrs.addAttribute("","name","name","CDATA",chanDef.getName());
                             channelAttrs.addAttribute("","description","description","CDATA",
@@ -587,9 +596,9 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                             channelAttrs.addAttribute("","timeout","timeout","CDATA",
                                                       "" + chanDef.getTimeout());
                             channelAttrs.addAttribute("","hasHelp","hasHelp","CDATA",
-                                                      CommonUtils.boolToStr(chanDef.hasHelp()));
+                                                      Boolean.toString(chanDef.hasHelp()));
                             channelAttrs.addAttribute("","hasAbout","hasAbout","CDATA",
-                                                      CommonUtils.boolToStr(chanDef.hasAbout()));
+                                                      Boolean.toString(chanDef.hasAbout()));
 
                             startElement("",CHANNEL,CHANNEL,channelAttrs);
 

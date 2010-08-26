@@ -37,22 +37,22 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
     
     private static final Log log = LogFactory.getLog(ThemeStylesheetUserPreferences.class);
     
-    protected Hashtable channelAttributeNumbers;
-    protected Hashtable channelAttributeValues;
-    protected ArrayList defaultChannelAttributeValues;
+    protected Hashtable<String, Integer> channelAttributeNumbers;
+    protected Hashtable<String, List<String>> channelAttributeValues;
+    protected ArrayList<String> defaultChannelAttributeValues;
 
     public ThemeStylesheetUserPreferences() {
         super();
-        channelAttributeNumbers=new Hashtable();
-        channelAttributeValues=new Hashtable();
-        defaultChannelAttributeValues=new ArrayList();
+        channelAttributeNumbers=new Hashtable<String, Integer>();
+        channelAttributeValues=new Hashtable<String, List<String>>();
+        defaultChannelAttributeValues=new ArrayList<String>();
     }
 
     public ThemeStylesheetUserPreferences(ThemeStylesheetUserPreferences ssup) {
         super(ssup);
-        this.channelAttributeNumbers=new Hashtable(ssup.channelAttributeNumbers);
-        this.channelAttributeValues=new Hashtable(ssup.channelAttributeValues);
-        this.defaultChannelAttributeValues=new ArrayList(ssup.defaultChannelAttributeValues);
+        this.channelAttributeNumbers=new Hashtable<String, Integer>(ssup.channelAttributeNumbers);
+        this.channelAttributeValues=new Hashtable<String, List<String>>(ssup.channelAttributeValues);
+        this.defaultChannelAttributeValues=new ArrayList<String>(ssup.defaultChannelAttributeValues);
     }
     /**
      * Provides a copy of this object with all fields instantiated to reflect 
@@ -67,24 +67,24 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
     }
 
     public String getChannelAttributeValue(String channelSubscribeId,String attributeName) {
-        Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
+        Integer attributeNumber=channelAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             log.error("ThemeStylesheetUserPreferences::getChannelAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
             return null;
         }
         String value=null;
-        List l=(List) channelAttributeValues.get(channelSubscribeId);
+        List l=channelAttributeValues.get(channelSubscribeId);
         if(l==null) {
 	    //            log.debug("ThemeStylesheetUserPreferences::getChannelAttributeValue() : Attempting to obtain an attribute for a non-existing channel \""+channelSubscribeId+"\".");
 	    // return null;
-	    return (String) defaultChannelAttributeValues.get(attributeNumber.intValue());
+	    return defaultChannelAttributeValues.get(attributeNumber.intValue());
         } else {
             if(attributeNumber.intValue()<l.size()) {
                 value=(String) l.get(attributeNumber.intValue());
             }
             if(value==null) {
                 try {
-                    value=(String) defaultChannelAttributeValues.get(attributeNumber.intValue());
+                    value=defaultChannelAttributeValues.get(attributeNumber.intValue());
                 } catch (IndexOutOfBoundsException e) {
                     log.error("ThemeStylesheetUserPreferences::getChannelAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
                     return null;
@@ -101,12 +101,12 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
      * @return attribute value or null if the value is determined by the attribute default
      */
     public String getDefinedChannelAttributeValue(String channelSubscribeId,String attributeName) {
-        Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
+        Integer attributeNumber=channelAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             log.error("ThemeStylesheetUserPreferences::hasDefinedChannelAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
             return null;
         }
-        List l=(List) channelAttributeValues.get(channelSubscribeId);
+        List l=channelAttributeValues.get(channelSubscribeId);
         if(l==null) {
 	    return null;
 	} else {
@@ -119,12 +119,12 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
 
     // this should be modified to throw exceptions
     public void setChannelAttributeValue(String channelSubscribeId,String attributeName,String attributeValue) {
-        Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
+        Integer attributeNumber=channelAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             log.error("ThemeStylesheetUserPreferences::setChannelAttribute() : Attempting to set a non-existing channel attribute \""+attributeName+"\".");
             return;
         }
-        List l=(List) channelAttributeValues.get(channelSubscribeId);
+        List<String> l=channelAttributeValues.get(channelSubscribeId);
         if(l==null)
             l=this.createChannel(channelSubscribeId);
         try {
@@ -150,13 +150,13 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
     }
 
     public void setChannelAttributeDefaultValue(String attributeName, String defaultValue) {
-        Integer attributeNumber=(Integer)channelAttributeNumbers.get(attributeName);
+        Integer attributeNumber=channelAttributeNumbers.get(attributeName);
         defaultChannelAttributeValues.set(attributeNumber.intValue(),defaultValue);
     }
 
     public void removeChannelAttribute(String attributeName) {
         Integer attributeNumber;
-        if((attributeNumber=(Integer)channelAttributeNumbers.get(attributeName))==null) {
+        if((attributeNumber=channelAttributeNumbers.get(attributeName))==null) {
             log.error("ThemeStylesheetUserPreferences::removeChannelAttribute() : Attempting to remove a non-existing channel attribute \""+attributeName+"\".");
         } else {
             channelAttributeNumbers.remove(attributeName);
@@ -164,7 +164,7 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
         }
     }
 
-    public Enumeration getChannelAttributeNames() {
+    public Enumeration<String> getChannelAttributeNames() {
         return channelAttributeNumbers.keys();
     }
 
@@ -172,7 +172,7 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
         // check if the channel is there. In general it might be ok to use this functon to default
         // all of the channel's parameters
 
-        ArrayList l=new ArrayList(defaultChannelAttributeValues.size());
+        ArrayList<String> l=new ArrayList<String>(defaultChannelAttributeValues.size());
 
         if(channelAttributeValues.put(channelSubscribeId,l)!=null && log.isDebugEnabled())
             log.debug("ThemeStylesheetUserPreferences::addChannel() : Readding an existing channel (channelSubscribeId=\""+channelSubscribeId+"\"). All values will be set to default.");
@@ -183,7 +183,7 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
             log.error("ThemeStylesheetUserPreferences::removeChannel() : Attempting to remove an non-existing channel (channelSubscribeId=\""+channelSubscribeId+"\").");
     }
 
-    public Enumeration getChannels() {
+    public Enumeration<String> getChannels() {
         return channelAttributeValues.keys();
     }
 
@@ -191,21 +191,21 @@ public class ThemeStylesheetUserPreferences extends StylesheetUserPreferences {
         return channelAttributeValues.containsKey(channelSubscribeId);
     }
 
-    private ArrayList createChannel(String channelSubscribeId) {
-        ArrayList l=new ArrayList(defaultChannelAttributeValues.size());
+    private ArrayList<String> createChannel(String channelSubscribeId) {
+        ArrayList<String> l=new ArrayList<String>(defaultChannelAttributeValues.size());
         channelAttributeValues.put(channelSubscribeId,l);
         return l;
     }
 
     public String getCacheKey() {
         StringBuffer sbKey = new StringBuffer();
-        for(Enumeration e=channelAttributeValues.keys();e.hasMoreElements();) {
-            String channelId=(String)e.nextElement();
+        for(Enumeration<String> e=channelAttributeValues.keys();e.hasMoreElements();) {
+            String channelId=e.nextElement();
             sbKey.append("(channel:").append(channelId).append(':');
-            List l=(List)channelAttributeValues.get(channelId);
+            List l=channelAttributeValues.get(channelId);
             for(int i=0;i<l.size();i++) {
                 String value=(String)l.get(i);
-                if(value==null) value=(String)defaultChannelAttributeValues.get(i);
+                if(value==null) value=defaultChannelAttributeValues.get(i);
                 sbKey.append(value).append(",");
             }
             sbKey.append(")");

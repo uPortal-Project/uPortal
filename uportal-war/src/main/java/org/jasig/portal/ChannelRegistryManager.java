@@ -31,6 +31,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channel.IChannelDefinition;
@@ -54,7 +55,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SmartCache;
@@ -267,7 +267,7 @@ public class ChannelRegistryManager {
         processGroupsRecursively(memberGroup, owner, categoryE);
       } else {
         IEntity channelDefMember = (IEntity)member;
-        int channelPublishId = CommonUtils.parseInt(channelDefMember.getKey());
+        int channelPublishId = NumberUtils.toInt(channelDefMember.getKey(), -1);
         if ( channelPublishId > 0 ) {
          IChannelDefinition channelDef = crs.getChannelDefinition(channelPublishId);
          if (channelDef != null) {

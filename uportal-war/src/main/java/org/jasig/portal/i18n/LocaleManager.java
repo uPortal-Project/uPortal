@@ -29,7 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -191,7 +190,7 @@ public class LocaleManager implements Serializable {
         
         // Sometimes people specify "en-US" instead of "en_US", so
         // we'll try to clean that up.
-        localeString = CommonUtils.replaceText(localeString, "-", "_");
+        localeString = localeString.replaceAll("-", "_");
         
         StringTokenizer st = new StringTokenizer(localeString, "_");
 

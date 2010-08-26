@@ -48,5 +48,6 @@ public interface IPortalRenderingPipeline {
     /**
      * Clear the system character cache.
      */
+    @Deprecated
     public void clearSystemCharacterCache();
 }

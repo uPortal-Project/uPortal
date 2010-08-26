@@ -41,7 +41,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.services.Authentication;
-import org.jasig.portal.utils.CommonUtils;
 import org.jasig.portal.utils.ResourceLoader;
 
 /**
@@ -116,7 +115,9 @@ public class LoginServlet extends HttpServlet {
    * @exception IOException
    */
   public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-  	CommonUtils.setNoCache(response);
+      response.setHeader("Pragma","no-cache");
+      response.setHeader("Cache-Control","no-cache");
+      response.setDateHeader("Expires",0);
 
     // Call to setCharacterEncoding method should be done before any call to req.getParameter() method.
     try {

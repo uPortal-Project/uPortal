@@ -21,14 +21,14 @@ package org.jasig.portal.layout;
 
 import java.lang.reflect.Constructor;
 
-import org.jasig.portal.PortalException;
-import org.jasig.portal.UserProfile;
-import org.jasig.portal.layout.immutable.ImmutableUserLayoutManagerWrapper;
-import org.jasig.portal.layout.simple.SimpleUserLayoutManager;
-import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.security.IPerson;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.PortalException;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.layout.dlm.DistributedLayoutManager;
+import org.jasig.portal.layout.immutable.ImmutableUserLayoutManagerWrapper;
+import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.stats.StatsRecorderLayoutEventListener;
 
 
@@ -42,7 +42,7 @@ public class UserLayoutManagerFactory {
     
 	private static final Log LOG = LogFactory.getLog(UserLayoutManagerFactory.class);
     
-    private static Class coreUserLayoutManagerImpl=SimpleUserLayoutManager.class;
+    private static Class coreUserLayoutManagerImpl=DistributedLayoutManager.class;
 
     static {
         // Retrieve the class name of the core IUserLayoutManager implementation

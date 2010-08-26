@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -60,6 +61,7 @@ import org.jasig.portal.i18n.LocaleAwareXSLT;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.spring.locator.CacheFactoryLocator;
 import org.jasig.portal.utils.cache.CacheFactory;
+import org.jasig.portal.xml.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -94,7 +96,9 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * 
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
+ * @deprecated Use {@link XmlUtilities} instead
  */
+@Deprecated
 public class XSLT {
     
 	private static final String ROOT_CACHE_NAME = "org.jasig.portal.utils.XSLT.STYLESHEET_ROOT_CACHE";
@@ -654,7 +658,7 @@ public class XSLT {
    */
     protected static String escape(String s){
         // for initial implementation, just look for single quote
-        s = CommonUtils.replaceText(s,"'","\u2019");
+        s = s.replaceAll(Pattern.quote("'"),"\u2019");
         return s;
     }
     

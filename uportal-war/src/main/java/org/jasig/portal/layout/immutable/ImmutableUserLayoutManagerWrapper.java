@@ -22,6 +22,7 @@ package org.jasig.portal.layout.immutable;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.stream.XMLEventReader;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserPreferences;
@@ -73,7 +74,12 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
     public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
         man.getUserLayout(nodeId,new ImmutableUserLayoutSAXFilter(ch));
     }
-
+    
+    @Override
+    public XMLEventReader getUserLayoutReader() {
+        final XMLEventReader userLayoutReader = man.getUserLayoutReader();
+        return new ImmutableUserLayoutXMLEventReader(userLayoutReader);
+    }
 
     public void setLayoutStore(IUserLayoutStore ls) {
     }

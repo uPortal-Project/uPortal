@@ -33,6 +33,9 @@ import java.util.Vector;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -381,6 +384,26 @@ IFolderLocalNameResolver
                         + owner.getAttribute(IPerson.USERNAME)+".");
         }
         getUserLayout(rootNode,ch);
+    }
+    
+    @Override
+    public XMLEventReader getUserLayoutReader() {
+        Document ul = this.getUserLayoutDOM();
+        if (ul == null) {
+            throw new PortalException("User layout has not been initialized for " + owner.getAttribute(IPerson.USERNAME));
+        }
+        
+        //TODO XMLInputFactory can be shared once created and configured. Need a central place for doing that
+        final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        final XMLEventReader xmlEventReader;
+        try {
+            xmlEventReader = inputFactory.createXMLEventReader(new DOMSource(ul));
+        }
+        catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to create Layout XMLStreamReader for user: " + owner.getAttribute(IPerson.USERNAME), e);
+        }
+        
+        return xmlEventReader;
     }
 
     protected void getUserLayout(Node n,ContentHandler ch) throws PortalException {

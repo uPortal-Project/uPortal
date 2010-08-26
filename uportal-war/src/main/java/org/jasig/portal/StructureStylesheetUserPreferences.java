@@ -40,15 +40,15 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
     
     private static final Log log = LogFactory.getLog(StructureStylesheetUserPreferences.class);
     
-    protected Hashtable folderAttributeNumbers;
-    protected Hashtable folderAttributeValues;
-    protected ArrayList defaultFolderAttributeValues;
+    protected Hashtable<String, Integer> folderAttributeNumbers;
+    protected Hashtable<String, List<String>> folderAttributeValues;
+    protected ArrayList<String> defaultFolderAttributeValues;
 
     public StructureStylesheetUserPreferences() {
         super();
-        folderAttributeNumbers=new Hashtable();
-        folderAttributeValues=new Hashtable();
-        defaultFolderAttributeValues=new ArrayList();
+        folderAttributeNumbers=new Hashtable<String, Integer>();
+        folderAttributeValues=new Hashtable<String, List<String>>();
+        defaultFolderAttributeValues=new ArrayList<String>();
     }
 
     public StructureStylesheetUserPreferences( StructureStylesheetUserPreferences fsup) {
@@ -61,13 +61,13 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
         // these fields.
         
         if (fsup.folderAttributeNumbers != null)
-            this.folderAttributeNumbers = new Hashtable(
+            this.folderAttributeNumbers = new Hashtable<String, Integer>(
                     fsup.folderAttributeNumbers);
         if (fsup.folderAttributeValues != null)
-            this.folderAttributeValues = new Hashtable(
+            this.folderAttributeValues = new Hashtable<String, List<String>>(
                     fsup.folderAttributeValues);
         if (fsup.defaultFolderAttributeValues != null)
-            this.defaultFolderAttributeValues = new ArrayList(
+            this.defaultFolderAttributeValues = new ArrayList<String>(
                     fsup.defaultFolderAttributeValues);
     }
 
@@ -93,24 +93,24 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
     }
 
     public String getFolderAttributeValue(String folderID,String attributeName) {
-        Integer attributeNumber=(Integer)folderAttributeNumbers.get(attributeName);
+        Integer attributeNumber=folderAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             log.error("StructureStylesheetUserPreferences::getFolderAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
             return null;
         }
         String value=null;
-        List l=(List) folderAttributeValues.get(folderID);
+        List l=folderAttributeValues.get(folderID);
         if(l==null) {
 	    //            log.error("StructureStylesheetUserPreferences::getFolderAttributeValue() : Attempting to obtain an attribute for a non-existing folder \""+folderID+"\".");
 	    //            return null;
-	    return (String) defaultFolderAttributeValues.get(attributeNumber.intValue());
+	    return defaultFolderAttributeValues.get(attributeNumber.intValue());
         } else {
             if(attributeNumber.intValue()<l.size()) {
                 value=(String) l.get(attributeNumber.intValue());
             }
             if(value==null) {
                 try {
-                    value=(String) defaultFolderAttributeValues.get(attributeNumber.intValue());
+                    value=defaultFolderAttributeValues.get(attributeNumber.intValue());
                 } catch (IndexOutOfBoundsException e) {
                     log.error("StructureStylesheetUserPreferences::getFolderAttributeValue() : internal error - attribute name is registered, but no default value is provided.");
                     return null;
@@ -127,12 +127,12 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
      * @return attribute value or null if the value is determined by the attribute default
      */
     public String getDefinedFolderAttributeValue(String folderID, String attributeName) {
-        Integer attributeNumber=(Integer)folderAttributeNumbers.get(attributeName);
+        Integer attributeNumber=folderAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             log.error("ThemeStylesheetUserPreferences::hasDefinedFolderAttributeValue() : Attempting to obtain a non-existing attribute \""+attributeName+"\".");
             return null;
         }
-        List l=(List) folderAttributeValues.get(folderID);
+        List l=folderAttributeValues.get(folderID);
         if(l==null) {
 	    return null;
 	} else {
@@ -145,12 +145,12 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
 
     // this should be modified to throw exceptions
     public void setFolderAttributeValue(String folderID,String attributeName,String attributeValue) {
-        Integer attributeNumber=(Integer)folderAttributeNumbers.get(attributeName);
+        Integer attributeNumber=folderAttributeNumbers.get(attributeName);
         if(attributeNumber==null) {
             log.error("StructureStylesheetUserPreferences::setFolderAttribute() : Attempting to set a non-existing folder attribute \""+attributeName+"\".");
             return;
         }
-        List l=(List) folderAttributeValues.get(folderID);
+        List<String> l=folderAttributeValues.get(folderID);
         if(l==null)
             l=this.createFolder(folderID);
         try {
@@ -175,13 +175,13 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
     }
 
     public void setFolderAttributeDefaultValue(String attributeName, String defaultValue) {
-        Integer attributeNumber=(Integer)folderAttributeNumbers.get(attributeName);
+        Integer attributeNumber=folderAttributeNumbers.get(attributeName);
         defaultFolderAttributeValues.set(attributeNumber.intValue(),defaultValue);
     }
 
     public void removeFolderAttribute(String attributeName) {
         Integer attributeNumber;
-        if((attributeNumber=(Integer)folderAttributeNumbers.get(attributeName))==null) {
+        if((attributeNumber=folderAttributeNumbers.get(attributeName))==null) {
             log.error("StructureStylesheetUserPreferences::removeFolderAttribute() : Attempting to remove a non-existing folder attribute \""+attributeName+"\".");
         } else {
             folderAttributeNumbers.remove(attributeName);
@@ -189,7 +189,7 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
         }
     }
 
-    public Enumeration getFolderAttributeNames() {
+    public Enumeration<String> getFolderAttributeNames() {
         return folderAttributeNumbers.keys();
     }
 
@@ -197,7 +197,7 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
         // check if the folder is there. In general it might be ok to use this functon to default
         // all of the folder's parameters
 
-        ArrayList l=new ArrayList(defaultFolderAttributeValues.size());
+        ArrayList<String> l=new ArrayList<String>(defaultFolderAttributeValues.size());
 
         if(folderAttributeValues.put(folderID,l)!=null)
             log.debug("StructureStylesheetUserPreferences::addFolder() : Readding an existing folder (folderID=\""+folderID+"\"). All values will be set to default.");
@@ -209,7 +209,7 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
     }
 
 
-    public Enumeration getFolders() {
+    public Enumeration<String> getFolders() {
         return folderAttributeValues.keys();
     }
 
@@ -217,13 +217,13 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
         return folderAttributeValues.containsKey(folderID);
     }
 
-    private ArrayList createFolder(String folderID) {
-        ArrayList l=new ArrayList(defaultFolderAttributeValues.size());
+    private ArrayList<String> createFolder(String folderID) {
+        ArrayList<String> l=new ArrayList<String>(defaultFolderAttributeValues.size());
         folderAttributeValues.put(folderID,l);
         return l;
     }
 
-    private Hashtable copyFolderAttributeNames() {
+    private Hashtable<String, Integer> copyFolderAttributeNames() {
         return folderAttributeNumbers;
     }
 
@@ -232,13 +232,13 @@ public class StructureStylesheetUserPreferences extends ThemeStylesheetUserPrefe
         // if no folder values then skip adding to prevent null pointer ex.
         if (folderAttributeValues != null)
         {
-        for(Enumeration e=folderAttributeValues.keys();e.hasMoreElements();) {
-            String folderId=(String)e.nextElement();
+        for(Enumeration<String> e=folderAttributeValues.keys();e.hasMoreElements();) {
+            String folderId=e.nextElement();
             sbKey.append("(folder:").append(folderId).append(':');
-            List l=(List)folderAttributeValues.get(folderId);
+            List l=folderAttributeValues.get(folderId);
             for(int i=0;i<l.size();i++) {
                 String value=(String)l.get(i);
-                if(value==null) value=(String)defaultFolderAttributeValues.get(i);
+                if(value==null) value=defaultFolderAttributeValues.get(i);
                 sbKey.append(value).append(",");
             }
             sbKey.append(")");

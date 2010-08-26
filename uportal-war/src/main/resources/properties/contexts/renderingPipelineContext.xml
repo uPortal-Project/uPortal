@@ -22,7 +22,47 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    
+    <bean id="xmlUtilities" class="org.jasig.portal.xml.XmlUtilitiesImpl">
+        <property name="templatesCache">
+            <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+                <property name="cacheManager" ref="cacheManager" />
+                <property name="cacheName" value="xsltTemplatesCache" />
+            </bean>
+        </property>
+    </bean>
+    
+    <!-- 
+     | Due to the fairly generic nature of each component in the rendering 
+     | pipeline it cannot be autowired. However the dependencies of each
+     | component often can.
+     +-->
+     <!-- commented out until the top level pipeline component is complete
+    <bean class="org.jasig.portal.rendering.DynamicRenderingPipeline">
+        <property name="pipeline" ref="" />
+    </bean>
+     -->
+    
+    <bean id="structureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
+        <property name="parentComponent" ref="structureAttributeIncorporationComponent" />
+        <property name="transformerSource">
+            <bean class="org.jasig.portal.rendering.xslt.StructureTransformerSource"/>
+        </property>
+        <property name="xsltParameterSource">
+            <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
+            </bean>
+        </property>
+    </bean>
+    
+    <!-- structure attribute incorporation -->
+    <bean id="structureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="parentComponent" ref="userLayoutStoreComponent" />
+        <property name="attributeSource">
+            <bean class="org.jasig.portal.rendering.StructureAttributeSource" />
+        </property>
+    </bean>
 
-    <!--  <bean id="portalRenderingPipeline" class="org.jasig.portal.rendering.StaticRenderingPipeline" /> -->
+    <!-- Start of the rendering pipeline, provides the user's layout -->
+    <bean id="userLayoutStoreComponent" class="org.jasig.portal.rendering.UserLayoutStoreComponent" />
 
 </beans>

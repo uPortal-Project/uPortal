@@ -25,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.Header;
@@ -35,7 +36,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.HttpClientManager;
-import org.jasig.portal.utils.CommonUtils;
 
 /**
  * Appends PROXY_REWRITE_PREFIX string in front of all the references to images
@@ -261,12 +261,12 @@ public class ProxyWriter {
 	 * @newName: is the name built form the address
 	 */
 	private static String fileNameGenerator(String addr) {
-		String newName = CommonUtils.replaceText(addr, "/", "");
-		newName = CommonUtils.replaceText(newName, "http:", "");
-		newName = CommonUtils.replaceText(newName, "www.", "");
-		newName = CommonUtils.replaceText(newName, ".", "");
-		newName = CommonUtils.replaceText(newName, "?", "");
-		newName = CommonUtils.replaceText(newName, "&", "");
+		String newName = addr.replaceAll(Pattern.quote("/"), "");
+		newName = newName.replaceAll(Pattern.quote("http:"), "");
+		newName = newName.replaceAll(Pattern.quote("www."), "");
+		newName = newName.replaceAll(Pattern.quote("."), "");
+		newName = newName.replaceAll(Pattern.quote("?"), "");
+		newName = newName.replaceAll(Pattern.quote("&"), "");
 
 		return newName.substring(0, Math.min(16, newName.length())) + ".html";
 	}
@@ -282,7 +282,7 @@ public class ProxyWriter {
 			if (line.indexOf(" src") != -1 && line.indexOf("http://") != -1) {
 				String srcValue = extractURL(line);
 				String srcNewValue = createProxyURL(srcValue);
-				line = CommonUtils.replaceText(line, srcValue, srcNewValue);
+				line = line.replaceAll(Pattern.quote(srcValue), srcNewValue);
 				int firstPartIndex = line.lastIndexOf(srcNewValue)
 						+ srcNewValue.length();
 				String remaining = line.substring(firstPartIndex);
@@ -336,7 +336,7 @@ public class ProxyWriter {
 		if (srcValue.indexOf("https://") != -1) {
 			return srcValue;
 		} else if (srcValue.indexOf("http://") != -1) {
-			srcNewValue = CommonUtils.replaceText(srcValue, "http://",
+			srcNewValue = srcValue.replaceAll(Pattern.quote("http://"),
 					PROXY_REWRITE_PREFIX);
 		} else {
 			srcNewValue = "";
