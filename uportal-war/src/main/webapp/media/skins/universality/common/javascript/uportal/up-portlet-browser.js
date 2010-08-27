@@ -91,7 +91,7 @@ var up = up || {};
     
     // defaults
     fluid.defaults("up.DefaultPortletSearchView", {
-        searchInvitationMessage: "Search for stuff to add...",
+        searchInvitationMessage: "Search for stuff",
         selectors: {
             portletSearchView: ".portlet-search-view",
             searchForm: ".portlet-search-form",

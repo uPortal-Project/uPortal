@@ -269,7 +269,7 @@
   <xsl:param name="USE_SIDEBAR_FOCUSED">
     <xsl:choose>
       <xsl:when test="$INSTITUTION='ivy'">false</xsl:when>
-      <xsl:otherwise>true</xsl:otherwise>
+      <xsl:otherwise>false</xsl:otherwise>
     </xsl:choose>
   </xsl:param>
   

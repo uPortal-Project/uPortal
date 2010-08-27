@@ -17,8 +17,6 @@
  * under the License.
  */
 
-// Revision: 2007-8-24 gthompson
-
 var up = up || {};
 
 // Add an instance of the research object to it as a singleton

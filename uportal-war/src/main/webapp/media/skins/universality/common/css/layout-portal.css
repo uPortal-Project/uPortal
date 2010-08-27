@@ -334,32 +334,47 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigation .editable .portal-subnav-list #editPageLink,
 #portalNavigation .deletable .portal-subnav-list #deletePageLink { display: list-item; }
 
-/* ---------- CSS Styles for the layout including Fluid Layout Overides ---------- */
+/* 
+------------------------------------
+  uPortal Gallery.
+------------------------------------ 
+ * The gallery is a sliding drawer that provides interfaces for customizing the protal.
+ */
+
+/* Gallery Layout 
+ * Includes Fluid layout overides.
+ * Generally the overall layout should not need to be altered.
+ * If needed, override these vales on a per-skin basis by adding the overrides to portal.css within the desired skin folder.
+ */
 .clear-float {clear:both;}
-.up-gallery {min-width:900px; background:#333; position:relative;}
+.up-gallery {min-width:900px; position:relative;}
 .up-gallery .gallery-inner {display:none; overflow:visible; padding-top:7px; background:url(../images/gallery-bar.png) top left repeat-x; height:190px;  position:relative;}
 .up-gallery .column-inner {position:relative;}
 .up-gallery .menu-wrapper {width:130px; display:block; height:190px; position:relative;}
 .up-gallery .content-wrapper {margin:0 0 0 127px; padding:8px 0; display:block; height:174px;}
 .up-gallery .content {padding-right:8px; }
-.up-gallery .content-filters-wrapper {width:193px; padding:0px; display:block; height:174px;}
-.up-gallery .content-results-wrapper {margin:0 0 0 200px; display:block; height:172px;}
+.up-gallery .content-filters-wrapper {width:200px; padding:0px; display:block; height:174px; position:relative;}
+.up-gallery .content-results-wrapper {margin:0 0 0 220px; display:block; height:172px;}
 .up-gallery .content-pager-wrapper {padding:0px; width:70px; display:block; height:170px;}
 .up-gallery .content-results-wrapper .column-inner {padding-left:15px;}
-
-.up-gallery .add-content, .up-gallery .use-content {border: 1px solid #424243;}
-.up-gallery .content-wrapper .content-filters-wrapper {background:#424243;}
-.up-gallery .content-wrapper .skins .content-filters-wrapper {background:#333;}
-.up-gallery .content-wrapper .layouts .content-filters-wrapper {background:#333;}
-
 .up-gallery .content-results-wrapper {padding:0px;}
 .up-gallery .skins .content-results-wrapper,
 .up-gallery .layouts .content-results-wrapper {margin-left:0px; margin-right:0px;}
-
 .up-gallery .results-wrapper {overflow:hidden;}
 .up-gallery .fl-col-mixed2 .fl-col-main {padding-left:0px;}
 
-/* ---------- CSS Styles for the Menu Items, Handle, and Open Close Buttons ---------- */
+/* Gallery General Coloring
+ * Override these vales on a per-skin basis by adding the overrides to portal.css within the desired skin folder.
+ */
+.up-gallery {background:#333; color:#eee;}
+.up-gallery .gallery-inner {background:url(../images/gallery-bar.png) top left repeat-x;}
+.up-gallery .content-wrapper .content-filters-wrapper {padding-right:5px; background:transparent url(../images/gallery-search-active-arrow.png) right 5% no-repeat;}
+.up-gallery .content-wrapper .content-filters-wrapper .categories-column,
+.up-gallery .content-wrapper .content-filters-wrapper .packages-column {background:#424243; border:3px solid #424242; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;}
+
+/* Gallery Menu Items 
+ * The navigation menu of gallery views.
+ */
 .up-gallery .menu {height:180px; background:#424243; padding:10px 0 0 0; position:relative; margin-top:0; margin-bottom:0; margin-left:15px; margin-right:auto; width:100px; border-left:1px solid #979797; border-right:1px solid #979797;}
 .up-gallery .menu li {position:relative; height:28px; cursor:pointer; list-style:none; margin:0; background:#525252; border-top:1px solid #979797;}
 .up-gallery .menu li.last {border-bottom:1px solid #979797;}
@@ -367,45 +382,84 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .menu li span {padding:7px; display:block; height:14px; width:110px; bottom:0; font-weight:bold; color:#fff; font-size:12px;}
 .up-gallery .menu li.active span {position:relative; background:#333 url(../images/gallery-arrow-right.png) 90% 50% no-repeat;}
 .up-gallery .menu li:hover {background-color:transparent;}
-.up-gallery .menu li.active:hover {background-color:#333;}
-
+.up-gallery .menu li.active:hover,
+.up-gallery .menu li.active:focus {background-color:#333; outline:none;}
+.up-gallery .menu li :focus {outline:none;}
 *:first-child+html .up-gallery .menu li {height:25px;}
 
+/* Gallery Handle 
+ * Clickable handle that opens the drawer. Once open, the handle can be clicked to close the drawer.
+ */
+.up-gallery .handle {margin:0; padding:0; position:absolute; bottom:-7px; left:0; right:0; background:#000 url(../images/gallery-bar.png) bottom left repeat-x; height:7px; clear:both;}
+.up-gallery .handle a {box-shadow: 0px 1px 2px #ccc; -moz-box-shadow: 0px 1px 2px #ccc; -webkit-box-shadow: 0px 1px 2px #ccc; width:100px; -webkit-border-bottom-right-radius: 3px;-webkit-border-bottom-left-radius: 03px;-moz-border-radius-bottomright: 3px;-moz-border-radius-bottomleft: 03px;border-bottom-right-radius: 3px;border-bottom-left-radius: 03px; cursor:pointer; font-size:10px; border: 1px solid #c5c5c5; border-top:0px; position:absolute; top:6px; left:0; margin-left:25px; background: scroll #fff url(../images/gallery-handle.png) 0 0 repeat-x;}
+.up-gallery .handle a span {text-transform:uppercase; color:#888; font-weight:bold; padding:1px 25px 2px 10px; margin-right:5px; display:block; background-image: url(../images/gallery-handle-arrow-down.png); background-position: right center; background-repeat: no-repeat;}
+.up-gallery .handle-arrow-up {background-image: url(../images/gallery-handle-arrow-up.png) !important;}
+
+/* Gallery Modal Loaders 
+ * Preloaders while the content loads, following the opening of the drawer.
+ */
+.up-gallery .gallery-inner .gallery-modal {position:absolute; top:7px; bottom:0; left:0; right:0; background: #333 url(../images/gallery-preloader.gif) center center no-repeat;}
+.up-gallery .content-wrapper .content-modal {display:none; position:absolute; top:7px; bottom:0; left:0; right:0; background: url(../images/gallery-content-preloader.gif) 50% 80% no-repeat;}
+
+/* Gallery Close Button 
+ * An explicit close button, that closes the drawer.
+ */
 .up-gallery .close-button {width:84px; padding:1px 5px 1px 5px; position:absolute; left:28px; bottom:3px; background-color:#F68A25; background-image:-moz-linear-gradient(90deg,#F68A25,#fcf8d9); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#FCF8D9), to(#F68A25)); cursor:pointer; border:1px solid #000; text-align:center; }
 .up-gallery .close-button a {color: #000;}
 .up-gallery .close-button:hover {color:#fff;}
 .up-gallery .close-button span{font-weight:bold; font-size:13px;}
 
-.up-gallery .gallery-inner .gallery-modal {position:absolute; top:7px; bottom:0; left:0; right:0; background: #333 url(../images/gallery-preloader.gif) center center no-repeat;}
-.up-gallery .handle {margin:0; padding:0; position:absolute; bottom:-7px; left:0; right:0; background:#000 url(../images/gallery-bar.png) bottom left repeat-x; height:7px; clear:both;}
-.up-gallery .handle a {box-shadow: 0px 1px 2px #ccc; -moz-box-shadow: 0px 1px 2px #ccc; -webkit-box-shadow: 0px 1px 2px #ccc; width:100px; -webkit-border-bottom-right-radius: 3px;-webkit-border-bottom-left-radius: 03px;-moz-border-radius-bottomright: 3px;-moz-border-radius-bottomleft: 03px;border-bottom-right-radius: 3px;border-bottom-left-radius: 03px; cursor:pointer; font-size:10px; border: 1px solid #c5c5c5; border-top:0px; position:absolute; top:6px; left:0; margin-left:25px; background: scroll #fff url(../images/gallery-handle.png) 0 0 repeat-x;}
-.up-gallery .handle a span {text-transform:uppercase; color:#888; font-weight:bold; padding:1px 25px 2px 10px; margin-right:5px; display:block; background-image: url(../images/gallery-handle-arrow-down.png); background-position: right center; background-repeat: no-repeat;}
-.up-gallery .handle-arrow-up {background-image: url(../images/gallery-handle-arrow-up.png) !important;}
-.up-gallery .content-wrapper .content-modal {display:none; position:absolute; top:7px; bottom:0; left:0; right:0; background: url(../images/gallery-content-preloader.gif) 50% 80% no-repeat;}
-
-/* ---------- CSS Styles for search area ---------- */
-.up-gallery .search-label {display:none;}
-.up-gallery .search {padding-left:8px;}
-.up .up-gallery .search input {padding:0; width:175px; background:#e6e6e6; color:#666; border:1px solid #000; -moz-box-shadow: inset 0px 1px 3px #000000; box-shadow: inset 0 0 10px #000000;}
-.up-gallery .search-wrapper {padding:5px 10px; position:relative;}
+/* Gallery Add/Use Portlet Filters 
+ * Search and category filters for the add portlet and use portlet views.
+ */
+.up-gallery .portlet-search-form {margin-bottom:10px;}
+.up-gallery .portlet-search-form label,
+.up-gallery .portlet-search-form .portlet-search-submit {display:none;}
+.up .up-gallery .portlet-search-form .portlet-search-input {width:157px; padding:2px 4px; background:#e6e6e6; color:#999; border:1px solid #000; font-size:11px; -moz-box-shadow:inset 0px 1px 3px #000000; box-shadow: inset 0 0 10px #000000;}
+.up .up-gallery .portlet-search-form .portlet-search-input:hover {background:#fff;}
+.up .up-gallery .portlet-search-form .portlet-search-input:focus {background:#fff; color:#000;}
 .up-gallery .categories-column,.up-gallery .packages-column {padding:0;}
-.up-gallery .categories,.up-gallery .packages {height:98px;}
+.up-gallery .categories,.up-gallery .packages {}
 .up-gallery .categories-column, .up-gallery .packages-column{clear:both;}
-.up-gallery .categories-column h3, .up-gallery .packages-column h3 {padding:5px 0 0 8px; cursor:pointer; width:191px; color:#f68923; font-size:12px; font-weight:normal; margin:5px 0 0 0;}
-.up-gallery .packages-column h3 {border-top:1px solid #333;}
-.up-gallery .categories-column.active h3, .up-gallery .packages-column.active h3 {color:#f68923; background: url(../images/gallery-search-active-arrow.png) right 75% no-repeat;}
-.up-gallery .categories-column h3:hover, .up-gallery .packages-column h3:hover {color:#ffAA66;}
+.up-gallery .content-filters-wrapper h3 {padding:5px 0 0 0; cursor:pointer; font-size:12px; font-weight:normal; margin:0;}
+.up-gallery .categories-column h3 {
+	background:#333;
+	padding-left:10px;
+	-webkit-border-top-left-radius: 2px;
+	-webkit-border-top-right-radius: 2px;
+	-moz-border-radius-topleft: 2px;
+	-moz-border-radius-topright: 2px;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+}
+.up-gallery .packages-column h3 {position:absolute; top:0; left:55px;}
+.up-gallery .content-filters-wrapper .active h3 {color:#f68923;}
+.up-gallery .content-filters-wrapper h3 span {
+	padding:0 10px; 
+	border:1px solid #333; 
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+.up-gallery .content-filters-wrapper .active h3 span {background:#333;}
+.up-gallery .content-filters-wrapper h3:hover,
+.up-gallery .content-filters-wrapper h3:focus {text-decoration:underline;}
 .up-gallery .categories-column .categories-wrapper, .up-gallery .packages-column .packages-wrapper {display:none;}
 .up-gallery .categories-column.active .categories-wrapper, .up-gallery .packages-column.active .packages-wrapper {display:block;}
-
-.up-gallery .packages-wrapper, .up-gallery .categories-wrapper {padding-bottom:3px;}
-.up-gallery .packages span{display:block; padding:8px; color:#ddd;}
-.up-gallery .categories-column h4 {color:#666; padding:3px 0 3px 8px; font-size:10px; border-bottom:1px solid #666;}
-
-.up-gallery .categories ul, .up-gallery .categories li, .up-gallery .categories a {list-style:none; margin:0; padding:0; color:#aaa; font-size:10px;}
-.up-gallery .categories li {float:left; width:85px; padding:1px 0 1px 10px;  text-align:left; cursor:pointer;}
-.up-gallery .categories li a:hover, .up-gallery .categories-wrapper li a.active {color:#fff; text-decoration:underline;}
-.up-gallery .categories li.active a {color:#fff;}
+.up-gallery .packages-wrapper, .up-gallery .categories-wrapper {padding:10px;}
+.up-gallery .packages p {margin:0; color:#aaa; font-size:11px;}
+.up-gallery .categories-column h4 {color:#222; padding-bottom:2px; font-size:10px; text-transform:uppercase;}
+.up-gallery .categories ul, .up-gallery .categories li, .up-gallery .categories a {list-style:none; margin:0; padding:0; color:#aaa; font-size:10px; text-decoration:none;}
+.up-gallery .categories li {float:left; padding:1px 0 1px 2px;  text-align:left; cursor:pointer;}
+.up-gallery .categories li:after {content:", ";}
+.up-gallery .categories li:last-child:after {content:"";}
+.up-gallery .categories li a {}
+.up-gallery .categories li a:hover, .up-gallery .categories li a:focus, .up-gallery .categories li.active a {color:#fff;}
+.up-gallery .categories li a:hover, .up-gallery .categories li a:focus {background-color:rgba(0,0,0,.25);}
+.up-gallery .categories li.active a {text-decoration:underline;}
 
 /* ---------- CSS Styles for Pager ---------- */
 .up-gallery .content-pager-wrapper {background:#424243;}

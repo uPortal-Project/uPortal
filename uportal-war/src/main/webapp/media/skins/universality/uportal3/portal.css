@@ -247,8 +247,8 @@
 .up .layout-1-columns .portal-page-column.fl-col-flex {padding:0;} /* Removes default padding from FSS  */
 
 /* Sidebar */
-.up #portalSidebar {background:#336699 url(../common/images/rounded_corner_bottomleft.png) bottom left no-repeat;}
-.up #portalSidebarInner {background:transparent url(../common/images/rounded_corner_bottomright.png) bottom right no-repeat;}
+.up #portalSidebar {}
+.up #portalSidebarInner {}
 /* Sidebar Widgets */
 .up #portalSidebar .fl-widget {padding:7px; font-size:85%; background:transparent url(../common/images/light_top_100px_30.png) 0 0 repeat-x; border:1px solid #ACC9E6;}
 .up #portalSidebar .fl-widget .fl-widget-titlebar {margin:0;}

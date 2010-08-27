@@ -62,18 +62,25 @@
   </xalan:component>
 <!-- ============================================= -->
 
-    <!-- Gallery "Add Stuff" Pane -->
+<!-- ==== TEMPLATE: Gallery Add Portlet Selection ==== -->
+<!-- ================================================= -->
+<!-- 
+| This template renders the add portlet selection view of 
+| the gallery. The list of portlets to select from is 
+| rendered by a separate template below. Adding a portlet 
+| places and persists the portlet into the user's layout.
+-->  
     <xsl:template name="gallery-add-content-pane">
-        <div class="add-content fl-fix fl-col-mixed fl-col-mixed2">
-            <div class="content-filters-wrapper fl-col-fixed fl-force-left">
+        <div class="fl-fix fl-col-mixed fl-col-mixed2 pane add-content">
+            <div class="fl-col-fixed fl-force-left content-filters-wrapper">
                 <div class="categories-column active">
-                    <h3 class="portlet-list-link">Browse Stuff</h3>
+                    <h3 class="portlet-list-link"><span>Stuff</span></h3>
                     <div class="categories-wrapper active">
-                        <div class="portlet-search-view">
+                    	<div class="portlet-search-view">
                             <form class="portlet-search-form">
-                                <div class="search">
-                                    <input class="portlet-search-input"/>
-                                </div>
+                                <label for="portletSearch">Search for stuff to add</label>
+                                <input id="portletSearch" name="portletSearch" class="portlet-search-input"/>
+                                <input type="submit" value="Search" class="portlet-search-submit"/>
                             </form>
                         </div>
                         <div class="categories">
@@ -90,11 +97,10 @@
                     </div>
                 </div>
                 <div class="packages-column">
-                    <h3 class="package-list-link">Packaged Stuff</h3>
+                	<h3 class="package-list-link"><span>Packaged Stuff</span></h3>
                     <div class="packages-wrapper">
                         <div class="packages">
-                            <span>Loading a package creates a new tab and populates
-                            it with multiple portlets.</span>
+                            <p>Adding a package creates a new tab and puts the packaged stuff on it.</p>
                         </div>
                     </div>
                 </div>
@@ -117,14 +123,20 @@
             <div class="content-modal content-loading"></div>
         </div>
     </xsl:template>
-    <!-- // end Gallery "Add Stuff" Pane -->
 
-    <!-- Gallery "Use Stuff" Pane -->
+<!-- ==== TEMPLATE: Gallery Use Portlet Selection ==== -->
+<!-- ================================================= -->
+<!-- 
+| This template renders the use portlet selection view of 
+| the gallery. The list of portlets to select from is 
+| rendered by a separate template below. Using a portlet 
+| does not add the portlet to the user's layout.
+-->
     <xsl:template name="gallery-use-content-pane">
-        <div class="use-content fl-fix fl-col-mixed fl-col-mixed2" style="display:none">
-            <div class="content-filters-wrapper fl-col-fixed fl-force-left">
+        <div class="fl-fix fl-col-mixed fl-col-mixed2 use-content" style="display:none">
+            <div class="fl-col-fixed fl-force-left content-filters-wrapper">
                 <div class="categories-column active">
-                    <h3 class="portlet-list-link">Browse Stuff</h3>
+                    <h3 class="portlet-list-link">Stuff</h3>
                     <div class="categories-wrapper active">
                         <div class="portlet-search-view">
                             <form class="portlet-search-form">
@@ -163,8 +175,13 @@
             </div>
         </div>
     </xsl:template>    
-    <!-- // end Gallery "Add Stuff" Pane -->
-    
+
+<!-- ========= TEMPLATE: Gallery Portlet List ======== -->
+<!-- ================================================= -->
+<!-- 
+| This template renders the list of portlets available to 
+| both the add portlet and use portlet views of the gallery.
+-->    
     <xsl:template name="gallery-add-content-pane-portlet-list">
         <div class="results-wrapper portlet-results fl-col-mixed2">
             <div class="pager-column fl-col-side fl-force-right">
@@ -186,7 +203,13 @@
             </div>
         </div>
     </xsl:template>
-    
+
+<!-- == TEMPLATE: Gallery Packaged Portlet Selection = -->
+<!-- ================================================= -->
+<!-- 
+| This template renders the packaged portlet selection 
+| view of the gallery.
+-->
     <xsl:template name="gallery-add-content-pane-fragment-list">
         <div class="results-wrapper package-results fl-col-mixed2" style="display:none">
             <div class="pager-column fl-col-side fl-force-right">
@@ -208,7 +231,12 @@
             </div>
         </div>
     </xsl:template>
-    
+
+<!-- ============= TEMPLATE: Gallery Pagef =========== -->
+<!-- ================================================= -->
+<!-- 
+| This template renders the gallery pager.
+-->
     <xsl:template name="gallery-pager">
         <div class="pager flc-pager-top">
             <div class="pager-button-up flc-pager-previous">
@@ -237,6 +265,12 @@
         </div>
     </xsl:template>
 
+<!-- ======== TEMPLATE: Gallery Skin Selection ======= -->
+<!-- ================================================= -->
+<!-- 
+| This template renders the skin selection view of the 
+| gallery.
+-->
     <xsl:template name="gallery-skin-pane">
         <div class="skins" style="display:none">
             <div class="content-results-wrapper">
@@ -259,7 +293,13 @@
             </div>
         </div>
     </xsl:template>
-
+    
+<!-- ======= TEMPLATE: Gallery Layout Selection ====== -->
+<!-- ================================================= -->
+<!-- 
+| This template renders the layout selection view of the 
+| gallery.
+-->
     <xsl:template name="gallery-layout-pane">
         <div class="layouts" style="display:none">
             <div class="content-results-wrapper">
@@ -283,14 +323,24 @@
             </div>
         </div>
     </xsl:template>
-
+	
+<!-- =============== TEMPLATE: Gallery =============== -->
+<!-- ================================================= -->
+<!-- 
+| This template renders the base structure of the gallery.
+| The gallery contains the interfaces for customizing the 
+| portal. Individual views presented within the gallery are 
+| in separate templates above. Customization options are
+| only available to authenticated users.
+-->
     <xsl:template name="gallery">
+    	<xsl:if test="$AUTHENTICATED = 'true'">
         <div class="up-gallery">
             <h2 class="handle">
                 <a><span class="handle-arrow-up">Customize</span></a>
             </h2>
-            <div class="gallery-inner fl-fix fl-col-mixed fl-col-mixed2" style="display:none">
-                <div class="menu-wrapper fl-col-side fl-force-left">
+            <div class="fl-fix fl-col-mixed fl-col-mixed2 gallery-inner" style="display:none">
+                <div class="fl-col-side fl-force-left menu-wrapper">
                     <ul class="menu" role="menu">
                         <li class="add-content-link active" role="tab">
                             <a href="javascript:;"><span>Add Stuff</span></a>
@@ -309,8 +359,8 @@
                         <a><span>I'm Done</span></a>
                     </div>
                 </div>
-                <div class="content-wrapper fl-col-main" role="tabpanel">
-                    <div class="content fl-fix">
+                <div class="fl-col-main content-wrapper" role="tabpanel">
+                    <div class="fl-fix content">
                         <xsl:call-template name="gallery-add-content-pane"/>
                         <xsl:call-template name="gallery-use-content-pane"/>
                         <xsl:call-template name="gallery-skin-pane"/>
@@ -320,6 +370,7 @@
                 </div>
             </div>
         </div>
+        </xsl:if>
     </xsl:template>
 
  <xsl:template name="preferences">
