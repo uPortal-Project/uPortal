@@ -1,5 +1,8 @@
 package org.jasig.portal.spring.spel;
 
+import org.springframework.binding.expression.spel.SpringELExpressionParser;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ParseException;
 import org.springframework.web.context.request.WebRequest;
 
 /**
@@ -13,6 +16,11 @@ import org.springframework.web.context.request.WebRequest;
  * @version $Revision$
  */
 public interface IPortalSpELService {
+    
+    /**
+     * @see SpringELExpressionParser#parseExpression(String, org.springframework.binding.expression.ParserContext)
+     */
+    public Expression parseExpression(String expressionString) throws ParseException;
 
     /**
      * Parse the supplied string by replacing any ${ } blocks with the 
@@ -23,5 +31,30 @@ public interface IPortalSpELService {
      * @return        evaluated string
      */
     public String parseString(String string, WebRequest request);
-
+    
+    /**
+     * Evaluates the expression in the standard portal evaluation context
+     * 
+     * @see Expression#getValue(org.springframework.expression.EvaluationContext)
+     */
+    public Object getValue(Expression expression, WebRequest request);
+    
+    /**
+     * @see #parseExpression(String)
+     * @see #getValue(Expression, WebRequest)
+     */
+    public Object getValue(String expressionString, WebRequest request);
+    
+    /**
+     * Evaluates the expression in the standard portal evaluation context
+     * 
+     * @see Expression#getValue(org.springframework.expression.EvaluationContext, Class)
+     */
+    public <T> T getValue(Expression expression, WebRequest request, Class<T> desiredResultType);
+    
+    /**
+     * @see #parseExpression(String)
+     * @see #getValue(Expression, WebRequest, Class)
+     */
+    public <T> T getValue(String expressionString, WebRequest request, Class<T> desiredResultType);
 }

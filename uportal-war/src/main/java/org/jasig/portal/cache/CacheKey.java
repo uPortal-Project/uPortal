@@ -9,6 +9,7 @@ package org.jasig.portal.cache;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.springframework.util.Assert;
 
@@ -32,6 +33,11 @@ public class CacheKey implements Serializable {
     public CacheKey(Serializable... keyParts) {
         Assert.notEmpty(keyParts);
         this.key = new ArrayList<Serializable>(Arrays.asList(keyParts));
+    }
+    
+    public CacheKey(Collection<? extends Serializable> keyParts) {
+        Assert.notEmpty(keyParts);
+        this.key = new ArrayList<Serializable>(keyParts);
     }
     
     public Serializable getKey() {

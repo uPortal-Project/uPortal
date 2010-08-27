@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.portlet.rendering.PortletExecutionManager;
+import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.utils.SAX2BufferImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -54,7 +54,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
 
     private final HttpServletRequest request;
     private final HttpServletResponse response;
-    private final PortletExecutionManager portletExecutionManager;
+    private final IPortletExecutionManager portletExecutionManager;
     private final boolean ccaching;
 
     // information about the current channel
@@ -65,7 +65,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
     private String channelPublishId;
     private long timeOut;
     
-  public ChannelRenderingBuffer(XMLReader parent, PortletExecutionManager portletExecutionManager, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
+  public ChannelRenderingBuffer(XMLReader parent, IPortletExecutionManager portletExecutionManager, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
       super(parent);
       this.portletExecutionManager = portletExecutionManager;
       this.ccaching = ccaching;
@@ -76,7 +76,7 @@ public class ChannelRenderingBuffer extends SAX2BufferImpl
       this.startBuffering();
   }
   
-  public ChannelRenderingBuffer(PortletExecutionManager portletExecutionManager, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
+  public ChannelRenderingBuffer(IPortletExecutionManager portletExecutionManager, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
       this.portletExecutionManager = portletExecutionManager;
       this.ccaching = ccaching;
       this.request = request;

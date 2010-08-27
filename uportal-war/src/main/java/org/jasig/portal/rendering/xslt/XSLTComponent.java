@@ -94,7 +94,7 @@ public class XSLTComponent implements StAXPipelineComponent {
         
         final CacheKey transformerConfigurationKey;
         if (this.xsltParameterSource != null) {
-            transformerConfigurationKey = this.xsltParameterSource.getTransformerConfigurationKey(request, response);
+            transformerConfigurationKey = this.xsltParameterSource.getCacheKey(request, response);
         }
         else {
             transformerConfigurationKey = null;
@@ -118,7 +118,7 @@ public class XSLTComponent implements StAXPipelineComponent {
             return null;
         }
         
-        final Map<String, Object> transformerParameters = this.xsltParameterSource.getTransformerParameters(request, response);
+        final Map<String, Object> transformerParameters = this.xsltParameterSource.getParameters(request, response);
         if (transformerParameters != null) {
             for (final Map.Entry<String, Object> transformerParametersEntry : transformerParameters.entrySet()) {
                 final String name = transformerParametersEntry.getKey();
@@ -127,11 +127,11 @@ public class XSLTComponent implements StAXPipelineComponent {
             }
         }
         
-        final Properties outputProperties = this.xsltParameterSource.getTransformerOutputProperties(request, response);
+        final Properties outputProperties = this.xsltParameterSource.getOutputProperties(request, response);
         if (outputProperties != null) {
             transformer.setOutputProperties(outputProperties);
         }
         
-        return this.xsltParameterSource.getTransformerConfigurationKey(request, response);
+        return this.xsltParameterSource.getCacheKey(request, response);
     }
 }

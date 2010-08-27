@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
-import org.jasig.portal.portlet.rendering.PortletExecutionManager;
+import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 
 /**
  * Provides for streaming token replacement with a character stream.
@@ -39,7 +39,7 @@ public class ChannelTitleIncorporationWiterFilter extends AbstractTokenReplaceme
     public static final int MAX_CHANNEL_ID_LENGTH = 32;
     public static final String TITLE_TOKEN_SUFFIX = "}";
     
-    private final PortletExecutionManager portletExecutionManager;
+    private final IPortletExecutionManager portletExecutionManager;
     private final IUserLayoutManager userLayoutManager;
     private final HttpServletRequest httpServletRequest;
     private final HttpServletResponse httpServletResponse;
@@ -49,7 +49,7 @@ public class ChannelTitleIncorporationWiterFilter extends AbstractTokenReplaceme
      * @param channelManager Used to load the dynamic channel title.
      * @param userLayoutManager Used to access the default title if no dynamic title is provided.
      */
-    public ChannelTitleIncorporationWiterFilter(Writer wrappedWriter, PortletExecutionManager portletExecutionManager, IUserLayoutManager userLayoutManager,
+    public ChannelTitleIncorporationWiterFilter(Writer wrappedWriter, IPortletExecutionManager portletExecutionManager, IUserLayoutManager userLayoutManager,
             HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         super(wrappedWriter, TITLE_TOKEN_PREFIX, MAX_CHANNEL_ID_LENGTH, TITLE_TOKEN_SUFFIX);
         this.portletExecutionManager = portletExecutionManager;

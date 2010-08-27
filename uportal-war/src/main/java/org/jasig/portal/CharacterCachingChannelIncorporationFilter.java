@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.portlet.rendering.PortletExecutionManager;
+import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.serialize.CachingSerializer;
 import org.jasig.portal.serialize.MarkupSerializer;
 import org.jasig.portal.utils.SAX2FilterImpl;
@@ -75,7 +75,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
      */
     private String insideElement = null;
     
-    private final PortletExecutionManager portletExecutionManager;
+    private final IPortletExecutionManager portletExecutionManager;
     private final IUserLayoutManager userLayoutManager;
 
     /**
@@ -101,7 +101,7 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
     /**
      * Downward chaining constructor.
      */
-    public CharacterCachingChannelIncorporationFilter(CachingSerializer handler, PortletExecutionManager portletExecutionManager, IUserLayoutManager userLayoutManager, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
+    public CharacterCachingChannelIncorporationFilter(CachingSerializer handler, IPortletExecutionManager portletExecutionManager, IUserLayoutManager userLayoutManager, boolean ccaching, HttpServletRequest request, HttpServletResponse response) {
         super(handler);
 
         this.ccaching = ccaching;

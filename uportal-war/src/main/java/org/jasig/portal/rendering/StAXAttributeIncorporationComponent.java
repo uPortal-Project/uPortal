@@ -26,15 +26,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import javax.xml.stream.util.EventReaderDelegate;
 
 import org.jasig.portal.cache.CacheKey;
+import org.jasig.portal.xml.stream.FilteringXMLEventReader;
 
 /**
  * @author Eric Dalquist
@@ -80,7 +78,7 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
         return new CacheableEventReaderImpl<XMLEventReader, XMLEvent>(cacheKey, eventReader);
     }
     
-    private static final class AttributeIncorporatingXMLEventReader extends EventReaderDelegate {
+    private static final class AttributeIncorporatingXMLEventReader extends FilteringXMLEventReader {
         private final HttpServletRequest request;
         private final HttpServletResponse response;
         private final AttributeSource attributeSource;
@@ -93,31 +91,9 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
             this.response = response;
             this.attributeSource = attributeSource;
         }
-
-        @Override
-        public Object next() {
-            return super.next();
-        }
-
-        @Override
-        public XMLEvent nextEvent() throws XMLStreamException {
-            final XMLEvent event = super.nextEvent();
-            return this.filterEvent(event);
-        }
-
-        @Override
-        public XMLEvent nextTag() throws XMLStreamException {
-            final XMLEvent event = super.nextTag();
-            return this.filterEvent(event);
-        }
-
-        @Override
-        public XMLEvent peek() throws XMLStreamException {
-            final XMLEvent event = super.peek();
-            return this.filterEvent(event);
-        }
         
-        private XMLEvent filterEvent(XMLEvent event) {
+        @Override
+        protected XMLEvent filterEvent(XMLEvent event, boolean peek) {
             //Only filtering start elements to add attributes
             if (!event.isStartElement()) {
                 return event;

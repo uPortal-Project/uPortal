@@ -10,20 +10,29 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Transformer;
 
 import org.jasig.portal.cache.CacheKey;
 
 /**
+ * Used by a {@link XSLTComponent} to configure the {@link Transformer}
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface TransformerConfigurationSource {
-    public Map<String, Object> getTransformerParameters(HttpServletRequest request, HttpServletResponse response);
+    /**
+     * Passed on to {@link Transformer#setParameter(String, Object)}
+     */
+    public Map<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response);
     
     /**
-     * transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+     * Passed on to {@link Transformer#setOutputProperties(Properties)}
      */
-    public Properties getTransformerOutputProperties(HttpServletRequest request, HttpServletResponse response);
+    public Properties getOutputProperties(HttpServletRequest request, HttpServletResponse response);
     
-    public CacheKey getTransformerConfigurationKey(HttpServletRequest request, HttpServletResponse response);
+    /**
+     * A key representing the state of the parameters and properties for the request.
+     */
+    public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response);
 }

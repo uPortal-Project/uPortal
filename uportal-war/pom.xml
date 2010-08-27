@@ -464,6 +464,12 @@
 
     <build>
         <finalName>${uportal.docbase}</finalName>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
@@ -502,15 +508,6 @@
                 <configuration>
                     <attachClasses>true</attachClasses>
                     <webXml>${war-plugin-webxml-source}</webXml>
-                    <webResources>
-                        <resource>
-                            <filtering>true</filtering>
-                            <directory>${basedir}/src/main/webapp</directory>
-                            <includes>
-                                <include>META-INF/context.xml</include>
-                            </includes>
-                        </resource>
-                    </webResources>
                 </configuration>
             </plugin>
             <plugin>

@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.portlet.rendering.PortletExecutionManager;
+import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.serialize.CachingSerializer;
 /**
  * @deprecated All IChannel implementations should be migrated to portlets
@@ -40,7 +40,7 @@ public class ChannelContentCacheEntry extends BaseChannelCacheEntry {
         super(channelId);
     }
 
-    public void replayCache(CachingSerializer serializer, PortletExecutionManager portletExecutionManager,
+    public void replayCache(CachingSerializer serializer, IPortletExecutionManager portletExecutionManager,
         HttpServletRequest req, HttpServletResponse res)
         throws PortalException {
         

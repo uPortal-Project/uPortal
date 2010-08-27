@@ -24,7 +24,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.rendering.PortletExecutionManager;
+import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.serialize.CachingSerializer;
 
 public class StringCacheEntry implements CacheEntry {
@@ -35,7 +35,7 @@ public class StringCacheEntry implements CacheEntry {
         this.characters = characters;
     }
     
-    public void replayCache(CachingSerializer serializer, PortletExecutionManager portletExecutionManager,
+    public void replayCache(CachingSerializer serializer, IPortletExecutionManager portletExecutionManager,
         HttpServletRequest req, HttpServletResponse res) throws PortalException {
         try {
             serializer.printRawCharacters(characters);

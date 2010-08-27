@@ -67,7 +67,7 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlet.rendering.PortletExecutionManager;
+import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
@@ -177,7 +177,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     private IPortletWindowRegistry portletWindowRegistry;
     private ApplicationEventPublisher applicationEventPublisher;
     private ResourcesDao resourcesDao;
-    private PortletExecutionManager portletExecutionManager;
+    private IPortletExecutionManager portletExecutionManager;
     private IPortalUrlProvider portalUrlProvider;
     
     /**
@@ -197,7 +197,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
 	}
 
 	@Autowired
-	public void setPortletExecutionManager(PortletExecutionManager portletExecutionManager) {
+	public void setPortletExecutionManager(IPortletExecutionManager portletExecutionManager) {
         this.portletExecutionManager = portletExecutionManager;
     }
     
