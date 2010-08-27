@@ -32,18 +32,25 @@ import javax.xml.transform.stream.StreamSource;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
 
 /**
+ * Implementation of core XML related utilities
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class XmlUtilitiesImpl implements XmlUtilities {
     private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
     
     private Ehcache templatesCache;
 
-    public void setTemplatesCache(Ehcache templatesCache) {
+    @Autowired
+    public void setTemplatesCache(@Qualifier("xsltTemplatesCache") Ehcache templatesCache) {
         this.templatesCache = templatesCache;
     }
 

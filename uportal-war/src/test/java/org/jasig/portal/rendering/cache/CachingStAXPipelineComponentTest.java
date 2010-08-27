@@ -16,11 +16,11 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
 import org.easymock.EasyMock;
-import org.jasig.portal.cache.CacheKey;
 import org.jasig.portal.rendering.CacheableEventReader;
 import org.jasig.portal.rendering.CacheableEventReaderImpl;
 import org.jasig.portal.rendering.StAXPipelineComponent;
 import org.jasig.portal.rendering.cache.CachingStAXPipelineComponent;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.stream.XMLEventBufferReader;
 import org.junit.Assert;
 import org.junit.Test;

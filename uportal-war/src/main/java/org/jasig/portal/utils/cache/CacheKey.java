@@ -4,7 +4,7 @@
  * https://www.ja-sig.org/svn/jasig-parent/tags/rel-10/license-header.txt
  */
 
-package org.jasig.portal.cache;
+package org.jasig.portal.utils.cache;
 
 import java.io.Serializable;
 import java.util.ArrayList;

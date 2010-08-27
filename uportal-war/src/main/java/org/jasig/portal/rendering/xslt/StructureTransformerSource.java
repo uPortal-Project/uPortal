@@ -28,9 +28,9 @@ import javax.xml.transform.TransformerConfigurationException;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.StructureStylesheetDescription;
-import org.jasig.portal.cache.CacheKey;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.XmlUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ResourceLoaderAware;

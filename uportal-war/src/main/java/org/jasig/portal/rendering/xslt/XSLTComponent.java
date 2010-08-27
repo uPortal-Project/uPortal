@@ -18,10 +18,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stax.StAXResult;
 import javax.xml.transform.stax.StAXSource;
 
-import org.jasig.portal.cache.CacheKey;
 import org.jasig.portal.rendering.CacheableEventReader;
 import org.jasig.portal.rendering.CacheableEventReaderImpl;
 import org.jasig.portal.rendering.StAXPipelineComponent;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.stream.XMLEventWriterBuffer;
 
 /**

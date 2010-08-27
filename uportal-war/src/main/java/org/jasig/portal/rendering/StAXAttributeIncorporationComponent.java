@@ -31,7 +31,7 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.jasig.portal.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.stream.FilteringXMLEventReader;
 
 /**

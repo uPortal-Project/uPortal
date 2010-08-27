@@ -26,7 +26,9 @@
     				 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
     
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal"/>
+    <context:component-scan base-package="org.jasig.portal">
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.portlets\."/>
+    </context:component-scan>
     
     <context:property-placeholder location="classpath:/properties/rdbm.properties,classpath:/properties/portal.properties,classpath:/properties/security.properties"/>
     

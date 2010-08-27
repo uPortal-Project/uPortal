@@ -13,7 +13,6 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
 import org.easymock.EasyMock;
-import org.jasig.portal.cache.CacheKey;
 import org.jasig.portal.character.stream.CharacterEventBufferReader;
 import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.events.CharacterEvent;
@@ -21,6 +20,7 @@ import org.jasig.portal.rendering.CacheableEventReader;
 import org.jasig.portal.rendering.CacheableEventReaderImpl;
 import org.jasig.portal.rendering.CharacterPipelineComponent;
 import org.jasig.portal.rendering.cache.CachingCharacterPipelineComponent;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

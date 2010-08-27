@@ -9,12 +9,15 @@ import net.sf.ehcache.Element;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParseException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.WebRequest;
 
 /**
@@ -24,26 +27,27 @@ import org.springframework.web.context.request.WebRequest;
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
+@Service
 public class PortalSpELServiceImpl implements IPortalSpELService {
     
     /**
      * Expression regex designed to match SpEL expressions contained in 
      * a ${ } block
      */
-    protected final static Pattern EXPRESSION_REGEX = Pattern.compile("\\$\\{([^\\}]*)\\}");
+    public final static Pattern EXPRESSION_REGEX = Pattern.compile("\\$\\{([^\\}]*)\\}");
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private ExpressionParser expressionParser = new SpelExpressionParser();
     private Ehcache expressionCache;
     
-    
     public void setExpressionParser(ExpressionParser expressionParser) {
         Validate.notNull(expressionParser);
         this.expressionParser = expressionParser;
     }
 
-    public void setExpressionCache(Ehcache expressionCache) {
+    @Autowired
+    public void setExpressionCache(@Qualifier("SpELExpressionCache") Ehcache expressionCache) {
         this.expressionCache = expressionCache;
     }
 

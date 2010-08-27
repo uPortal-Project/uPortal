@@ -24,7 +24,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-
+    
+    <!-- This bean CANNOT be autowired or it will not function correctly -->
+    <bean class="org.jasig.portal.utils.cache.EhcacheManagerBeanConfigurer">
+        <property name="cacheManager" ref="cacheManager" />
+    </bean>
     
     <!-- 
      | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml

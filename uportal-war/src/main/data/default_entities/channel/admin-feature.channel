@@ -69,8 +69,8 @@
       <values><value>200</value></values>  
     </portletPreference>
     <portletPreference> 
-      <name>img-uri-spel</name>  
-      <values><value>contextPath + '/media/org/jasig/portal/channels/CImage/admin_feature.png'</value></values>  
+      <name>img-uri</name>  
+      <values><value>${request.contextPath}/media/org/jasig/portal/channels/CImage/admin_feature.png</value></values>  
     </portletPreference>
     <portletPreference> 
       <name>img-width</name>  

@@ -9,7 +9,7 @@ package org.jasig.portal.rendering;
 import java.util.Iterator;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey;
 
 /**
  * Generic {@link CacheableEventReader} implementation, Takes a reference to the eventReader and

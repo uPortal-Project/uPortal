@@ -13,8 +13,8 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.cache.CacheKey;
 import org.jasig.portal.spring.spel.IPortalSpELService;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.web.context.request.ServletWebRequest;

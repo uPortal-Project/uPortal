@@ -28,7 +28,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey;
 
 /**
  * Merges the results of multiple {@link TransformerConfigurationSource}s

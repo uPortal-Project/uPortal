@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
-import org.jasig.portal.cache.CacheKey;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

@@ -13,7 +13,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.EventReaderDelegate;
 
-import org.jasig.portal.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey;
 
 /**
  * Logs the StAX events

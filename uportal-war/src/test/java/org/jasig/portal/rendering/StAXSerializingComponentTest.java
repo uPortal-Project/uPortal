@@ -22,7 +22,6 @@ import javax.xml.stream.events.XMLEvent;
 
 import junit.framework.TestCase;
 
-import org.jasig.portal.cache.CacheKey;
 import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.CharacterEventSource;
 import org.jasig.portal.character.stream.PortletContentPlaceholderEventSource;
@@ -35,6 +34,7 @@ import org.jasig.portal.character.stream.events.PortletContentPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
+import org.jasig.portal.utils.cache.CacheKey;
 
 /**
  * @author Eric Dalquist

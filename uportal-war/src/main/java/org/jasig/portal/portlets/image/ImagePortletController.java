@@ -26,10 +26,11 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.jasig.portal.spring.spel.IPortalSpELService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.context.PortletWebRequest;
 import org.springframework.web.portlet.mvc.AbstractController;
 
 /** <p>A simple portlet which renders an image along with an optional
@@ -51,7 +52,12 @@ import org.springframework.web.portlet.mvc.AbstractController;
  * @version $Revision$
  */
 public class ImagePortletController extends AbstractController {
-    private final ExpressionParser expressionParser = new SpelExpressionParser();
+    private IPortalSpELService portalSpELService;
+    
+    @Autowired
+    public void setPortalSpELService(IPortalSpELService portalSpELService) {
+        this.portalSpELService = portalSpELService;
+    }
 
     @Override
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request,
@@ -59,29 +65,29 @@ public class ImagePortletController extends AbstractController {
 		
 		final Map<String,Object> model = new HashMap<String,Object>();
 		
+		final PortletPreferences preferences = request.getPreferences();
+        final PortletWebRequest webRequest = new PortletWebRequest(request);
+		
 		// retrieve configuration information about the image from the portlet
 		// preferences
-		model.put("uri", getPreference("img-uri", request));
-		model.put("width", getPreference("img-width", request));
-		model.put("height", getPreference("img-height", request));
-		model.put("border", getPreference("img-border", request));
-		model.put("link", getPreference("img-link", request));
-		model.put("caption", getPreference("caption", request));
-		model.put("subcaption", getPreference("subcaption", request));
-		model.put("alt", getPreference("alt-text", request));
+		model.put("uri", getPreference("img-uri", webRequest, preferences));
+		model.put("width", getPreference("img-width", webRequest, preferences));
+		model.put("height", getPreference("img-height", webRequest, preferences));
+		model.put("border", getPreference("img-border", webRequest, preferences));
+		model.put("link", getPreference("img-link", webRequest, preferences));
+		model.put("caption", getPreference("caption", webRequest, preferences));
+		model.put("subcaption", getPreference("subcaption", webRequest, preferences));
+		model.put("alt", getPreference("alt-text", webRequest, preferences));
 		
 		return new ModelAndView("/jsp/Image/imagePortlet", model);
 	}
 
-    protected String getPreference(String name, RenderRequest request) {
-        final PortletPreferences preferences = request.getPreferences();
-        
-        final String spelValue = preferences.getValue(name + "-spel", null);
-        if (spelValue != null) {
-            final Expression expression = this.expressionParser.parseExpression(spelValue);
-            return expression.getValue(request, String.class);
+    protected String getPreference(String name, WebRequest request, PortletPreferences preferences) {
+        final String value = preferences.getValue(name, null);
+        if (value != null) {
+            return this.portalSpELService.parseString(value, request);
         }
         
-        return preferences.getValue(name, null);
+        return value;
     }
 }

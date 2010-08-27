@@ -9,7 +9,7 @@ package org.jasig.portal.rendering;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey;
 
 
 /**

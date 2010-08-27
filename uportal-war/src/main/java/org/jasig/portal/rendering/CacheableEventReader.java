@@ -6,7 +6,7 @@
 
 package org.jasig.portal.rendering;
 
-import org.jasig.portal.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey;
 
 /**
  * Response for a rendering pipeline component that includes the event reader for data and the

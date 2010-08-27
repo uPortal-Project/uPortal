@@ -17,10 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
-import org.jasig.portal.cache.CacheKey;
 import org.jasig.portal.rendering.CacheableEventReader;
 import org.jasig.portal.rendering.CacheableEventReaderImpl;
 import org.jasig.portal.rendering.PipelineComponent;
+import org.jasig.portal.utils.cache.CacheKey;
 
 /**
  * component that can cache character pipeline events

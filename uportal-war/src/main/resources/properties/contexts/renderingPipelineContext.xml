@@ -26,15 +26,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
     
-    <bean id="xmlUtilities" class="org.jasig.portal.xml.XmlUtilitiesImpl">
-        <property name="templatesCache">
-            <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-                <property name="cacheManager" ref="cacheManager" />
-                <property name="cacheName" value="xsltTemplatesCache" />
-            </bean>
-        </property>
-    </bean>
-    
     <!-- 
      | Due to the fairly generic nature of each component in the rendering 
      | pipeline it cannot be autowired. However the dependencies of each
