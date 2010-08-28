@@ -577,10 +577,11 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="logo.focused.block">
+  	<img src="{$SKIN_PATH}/images/portal_logo.png" alt="{$TOKEN[@name='LOGO']}"/>
   	<!-- Text:
     <span><xsl:value-of select="$TOKEN[@name='LOGO']"/></span> -->
-    <!-- Image:  -->
-    <img src="{$SKIN_PATH}/images/portal_logo_slim.png" alt="{$TOKEN[@name='LOGO']}"/>
+    <!-- Slim version of logo:
+    <img src="{$SKIN_PATH}/images/portal_logo_slim.png" alt="{$TOKEN[@name='LOGO']}"/>  -->
   </xsl:template>
   <!-- ================================================== -->
   

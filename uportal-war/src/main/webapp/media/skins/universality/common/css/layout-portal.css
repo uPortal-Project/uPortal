@@ -368,9 +368,9 @@ table.purpose-layout td {margin:0; padding:0;}
  */
 .up-gallery {background:#333; color:#eee;}
 .up-gallery .gallery-inner {background:url(../images/gallery-bar.png) top left repeat-x;}
-.up-gallery .content-wrapper .content-filters-wrapper {padding-right:5px; background:transparent url(../images/gallery-search-active-arrow.png) right 5% no-repeat;}
+.up-gallery .content-wrapper .content-filters-wrapper {padding-right:5px; background:transparent url(../images/gallery-search-active-arrow.png) right 20% no-repeat;}
 .up-gallery .content-wrapper .content-filters-wrapper .categories-column,
-.up-gallery .content-wrapper .content-filters-wrapper .packages-column {background:#424243; border:3px solid #424242; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;}
+.up-gallery .content-wrapper .content-filters-wrapper .packages-column {background:#424243; /*border:3px solid #424243; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;*/}
 
 /* Gallery Menu Items 
  * The navigation menu of gallery views.
@@ -421,22 +421,23 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .categories-column,.up-gallery .packages-column {padding:0;}
 .up-gallery .categories,.up-gallery .packages {}
 .up-gallery .categories-column, .up-gallery .packages-column{clear:both;}
-.up-gallery .content-filters-wrapper h3 {padding:5px 0 0 0; cursor:pointer; font-size:12px; font-weight:normal; margin:0;}
+.up-gallery .content-filters-wrapper h3 {margin:0; padding:7px 0 0 0; cursor:pointer; font-size:12px; color:#c5c5c6;}
 .up-gallery .categories-column h3 {
 	background:#333;
-	padding-left:10px;
 	-webkit-border-top-left-radius: 2px;
 	-webkit-border-top-right-radius: 2px;
 	-moz-border-radius-topleft: 2px;
 	-moz-border-radius-topright: 2px;
 	border-top-left-radius: 2px;
 	border-top-right-radius: 2px;
+	
 }
-.up-gallery .packages-column h3 {position:absolute; top:0; left:55px;}
+.up-gallery .packages-column h3 {position:absolute; top:0; left:56px;}
 .up-gallery .content-filters-wrapper .active h3 {color:#f68923;}
 .up-gallery .content-filters-wrapper h3 span {
-	padding:0 10px; 
-	border:1px solid #333; 
+	padding:1px 10px; 
+	border:2px solid #424243; 
+	border-bottom:none;
 	-webkit-border-top-left-radius: 5px;
 	-webkit-border-top-right-radius: 5px;
 	-moz-border-radius-topleft: 5px;
@@ -444,14 +445,14 @@ table.purpose-layout td {margin:0; padding:0;}
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 }
-.up-gallery .content-filters-wrapper .active h3 span {background:#333;}
-.up-gallery .content-filters-wrapper h3:hover,
-.up-gallery .content-filters-wrapper h3:focus {text-decoration:underline;}
+.up-gallery .content-filters-wrapper .active h3 span {background:#424243;}
+.up-gallery .content-filters-wrapper h3 span:hover,
+.up-gallery .content-filters-wrapper h3 span:focus {background:#000; color:#f68923;}
 .up-gallery .categories-column .categories-wrapper, .up-gallery .packages-column .packages-wrapper {display:none;}
 .up-gallery .categories-column.active .categories-wrapper, .up-gallery .packages-column.active .packages-wrapper {display:block;}
 .up-gallery .packages-wrapper, .up-gallery .categories-wrapper {padding:10px;}
 .up-gallery .packages p {margin:0; color:#aaa; font-size:11px;}
-.up-gallery .categories-column h4 {color:#222; padding-bottom:2px; font-size:10px; text-transform:uppercase;}
+.up-gallery .categories-column h4 {color:#ccc; padding-bottom:1px; margin-bottom:3px; font-size:10px; text-transform:uppercase; border-bottom:1px dotted #666;}
 .up-gallery .categories ul, .up-gallery .categories li, .up-gallery .categories a {list-style:none; margin:0; padding:0; color:#aaa; font-size:10px; text-decoration:none;}
 .up-gallery .categories li {float:left; padding:1px 0 1px 2px;  text-align:left; cursor:pointer;}
 .up-gallery .categories li:after {content:", ";}
@@ -461,23 +462,38 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .categories li a:hover, .up-gallery .categories li a:focus {background-color:rgba(0,0,0,.25);}
 .up-gallery .categories li.active a {text-decoration:underline;}
 
-/* ---------- CSS Styles for Pager ---------- */
-.up-gallery .content-pager-wrapper {background:#424243;}
-.up-gallery .pager-button-up span ,.up-gallery .pager-button-down span {display:none;}
-.up-gallery .pager-pagination {height:38px; color:#FFF; margin:2px 0 2px 0; font-size:10px;}
-
-.up-gallery .pager-button-up-inner {display:block; height:59px; background: url(../images/gallery-pager-up-inactive.png) center 85% no-repeat;}
-.up-gallery .pager-button-up.active .up-gallery .pager-button-up-inner {background-image: url(../images/gallery-pager-up-active.png);}
-.up-gallery .pager-button-down-inner {display:block; height:59px; background: url(../images/gallery-pager-down-inactive.png) center 15% no-repeat;}
-.up-gallery .pager-button-down.active .up-gallery .pager-button-down-inner {background-image: url(../images/gallery-pager-down-active.png);}
-
-.up-gallery .pager-button-up,.up-gallery .pager-button-down{cursor:pointer; border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; position:relative; border:1px solid #666666; height:62px; background-image:none; background:transparent;}
-.up-gallery .pager-button-up.active,.up-gallery .pager-button-down.active {background-color:#666666; background-image:-moz-linear-gradient(90deg,#424243,#666666); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#424243), to(#666666)); }
-.up-gallery .pager-button-up.active:hover,.up-gallery .pager-button-down.active:hover {background-image:-moz-linear-gradient(90deg,#424243,#888888); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#424243), to(#888888)); }
-.up-gallery .content-pager-wrapper {padding:2px;}
+/* Gallery List Pager 
+ * Pagination controls for lists in the gallery.
+ */
+.up-gallery .content-pager-wrapper {padding:2px; background:#424243;}
 .up-gallery .content-pager-wrapper .column-inner {padding:0px; margin:0px;}
+.up-gallery .pager-button-up span,
+.up-gallery .pager-button-down span {display:none;}
+.up-gallery .pager-pagination {height:38px; color:#FFF; margin:2px 0 2px 0; font-size:10px;}
+.up-gallery .pager-button-up-inner {display:block; height:59px; background: url(../images/gallery-pager-up-active.png) center 85% no-repeat;}
+.up-gallery .pager-button-down-inner {display:block; height:59px; background: url(../images/gallery-pager-down-active.png) center 15% no-repeat;}
+.up-gallery .pager-button-up.fl-pager-disabled .pager-button-up-inner {background-image: url(../images/gallery-pager-up-inactive.png);}
+.up-gallery .pager-button-down.fl-pager-disabled .pager-button-down-inner {background-image: url(../images/gallery-pager-down-inactive.png);}
+.up-gallery .pager-button-up,
+.up-gallery .pager-button-down {cursor:pointer; border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; position:relative; border:1px solid #666666; height:62px; background-image:none; background:transparent;}
+.up-gallery .pager-button-up,
+.up-gallery .pager-button-down {background-color:#666666; background-image:-moz-linear-gradient(90deg,#424243,#666666); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#424243), to(#666666));}
+.up-gallery .pager-button-up:hover,
+.up-gallery .pager-button-down:hover,
+.up-gallery .pager-button-up:focus,
+.up-gallery .pager-button-down:focus {background-image:-moz-linear-gradient(90deg,#424243,#888888); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#424243), to(#888888)); border-color:#fff;}
+.up-gallery .pager-button-up-inner:focus,
+.up-gallery .pager-button-down-inner:focus {outline:none;}
+.up-gallery .pager-button-up.fl-pager-disabled,
+.up-gallery .pager-button-down.fl-pager-disabled,
+.up-gallery .pager-button-up.fl-pager-disabled:hover,
+.up-gallery .pager-button-down.fl-pager-disabled:hover,
+.up-gallery .pager-button-up.fl-pager-disabled:focus,
+.up-gallery .pager-button-down.fl-pager-disabled:focus {background:#333; border-color:#666;}
 
-/* ----------CSS Styles for Add_Content Results ---------- */
+/* Gallery Portlet List 
+ * The list of portlets for add and use.
+ */
 .up-gallery .results-wrapper {font-size:10px; position:relative; color:#AAA;}
 .up-gallery .results-wrapper .portlet-list {list-style:none; padding:0; margin:0; position:relative;}
 .up-gallery .results-wrapper .portlet-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:25%; height:50%;}
@@ -486,62 +502,61 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .results-column.fl-col-main {margin:0 74px 0 0; padding:0px; position:relative;}
 .up-gallery .results-wrapper .pager-column.fl-col-side {float:right; width:74px; margin:0px; padding:0px;}
 .up-gallery .results-wrapper .portlet-list {position:relative; width:100%;}
-
-*:first-child+html .up-gallery .results-wrapper .portlet-list li {width:24%;} 
-
 .up-gallery .portlet-wrapper a {width:25px; cursor:pointer; color:#000; position:absolute; padding:3px 8px; top:0; right:0; display:none; background:#f68923; background-image:-moz-linear-gradient(90deg,#f68923,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(#ffffff)); border-bottom-left-radius:3px; -moz-border-radius-bottomleft:3px; -webkit-border-bottom-left-radius:3px; }
 .up-gallery .portlet-description {clear:right; color:#AAA; display:inline;}
 .up-gallery .portlet-titlebar {padding:5px 0 3px 0; font-size:12px; font-weight:bold; color:#DDD;}
-
 .up-gallery .portlet-wrapper  {border:1px solid #333; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;}
 .up-gallery .portlet-wrapper:hover {border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); border-top-right-radius:0px;    -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;}
 .up-gallery .portlet-wrapper:hover a {display:block;}
 .up-gallery .portlet-wrapper img {width:37px; height:37px; float:left; margin-right:5px; margin-bottom:5px;}
-
+/* temporary icon */
+.up-gallery .portlet-wrapper img {background:transparent url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png) 0 0 no-repeat;}
 .up-gallery .results-wrapper .package-list {list-style:none; padding:0; margin:0; position:relative;}
 .up-gallery .results-wrapper .package-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:25%; height:50%;}
 .up-gallery .results-wrapper .package-list li .package-wrapper {height:66px; padding:5px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
 .up-gallery .results-wrapper .package-list {position:relative; width:100%;}
-
+/* IE7 adjustments*/
+*:first-child+html .up-gallery .results-wrapper .portlet-list li {width:24%;} 
 *:first-child+html .up-gallery .results-wrapper .package-list li {width:24%;} 
 
 .up-gallery .package-wrapper a {width:25px; cursor:pointer; color:#000; position:absolute; padding:3px 8px; top:0; right:0; display:none; background:#f68923; background-image:-moz-linear-gradient(90deg,#f68923,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(#ffffff)); border-bottom-left-radius:3px; -moz-border-radius-bottomleft:3px; -webkit-border-bottom-left-radius:3px; }
 .up-gallery .package-description {clear:right; color:#AAA; display:inline;}
 .up-gallery .package-titlebar {padding:5px 0 3px 0; font-size:12px; font-weight:bold; color:#DDD;}
-
 .up-gallery .package-wrapper  {border:1px solid #333; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;}
 .up-gallery .package-wrapper:hover {border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); border-top-right-radius:0px;    -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;}
 .up-gallery .package-wrapper:hover a {display:block;}
 .up-gallery .package-wrapper img {width:37px; height:37px; float:left; margin-right:5px; margin-bottom:5px;}
 
-/* ----------CSS Styles for Skins Results ---------- */
+/* Gallery Skin List 
+ * The list of skins.
+ */
 .up-gallery .results-wrapper {font-size:10px; position:relative; color:#AAA;}
 .up-gallery .results-wrapper .skins-list {list-style:none; padding:0; margin:0; position:relative;}
 .up-gallery .results-wrapper .skins-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:140px; height:75%;}
 .up-gallery .results-wrapper .skins-list li .skins-wrapper {height:100px; padding:5px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
-
 .up-gallery .skins-wrapper a {cursor:pointer; top:0; right:0; color:transparent;}
 .up-gallery .skins-wrapper img {border:none;}
 .up-gallery .skin-titlebar {padding:5px 0 3px 0; font-size:12px; font-weight:bold; color:#DDD;}
-
 .up-gallery .skins-wrapper  {border:1px solid #333; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;}
 .up-gallery .skins-wrapper:hover {border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333));}
 .up-gallery .skins-wrapper:hover a {display:block;}
-.up-gallery .skins-wrapper.selected {border:1px solid #f68923; background:#f68d29; background-image:-moz-linear-gradient(90deg,#d87516,#222222); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#d87516), to(#222222));}
+.up-gallery .skins-wrapper.selected {border:1px solid #f68923; background:#f68d29; background-image:-moz-linear-gradient(90deg,#d87516,#222222); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#d87516), to(#222222)); color:#fff;}
+.up-gallery .selected .skin-titlebar {color:#fff;}
 
-/* ----------CSS Styles for Layout Results ---------- */
+/* Gallery Layout List 
+ * The list of page layouts.
+ */
 .up-gallery .results-wrapper {font-size:10px; position:relative; color:#AAA;}
 .up-gallery .results-wrapper .layouts-list {list-style:none; padding:0; margin:0; position:relative;}
 .up-gallery .results-wrapper .layouts-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:140px; height:50%;}
 .up-gallery .results-wrapper .layouts-list li .layout-wrapper {height:66px; padding:5px 10px 5px 10px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
-
 .up-gallery .layout-wrapper a {cursor:pointer; top:0; right:0; color:transparent;}
 .up-gallery .layout-wrapper img {border:none;}
 .up-gallery .layout-titlebar {padding:5px 0 3px 0; font-size:12px; font-weight:bold; color:#DDD;}
 .up-gallery .layout-description {clear:right; color:#AAA; display:inline;}
 .up-gallery .layout-thumb {float:left; margin:0 5px 5px 0;}
-
 .up-gallery .layout-wrapper  {border:1px solid #333; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;}
 .up-gallery .layout-wrapper:hover {border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333));}
 .up-gallery .layout-wrapper:hover a {display:block;}
 .up-gallery .layout-wrapper.selected {border:1px solid #f68923; background:#f68d29; background-image:-moz-linear-gradient(90deg,#d87516,#222222); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#d87516), to(#222222));}
+.up-gallery .selected .layout-titlebar {color:#fff;}
