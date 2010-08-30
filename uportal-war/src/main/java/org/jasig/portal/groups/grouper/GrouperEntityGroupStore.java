@@ -101,26 +101,12 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
             // Search the Grouper server for groups with the specified local
             // key
             LOGGER.debug("Searching Grouper for a direct match for key: " + key);
-            GcGetGroups getGroups = new GcGetGroups();
-            getGroups.addSubjectIdentifier(key);
-            WsGetGroupsResults results = getGroups.execute();
-            
-            // if no results were returned, return null
-            if (results == null || results.getResults() == null
-                    || results.getResults().length == 0) {
-                LOGGER.debug("Grouper service returned no matches for key " + key);
-                return null;
+            WsGroup wsGroup = findGroupFromKey(key);
+            if (wsGroup == null) {
+              return null;
             }
+            IEntityGroup group = createUportalGroupFromGrouperGroup(wsGroup);
             
-            // construct a uPortal group representation of the first returned
-            // result
-            WsSubject subject = results.getResults()[0].getWsSubject();
-            IEntityGroup group = new EntityGroupImpl(subject.getName(), IPerson.class);
-            
-            // TODO: need to set the group name and description to the actual
-            // display name and description
-            group.setName(subject.getName());
-
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Retrieved group from the Grouper server matching key "
                         + key + ": " + group.toString());
@@ -191,9 +177,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.trace("Retrieved group: " + g.getName());
                             }
-                            IEntityGroup parent = new EntityGroupImpl(g.getName(), IPerson.class);
-                            // TODO: set display name and description
-                            parent.setName(g.getName());
+                            IEntityGroup parent = createUportalGroupFromGrouperGroup(g);
                         }
                     }
                 }
@@ -255,10 +239,12 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
                 // if the member is a person group
                 if (gInfo.getName() != null && gInfo.getName().contains(":")) {
                     LOGGER.trace("creating group member: " + gInfo.getName());
-                    IEntityGroup member = new EntityGroupImpl(gInfo.getAttributeValue(4), IPerson.class);
-                    // TODO: set display name and description
-                    member.setName(gInfo.getAttributeValue(4));
-                    members.add(member);
+                    
+                    WsGroup wsGroup = findGroupFromKey(gInfo.getAttributeValue(4));
+                    if (wsGroup != null) {
+                      IEntityGroup member = createUportalGroupFromGrouperGroup(wsGroup);
+                      members.add(member);
+                    }
                 }
                 
                 // otherwise assume the member is an individual person 
@@ -329,9 +315,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
             for (WsGetGroupsResult wsg : results.getResults()) {
                 if (wsg.getWsGroups() != null) {
                     for (WsGroup g : wsg.getWsGroups()) {
-                        IEntityGroup member = new EntityGroupImpl(g.getName(), IPerson.class);
-                        // TODO: set display name and description
-                        member.setName(g.getName());
+                        IEntityGroup member = createUportalGroupFromGrouperGroup(g);
                         members.add(member);
                         if (LOGGER.isTraceEnabled()) {
                             LOGGER.trace("found IEntityGroup member: " + member);
@@ -433,7 +417,47 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
         }
 	}
 	
-	
+    /**
+     * Construct an IEntityGroup from a Grouper WsGroup.
+     * 
+     * @param wsGroup
+     * @return the group
+     */
+    protected IEntityGroup createUportalGroupFromGrouperGroup(WsGroup wsGroup) {
+        IEntityGroup iEntityGroup = new EntityGroupImpl(wsGroup.getName(),
+                IPerson.class);
+
+        // need to set the group name and description to the actual
+        // display name and description
+        iEntityGroup.setName(wsGroup.getDisplayName());
+        iEntityGroup.setDescription(wsGroup.getDescription());
+        return iEntityGroup;
+    }
+
+    /**
+     * Find the Grouper group matching the specified key.
+     * 
+     * @param key
+     * @return the group or null
+     */
+    protected WsGroup findGroupFromKey(String key) {
+        GcFindGroups gcFindGroups = new GcFindGroups();
+        gcFindGroups.addGroupName(key);
+        WsFindGroupsResults results = gcFindGroups.execute();
+
+        // if no results were returned, return null
+        if (results == null || results.getGroupResults() == null
+                || results.getGroupResults().length == 0) {
+            LOGGER.debug("Grouper service returned no matches for key " + key);
+            return null;
+        }
+
+        // construct a uPortal group representation of the first returned
+        // result
+        WsGroup wsGroup = results.getGroupResults()[0];
+        return wsGroup;
+    } 
+
 	/*
 	 * UNSUPPORTED WRITE OPERATIONS
 	 * 
