@@ -73,7 +73,7 @@
     <!-- theme attribute incorporation -->
     
     <!-- portlet rendering initiation -->
-    <bean class="org.jasig.portal.rendering.PortletRenderingInitiationComponent">
+    <bean id="portletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationComponent">
         <property name="parentComponent" ref="structureTransformComponent" />
     </bean>
     

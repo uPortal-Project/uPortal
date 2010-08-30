@@ -135,6 +135,7 @@
         <easymock.version>3.0</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
         <ehcache.version>2.2.0</ehcache.version>
+        <ehcache-spring-annotations.version>1.1.2</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.0</ehcache-web.version>
         <grouperClient.version>1.6.0</grouperClient.version>
         <hibernate-annotations.version>3.3.1.GA</hibernate-annotations.version>
@@ -214,6 +215,11 @@
                         <artifactId>retrotranslator-runtime</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.ehcache-spring-annotations</groupId>
+                <artifactId>ehcache-spring-annotations</artifactId>
+                <version>${ehcache-spring-annotations.version}</version>
             </dependency>
             <dependency> 
                 <groupId>com.ibm.icu</groupId> 

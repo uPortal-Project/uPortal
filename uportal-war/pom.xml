@@ -42,6 +42,11 @@
             <groupId>com.googlecode.cernunnos</groupId>
             <artifactId>cernunnos</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>com.googlecode.ehcache-spring-annotations</groupId>
+            <artifactId>ehcache-spring-annotations</artifactId>
+        </dependency>
 
         <dependency> 
             <groupId>com.ibm.icu</groupId> 

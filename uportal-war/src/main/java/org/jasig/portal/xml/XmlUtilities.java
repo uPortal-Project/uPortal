@@ -20,6 +20,7 @@
 package org.jasig.portal.xml;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.transform.Templates;
@@ -44,6 +45,12 @@ public interface XmlUtilities {
      * Get a {@link Transformer} for the specified stylesheet resource
      */
     public Transformer getTransformer(Resource stylesheet) throws TransformerConfigurationException, IOException;
+    
+    /**
+     * Gets an appropriate cache key for the specified stylesheet resource. The key should be valid for both {@link Transformer}s
+     * and {@link Templates} based on this stylesheet.
+     */
+    public Serializable getStylesheetCacheKey(Resource stylesheet) throws TransformerConfigurationException, IOException;
     
     /**
      * @return The {@link XMLEventFactory} used for generating StAX events

@@ -20,20 +20,19 @@
 package org.jasig.portal.xml;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Serializable;
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamSource;
 
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-
+import org.jasig.portal.utils.cache.resource.CachedResource;
+import org.jasig.portal.utils.cache.resource.CachingResourceLoader;
+import org.jasig.portal.utils.cache.resource.ResourceLoaderOptions;
+import org.jasig.portal.utils.cache.resource.ResourceLoaderOptionsBuilder;
+import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -46,30 +45,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class XmlUtilitiesImpl implements XmlUtilities {
     private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
+    private final ResourceLoaderOptions templatesLoaderOptions = new ResourceLoaderOptionsBuilder().digestAlgorithm("SHA1").digestInput(true);
     
-    private Ehcache templatesCache;
+    private CachingResourceLoader cachingResourceLoader;
 
     @Autowired
-    public void setTemplatesCache(@Qualifier("xsltTemplatesCache") Ehcache templatesCache) {
-        this.templatesCache = templatesCache;
+    public void setCachingResourceLoader(CachingResourceLoader cachingResourceLoader) {
+        this.cachingResourceLoader = cachingResourceLoader;
     }
 
+    /* (non-Javadoc)
+     * @see org.jasig.portal.xml.XmlUtilities#getTemplates(org.springframework.core.io.Resource)
+     */
+    @Override
     public Templates getTemplates(Resource stylesheet) throws TransformerConfigurationException, IOException {
-        final String key = stylesheet.getDescription();
-        Element templatesElement = this.templatesCache.get(key);
-        if (templatesElement != null) {
-            return (Templates)templatesElement.getObjectValue();
-        }
-        
-        final InputStream stylesheetStream = stylesheet.getInputStream();
-
-        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        final Templates templates = transformerFactory.newTemplates(new StreamSource(stylesheetStream));
-        
-        templatesElement = new Element(key, templates);
-        this.templatesCache.put(templatesElement);
-        
-        return templates;
+        final CachedResource<Templates> templates = this.getStylesheetCachedResource(stylesheet);
+        return templates.getCachedResource();
     }
 
     /* (non-Javadoc)
@@ -80,6 +71,20 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         final Templates templates = this.getTemplates(stylesheet);
         return templates.newTransformer();
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.xml.XmlUtilities#getStylesheetCacheKey(org.springframework.core.io.Resource)
+     */
+    @Override
+    public Serializable getStylesheetCacheKey(Resource stylesheet) throws TransformerConfigurationException, IOException {
+        final CachedResource<Templates> templates = this.getStylesheetCachedResource(stylesheet);
+        return templates.getLastLoadDigest();
+    }
+
+    private CachedResource<Templates> getStylesheetCachedResource(Resource stylesheet) throws IOException {
+        return this.cachingResourceLoader.getResource(stylesheet, TemplatesBuilder.INSTANCE, this.templatesLoaderOptions);
+    }
+
 
     /* (non-Javadoc)
      * @see org.jasig.portal.xml.XmlUtilities#getXmlEventFactory()
@@ -88,5 +93,4 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     public XMLEventFactory getXmlEventFactory() {
         return this.xmlEventFactory;
     }
-
 }

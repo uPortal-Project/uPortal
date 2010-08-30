@@ -20,6 +20,7 @@
 package org.jasig.portal.rendering.xslt;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,9 +69,19 @@ public class StructureTransformerSource implements TransformerSource, ResourceLo
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final String stylesheetURI = this.getStylesheetResource(request);
+        final Resource stylesheetResource = this.getStylesheetResource(request);
+        final Serializable stylesheetCacheKey;
+        try {
+            stylesheetCacheKey = this.xmlUtilities.getStylesheetCacheKey(stylesheetResource);
+        }
+        catch (TransformerConfigurationException e) {
+            throw new RuntimeException("Failed to get Transformer for stylesheet: " + stylesheetResource, e);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to load stylesheet: " + stylesheetResource, e);
+        }
         
-        return new CacheKey(stylesheetURI);
+        return new CacheKey(stylesheetResource.getDescription(), stylesheetCacheKey);
     }
 
     /* (non-Javadoc)
@@ -78,8 +89,7 @@ public class StructureTransformerSource implements TransformerSource, ResourceLo
      */
     @Override
     public Transformer getTransformer(HttpServletRequest request, HttpServletResponse response) {
-        final String stylesheetURI = this.getStylesheetResource(request);
-        final Resource stylesheetResource = this.resourceLoader.getResource(stylesheetURI);
+        final Resource stylesheetResource = this.getStylesheetResource(request);
         try {
             return this.xmlUtilities.getTransformer(stylesheetResource);
         }
@@ -91,7 +101,7 @@ public class StructureTransformerSource implements TransformerSource, ResourceLo
         }
     }
 
-    private String getStylesheetResource(HttpServletRequest request) {
+    private Resource getStylesheetResource(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final StructureStylesheetDescription structureStylesheetDescription;
@@ -103,7 +113,8 @@ public class StructureTransformerSource implements TransformerSource, ResourceLo
             throw new RuntimeException("Failed getting StructureStylesheetDescription from IUserPreferencesManager", e);
         }
         
-        return structureStylesheetDescription.getStylesheetURI();
+        final String stylesheetURI = structureStylesheetDescription.getStylesheetURI();
+        return this.resourceLoader.getResource(stylesheetURI);
     }
 
 }
