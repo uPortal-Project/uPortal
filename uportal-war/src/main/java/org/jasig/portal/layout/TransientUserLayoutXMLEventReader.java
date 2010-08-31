@@ -35,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
-import org.jasig.portal.rendering.XMLPipelineConstants;
 import org.jasig.portal.xml.stream.BaseXMLEventReader;
 
 /**
@@ -43,7 +42,7 @@ import org.jasig.portal.xml.stream.BaseXMLEventReader;
  * @version $Revision$
  */
 public class TransientUserLayoutXMLEventReader extends BaseXMLEventReader {
-    private static final XMLEventFactory EVENT_FACTORY = XMLPipelineConstants.XML_EVENT_FACTORY;
+    private static final XMLEventFactory EVENT_FACTORY = XMLEventFactory.newFactory();
 
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -96,7 +95,7 @@ public class TransientUserLayoutXMLEventReader extends BaseXMLEventReader {
             final StartElement startElement = event.asStartElement();
             
             //All following logic requires an ID attribute, ignore any element without one
-            final Attribute idAttribute = startElement.getAttributeByName(XMLPipelineConstants.ID_ATTR_NAME);
+            final Attribute idAttribute = startElement.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
             if (idAttribute == null) {
                 return event;
             }
@@ -111,7 +110,7 @@ public class TransientUserLayoutXMLEventReader extends BaseXMLEventReader {
                 transientFolderAttributes.add(EVENT_FACTORY.createAttribute("immutable", "true"));
                 transientFolderAttributes.add(EVENT_FACTORY.createAttribute("name", "Transient Folder"));
                 
-                final StartElement transientFolder = EVENT_FACTORY.createStartElement(XMLPipelineConstants.FOLDER, transientFolderAttributes.iterator(), null);
+                final StartElement transientFolder = EVENT_FACTORY.createStartElement(IUserLayoutManager.FOLDER, transientFolderAttributes.iterator(), null);
                 this.transientEventBuffer.add(transientFolder);
 
                 //append channel element iff subscribeId describes a transient channel, and not a regular layout channel
@@ -143,7 +142,7 @@ public class TransientUserLayoutXMLEventReader extends BaseXMLEventReader {
                         channelAttrs.add(EVENT_FACTORY.createAttribute("hasHelp", Boolean.toString(chanDef.hasHelp())));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("hasAbout", Boolean.toString(chanDef.hasAbout())));
 
-                        final StartElement startChannel = EVENT_FACTORY.createStartElement(XMLPipelineConstants.CHANNEL, channelAttrs.iterator(), null);
+                        final StartElement startChannel = EVENT_FACTORY.createStartElement(IUserLayoutManager.CHANNEL, channelAttrs.iterator(), null);
                         this.transientEventBuffer.add(startChannel);
 
                         // add channel parameter elements
@@ -153,19 +152,19 @@ public class TransientUserLayoutXMLEventReader extends BaseXMLEventReader {
                             parameterAttrs.add(EVENT_FACTORY.createAttribute("name",parm.getName()));
                             parameterAttrs.add(EVENT_FACTORY.createAttribute("value",parm.getValue()));
 
-                            final StartElement startParameter = EVENT_FACTORY.createStartElement(XMLPipelineConstants.PARAMETER, parameterAttrs.iterator(), null);
+                            final StartElement startParameter = EVENT_FACTORY.createStartElement(IUserLayoutManager.PARAMETER, parameterAttrs.iterator(), null);
                             this.transientEventBuffer.add(startParameter);
                             
-                            final EndElement endParameter = EVENT_FACTORY.createEndElement(XMLPipelineConstants.PARAMETER, null);
+                            final EndElement endParameter = EVENT_FACTORY.createEndElement(IUserLayoutManager.PARAMETER, null);
                             this.transientEventBuffer.add(endParameter);
                         }
 
-                        final EndElement endChannel = EVENT_FACTORY.createEndElement(XMLPipelineConstants.CHANNEL, null);
+                        final EndElement endChannel = EVENT_FACTORY.createEndElement(IUserLayoutManager.CHANNEL, null);
                         this.transientEventBuffer.add(endChannel);
                     }
                 }
                 
-                final EndElement endFolder = EVENT_FACTORY.createEndElement(XMLPipelineConstants.FOLDER, null);
+                final EndElement endFolder = EVENT_FACTORY.createEndElement(IUserLayoutManager.FOLDER, null);
                 this.transientEventBuffer.add(endFolder);
             }
         }

@@ -16,8 +16,8 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
 import org.easymock.EasyMock;
-import org.jasig.portal.rendering.CacheableEventReader;
-import org.jasig.portal.rendering.CacheableEventReaderImpl;
+import org.jasig.portal.rendering.PipelineEventReader;
+import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.rendering.StAXPipelineComponent;
 import org.jasig.portal.rendering.cache.CachingStAXPipelineComponent;
 import org.jasig.portal.utils.cache.CacheKey;
@@ -38,7 +38,7 @@ public class CachingStAXPipelineComponentTest {
         final MockHttpServletResponse mockRes = new MockHttpServletResponse();
         final CacheKey cacheKey = new CacheKey("testCacheKey");
         final List<XMLEvent> eventBuffer = Collections.emptyList();
-        final CacheableEventReader<XMLEventReader, XMLEvent> eventReader = new CacheableEventReaderImpl<XMLEventReader, XMLEvent>(cacheKey, new XMLEventBufferReader(eventBuffer.listIterator()));
+        final PipelineEventReader<XMLEventReader, XMLEvent> eventReader = new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(new XMLEventBufferReader(eventBuffer.listIterator()));
         
         final Ehcache cache = EasyMock.createMock(Ehcache.class);
 
@@ -56,10 +56,9 @@ public class CachingStAXPipelineComponentTest {
         cachingComponent.setCache(cache);
         cachingComponent.setParentComponent(targetComponent);
         
-        final CacheableEventReader<XMLEventReader, XMLEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
+        final PipelineEventReader<XMLEventReader, XMLEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
 
         Assert.assertNotNull(actualEventReader);
-        Assert.assertEquals(cacheKey, actualEventReader.getCacheKey());
         Assert.assertNotNull(actualEventReader.getEventReader());
         Assert.assertFalse(actualEventReader.getEventReader().hasNext());
         
@@ -87,10 +86,9 @@ public class CachingStAXPipelineComponentTest {
         cachingComponent.setCache(cache);
         cachingComponent.setParentComponent(targetComponent);
         
-        final CacheableEventReader<XMLEventReader, XMLEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
+        final PipelineEventReader<XMLEventReader, XMLEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
 
         Assert.assertNotNull(actualEventReader);
-        Assert.assertEquals(cacheKey, actualEventReader.getCacheKey());
         Assert.assertNotNull(actualEventReader.getEventReader());
         Assert.assertFalse(actualEventReader.getEventReader().hasNext());
         

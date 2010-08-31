@@ -73,7 +73,7 @@ import org.springframework.web.util.UrlPathHelper;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Component
+@Component("portalUrlProvider")
 public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator {
     
     

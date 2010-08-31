@@ -32,7 +32,7 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.user.IUserInstance;
@@ -42,12 +42,12 @@ import org.jasig.portal.xml.XmlUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Handles converting the data stored in {@link StructureStylesheetUserPreferences} into additional attributes
+ * Handles converting the data stored in {@link ThemeStylesheetUserPreferences} into additional attributes
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class StructureAttributeSource implements AttributeSource {
+public class ThemeAttributeSource implements AttributeSource {
     private XmlUtilities xmlUtilities;
     private IUserInstanceManager userInstanceManager;
     
@@ -55,59 +55,38 @@ public class StructureAttributeSource implements AttributeSource {
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
-    
+
     @Autowired
     public void setXmlUtilities(XmlUtilities xmlUtilities) {
         this.xmlUtilities = xmlUtilities;
     }
+
 
     /* (non-Javadoc)
      * @see org.jasig.portal.rendering.AttributeSource#getAdditionalAttributes(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.xml.stream.events.StartElement)
      */
     @Override
     public Iterator<Attribute> getAdditionalAttributes(HttpServletRequest request, HttpServletResponse response, StartElement event) {
-        final StructureStylesheetUserPreferences structureStylesheetUserPreferences = this.getStructureStylesheetUserPreferences(request);
+        final ThemeStylesheetUserPreferences themeStylesheetUserPreferences = this.getThemeStylesheetUserPreferences(request);
         
         final QName name = event.getName();
         if (IUserLayoutManager.CHANNEL.equals(name)) {
-            final Enumeration<String> channelAttributeNames = structureStylesheetUserPreferences.getChannelAttributeNames();
+            final Enumeration<String> channelAttributeNames = themeStylesheetUserPreferences.getChannelAttributeNames();
             if (!channelAttributeNames.hasMoreElements()) {
                 return null;
             }
             
             final Collection<Attribute> attributes = new LinkedList<Attribute>();
 
-            final XMLEventFactory xmlEventFactory = this.xmlUtilities.getXmlEventFactory();
             final Attribute subscribeIdAttr = event.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
             final String subscribeId = subscribeIdAttr.getValue();
             while (channelAttributeNames.hasMoreElements()) {
                 final String channelAttributeName = channelAttributeNames.nextElement();
                 
-                final String value = structureStylesheetUserPreferences.getChannelAttributeValue(subscribeId, channelAttributeName);
+                final String value = themeStylesheetUserPreferences.getChannelAttributeValue(subscribeId, channelAttributeName);
                 
+                final XMLEventFactory xmlEventFactory = this.xmlUtilities.getXmlEventFactory();
                 final Attribute attribute = xmlEventFactory.createAttribute(channelAttributeName, value);
-                attributes.add(attribute);
-            }
-            
-            return attributes.iterator();
-        }
-        
-        if (IUserLayoutManager.FOLDER.equals(name)) {
-            final Enumeration<String> folderAttributeNames = structureStylesheetUserPreferences.getFolderAttributeNames();
-            if (!folderAttributeNames.hasMoreElements()) {
-                return null;
-            }
-            
-            final Collection<Attribute> attributes = new LinkedList<Attribute>();
-
-            final XMLEventFactory xmlEventFactory = this.xmlUtilities.getXmlEventFactory();
-            final Attribute folderIdAttr = event.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
-            final String folderId = folderIdAttr.getValue();
-            while (folderAttributeNames.hasMoreElements()) {
-                final String folderAttributeName = folderAttributeNames.nextElement();
-                final String value = structureStylesheetUserPreferences.getFolderAttributeValue(folderId, folderAttributeName);
-                
-                final Attribute attribute = xmlEventFactory.createAttribute(folderAttributeName, value);
                 attributes.add(attribute);
             }
             
@@ -122,16 +101,15 @@ public class StructureAttributeSource implements AttributeSource {
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final StructureStylesheetUserPreferences structureStylesheetUserPreferences = this.getStructureStylesheetUserPreferences(request);
-        final String cacheKey = structureStylesheetUserPreferences.getCacheKey();
+        final ThemeStylesheetUserPreferences themeStylesheetUserPreferences = this.getThemeStylesheetUserPreferences(request);
+        final String cacheKey = themeStylesheetUserPreferences.getCacheKey();
         return new CacheKey(cacheKey);
     }
 
-    private StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(HttpServletRequest request) {
+    private ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final UserPreferences userPreferences = preferencesManager.getUserPreferences();
-        final StructureStylesheetUserPreferences structureStylesheetUserPreferences = userPreferences.getStructureStylesheetUserPreferences();
-        return structureStylesheetUserPreferences;
+        return userPreferences.getThemeStylesheetUserPreferences();
     }
 }

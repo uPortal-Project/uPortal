@@ -16,10 +16,9 @@ import org.easymock.EasyMock;
 import org.jasig.portal.character.stream.CharacterEventBufferReader;
 import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.rendering.CacheableEventReader;
-import org.jasig.portal.rendering.CacheableEventReaderImpl;
 import org.jasig.portal.rendering.CharacterPipelineComponent;
-import org.jasig.portal.rendering.cache.CachingCharacterPipelineComponent;
+import org.jasig.portal.rendering.PipelineEventReader;
+import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +36,7 @@ public class CachingCharacterPipelineComponentTest {
         final MockHttpServletResponse mockRes = new MockHttpServletResponse();
         final CacheKey cacheKey = new CacheKey("testCacheKey");
         final List<CharacterEvent> eventBuffer = Collections.emptyList();
-        final CacheableEventReader<CharacterEventReader, CharacterEvent> eventReader = new CacheableEventReaderImpl<CharacterEventReader, CharacterEvent>(cacheKey, new CharacterEventBufferReader(eventBuffer.listIterator()));
+        final PipelineEventReader<CharacterEventReader, CharacterEvent> eventReader = new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(new CharacterEventBufferReader(eventBuffer.listIterator()));
         
         final Ehcache cache = EasyMock.createMock(Ehcache.class);
 
@@ -55,10 +54,9 @@ public class CachingCharacterPipelineComponentTest {
         cachingComponent.setCache(cache);
         cachingComponent.setParentComponent(targetComponent);
         
-        final CacheableEventReader<CharacterEventReader, CharacterEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
+        final PipelineEventReader<CharacterEventReader, CharacterEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
 
         Assert.assertNotNull(actualEventReader);
-        Assert.assertEquals(cacheKey, actualEventReader.getCacheKey());
         Assert.assertNotNull(actualEventReader.getEventReader());
         Assert.assertFalse(actualEventReader.getEventReader().hasNext());
         
@@ -86,10 +84,9 @@ public class CachingCharacterPipelineComponentTest {
         cachingComponent.setCache(cache);
         cachingComponent.setParentComponent(targetComponent);
         
-        final CacheableEventReader<CharacterEventReader, CharacterEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
+        final PipelineEventReader<CharacterEventReader, CharacterEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
 
         Assert.assertNotNull(actualEventReader);
-        Assert.assertEquals(cacheKey, actualEventReader.getCacheKey());
         Assert.assertNotNull(actualEventReader.getEventReader());
         Assert.assertFalse(actualEventReader.getEventReader().hasNext());
         

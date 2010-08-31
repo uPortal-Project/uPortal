@@ -175,6 +175,7 @@
         <tagsoup.version>1.2</tagsoup.version>
         <tyrex.version>1.0.1</tyrex.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
+        <woodstox.version>4.0.8</woodstox.version>
         <xalan.version>2.7.1</xalan.version>
         <xercesImpl.version>2.9.1</xercesImpl.version>
         <xml-apis.version>1.0.b2</xml-apis.version>
@@ -510,6 +511,17 @@
                 <groupId>org.ccil.cowan.tagsoup</groupId>
                 <artifactId>tagsoup</artifactId>
                 <version>${tagsoup.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>woodstox-core-asl</artifactId>
+                <version>${woodstox.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>stax-api</artifactId>
+                        <groupId>javax.xml.stream</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.easymock</groupId>

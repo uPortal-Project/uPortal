@@ -19,35 +19,17 @@
 
 package org.jasig.portal.rendering;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventFactory;
-
 /**
- * Constants used throughout the uPortal XML based rendering pipeline
+ * Event reader for the rendering pipeline.
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @param <R> The type of the native event reader
+ * @param <E> The type of event the reader exposes
  */
-public class XMLPipelineConstants {
+public interface PipelineEventReader<R, E> extends Iterable<E> {
     /**
-     * Represents a <folder> layout element
+     * @return The native event reader
      */
-    public static final QName FOLDER = new QName("folder");
-    /**
-     * Represents <channel> layout element
-     */
-    public static final QName CHANNEL = new QName("channel");
-    /**
-     * Represents <parameter> layout element
-     */
-    public static final QName PARAMETER = new QName("parameter");
-    /**
-     * Represents an ID element attribute
-     */
-    public static final QName ID_ATTR_NAME = new QName("ID");
-    
-    /**
-     * The shared {@link XMLEventFactory} to use
-     */
-    public static final XMLEventFactory XML_EVENT_FACTORY = XMLEventFactory.newFactory();
+    public R getEventReader();
 }

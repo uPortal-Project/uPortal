@@ -18,15 +18,9 @@ import org.jasig.portal.utils.cache.CacheKey;
  * 
  * Implementations must be thread safe.
  * 
- * Important, due to other threads or background processes the {@link CacheKey} for a request and response can change between
- * a call to {@link #getCacheKey(HttpServletRequest, HttpServletResponse) and a subsequent call to
- * {@link PipelineComponent#getEventReader(HttpServletRequest, HttpServletResponse)}. If the returned event reader is
- * cached the {@link CacheKey} from the {@link CacheableEventReader} must be used.
- * 
  * @author Eric Dalquist
  * @version $Revision$
  * @param <R> The event reader implementation
- * @param <E> The type of event the event reader returns
  */
 public interface PipelineComponent<R, E> {
     
@@ -38,5 +32,5 @@ public interface PipelineComponent<R, E> {
     /**
      * Get the event reader and corresponding cache key for the request
      */
-    public CacheableEventReader<R, E> getEventReader(HttpServletRequest request, HttpServletResponse response);
+    public PipelineEventReader<R, E> getEventReader(HttpServletRequest request, HttpServletResponse response);
 }

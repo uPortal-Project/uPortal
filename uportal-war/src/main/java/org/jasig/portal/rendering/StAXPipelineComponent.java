@@ -10,7 +10,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.events.XMLEvent;
 
 /**
- * {@link PipelineComponent} for a {@link XMLEventReader} and {@link XMLEvent}.
+ * {@link PipelineComponent} for a {@link XMLEventReader}
  * 
  * @author Eric Dalquist
  * @version $Revision$

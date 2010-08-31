@@ -19,65 +19,20 @@
 
 package org.jasig.portal.rendering.xslt;
 
-import java.util.Hashtable;
-import java.util.LinkedHashMap;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.StylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
-import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.user.IUserInstanceManager;
-import org.jasig.portal.utils.cache.CacheKey;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Exposes the structure tranform parameters in {@link StructureStylesheetUserPreferences} via
- * the new rendering pipeline API
+ * Returns {@link StructureStylesheetUserPreferences}
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class StructureTransformerConfigurationSource implements TransformerConfigurationSource {
-    private IUserInstanceManager userInstanceManager;
+public class StructureTransformerConfigurationSource extends PreferencesTransformerConfigurationSource {
     
-    @Autowired
-    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        this.userInstanceManager = userInstanceManager;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.rendering.xslt.TransformerConfigurationSource#getTransformerConfigurationKey(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
     @Override
-    public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final LinkedHashMap<String, Object> transformerParameters = this.getParameters(request, response);
-        return new CacheKey(transformerParameters);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.rendering.xslt.TransformerConfigurationSource#getTransformerOutputProperties(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public Properties getOutputProperties(HttpServletRequest request, HttpServletResponse response) {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.rendering.xslt.TransformerConfigurationSource#getTransformerParameters(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public LinkedHashMap<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final UserPreferences userPreferences = preferencesManager.getUserPreferences();
-        
-        final StructureStylesheetUserPreferences structureStylesheetUserPreferences = userPreferences.getStructureStylesheetUserPreferences();
-        final Hashtable<String, String> parameterValues = structureStylesheetUserPreferences.getParameterValues();
-        
-        return new LinkedHashMap<String, Object>(parameterValues);
+    protected StylesheetUserPreferences getStylesheetUserPreferences(UserPreferences userPreferences) {
+        return userPreferences.getStructureStylesheetUserPreferences();
     }
 }

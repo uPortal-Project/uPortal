@@ -6,10 +6,16 @@
 
 package org.jasig.portal.character.stream.events;
 
+
 /**
+ * A generic base event type for any event that targets a portlet window.
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface PortletPlaceholderEvent extends CharacterEvent {
-    public int getPortletWindowId();
+    /**
+     * @return The layout subscribe ID of the targeted portlet
+     */
+    public String getPortletSubscribeId();
 }

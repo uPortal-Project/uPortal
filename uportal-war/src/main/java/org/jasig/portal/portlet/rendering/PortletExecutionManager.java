@@ -19,9 +19,7 @@
 
 package org.jasig.portal.portlet.rendering;
 
-import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -135,6 +133,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#doPortletAction(org.jasig.portal.portlet.om.IPortletEntityId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
+    @Override
     public void doPortletAction(IPortletEntityId portletEntityId, HttpServletRequest request, HttpServletResponse response) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId);
         this.doPortletAction(portletWindow.getPortletWindowId(), request, response);
@@ -143,6 +142,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#doPortletAction(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
+    @Override
     public void doPortletAction(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
         final int timeout = getPortletRenderTimeout(portletWindowId, request);
         
@@ -163,6 +163,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletRender(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
+    @Override
     public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
         Assert.notNull(subscribeId, "subscribeId cannot be null");
         
@@ -185,11 +186,14 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletRender(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
+    @Override
     public void startPortletRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
         this.startPortletRenderInternal(portletWindowId, request, response);
     }
 
-
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletRenderRequested(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     @Override
     public boolean isPortletRenderRequested(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
         final IPortletWindow portletWindow;
@@ -208,19 +212,23 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         return this.isPortletRenderRequested(portletWindow.getPortletWindowId(), request, response);
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletRenderRequested(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     @Override
     public boolean isPortletRenderRequested(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final Map<IPortletWindowId, PortletRenderExecutionWorker<StringWriter>> portletRenderingMap = this.getPortletRenderingMap(request);
-        final PortletRenderExecutionWorker<StringWriter> tracker = portletRenderingMap.get(portletWindowId);
+        final Map<IPortletWindowId, PortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
+        final PortletRenderExecutionWorker tracker = portletRenderingMap.get(portletWindowId);
         
         return tracker != null;
     }
-
+    
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#outputPortlet(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.Writer)
+     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletOutput(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    public void outputPortlet(String subscribeId, HttpServletRequest request, HttpServletResponse response, Writer writer) throws IOException {
-        Assert.notNull(subscribeId, "subscribeId cannot be null");
+    @Override
+    public String getPortletOutput(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
+            Assert.notNull(subscribeId, "subscribeId cannot be null");
         
         final IPortletWindow portletWindow;
         try {
@@ -228,32 +236,35 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         }
         catch (NotAPortletException nape) {
             this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
-            return;
+            return null;
         }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to output portlet: " + subscribeId, e);
-            return;
+            return null;
         }
 
-        this.outputPortlet(portletWindow.getPortletWindowId(), request, response, writer);
+        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+        return this.getPortletOutput(portletWindowId, request, response);
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#outputPortlet(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.Writer)
+     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletOutput(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    public void outputPortlet(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response, Writer writer) throws IOException {
-        final PortletRenderExecutionWorker<StringWriter> tracker = getRenderedPortlet(portletWindowId, request, response);
+    @Override
+    public String getPortletOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+        final PortletRenderExecutionWorker tracker = getRenderedPortlet(portletWindowId, request, response);
         final int timeout = getPortletRenderTimeout(portletWindowId, request);
 
         final PortletRenderResult portletRenderResult = tracker.get(timeout);
-        writer.write(tracker.getWriter().toString());
-        
-        //TODO publish portlet render event
+        //TODO publish portlet render event - should actually be published from the portlet renderer impl
+
+        return tracker.getOutput();
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletTitle(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
+    @Override
     public String getPortletTitle(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
         Assert.notNull(subscribeId, "subscribeId cannot be null");
         
@@ -276,8 +287,9 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletTitle(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
+    @Override
     public String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final PortletRenderExecutionWorker<StringWriter> tracker = getRenderedPortlet(portletWindowId, request, response);
+        final PortletRenderExecutionWorker tracker = getRenderedPortlet(portletWindowId, request, response);
         final int timeout = getPortletRenderTimeout(portletWindowId, request);
         final PortletRenderResult portletRenderResult = tracker.get(timeout);
         
@@ -311,9 +323,9 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         return (int)TimeUnit.MINUTES.toMillis(5);
     }
 
-    protected PortletRenderExecutionWorker<StringWriter> getRenderedPortlet(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final Map<IPortletWindowId, PortletRenderExecutionWorker<StringWriter>> portletRenderingMap = this.getPortletRenderingMap(request);
-        PortletRenderExecutionWorker<StringWriter> tracker = portletRenderingMap.get(portletWindowId);
+    protected PortletRenderExecutionWorker getRenderedPortlet(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+        final Map<IPortletWindowId, PortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
+        PortletRenderExecutionWorker tracker = portletRenderingMap.get(portletWindowId);
         if (tracker == null) {
             tracker = this.startPortletRenderInternal(portletWindowId, request, response);
         }
@@ -355,22 +367,21 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     /**
      * create and submit the rendering job to the thread pool
      */
-    protected PortletRenderExecutionWorker<StringWriter> startPortletRenderInternal(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final StringWriter portletOutputBuffer = new StringWriter();
-        final PortletRenderExecutionWorker<StringWriter> portletRenderExecutionWorker = new PortletRenderExecutionWorker<StringWriter>(this.portletThreadPool, portletWindowId, request, response, portletOutputBuffer);
+    protected PortletRenderExecutionWorker startPortletRenderInternal(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+        final PortletRenderExecutionWorker portletRenderExecutionWorker = new PortletRenderExecutionWorker(this.portletThreadPool, portletWindowId, request, response);
         portletRenderExecutionWorker.submit();
         
-        final Map<IPortletWindowId, PortletRenderExecutionWorker<StringWriter>> portletRenderingMap = this.getPortletRenderingMap(request);
+        final Map<IPortletWindowId, PortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
         portletRenderingMap.put(portletWindowId, portletRenderExecutionWorker);
         
         return portletRenderExecutionWorker;
     }
 
     @SuppressWarnings("unchecked")
-    protected Map<IPortletWindowId, PortletRenderExecutionWorker<StringWriter>> getPortletRenderingMap(HttpServletRequest request) {
-        Map<IPortletWindowId, PortletRenderExecutionWorker<StringWriter>> portletRenderingMap = (Map<IPortletWindowId, PortletRenderExecutionWorker<StringWriter>>)request.getAttribute(PORTLET_RENDERING_MAP);
+    protected Map<IPortletWindowId, PortletRenderExecutionWorker> getPortletRenderingMap(HttpServletRequest request) {
+        Map<IPortletWindowId, PortletRenderExecutionWorker> portletRenderingMap = (Map<IPortletWindowId, PortletRenderExecutionWorker>)request.getAttribute(PORTLET_RENDERING_MAP);
         if (portletRenderingMap == null) {
-            portletRenderingMap = new ConcurrentHashMap<IPortletWindowId, PortletRenderExecutionWorker<StringWriter>>();
+            portletRenderingMap = new ConcurrentHashMap<IPortletWindowId, PortletRenderExecutionWorker>();
             request.setAttribute(PORTLET_RENDERING_MAP, portletRenderingMap);
         }
         return portletRenderingMap;
@@ -610,22 +621,24 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         }
     }
     
-    private class PortletRenderExecutionWorker<W extends Writer> extends PortletExecutionWorker<PortletRenderResult> {
-        private final W writer;
+    private class PortletRenderExecutionWorker extends PortletExecutionWorker<PortletRenderResult> {
+        private String output = null;
         
-        public PortletRenderExecutionWorker(ExecutorService executorService, IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response, W writer) {
+        public PortletRenderExecutionWorker(ExecutorService executorService, IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
             super(executorService, portletWindowId, request, response);
-            this.writer = writer;
         }
         
         @Override
         protected PortletRenderResult callInternal() throws Exception {
-            return portletRenderer.doRender(portletWindowId, request, response, writer);
+            final StringWriter writer = new StringWriter();
+            final PortletRenderResult result = portletRenderer.doRender(portletWindowId, request, response, writer);
+            this.output = writer.toString();
+            return result;
         }
 
         //Buffer used to write portlet content to.
-        public W getWriter() {
-            return this.writer;
+        public String getOutput() {
+            return this.output;
         }
     }
 }

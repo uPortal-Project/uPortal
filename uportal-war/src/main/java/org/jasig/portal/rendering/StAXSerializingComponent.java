@@ -61,8 +61,8 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
     }
 
     @Override
-    public CacheableEventReader<CharacterEventReader, CharacterEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
-        final CacheableEventReader<XMLEventReader, XMLEvent> eventReader = this.parentComponent.getEventReader(request, response);
+    public PipelineEventReader<CharacterEventReader, CharacterEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
+        final PipelineEventReader<XMLEventReader, XMLEvent> eventReader = this.parentComponent.getEventReader(request, response);
 
         //Writer shared by the ChunkingEventReader and the StAX Serializer
         final StringWriter writer = new StringWriter();
@@ -93,10 +93,9 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
         }
         
         //Return the chunked data
-        final CacheKey cacheKey = this.getCacheKey(request, response);
         final List<CharacterEvent> characterEvents = chunkingEventReader.getCharacterEvents();
         final CharacterEventBufferReader characterEventReader = new CharacterEventBufferReader(characterEvents.listIterator());
-        return new CacheableEventReaderImpl<CharacterEventReader, CharacterEvent>(cacheKey, characterEventReader);
+        return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(characterEventReader);
     }
 
     @Override

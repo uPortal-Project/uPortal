@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -24,6 +26,8 @@ import org.springframework.web.context.request.ServletWebRequest;
  * @version $Revision$
  */
 public class StaticTransformerConfigurationSource implements TransformerConfigurationSource {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     private Properties outputProperties;
     private LinkedHashMap<String, Object> parameters;
     private IPortalSpELService portalSpELService;
@@ -63,6 +67,7 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
 
     @Override
     public Properties getOutputProperties(HttpServletRequest request, HttpServletResponse response) {
+        this.logger.debug("Returning output properties: {}", this.outputProperties);
         return this.outputProperties;
     }
 
@@ -71,12 +76,17 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
         final ServletWebRequest webRequest = new ServletWebRequest(request, response);
         
         final LinkedHashMap<String, Object> parameters = new LinkedHashMap<String, Object>(this.parameters);
-        for (final Map.Entry<String, Expression> expressionEntry : this.parameterExpressions.entrySet()) {
-            final Expression expression = expressionEntry.getValue();
-            final Object value = this.portalSpELService.getValue(expression, webRequest);
-            
-            parameters.put(expressionEntry.getKey(), value);
+        
+        if (this.parameterExpressions != null) {
+            for (final Map.Entry<String, Expression> expressionEntry : this.parameterExpressions.entrySet()) {
+                final Expression expression = expressionEntry.getValue();
+                final Object value = this.portalSpELService.getValue(expression, webRequest);
+                
+                parameters.put(expressionEntry.getKey(), value);
+            }
         }
+        
+        this.logger.debug("Returning transformer parameters: {}", this.parameters);
         
         return parameters;
     }

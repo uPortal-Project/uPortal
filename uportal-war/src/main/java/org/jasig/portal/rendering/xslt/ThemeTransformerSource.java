@@ -17,26 +17,27 @@
  * under the License.
  */
 
-package org.jasig.portal.character.stream;
+package org.jasig.portal.rendering.xslt;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.MatchResult;
-
-import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
-import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEventImpl;
+import org.jasig.portal.CoreStylesheetDescription;
+import org.jasig.portal.IUserPreferencesManager;
 
 /**
- * Generates a {@link PortletTitlePlaceholderEvent} for a regular expression match
+ * Return {@link IUserPreferencesManager#getThemeStylesheetDescription()}
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletTitlePlaceholderEventSource extends PortletPlaceholderEventSource {
+public class ThemeTransformerSource extends BaseTransformerSource {
     
     @Override
-    protected List<CharacterEvent> getCharacterEvents(String subscribeId, MatchResult matchResult) {
-        return Arrays.asList((CharacterEvent)new PortletTitlePlaceholderEventImpl(subscribeId));
+    protected CoreStylesheetDescription getStylesheetDescription(IUserPreferencesManager preferencesManager) {
+        try {
+            return preferencesManager.getThemeStylesheetDescription();
+        }
+        catch (Exception e) {
+            //TODO fix getThemeStylesheetDescription so it doesn't throw Exception
+            throw new RuntimeException("Failed getting ThemeStylesheetDescription from IUserPreferencesManager", e);
+        }
     }
 }

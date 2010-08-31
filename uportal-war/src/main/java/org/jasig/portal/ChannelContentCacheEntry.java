@@ -20,7 +20,6 @@
 package org.jasig.portal;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,9 +44,8 @@ public class ChannelContentCacheEntry extends BaseChannelCacheEntry {
         throws PortalException {
         
         try {
-            final StringWriter output = new StringWriter();
-            portletExecutionManager.outputPortlet(this.getChannelId(), req, res, output);
-            serializer.printRawCharacters(output.toString());
+            final String output = portletExecutionManager.getPortletOutput(this.getChannelId(), req, res);
+            serializer.printRawCharacters(output);
         }
         catch (IOException ioe) {
             //TODO better error handling

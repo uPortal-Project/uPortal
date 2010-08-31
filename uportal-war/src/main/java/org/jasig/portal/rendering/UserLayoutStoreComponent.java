@@ -41,14 +41,12 @@ public class UserLayoutStoreComponent implements StAXPipelineComponent {
     }
 
     @Override
-    public CacheableEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
+    public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
         final IUserLayoutManager userLayoutManager = getUserLayoutManager(request);
-        
-        final CacheKey userLayoutCacheKey = this.getCacheKey(userLayoutManager);
         
         final XMLEventReader userLayoutReader = userLayoutManager.getUserLayoutReader();
 
-        return new CacheableEventReaderImpl<XMLEventReader, XMLEvent>(userLayoutCacheKey, userLayoutReader);
+        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(userLayoutReader);
     }
 
     /**

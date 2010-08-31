@@ -41,7 +41,7 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
 
     @Override
     public void renderState(HttpServletRequest req, HttpServletResponse res, IUserInstance userInstance) {
-        final CacheableEventReader<CharacterEventReader, CharacterEvent> eventReader = this.pipeline.getEventReader(req, res);
+        final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader = this.pipeline.getEventReader(req, res);
         final PrintWriter writer;
         try {
             writer = res.getWriter();
@@ -51,7 +51,7 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
             throw new PortalException(e.getMessage(), e);
         }
         
-        for (final CharacterEvent event : eventReader) {
+        for (final CharacterEvent event : pipelineEventReader) {
             if (CharacterEventTypes.CHARACTER != event.getEventType()) {
                 throw new RenderingPipelineConfigurationException("Only " + CharacterEventTypes.CHARACTER + " events are supported in the top level renderer");
             }

@@ -42,10 +42,10 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
     
     
     @Override
-    public CacheableEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
-        final CacheableEventReader<XMLEventReader, XMLEvent> eventReader = this.parentComponent.getEventReader(request, response);
+    public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
+        final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.parentComponent.getEventReader(request, response);
         
-        return new CacheableEventReaderImpl<XMLEventReader, XMLEvent>(eventReader.getCacheKey(), new EventReaderDelegate(eventReader.getEventReader()) {
+        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(new EventReaderDelegate(pipelineEventReader.getEventReader()) {
 
             @Override
             public Object getProperty(String name) throws IllegalArgumentException {

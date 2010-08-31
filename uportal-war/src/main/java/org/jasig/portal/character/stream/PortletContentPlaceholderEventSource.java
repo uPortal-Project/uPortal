@@ -21,49 +21,32 @@ package org.jasig.portal.character.stream;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.MatchResult;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.jasig.portal.character.stream.events.PortletContentPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletContentPlaceholderEventImpl;
 
 /**
+ * Generates a {@link PortletContentPlaceholderEvent} for a {@link StartElement} event. 
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletContentPlaceholderEventSource implements CharacterEventSource {
-    private static final QName ID_ATTRIBUTE_NAME = new QName("id");
+public class PortletContentPlaceholderEventSource extends PortletPlaceholderEventSource {
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.CharacterEventSource#getCharacterEvents(javax.xml.stream.XMLEventReader, javax.xml.stream.events.StartElement)
-     */
     @Override
-    public List<CharacterEvent> getCharacterEvents(XMLEventReader eventReader, StartElement event) throws XMLStreamException {
-        final Attribute idAttribute = event.getAttributeByName(ID_ATTRIBUTE_NAME);
-        final String idString = idAttribute.getValue();
-        final int id = Integer.parseInt(idString);
-
+    protected List<CharacterEvent> getCharacterEvents(String subscribeId, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
         //Read the stream to remove the endElement event
         final XMLEvent nextEvent = eventReader.nextEvent();
         if (!nextEvent.isEndElement()) {
-            throw new XMLStreamException(event.getName() +" element must be empty");
+            throw new XMLStreamException(event.getName() + " element must be empty");
         }
 
-        return Arrays.asList((CharacterEvent)new PortletContentPlaceholderEventImpl(id));
+        return Arrays.asList((CharacterEvent)new PortletContentPlaceholderEventImpl(subscribeId));
     }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.CharacterEventSource#getCharacterEvents(java.util.regex.MatchResult)
-     */
-    @Override
-    public List<CharacterEvent> getCharacterEvents(MatchResult matchResult) {
-        throw new UnsupportedOperationException();
-    }
-
 }

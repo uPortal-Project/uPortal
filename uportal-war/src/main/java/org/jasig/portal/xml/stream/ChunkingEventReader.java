@@ -29,7 +29,7 @@ import org.jasig.portal.character.stream.events.CharacterEventTypes;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class ChunkingEventReader extends BaseXMLEventReader implements XMLEventReader {
+public class ChunkingEventReader extends BaseXMLEventReader {
     private final List<CharacterEvent> characterEvents = new LinkedList<CharacterEvent>();
 
     private final Map<QName, CharacterEventSource> chunkingElements;

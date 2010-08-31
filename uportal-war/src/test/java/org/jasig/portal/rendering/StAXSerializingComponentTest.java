@@ -58,7 +58,7 @@ public class StAXSerializingComponentTest extends TestCase {
         chunkingPatterns.put("\\{up-portlet-help\\(([^\\)]+)\\)\\}", new PortletHelpPlaceholderEventSource());
         staxSerializingComponent.setChunkingPatterns(chunkingPatterns);
         
-        final CacheableEventReader<CharacterEventReader, CharacterEvent> eventReader = staxSerializingComponent.getEventReader(null, null);
+        final PipelineEventReader<CharacterEventReader, CharacterEvent> eventReader = staxSerializingComponent.getEventReader(null, null);
         
         //Expected events structure, leaving the data out to make it at least a little simpler
         final List<Class<? extends CharacterEvent>> expectedEvents = new ArrayList<Class<? extends CharacterEvent>>();
@@ -139,8 +139,7 @@ public class StAXSerializingComponentTest extends TestCase {
         }
 
         @Override
-        public CacheableEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
-            final CacheKey cacheKey = this.getCacheKey(request, response);
+        public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
             final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
             final XMLEventReader xmlEventReader;
             try {
@@ -149,7 +148,7 @@ public class StAXSerializingComponentTest extends TestCase {
             catch (XMLStreamException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
-            return new CacheableEventReaderImpl<XMLEventReader, XMLEvent>(cacheKey, xmlEventReader);
+            return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(xmlEventReader);
         }
     }
 }

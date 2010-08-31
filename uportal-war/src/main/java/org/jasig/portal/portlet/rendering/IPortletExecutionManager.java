@@ -41,7 +41,7 @@ public interface IPortletExecutionManager {
     public void doPortletAction(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
     /**
-     * Starts the specified portlet rendering, returns immediately.
+     * @see #startPortletRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)
      */
     public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
 
@@ -50,24 +50,39 @@ public interface IPortletExecutionManager {
      */
     public void startPortletRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
+    
+    /**
+     * @see #isPortletRenderRequested(IPortletWindowId, HttpServletRequest, HttpServletResponse)
+     */
     public boolean isPortletRenderRequested(String subscribeId, HttpServletRequest request, HttpServletResponse response);
     
+    /**
+     * @return true if the specified portlet been requested to render during this request.
+     */
     public boolean isPortletRenderRequested(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
-    public void outputPortlet(String subscribeId, HttpServletRequest request, HttpServletResponse response, Writer writer) throws IOException;
+    
+    /**
+     * @see #outputPortlet(IPortletWindowId, HttpServletRequest, HttpServletResponse, Writer)
+     */
+    public String getPortletOutput(String subscribeId, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Writes the specified portlet content to the Writer. If the portlet was already rendering due to a previous call to
      * {@link #startPortletRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)} the output from that render will
      * be used. If the portlet is not already rendering it will be started.
      */
-    public void outputPortlet(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response, Writer writer) throws IOException;
+    public String getPortletOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
+     * @see #getPortletTitle(IPortletWindowId, HttpServletRequest, HttpServletResponse)
+     */
+    public String getPortletTitle(String subscribeId, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Gets the title for the specified portlet
      */
-    public String getPortletTitle(String subscribeId, HttpServletRequest request, HttpServletResponse response);
-
     public String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
 }

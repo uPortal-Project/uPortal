@@ -20,7 +20,6 @@
 package org.jasig.portal;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
@@ -319,9 +318,8 @@ public class CharacterCachingChannelIncorporationFilter extends SAX2FilterImpl {
 						}
 						this.flush();
 						try {
-						    final StringWriter output = new StringWriter();
-    						this.portletExecutionManager.outputPortlet(this.channelSubscribeId, request, response, output);
-    						this.ser.printRawCharacters(output.toString());
+						    final String output = this.portletExecutionManager.getPortletOutput(this.channelSubscribeId, request, response);
+    						this.ser.printRawCharacters(output);
 						}
 						catch (IOException ioe) {
 						    //TODO better error handling

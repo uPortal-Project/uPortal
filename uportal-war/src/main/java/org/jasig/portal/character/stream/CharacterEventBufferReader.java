@@ -38,14 +38,17 @@ public class CharacterEventBufferReader implements CharacterEventReader {
         return event;
     }
 
+    @Override
     public boolean hasNext() {
         return this.eventBuffer.hasNext();
     }
 
+    @Override
     public CharacterEvent next() {
         return this.eventBuffer.next();
     }
 
+    @Override
     public void remove() {
         this.eventBuffer.remove();
     }

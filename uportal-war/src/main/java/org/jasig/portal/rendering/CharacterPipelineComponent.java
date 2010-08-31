@@ -9,7 +9,7 @@ import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 
 /**
- * {@link PipelineComponent} for a {@link CharacterEventReader} and {@link CharacterEvent}.
+ * {@link PipelineComponent} for a {@link CharacterEventReader}
  * 
  * @author Eric Dalquist
  * @version $Revision$

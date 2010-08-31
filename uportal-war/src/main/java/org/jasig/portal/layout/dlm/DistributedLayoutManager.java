@@ -27,10 +27,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLEventReader;
@@ -395,15 +395,13 @@ IFolderLocalNameResolver
         
         //TODO XMLInputFactory can be shared once created and configured. Need a central place for doing that
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        final XMLEventReader xmlEventReader;
+        final DOMSource layoutSoure = new DOMSource(ul);
         try {
-            xmlEventReader = inputFactory.createXMLEventReader(new DOMSource(ul));
+            return inputFactory.createXMLEventReader(layoutSoure);
         }
         catch (XMLStreamException e) {
             throw new RuntimeException("Failed to create Layout XMLStreamReader for user: " + owner.getAttribute(IPerson.USERNAME), e);
         }
-        
-        return xmlEventReader;
     }
 
     protected void getUserLayout(Node n,ContentHandler ch) throws PortalException {

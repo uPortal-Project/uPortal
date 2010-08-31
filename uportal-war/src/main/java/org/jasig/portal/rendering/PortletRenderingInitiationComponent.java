@@ -27,6 +27,7 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.stream.FilteringXMLEventReader;
@@ -65,15 +66,13 @@ public class PortletRenderingInitiationComponent implements StAXPipelineComponen
      * @see org.jasig.portal.rendering.PipelineComponent#getEventReader(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public CacheableEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
-        final CacheableEventReader<XMLEventReader, XMLEvent> cacheableEventReader = this.parentComponent.getEventReader(request, response);
+    public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
+        final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.parentComponent.getEventReader(request, response);
 
-        final CacheKey cacheKey = cacheableEventReader.getCacheKey();
-        
-        final XMLEventReader eventReader = cacheableEventReader.getEventReader();
+        final XMLEventReader eventReader = pipelineEventReader.getEventReader();
         final PortletRenderingXMLEventReader filteredEventReader = new PortletRenderingXMLEventReader(request, response, eventReader);
         
-        return new CacheableEventReaderImpl<XMLEventReader, XMLEvent>(cacheKey, filteredEventReader);
+        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(filteredEventReader);
     }
 
     private class PortletRenderingXMLEventReader extends FilteringXMLEventReader {
@@ -97,8 +96,8 @@ public class PortletRenderingInitiationComponent implements StAXPipelineComponen
                 final StartElement startElement = event.asStartElement();
                 
                 final QName name = startElement.getName();
-                if (XMLPipelineConstants.CHANNEL.equals(name)) {
-                    final Attribute idAttribute = startElement.getAttributeByName(XMLPipelineConstants.ID_ATTR_NAME);
+                if (IUserLayoutManager.CHANNEL.equals(name)) {
+                    final Attribute idAttribute = startElement.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
                     final String id = idAttribute.getValue();
 
                     if (!portletExecutionManager.isPortletRenderRequested(id, this.request, this.response)) {

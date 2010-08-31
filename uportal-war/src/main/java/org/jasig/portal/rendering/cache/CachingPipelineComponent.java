@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
-import org.jasig.portal.rendering.CacheableEventReader;
-import org.jasig.portal.rendering.CacheableEventReaderImpl;
 import org.jasig.portal.rendering.PipelineComponent;
+import org.jasig.portal.rendering.PipelineEventReader;
+import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.utils.cache.CacheKey;
 
 /**
@@ -50,9 +50,9 @@ public abstract class CachingPipelineComponent<R, E> implements PipelineComponen
      */
     @SuppressWarnings("unchecked")
     @Override
-    public final CacheableEventReader<R, E> getEventReader(HttpServletRequest request, HttpServletResponse response) {
+    public final PipelineEventReader<R, E> getEventReader(HttpServletRequest request, HttpServletResponse response) {
         //Get the key for this request from the target component and see if there is a cache entry
-        CacheKey cacheKey = this.parentComponent.getCacheKey(request, response);
+        final CacheKey cacheKey = this.parentComponent.getCacheKey(request, response);
         Element element = this.cache.get(cacheKey);
         List<E> eventCache = null;
         if (element != null) {
@@ -61,12 +61,11 @@ public abstract class CachingPipelineComponent<R, E> implements PipelineComponen
         
         //No cached data for key, call target component to get events and an updated cache key
         if (eventCache == null) {
-            final CacheableEventReader<R, E> cacheableEventReader = this.parentComponent.getEventReader(request, response);
-            cacheKey = cacheableEventReader.getCacheKey();
+            final PipelineEventReader<R, E> pipelineEventReader = this.parentComponent.getEventReader(request, response);
     
             //Copy the events from the reader into a buffer to be cached
             eventCache = new LinkedList<E>();
-            for (final E event : cacheableEventReader) {
+            for (final E event : pipelineEventReader) {
                 eventCache.add(event);
             }
     
@@ -78,7 +77,7 @@ public abstract class CachingPipelineComponent<R, E> implements PipelineComponen
         //Ugly!!! Needed because XMLEventReader implements Iterator but does not parameterize it
         final R eventReader = this.createEventReader(eventCache.listIterator());
         
-        return new CacheableEventReaderImpl<R, E>(cacheKey, eventReader);
+        return new PipelineEventReaderImpl<R, E>(eventReader);
     }
     
     protected abstract R createEventReader(ListIterator<E> eventCache);

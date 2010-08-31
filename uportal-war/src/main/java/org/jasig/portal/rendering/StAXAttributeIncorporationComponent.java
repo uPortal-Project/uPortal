@@ -26,19 +26,23 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.stream.FilteringXMLEventReader;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class StAXAttributeIncorporationComponent implements StAXPipelineComponent {
+    private XmlUtilities xmlUtilities;
     private StAXPipelineComponent parentComponent;
     private AttributeSource attributeSource;
     
@@ -49,7 +53,11 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
     public void setAttributeSource(AttributeSource attributeSource) {
         this.attributeSource = attributeSource;
     }
-
+    
+    @Autowired
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.rendering.PipelineComponent#getCacheKey(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -65,31 +73,24 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
      * @see org.jasig.portal.rendering.PipelineComponent#getEventReader(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public CacheableEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
+    public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
         //Get the reader from the parent and add the attribute incorporating wrapper
-        final CacheableEventReader<XMLEventReader, XMLEvent> cachingEventReader = this.parentComponent.getEventReader(request, response);
-        final XMLEventReader eventReader = new AttributeIncorporatingXMLEventReader(request, response, this.attributeSource, cachingEventReader.getEventReader());
+        final PipelineEventReader<XMLEventReader, XMLEvent> cachingEventReader = this.parentComponent.getEventReader(request, response);
+        final XMLEventReader eventReader = new AttributeIncorporatingXMLEventReader(request, response, cachingEventReader.getEventReader());
         
-        //Create the cache key from the parent and the attribute source
-        final CacheKey parentKey = cachingEventReader.getCacheKey();
-        final CacheKey attributeKey = this.attributeSource.getCacheKey(request, response);
-        final CacheKey cacheKey = new CacheKey(parentKey, attributeKey);
-        
-        return new CacheableEventReaderImpl<XMLEventReader, XMLEvent>(cacheKey, eventReader);
+        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(eventReader);
     }
     
-    private static final class AttributeIncorporatingXMLEventReader extends FilteringXMLEventReader {
+    private final class AttributeIncorporatingXMLEventReader extends FilteringXMLEventReader {
         private final HttpServletRequest request;
         private final HttpServletResponse response;
-        private final AttributeSource attributeSource;
 
         
         public AttributeIncorporatingXMLEventReader(HttpServletRequest request, HttpServletResponse response,
-                AttributeSource attributeSource, XMLEventReader reader) {
+                XMLEventReader reader) {
             super(reader);
             this.request = request;
             this.response = response;
-            this.attributeSource = attributeSource;
         }
         
         @Override
@@ -122,7 +123,8 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
             }
             
             //Create the modified StartElement with the additional attribute data
-            final StartElement modifiedStartElement = XMLPipelineConstants.XML_EVENT_FACTORY.createStartElement(
+            final XMLEventFactory xmlEventFactory = xmlUtilities.getXmlEventFactory();
+            final StartElement modifiedStartElement = xmlEventFactory.createStartElement(
                     startElement.getName(), 
                     mergedAttributes.values().iterator(), 
                     startElement.getNamespaces());

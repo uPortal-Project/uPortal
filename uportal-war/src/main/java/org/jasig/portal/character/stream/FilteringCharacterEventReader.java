@@ -19,24 +19,37 @@
 
 package org.jasig.portal.character.stream;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.MatchResult;
-
 import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
-import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEventImpl;
 
 /**
- * Generates a {@link PortletTitlePlaceholderEvent} for a regular expression match
+ * Base class for application event readers that simply want to filter
+ * or monitor events passing through the reader.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletTitlePlaceholderEventSource extends PortletPlaceholderEventSource {
+public abstract class FilteringCharacterEventReader extends CharacterEventReaderDelegate {
+
+    public FilteringCharacterEventReader(CharacterEventReader delegate) {
+        super(delegate);
+    }
     
     @Override
-    protected List<CharacterEvent> getCharacterEvents(String subscribeId, MatchResult matchResult) {
-        return Arrays.asList((CharacterEvent)new PortletTitlePlaceholderEventImpl(subscribeId));
+    public CharacterEvent next() {
+        final CharacterEvent event = super.next();
+        return this.filterEvent(event, false);
     }
+
+    @Override
+    public CharacterEvent peek() {
+        final CharacterEvent event = super.peek();
+        return this.filterEvent(event, true);
+    }
+
+    /**
+     * @param event The current event
+     * @param peek If the event is from a {@link #peek()} call
+     * @return The event to return
+     */
+    protected abstract CharacterEvent filterEvent(CharacterEvent event, boolean peek);
 }

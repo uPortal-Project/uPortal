@@ -7,6 +7,7 @@
 package org.jasig.portal.character.stream.events;
 
 
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -15,9 +16,9 @@ public class PortletContentPlaceholderEventImpl implements PortletContentPlaceho
     private static final long serialVersionUID = 1L;
 
     
-    private final int portletWindowId;
+    private final String portletWindowId;
     
-    public PortletContentPlaceholderEventImpl(int portletWindowId) {
+    public PortletContentPlaceholderEventImpl(String portletWindowId) {
         this.portletWindowId = portletWindowId;
     }
 
@@ -25,7 +26,7 @@ public class PortletContentPlaceholderEventImpl implements PortletContentPlaceho
      * @see org.jasig.portal.character.stream.events.PortletPlaceholderEvent#getPortletWindowId()
      */
     @Override
-    public int getPortletWindowId() {
+    public String getPortletSubscribeId() {
         return this.portletWindowId;
     }
 

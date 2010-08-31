@@ -22,6 +22,7 @@ package org.jasig.portal.layout;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 
 import org.jasig.portal.PortalException;
@@ -39,6 +40,28 @@ import org.xml.sax.ContentHandler;
  * @version 1.1
  */
 public interface IUserLayoutManager {
+    /**
+     * Represents a <folder> layout element
+     */
+    public static final QName FOLDER = new QName("folder");
+    /**
+     * Represents <channel> layout element
+     */
+    public static final QName CHANNEL = new QName("channel");
+    /**
+     * Represents <channel> layout element
+     */
+    public static final QName CHANNEL_HEADER = new QName("channel-header");
+    /**
+     * Represents <parameter> layout element
+     */
+    public static final QName PARAMETER = new QName("parameter");
+    /**
+     * Represents an ID element attribute
+     */
+    public static final QName ID_ATTR_NAME = new QName("ID");
+    
+    
     /**
      * Gets a user layout (with appropriate markings).
      *

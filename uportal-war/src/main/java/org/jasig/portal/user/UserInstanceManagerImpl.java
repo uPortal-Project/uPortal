@@ -51,6 +51,8 @@ import org.springframework.stereotype.Service;
  */
 @Service("userInstanceManager")
 public class UserInstanceManagerImpl implements IUserInstanceManager, ApplicationListener {
+    private static final String KEY = UserInstanceManagerImpl.class.getName() + ".USER_INSTANCE";
+    
     protected final Log logger = LogFactory.getLog(UserInstanceManagerImpl.class);
     
     private Map<Integer, GuestUserPreferencesManager> guestUserPreferencesManagers = new HashMap<Integer, GuestUserPreferencesManager>();
@@ -97,6 +99,12 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
             //ignore, just means that this isn't a wrapped request
         }
         
+        //Use request attributes first for the fastest possible retrieval
+        IUserInstance userInstance = (IUserInstance)request.getAttribute(KEY);
+        if (userInstance != null) {
+            return userInstance;
+        }
+        
         final IPerson person;
         try {
             // Retrieve the person object that is associated with the request
@@ -119,7 +127,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
         // Return the UserInstance object if it's in the session
         UserInstanceHolder userInstanceHolder = getUserInstanceHolder(session);
         if (userInstanceHolder != null) {
-            final IUserInstance userInstance = userInstanceHolder.getUserInstance();
+            userInstance = userInstanceHolder.getUserInstance();
             
             if (userInstance != null) {
                 return userInstance;
@@ -127,7 +135,6 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
         }
 
         // Create either a UserInstance or a GuestUserInstance
-        final IUserInstance userInstance;
         if (person.isGuest()) {
             final Integer personId = person.getID();
             
@@ -160,7 +167,8 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
             userInstanceHolder = new UserInstanceHolder();
         }
         userInstanceHolder.setUserInstance(userInstance);
-        session.setAttribute(UserInstanceHolder.KEY, userInstanceHolder);
+        session.setAttribute(KEY, userInstanceHolder);
+        request.setAttribute(KEY, userInstance);
 
         // Return the new UserInstance
         return userInstance;
@@ -186,7 +194,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
     }
 
     protected UserInstanceHolder getUserInstanceHolder(final HttpSession session) {
-        return (UserInstanceHolder) session.getAttribute(UserInstanceHolder.KEY);
+        return (UserInstanceHolder) session.getAttribute(KEY);
     }
 
     /**
@@ -200,8 +208,6 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
      */
     private static class UserInstanceHolder implements Serializable {
         private static final long serialVersionUID = 1L;
-
-        public transient static final String KEY = UserInstanceHolder.class.getName();
 
         private transient IUserInstance ui = null;
 

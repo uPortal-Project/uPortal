@@ -22,25 +22,6 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
-
-<%@page import="org.jasig.portal.spring.PortalApplicationContextLocator"%>
-
-
-<%@page import="org.springframework.context.ApplicationContext"%>
-<%@page import="org.jasig.portal.api.portlet.PortletDelegationLocator"%>
-<%@page import="javax.portlet.PortletSession"%>
-<%@page import="org.jasig.portal.portlet.om.IPortletWindowId"%>
-<%@page import="org.jasig.portal.api.portlet.PortletDelegationDispatcher"%>
-<%@page import="org.jasig.portal.api.portlet.DelegateState"%>
-<%@page import="org.jasig.portal.channels.portlet.IPortletAdaptor"%>
-<%@page import="org.jasig.portal.api.portlet.DelegationRequest"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.Map"%>
-<%@page import="java.util.LinkedHashMap"%>
-<%@page import="java.util.Arrays"%>
-
-
-
 <portlet:actionURL var="navigationUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>

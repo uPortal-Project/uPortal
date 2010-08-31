@@ -17,28 +17,22 @@
  * under the License.
  */
 
-package org.jasig.portal.rendering;
+package org.jasig.portal.rendering.xslt;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.jasig.portal.StructureStylesheetUserPreferences;
+import org.jasig.portal.StylesheetUserPreferences;
+import org.jasig.portal.UserPreferences;
 
 /**
- * Utility functions for working with a {@link CacheableEventReader}
+ * Returns {@link StructureStylesheetUserPreferences}
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class CacheableEventReaderUtils {
-    /**
-     * Read all of the events from the {@link CacheableEventReader} into a {@link List}
-     */
-    public static <E> List<E> toEventList(CacheableEventReader<?, E> reader) {
-        final List<E> events = new LinkedList<E>();
-        
-        for (final E event : reader) {
-            events.add(event);
-        }
-        
-        return events;
+public class ThemeTransformerConfigurationSource extends PreferencesTransformerConfigurationSource {
+    
+    @Override
+    protected StylesheetUserPreferences getStylesheetUserPreferences(UserPreferences userPreferences) {
+        return userPreferences.getThemeStylesheetUserPreferences();
     }
 }

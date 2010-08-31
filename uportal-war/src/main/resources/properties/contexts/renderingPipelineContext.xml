@@ -30,47 +30,93 @@
      | Due to the fairly generic nature of each component in the rendering 
      | pipeline it cannot be autowired. However the dependencies of each
      | component often can.
-     +-->
-     <!-- commented out until the top level pipeline component is complete
+     +
     <bean class="org.jasig.portal.rendering.DynamicRenderingPipeline">
-        <property name="pipeline" ref="" />
+        <property name="pipeline" ref="portletRenderingIncorporationComponent" />
     </bean>
-     -->
-    
-    <!-- portlet content incorporation -->
-    
-    <!-- portlet rendering initiation -->
-    
-    <!-- StAX to String serialization -->
-     
-    <!-- theme transformation
-        Use this for theme transform
-            <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
-                <property name="parameters">
-                    <map>
-                        <entry>
-                            <key><util:constant static-field="org.jasig.portal.url.xml.BaseUrlXalanElements.PORTAL_URL_PROVIDER_PARAMETER" /></key>
-                            <ref bean="portalUrlProvider"/>
-                        </entry>
-                        <entry>
-                            <key><util:constant static-field="org.jasig.portal.url.xml.PortletUrlXalanElements.PORTLET_WINDOW_REGISTRY_PARAMETER" /></key>
-                            <ref bean="portletWindowRegistry"/>
-                        </entry>
-                    </map>
-                </property>
-                <property name="parameterExpressions">
-                    <map>
-                        <entry>
-                            <key><util:constant static-field="org.jasig.portal.url.xml.BaseUrlXalanElements.CURRENT_PORTAL_REQUEST" /></key>
-                            <value>request.nativeRequest</value>
-                        </entry>
-                        <entry key="CONTEXT_PATH" value="request.contexPath" />
-                    </map>
-                </property>
-            </bean>
     -->
     
+    <!-- portlet content incorporation -->
+    <bean id="portletRenderingIncorporationComponent" class="org.jasig.portal.rendering.PortletRenderingIncorporationComponent">
+        <property name="parentComponent" ref="staxSerializingComponent" />
+    </bean>
+    
+    <!-- StAX to String serialization -->
+    <bean id="staxSerializingComponent" class="org.jasig.portal.rendering.StAXSerializingComponent">
+        <property name="parentComponent" ref="themeTransformComponent" />
+        <property name="chunkingElements">
+            <map>
+                <entry>
+                    <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL" /></key>
+                    <bean class="org.jasig.portal.character.stream.PortletContentPlaceholderEventSource" />
+                </entry>
+                <entry>
+                    <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
+                    <bean class="org.jasig.portal.character.stream.PortletHeaderPlaceholderEventSource" />
+                </entry>
+            </map>
+        </property>
+        <property name="chunkingPatterns">
+            <map>
+                <entry key="\{up-portlet-title\(([^\)]+)\)\}">
+                    <bean class="org.jasig.portal.character.stream.PortletTitlePlaceholderEventSource" />
+                </entry>
+                <entry key="\{up-portlet-help\(([^\)]+)\)\}">
+                    <bean class="org.jasig.portal.character.stream.PortletHelpPlaceholderEventSource" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+     
+    <!-- theme transformation -->
+    <bean id="themeTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
+        <property name="parentComponent" ref="themeAttributeIncorporationComponent" />
+        <property name="transformerSource">
+            <bean class="org.jasig.portal.rendering.xslt.ThemeTransformerSource"/>
+        </property>
+        <property name="xsltParameterSource">
+            <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
+                <property name="sources">
+                    <list>
+                        <bean class="org.jasig.portal.rendering.xslt.ThemeTransformerConfigurationSource" />
+                        <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
+                            <property name="parameters">
+                                <map>
+                                    <entry>
+                                        <key><util:constant static-field="org.jasig.portal.url.xml.BaseUrlXalanElements.PORTAL_URL_PROVIDER_PARAMETER" /></key>
+                                        <ref bean="portalUrlProvider"/>
+                                    </entry>
+                                    <entry>
+                                        <key><util:constant static-field="org.jasig.portal.url.xml.PortletUrlXalanElements.PORTLET_WINDOW_REGISTRY_PARAMETER" /></key>
+                                        <ref bean="portletWindowRegistry"/>
+                                    </entry>
+                                    <entry key="EXTERNAL_LOGIN_URL" value="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
+                                </map>
+                            </property>
+                            <property name="parameterExpressions">
+                                <map>
+                                    <entry>
+                                        <key><util:constant static-field="org.jasig.portal.url.xml.BaseUrlXalanElements.CURRENT_PORTAL_REQUEST" /></key>
+                                        <value>request.nativeRequest</value>
+                                    </entry>
+                                    <entry key="CONTEXT_PATH" value="request.contexPath" />
+                                </map>
+                            </property>
+                        </bean>
+                        <bean class="org.jasig.portal.rendering.xslt.LocaleTransformerConfigurationSource" />
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
     <!-- theme attribute incorporation -->
+    <bean id="themeAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="parentComponent" ref="portletRenderingInitiationComponent" />
+        <property name="attributeSource">
+            <bean class="org.jasig.portal.rendering.ThemeAttributeSource" />
+        </property>
+    </bean>
     
     <!-- portlet rendering initiation -->
     <bean id="portletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationComponent">
@@ -79,7 +125,6 @@
     
     <!-- structure transformation -->
     <bean id="structureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
-        <!-- TODO ErrorListener -->
         <property name="parentComponent" ref="structureAttributeIncorporationComponent" />
         <property name="transformerSource">
             <bean class="org.jasig.portal.rendering.xslt.StructureTransformerSource"/>

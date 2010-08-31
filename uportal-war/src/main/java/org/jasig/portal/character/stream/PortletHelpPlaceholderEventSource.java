@@ -23,36 +23,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.MatchResult;
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-
 import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEventImpl;
 
 /**
+ * Generates a {@link PortletHelpPlaceholderEvent} for a regular expression match
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletHelpPlaceholderEventSource implements CharacterEventSource {
-    /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.CharacterEventSource#getCharacterEvents(javax.xml.stream.XMLEventReader, javax.xml.stream.events.StartElement)
-     */
+public class PortletHelpPlaceholderEventSource extends PortletPlaceholderEventSource {
+
     @Override
-    public List<CharacterEvent> getCharacterEvents(XMLEventReader eventReader, StartElement event) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+    protected List<CharacterEvent> getCharacterEvents(String subscribeId, MatchResult matchResult) {
+        return Arrays.asList((CharacterEvent)new PortletHelpPlaceholderEventImpl(subscribeId));
     }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.CharacterEventSource#getCharacterEvents(java.util.regex.MatchResult)
-     */
-    @Override
-    public List<CharacterEvent> getCharacterEvents(MatchResult matchResult) {
-        final String idString = matchResult.group(1);
-        final int id = Integer.parseInt(idString);
-
-        return Arrays.asList((CharacterEvent)new PortletHelpPlaceholderEventImpl(id));
-        
-    }
-
 }
