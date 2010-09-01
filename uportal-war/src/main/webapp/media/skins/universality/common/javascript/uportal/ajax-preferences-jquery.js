@@ -132,7 +132,7 @@
                                     }
                                 }
                             }
-                        },
+                        }
                     }
                 },
                 useContentPane: {
@@ -285,7 +285,7 @@
         }
         
         // add onclick events for portlet delete buttons
-        $('a[id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});    
+        $('a[id*=removePortlet_]').each(function(i){$(this).click(function(){deletePortlet(this.id.split("_")[1]);return false;});});
         
         // set click handlers for tab moving and editing links
         $("#addTabLink").click(addTab);
@@ -293,10 +293,17 @@
         $("#movePageLeftLink").click(function(){moveTab('left')});
         $("#movePageRightLink").click(function(){moveTab('right')});
         initTabEditLinks();
+        
+        // Tab inline editor.
+        up.TabInlineEditor("#portalNavigationList", {
+            listeners: {
+                afterFinishEdit: function (newValue, oldValue, editNode, viewNode) {
+                    updateLayout({action: 'renameTab', tabId: settings.tabId, tabName: newValue});
+                }
+            }
+        });
     };
-        
-
-        
+    
         var getCurrentLayout = function() {
             var columns = [];
             $('#portalPageBodyColumns > [id^=column_]').each(function(){
@@ -557,7 +564,6 @@
          * Initialize all required components for the focused view of the portal.
          */
         var initfocusedportal = function () {
-            
             // initialize the focused content adding dialog link
             $("#focusedContentDialogLink").click(function () {
                 
@@ -594,8 +600,6 @@
                 });
             });
         };
-        
-
         
         var updateLayout = function(data, success) {
             $.ajax({
