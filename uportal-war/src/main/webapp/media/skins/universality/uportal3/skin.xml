@@ -23,7 +23,7 @@
 <s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
   
   <!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
-  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
+  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
   
   <!-- Fluid Skinning System (FSS) theme. -->
   <css type="fss-theme" name="fl-theme-mist">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-theme-mist.min.css</css>
@@ -77,6 +77,7 @@
   <js>../common/javascript/uportal/up-layout-selector.js</js>
   <js>../common/javascript/uportal/up-group-browser.js</js>
   <js>../common/javascript/uportal/up-skin-selector.js</js>
+  <js>../common/javascript/uportal/up-tab-inline-editor.js</js>
   <js>../common/javascript/uportal/flyout-nav.js</js>
   <js>../common/javascript/jquery.tokeninput.js</js>
 </s:resources>
