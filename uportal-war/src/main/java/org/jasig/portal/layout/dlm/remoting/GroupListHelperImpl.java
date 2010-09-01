@@ -312,7 +312,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	    
 		List<JsonEntityBean> beans = new ArrayList<JsonEntityBean>();
 		for (String param : params) {
-			String[] parts = param.split(":");
+			String[] parts = param.split(":", 2);
 			JsonEntityBean member = getEntity(parts[0], parts[1], false);
 			beans.add(member);
 		}
