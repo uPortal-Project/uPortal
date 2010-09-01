@@ -60,10 +60,10 @@
         <div class="details">Created by ${ group.creatorId }</div>
         <div class="toolbar">
         	<ul>
-            	<li><a class="button" href="${ editDetailsUrl }">Edit</a></li>
-                <li><a class="button" href="${ permissionsUrl }">View Permissions</a></li>
-                <li><a class="button" href="${ deleteUrl }">Delete</a></li>
-                <li><a class="button" href="${ createMemberUrl }">Create new member group</a></li>
+            	<li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
+                <li><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
+                <li><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
+                <li><a class="button" href="${ createMemberUrl }"><spring:message code="create.member.group"/></a></li>
             </ul>
         </div>
     </div> <!-- end: portlet-titlebar -->
@@ -74,9 +74,9 @@
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
             <div class="titlebar">
-                <h3 class="title" role="heading">Members</h3>
+                <h3 class="title" role="heading"><spring:message code="members"/></h3>
                 <div class="options">
-                    <a href="${ editMembersUrl }"><span>Edit Members</span></a>
+                    <a href="${ editMembersUrl }"><span><spring:message code="edit.members"/></span></a>
                 </div>
             </div>
             <div class="content">
@@ -89,8 +89,8 @@
         </div>
         
         <div class="buttons">
-            <a class="button" href="${ cancelUrl }">Cancel</a>
-            <a class="button primary" href="${ saveUrl }">Save</a>
+            <a class="button" href="${ cancelUrl }"><spring:message code="cancel"/></a>
+            <a class="button primary" href="${ saveUrl }"><spring:message code="save"/></a>
         </div>
     </div>
 </div>

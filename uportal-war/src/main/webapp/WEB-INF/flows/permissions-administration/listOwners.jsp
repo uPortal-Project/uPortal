@@ -40,7 +40,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-      <h2 role="heading" class="title">Permissions by Category</h2>
+      <h2 role="heading" class="title"><spring:message code="permissions.by.category"/></h2>
   </div>
   <!-- end: portlet-titlebar -->
   

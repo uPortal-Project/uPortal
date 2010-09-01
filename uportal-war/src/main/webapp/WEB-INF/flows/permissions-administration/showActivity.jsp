@@ -24,11 +24,11 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <portlet:actionURL var="permissionsUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="permissions"/>
+    <portlet:param name="_eventId" value="owner"/>
 </portlet:actionURL>
 <portlet:actionURL var="ownerUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="owner"/>
+    <portlet:param name="_eventId" value="permissions"/>
 </portlet:actionURL>
 
 <portlet:actionURL var="createUrl">
@@ -70,17 +70,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Titlebar -->
 	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
     	<div class="breadcrumb">
-        	<span class="breadcrumb-1"><a href="${ permissionsUrl }">Categories</a></span>
+        	<span class="breadcrumb-1"><a href="${ permissionsUrl }"><spring:message code="categories"/></a></span>
             <span class="separator">&gt; </span>
             <span class="breadcrumb-2"><a href="${ ownerUrl }">${ owner.name }</a></span>
             <span class="separator">&gt; </span>
             
         </div>
-        <h2 class="title" role="heading">Assignments for <span class="name">${ activity.name }</span></h2>
+        <h2 class="title" role="heading"><spring:message code="assignments.for"/> <span class="name">${ activity.name }</span></h2>
         <h3 class="subtitle">${ activity.description }</h3>
         <div role="toolbar" class="toolbar">
             <ul>
-                <li><a href="${ createUrl }" class="button">Add an Assignement</a></li>
+                <li><a href="${ createUrl }" class="button"><spring:message code="add.assignment"/></a></li>
             </ul>
         </div>         
     </div>
@@ -92,7 +92,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div id="${n}permissionAddingTabs" class="portlet-section" role="region">
         <div class="view-pager flc-pager-top">
             <ul id="pager-top" class="fl-pager-ui">
-                <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="listPermissions.pagerPrevious"/></a></li>
+                <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
                 <li>
                     <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
                         <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
@@ -100,7 +100,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
                     </ul>
                 </li>
-                <li class="flc-pager-next"><a href="#"><spring:message code="listPermissions.pagerNext"/> &gt;</a></li>
+                <li class="flc-pager-next"><a href="#"><spring:message code="next"/> &gt;</a></li>
                 <li>
                     <span class="flc-pager-summary"><spring:message code="listPermissions.pagerPerPagePrefix"/></span>
                     <span> <select class="pager-page-size flc-pager-page-size">
@@ -108,18 +108,18 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <option value="10">10</option>
                         <option value="20">20</option>
                         <option value="50">50</option>
-                    </select></span> <spring:message code="listPermissions.pagerPerPageSuffix"/>
+                    </select></span> <spring:message code="per.page"/>
                 </li>
             </ul>
         </div>
         <table class="portlet-table" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;" title="Assignments of this permission">
             <thead>
                 <tr rsf:id="header:">
-                    <th id="${n}permissionPrincipal" class="flc-pager-sort-header"><a rsf:id="permissionPrincipal" title="Click to sort" href="javascript:;"><spring:message code="listPermissions.permissionPrincipalHeading"/></a></th>
-                    <th id="${n}permissionTarget" class="flc-pager-sort-header"><a rsf:id="permissionTarget" title="Click to sort" href="javascript:;"><spring:message code="listPermissions.permissionTargetHeading"/></a></th>
-                    <th id="${n}permissionType" class="flc-pager-sort-header"><a rsf:id="permissionType" title="Click to sort" href="javascript:;"><spring:message code="listPermissions.permissionTypeHeading"/></a></th>
-                    <th id="${n}permissionEdit" rsf:id="permissionEdit"><spring:message code="listPermissions.permissionEditHeading"/></th>
-                    <th id="${n}permissionDelete" rsf:id="permissionDelete"><spring:message code="listPermissions.permissionDeleteHeading"/></th>
+                    <th id="${n}permissionPrincipal" class="flc-pager-sort-header"><a rsf:id="permissionPrincipal" title="Click to sort" href="javascript:;"><spring:message code="principal"/></a></th>
+                    <th id="${n}permissionTarget" class="flc-pager-sort-header"><a rsf:id="permissionTarget" title="Click to sort" href="javascript:;"><spring:message code="target"/></a></th>
+                    <th id="${n}permissionType" class="flc-pager-sort-header"><a rsf:id="permissionType" title="Click to sort" href="javascript:;"><spring:message code="grant.deny"/></a></th>
+                    <th id="${n}permissionEdit" rsf:id="permissionEdit"><spring:message code="edit"/></th>
+                    <th id="${n}permissionDelete" rsf:id="permissionDelete"><spring:message code="delete"/></th>
                 </tr>
             </thead>
             <tbody id="${n}permissionsBody">
@@ -178,7 +178,7 @@ up.jQuery(function() {
                     target: editUrl.replace("OWNER", '${"${*.owner}"}')
                                     .replace("ACTIVITY", '${"${*.activity}"}')
                                     .replace("TARGET", '${"${*.target}"}'),
-                    linktext: "<spring:message code="listPermissions.editLink"/>"
+                    linktext: "<spring:message code="edit"/>"
                 }
             },
             { key: "permissionDelete", valuebinding: "*.owner",
@@ -189,7 +189,7 @@ up.jQuery(function() {
                                     .replace("ACTIVITY", escape('${"${*.activity}"}'))
                                     .replace("TARGET", escape('${"${*.target}"}'))
                                     .replace("PERMISSIONTYPE", escape('${"${*.permissionType}"}')),
-                    linktext: "<spring:message code="listPermissions.deleteLink"/>"
+                    linktext: "<spring:message code="delete"/>"
                 }
             }
         ],

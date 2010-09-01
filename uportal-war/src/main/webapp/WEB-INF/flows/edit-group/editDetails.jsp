@@ -30,7 +30,7 @@
     
     <!-- Portlet Title -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading">Edit Group Details</h2>
+        <h2 class="title" role="heading"><spring:message code="edit.group.details"/></h2>
     </div> <!-- end: portlet-title -->
     
     <!-- Portlet Body -->
@@ -40,17 +40,17 @@
                 <table class="purpose-layout" summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Description</th>
+                            <th><spring:message code="name"/></th>
+                            <th><spring:message code="description"/></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="label"><label for="name">Name:</label></td>
+                            <td class="label"><label for="name"><spring:message code="name"/>:</label></td>
                             <td><form:input path="name"/></td>
                         </tr>  
                         <tr>
-                            <td class="label"><label for="description">Description</label></td>
+                            <td class="label"><label for="description"><spring:message code="description"/>:</label></td>
                             <td><form:input path="description"/></td>
                         </tr>  
                     </tbody>
@@ -58,13 +58,13 @@
                 <div class="buttons">
                     <c:choose>
                         <c:when test="${ completed }">
-                          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
+                          <input class="button primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
                         </c:when>
                         <c:otherwise>
-                          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
+                          <input class="button primary" type="submit" value="<spring:message code="next"/>" name="_eventId_next"/>
                         </c:otherwise>
                     </c:choose>
-                    <input class="button" type="submit" value="<spring:message code="groups-manager.cancel"/>" name="_eventId_cancel"/>
+                    <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
                 </div>
             </form:form>
         </div>

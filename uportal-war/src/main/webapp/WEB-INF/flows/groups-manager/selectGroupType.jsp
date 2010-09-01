@@ -41,7 +41,7 @@
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">
-            <spring:message code="groups-manager.selectGroupType.Title" />
+            <spring:message code="groups.by.type" />
         </h2>
     </div> <!-- end: portlet-titlebar -->
     
@@ -52,9 +52,9 @@
         	<div class="panel type-categories">
             	<div class="titlebar">
                 	<h2 class="title">
-                    	<a href="${ portletUrl }"><spring:message code="groups-manager.type.categories"/></a>
+                    	<a href="${ portletUrl }"><spring:message code="portlet.categories"/></a>
                     </h2>
-                    <h3 class="subtitle"><spring:message code="groups-manager.type.categories.description"/></h3>
+                    <h3 class="subtitle"><spring:message code="portlet.categories.description"/></h3>
                 </div>
                 <div class="content">
                 	<span class="link-list">
@@ -67,9 +67,9 @@
             <div class="panel type-people">
             	<div class="titlebar">
                 	<h2 class="title">
-                    	<a href="${ peopleUrl }"><spring:message code="groups-manager.type.people"/></a>
+                    	<a href="${ peopleUrl }"><spring:message code="person.groups"/></a>
                     </h2>
-                    <h3 class="subtitle"><spring:message code="groups-manager.type.people.description"/></h3>
+                    <h3 class="subtitle"><spring:message code="person.groups.description"/></h3>
                 </div>
                 <div class="content">
                 	<span class="link-list">

@@ -45,10 +45,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Titlebar -->
 	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
 	  	<div class="breadcrumb">
-	    	<span class="breadcrumb-1"><a href="${ backUrl }">Categories</a></span>
+	    	<span class="breadcrumb-1"><a href="${ backUrl }"><spring:message code="categories"/></a></span>
 	        <span class="separator">&gt; </span>
 	    </div>
-	    <h2 class="title" role="heading">Permissions in <span class="name">${ owner.name }</span></h2>
+	    <h2 class="title" role="heading"><spring:message code="permissions.in"/> <span class="name">${ owner.name }</span></h2>
 	    <h3 class="subtitle">${ owner.description }</h3>
 	</div>
   
@@ -60,9 +60,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 		
         <table class="portlet-table" style="width:100%" title="${ owner.description }">    
             <tr>
-                <th>Name</th>
-                <th>System ID</th>
-                <th>Description</th>
+                <th><spring:message code="name"/></th>
+                <th><spring:message code="systemId"/></th>
+                <th><spring:message code="description"/></th>
             </tr>
             <c:forEach items="${ owner.activities }" var="activity">
                 <tr>

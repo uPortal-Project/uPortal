@@ -65,11 +65,12 @@
         
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="false"/>
-        <input name="saveButtonCode" value="'groups-manager.next'" />
-        <input name="backButtonCode" value="'edit-portlet.backButton'" />
-        <input name="cancelButtonCode" value="'edit-portlet.cancelButton'" />
-        <input name="pageTitleCode" value="'groups-manager.selectGroup'"/>
-        <input name="pageSubtitleCode" value="'groups-manager.selectSubtitle'" />
+        <input name="saveButtonCode" value="'next'" />
+        <input name="backButtonCode" value="'back'" />
+        <input name="cancelButtonCode" value="'cancel'" />
+        <input name="pageTitleCode" value="'select.people.and.groups'"/>
+        <input name="pageSubtitleCode" value="'select.members.of.group'" />
+        <input name="pageSubtitleArgument" value="group.name" />
         
         <!-- Group input/output mapping -->
         <input name="selectedGroups" value="group.members"/>

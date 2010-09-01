@@ -48,7 +48,7 @@
     <input name="pageTitleText" type="string" required="false" />
     <input name="pageSubtitleCode" type="string" required="false" />
     <input name="pageSubtitleText" type="string" required="false" />
-    <input name="pageSubtitleChannelName" type="string" required="false" />
+    <input name="pageSubtitleArgument" type="string" required="false" />
 
     <!-- 
         | Selected groups input

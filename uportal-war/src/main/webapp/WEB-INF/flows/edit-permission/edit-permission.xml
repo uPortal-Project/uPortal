@@ -62,10 +62,11 @@
         
         <input name="showCancelButton" value="false"/>
         <input name="showBackButton" value="true"/>
-        <input name="saveButtonCode" value="'editPermission.submitButton'" />
-        <input name="backButtonCode" value="'editPermission.backButton'" />
-        <input name="pageTitleCode" value="'editPermission.title'"/>
-        <input name="pageSubtitleCode" value="'editPermission.createPermissionHeader'" />
+        <input name="saveButtonCode" value="'submit'" />
+        <input name="backButtonCode" value="'back'" />
+        <input name="pageTitleCode" value="'select.principals'"/>
+        <input name="pageSubtitleCode" value="'select.principals.for.permission'" />
+        <input name="pageSubtitleArgument" value="''" />
 
         <!-- Group input/output mapping -->
         <input name="selectedGroups" value="principals"/>

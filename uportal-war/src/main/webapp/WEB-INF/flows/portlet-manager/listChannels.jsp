@@ -322,7 +322,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 { 
                     portletRegistry: { 
                         type: "up.PortletRegistry",
-                        options: { portletListUrl: "<c:url value="/mvc/channelList?xml=false"/>" } 
+                        options: { portletListUrl: "<c:url value="/mvc/channelList?type=manage"/>" } 
                     },
                     categoryListView: {
                         type: "up.PortletAdministrationCategoryListView"

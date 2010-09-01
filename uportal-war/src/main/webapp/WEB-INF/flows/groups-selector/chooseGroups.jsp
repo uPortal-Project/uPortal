@@ -44,7 +44,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<!-- Portlet Title -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading"><spring:message code="${ pageTitleCode }" text="${ pageTitleText }"/></h2>
-    <h3 class="subtitle"><spring:message code="${ pageSubtitleCode }" arguments="${ pageSubtitleChannelName }" text="${ pageSubtitleText }"/></h3>
+    <h3 class="subtitle"><spring:message code="${ pageSubtitleCode }" arguments="${ pageSubtitleArgument }" text="${ pageSubtitleText }"/></h3>
   </div> <!-- end: portlet-titlebar -->
   
 	<!-- Portlet Body -->
@@ -67,7 +67,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <!-- selections -->
             <div class="portlet-selection">
                 <div class="titlebar">
-                    <h4 class="title selections"><spring:message code="chooseGroups.selectionsHeading"/></h4>
+                    <h4 class="title selections"><spring:message code="your.selections"/></h4>
                 </div>
                 <div class="content">
                     <form action="${ submitUrl }" method="post">
@@ -101,17 +101,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         
             <!-- start: search -->
             <div class="portlet-search">
-              <h4 class="title search"><spring:message code="chooseGroups.searchHeading"/></h4>
+              <h4 class="title search"><spring:message code="search"/></h4>
               <form id="${n}searchForm">
-                <input type="text" name="searchterm" value="<spring:message code="chooseGroups.searchBoxDefault"/>"/>
-                <input type="submit" class="button" value="<spring:message code="chooseGroups.searchSubmit"/>" />
+                <input type="text" name="searchterm" value="<spring:message code="enter.name"/>"/>
+                <input type="submit" class="button" value="<spring:message code="go"/>" />
               </form>
             </div><!-- end: search -->
     
             <!-- start: browse -->
             <div class="browse-hierarchy">
                 <div class="titlebar">
-                    <h4 class="title browse"><spring:message code="chooseGroups.browseHeading"/></h4>
+                    <h4 class="title browse"><spring:message code="browse"/></h4>
                 </div>
                 <!-- browse content -->
                 <div class="content">
@@ -128,27 +128,27 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         </div> <!-- end: titlebar -->    
                         <!-- entity selections -->
                         <div class="fl-container content">
-                            <p><span class="current">Everyone</span> <spring:message code="chooseGroups.includes"/>:</p>
-                            <p id="${n}browsingResultNoMembers" style="display:none"><spring:message code="chooseGroups.noMembers"/></p>
+                            <p><span class="current">Everyone</span> <spring:message code="includes"/>:</p>
+                            <p id="${n}browsingResultNoMembers" style="display:none"><spring:message code="no.members"/></p>
                             <c:forEach items="${selectTypes}" var="type">
                                 <c:choose>
                                     <c:when test="${type == 'group'}">
                                         <div class="group">
-                                            <h6 class="title"><spring:message code="chooseGroups.groupsHeading"/></h6>
+                                            <h6 class="title"><spring:message code="groups"/></h6>
                                             <ul class="member-list">
                                             </ul>
                                         </div>
                                     </c:when>
                                     <c:when test="${type == 'person'}">
                                         <div class="person">
-                                            <h6 class="title"><spring:message code="chooseGroups.peopleHeading"/></h6>
+                                            <h6 class="title"><spring:message code="people"/></h6>
                                             <ul class="member-list">
                                             </ul>
                                         </div>
                                     </c:when>
                                     <c:when test="${type == 'category'}">
                                         <div class="category">
-                                            <h6 class="title"><spring:message code="chooseGroups.categoriesHeading"/></h6>
+                                            <h6 class="title"><spring:message code="categories"/></h6>
                                             <ul class="member-list">
                                             </ul>
                                         </div>
@@ -164,8 +164,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div> <!-- end: Right panel -->
     </div> <!-- end: 2 panel -->
 
-	<div id="${n}searchDialog" title="<spring:message code="chooseGroups.searchResultsTitle"/>">
-	    <p id="${n}searchResultsNoMembers" style="display:none"><spring:message code="chooseGroups.noResults"/></p>
+	<div id="${n}searchDialog" title="<spring:message code="search"/>">
+	    <p id="${n}searchResultsNoMembers" style="display:none"><spring:message code="no.results"/></p>
 	    <ul id="${n}searchResults"></ul>
 	</div>
 
@@ -185,8 +185,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 		        entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
 		        selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
 		        initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',
-		        selectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="chooseGroups.selectButton"/></spring:escapeBody>',
-		        deselectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="chooseGroups.deselectButton"/></spring:escapeBody>',
+		        selectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="select"/></spring:escapeBody>',
+		        deselectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="deselect"/></spring:escapeBody>',
 		        selectors: {
 		            selectionBasket: "#${n}selectionBasket ul",
 		            breadcrumbs: "#${n}entityBrowsingBreadcrumbs",

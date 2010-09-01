@@ -43,14 +43,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <!-- Portlet Titlebar -->
 	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
     	<div class="breadcrumb">
-        	<span class="breadcrumb-1"><a href="${ permissionsUrl }">Categories</a></span>
+        	<span class="breadcrumb-1"><a href="${ permissionsUrl }"><spring:message code="categories"/></a></span>
             <span class="separator">&gt; </span>
             <span class="breadcrumb-2"><a href="${ ownerUrl }">${ owner.name }</a></span>
             <span class="separator">&gt; </span>
             <span class="breadcrumb-3"><a href="?">${ activity.name }</a></span>
             <span class="separator">&gt; </span>
         </div>
-        <h2 class="title" role="heading">Add an Assignment to <span class="name">${ activity.name }</span></h2>
+        <h2 class="title" role="heading"><spring:message code="add.assignment.to"/> <span class="name">${ activity.name }</span></h2>
         <h3 class="subtitle">${ activity.description }</h3>
     </div>
   
@@ -62,13 +62,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div class="portlet-form">
         <form id="${n}targetForm" action="${ formUrl }" method="POST">
-            <label for="${n}target">Select a target for the assigment by typing the target name:</label> 
+            <label for="${n}target"><spring:message code="select.target.instruction"/>:</label> 
             <input id="${n}target" class="target-input multiselect" name="target"/>
 
             <!-- Buttons -->
             <div class="buttons">
-                <input class="button primary" type="submit" value="<spring:message code="editPermission.submitButton"/>" name="_eventId_editPermission"/>
-                <input class="button" type="submit" value="<spring:message code="editPermission.cancelButton"/>" name="_eventId_cancel"/>
+                <input class="button primary" type="submit" value="<spring:message code="submit"/>" name="_eventId_editPermission"/>
+                <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
             </div> <!-- end: buttons -->
             
         </form>

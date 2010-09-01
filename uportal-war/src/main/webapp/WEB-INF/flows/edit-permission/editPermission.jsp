@@ -48,7 +48,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     	<div class="breadcrumb">
-        	<span class="breadcrumb-1"><a href="${ permissionsUrl }">Categories</a></span>
+        	<span class="breadcrumb-1"><a href="${ permissionsUrl }"><spring:message code="categories"/></a></span>
             <span class="separator">&gt; </span>
             <span class="breadcrumb-2"><a href="${ ownerUrl }">${ permissionDefinition.owner.name }</a></span>
             <span class="separator">&gt; </span>
@@ -59,7 +59,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <h3 class="subtitle">With target <span class="name">${ permissionDefinition.target.name }</span></h3>
         <div class="toolbar">
         	<ul>
-                <li><a href="${ choosePrinicipalsUrl }" class="button">Choose Principals</a></li>
+                <li><a href="${ choosePrinicipalsUrl }" class="button"><spring:message code="choose.principals"/></a></li>
             </ul>
         </div>
     </div>
@@ -78,8 +78,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
                 <!-- Buttons -->
                 <div class="buttons">
-                    <input class="button primary" type="submit" value="<spring:message code="editPermission.submitButton"/>" name="_eventId_submit"/>
-                    <input class="button" type="submit" value="<spring:message code="editPermission.cancelButton"/>" name="_eventId_cancel"/>
+                    <input class="button primary" type="submit" value="<spring:message code="submit"/>" name="_eventId_submit"/>
+                    <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
                 </div> <!-- end: buttons -->
                 
             </form:form>

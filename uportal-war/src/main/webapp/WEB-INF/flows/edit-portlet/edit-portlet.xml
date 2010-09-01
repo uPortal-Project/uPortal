@@ -111,12 +111,12 @@
 
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="!completed"/>
-        <input name="saveButtonCode" value="completed ? 'edit-portlet.reviewButton' : 'edit-portlet.nextButton'" />
-        <input name="backButtonCode" value="'edit-portlet.backButton'" />
-        <input name="cancelButtonCode" value="'edit-portlet.cancelButton'" />
-        <input name="pageTitleCode" value="'edit-portlet.selectCategories'"/>
-        <input name="pageSubtitleCode" value="'edit-portlet.categorySubtitle'" />
-        <input name="pageSubtitleChannelName" value="channel.name != '' ? channel.name : 'this portlet'" />
+        <input name="saveButtonCode" value="completed ? 'review' : 'next'" />
+        <input name="backButtonCode" value="'back'" />
+        <input name="cancelButtonCode" value="'cancel'" />
+        <input name="pageTitleCode" value="'select.categories'"/>
+        <input name="pageSubtitleCode" value="'categories.membership.which'" />
+        <input name="pageSubtitleArgument" value="channel.name != '' ? channel.name : 'this portlet'" />
         
         <!-- Group input/output mapping -->
         <input name="selectedGroups" value="channel.categories"/>
@@ -145,12 +145,12 @@
         
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="!completed"/>
-        <input name="saveButtonCode" value="completed ? 'edit-portlet.reviewButton' : 'edit-portlet.nextButton'" />
-        <input name="backButtonCode" value="'edit-portlet.backButton'" />
-        <input name="cancelButtonCode" value="'edit-portlet.cancelButton'" />
-        <input name="pageTitleCode" value="'edit-portlet.selectPag'"/>
-        <input name="pageSubtitleCode" value="'edit-portlet.pagSubtitle'" />
-        <input name="pageSubtitleChannelName" value="channel.name != '' ? channel.name : 'this portlet'" />
+        <input name="saveButtonCode" value="completed ? 'review' : 'next'" />
+        <input name="backButtonCode" value="'back'" />
+        <input name="cancelButtonCode" value="'cancel'" />
+        <input name="pageTitleCode" value="'select.people.and.groups'"/>
+        <input name="pageSubtitleCode" value="'people.membership.which'" />
+        <input name="pageSubtitleArgument" value="channel.name != '' ? channel.name : 'this portlet'" />
 
         <!-- Group input/output mapping -->
         <input name="selectedGroups" value="channel.groups"/>
