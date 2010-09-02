@@ -21,12 +21,12 @@
 
 
 <permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
-  <name>uPortal Fragments</name>
+  <name>uPortal System</name>
   <fname>UP_SYSTEM</fname>
   <desc>Permissions controlling the base uPortal system</desc>
   <activities>
     <activity>
-        <name>Portal System</name>
+        <name>Superuser</name>
         <fname>ALL_PERMISSIONS</fname>
         <desc>Receive *any* portal permission.  This permission covers all 
         permissions for all systems, is not blockable, and is only intended
