@@ -186,8 +186,7 @@ public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, int chan
     }
     
     final String activity = IPermission.PORTLET_MODE_CONFIG;
-    return doesPrincipalHavePermission(principal, owner, activity, IPermission.ALL_CHANNELS_TARGET) || 
-        doesPrincipalHavePermission(principal, owner, activity, target);
+    return doesPrincipalHavePermission(principal, owner, activity, target);
 }
 /**
  * Answers if the principal has permission to MANAGE this Channel.
@@ -224,39 +223,30 @@ throws AuthorizationException
      * may not yet be published or expired.
      */
     
-    String all = IPermission.ALL_CHANNELS_TARGET;
     String activity = IPermission.CHANNEL_MANAGER_EXPIRED_ACTIVITY;
 	if ((order <= ChannelLifecycleState.EXPIRED.getOrder() 
 			|| channel.getExpirationDate() != null)
-			&& (doesPrincipalHavePermission(principal, owner, activity, all)
-				|| doesPrincipalHavePermission(principal, owner,
-						activity, target))) {
+			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
 		return true;
     } 
 	
 	activity = IPermission.CHANNEL_MANAGER_ACTIVITY;
 	if ((order <= ChannelLifecycleState.PUBLISHED.getOrder() 
     		|| channel.getPublishDate() != null)
-			&& (doesPrincipalHavePermission(principal, owner, activity, all)
-				|| doesPrincipalHavePermission(principal, owner, 
-						activity, target))) {
+			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
     	return true;
     } 
 	
 	activity = IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY;
 	log.debug("order: " + order + ", approved order: " + ChannelLifecycleState.APPROVED.getOrder());
 	if (order <= ChannelLifecycleState.APPROVED.getOrder()
-			&& (doesPrincipalHavePermission(principal, owner, activity, all)
-				|| doesPrincipalHavePermission(principal, owner,
-						activity, target))) {
+			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
     	return true;
     } 
 	
 	activity = IPermission.CHANNEL_MANAGER_CREATED_ACTIVITY;
 	if (order <= ChannelLifecycleState.CREATED.getOrder()
-			&& (doesPrincipalHavePermission(principal, owner, activity, all)
-				|| doesPrincipalHavePermission(principal, owner,
-						activity, target))) {
+			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
     	return true;
     }
     	
@@ -285,36 +275,27 @@ public boolean canPrincipalManage(IAuthorizationPrincipal principal, ChannelLife
     }    
     int order = state.getOrder();
     
-    String all = IPermission.ALL_CHANNELS_TARGET;
     String activity = IPermission.CHANNEL_MANAGER_EXPIRED_ACTIVITY;
 	if (order <= ChannelLifecycleState.EXPIRED.getOrder()
-			&& (doesPrincipalHavePermission(principal, owner, activity, all)
-				|| doesPrincipalHavePermission(principal, owner, 
-					activity, categoryId))) {
+			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
 		return true;
     }
 	
     activity = IPermission.CHANNEL_MANAGER_ACTIVITY;
 	if (order <= ChannelLifecycleState.PUBLISHED.getOrder()
-			&& (doesPrincipalHavePermission(principal, owner, activity, all)
-					|| doesPrincipalHavePermission(principal, owner,
-							activity, categoryId))) {
+			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
     	return true;
     }
 	
     activity = IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY;
 	if (order <= ChannelLifecycleState.APPROVED.getOrder()
-			&& (doesPrincipalHavePermission(principal, owner, activity, all)
-					|| doesPrincipalHavePermission(principal, owner,
-							activity, categoryId))) {
+			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
     	return true;
     }
 	
     activity = IPermission.CHANNEL_MANAGER_CREATED_ACTIVITY;
 	if (order <= ChannelLifecycleState.CREATED.getOrder()
-			&& (doesPrincipalHavePermission(principal, owner, activity, all)
-					|| doesPrincipalHavePermission(principal, owner,
-							activity, categoryId))) {
+			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
     	return true;
     }
     	
@@ -381,8 +362,7 @@ public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int chan
     }
 
     // test the appropriate permission
-    return (doesPrincipalHavePermission(principal, owner, permission, IPermission.ALL_CHANNELS_TARGET)
-    		|| doesPrincipalHavePermission(principal, owner, permission, target));
+    return doesPrincipalHavePermission(principal, owner, permission, target);
 
 }
 
@@ -431,7 +411,8 @@ public boolean doesPrincipalHavePermission(
     IPermissionPolicy policy)
 throws AuthorizationException
 {
-    return policy.doesPrincipalHavePermission(this, principal, owner, activity, target);
+    return policy.doesPrincipalHavePermission(this, principal, owner,
+            activity, target);
 }
 
 /**
@@ -917,7 +898,7 @@ throws AuthorizationException
 {
 
     /*
-     * Get a list of all permissions for the specified principle, then iterate
+     * Get a list of all permissions for the specified principal, then iterate
      * through them to build a list of the permissions matching the specified
      * criteria.
      */

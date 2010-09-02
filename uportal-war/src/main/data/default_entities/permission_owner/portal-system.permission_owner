@@ -20,23 +20,18 @@
 -->
 
 
-<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
-  <owner>UP_GROUPS</owner>
-  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
-  <principal> 
-    <group>Portal System</group> 
-  </principal>
-  <activity>VIEW</activity>
-  <target permission-type="GRANT"> 
-    <group>All categories</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <group>Everyone</group> 
-  </target>
-  <target permission-type="GRANT"> 
-    <literal>ALL_CATEGORIES</literal> 
-  </target>
-  <target permission-type="GRANT"> 
-    <literal>ALL_GROUPS</literal> 
-  </target>
-</permission-set>
+<permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
+  <name>uPortal Fragments</name>
+  <fname>UP_SYSTEM</fname>
+  <desc>Permissions controlling the base uPortal system</desc>
+  <activities>
+    <activity>
+        <name>Portal System</name>
+        <fname>ALL_PERMISSIONS</fname>
+        <desc>Receive *any* portal permission.  This permission covers all 
+        permissions for all systems, is not blockable, and is only intended
+        to be granted to superusers.</desc>
+        <targetProvider>portalSystemTargetProvider</targetProvider>
+    </activity>
+  </activities>
+</permission-owner>

@@ -20,15 +20,14 @@
 -->
 
 
-<permission script="classpath://org/jasig/portal/io/import-permission_v2-6.crn">
-  <owner>UP_PORTLET_PUBLISH</owner>
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+  <owner>UP_SYSTEM</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
-  <principal> 
-    <group>Portal Administrators</group> 
+  <principal>
+    <group>Portal System</group> 
   </principal>
-  <activity>MANAGE</activity>
-  <target> 
-    <literal>CHAN_ID.*</literal> 
+  <activity>ALL_PERMISSIONS</activity>
+  <target permission-type="GRANT"> 
+    <literal>ALL</literal> 
   </target>
-  <permission-type>GRANT</permission-type>
-</permission>
+</permission-set>

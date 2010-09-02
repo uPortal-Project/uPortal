@@ -82,6 +82,18 @@
                         </property>
                     </bean>
                 </entry>
+                <entry key="portalSystemTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">
+                        <property name="targets">
+                            <util:list>
+                                <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">
+                                    <constructor-arg value="ALL"/>
+                                    <constructor-arg value="All permissions"/>
+                                </bean>
+                            </util:list>
+                        </property>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>    

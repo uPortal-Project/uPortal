@@ -27,12 +27,15 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionPolicy;
+import org.jasig.portal.services.GroupService;
 
 /**
  * If there exists a GRANT explicitly for the Principal for the Activity under consideration,
@@ -82,7 +85,14 @@ public class AnyUnblockedGrantPermissionPolicy
             return false;
         }
 
-        
+        // if this user is a super-user, just return true
+        if (!IPermission.ALL_PERMISSIONS_ACTIVITY.equals(activity)
+                && doesPrincipalHavePermission(service, principal,
+                        IPermission.PORTAL_SYSTEM,
+                        IPermission.ALL_PERMISSIONS_ACTIVITY,
+                        IPermission.ALL_TARGET)) {
+            return true;
+        }
         
         // first check for explicit permissions for this Principal
         IPermission[] perms = service.getPermissionsForPrincipal(principal, owner, activity, target);
@@ -102,6 +112,27 @@ public class AnyUnblockedGrantPermissionPolicy
             	log.trace("Principal [" + principal + "] is granted permission to perform activity [" + activity + "] on target [" + target + "] under permission owning system [" + owner + "] because this principal has an excplicit GRANT and does not have an exlicit DENY.");
             }
             return true;
+        }
+
+        // if the target is formatted as a channel, check if the user has
+        // the ALL_CHANNELS permission
+        if (target.startsWith(IPermission.CHANNEL_PREFIX)
+                    && doesPrincipalHavePermission(service, principal, owner,
+                            activity, IPermission.ALL_PORTLETS_TARGET)) {
+            return true;
+        }
+
+        // if this target corresponds to a group or category, check if the user
+        // has the ALL_CATEGORIES or ALL_GROUPS permissions
+        IEntityGroup targetGroup = GroupService.findGroup(target);
+        if (targetGroup != null) {
+            if ((targetGroup.getEntityType().equals(IChannelDefinition.class)
+                    && doesPrincipalHavePermission(service, principal, owner,
+                            activity, IPermission.ALL_CATEGORIES_TARGET) || doesPrincipalHavePermission(
+                    service, principal, owner, activity,
+                    IPermission.ALL_GROUPS_TARGET))) {
+                return true;
+            }
         }
 
         // no explicit permission.  Search for an unblocked GRANT.

@@ -76,6 +76,8 @@ public interface IPermission {
   public String PORTAL_PUBLISH = "UP_PORTLET_PUBLISH";
   
   public String PORTAL_SUBSCRIBE = "UP_PORTLET_SUBSCRIBE";
+  
+  public String PORTAL_SYSTEM = "UP_SYSTEM";
 
   /*
     A String which, when concatentated with a channel id, represents a portal
@@ -84,7 +86,15 @@ public interface IPermission {
   */
   public String CHANNEL_PREFIX = "CHAN_ID.";    
   
-  public String ALL_CHANNELS_TARGET = "ALL_CHANNELS";
+  public String ALL_PORTLETS_TARGET = "ALL_CHANNELS";
+  
+  public String ALL_GROUPS_TARGET = "ALL_GROUPS";
+  
+  public String ALL_CATEGORIES_TARGET = "ALL_CATEGORIES";
+  
+  public String ALL_PERMISSIONS_ACTIVITY = "ALL_PERMISSIONS";
+  
+  public String ALL_TARGET = "ALL";
   
   /**
    * Gets the activity associated with this <code>IPermission</code>.
