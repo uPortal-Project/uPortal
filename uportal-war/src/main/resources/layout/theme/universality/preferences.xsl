@@ -47,8 +47,9 @@
   xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
   xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
   xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+  xmlns:upMsg="xalan://org.jasig.portal.security.xslt.XalanMessageHelper"
   extension-element-prefixes="portal portlet layout" 
-  exclude-result-prefixes="xalan portal portlet layout upAuth upGroup" 
+  exclude-result-prefixes="xalan portal portlet layout upAuth upGroup upMsg" 
   version="1.0">
   
   <xalan:component prefix="portal" elements="url param">
@@ -74,17 +75,17 @@
         <div class="fl-fix fl-col-mixed fl-col-mixed2 pane add-content">
             <div class="fl-col-fixed fl-force-left content-filters-wrapper">
                 <div class="categories-column active">
-                    <h3 class="portlet-list-link"><span>Stuff</span></h3>
+                    <h3 class="portlet-list-link"><span><xsl:value-of select="upMsg:getMessage('stuff', $USER_LANG)"/></span></h3>
                     <div class="categories-wrapper active">
                     	<div class="portlet-search-view">
                             <form class="portlet-search-form">
-                                <label for="portletSearch">Search for stuff to add</label>
+                                <label for="portletSearch"><xsl:value-of select="upMsg:getMessage('search.stuff.add', $USER_LANG)"/></label>
                                 <input id="portletSearch" name="portletSearch" class="portlet-search-input"/>
                                 <input type="submit" value="Search" class="portlet-search-submit"/>
                             </form>
                         </div>
                         <div class="categories">
-                            <h4>Categories</h4>
+                            <h4><xsl:value-of select="upMsg:getMessage('categories', $USER_LANG)"/></h4>
                             <ul>
                                 <div class="category-choice-container">
                                     <li class="category-choice">
@@ -97,10 +98,10 @@
                     </div>
                 </div>
                 <div class="packages-column">
-                	<h3 class="package-list-link"><span>Packaged Stuff</span></h3>
+                	<h3 class="package-list-link"><span><xsl:value-of select="upMsg:getMessage('packaged.stuff', $USER_LANG)"/></span></h3>
                     <div class="packages-wrapper">
                         <div class="packages">
-                            <p>Adding a package creates a new tab and puts the packaged stuff on it.</p>
+                            <p><xsl:value-of select="upMsg:getMessage('add.package.instruction', $USER_LANG)"/></p>
                         </div>
                     </div>
                 </div>
@@ -136,7 +137,7 @@
         <div class="fl-fix fl-col-mixed fl-col-mixed2 use-content" style="display:none">
             <div class="fl-col-fixed fl-force-left content-filters-wrapper">
                 <div class="categories-column active">
-                    <h3 class="portlet-list-link"><span>Stuff</span></h3>
+                    <h3 class="portlet-list-link"><span><xsl:value-of select="upMsg:getMessage('stuff', $USER_LANG)"/></span></h3>
                     <div class="categories-wrapper active">
                         <div class="portlet-search-view">
                             <form class="portlet-search-form">
@@ -146,7 +147,7 @@
                             </form>
                         </div>
                         <div class="categories">
-                            <h4>Categories</h4>
+                            <h4><xsl:value-of select="upMsg:getMessage('categories', $USER_LANG)"/></h4>
                             <ul>
                                 <div class="category-choice-container">
                                     <li class="category-choice">
@@ -193,7 +194,7 @@
                 <ul class="portlet-list">
                     <li class="portlet">
                         <div class="portlet-wrapper">
-                            <a href="javascript:;" class="portlet-link"><span>Add</span></a>
+                            <a href="javascript:;" class="portlet-link"><span><xsl:value-of select="upMsg:getMessage('add', $USER_LANG)"/></span></a>
                             <div class="portlet-titlebar"></div>
                             <img class="portlet-icon"/>
                             <div class="portlet-description"></div>
@@ -221,7 +222,7 @@
                 <ul class="package-list">
                     <li class="package">
                        <div class="package-wrapper">
-                           <a href="javascript:;" class="package-link"><span>Subscribe</span></a>
+                           <a href="javascript:;" class="package-link"><span><xsl:value-of select="upMsg:getMessage('subscribe', $USER_LANG)"/></span></a>
                            <div class="package-titlebar"></div>
                            <img class="package-icon"/>
                            <div class="package-description"></div>
@@ -241,7 +242,7 @@
         <div class="pager flc-pager-top">
             <div class="pager-button-up flc-pager-previous">
                 <a class="pager-button-up-inner" href="javascript:;">
-                    <span>up</span>
+                    <span><xsl:value-of select="upMsg:getMessage('up', $USER_LANG)"/></span>
                 </a>
             </div>
             <li style="display:none">
@@ -254,11 +255,11 @@
             <div class="pager-pagination"></div>
             <div class="pager-button-down flc-pager-next">
                 <a class="pager-button-down-inner" href="javascript:;">
-                    <span>down</span>
+                    <span><xsl:value-of select="upMsg:getMessage('down', $USER_LANG)"/></span>
                 </a>
             </div>
             <li style="display:none">
-                <span class="flc-pager-summary">show</span>
+                <span class="flc-pager-summary"><xsl:value-of select="upMsg:getMessage('show', $USER_LANG)"/></span>
                 <span><select class="pager-page-size flc-pager-page-size">
                 </select></span>
             </li>
@@ -343,20 +344,20 @@
                 <div class="fl-col-side fl-force-left menu-wrapper">
                     <ul class="menu" role="menu">
                         <li class="add-content-link active" role="tab">
-                            <a href="javascript:;"><span>Add Stuff</span></a>
+                            <a href="javascript:;"><span><xsl:value-of select="upMsg:getMessage('add.stuff', $USER_LANG)"/></span></a>
                         </li>
                         <li class="use-content-link" role="tab">
-                            <a href="javascript:;"><span>Use It</span></a>
+                            <a href="javascript:;"><span><xsl:value-of select="upMsg:getMessage('use.it', $USER_LANG)"/></span></a>
                         </li>
                         <li class="skin-link" role="tab">
-                            <a href="javascript:;"><span>Colors</span></a>
+                            <a href="javascript:;"><span><xsl:value-of select="upMsg:getMessage('colors', $USER_LANG)"/></span></a>
                         </li>
                         <li class="layout-link last" role="tab">
-                            <a href="javascript:;"><span>Layout</span></a>
+                            <a href="javascript:;"><span><xsl:value-of select="upMsg:getMessage('layouts', $USER_LANG)"/></span></a>
                         </li>
                     </ul>
                     <div class="close-button">
-                        <a><span>I'm Done</span></a>
+                        <a><span><xsl:value-of select="upMsg:getMessage('im.done', $USER_LANG)"/></span></a>
                     </div>
                 </div>
                 <div class="fl-col-main content-wrapper" role="tabpanel">

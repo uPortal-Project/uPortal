@@ -158,4 +158,7 @@
     <!-- Start of the rendering pipeline, provides the user's layout -->
     <bean id="userLayoutStoreComponent" class="org.jasig.portal.rendering.UserLayoutStoreComponent" />
 
+    <!-- Spring Messages helper for Xalan -->
+    <bean id="xalanMessageHelper" class="org.jasig.portal.security.xslt.XalanMessageHelperBean"/>
+    
 </beans>

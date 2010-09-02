@@ -33,6 +33,11 @@
         <constructor-arg index="0" ref="xalanGroupMembershipHelper" />
     </bean>
     
+    <bean id="org.jasig.portal.spring.locator.XalanMessageHelperLocator" 
+            class="org.jasig.portal.spring.locator.XalanMessageHelperLocator">
+        <constructor-arg index="0" ref="xalanMessageHelper" />
+    </bean>
+    
     
     <!-- 
      | The beans below are deprecated and should NEVER be referenced by other beans.
