@@ -130,7 +130,7 @@ up.jQuery(function() {
     
     $(document).ready(function(){
         $.get(
-            "mvc/permissionAssignmentMap", 
+            "<c:url value="/mvc/permissionAssignmentMap"/>", 
             { permissions: JSON.stringify(permissions) },
             function(data) {
                 allAssignments = data.assignments;
