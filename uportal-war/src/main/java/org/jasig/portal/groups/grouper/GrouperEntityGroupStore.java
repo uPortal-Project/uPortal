@@ -441,6 +441,24 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
         return new EntityIdentifier[]{};
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.groups.IEntityStore#newInstance(java.lang.String)
+     */
+    public IEntity newInstance(String key) throws GroupsException {
+        return new EntityImpl(key, null);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.groups.IEntityStore#newInstance(java.lang.String, java.lang.Class)
+     */
+    @SuppressWarnings("unchecked")
+    public IEntity newInstance(String key, Class type) throws GroupsException {
+        if (org.jasig.portal.EntityTypes.getEntityTypeID(type) == null) {
+            throw new GroupsException("Invalid group type: " + type);
+        }
+        return new EntityImpl(key, type);
+    }
+
 	/**
 	 * Test a Grouper {WsGroup} against a query string according to the specified
 	 * method and determine if it matches the query.
@@ -586,7 +604,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 	 */
     public void delete(IEntityGroup group) throws GroupsException {
         throw new UnsupportedOperationException(
-                "Group deletion is not supported by the Grouper groups service");
+             "Group deletion is not supported by the Grouper groups service");
     }
 
     /* (non-Javadoc)
@@ -605,23 +623,5 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
         throw new UnsupportedOperationException(
             "Group updates are not supported by the Grouper groups service");
     }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.groups.IEntityStore#newInstance(java.lang.String)
-     */
-	public IEntity newInstance(String key) throws GroupsException {
-	    return new EntityImpl(key, null);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.groups.IEntityStore#newInstance(java.lang.String, java.lang.Class)
-	 */
-	@SuppressWarnings("unchecked")
-	public IEntity newInstance(String key, Class type) throws GroupsException {
-        if (org.jasig.portal.EntityTypes.getEntityTypeID(type) == null) {
-            throw new GroupsException("Invalid group type: " + type);
-        }
-        return new EntityImpl(key, type);
-	}
 
 }
