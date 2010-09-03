@@ -31,7 +31,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.jasig.portal.layout.dlm.ConfigurationLoader;
+import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
+import org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluatorFactory;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
@@ -120,26 +122,44 @@ public class RetrieveSubscribableTabsController {
 
         // iterate through the list
         for (FragmentDefinition fragmentDefinition : fragmentDefinitions) {
-            String owner = fragmentDefinition.getOwnerId();
             
-            // check to see if the current user has permission to subscribe to
-            // this fragment
-            if (principal.hasPermission("UP_FRAGMENT", "FRAGMENT_SUBSCRIBE", owner)) {
+            if (isSubscribable(fragmentDefinition, principal)) {
                 
-                // create a JSON fragment bean and add it to our list
-                boolean subscribed = subscribedOwners.contains(owner);
-                SubscribableFragment jsonFragment = new SubscribableFragment(
-                        fragmentDefinition.getName(), 
-                        fragmentDefinition.getDescription(), owner, subscribed);
-                jsonFragments.add(jsonFragment);
+                String owner = fragmentDefinition.getOwnerId();
+                
+                // check to see if the current user has permission to subscribe to
+                // this fragment
+                if (principal.hasPermission("UP_FRAGMENT", "FRAGMENT_SUBSCRIBE", owner)) {
+                    
+                    // create a JSON fragment bean and add it to our list
+                    boolean subscribed = subscribedOwners.contains(owner);
+                    SubscribableFragment jsonFragment = new SubscribableFragment(
+                            fragmentDefinition.getName(), 
+                            fragmentDefinition.getDescription(), owner, subscribed);
+                    jsonFragments.add(jsonFragment);
+                }
+                
             }
-            
+                        
         }
 
         model.put("fragments", jsonFragments);
         	
 		return new ModelAndView("jsonView", model);
 		
+	}
+	
+	protected boolean isSubscribable(FragmentDefinition definition, IAuthorizationPrincipal principal) {
+
+	    String owner = definition.getOwnerId();
+        
+        for (Evaluator evaluator : definition.getEvaluators()) {
+            if (evaluator.getFactoryClass().equals(SubscribedTabEvaluatorFactory.class)) {
+                return principal.hasPermission("UP_FRAGMENT", "FRAGMENT_SUBSCRIBE", owner);
+            }
+        }
+        
+        return false;
 	}
 
 	/**

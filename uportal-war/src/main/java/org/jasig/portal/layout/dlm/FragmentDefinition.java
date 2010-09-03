@@ -169,6 +169,10 @@ public class FragmentDefinition extends Evaluator
         return this.evaluators == null ? 0 : this.evaluators.size();
     }
     
+    public List<Evaluator> getEvaluators() {
+        return this.evaluators;
+    }
+    
     public int getIndex() {
         return index;
     }
