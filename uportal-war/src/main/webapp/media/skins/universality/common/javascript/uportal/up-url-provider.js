@@ -17,7 +17,7 @@
  * under the License.
  */
 
-var up = up || {};
+var uportal = uportal || {};
 
 
 (function($, fluid){
@@ -28,22 +28,17 @@ var up = up || {};
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
-    up.LayoutPreferencesPersistence = function(container, options) {
+    up.UrlProvider = function(container, options) {
         
         // construct the new component
-        var that = fluid.initView("up.LayoutPreferencesPersistence", container, options);
+        var that = fluid.initView("up.UrlProvider", container, options);
 
-        that.update = function(data, success) {
-            $.ajax({
-                url: that.options.saveLayoutUrl,
-                type: "POST",
-                data: data,
-                dataType: "json",
-                success: success,
-                error: function(request, text, error) {
-                    that.events.onError.fire(that, request, text, error);
-                }
-            });
+        that.getPortletUrl = function (fname) {
+            return that.options.portalContext + "/p/" + fname;
+        };
+        
+        that.getTabUrl = function (tabId) {
+            return that.options.portalContext + "/f/" + tabId;
         };
         
         return that;
@@ -51,18 +46,8 @@ var up = up || {};
 
     
     // defaults
-    fluid.defaults("up.LayoutPreferencesPersistence", {
-        saveLayoutUrl: null,
-        selectors: {
-            errorMessage: ".layout-persistence-error-message"
-        },
-        listeners: {
-            onSuccess: null,
-            onError: function(that, request, text, error) {
-                if (console) console.log(request, text, error);
-                that.locate("errorMessage").text("Error persisting layout change");
-            }
-        }
+    fluid.defaults("up.UrlProvider", {
+        portalContext: "/uPortal"
     });
     
 })(jQuery, fluid);

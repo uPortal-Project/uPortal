@@ -410,20 +410,15 @@
         </div>
     </div>
     <script type="text/javascript">
-     
-     up.jQuery(document).ready(function(){
-       up.jQuery.uportal.UportalLayoutManager(
-       {
-          portalUrl: '',
-          mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
-          currentSkin: '<xsl:value-of select="$SKIN"/>',
-          preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
-          channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList',
-          subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
-          isFocusMode: true
-       });
-     });
-     
+        up.jQuery(document).ready(function(){
+            up.FocusedLayoutPreferences(
+                "body",
+                {
+                    portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
+                    layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
+                }
+            );
+        });
     </script>
    </xsl:when>
    
@@ -536,6 +531,23 @@
               channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList',
               subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
               isFragmentMode: <xsl:choose><xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>,
+              messages: { 
+                  confirmRemoveTab: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE']"/>', 
+                  confirmRemovePortlet: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_PORTLET_CONFIRMATION_MESSAGE']"/>' 
+              }
+            }
+          );
+          up.LayoutPreferences(
+            "body",
+            {
+              pageUrl: '<portal:url/>',
+              portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
+              mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
+              currentSkin: '<xsl:value-of select="$SKIN"/>',
+              subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
+              layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
+              channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList',
+              subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
               messages: { 
                   confirmRemoveTab: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE']"/>', 
                   confirmRemovePortlet: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_PORTLET_CONFIRMATION_MESSAGE']"/>' 

@@ -36,7 +36,7 @@ var up = up || {};
      * @return {String} DLM node ID associated with the supplied HTML node
      */
     up.defaultNodeIdExtractor = function (element) {
-        return element.attr("id").split("_")[1];
+        return $(element).attr("id").split("_")[1];
     };
     
     /**

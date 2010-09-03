@@ -43,8 +43,8 @@ var up = up || {};
             var categories = [];
             categories.push({
                 id: "",
-                name: "ALL",
-                description: "All Categories",
+                name: that.options.rootCategoryName,
+                description: that.options.rootCategoryDescription,
                 categories: [],
                 deepCategories: [],
                 portlets: [],
@@ -55,7 +55,7 @@ var up = up || {};
                     categories.push(category);
                 }
             });
-            categories.sort(up.getStringPropertySortFunction("name", "ALL"));
+            categories.sort(up.getStringPropertySortFunction("name", that.options.rootCategoryName));
 
             var tree = { children: [] };
 
@@ -98,6 +98,10 @@ var up = up || {};
         return that;        
     };
     
+    fluid.defaults("up.AjaxLayoutCategoryListView", {
+        rootCategoryName: "ALL",
+        rootCategoryDescription: "All Categories"
+    });
 
     up.AjaxLayoutPortletListView = function (container, overallThat, options) {
     

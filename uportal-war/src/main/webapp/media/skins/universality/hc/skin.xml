@@ -75,6 +75,9 @@
   <js>../common/javascript/uportal/up-group-browser.js</js>
   <js>../common/javascript/uportal/up-skin-selector.js</js>
   <js>../common/javascript/uportal/up-tab-inline-editor.js</js>
+  <js>../common/javascript/uportal/up-layout-persistence.js</js>
+  <js>../common/javascript/uportal/up-url-provider.js</js>
+  <js>../common/javascript/uportal/up-layout-preferences.js</js>
   <js>../common/javascript/uportal/flyout-nav.js</js>
   <js>../common/javascript/jquery.tokeninput.js</js>
 </s:resources>
