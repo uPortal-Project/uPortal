@@ -237,15 +237,18 @@
           <xsl:with-param name="TAB_POSITION" select="position()"/>
         </xsl:call-template>
       </xsl:if>
-      <xsl:if test="@activeTab='false' and $USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
+      <xsl:if test="$USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
         <xsl:call-template name="subnavigation">
           <xsl:with-param name="CONTEXT" select="'flyout'"/>
           <xsl:with-param name="TAB_POSITION" select="position()"/>
         </xsl:call-template>
       </xsl:if>
-      <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true' and @activeTab='true' and not($PORTAL_VIEW='focused')"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
+      <!-- 
+      !!!! DEPRECATED !!!!
+      If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu.
+      <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true' and @activeTab='true' and not($PORTAL_VIEW='focused')"> 
         <xsl:call-template name="preferences.editpage"/>
-      </xsl:if>
+      </xsl:if> -->
     </li>
   
   </xsl:template>
@@ -421,6 +424,8 @@
   <!-- ========= TEMPLATE: PREFERENCES EDIT PAGE ========= -->
   <!-- =================================================== -->
   <!--
+   | !!!! DEPRECATED !!!!
+   | !!!! Tab management has been redesigned and tab editing will no longer be rendered in the flyout !!!!
    | This template renders the tab preferences menu for the active tab when flyout menus are used.
   -->
   <xsl:template name="preferences.editpage">

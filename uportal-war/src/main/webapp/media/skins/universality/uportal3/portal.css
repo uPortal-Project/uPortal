@@ -177,11 +177,7 @@
 .up #portalLogo {padding-bottom:20px;}
 .up .focused #portalLogo {padding:10px 30px;}
 
-/* Welcome
- Keep the top value relative to the text size so that the top position remains good when the browser text size is increased. 
- Set the left width to the width of your logo (plus logo margins).
- This margin prevents it from colliding with the logo if the browser window is shrunk down. 
-*/
+/* Welcome */
 .up #portalWelcome {color:#B3CCE1;}
 .up #portalWelcome .user-name {color:#fff;}
 
@@ -201,19 +197,18 @@
 .up #portalNavigation .fl-tabs,
 .up #portalNavigation .fl-tabs li,
 .up #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:transparent;}
-.up #portalNavigation .fl-tabs {padding:0.5em 0; text-align:left; border:none; border-left:1px solid rgba(0,0,0,0.25);}
+.up #portalNavigation .fl-tabs {padding:0.5em 0; text-align:left; border-left:1px solid rgba(0,0,0,0.25);}
 .up #portalNavigation .fl-tabs > li {position:relative; padding:0.5em 0; border-left:1px solid rgba(255,255,255,0.25); border-right:1px solid rgba(0,0,0,0.25);}
 .up #portalNavigation .fl-tabs > li > a {padding:0.5em 2em; font-weight:bold; color:#fff !important; text-decoration:none; text-shadow:1px 1px 1px rgba(0,0,0,.5);}
 *:first-child+html .up #portalNavigation .fl-tabs,
 *:first-child+html .up #portalNavigation .fl-tabs li.portal-navigation {padding:0;} /* hack needed for IE7 */
+.up #portalNavigation .fl-tabs > .fl-tabs-active > a {background:#5E7EC4; background-image:-moz-linear-gradient(0% 100% 90deg,#3E61A8, #4065AF, #4065AF 50%,#5e7ec4 0%); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#5E7EC4), to(#3E61A8), color-stop(.5,#5e7ec4),color-stop(.5,#4065AF)); text-shadow:-1px -1px 1px rgba(0,0,0,.7);}
 .up #portalNavigation .fl-tabs > li:hover,
 .up #portalNavigation .fl-tabs > li:focus,
 .up #portalNavigation .fl-tabs > li:hover a,
 .up #portalNavigation .fl-tabs > li:focus a,
 .up #portalNavigation .fl-tabs > li a:hover,
-.up #portalNavigation .fl-tabs > li a:focus {background-color:#333;}
-.up #portalNavigation .fl-tabs > .fl-tabs-active a,
-.up #portalNavigation .fl-tabs > .fl-tabs-active a:hover {background-color:#5E7EC4; background-image:-moz-linear-gradient(0% 100% 90deg,#3E61A8, #4065AF, #4065AF 50%,#5e7ec4 0%); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#5E7EC4), to(#3E61A8), color-stop(.5,#5e7ec4),color-stop(.5,#4065AF)); text-shadow:-1px -1px 1px rgba(0,0,0,.7);}
+.up #portalNavigation .fl-tabs > li a:focus {background:#333;}
 
 /* Flyout Navigation */
 .up #portalNavigation .portal-flyout-container {
@@ -230,7 +225,7 @@
 	-moz-box-shadow:4px 4px 8px rgba(0,0,0,.5);
 	box-shadow:4px 4px 8px rgba(0,0,0,.5);
 }
-.up #portalNavigation .fl-tabs .portal-flyout-container li a {padding:0.7em 2em; border-top:1px solid #333; background-color:#fff; color:#666; font-size:85%; }
+.up #portalNavigation .fl-tabs .portal-flyout-container li a {padding:0.7em 2em; border-top:1px solid #333; background-color:#fff; color:#666 !important; font-size:85%; }
 .up #portalNavigation .fl-tabs .portal-flyout-container li:first-child a {border:none;}
 .up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:hover,
 .up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:focus {color:#fff !important; background-color:#4065AF;}

@@ -392,9 +392,7 @@
     <!-- Logo -->
     
     <!-- Web Search -->
-    <xsl:if test="$INSTITUTION != 'ivy'">
-    	<xsl:call-template name="web.search"/>
-    </xsl:if>
+    <xsl:call-template name="web.search"/>
     <!-- Web Search -->
     
     <!-- Quicklinks
@@ -820,7 +818,7 @@
   -->
   <xsl:template name="footer.block">
 
-    <xsl:if test="$INSTITUTION='uportal' or $INSTITUTION='coal'">
+    <xsl:if test="$INSTITUTION='uportal' or $INSTITUTION='coal' or $INSTITUTION='ivy' or $INSTITUTION='hc'">
       <!-- Footer Links -->
       <div id="portalPageFooterLinks">
         <a href="http://www.jasig.org/" target="_blank" title="{$TOKEN[@name='JASIG_LONG_LABEL']}">
