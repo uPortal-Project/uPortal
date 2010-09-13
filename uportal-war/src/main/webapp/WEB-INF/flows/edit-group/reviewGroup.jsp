@@ -24,10 +24,6 @@
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="cancel"/>
 </portlet:renderURL>
-<portlet:renderURL var="saveUrl">
-    <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="save"/>
-</portlet:renderURL>
 <portlet:renderURL var="deleteUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="confirmRemove"/>
@@ -89,8 +85,7 @@
         </div>
         
         <div class="buttons">
-            <a class="button" href="${ cancelUrl }"><spring:message code="cancel"/></a>
-            <a class="button primary" href="${ saveUrl }"><spring:message code="save"/></a>
+            <a class="button" href="${ backUrl }"><spring:message code="back"/></a>
         </div>
     </div>
 </div>

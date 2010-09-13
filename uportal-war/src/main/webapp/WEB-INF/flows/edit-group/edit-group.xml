@@ -65,7 +65,7 @@
         
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="false"/>
-        <input name="saveButtonCode" value="'next'" />
+        <input name="saveButtonCode" value="'save'" />
         <input name="backButtonCode" value="'back'" />
         <input name="cancelButtonCode" value="'cancel'" />
         <input name="pageTitleCode" value="'select.people.and.groups'"/>

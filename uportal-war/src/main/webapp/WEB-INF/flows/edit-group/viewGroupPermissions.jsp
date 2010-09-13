@@ -82,10 +82,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <div id="${n}assignmentTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
                     <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
                         <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active">
-                            <a href="#${n}principalTab" shape="rect"><span><spring:message code="principals"/></span></a>
+                            <a href="#${n}principalTab" shape="rect"><span><spring:message code="permissions.for.name" arguments="${group.name}"/></span></a>
                         </li>
                         <li class="ui-state-default ui-corner-top">
-                            <a href="#${n}targetTab" shape="rect"><span><spring:message code="targets"/></span></a>
+                            <a href="#${n}targetTab" shape="rect"><span><spring:message code="permissions.on.name" arguments="${group.name}"/></span></a>
                         </li>
                     </ul>
     
@@ -208,9 +208,9 @@ up.jQuery(function() {
     // Initialize the pager
     var options = {
         columnDefs: [
-            { key: "permissionOwner", valuebinding: "*.owner", sortable: true },
+            { key: "permissionOwner", valuebinding: "*.ownerName", sortable: true },
             { key: "permissionPrincipal", valuebinding: "*.principalName", sortable: true },
-            { key: "permissionActivity", valuebinding: "*.activity", sortable: true },
+            { key: "permissionActivity", valuebinding: "*.activityName", sortable: true },
             { key: "permissionTarget", valuebinding: "*.targetName", sortable: true },
             { key: "permissionType", valuebinding: "*.permissionType", sortable: true },
             { key: "permissionEdit", valuebinding: "*.owner",
