@@ -53,7 +53,7 @@
     </view-state>
     
     <!-- CHOOSE MEMBER GROUPS view -->
-    <subflow-state id="editMembers" subflow="groups-selector">
+    <subflow-state id="editMembers" subflow="entity-selector">
         <on-entry>
             <set name="flashScope.entityTypes" value="groupListHelper.getEntityTypesForGroupType(group.type)"/>
             <set name="flashScope.rootEntity" value="groupListHelper.getRootEntity(group.type)"/>

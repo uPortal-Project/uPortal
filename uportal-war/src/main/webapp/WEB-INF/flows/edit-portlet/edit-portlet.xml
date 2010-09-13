@@ -98,7 +98,7 @@
     </view-state>
     
     <!-- CATEGORIES view -->
-    <subflow-state id="chooseCategory" subflow="groups-selector">
+    <subflow-state id="chooseCategory" subflow="entity-selector">
         <on-entry>
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('category')"/>
@@ -131,7 +131,7 @@
     </decision-state>
         
     <!-- GROUPS view -->
-    <subflow-state id="chooseGroup" subflow="groups-selector">
+    <subflow-state id="chooseGroup" subflow="entity-selector">
         <on-entry>
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('person')"/>

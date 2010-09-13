@@ -32,7 +32,7 @@
     </view-state>
 
     <!-- SELECT GROUP view -->
-    <subflow-state id="selectGroup" subflow="groups-selector">
+    <subflow-state id="selectGroup" subflow="entity-selector">
         <on-entry>
             <set name="flashScope.entityTypes" value="groupType == 'group' ? 'group' : 'category'"/>
             <set name="flashScope.rootEntity" value="groupListHelper.getRootEntity(groupType)"/>

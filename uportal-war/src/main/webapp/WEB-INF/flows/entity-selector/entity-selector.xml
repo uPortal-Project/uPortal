@@ -66,7 +66,7 @@
     </on-start>
     
     <!-- Main user form for entity selection -->
-    <view-state id="chooseGroups">
+    <view-state id="selectEntities">
         <transition on="back" to="back"/>
         <transition on="save" to="finish">
             <set name="flowScope.groups" value="groupListHelper.getEntityBeans(requestParameters.groups)"/>

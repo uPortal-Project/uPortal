@@ -48,7 +48,7 @@
     </view-state>
 
     <!-- Sub-flow to choose principals (groups and users) -->
-    <subflow-state id="choosePrinicipals" subflow="groups-selector">
+    <subflow-state id="choosePrinicipals" subflow="entity-selector">
         <on-entry>
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('person')"/>
