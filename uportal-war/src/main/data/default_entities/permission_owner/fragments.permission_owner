@@ -21,7 +21,7 @@
 
 
 <permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
-  <name>uPortal Fragments</name>
+  <name>Fragments</name>
   <fname>UP_FRAGMENT</fname>
   <desc>Permissions controlling uPortal DLM fragments</desc>
   <activities>

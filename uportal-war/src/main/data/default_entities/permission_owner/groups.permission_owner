@@ -21,7 +21,7 @@
 
 
 <permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
-  <name>uPortal Groups</name>
+  <name>Groups</name>
   <fname>UP_GROUPS</fname>
   <desc>Permissions controlling uPortal group and category viewing and management</desc>
   <activities>

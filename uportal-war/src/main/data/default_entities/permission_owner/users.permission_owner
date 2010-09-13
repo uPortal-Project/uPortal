@@ -21,7 +21,7 @@
 
 
 <permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
-  <name>uPortal Users</name>
+  <name>Users</name>
   <fname>UP_USERS</fname>
   <desc>Permissions controlling uPortal user account management</desc>
   <activities>

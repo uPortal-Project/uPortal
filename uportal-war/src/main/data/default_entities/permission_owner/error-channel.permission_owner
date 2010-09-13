@@ -21,7 +21,7 @@
 
 
 <permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
-  <name>uPortal Error Channel</name>
+  <name>Error Channel</name>
   <fname>UP_ERROR_CHAN</fname>
   <desc>Permissions controlling the rendering of the uPortal error channel</desc>
   <activities>

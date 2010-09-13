@@ -21,7 +21,7 @@
 
 
 <permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
-  <name>uPortal Portlet Publishing</name>
+  <name>Portlet Publishing</name>
   <fname>UP_PORTLET_PUBLISH</fname>
   <desc>Permissions controlling the publishing and editing of uPortal content</desc>
   <activities>
