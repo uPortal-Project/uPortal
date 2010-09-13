@@ -26,7 +26,7 @@
   <principal> 
     <group>Portal System</group> 
   </principal>
-  <activity>VIEW</activity>
+  <activity>VIEW_GROUP</activity>
   <target permission-type="GRANT"> 
     <group>All categories</group> 
   </target>

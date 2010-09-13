@@ -68,7 +68,7 @@ public class FindEntityController  {
 
 		EntityIdentifier ei = person.getEntityIdentifier();
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-	    if (!ap.hasPermission("UP_GROUPS", "VIEW", entityId)) {
+	    if (!ap.hasPermission("UP_GROUPS", "VIEW_GROUP", entityId)) {
 			throw new AuthorizationException("User " + person.getUserName() + 
 					" does not have view permissions on entity " + entityId);
 		}

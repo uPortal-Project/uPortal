@@ -26,7 +26,7 @@
   <principal> 
     <group>Everyone</group> 
   </principal>
-  <activity>VIEW</activity>
+  <activity>VIEW_GROUP</activity>
   <target permission-type="GRANT"> 
     <group>Everyone</group> 
   </target>
