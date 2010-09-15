@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,7 +39,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
@@ -54,7 +53,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -69,7 +67,6 @@ import org.jasig.portal.channel.XmlGeneratingBaseChannelDefinition;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletPreference;
 
 /**
  * JPA/Hibernate implementation of the IChannelDefinition interface.
@@ -159,9 +156,8 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 	@org.hibernate.annotations.MapKey(columns = @Column(name = "LOCALE", length = 64, nullable = false))
 	private Map<String, ChannelLocalizationData> localizations = new HashMap<String, ChannelLocalizationData>();
 
-	@OneToOne(targetEntity = PortletDefinitionImpl.class, mappedBy = "channelDefinition", fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
-	@Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
-    private final IPortletDefinition portletDefinition;
+    @OneToMany(mappedBy = "channelDefinition", targetEntity = PortletDefinitionImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+    private Set<IPortletDefinition> portletDefinitions = null;
 
 	@Transient
 	private String locale; // this probably shouldn't be a channel property?
@@ -198,7 +194,7 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
     private ChannelDefinitionImpl() {
         this.internalId = -1;
         this.channelType = null;
-        this.portletDefinition = null;
+        this.portletDefinitions = null;
         this.name = null;
         this.fname = null;
         this.title = null;
@@ -214,7 +210,8 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
         
         this.internalId = -1;
         this.channelType = channelType;
-        this.portletDefinition = new PortletDefinitionImpl(this);
+        this.portletDefinitions = new LinkedHashSet<IPortletDefinition>();
+        this.portletDefinitions.add(new PortletDefinitionImpl(this));
         this.name = name;
         this.fname = fname;
         this.title = title;
@@ -263,10 +260,6 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
         this.channelType = channelType;
     }
     
-    public IPortletDefinition getPortletDefinition() {
-        return this.portletDefinition;
-    }
-
     public void addParameter(IChannelParameter parameter) {
 		addParameter(parameter);
 	}
@@ -478,17 +471,6 @@ public class ChannelDefinitionImpl extends XmlGeneratingBaseChannelDefinition im
 			this.parameters.add(new ChannelParameterImpl(param));
 		}
 	}
-
-	@Deprecated
-	public void replacePortletPreference(List<IPortletPreference> portletPreferences) {
-	    this.portletDefinition.getPortletPreferences().setPortletPreferences(portletPreferences);
-	}
-
-	@Deprecated
-    public IPortletPreference[] getPortletPreferences() {
-        final List<IPortletPreference> portletPreferences = this.portletDefinition.getPortletPreferences().getPortletPreferences();
-        return portletPreferences.toArray(new IPortletPreference[portletPreferences.size()]);
-    }
 
 	public void setApprovalDate(Date approvalDate) {
 		this.approvalDate = approvalDate;

@@ -288,6 +288,25 @@
     <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <!-- 
+     | Caches parameters for ChannelDefinition objects
+     | - 1 x channel definition
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl.parameters"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <!-- 
+     | Caches parameters for ChannelDefinition objects
+     | - 1 x channel definition
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl.localizations"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
 
     <!-- 
      | Query cache for ChannelDefinition
@@ -322,6 +341,17 @@
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+
+    <!-- 
+     |Caches queries for PortletDefinitionImpl by ChannelDefinitionImpl
+     | - 1 x published portlet
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.query.FIND_PORTLET_DEF_BY_CHANNEL_DEF"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+        
+        
 
     
     <!-- 

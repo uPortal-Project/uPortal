@@ -73,6 +73,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.url.PortletUrl;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
@@ -104,6 +105,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
     private IChannelRegistryStore channelRegistryStore;
     private OptionalContainerServices optionalContainerServices;
     private IChannelPublishingService channelPublishingService; 
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
     private PortletDelegationLocator portletDelegationLocator;
     private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
     private ServletContext servletContext;
@@ -143,6 +145,10 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	public void setChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao channelPublishingDefinitionDao) {
         this.channelPublishingDefinitionDao = channelPublishingDefinitionDao;
     }
+	
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
 
     /**
 	 * Construct a new ChannelDefinitionForm for the given IChannelDefinition id.
@@ -161,7 +167,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		// create the new form
 		final ChannelDefinitionForm form;
 		if (def != null) {
-		    form = new ChannelDefinitionForm(def);
+		    final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(def.getId());
+		    form = new ChannelDefinitionForm(def, portletDefinition);
 		    form.setId(def.getId());
 		}
 		else {
@@ -394,7 +401,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
 				preferenceList.add(new PortletPreferenceImpl(key, readOnly, values));
 			}
 		}
-		final IPortletDefinition portletDefinition = channelDef.getPortletDefinition();
+		
+		final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelDef.getId());
 		final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
 		portletPreferences.setPortletPreferences(preferenceList);
 	    

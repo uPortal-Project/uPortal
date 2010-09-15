@@ -192,6 +192,7 @@
         <property name="portletRenderer" ref="portletRenderer" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="portletRequestParameterManager" ref="portletRequestParameterManager" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
     </bean>
     
     <!--********** Portlet Rendering Channel ********** -->

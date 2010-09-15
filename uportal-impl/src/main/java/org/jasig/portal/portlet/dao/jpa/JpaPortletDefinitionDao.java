@@ -19,13 +19,20 @@
 
 package org.jasig.portal.portlet.dao.jpa;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.dao.IChannelDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +44,14 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public class JpaPortletDefinitionDao implements IPortletDefinitionDao {
+    private static final String FIND_PORTLET_DEF_BY_CHANNEL_DEF = 
+        "from PortletDefinitionImpl portDef " +
+        "where portDef.channelDefinition = :channelDefinition";
+    
+    private static final String FIND_PORTLET_DEF_BY_CHANNEL_DEF_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_CHANNEL_DEF";
+    
     private EntityManager entityManager;
+    private IChannelDefinitionDao channelDefinitionDao;
     
     /**
      * @return the entityManager
@@ -53,7 +67,24 @@ public class JpaPortletDefinitionDao implements IPortletDefinitionDao {
         this.entityManager = entityManager;
     }
     
-
+    @Required
+    public void setChannelDefinitionDao(IChannelDefinitionDao channelDefinitionDao) {
+        this.channelDefinitionDao = channelDefinitionDao;
+    }
+    
+    @Override
+    public IPortletDefinition getPortletDefinition(int channelPublishId) {
+        final IChannelDefinition channelDefinition = this.channelDefinitionDao.getChannelDefinition(channelPublishId);
+        
+        final Query query = this.entityManager.createQuery(FIND_PORTLET_DEF_BY_CHANNEL_DEF);
+        query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", FIND_PORTLET_DEF_BY_CHANNEL_DEF_CACHE_REGION);
+        query.setParameter("channelDefinition", channelDefinition);
+        
+        final List portletEntities = query.getResultList();
+        return (IPortletDefinition)DataAccessUtils.singleResult(portletEntities);
+    }
+    
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId) {
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
         

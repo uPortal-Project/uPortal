@@ -288,9 +288,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         if(null == channelDefinition) {
             throw new IllegalArgumentException("No channel definition found for publish id: " + channelPublishId);
         }
-        final IPortletDefinition portletDefinition = channelDefinition.getPortletDefinition();
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelDefinition.getId());
         if (portletDefinition == null) {
-            throw new IllegalArgumentException("No portlet defintion found for channel definition '" + channelPublishId + "'.");
+            throw new IllegalArgumentException("No portlet defintion found for channel definition '" + channelDefinition.getId() + "'.");
         }
         
         //Determine the appropriate portlet window ID

@@ -40,6 +40,7 @@
     <!-- ********** Portlet DAOs ********** -->
     
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
+        <property name="channelDefinitionDao" ref="channelDefinitionDao" />
     </bean>
     
     <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.trans.TransientPortletEntityDao">

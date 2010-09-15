@@ -36,6 +36,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
@@ -57,6 +58,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
     private IChannelRegistryStore channelRegistryStore;
     private IPortalRequestUtils portalRequestUtils;
     private IPersonManager personManager;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletRenderer portletRenderer;
@@ -91,6 +93,10 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
         this.portletRequestParameterManager = portletRequestParameterManager;
     }
     
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.api.portlet.PortletDelegationLocator#createRequestDispatcher(java.lang.String)
      */
@@ -101,7 +107,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
             return null;
         }
         
-        final IPortletDefinition portletDefinition = channelDefinition.getPortletDefinition();
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelDefinition.getId());
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
         
         return this.createRequestDispatcher(portletRequest, portletDefinitionId);

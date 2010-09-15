@@ -131,7 +131,7 @@ public class ChannelDefinitionForm implements Serializable {
 	 * 
 	 * @param def
 	 */
-	public ChannelDefinitionForm(IChannelDefinition def) {
+	public ChannelDefinitionForm(IChannelDefinition def, IPortletDefinition portletDef) {
 		this.setId(def.getId());
 		this.setFname(def.getFName());
 		this.setName(def.getName());
@@ -170,7 +170,6 @@ public class ChannelDefinitionForm implements Serializable {
 		}
 		
 		if (def.isPortlet()) {
-			final IPortletDefinition portletDef = def.getPortletDefinition();
             final IPortletPreferences prefs = portletDef.getPortletPreferences();
             for (IPortletPreference pref : prefs.getPortletPreferences()) {
 				List<Attribute> attributes = new ArrayList<Attribute>();

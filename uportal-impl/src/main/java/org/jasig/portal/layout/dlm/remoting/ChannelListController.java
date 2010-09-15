@@ -31,7 +31,6 @@ import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelRegistryBean;
-import org.jasig.portal.security.AdminEvaluator;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -109,10 +108,10 @@ public class ChannelListController extends AbstractController {
 	     * registry, assuming the current user has manage permissions.
 	     */
 	    
-		EntityIdentifier ei = user.getEntityIdentifier();
-	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+		if (type.equals(TYPE_MANAGE)) {
+		    EntityIdentifier ei = user.getEntityIdentifier();
+	        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
-	    if (type.equals(TYPE_MANAGE)) {
 	        for (IChannelDefinition channel : allChannels) {
 	            if (ap.canManage(channel.getId())) {
 	                registry.addChannel(new ChannelBean(channel));

@@ -69,12 +69,14 @@ import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.ChannelPublishingServiceLocator;
 import org.jasig.portal.spring.locator.JpaInterceptorLocator;
+import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.jasig.portal.utils.XML;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.orm.jpa.JpaInterceptor;
@@ -688,8 +690,9 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 preferences.add(portletPreference);
             }
         }
-
-        final IPortletDefinition portletDefinition = ci.chanDef.getPortletDefinition();
+        
+        final IPortletDefinitionRegistry portletDefinitionRegistry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
+        final IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(ci.chanDef.getId());
         final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
         portletPreferences.setPortletPreferences(preferences);
     }

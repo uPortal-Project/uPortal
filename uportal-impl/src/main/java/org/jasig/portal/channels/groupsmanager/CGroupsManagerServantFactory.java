@@ -45,9 +45,6 @@ import org.w3c.dom.Element;
  * implement complicated custom GUIs for managing group memberships or
  * selecting groups and entities.
  *
- * @see org.jasig.portal.channels.CChannelManager
- *  as an example of using Groups Manager servants
- *
  * @author Alex Vigdor
  * @version $Revision$
  * @deprecated All IChannel implementations should be migrated to portlets

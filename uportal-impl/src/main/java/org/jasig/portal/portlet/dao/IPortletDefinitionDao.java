@@ -45,4 +45,14 @@ public interface IPortletDefinitionDao {
      * @throws IllegalArgumentException if portletDefinitionId is null.
      */
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId);
+    
+    /**
+     * Get an existing portlet definition for the channel publish id. If no definition exists for the id null will be
+     * returned.
+     * 
+     * @param channelPublishId The id of the {@link org.jasig.portal.ChannelDefinition} this portlet definition represents.
+     * @return The portlet definition for the channelPublishId, null if no definition exists for the id.
+     * @throws IllegalArgumentException If channelPublishId is null.
+     */
+    public IPortletDefinition getPortletDefinition(int channelPublishId);
 }

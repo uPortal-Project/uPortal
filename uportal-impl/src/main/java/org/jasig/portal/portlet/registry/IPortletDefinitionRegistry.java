@@ -49,9 +49,7 @@ public interface IPortletDefinitionRegistry {
      * @param channelPublishId The id of the {@link org.jasig.portal.ChannelDefinition} this portlet definition represents.
      * @return The portlet definition for the channelPublishId, null if no definition exists for the id.
      * @throws IllegalArgumentException If channelPublishId is null.
-     * @deprecated Use {@link org.jasig.portal.IChannelRegistryStore#getChannelDefinition(int)} instead
      */
-    @Deprecated
     public IPortletDefinition getPortletDefinition(int channelPublishId);
     
     /**
@@ -67,9 +65,7 @@ public interface IPortletDefinitionRegistry {
      *         be found for the publish ID or the channel definition does not have the required channel parameters
      *         {@link org.jasig.portal.channels.portlet.IPortletAdaptor#CHANNEL_PARAM__PORTLET_APPLICATION_ID} and
      *         {@link org.jasig.portal.channels.portlet.IPortletAdaptor#CHANNEL_PARAM__PORTLET_NAME}.
-     * @deprecated Use {@link IChannelDefinition#getPortletDefinition()} instead
      */
-    @Deprecated
     public IPortletDefinition createPortletDefinition(int channelPublishId);
     
     /**

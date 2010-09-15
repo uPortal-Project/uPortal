@@ -70,6 +70,7 @@
         <property name="groupListHelper" ref="groupListHelper"/>
         <property name="portletDelegationLocator" ref="portletDelegationLocator" />
         <property name="channelPublishingDefinitionDao" ref="channelPublishingDefinitionDao" />
+        <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
     </bean>
     
     <bean id="userLocaleHelper" class="org.jasig.portal.portlets.localization.UserLocaleHelper">

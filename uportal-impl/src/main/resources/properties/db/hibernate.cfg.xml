@@ -58,6 +58,8 @@
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" usage="nonstrict-read-write"/>
         
+        <collection-cache collection="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl.parameters" usage="nonstrict-read-write"/>
+        <collection-cache collection="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl.localizations" usage="nonstrict-read-write"/>
         <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences" usage="nonstrict-read-write"/>
         <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values" usage="nonstrict-read-write"/>
     </session-factory>
