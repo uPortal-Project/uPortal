@@ -43,23 +43,24 @@ public interface IUserLayoutManager {
     /**
      * Represents a <folder> layout element
      */
-    public static final QName FOLDER = new QName("folder");
+    public static final String FOLDER = "folder";
     /**
      * Represents <channel> layout element
      */
-    public static final QName CHANNEL = new QName("channel");
+    public static final String CHANNEL = "channel";
     /**
      * Represents <channel> layout element
      */
-    public static final QName CHANNEL_HEADER = new QName("channel-header");
+    public static final String CHANNEL_HEADER = "channel-header";
     /**
      * Represents <parameter> layout element
      */
-    public static final QName PARAMETER = new QName("parameter");
+    public static final String PARAMETER = "parameter";
     /**
      * Represents an ID element attribute
      */
-    public static final QName ID_ATTR_NAME = new QName("ID");
+    public static final String ID_ATTR = "ID";
+    public static final QName ID_ATTR_NAME = new QName(ID_ATTR);
     
     
     /**

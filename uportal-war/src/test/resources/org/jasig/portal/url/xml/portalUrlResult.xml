@@ -21,7 +21,6 @@
 -->
 
 <out>
-    <a href="/uPortal/home/normal/render.uP">
-        My URL
-        </a>
+    <a href="/uPortal/home/normal/render.uP">My URL</a>
+    <a href="/uPortal/home/normal/render.uP">My URL</a>
 </out>

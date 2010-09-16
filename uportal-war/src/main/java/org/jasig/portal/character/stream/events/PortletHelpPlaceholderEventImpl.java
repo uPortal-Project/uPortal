@@ -34,7 +34,7 @@ public class PortletHelpPlaceholderEventImpl implements PortletHelpPlaceholderEv
      */
     @Override
     public CharacterEventTypes getEventType() {
-        return CharacterEventTypes.PORTLET_CONTENT;
+        return CharacterEventTypes.PORTLET_HELP;
     }
 
     @Override

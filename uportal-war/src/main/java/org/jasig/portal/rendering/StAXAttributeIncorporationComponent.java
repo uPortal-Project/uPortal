@@ -35,16 +35,23 @@ import javax.xml.stream.events.XMLEvent;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.stream.FilteringXMLEventReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class StAXAttributeIncorporationComponent implements StAXPipelineComponent {
+public class StAXAttributeIncorporationComponent implements StAXPipelineComponent, BeanNameAware {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private XmlUtilities xmlUtilities;
     private StAXPipelineComponent parentComponent;
     private AttributeSource attributeSource;
+    
+    private String beanName;
     
     public void setParentComponent(StAXPipelineComponent parentComponent) {
         this.parentComponent = parentComponent;
@@ -57,6 +64,11 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
     @Autowired
     public void setXmlUtilities(XmlUtilities xmlUtilities) {
         this.xmlUtilities = xmlUtilities;
+    }
+    
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
     }
 
     /* (non-Javadoc)
@@ -120,6 +132,13 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
             while (additionalAttributes.hasNext()) {
                 final Attribute attribute = additionalAttributes.next();
                 mergedAttributes.put(attribute.getName(), attribute);
+                
+                if (logger.isDebugEnabled()) {
+                    logger.debug("{} - Adding Attribute {} to event {}", 
+                            new Object[] {beanName, 
+                            xmlUtilities.xmlEventToString(attribute), 
+                            xmlUtilities.xmlEventToString(event)});
+                }
             }
             
             //Create the modified StartElement with the additional attribute data

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.3.2.201003220227-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.5.0.201008251000-M3]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -31,6 +31,7 @@
 		<config>uportal-war/src/main/resources/properties/contexts/servicesContext.xml</config>
 		<config>uportal-war/src/main/resources/properties/contexts/statsContext.xml</config>
 		<config>uportal-war/src/main/resources/properties/contexts/userContext.xml</config>
+		<config>uportal-war/src/test/resources/org/jasig/portal/rendering/renderingPipelineTestContext.xml</config>
 	</configs>
 	<configSets>
 	</configSets>

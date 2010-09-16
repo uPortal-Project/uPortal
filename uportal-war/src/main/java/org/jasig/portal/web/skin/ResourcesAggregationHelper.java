@@ -36,7 +36,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ResourcesAggregationHelper {
-
+    /**
+     * Name of {@link System} property used to toggle default/aggregated skin output.
+     */
+    public static final String AGGREGATED_THEME_PARAMETER = "org.jasig.portal.web.skin.aggregated_theme";
+    public static final String DEFAULT_AGGREGATION_ENABLED = Boolean.TRUE.toString();
+    
 	protected final Log logger = LogFactory.getLog(this.getClass());
 	
 	private IPortalRenderingPipeline portalRenderingPipeline;
@@ -54,7 +59,7 @@ public class ResourcesAggregationHelper {
 	 * @return true if aggregation is currently enabled.
 	 */
 	public boolean isAggregationEnabled() {
-		return Boolean.parseBoolean(System.getProperty(ResourcesXalanElements.AGGREGATED_THEME_PARAMETER, ResourcesXalanElements.DEFAULT_AGGREGATION_ENABLED));
+		return Boolean.parseBoolean(System.getProperty(AGGREGATED_THEME_PARAMETER, DEFAULT_AGGREGATION_ENABLED));
 	}
 	/**
 	 * Invokes {@link Boolean#parseBoolean(String)} on the argument and passes the result
@@ -73,7 +78,7 @@ public class ResourcesAggregationHelper {
 	public void setAggregationEnabled(boolean value) {
 		boolean currentValue = isAggregationEnabled();
 		if(currentValue != value) {
-			System.setProperty(ResourcesXalanElements.AGGREGATED_THEME_PARAMETER, Boolean.toString(value));
+			System.setProperty(AGGREGATED_THEME_PARAMETER, Boolean.toString(value));
 			logger.warn("resources aggregation set: " + value);
 			portalRenderingPipeline.clearSystemCharacterCache();
 		}

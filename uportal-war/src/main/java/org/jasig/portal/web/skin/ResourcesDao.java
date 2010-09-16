@@ -24,7 +24,7 @@ package org.jasig.portal.web.skin;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -58,5 +58,5 @@ public interface ResourcesDao {
      * @return
      */
 //    @Cacheable(modelId="org.jasig.portal.web.skin.Resources_DocumentFragment")
-    DocumentFragment getResourcesFragment(String pathToSkinXml, String relativeRoot) throws ParserConfigurationException;
+	NodeList getResourcesFragment(String pathToSkinXml, String relativeRoot) throws ParserConfigurationException;
 }

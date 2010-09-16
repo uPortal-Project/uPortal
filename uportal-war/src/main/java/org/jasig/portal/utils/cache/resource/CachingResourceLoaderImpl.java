@@ -175,7 +175,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
             }
             
             //Build the resource using the callback
-            builtResource = builder.buildResource(stream);
+            builtResource = builder.buildResource(resource, stream);
         }
         finally {
             IOUtils.closeQuietly(stream);

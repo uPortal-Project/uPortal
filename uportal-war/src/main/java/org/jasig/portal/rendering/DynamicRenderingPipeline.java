@@ -53,7 +53,9 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
         
         for (final CharacterEvent event : pipelineEventReader) {
             if (CharacterEventTypes.CHARACTER != event.getEventType()) {
-                throw new RenderingPipelineConfigurationException("Only " + CharacterEventTypes.CHARACTER + " events are supported in the top level renderer");
+                writer.print(event.toString());
+                continue;
+//                throw new RenderingPipelineConfigurationException("Only " + CharacterEventTypes.CHARACTER + " events are supported in the top level renderer");
             }
             
             final String data = ((CharacterDataEvent)event).getData();

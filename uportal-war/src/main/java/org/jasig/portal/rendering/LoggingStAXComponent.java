@@ -6,34 +6,57 @@
 
 package org.jasig.portal.rendering;
 
+import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
-import javax.xml.stream.util.EventReaderDelegate;
 
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.xml.XmlUtilities;
+import org.jasig.portal.xml.stream.FilteringXMLEventReader;
+import org.jasig.portal.xml.stream.XMLEventBufferReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Logs the StAX events
- * 
- * TODO log as a complete XML document instead of just the events
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class LoggingStAXComponent implements StAXPipelineComponent {
-    private String logPrefix;
-    private StAXPipelineComponent parentComponent;
+    private Logger logger = LoggerFactory.getLogger(getClass());
     
-    public void setLogPrefix(String logPrefix) {
-        this.logPrefix = logPrefix;
+    private XmlUtilities xmlUtilities;
+    private StAXPipelineComponent parentComponent;
+    private boolean logFullDocument = true;
+    private boolean logEvents = true;
+
+    @Autowired
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
+    }
+    
+    public void setLoggerName(String loggerName) {
+        logger = LoggerFactory.getLogger(loggerName);
     }
     public void setParentComponent(StAXPipelineComponent parentComponent) {
         this.parentComponent = parentComponent;
     }
-    
+    public void setLogFullDocument(boolean logFullDocument) {
+        this.logFullDocument = logFullDocument;
+    }
+    public void setLogEvents(boolean logEvents) {
+        this.logEvents = logEvents;
+    }
     
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
@@ -45,35 +68,62 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
     public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
         final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.parentComponent.getEventReader(request, response);
         
-        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(new EventReaderDelegate(pipelineEventReader.getEventReader()) {
+        final XMLEventReader eventReader = pipelineEventReader.getEventReader();
+        final LoggingXMLEventReader loggingEventReader = new LoggingXMLEventReader(eventReader);
+        
+        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(loggingEventReader);
+    }
+    
+    private class LoggingXMLEventReader extends FilteringXMLEventReader {
+        private final List<XMLEvent> eventBuffer = new LinkedList<XMLEvent>();
+        
+        public LoggingXMLEventReader(XMLEventReader reader) {
+            super(reader);
+        }
 
-            @Override
-            public Object getProperty(String name) throws IllegalArgumentException {
-                final Object property = super.getProperty(name);
-                System.out.println(logPrefix + "\t getProperty(" + name +") returns '" + property + "'");
-                return property;
+        @Override
+        protected XMLEvent filterEvent(XMLEvent event, boolean peek) {
+            if (logEvents && logger.isDebugEnabled()) {
+                if (peek) {
+                    logger.debug("Peek: " + xmlUtilities.xmlEventToString(event));
+                }
+                else {
+                    logger.debug("Read: " + xmlUtilities.xmlEventToString(event));
+                }
             }
-
-            @Override
-            public Object next() {
-                final XMLEvent event = (XMLEvent)super.next();
-                System.out.println(logPrefix + "\t next() returns '" + event + "'");
-                return event;
+            
+            if (!peek && logFullDocument && logger.isDebugEnabled()) {
+                eventBuffer.add(event);
+                
+                if (event.isEndDocument()) {
+                    
+                    //TODO move this into XmlUtilities
+                    final StringWriter writer = new StringWriter();
+                    
+                    final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+                    final XMLEventWriter xmlEventWriter;
+                    try {
+                        xmlEventWriter = outputFactory.createXMLEventWriter(writer);
+                    }
+                    catch (XMLStreamException e) {
+                        throw new RuntimeException("Failed to create XMLEventWriter", e);
+                    }
+                    
+                    try {
+                        xmlEventWriter.add(new XMLEventBufferReader(this.eventBuffer.listIterator()));
+                        xmlEventWriter.flush();
+                        xmlEventWriter.close();
+                    }
+                    catch (XMLStreamException e) {
+                        throw new RuntimeException("Failed to write events to Writer", e);
+                    }
+                    
+                    logger.debug(writer.toString());
+                }
             }
-
-            @Override
-            public XMLEvent nextEvent() throws XMLStreamException {
-                final XMLEvent event = super.nextEvent();
-                System.out.println(logPrefix + "\t nextEvent() returns '" + event + "'");
-                return event;
-            }
-
-            @Override
-            public XMLEvent nextTag() throws XMLStreamException {
-                final XMLEvent event = super.nextTag();
-                System.out.println(logPrefix + "\t nextTag() returns '" + event + "'");
-                return event;
-            }
-        });
+            
+            
+            return event;
+        }
     }
 }

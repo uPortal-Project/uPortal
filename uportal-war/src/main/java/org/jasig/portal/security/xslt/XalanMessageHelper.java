@@ -1,17 +1,22 @@
 package org.jasig.portal.security.xslt;
 
-import org.jasig.portal.spring.locator.XalanMessageHelperLocator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public class XalanMessageHelper implements IXalanMessageHelper {
 
-    private IXalanMessageHelper messageHelper;
-
-    public XalanMessageHelper() {
-        this.messageHelper = XalanMessageHelperLocator.getXalanMessageHelper();
+/**
+ * Static wrapper around {@link IXalanMessageHelper} to make calls from XSTLC easier
+ */
+@Service
+public final class XalanMessageHelper {
+    private static IXalanMessageHelper messageHelper;
+    
+    @Autowired
+    public void setMessageHelper(IXalanMessageHelper messageHelper) {
+        XalanMessageHelper.messageHelper = messageHelper;
     }
 
-    public String getMessage(String code, String language) {
-        return this.messageHelper.getMessage(code, language);
+    public static String getMessage(String code, String language) {
+        return messageHelper.getMessage(code, language);
     }
-
 }

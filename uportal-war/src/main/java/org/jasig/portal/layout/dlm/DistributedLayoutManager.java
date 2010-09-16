@@ -78,6 +78,8 @@ import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.XML;
+import org.jasig.portal.xml.stream.LocationOverridingEventAllocator;
+import org.jasig.portal.xml.stream.UnknownLocation;
 import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -395,6 +397,8 @@ IFolderLocalNameResolver
         
         //TODO XMLInputFactory can be shared once created and configured. Need a central place for doing that
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        inputFactory.setEventAllocator(new LocationOverridingEventAllocator(new UnknownLocation()));
+        
         final DOMSource layoutSoure = new DOMSource(ul);
         try {
             return inputFactory.createXMLEventReader(layoutSoure);

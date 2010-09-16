@@ -21,6 +21,9 @@ import org.jasig.portal.rendering.PipelineComponent;
 import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanNameAware;
 
 /**
  * component that can cache character pipeline events
@@ -28,9 +31,12 @@ import org.jasig.portal.utils.cache.CacheKey;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class CachingPipelineComponent<R, E> implements PipelineComponent<R, E> {
+public abstract class CachingPipelineComponent<R, E> implements PipelineComponent<R, E>, BeanNameAware {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private PipelineComponent<R, E> parentComponent;
     private Ehcache cache;
+    private String beanName;
     
     public final void setParentComponent(PipelineComponent<R, E> parentComponent) {
         this.parentComponent = parentComponent;
@@ -38,6 +44,11 @@ public abstract class CachingPipelineComponent<R, E> implements PipelineComponen
 
     public final void setCache(Ehcache cache) {
         this.cache = cache;
+    }
+    
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
     }
 
     @Override
@@ -61,6 +72,7 @@ public abstract class CachingPipelineComponent<R, E> implements PipelineComponen
         
         //No cached data for key, call target component to get events and an updated cache key
         if (eventCache == null) {
+            logger.debug("{} - No cached events found for key {}, calling parent", this.beanName, cacheKey);
             final PipelineEventReader<R, E> pipelineEventReader = this.parentComponent.getEventReader(request, response);
     
             //Copy the events from the reader into a buffer to be cached
@@ -72,6 +84,10 @@ public abstract class CachingPipelineComponent<R, E> implements PipelineComponen
             //Cache the buffer
             element = new Element(cacheKey, Collections.unmodifiableList(eventCache));
             this.cache.put(element);
+            logger.debug("{} - Cached {} events for key {}", new Object[] {this.beanName, eventCache.size(), cacheKey});
+        }
+        else {
+            logger.debug("{} - Founed {} cached events for key {}", new Object[] {this.beanName, eventCache.size(), cacheKey});
         }
         
         //Ugly!!! Needed because XMLEventReader implements Iterator but does not parameterize it

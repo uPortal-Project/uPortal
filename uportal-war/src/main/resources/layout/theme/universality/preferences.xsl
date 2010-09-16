@@ -39,29 +39,13 @@
  | used by the theme
 -->
 <xsl:stylesheet 
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-  xmlns:xalan="http://xml.apache.org/xalan" 
-  xmlns:dlm="http://www.uportal.org/layout/dlm"
-  xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-  xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-  xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
-  xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-  xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-  xmlns:upMsg="xalan://org.jasig.portal.security.xslt.XalanMessageHelper"
-  extension-element-prefixes="portal portlet layout" 
-  exclude-result-prefixes="xalan portal portlet layout upAuth upGroup upMsg" 
-  version="1.0">
-  
-  <xalan:component prefix="portal" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="portlet" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="layout" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
-  </xalan:component>
-<!-- ============================================= -->
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    exclude-result-prefixes="upAuth upGroup upMsg" 
+    version="1.0">
 
 <!-- ==== TEMPLATE: Gallery Add Portlet Selection ==== -->
 <!-- ================================================= -->
@@ -523,7 +507,7 @@
        up.jQuery(document).ready(function(){
           up.jQuery.uportal.UportalLayoutManager(
             {
-              portalUrl: '<portal:url/>',
+              portalUrl: '<xsl:call-template name="portalUrl"/>',
               mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
               currentSkin: '<xsl:value-of select="$SKIN"/>',
               subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
@@ -540,7 +524,7 @@
           up.LayoutPreferences(
             "body",
             {
-              pageUrl: '<portal:url/>',
+              pageUrl: '<xsl:call-template name="portalUrl"/>',
               portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
               mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
               currentSkin: '<xsl:value-of select="$SKIN"/>',

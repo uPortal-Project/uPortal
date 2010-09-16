@@ -25,7 +25,6 @@ import java.util.List;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.character.stream.events.PortletContentPlaceholderEvent;
@@ -41,12 +40,7 @@ public class PortletContentPlaceholderEventSource extends PortletPlaceholderEven
     
     @Override
     protected List<CharacterEvent> getCharacterEvents(String subscribeId, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
-        //Read the stream to remove the endElement event
-        final XMLEvent nextEvent = eventReader.nextEvent();
-        if (!nextEvent.isEndElement()) {
-            throw new XMLStreamException(event.getName() + " element must be empty");
-        }
-
+        this.readToEndElement(eventReader, event);
         return Arrays.asList((CharacterEvent)new PortletContentPlaceholderEventImpl(subscribeId));
     }
 }

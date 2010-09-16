@@ -39,30 +39,14 @@
  | used by the theme
 -->
 <xsl:stylesheet 
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-  xmlns:xalan="http://xml.apache.org/xalan" 
-  xmlns:dlm="http://www.uportal.org/layout/dlm"
-  xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-  xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-  xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
-  xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-  xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-  extension-element-prefixes="portal portlet layout" 
-  exclude-result-prefixes="xalan portal portlet layout upAuth upGroup" 
-  version="1.0">
-  
-  <xalan:component prefix="portal" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="portlet" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="layout" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
-  </xalan:component>
-<!-- ============================================= -->
-    
-  
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    exclude-result-prefixes="upAuth upGroup upMsg" 
+    version="1.0">
+      
   <!-- ========== TEMPLATE: NAVIGATION ========== -->
   <!-- ========================================== -->
   <!--
@@ -226,7 +210,9 @@
     
     <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_INLINE_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
-        <layout:url layoutId="{@ID}"/>
+          <xsl:call-template name="layoutUrl">
+            <xsl:with-param name="folderId" select="@ID" />
+          </xsl:call-template>
       </xsl:variable>
       <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}"><xsl:value-of select="@name"/></span>
@@ -270,7 +256,7 @@
         	<ul class="fl-listmenu">
           	<li id="portletNavigationLinkHome">
                 <xsl:variable name="homeUrl">
-                  <portal:url/>
+                  <xsl:call-template name="portalUrl"/>
                 </xsl:variable>
             	<a href="{$homeUrl}" title="{$TOKEN[@name='HOME_LONG_LABEL']}">
               	<span>
@@ -286,7 +272,9 @@
               <xsl:for-each select="tabChannel">
                 <li>
                   <xsl:variable name="tabLinkUrl">
-                    <layout:url layoutId="{@ID}"/>
+                    <xsl:call-template name="layoutUrl">
+                      <xsl:with-param name="folderId" select="@ID" />
+                    </xsl:call-template>
                   </xsl:variable>
                   <a href="{$tabLinkUrl}" title="{@name}">  <!-- Navigation item link. -->
                     <span><xsl:value-of select="@name"/></span>
@@ -361,7 +349,10 @@
                 </xsl:variable>
                 <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
                   <xsl:variable name="portletSubNavLink">
-                    <portlet:url layoutId="{@ID}" state="MAXIMIZED"/>
+                    <xsl:call-template name="portletUrl">
+                      <xsl:with-param name="subscribeId" select="@ID" />
+                      <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                    </xsl:call-template>
                   </xsl:variable>
                   <a href="{$portletSubNavLink}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
                       <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
@@ -383,7 +374,10 @@
                 </xsl:variable>
                 <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
                   <xsl:variable name="portletSubNavLink">
-                    <portlet:url layoutId="{@ID}" state="MAXIMIZED"/>
+                    <xsl:call-template name="portletUrl">
+                      <xsl:with-param name="subscribeId" select="@ID" />
+                      <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                    </xsl:call-template>
                   </xsl:variable>
                   <a href="{$portletSubNavLink}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
                     <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>

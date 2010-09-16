@@ -137,7 +137,7 @@
         <ehcache.version>2.2.0</ehcache.version>
         <ehcache-spring-annotations.version>1.1.2</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.0</ehcache-web.version>
-        <grouperClient.version>1.6.0</grouperClient.version>
+        <grouperClient.version>1.6.1</grouperClient.version>
         <hibernate-annotations.version>3.3.1.GA</hibernate-annotations.version>
         <hibernate-commons-annotations.version>3.3.0.ga</hibernate-commons-annotations.version>
         <hibernate-entitymanager.version>3.3.2.GA</hibernate-entitymanager.version>
@@ -176,7 +176,6 @@
         <tyrex.version>1.0.1</tyrex.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
         <woodstox.version>4.0.8</woodstox.version>
-        <xalan.version>2.7.1</xalan.version>
         <xercesImpl.version>2.9.1</xercesImpl.version>
         <xml-apis.version>1.0.b2</xml-apis.version>
         <xml-resolver.version>1.2-JASIG_PATCH</xml-resolver.version>
@@ -834,11 +833,6 @@
                 <groupId>tyrex</groupId>
                 <artifactId>tyrex</artifactId>
                 <version>${tyrex.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xalan</groupId>
-                <artifactId>xalan</artifactId>
-                <version>${xalan.version}</version>
             </dependency>
             <dependency>
                 <groupId>xerces</groupId>

@@ -29,24 +29,23 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelper {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private IChannelRegistryStore channelRegistryStore;
     
-    public IChannelRegistryStore getChannelRegistryStore() {
-        return this.channelRegistryStore;
-    }
     /**
      * @param channelRegistryStore the channelRegistryStore to set
      */
-    @Required
+    @Autowired
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
         this.channelRegistryStore = channelRegistryStore;
     }
@@ -55,6 +54,7 @@ public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelp
     /* (non-Javadoc)
      * @see org.jasig.portal.security.xslt.IXalanGroupMembershipHelper#isChannelDeepMemberOf(java.lang.String, java.lang.String)
      */
+    @Override
     public boolean isChannelDeepMemberOf(String fname, String groupKey) {
         final IEntityGroup distinguishedGroup = GroupService.findGroup(groupKey);
         if (distinguishedGroup == null) {
@@ -99,6 +99,7 @@ public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelp
     /* (non-Javadoc)
      * @see org.jasig.portal.security.xslt.IXalanGroupMembershipHelper#isUserDeepMemberOf(java.lang.String, java.lang.String)
      */
+    @Override
     public boolean isUserDeepMemberOf(String userName, String groupKey) {
         final IEntityGroup distinguishedGroup = GroupService.findGroup(groupKey);
         if (distinguishedGroup == null) {
@@ -121,6 +122,9 @@ public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelp
         return distinguishedGroup.deepContains(entity);
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.security.xslt.IXalanGroupMembershipHelper#isUserDeepMemberOfGroupName(java.lang.String, java.lang.String)
+     */
     @Override
     public boolean isUserDeepMemberOfGroupName(String userName, String groupName) {
         final EntityIdentifier[] results = GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);

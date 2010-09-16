@@ -22,7 +22,6 @@ package org.jasig.portal.xml.stream;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
-import javax.xml.stream.util.EventReaderDelegate;
 
 /**
  * Base class for {@link XMLEventReader}s that just want to modify events without adding or
@@ -31,30 +30,15 @@ import javax.xml.stream.util.EventReaderDelegate;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class FilteringXMLEventReader extends EventReaderDelegate {
-    public FilteringXMLEventReader() {
-        super();
-    }
-
+public abstract class FilteringXMLEventReader extends BaseXMLEventReader {
+    
     public FilteringXMLEventReader(XMLEventReader reader) {
         super(reader);
     }
 
     @Override
-    public final Object next() {
-        final XMLEvent event = (XMLEvent)super.next();
-        return this.filterEvent(event, false);
-    }
-
-    @Override
-    public final XMLEvent nextEvent() throws XMLStreamException {
-        final XMLEvent event = super.nextEvent();
-        return this.filterEvent(event, false);
-    }
-
-    @Override
-    public final XMLEvent nextTag() throws XMLStreamException {
-        final XMLEvent event = super.nextTag();
+    protected final XMLEvent internalNextEvent() throws XMLStreamException {
+        final XMLEvent event = this.getParent().nextEvent();
         return this.filterEvent(event, false);
     }
 

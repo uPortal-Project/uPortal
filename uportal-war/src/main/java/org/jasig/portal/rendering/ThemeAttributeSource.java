@@ -70,7 +70,7 @@ public class ThemeAttributeSource implements AttributeSource {
         final ThemeStylesheetUserPreferences themeStylesheetUserPreferences = this.getThemeStylesheetUserPreferences(request);
         
         final QName name = event.getName();
-        if (IUserLayoutManager.CHANNEL.equals(name)) {
+        if (IUserLayoutManager.CHANNEL.equals(name.getLocalPart())) {
             final Enumeration<String> channelAttributeNames = themeStylesheetUserPreferences.getChannelAttributeNames();
             if (!channelAttributeNames.hasMoreElements()) {
                 return null;
@@ -82,8 +82,14 @@ public class ThemeAttributeSource implements AttributeSource {
             final String subscribeId = subscribeIdAttr.getValue();
             while (channelAttributeNames.hasMoreElements()) {
                 final String channelAttributeName = channelAttributeNames.nextElement();
+                if (channelAttributeName == null) {
+                    continue;
+                }
                 
                 final String value = themeStylesheetUserPreferences.getChannelAttributeValue(subscribeId, channelAttributeName);
+                if (value == null) {
+                    continue;
+                }
                 
                 final XMLEventFactory xmlEventFactory = this.xmlUtilities.getXmlEventFactory();
                 final Attribute attribute = xmlEventFactory.createAttribute(channelAttributeName, value);

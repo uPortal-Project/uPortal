@@ -81,8 +81,7 @@ import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.UrlType;
-import org.jasig.portal.url.xml.BaseUrlXalanElements;
-import org.jasig.portal.url.xml.PortletUrlXalanElements;
+import org.jasig.portal.url.xml.XsltPortalUrlProvider;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
@@ -92,12 +91,13 @@ import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.jasig.portal.utils.URLUtil;
 import org.jasig.portal.utils.XSLT;
 import org.jasig.portal.web.skin.ResourcesDao;
-import org.jasig.portal.web.skin.ResourcesXalanElements;
+import org.jasig.portal.web.skin.ResourcesElementsProvider;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;
+import org.springframework.util.xml.SimpleTransformErrorListener;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.XMLReader;
 
@@ -107,7 +107,7 @@ import org.xml.sax.XMLReader;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service("portalRenderingPipeline")
+//@Service("portalRenderingPipeline")
 public class StaticRenderingPipeline implements IPortalRenderingPipeline, ApplicationEventPublisherAware, InitializingBean {
     // Metric counters
     private static final MovingAverage renderTimes = new MovingAverage();
@@ -129,11 +129,18 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     private static final Map<String, SAX2BufferImpl> systemCache = Collections.synchronizedMap(new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_XSLT_CACHE_MIN_SIZE, .75f, true));
     private static final Map<String, List<CacheEntry>> systemCharacterCache = Collections.synchronizedMap(new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT, SYSTEM_CHARACTER_BLOCK_CACHE_MIN_SIZE, .75f, true));
 
+    private static final Log LOGGER = LogFactory.getLog(StaticRenderingPipeline.class);
     /**
      * Listener that exposes full causal information when exceptions occur 
      * during transformation. 
      */
-    private static final TransformErrorListener cErrListener =  new TransformErrorListener();
+    private static final ErrorListener cErrListener =  new SimpleTransformErrorListener(LOGGER) {
+
+        @Override
+        public void warning(TransformerException ex) throws TransformerException {
+            LOGGER.warn("XSLT transformation warning: " + ex.getMessageAndLocation());
+        }
+    };
     
     // worker configuration
     private static final String WORKER_PROPERTIES_FILE_NAME = "/properties/worker.properties";
@@ -514,7 +521,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     tst.setErrorListener(cErrListener);
                     
                     // pass resourcesDao into transformer
-                    tst.setParameter(ResourcesXalanElements.SKIN_RESOURCESDAO_PARAMETER_NAME, resourcesDao);
+//                    tst.setParameter(ResourcesElementsProvider.SKIN_RESOURCESDAO_PARAMETER_NAME, resourcesDao);
 
                     // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
                     ChannelRenderingBuffer crb = new ChannelRenderingBuffer(this.portletExecutionManager, CACHE_ENABLED, req, res);
@@ -602,10 +609,15 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     
                     //TODO move into elements specific advisor interfaces when componentizing this class
                     //Setup the transformer parameters
-                    tst.setParameter(BaseUrlXalanElements.PORTAL_URL_PROVIDER_PARAMETER, this.portalUrlProvider);
-                    tst.setParameter(BaseUrlXalanElements.CURRENT_PORTAL_REQUEST, req);
-                    tst.setParameter(PortletUrlXalanElements.PORTLET_WINDOW_REGISTRY_PARAMETER, this.portletWindowRegistry);
+                    final XsltPortalUrlProvider xsltPortalUrlProvider = new XsltPortalUrlProvider();
+                    xsltPortalUrlProvider.setUrlProvider(portalUrlProvider);
+                    tst.setParameter(XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xsltPortalUrlProvider);
+                    tst.setParameter(XsltPortalUrlProvider.CURRENT_REQUEST, req);
                     tst.setParameter("CONTEXT_PATH", req.getContextPath());
+                    
+                    final ResourcesElementsProvider resourcesElementsProvider = new ResourcesElementsProvider();
+                    resourcesElementsProvider.setResourcesDao(resourcesDao);
+                    tst.setParameter(ResourcesElementsProvider.RESOURCES_ELEMENTS_PROVIDER, resourcesElementsProvider);
 
                     // set up of the parameters
                     tst.setParameter("baseActionURL", uPElement.getUPFile());
@@ -780,27 +792,5 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
      */
     public void clearSystemCharacterCache() {
     	systemCharacterCache.clear();
-    }
-
-    /**
-     * Class providing exposure to causal exception information for exceptions
-     * incurred during transformation.
-     * 
-     * @author Mark Boyd
-     */
-    private static class TransformErrorListener implements ErrorListener {
-        protected final Log log = LogFactory.getLog(UserInstance.class);
-
-        public void error(TransformerException te) throws TransformerException {
-            log.error("An error occurred during transforamtion.", te);
-        }
-
-        public void fatalError(TransformerException te) throws TransformerException {
-            log.error("A fatal error occurred during transforamtion.", te);
-        }
-
-        public void warning(TransformerException te) throws TransformerException {
-            log.error("A warning occurred during transforamtion.", te);
-        }
     }
 }

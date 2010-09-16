@@ -34,7 +34,7 @@ public class PortletTitlePlaceholderEventImpl implements PortletTitlePlaceholder
      */
     @Override
     public CharacterEventTypes getEventType() {
-        return CharacterEventTypes.PORTLET_CONTENT;
+        return CharacterEventTypes.PORTLET_TITLE;
     }
 
     @Override

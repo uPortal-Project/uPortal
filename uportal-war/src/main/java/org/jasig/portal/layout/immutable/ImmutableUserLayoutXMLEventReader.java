@@ -19,118 +19,82 @@
 
 package org.jasig.portal.layout.immutable;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.jasig.portal.utils.IteratorWrapper;
-import org.jasig.portal.xml.stream.BaseXMLEventReader;
+import org.jasig.portal.xml.stream.FilteringXMLEventReader;
 import org.jasig.portal.xml.stream.events.StartElementWrapper;
-import org.jasig.portal.xml.stream.events.ValueOverridingAttributeWrapper;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class ImmutableUserLayoutXMLEventReader extends BaseXMLEventReader {
-    private final XMLEventReader wrappedReader;
-    private XMLEvent previousEvent;
+public class ImmutableUserLayoutXMLEventReader extends FilteringXMLEventReader {
+    private static final XMLEventFactory EVENT_FACTORY = XMLEventFactory.newFactory();
+    
     
     public ImmutableUserLayoutXMLEventReader(XMLEventReader wrappedReader) {
-        this.wrappedReader = wrappedReader;
+        super(wrappedReader);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.xml.stream.BaseXMLEventReader#getPreviousEvent()
-     */
     @Override
-    protected XMLEvent getPreviousEvent() {
-        return this.previousEvent;
-    }
-
-    public void close() throws XMLStreamException {
-        this.wrappedReader.close();
-    }
-
-    public Object getProperty(String name) throws IllegalArgumentException {
-        return this.wrappedReader.getProperty(name);
-    }
-
-    public boolean hasNext() {
-        return this.wrappedReader.hasNext();
-    }
-
-    public XMLEvent nextEvent() throws XMLStreamException {
-        XMLEvent event = this.wrappedReader.nextEvent();
-        
-        if (event.isStartDocument()) {
+    protected XMLEvent filterEvent(XMLEvent event, boolean peek) {
+        if (event.isStartElement()) {
             final StartElement startElement = event.asStartElement();
             
             final QName name = startElement.getName();
             
             final String localPart = name.getLocalPart();
             if ("channel".equals(localPart) || "folder".equals(localPart)) {
-                event = new ImmutableStartElementWrapper(startElement);
+                return new ImmutableStartElementWrapper(startElement);
             }
         }
         
-        this.previousEvent = event;
         return event;
     }
 
-    public XMLEvent peek() throws XMLStreamException {
-        return this.wrappedReader.peek();
-    }
-
-    public void remove() {
-        this.wrappedReader.remove();
-    }
-
-    private static final class ImmutableStartElementWrapper extends StartElementWrapper {
+    private final class ImmutableStartElementWrapper extends StartElementWrapper {
         public ImmutableStartElementWrapper(StartElement startElement) {
             super(startElement);
         }
 
         @Override
         public Attribute getAttributeByName(QName name) {
-            final Attribute attribute = super.getAttributeByName(name);
-            
             final String localPart = name.getLocalPart();
-            if (attribute != null && ("unremovable".equals(localPart) || !"immutable".equals(localPart))) {
-                return new ValueOverridingAttributeWrapper(attribute, "true");
+            if ("unremovable".equals(localPart) || "immutable".equals(localPart)) {
+                return EVENT_FACTORY.createAttribute(name, "true");
             }
             
-            return attribute;
+            return super.getAttributeByName(name);
         }
 
         @Override
         public Iterator<Attribute> getAttributes() {
-            final Iterator<Attribute> attributes = super.getAttributes();
-            return new ImmutableAttributeIterator(attributes);
-        }
-    }
-    
-    private static class ImmutableAttributeIterator extends IteratorWrapper<Attribute> {
-        public ImmutableAttributeIterator(Iterator<Attribute> iterator) {
-            super(iterator);
-        }
-
-        @Override
-        public Attribute next() {
-            final Attribute attribute = super.next();
+            final Map<QName, Attribute> attributes = new LinkedHashMap<QName, Attribute>();
             
-            final QName name = attribute.getName();
-            final String localPart = name.getLocalPart();
-            if ("unremovable".equals(localPart) || !"immutable".equals(localPart)) {
-                return new ValueOverridingAttributeWrapper(attribute, "true");
+            for (final Iterator<Attribute> attributeItr = super.getAttributes(); attributeItr.hasNext(); ) {
+                final Attribute attribute = attributeItr.next();
+                attributes.put(attribute.getName(), attribute);
             }
-            return attribute;
+            
+            final QName immutableName = new QName("immutable");
+            final Attribute immutableAttribute = EVENT_FACTORY.createAttribute(immutableName, "true");
+            attributes.put(immutableName, immutableAttribute);
+            
+            final QName unremovableName = new QName("unremovable");
+            final Attribute unremovableAttribute = EVENT_FACTORY.createAttribute(unremovableName, "true");
+            attributes.put(unremovableName, unremovableAttribute);
+            
+            return Collections.unmodifiableCollection(attributes.values()).iterator();
         }
-        
     }
 }

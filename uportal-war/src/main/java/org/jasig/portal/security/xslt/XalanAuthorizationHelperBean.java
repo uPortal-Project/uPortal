@@ -29,7 +29,8 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Spring managed version of the Xalan Elements helper class used during portal XSL
@@ -38,21 +39,16 @@ import org.springframework.beans.factory.annotation.Required;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     private IChannelRegistryStore channelRegistryStore;
     
     /**
-     * @return the channelRegistryStore
-     */
-    public IChannelRegistryStore getChannelRegistryStore() {
-        return channelRegistryStore;
-    }
-    /**
      * @param channelRegistryStore the channelRegistryStore to set
      */
-    @Required
+    @Autowired
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
         Validate.notNull(channelRegistryStore, "channelRegistryStore can not be null");
         this.channelRegistryStore = channelRegistryStore;
@@ -61,6 +57,7 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
     /* (non-Javadoc)
      * @see org.jasig.portal.security.xslt.IAuthorizationHelper#canRender(java.lang.String, java.lang.String)
      */
+    @Override
     public boolean canRender(final String userName, final String channelFName) {
         if (userName == null || channelFName == null) {
             return false;

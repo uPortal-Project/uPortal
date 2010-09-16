@@ -20,4 +20,4 @@
 
 -->
 
-<doc><element/></doc>
+<doc><element ID="foo"/></doc>

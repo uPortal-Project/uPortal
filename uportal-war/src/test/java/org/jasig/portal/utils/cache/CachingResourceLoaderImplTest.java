@@ -218,7 +218,7 @@ public class CachingResourceLoaderImplTest {
         public static final StringResourceBuilder INSTANCE = new StringResourceBuilder();
 
         @Override
-        public String buildResource(InputStream stream) throws IOException {
+        public String buildResource(Resource resource, InputStream stream) throws IOException {
             return IOUtils.toString(stream);
         }
     }

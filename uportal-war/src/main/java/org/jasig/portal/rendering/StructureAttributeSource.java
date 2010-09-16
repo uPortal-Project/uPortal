@@ -69,7 +69,7 @@ public class StructureAttributeSource implements AttributeSource {
         final StructureStylesheetUserPreferences structureStylesheetUserPreferences = this.getStructureStylesheetUserPreferences(request);
         
         final QName name = event.getName();
-        if (IUserLayoutManager.CHANNEL.equals(name)) {
+        if (IUserLayoutManager.CHANNEL.equals(name.getLocalPart())) {
             final Enumeration<String> channelAttributeNames = structureStylesheetUserPreferences.getChannelAttributeNames();
             if (!channelAttributeNames.hasMoreElements()) {
                 return null;
@@ -82,8 +82,14 @@ public class StructureAttributeSource implements AttributeSource {
             final String subscribeId = subscribeIdAttr.getValue();
             while (channelAttributeNames.hasMoreElements()) {
                 final String channelAttributeName = channelAttributeNames.nextElement();
+                if (channelAttributeName == null) {
+                    continue;
+                }
                 
                 final String value = structureStylesheetUserPreferences.getChannelAttributeValue(subscribeId, channelAttributeName);
+                if (value == null) {
+                    continue;
+                }
                 
                 final Attribute attribute = xmlEventFactory.createAttribute(channelAttributeName, value);
                 attributes.add(attribute);
@@ -92,7 +98,7 @@ public class StructureAttributeSource implements AttributeSource {
             return attributes.iterator();
         }
         
-        if (IUserLayoutManager.FOLDER.equals(name)) {
+        if (IUserLayoutManager.FOLDER.equals(name.getLocalPart())) {
             final Enumeration<String> folderAttributeNames = structureStylesheetUserPreferences.getFolderAttributeNames();
             if (!folderAttributeNames.hasMoreElements()) {
                 return null;
@@ -105,7 +111,14 @@ public class StructureAttributeSource implements AttributeSource {
             final String folderId = folderIdAttr.getValue();
             while (folderAttributeNames.hasMoreElements()) {
                 final String folderAttributeName = folderAttributeNames.nextElement();
+                if (folderAttributeName == null) {
+                    continue;
+                }
+                
                 final String value = structureStylesheetUserPreferences.getFolderAttributeValue(folderId, folderAttributeName);
+                if (value == null) {
+                    continue;
+                }
                 
                 final Attribute attribute = xmlEventFactory.createAttribute(folderAttributeName, value);
                 attributes.add(attribute);

@@ -6,9 +6,11 @@
 
 package org.jasig.portal.rendering.xslt;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +34,7 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
     private LinkedHashMap<String, Object> parameters;
     private IPortalSpELService portalSpELService;
     private Map<String, Expression> parameterExpressions;
+    private Set<String> cacheKeyExcludedParameters = Collections.emptySet();
 
 
     @Autowired
@@ -58,10 +61,18 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
         
         this.parameterExpressions = parameterExpressionsBuilder;
     }
+    
+    /**
+     * Parameter keys to exclude from the cache key.
+     */
+    public void setCacheKeyExcludedParameters(Set<String> cacheKeyExcludedParameters) {
+        this.cacheKeyExcludedParameters = cacheKeyExcludedParameters;
+    }
 
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final LinkedHashMap<String, Object> transformerParameters = this.getParameters(request, response);
+        transformerParameters.keySet().removeAll(this.cacheKeyExcludedParameters);
         return new CacheKey(this.outputProperties, transformerParameters);
     }
 

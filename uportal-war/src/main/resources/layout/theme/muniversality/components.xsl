@@ -35,24 +35,15 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet  
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:xalan="http://xml.apache.org/xalan" 
-  xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-  xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-  xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
-  xmlns:upAuthentication="xalan://org.jasig.portal.security.xslt.XalanAuthenticationHelper"  
-  version="1.0">
-
-  <xalan:component prefix="portal" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="portlet" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="layout" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
-  </xalan:component>
+<xsl:stylesheet 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    exclude-result-prefixes="upAuth upGroup upMsg" 
+    version="1.0">
+    
 <!-- ======================================================================================================================================================== -->
 <!-- ========== PUBLIC VIEW ================================================================================================================================= -->
 <!-- ======================================================================================================================================================== -->
@@ -157,7 +148,10 @@
                         </xsl:when>
                         <xsl:otherwise>
                         	<xsl:variable name="portletLoginUrl">
-                        		<portlet:url fname="portal_login_general" state="MAXIMIZED"/>
+                                <xsl:call-template name="portletUrl">
+                                    <xsl:with-param name="fname">portal_login_general</xsl:with-param>
+                                    <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                                </xsl:call-template>
                         	</xsl:variable>
                             <xsl:value-of select="$portletLoginUrl"/>
                         </xsl:otherwise>
@@ -198,7 +192,10 @@
                     <xsl:for-each select="channel">
                         <li>
                         	<xsl:variable name="portletUrl">
-        						<portlet:url layoutId="{@ID}" state="MAXIMIZED"/>
+                                <xsl:call-template name="portletUrl">
+                                    <xsl:with-param name="subscribeId" select="@ID" />
+                                    <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                                </xsl:call-template>
       						</xsl:variable>
                             <a class="flc-screenNavigator-backButton" href="{$portletUrl}" title="To view {@name}">
                                 <xsl:value-of select="@name" />
@@ -247,7 +244,7 @@
             
             <div class="fl-table-cell up-mobile-focus">
             	<xsl:variable name="basePortalUrl">
-        			<portal:url/>
+        			<xsl:call-template name="portalUrl"/>
       			</xsl:variable>
                 <a id="up-page-back-button" href="basePortalUrl" class="fl-button fl-backButton">
                     <span class="fl-button-inner">Back</span>
