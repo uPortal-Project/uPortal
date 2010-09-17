@@ -19,6 +19,7 @@
 
 package org.jasig.portal.utils.cache;
 
+import static org.easymock.EasyMock.anyLong;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -137,6 +138,7 @@ public class CachingResourceLoaderImplTest {
         expect(cache.get(doc1Resouce))
             .andReturn(new Element(doc1Resouce, cachedResource));
         
+        expect(cachedResource.getLastCheckTime()).andReturn(1000000L);
         expect(cachedResource.getLastLoadTime()).andReturn(1000000L);
         
         cache.put(anyObject(Element.class));
@@ -146,7 +148,7 @@ public class CachingResourceLoaderImplTest {
         
         loader.setResourceCache(cache);
         
-        doc1.setLastModified(1000001);
+        doc1.setLastModified(2000000);
         
         final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
         
@@ -168,10 +170,14 @@ public class CachingResourceLoaderImplTest {
         final CachedResource<?> cachedResource = createMock(CachedResource.class);
         
         expect(cache.getInternalContext()).andReturn(null);
-        expect(cache.get(doc1Resouce))
-            .andReturn(new Element("class path resource [CachingResourceLoaderImplTest_doc1.txt]", cachedResource));
+        final Element element = new Element("class path resource [CachingResourceLoaderImplTest_doc1.txt]", cachedResource);
+        expect(cache.get(doc1Resouce)).andReturn(element);
         
+        expect(cachedResource.getLastCheckTime()).andReturn(1000001L);
         expect(cachedResource.getLastLoadTime()).andReturn(1000001L);
+        cachedResource.setLastCheckTime(anyLong());
+        cache.put(element);
+        expectLastCall();
         
         replay(cache, cachedResource);
         
@@ -200,7 +206,7 @@ public class CachingResourceLoaderImplTest {
         expect(cache.get(doc1Resouce))
             .andReturn(new Element(doc1Resouce, cachedResource));
         
-        expect(cachedResource.getLastLoadTime()).andReturn(System.currentTimeMillis());
+        expect(cachedResource.getLastCheckTime()).andReturn(System.currentTimeMillis());
         
         replay(cache, cachedResource);
         

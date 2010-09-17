@@ -324,17 +324,6 @@
         <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
 
-    <!-- Uncomment this servlet-mapping and the corresponding servlet if ProxyWriter is enabled in portal.properties
-    <servlet-mapping>
-        <servlet-name>HttpProxyServlet</servlet-name>
-        <url-pattern>/servlet/ProxyServlet/*</url-pattern>
-    </servlet-mapping>
-    -->
-    <servlet-mapping>
-        <servlet-name>uPortal</servlet-name>
-        <url-pattern>/worker/download/*</url-pattern>
-    </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>Problems</servlet-name>
         <url-pattern>/problems</url-pattern>

@@ -19,12 +19,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.portal.xml.XmlUtilities;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.FilteringXMLEventReader;
 import org.jasig.portal.xml.stream.XMLEventBufferReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Logs the StAX events
@@ -35,16 +34,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class LoggingStAXComponent implements StAXPipelineComponent {
     private Logger logger = LoggerFactory.getLogger(getClass());
     
-    private XmlUtilities xmlUtilities;
     private StAXPipelineComponent parentComponent;
     private boolean logFullDocument = true;
     private boolean logEvents = true;
 
-    @Autowired
-    public void setXmlUtilities(XmlUtilities xmlUtilities) {
-        this.xmlUtilities = xmlUtilities;
-    }
-    
     public void setLoggerName(String loggerName) {
         logger = LoggerFactory.getLogger(loggerName);
     }
@@ -85,10 +78,10 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
         protected XMLEvent filterEvent(XMLEvent event, boolean peek) {
             if (logEvents && logger.isDebugEnabled()) {
                 if (peek) {
-                    logger.debug("Peek: " + xmlUtilities.xmlEventToString(event));
+                    logger.debug("Peek: " + XmlUtilitiesImpl.toString(event));
                 }
                 else {
-                    logger.debug("Read: " + xmlUtilities.xmlEventToString(event));
+                    logger.debug("Read: " + XmlUtilitiesImpl.toString(event));
                 }
             }
             

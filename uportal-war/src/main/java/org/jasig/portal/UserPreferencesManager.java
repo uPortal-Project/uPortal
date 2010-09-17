@@ -137,7 +137,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             // determine user profile
             String userAgent = req.getHeader("User-Agent");
             if(StringUtils.isEmpty(userAgent)) {
-                userAgent=MediaManager.NULL_USER_AGENT;
+                userAgent="null";
             }
             
             

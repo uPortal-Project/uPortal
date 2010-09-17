@@ -31,6 +31,7 @@ class CachedResourceImpl<T> implements CachedResource<T> {
     private final Resource resource;
     private final T cachedResource;
     private final long lastLoadTime;
+    private volatile long lastCheckTime;
     private String lastLoadDigest;
     private byte[] lastLoadDigestBytes;
     private String digestAlgorithm;
@@ -45,6 +46,7 @@ class CachedResourceImpl<T> implements CachedResource<T> {
         this.resource = resource;
         this.cachedResource = cachedResource;
         this.lastLoadTime = lastLoadTime;
+        this.lastCheckTime = lastLoadTime;
         this.lastLoadDigest = lastLoadDigest;
         this.lastLoadDigestBytes = lastLoadDigestBytes;
         this.digestAlgorithm = digestAlgorithm;
@@ -63,6 +65,16 @@ class CachedResourceImpl<T> implements CachedResource<T> {
     @Override
     public long getLastLoadTime() {
         return this.lastLoadTime;
+    }
+    
+    @Override
+    public long getLastCheckTime() {
+        return this.lastCheckTime;
+    }
+
+    @Override
+    public void setLastCheckTime(long lastCheckTime) {
+        this.lastCheckTime = lastCheckTime;
     }
 
     @Override
@@ -91,6 +103,7 @@ class CachedResourceImpl<T> implements CachedResource<T> {
         result = prime * result + ((this.digestAlgorithm == null) ? 0 : this.digestAlgorithm.hashCode());
         result = prime * result + ((this.lastLoadDigest == null) ? 0 : this.lastLoadDigest.hashCode());
         result = prime * result + (int) (this.lastLoadTime ^ (this.lastLoadTime >>> 32));
+        result = prime * result + (int) (this.lastCheckTime ^ (this.lastCheckTime >>> 32));
         result = prime * result + ((this.resource == null) ? 0 : this.resource.hashCode());
         return result;
     }
@@ -126,6 +139,9 @@ class CachedResourceImpl<T> implements CachedResource<T> {
         if (this.lastLoadTime != other.lastLoadTime) {
             return false;
         }
+        if (this.lastCheckTime != other.lastCheckTime) {
+            return false;
+        }
         if (this.resource == null) {
             if (other.resource != null) {
                 return false;
@@ -140,6 +156,7 @@ class CachedResourceImpl<T> implements CachedResource<T> {
     @Override
     public String toString() {
         return "CachedResourceImpl [resource=" + this.resource + ", lastLoadTime=" + this.lastLoadTime
-                + ", lastLoadDigest=" + this.lastLoadDigest + ", digestAlgorithm=" + this.digestAlgorithm + "]";
+                + ", lastCheckTime=" + this.lastCheckTime + ", lastLoadDigest=" + this.lastLoadDigest
+                + ", digestAlgorithm=" + this.digestAlgorithm + "]";
     }
 }

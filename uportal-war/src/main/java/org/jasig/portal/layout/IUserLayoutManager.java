@@ -30,7 +30,6 @@ import org.jasig.portal.UserPreferences;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
-import org.xml.sax.ContentHandler;
 
 /**
  * An interface for abstracting operations performed on the user layout.
@@ -79,27 +78,6 @@ public interface IUserLayoutManager {
      */
     public void setUserLayout(IUserLayout userLayout) throws PortalException;
 
-    /**
-     * Output user layout (with appropriate markings) into
-     * a <code>ContentHandler</code>
-     *
-     * @param ch a <code>ContentHandler</code> value
-     * @exception PortalException if an error occurs
-     */
-    @Deprecated
-    public void getUserLayout(ContentHandler ch) throws PortalException;
-
-    /**
-     * Output subtree of a user layout (with appropriate markings) defined by a particular node into
-     * a <code>ContentHandler</code>
-     *
-     * @param nodeId a <code>String</code> a node determining a user layout subtree.
-     * @param ch a <code>ContentHandler</code> value
-     * @exception PortalException if an error occurs
-     */
-    @Deprecated
-    public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException;
-    
     public XMLEventReader getUserLayoutReader();
 
     /**

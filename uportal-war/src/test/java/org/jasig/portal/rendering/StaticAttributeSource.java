@@ -32,28 +32,20 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
 import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.portal.xml.XmlUtilities;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class StaticAttributeSource implements AttributeSource {
-    private XmlUtilities xmlUtilities;
+    private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
+    
     private Map<String, Map<String, String>> attributes;
     
     public void setAttributes(Map<String, Map<String, String>> attributes) {
         this.attributes = attributes;
     }
     
-    @Autowired
-    public void setXmlUtilities(XmlUtilities xmlUtilities) {
-        this.xmlUtilities = xmlUtilities;
-    }
-
-
-
     /* (non-Javadoc)
      * @see org.jasig.portal.rendering.AttributeSource#getAdditionalAttributes(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.xml.stream.events.StartElement)
      */
@@ -70,7 +62,6 @@ public class StaticAttributeSource implements AttributeSource {
             return null;
         }
         
-        final XMLEventFactory xmlEventFactory = this.xmlUtilities.getXmlEventFactory();
         final List<Attribute> newAttributes = new ArrayList<Attribute>(attributes.size());
         for (final Map.Entry<String, String> attributeEntry : attributes.entrySet()) {
             final String key = attributeEntry.getKey();

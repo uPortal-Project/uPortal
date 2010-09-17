@@ -38,7 +38,6 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.portal.xml.XmlUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -48,17 +47,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @version $Revision$
  */
 public class ThemeAttributeSource implements AttributeSource {
-    private XmlUtilities xmlUtilities;
+    private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
+    
     private IUserInstanceManager userInstanceManager;
     
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
-    }
-
-    @Autowired
-    public void setXmlUtilities(XmlUtilities xmlUtilities) {
-        this.xmlUtilities = xmlUtilities;
     }
 
 
@@ -91,7 +86,6 @@ public class ThemeAttributeSource implements AttributeSource {
                     continue;
                 }
                 
-                final XMLEventFactory xmlEventFactory = this.xmlUtilities.getXmlEventFactory();
                 final Attribute attribute = xmlEventFactory.createAttribute(channelAttributeName, value);
                 attributes.add(attribute);
             }

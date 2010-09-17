@@ -30,8 +30,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.jasig.portal.xml.XmlUtilities;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -71,6 +73,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
     public void setConfigurationFile(Resource configurationFile) {
         this.configurationFile = configurationFile;
     }
+
 
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
@@ -172,7 +175,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
                     logger.info("\n\n---------- Warning ----------\nThe 'name'" +
                             " attribute of the " +
                             "property element is required and must not be empty " +
-                            "in \n'" + XML.serializeNode(node) +
+                            "in \n'" + XmlUtilitiesImpl.toString(node) +
                             "'\nfrom distributed layout managment configuration " +
                             "file \n" + this.configurationFile.toString() +
                             "  \n-----------------------------\n");
@@ -227,10 +230,10 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
             {
                 final String msg = "Unable to load distributed layout fragment definition. Content from this fragment will not be avilable.";
                 if (this.logger.isDebugEnabled()) {
-                    logger.debug(msg + XML.serializeNode(fragmentElement), e );
+                    logger.debug(msg + XmlUtilitiesImpl.toString(fragmentElement), e );
                 }
                 else {
-                    logger.warn(msg + " Enable DEBUG logging for stack trace.\n\tCaused By: " + e.getMessage() + XML.serializeNode(fragmentElement));
+                    logger.warn(msg + " Enable DEBUG logging for stack trace.\n\tCaused By: " + e.getMessage() + " " + XmlUtilitiesImpl.toString(fragmentElement));
                 }
             }
         }   

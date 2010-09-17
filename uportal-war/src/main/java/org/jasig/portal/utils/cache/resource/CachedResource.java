@@ -48,6 +48,18 @@ public interface CachedResource<T> {
     public long getLastLoadTime();
     
     /**
+     * Must be thread safe and follow data visibility rules
+     * @return The timestamp for the last time the resource was checked for modification
+     */
+    public long getLastCheckTime();
+    
+    /**
+     * Sets the timestamp for the last time the resource was checked for modification
+     * Must be thread safe and follow data visibility rules
+     */
+    public void setLastCheckTime(long lastCheckTime);
+    
+    /**
      * Optional, may return null if no digesting was done.
      * 
      * @return The Base64 encoded {@link MessageDigest} output from digesting the resource during loading.

@@ -41,24 +41,12 @@
         <dependency>
             <groupId>com.googlecode.cernunnos</groupId>
             <artifactId>cernunnos</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>xom</groupId>
-                    <artifactId>xom</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         
         <dependency>
             <groupId>com.googlecode.ehcache-spring-annotations</groupId>
             <artifactId>ehcache-spring-annotations</artifactId>
         </dependency>
-
-        <dependency> 
-            <groupId>com.ibm.icu</groupId> 
-            <artifactId>icu4j</artifactId> 
-            <scope>runtime</scope> 
-        </dependency> 
         
         <dependency>
             <groupId>commons-cli</groupId>
@@ -118,12 +106,6 @@
         <dependency>
             <groupId>edu.internet2.middleware.grouper</groupId>
             <artifactId>grouperClient</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>xom</groupId>
-                    <artifactId>xom</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         
         <dependency>
@@ -240,11 +222,6 @@
             <groupId>org.jasypt</groupId> 
             <artifactId>jasypt</artifactId>  
         </dependency> 
-        
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -347,26 +324,6 @@
         </dependency>
 
         <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xmlParserAPIs</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>xml-resolver</groupId>
-            <artifactId>xml-resolver</artifactId>
-        </dependency>
-<!-- 
-        <dependency>
-            <groupId>xom</groupId>
-            <artifactId>xom</artifactId>
-        </dependency>
-         -->
-        <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
         </dependency>
@@ -446,6 +403,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
 

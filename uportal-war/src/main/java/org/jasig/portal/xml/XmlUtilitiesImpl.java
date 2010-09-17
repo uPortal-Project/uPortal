@@ -23,29 +23,31 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.jasig.portal.utils.cache.resource.CachedResource;
 import org.jasig.portal.utils.cache.resource.CachingResourceLoader;
 import org.jasig.portal.utils.cache.resource.ResourceLoaderOptions;
 import org.jasig.portal.utils.cache.resource.ResourceLoaderOptionsBuilder;
 import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
-import org.jasig.portal.xml.stream.XMLStreamConstantsUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Implementation of core XML related utilities
@@ -55,7 +57,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class XmlUtilitiesImpl implements XmlUtilities, ResourceLoaderAware, InitializingBean {
-    private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
+    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
     private final ResourceLoaderOptions templatesLoaderOptions = new ResourceLoaderOptionsBuilder().digestAlgorithm("SHA1").digestInput(true);
 
     private URIResolver uriResolver;
@@ -111,18 +113,45 @@ public class XmlUtilitiesImpl implements XmlUtilities, ResourceLoaderAware, Init
     private CachedResource<Templates> getStylesheetCachedResource(Resource stylesheet) throws IOException {
         return this.cachingResourceLoader.getResource(stylesheet, this.templatesBuilder, this.templatesLoaderOptions);
     }
-
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.xml.XmlUtilities#getXmlEventFactory()
-     */
-    @Override
-    public XMLEventFactory getXmlEventFactory() {
-        return this.xmlEventFactory;
+    
+    public static String getElementText(Element e) {
+        final StringBuilder text = new StringBuilder();
+        for (Node n = e.getFirstChild(); n != null; n = n.getNextSibling()) {
+            if (n.getNodeType() == Node.TEXT_NODE || 
+                n.getNodeType() == Node.CDATA_SECTION_NODE) {
+                text.append(n.getNodeValue());
+            }
+            else {
+                break;
+            }
+        }
+        return text.toString();
+    }
+    
+    public static String toString(Node node) {
+        final Transformer identityTransformer;
+        try {
+            identityTransformer = transformerFactory.newTransformer();
+        }
+        catch (TransformerConfigurationException e) {
+            throw new RuntimeException("Failed to create identity transformer to serialize Node to String", e);
+        }
+        identityTransformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        
+        final StringWriter outputWriter = new StringWriter();
+        final StreamResult outputTarget = new StreamResult(outputWriter);
+        final DOMSource xmlSource = new DOMSource(node);
+        try {
+            identityTransformer.transform(xmlSource, outputTarget);
+        }
+        catch (TransformerException e) {
+            throw new RuntimeException("Failed to convert Node to String using Transformer", e);
+        }
+        
+        return outputWriter.toString();
     }
 
-    @Override
-    public String xmlEventToString(XMLEvent event) {
+    public static String toString(XMLEvent event) {
         final StringWriter writer = new StringWriter();
         try {
             event.writeAsEncodedUnicode(writer);
@@ -132,67 +161,5 @@ public class XmlUtilitiesImpl implements XmlUtilities, ResourceLoaderAware, Init
         }
 
         return writer.toString();
-    }
-
-    @Override
-    public String streamStateToString(XMLStreamReader streamReader) {
-        final int eventType = streamReader.getEventType();
-        
-        final StringBuilder state = new StringBuilder();
-        
-        state.append("[");
-        state.append(XMLStreamConstantsUtils.getEventName(eventType));
-        state.append(" ");
-        
-        switch (eventType) {
-            case XMLStreamConstants.START_ELEMENT: {
-                state.append("<");
-                state.append(streamReader.getName());
-                
-                for (int index = 0; index < streamReader.getAttributeCount(); index++) {
-                    final QName attributeName = streamReader.getAttributeName(index);
-                    final String value = streamReader.getAttributeValue(index);
-                    state.append(" ");
-                    state.append(attributeName);
-                    state.append("=");
-                    state.append(value);
-                }
-                
-                state.append(">");
-                break;
-            }
-            case XMLStreamConstants.END_ELEMENT: {
-                state.append("<");
-                state.append(streamReader.getName());
-                state.append(">");
-                break;
-            }
-            case XMLStreamConstants.PROCESSING_INSTRUCTION: {
-                break;
-            }
-            case XMLStreamConstants.CHARACTERS: {
-                state.append(streamReader.getText());
-                break;
-            }
-            case XMLStreamConstants.COMMENT: {
-                break;
-            }
-            case XMLStreamConstants.ENTITY_REFERENCE: {
-                break;
-            }
-            case XMLStreamConstants.ATTRIBUTE: {
-                break;
-            }
-            case XMLStreamConstants.DTD: {
-                break;
-            }
-            case XMLStreamConstants.CDATA: {
-                break;
-            }
-        }
-
-        state.append("]");
-        
-        return state.toString();
     }
 }

@@ -33,12 +33,11 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.portal.xml.XmlUtilities;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.FilteringXMLEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Eric Dalquist
@@ -47,7 +46,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class StAXAttributeIncorporationComponent implements StAXPipelineComponent, BeanNameAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private XmlUtilities xmlUtilities;
+    private final XMLEventFactory eventFactory = XMLEventFactory.newFactory();
+    
     private StAXPipelineComponent parentComponent;
     private AttributeSource attributeSource;
     
@@ -59,11 +59,6 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
 
     public void setAttributeSource(AttributeSource attributeSource) {
         this.attributeSource = attributeSource;
-    }
-    
-    @Autowired
-    public void setXmlUtilities(XmlUtilities xmlUtilities) {
-        this.xmlUtilities = xmlUtilities;
     }
     
     @Override
@@ -136,14 +131,13 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
                 if (logger.isDebugEnabled()) {
                     logger.debug("{} - Adding Attribute {} to event {}", 
                             new Object[] {beanName, 
-                            xmlUtilities.xmlEventToString(attribute), 
-                            xmlUtilities.xmlEventToString(event)});
+                            XmlUtilitiesImpl.toString(attribute), 
+                            XmlUtilitiesImpl.toString(event)});
                 }
             }
             
             //Create the modified StartElement with the additional attribute data
-            final XMLEventFactory xmlEventFactory = xmlUtilities.getXmlEventFactory();
-            final StartElement modifiedStartElement = xmlEventFactory.createStartElement(
+            final StartElement modifiedStartElement = eventFactory.createStartElement(
                     startElement.getName(), 
                     mergedAttributes.values().iterator(), 
                     startElement.getNamespaces());

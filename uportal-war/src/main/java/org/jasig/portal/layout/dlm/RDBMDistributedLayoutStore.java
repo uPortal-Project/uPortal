@@ -83,8 +83,8 @@ import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.spring.locator.ConfigurationLoaderLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SmartCache;
-import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -1127,7 +1127,7 @@ public class RDBMDistributedLayoutStore
         {
             Document PLF, ILF = null;
             PLF = _safeGetUserLayout(person, profile);
-            ILF = XML.cloneDocument( PLF );
+            ILF = (Document)PLF.cloneNode(true);
 
             Element layoutNode = ILF.getDocumentElement();
 
@@ -1191,7 +1191,7 @@ public class RDBMDistributedLayoutStore
                                      FragmentDefinition fragment )
     {
         // need to make a copy that we can fragmentize
-        layout = XML.cloneDocument(layout);
+        layout = (Document)layout.cloneNode(true);
 
         FragmentActivator activator = this.getFragmentActivator();
 
@@ -1341,7 +1341,7 @@ public class RDBMDistributedLayoutStore
         }
         if (LOG.isDebugEnabled())
             LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) +
-                    " immediately after loading\n" + XML.serializeNode(PLF));
+                    " immediately after loading\n" + XmlUtilitiesImpl.toString(PLF));
 
         Document ILF = ILFBuilder.constructILF( PLF, applicables, person );
         person.setAttribute( Constants.PLF, PLF );
@@ -1350,9 +1350,9 @@ public class RDBMDistributedLayoutStore
         if (LOG.isDebugEnabled())
         {
             LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) +
-                    " after MERGING\n" + XML.serializeNode(PLF));
+                    " after MERGING\n" + XmlUtilitiesImpl.toString(PLF));
             LOG.debug("ILF for " + person.getAttribute(IPerson.USERNAME) +
-                    " after MERGING\n" + XML.serializeNode(ILF));
+                    " after MERGING\n" + XmlUtilitiesImpl.toString(ILF));
         }
         // push optimizations made during merge back into db.
         if( result.changedPLF )
@@ -1395,7 +1395,7 @@ public class RDBMDistributedLayoutStore
         Document plf = (Document) person.getAttribute( Constants.PLF );
         if (LOG.isDebugEnabled())
             LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) +
-                    "\n" + XML.serializeNode(plf));
+                    "\n" + XmlUtilitiesImpl.toString(plf));
         super.setUserLayout( person, profile, plf, channelsAdded );
 
         if (updateFragmentCache)
@@ -2439,7 +2439,7 @@ public class RDBMDistributedLayoutStore
 
             if (LOG.isDebugEnabled())
                 LOG.debug("saveStructure XML content: "
-                    + XML.serializeNode(node));
+                    + XmlUtilitiesImpl.toString(node));
 
             // determine the struct_id for storing in the db. For incorporated nodes in
             // the plf their ID is a system-wide unique ID while their struct_id for

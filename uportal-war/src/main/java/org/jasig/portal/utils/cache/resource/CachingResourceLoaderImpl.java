@@ -110,26 +110,35 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
 
         CachedResource<T> cachedResource = (CachedResource<T>)element.getObjectValue();
         if (this.logger.isTraceEnabled()) {
-            this.logger.trace("Found CachedResource in cache for " + resource + ": " + cachedResource);
+            this.logger.trace("Found " + cachedResource + " in cache");
         }
         
         //Found it, now check if the last-load time is within the check interval
-        final long lastLoadTime = cachedResource.getLastLoadTime();
+        final long lastCheckTime = cachedResource.getLastCheckTime();
         final long checkInterval = this.getCheckInterval(options);
-        if (lastLoadTime + checkInterval > System.currentTimeMillis()) {
+        if (lastCheckTime + checkInterval >= System.currentTimeMillis()) {
             if (this.logger.isTraceEnabled()) {
-                this.logger.trace("CachedResource for " + resource + " is within checkInterval " + checkInterval + ", returning");
+                this.logger.trace(cachedResource + " is within checkInterval " + checkInterval + ", returning");
             }
             return cachedResource;
         }
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(cachedResource + " is older than checkInterval " + checkInterval + ", checking for modification");
+        }
 
         //Check if the resource has been modified since it was last loaded.
+        final long lastLoadTime = cachedResource.getLastLoadTime();
         final long lastModified = this.getLastModified(resource);
-        if (lastModified < lastLoadTime) {
+        if (lastLoadTime >= lastModified) {
             if (this.logger.isTraceEnabled()) {
-                this.logger.trace("CachedResource for " + resource + " has not been modified since last loaded " + lastLoadTime + ", returning");
+                this.logger.trace(cachedResource + " has not been modified since last loaded " + lastLoadTime + ", returning");
             }
+            cachedResource.setLastCheckTime(System.currentTimeMillis());
+            this.resourceCache.put(element); //do a cache put to notify the cache the object has been modified
             return cachedResource;
+        }
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace(cachedResource + " was modified at " + lastModified + ", reloading");
         }
         
         //The resource has been modified, reload it.

@@ -77,7 +77,6 @@ import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.XML;
 import org.jasig.portal.xml.stream.LocationOverridingEventAllocator;
 import org.jasig.portal.xml.stream.UnknownLocation;
 import org.springframework.context.ApplicationContext;
@@ -1614,8 +1613,7 @@ IFolderLocalNameResolver
             {
                 LOG.error("Unable to locate root node in layout of "
                         + owner.getAttribute(IPerson.USERNAME) 
-                        + ". Resetting corrupted layout: " 
-                        + XML.serializeNode(layout));
+                        + ". Resetting corrupted layout.");
                 resetLayout((String) null);
                 rootNode = RootLocator.getRootElement(getUserLayoutDOM());
                 if (rootNode == null

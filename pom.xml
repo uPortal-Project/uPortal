@@ -136,7 +136,7 @@
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
         <ehcache.version>2.2.0</ehcache.version>
         <ehcache-spring-annotations.version>1.1.2</ehcache-spring-annotations.version>
-        <ehcache-web.version>2.0.0</ehcache-web.version>
+        <ehcache-web.version>2.0.2</ehcache-web.version>
         <grouperClient.version>1.6.1</grouperClient.version>
         <hibernate-annotations.version>3.3.1.GA</hibernate-annotations.version>
         <hibernate-commons-annotations.version>3.3.0.ga</hibernate-commons-annotations.version>
@@ -144,7 +144,6 @@
         <hibernate-tools.version>3.2.0.ga</hibernate-tools.version>
         <hibernate.version>3.2.6.ga</hibernate.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
-        <icu4j.version>3.8</icu4j.version>
         <javassist.version>3.8.0.GA</javassist.version> 
         <jasypt.version>1.6</jasypt.version>
         <jdom.version>1.0</jdom.version>
@@ -176,12 +175,7 @@
         <tyrex.version>1.0.1</tyrex.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
         <woodstox.version>4.0.8</woodstox.version>
-        <xercesImpl.version>2.9.1</xercesImpl.version>
-        <xml-apis.version>1.0.b2</xml-apis.version>
-        <xml-resolver.version>1.2-JASIG_PATCH</xml-resolver.version>
-        <xmlParserAPIs.version>2.6.2</xmlParserAPIs.version>
         <xmlunit.version>1.3</xmlunit.version>
-        <xom.version>1.1</xom.version>
         <xstream.version>1.3.1</xstream.version>
         
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -207,12 +201,28 @@
                 <version>${cernunnos.version}</version>
                 <exclusions>
                     <exclusion>
+                        <artifactId>cvsclient</artifactId>
+                        <groupId>org.netbeans.lib</groupId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>net.sf.retrotranslator</groupId>
                         <artifactId>retrotranslator-runtime</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>xercesImpl</artifactId>
+                        <groupId>xerces</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>xml-apis</artifactId>
+                        <groupId>xml-apis</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xom</groupId>
+                        <artifactId>xom</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -221,11 +231,6 @@
                 <artifactId>ehcache-spring-annotations</artifactId>
                 <version>${ehcache-spring-annotations.version}</version>
             </dependency>
-            <dependency> 
-                <groupId>com.ibm.icu</groupId> 
-                <artifactId>icu4j</artifactId> 
-                <version>${icu4j.version}</version> 
-            </dependency> 
             <dependency>
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
@@ -275,16 +280,6 @@
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>${commons-logging.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>logkit</groupId>
-                        <artifactId>logkit</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>avalon-framework</groupId>
-                        <artifactId>avalon-framework</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
@@ -300,17 +295,17 @@
                 <groupId>dom4j</groupId>
                 <artifactId>dom4j</artifactId>
                 <version>${dom4j.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>xml-apis</artifactId>
+                        <groupId>xml-apis</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>edu.internet2.middleware.grouper</groupId>
                 <artifactId>grouperClient</artifactId>
                 <version>${grouperClient.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>edu.internet2.middleware.grouper</groupId>
-                        <artifactId>grouper</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>hsqldb</groupId>
@@ -835,40 +830,9 @@
                 <version>${tyrex.version}</version>
             </dependency>
             <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>${xercesImpl.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xmlParserAPIs</artifactId>
-                <version>${xmlParserAPIs.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xml-apis</groupId>
-                <artifactId>xml-apis</artifactId>
-                <version>${xml-apis.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xml-resolver</groupId>
-                <artifactId>xml-resolver</artifactId>
-                <version>${xml-resolver.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>xmlunit</groupId>
                 <artifactId>xmlunit</artifactId>
                 <version>${xmlunit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xom</groupId>
-                <artifactId>xom</artifactId>
-                <version>${xom.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

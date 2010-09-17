@@ -38,7 +38,6 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.portal.xml.XmlUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -48,17 +47,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @version $Revision$
  */
 public class StructureAttributeSource implements AttributeSource {
-    private XmlUtilities xmlUtilities;
+    private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
+    
     private IUserInstanceManager userInstanceManager;
     
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
-    }
-    
-    @Autowired
-    public void setXmlUtilities(XmlUtilities xmlUtilities) {
-        this.xmlUtilities = xmlUtilities;
     }
 
     /* (non-Javadoc)
@@ -77,7 +72,6 @@ public class StructureAttributeSource implements AttributeSource {
             
             final Collection<Attribute> attributes = new LinkedList<Attribute>();
 
-            final XMLEventFactory xmlEventFactory = this.xmlUtilities.getXmlEventFactory();
             final Attribute subscribeIdAttr = event.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
             final String subscribeId = subscribeIdAttr.getValue();
             while (channelAttributeNames.hasMoreElements()) {
@@ -106,7 +100,6 @@ public class StructureAttributeSource implements AttributeSource {
             
             final Collection<Attribute> attributes = new LinkedList<Attribute>();
 
-            final XMLEventFactory xmlEventFactory = this.xmlUtilities.getXmlEventFactory();
             final Attribute folderIdAttr = event.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
             final String folderId = folderIdAttr.getValue();
             while (folderAttributeNames.hasMoreElements()) {

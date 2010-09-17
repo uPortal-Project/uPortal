@@ -29,7 +29,6 @@ import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.ProblemsTable;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.UserInstance;
-import org.jasig.portal.rendering.StaticRenderingPipeline;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.utils.MovingAverageSample;
 
@@ -81,7 +80,7 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
     }
 
     public MovingAverageSample getLastRender() {
-        return StaticRenderingPipeline.getLastRenderSample();
+        return null;//StaticRenderingPipeline.getLastRenderSample();
     }
 
     public String[] getRecentProblems() {

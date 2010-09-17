@@ -23,8 +23,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-import java.io.StringWriter;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.events.XMLEvent;
@@ -32,9 +30,12 @@ import javax.xml.stream.events.XMLEvent;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.web.skin.ResourcesDao;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.XMLStreamConstantsUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -51,6 +52,8 @@ import org.w3c.dom.DocumentFragment;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "renderingPipelineTestContext.xml")
 public class RenderingPipelineIntegrationTest {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private PipelineComponent<?, ?> component;
     
     //Mocked Beans
@@ -101,7 +104,7 @@ public class RenderingPipelineIntegrationTest {
         final PipelineEventReader<?, ?> eventReader = this.component.getEventReader(request, response);
         
         for (final Object event : eventReader) {
-            System.out.println(toString(event));
+            logger.debug(toString(event));
         }
         
         verify(this.resourcesDao, this.portalUrlProvider, this.portletWindowRegistry);
@@ -111,15 +114,14 @@ public class RenderingPipelineIntegrationTest {
         if (event instanceof XMLEvent) {
             final XMLEvent xmlEvent = (XMLEvent)event;
             
-            final StringBuilder eventString = new StringBuilder("[");
-            eventString.append(XMLStreamConstantsUtils.getEventName(xmlEvent.getEventType()));
+            final StringBuilder eventBuilder = new StringBuilder("[");
+            eventBuilder.append(XMLStreamConstantsUtils.getEventName(xmlEvent.getEventType()));
             
-            final StringWriter writer = new StringWriter();
-            xmlEvent.writeAsEncodedUnicode(writer);
-            eventString.append(" ").append(writer.toString());
+            final String eventString = XmlUtilitiesImpl.toString(xmlEvent);
+            eventBuilder.append(" ").append(eventString);
             
-            eventString.append("]");
-            return eventString.toString();
+            eventBuilder.append("]");
+            return eventBuilder.toString();
         }
         
         return String.valueOf(event);

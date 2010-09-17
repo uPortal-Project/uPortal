@@ -33,7 +33,6 @@ import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
-import org.xml.sax.ContentHandler;
 
 
 /**
@@ -62,17 +61,6 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
     public void setUserLayout(IUserLayout userLayout) throws PortalException {
-    }
-
-    public void getUserLayout(ContentHandler ch) throws PortalException {
-        //todo: we should probably cache the output here and save a DOM transform - the user layout never changes here
-        man.getUserLayout(new ImmutableUserLayoutSAXFilter(ch));
-        //        man.getUserLayout(ch);
-    }
-
-
-    public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
-        man.getUserLayout(nodeId,new ImmutableUserLayoutSAXFilter(ch));
     }
     
     @Override

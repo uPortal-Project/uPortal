@@ -108,7 +108,7 @@ public class BrowserInfo {
     public String getUserAgent () {
         String ua=(String)headers.get("user-agent");
         if(ua==null || ua.equals("")) { 
-            ua=MediaManager.NULL_USER_AGENT; 
+            ua="null"; 
         }
         return ua;
     }

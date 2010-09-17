@@ -27,10 +27,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,15 +39,7 @@ import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.SAX2FilterImpl;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Wraps {@link IUserLayoutManager} interface to provide ability to
@@ -109,42 +97,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
     public void setUserLayout(IUserLayout userLayout) throws PortalException {
         man.setUserLayout(userLayout);
-    }
-
-
-    public void getUserLayout(ContentHandler ch) throws PortalException {
-        man.getUserLayout(new TransientUserLayoutManagerSAXFilter(ch));
-    }
-
-    public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
-        IUserLayoutNodeDescription node = this.getNode(nodeId);
-        if ( null != node ) {
-          IUserLayoutNodeDescription layoutNode = null;
-          try
-          {
-              layoutNode = man.getNode(nodeId);
-          }
-          catch(PortalException pe)
-          {
-              // disregard. This means that the node isn't had within the
-              // nested layout manager so we can use the transient one.
-          }
-          if ( layoutNode != null )
-           man.getUserLayout(nodeId, new TransientUserLayoutManagerSAXFilter(ch));
-          else {
-             Document doc = DocumentFactory.getNewDocument();
-             try{
-                Element e = node.getXML(doc);
-                doc.appendChild(e);
-                Transformer trans=TransformerFactory.newInstance().newTransformer();
-                trans.transform(new DOMSource(doc), new SAXResult(new TransientUserLayoutManagerSAXFilter(ch)));
-             }
-             catch( Exception e ){
-                throw new PortalException("Encountered an exception trying to output user layout",e);
-             }
-          }
-        }
-    }
+    } 
     
     @Override
     public XMLEventReader getUserLayoutReader() {
@@ -509,139 +462,6 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         mSubId ++;
         return SUBSCRIBE_PREFIX + mSubId;
     }
-
-
-    /**
-     * This filter incorporates transient channels into a layout.
-     * This provides the ability for channel definitions to reside in
-     * a layout w/out the owner having to actually have them
-     * persisted.
-     */
-    class TransientUserLayoutManagerSAXFilter extends SAX2FilterImpl {
-
-        private static final String LAYOUT="layout";
-        private static final String LAYOUT_FRAGMENT="layout_fragment";
-        private static final String FOLDER="folder";
-        private static final String CHANNEL="channel";
-        private static final String PARAMETER="parameter";
-
-        public TransientUserLayoutManagerSAXFilter(ContentHandler handler) {
-            super(handler);
-        }
-
-        public TransientUserLayoutManagerSAXFilter(XMLReader parent) {
-            super(parent);
-        }
-
-        public void startElement(String uri, String localName, String qName,
-                                 Attributes atts)
-            throws SAXException {
-            // check for root node (layout_fragment for detached
-            // nodes), as that's where the transient folder/channel(s)
-            // need to be added.
-            String id = atts.getValue("ID");
-            if ( null != id && id.equals(getRootFolderId()))
-            {
-                // pass root event up the chain
-                super.startElement(uri,localName,qName,atts);
-                // create folder off of root layout to act as
-                // container for transient channels
-                AttributesImpl folderAtts = new AttributesImpl();
-                folderAtts.addAttribute("","ID","ID","ID",TRANSIENT_FOLDER_ID);
-                folderAtts.addAttribute("","type","type","CDATA","regular" );
-                folderAtts.addAttribute("","hidden","hidden","CDATA","true");
-                folderAtts.addAttribute("","unremovable","unremovable","CDATA","true");
-                folderAtts.addAttribute("","immutable","immutable","CDATA","true");
-                folderAtts.addAttribute("","name","name","CDATA","Transient Folder");
-                startElement("",FOLDER,FOLDER,folderAtts);
-                return;
-            }
-            else if ( qName.equals(FOLDER) )
-            {
-                id = atts.getValue("ID");
-                if ( null != id && id.equals(TRANSIENT_FOLDER_ID) )
-                {
-                    // pass event up the chain so it's added
-                    // as a child of the root
-                    super.startElement(uri,localName,qName,atts);
-
-                    // add a channel to the transient folder
-                    // implementation
-                    String subscribeId = "";
-                    try
-                    {
-                        subscribeId = getFocusedId();
-                        // append channel element iff subscribeId describes
-                        // a transient channel, and not a regular layout channel
-
-                        if ( null != subscribeId && !subscribeId.equals("") && mSubIdMap.containsKey(subscribeId))
-                        {
-                            IChannelDefinition chanDef = getChannelDefinition(subscribeId);
-                            AttributesImpl channelAttrs = new AttributesImpl();
-                            channelAttrs.addAttribute("","ID","ID","ID",subscribeId);
-                            channelAttrs.addAttribute("","typeID","typeID","CDATA",
-                                                      "" + chanDef.getTypeId());
-                            channelAttrs.addAttribute("","hidden","hidden","CDATA","false");
-                            channelAttrs.addAttribute("","editable","editable","CDATA",
-                                                      Boolean.toString(chanDef.isEditable()));
-                            channelAttrs.addAttribute("","unremovable","unremovable","CDATA","true");
-                            channelAttrs.addAttribute("","name","name","CDATA",chanDef.getName());
-                            channelAttrs.addAttribute("","description","description","CDATA",
-                                                      chanDef.getDescription());
-                            channelAttrs.addAttribute("","title","title","CDATA",chanDef.getTitle());
-                            channelAttrs.addAttribute("","class","class","CDATA",chanDef.getJavaClass());
-                            channelAttrs.addAttribute("","chanID","chanID","CDATA",
-                                                      "" + chanDef.getId());
-                            channelAttrs.addAttribute("","fname","fname","CDATA",chanDef.getFName());
-                            channelAttrs.addAttribute("","timeout","timeout","CDATA",
-                                                      "" + chanDef.getTimeout());
-                            channelAttrs.addAttribute("","hasHelp","hasHelp","CDATA",
-                                                      Boolean.toString(chanDef.hasHelp()));
-                            channelAttrs.addAttribute("","hasAbout","hasAbout","CDATA",
-                                                      Boolean.toString(chanDef.hasAbout()));
-
-                            startElement("",CHANNEL,CHANNEL,channelAttrs);
-
-                            // now add channel parameters
-                            Set<IChannelParameter> chanParms = chanDef.getParameters();
-                            for( IChannelParameter parm : chanParms )
-                            {
-                                AttributesImpl parmAttrs = new AttributesImpl();
-                                parmAttrs.addAttribute("","name","name","CDATA",parm.getName());
-                                parmAttrs.addAttribute("","value","value","CDATA",parm.getValue());
-
-                                startElement("",PARAMETER,PARAMETER,parmAttrs);
-                                endElement("",PARAMETER,PARAMETER);
-                            }
-
-                            endElement("",CHANNEL,CHANNEL);
-                        }
-                    }
-                    catch( Exception e )
-                    {
-                        log.error(
-                                       "Could not obtain channel definition " +
-                                       "from database for subscribe id: " +
-                                       subscribeId, e);
-                    }
-
-                    // now pass folder up the chain so it's closed
-                    // out
-                    super.endElement(uri,localName,qName);
-                    return;
-                }
-                else
-                {
-                    AttributesImpl attsImpl = new AttributesImpl(atts);
-                    super.startElement(uri,localName,qName,attsImpl);
-                }
-            } else {
-                AttributesImpl attsImpl = new AttributesImpl(atts);
-                super.startElement(uri,localName,qName,attsImpl);
-            }
-        }
-    }
-
 
 
     /**
