@@ -68,7 +68,7 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(request);
         final UrlType urlType = portalRequestInfo.getUrlType();
-        if (UrlType.RENDER == urlType) {
+        if ("GET".equals(request.getMethod())) {
             final String canonicalUrl = portalRequestInfo.getCanonicalUrl();
             final String queryString = request.getQueryString();
             final String requestURI = request.getRequestURI();
