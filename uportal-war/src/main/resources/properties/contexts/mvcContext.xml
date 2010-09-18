@@ -25,6 +25,8 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">           
 
+    <bean id="urlCanonicalizingFilter" class="org.jasig.portal.url.UrlCanonicalizingFilter" />
+
     <!--
      | Message source for this context, loaded from localized "messages_xx" files
      +-->

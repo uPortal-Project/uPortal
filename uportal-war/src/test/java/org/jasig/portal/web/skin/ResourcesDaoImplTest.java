@@ -39,7 +39,6 @@ import org.springframework.core.io.ClassPathResource;
  *
  */
 public class ResourcesDaoImplTest {
-
 	/**
 	 * Verify expected results with "org/jasig/portal/web/skin/resources1.xml"
 	 * 

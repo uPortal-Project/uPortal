@@ -50,12 +50,6 @@
                     <bean class="org.springframework.scheduling.concurrent.CustomizableThreadFactory">
                         <property name="daemon" value="true" />
                         <property name="threadNamePrefix" value="PortalEvent-" />
-                        <property name="threadGroup">
-                            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                                <property name="targetClass" value="org.jasig.portal.PortalSessionManager" />
-                                <property name="targetMethod" value="getThreadGroup" />
-                            </bean>
-                        </property>
                     </bean>
                 </property>
             </bean>

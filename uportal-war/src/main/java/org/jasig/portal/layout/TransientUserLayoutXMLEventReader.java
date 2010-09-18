@@ -20,12 +20,12 @@
 package org.jasig.portal.layout;
 
 import java.util.Collection;
+import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Queue;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
@@ -35,73 +35,47 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
-import org.jasig.portal.xml.stream.BaseXMLEventReader;
+import org.jasig.portal.xml.stream.InjectingXMLEventReader;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class TransientUserLayoutXMLEventReader extends BaseXMLEventReader {
+public class TransientUserLayoutXMLEventReader extends InjectingXMLEventReader {
     private static final XMLEventFactory EVENT_FACTORY = XMLEventFactory.newFactory();
 
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private final TransientUserLayoutManagerWrapper userLayoutManager;
-    private final XMLEventReader wrappedReader;
     private final String rootFolderId;
-    
-    private final Queue<XMLEvent> transientEventBuffer = new LinkedList<XMLEvent>();
-    private XMLEvent previousEvent;
     
     
     public TransientUserLayoutXMLEventReader(TransientUserLayoutManagerWrapper userLayoutManager,
             XMLEventReader wrappedReader) {
+        super(wrappedReader);
         this.userLayoutManager = userLayoutManager;
-        this.wrappedReader = wrappedReader;
         this.rootFolderId = this.userLayoutManager.getRootFolderId();
     }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.xml.stream.BaseXMLEventReader#getPreviousEvent()
-     */
+    
     @Override
-    protected XMLEvent getPreviousEvent() {
-        return this.previousEvent;
-    }
-
-    public void close() throws XMLStreamException {
-        this.wrappedReader.close();
-    }
-
-    public Object getProperty(String name) throws IllegalArgumentException {
-        return this.wrappedReader.getProperty(name);
-    }
-
-    public boolean hasNext() {
-        return this.wrappedReader.hasNext();
-    }
-
-    public XMLEvent nextEvent() throws XMLStreamException {
-        //Read from the buffer first
-        if (!this.transientEventBuffer.isEmpty()) {
-            final XMLEvent event = transientEventBuffer.poll();
-            this.previousEvent = event;
-            return event;
-        }
-        
-        XMLEvent event = this.wrappedReader.nextEvent();
-        
+    protected Deque<XMLEvent> getAdditionalEvents(XMLEvent event) {
         if (event.isStartElement()) {
             final StartElement startElement = event.asStartElement();
             
             //All following logic requires an ID attribute, ignore any element without one
             final Attribute idAttribute = startElement.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
             if (idAttribute == null) {
-                return event;
+                return null;
             }
             
             //Handle adding a transient folder to the root element
             if (this.rootFolderId.equals(idAttribute.getValue())) {
+                final QName name = startElement.getName();
+                final String namespaceURI = name.getNamespaceURI();
+                final String prefix = name.getPrefix();
+                
+                final Deque<XMLEvent> transientEventBuffer = new LinkedList<XMLEvent>();
+                
                 final Collection<Attribute> transientFolderAttributes = new LinkedList<Attribute>();
                 transientFolderAttributes.add(EVENT_FACTORY.createAttribute("ID", TransientUserLayoutManagerWrapper.TRANSIENT_FOLDER_ID));
                 transientFolderAttributes.add(EVENT_FACTORY.createAttribute("type", "regular"));
@@ -110,8 +84,8 @@ public class TransientUserLayoutXMLEventReader extends BaseXMLEventReader {
                 transientFolderAttributes.add(EVENT_FACTORY.createAttribute("immutable", "true"));
                 transientFolderAttributes.add(EVENT_FACTORY.createAttribute("name", "Transient Folder"));
                 
-                final StartElement transientFolder = EVENT_FACTORY.createStartElement(IUserLayoutManager.FOLDER, transientFolderAttributes.iterator(), null);
-                this.transientEventBuffer.add(transientFolder);
+                final StartElement transientFolder = EVENT_FACTORY.createStartElement(prefix, namespaceURI, IUserLayoutManager.FOLDER, transientFolderAttributes.iterator(), null);
+                transientEventBuffer.add(transientFolder);
 
                 //append channel element iff subscribeId describes a transient channel, and not a regular layout channel
                 final String subscribeId = this.userLayoutManager.getFocusedId();
@@ -142,8 +116,8 @@ public class TransientUserLayoutXMLEventReader extends BaseXMLEventReader {
                         channelAttrs.add(EVENT_FACTORY.createAttribute("hasHelp", Boolean.toString(chanDef.hasHelp())));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("hasAbout", Boolean.toString(chanDef.hasAbout())));
 
-                        final StartElement startChannel = EVENT_FACTORY.createStartElement(IUserLayoutManager.CHANNEL, channelAttrs.iterator(), null);
-                        this.transientEventBuffer.add(startChannel);
+                        final StartElement startChannel = EVENT_FACTORY.createStartElement(prefix, namespaceURI, IUserLayoutManager.CHANNEL, channelAttrs.iterator(), null);
+                        transientEventBuffer.offer(startChannel);
 
                         // add channel parameter elements
                         for(final IChannelParameter parm : chanDef.getParameters())
@@ -152,36 +126,36 @@ public class TransientUserLayoutXMLEventReader extends BaseXMLEventReader {
                             parameterAttrs.add(EVENT_FACTORY.createAttribute("name",parm.getName()));
                             parameterAttrs.add(EVENT_FACTORY.createAttribute("value",parm.getValue()));
 
-                            final StartElement startParameter = EVENT_FACTORY.createStartElement(IUserLayoutManager.PARAMETER, parameterAttrs.iterator(), null);
-                            this.transientEventBuffer.add(startParameter);
+                            final StartElement startParameter = EVENT_FACTORY.createStartElement(prefix, namespaceURI, IUserLayoutManager.PARAMETER, parameterAttrs.iterator(), null);
+                            transientEventBuffer.offer(startParameter);
                             
-                            final EndElement endParameter = EVENT_FACTORY.createEndElement(IUserLayoutManager.PARAMETER, null);
-                            this.transientEventBuffer.add(endParameter);
+                            final EndElement endParameter = EVENT_FACTORY.createEndElement(prefix, namespaceURI, IUserLayoutManager.PARAMETER, null);
+                            transientEventBuffer.offer(endParameter);
                         }
 
-                        final EndElement endChannel = EVENT_FACTORY.createEndElement(IUserLayoutManager.CHANNEL, null);
-                        this.transientEventBuffer.add(endChannel);
+                        final EndElement endChannel = EVENT_FACTORY.createEndElement(prefix, namespaceURI, IUserLayoutManager.CHANNEL, null);
+                        transientEventBuffer.offer(endChannel);
                     }
                 }
                 
-                final EndElement endFolder = EVENT_FACTORY.createEndElement(IUserLayoutManager.FOLDER, null);
-                this.transientEventBuffer.add(endFolder);
+                final EndElement endFolder = EVENT_FACTORY.createEndElement(prefix, namespaceURI, IUserLayoutManager.FOLDER, null);
+                transientEventBuffer.offer(endFolder);
+                
+                return transientEventBuffer;
             }
         }
         
-        this.previousEvent = event;
-        return event;
+        return null;
     }
 
-    public XMLEvent peek() throws XMLStreamException {
-        if (!this.transientEventBuffer.isEmpty()) {
-            return transientEventBuffer.peek();
+
+    @Override
+    protected XMLEvent getPeekEvent(XMLEvent event) {
+        //Not the most efficient way of doing this since the whole deque is built but we only need the first element.
+        final Deque<XMLEvent> additionalEvents = this.getAdditionalEvents(event);
+        if (additionalEvents != null) {
+            return additionalEvents.pop();
         }
-
-        return this.wrappedReader.peek();
-    }
-
-    public void remove() {
-        this.wrappedReader.remove();
+        return null;
     }
 }

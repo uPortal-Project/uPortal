@@ -13,22 +13,46 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EntityDeclaration;
 import javax.xml.stream.events.EntityReference;
 import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.util.EventReaderDelegate;
 
 /**
- * Base for XMLEventReader that implements the getElementText and nextTag APIs in a
- * way that is agnostic from the rest of the XMLEventReader implementation
+ * Base for XMLEventReader that implements the {@link #getElementText()} and {@link #nextTag()} APIs in a
+ * way that is agnostic from the rest of the XMLEventReader implementation. Both will use the subclasses
+ * {@link #internalNextEvent()} as the exclusive way to read events.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class BaseXMLEventReader implements XMLEventReader {
+public abstract class BaseXMLEventReader extends EventReaderDelegate {
+    private XMLEvent previousEvent;
     
-    protected abstract XMLEvent getPreviousEvent();
+    public BaseXMLEventReader(XMLEventReader reader) {
+        super(reader);
+    }
+
+    /**
+     * Subclass's version of {@link #nextEvent()}, called by {@link #next()}
+     */
+    protected abstract XMLEvent internalNextEvent() throws XMLStreamException;
     
+    /**
+     * @return The XMLEvent returned by the last call to {@link #internalNextEvent()}
+     */
+    protected final XMLEvent getPreviousEvent() {
+        return this.previousEvent;
+    }
+    
+    @Override
+    public final XMLEvent nextEvent() throws XMLStreamException {
+        this.previousEvent = this.internalNextEvent();
+        return this.previousEvent;
+    }
+
     /* (non-Javadoc)
      * @see java.util.Iterator#next()
      */
-    public Object next() {
+    @Override
+    public final Object next() {
         try {
             return this.nextEvent();
         }
@@ -41,8 +65,8 @@ public abstract class BaseXMLEventReader implements XMLEventReader {
      * @see javax.xml.stream.XMLEventReader#getElementText()
      */
     @Override
-    public String getElementText() throws XMLStreamException {
-        XMLEvent event = this.getPreviousEvent();
+    public final String getElementText() throws XMLStreamException {
+        XMLEvent event = this.previousEvent;
         if (event == null || !event.isStartElement()) {
             throw new XMLStreamException("Must be on START_ELEMENT to read next text", event.getLocation());
         }
@@ -83,8 +107,7 @@ public abstract class BaseXMLEventReader implements XMLEventReader {
      * @see javax.xml.stream.XMLEventReader#nextTag()
      */
     @Override
-    public XMLEvent nextTag() throws XMLStreamException {
-        
+    public final XMLEvent nextTag() throws XMLStreamException {
         XMLEvent event = this.nextEvent();
         while ((event.isCharacters() && event.asCharacters().isWhiteSpace())
                 || event.isProcessingInstruction()

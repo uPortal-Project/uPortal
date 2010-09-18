@@ -28,7 +28,7 @@ import java.util.Iterator;
  * @version $Revision$
  */
 public class PipelineEventReaderImpl<R, E> implements PipelineEventReader<R, E> {
-    private final R eventReader;
+    protected final R eventReader;
     
     public PipelineEventReaderImpl(R eventReader) {
         this.eventReader = eventReader;

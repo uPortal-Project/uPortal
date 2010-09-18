@@ -30,20 +30,24 @@
      | Due to the fairly generic nature of each component in the rendering 
      | pipeline it cannot be autowired. However the dependencies of each
      | component often can.
-     +
-    <bean class="org.jasig.portal.rendering.DynamicRenderingPipeline">
+     +-->
+    <bean id="portalRenderingPipeline" class="org.jasig.portal.rendering.DynamicRenderingPipeline">
         <property name="pipeline" ref="portletRenderingIncorporationComponent" />
     </bean>
-    -->
     
     <!-- portlet content incorporation -->
     <bean id="portletRenderingIncorporationComponent" class="org.jasig.portal.rendering.PortletRenderingIncorporationComponent">
+        <property name="parentComponent" ref="themeCachingComponent" />
+    </bean>
+    
+    <bean id="themeCachingComponent" class="org.jasig.portal.rendering.cache.CachingCharacterPipelineComponent">
         <property name="parentComponent" ref="staxSerializingComponent" />
+        <property name="cache" ref="org.jasig.portal.rendering.THEME_TRANSFORM" />
     </bean>
     
     <!-- StAX to String serialization -->
     <bean id="staxSerializingComponent" class="org.jasig.portal.rendering.StAXSerializingComponent">
-        <property name="parentComponent" ref="themeTransformComponent" />
+        <property name="parentComponent" ref="postThemeTransformLogger" />
         <property name="chunkingElements">
             <map>
                 <entry>
@@ -67,10 +71,24 @@
             </map>
         </property>
     </bean>
+    
+    <bean id="postThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+        <property name="parentComponent" ref="dtdSettingPipelineComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_THEME" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
+    </bean>
+    
+    <bean id="dtdSettingPipelineComponent" class="org.jasig.portal.rendering.DTDSettingPipelineComponent">
+        <property name="parentComponent" ref="themeTransformComponent" />
+        <property name="DTD">
+            <value>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;</value>
+        </property>
+    </bean>
      
     <!-- theme transformation -->
     <bean id="themeTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
-        <property name="parentComponent" ref="themeAttributeIncorporationComponent" />
+        <property name="parentComponent" ref="preThemeTransformLogger" />
         <property name="transformerSource">
             <bean class="org.jasig.portal.rendering.xslt.ThemeTransformerSource"/>
         </property>
@@ -79,28 +97,33 @@
                 <property name="sources">
                     <list>
                         <bean class="org.jasig.portal.rendering.xslt.ThemeTransformerConfigurationSource" />
+                        <!-- TODO move most of these parameters into their own little configuration source beans so they can provide good input to the cache key -->
                         <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
                             <property name="parameters">
                                 <map>
                                     <entry>
-                                        <key><util:constant static-field="org.jasig.portal.url.xml.BaseUrlXalanElements.PORTAL_URL_PROVIDER_PARAMETER" /></key>
-                                        <ref bean="portalUrlProvider"/>
+                                        <key><util:constant static-field="org.jasig.portal.web.skin.ResourcesElementsProvider.RESOURCES_ELEMENTS_PROVIDER" /></key>
+                                        <ref bean="resourcesElementsProvider"/>
                                     </entry>
                                     <entry>
-                                        <key><util:constant static-field="org.jasig.portal.url.xml.PortletUrlXalanElements.PORTLET_WINDOW_REGISTRY_PARAMETER" /></key>
-                                        <ref bean="portletWindowRegistry"/>
+                                        <key><util:constant static-field="org.jasig.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" /></key>
+                                        <ref bean="xslPortalUrlProvider"/>
                                     </entry>
                                     <entry key="EXTERNAL_LOGIN_URL" value="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
                                 </map>
                             </property>
                             <property name="parameterExpressions">
                                 <map>
-                                    <entry>
-                                        <key><util:constant static-field="org.jasig.portal.url.xml.BaseUrlXalanElements.CURRENT_PORTAL_REQUEST" /></key>
-                                        <value>request.nativeRequest</value>
-                                    </entry>
-                                    <entry key="CONTEXT_PATH" value="request.contexPath" />
+                                    <entry key="CURRENT_REQUEST" value="request.nativeRequest" />
+                                    <entry key="CONTEXT_PATH" value="request.contextPath" />
                                 </map>
+                            </property>
+                            <property name="cacheKeyExcludedParameters">
+                                <set>
+                                    <value>CURRENT_REQUEST</value>
+                                    <util:constant static-field="org.jasig.portal.web.skin.ResourcesElementsProvider.RESOURCES_ELEMENTS_PROVIDER" />
+                                    <util:constant static-field="org.jasig.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" />
+                                </set>
                             </property>
                         </bean>
                         <bean class="org.jasig.portal.rendering.xslt.LocaleTransformerConfigurationSource" />
@@ -108,6 +131,13 @@
                 </property>
             </bean>
         </property>
+    </bean>
+    
+    <bean id="preThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+        <property name="parentComponent" ref="themeAttributeIncorporationComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_THEME" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
     </bean>
     
     <!-- theme attribute incorporation -->
@@ -120,12 +150,24 @@
     
     <!-- portlet rendering initiation -->
     <bean id="portletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationComponent">
+        <property name="parentComponent" ref="structureCachingComponent" />
+    </bean>
+    
+    <bean id="structureCachingComponent" class="org.jasig.portal.rendering.cache.CachingStAXPipelineComponent">
+        <property name="parentComponent" ref="postStructureTransformLogger" />
+        <property name="cache" ref="org.jasig.portal.rendering.STRUCTURE_TRANSFORM" />
+    </bean>
+    
+    <bean id="postStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="parentComponent" ref="structureTransformComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_STRUCTURE" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
     </bean>
     
     <!-- structure transformation -->
     <bean id="structureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
-        <property name="parentComponent" ref="structureAttributeIncorporationComponent" />
+        <property name="parentComponent" ref="preStructureTransformLogger" />
         <property name="transformerSource">
             <bean class="org.jasig.portal.rendering.xslt.StructureTransformerSource"/>
         </property>
@@ -147,18 +189,29 @@
         </property>
     </bean>
     
+    <bean id="preStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+        <property name="parentComponent" ref="structureAttributeIncorporationComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_STRUCTURE" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
+    </bean>
+    
     <!-- structure attribute incorporation -->
     <bean id="structureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="parentComponent" ref="userLayoutStoreComponent" />
+        <property name="parentComponent" ref="postUserLayoutStoreLogger" />
         <property name="attributeSource">
             <bean class="org.jasig.portal.rendering.StructureAttributeSource" />
         </property>
     </bean>
+    
+    <bean id="postUserLayoutStoreLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+        <property name="parentComponent" ref="userLayoutStoreComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_LAYOUT" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
+    </bean>
 
     <!-- Start of the rendering pipeline, provides the user's layout -->
     <bean id="userLayoutStoreComponent" class="org.jasig.portal.rendering.UserLayoutStoreComponent" />
-
-    <!-- Spring Messages helper for Xalan -->
-    <bean id="xalanMessageHelper" class="org.jasig.portal.security.xslt.XalanMessageHelperBean"/>
     
 </beans>

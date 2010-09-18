@@ -119,7 +119,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             // determine user profile
             String userAgent = req.getHeader("User-Agent");
             if(userAgent==null || userAgent.equals("")) { 
-                userAgent=MediaManager.NULL_USER_AGENT; 
+                userAgent="null"; 
             }
             UserProfile upl;
             // see if the profile was cached

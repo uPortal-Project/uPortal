@@ -19,6 +19,8 @@
 
 package org.jasig.portal.url;
 
+import org.apache.pluto.container.PortletURLProvider.TYPE;
+
 /**
  * Represents the request type of the url, all available request types should be enumerated here
  * 
@@ -46,6 +48,18 @@ public enum UrlType {
     public String toLowercaseString() {
         return this.lowercase;
     }
+    public TYPE getPortletUrlType() {
+        switch (this) {
+            case ACTION: {
+                return TYPE.ACTION;
+            }
+            case RENDER: {
+                return TYPE.RENDER;
+            }
+        }
+        
+        throw new IllegalStateException("Unknown UrlType: " + this);
+    }
     
     public static UrlType valueOfIngoreCase(String name) {
         return UrlType.valueOf(name.toUpperCase());
@@ -63,4 +77,6 @@ public enum UrlType {
             return defaultValue;
         }
     }
+    
+    
 }

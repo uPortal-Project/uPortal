@@ -55,7 +55,6 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.channel.IChannelPublishingService;
@@ -75,7 +74,7 @@ import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.ChannelPublishingServiceLocator;
 import org.jasig.portal.spring.locator.JpaInterceptorLocator;
-import org.jasig.portal.utils.XML;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.orm.jpa.JpaInterceptor;
 import org.w3c.dom.Document;
@@ -377,13 +376,13 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
 
                 // each tagname corresponds to an object data field
                 if (tagname.equals("title"))
-                    title = XML.getElementText(pele).trim();
+                    title = XmlUtilitiesImpl.getElementText(pele).trim();
                 else if (tagname.equals("name"))
-                    name = XML.getElementText(pele).trim();
+                    name = XmlUtilitiesImpl.getElementText(pele).trim();
                 else if (tagname.equals("type"))
-                    typeId = getType(XML.getElementText(pele).trim());
+                    typeId = getType(XmlUtilitiesImpl.getElementText(pele).trim());
                 else if (tagname.equals("class"))
-                    clazz = XML.getElementText(pele).trim();
+                    clazz = XmlUtilitiesImpl.getElementText(pele).trim();
             }
             
             ci.chanDef = crs.newChannelDefinition(typeId, fname, clazz, name, title);
@@ -394,7 +393,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 continue; // whitespace (typically \n) between tags
             Element pele = (Element) param;
             String tagname = pele.getTagName();
-            String value = XML.getElementText(pele).trim();
+            String value = XmlUtilitiesImpl.getElementText(pele).trim();
 
             // each tagname corresponds to an object data field
             if (tagname.equals("title"))
@@ -470,7 +469,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             {
                 if (n.getNodeName().equals("fname"))
                 {
-                    fname = XML.getElementText((Element) n).trim();
+                    fname = XmlUtilitiesImpl.getElementText((Element) n).trim();
                 }
             }
         }
@@ -499,7 +498,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             {
                 if (n.getNodeName().equals("channelId"))
                 {
-                    id = XML.getElementText((Element) n).trim();
+                    id = XmlUtilitiesImpl.getElementText((Element) n).trim();
                 }
             }
         }
@@ -566,7 +565,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             for (int j = 0; j < anodes.getLength(); j++)
             {
                 Element anode = (Element) anodes.item(j);
-                String catString = XML.getElementText(anode).trim();
+                String catString = XmlUtilitiesImpl.getElementText(anode).trim();
                 // need to look up corresponding category id
                 // ie: Applications = local.50
                 //     Entertainment = local.51
@@ -605,22 +604,22 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 NodeList namenodes = anode.getElementsByTagName("name");
                 if (namenodes.getLength() > 0)
                 {
-                    pname = XML.getElementText((Element) namenodes.item(0)).trim();
+                    pname = XmlUtilitiesImpl.getElementText((Element) namenodes.item(0)).trim();
                 }
                 NodeList valuenodes = anode.getElementsByTagName("value");
                 if (valuenodes.getLength() > 0)
                 {
-                    pvalue = XML.getElementText((Element) valuenodes.item(0)).trim();
+                    pvalue = XmlUtilitiesImpl.getElementText((Element) valuenodes.item(0)).trim();
                 }
                 NodeList descnodes = anode.getElementsByTagName("description");
                 if (descnodes.getLength() > 0)
                 {
-                    pdescr = XML.getElementText((Element) descnodes.item(0)).trim();
+                    pdescr = XmlUtilitiesImpl.getElementText((Element) descnodes.item(0)).trim();
                 }
                 NodeList ovrdnodes = anode.getElementsByTagName("ovrd");
                 if (ovrdnodes.getLength() > 0)
                 {
-                    povrd = XML.getElementText((Element) ovrdnodes.item(0)).trim();
+                    povrd = XmlUtilitiesImpl.getElementText((Element) ovrdnodes.item(0)).trim();
                 }
                 IChannelParameter chanParam =
                     new ChannelParameterImpl(pname, pvalue, RDBMServices.dbFlag(povrd));
@@ -657,7 +656,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                 if (nameNodes.getLength() != 1) {
                     throw new IllegalArgumentException("Illegal number of 'name' elements under a 'portletPreference' element: was " + nameNodes.getLength() + " expected 1");
                 }
-                name = XML.getElementText((Element) nameNodes.item(0)).trim();
+                name = XmlUtilitiesImpl.getElementText((Element) nameNodes.item(0)).trim();
                 
                 //Load the readOnly flag
                 final NodeList readOnlyNodes = portletPreferenceNode.getElementsByTagName("read-only");
@@ -665,7 +664,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                     throw new IllegalArgumentException("Illegal number of 'read-only' elements under a 'portletPreference' element: was " + nameNodes.getLength() + " expected 0 or 1");
                 }
                 else if (readOnlyNodes.getLength() == 1) {
-                    readOnly = Boolean.parseBoolean(XML.getElementText((Element) readOnlyNodes.item(0)).trim());
+                    readOnly = Boolean.parseBoolean(XmlUtilitiesImpl.getElementText((Element) readOnlyNodes.item(0)).trim());
                 }
                 
                 //Load the values
@@ -679,7 +678,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
                     values = new ArrayList<String>(valueNodes.getLength());
                     for (int valueNodeIndex = 0; valueNodeIndex < valueNodes.getLength(); valueNodeIndex++) {
                         final Element valueNode = (Element) valueNodes.item(valueNodeIndex);
-                        values.add(XML.getElementText(valueNode).trim());
+                        values.add(XmlUtilitiesImpl.getElementText(valueNode).trim());
                     }
                 }
                 
@@ -709,7 +708,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             for (int j = 0; j < anodes.getLength(); j++)
             {
                 Element anode = (Element) anodes.item(j);
-                String groupStr = XML.getElementText(anode).trim();
+                String groupStr = XmlUtilitiesImpl.getElementText(anode).trim();
                 // need to look up corresponding group id
                 // ie: Everyone = local.0
                 //     Developers = local.4
@@ -740,7 +739,7 @@ public class ChannelPublisher implements ErrorHandler, IChannelPublisher
             for (int j = 0; j < anodes.getLength(); j++)
             {
                 Element anode = (Element) anodes.item(j);
-                String userStr = XML.getElementText(anode).trim();
+                String userStr = XmlUtilitiesImpl.getElementText(anode).trim();
                 // need to look up corresponding user
                 IEntity user = GroupService.getEntity(userStr, IPerson.class);
 

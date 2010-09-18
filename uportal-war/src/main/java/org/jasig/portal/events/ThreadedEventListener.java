@@ -24,7 +24,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.utils.threading.PriorityThreadFactory;
 
 /**
@@ -66,11 +65,13 @@ public final class ThreadedEventListener extends AbstractEventListener {
 
 	/** Priority of Threads. */
 	private int threadPriority = DEFAULT_THREAD_PRIORITY;
+	
+	private final ThreadGroup group = new ThreadGroup("uPortal");
 
 	protected void afterPropertiesSetInternal() throws Exception {
 		this.threadPool = new ThreadPoolExecutor(initialThreads, maxThreads,
 				0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(),
-				new PriorityThreadFactory(threadPriority, "Priority", PortalSessionManager.getThreadGroup()));
+				new PriorityThreadFactory(threadPriority, "Priority", group));
 	}
 
 	protected void onApplicationEventInternal(final PortalEvent event,

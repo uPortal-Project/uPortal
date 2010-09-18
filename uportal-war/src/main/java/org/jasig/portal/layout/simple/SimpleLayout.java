@@ -36,12 +36,10 @@ import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutNodeDescription;
-import org.jasig.portal.utils.XML;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.ContentHandler;
 
 /**
  * The simple user layout implementation. This
@@ -66,22 +64,6 @@ public class SimpleLayout implements IUserLayout {
     public SimpleLayout(String layoutId, Document layout) {
         this.layoutId = layoutId;
         this.layout = layout;
-    }
-
-    public void writeTo(ContentHandler ch) throws PortalException {
-        try {
-            XML.dom2sax(layout, ch);
-        } catch (Exception e) {
-            throw new PortalException(e);
-        }
-    }
-
-    public void writeTo(String nodeId, ContentHandler ch) throws PortalException {
-        try {
-            XML.dom2sax(layout.getElementById(nodeId), ch);
-        } catch (Exception e) {
-            throw new PortalException(e);
-        }
     }
 
     public void writeTo(Document document) throws PortalException {

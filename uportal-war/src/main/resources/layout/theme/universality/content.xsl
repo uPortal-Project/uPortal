@@ -40,29 +40,14 @@
  | used by the theme
 -->
 <xsl:stylesheet 
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-  xmlns:xalan="http://xml.apache.org/xalan" 
-  xmlns:dlm="http://www.uportal.org/layout/dlm"
-  xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-  xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-  xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
-  xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-  xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-  extension-element-prefixes="portal portlet layout" 
-  exclude-result-prefixes="xalan portal portlet layout upAuth upGroup" 
-  version="1.0">
-  
-  <xalan:component prefix="portal" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="portlet" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="layout" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
-  </xalan:component>
-<!-- ============================================= -->
-  
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    exclude-result-prefixes="upAuth upGroup upMsg" 
+    version="1.0">
+      
   <!-- ========== TEMPLATE: PORTLET ========== -->
   <!-- ======================================= -->
   <!--
@@ -134,10 +119,13 @@
             <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar"> <!-- Portlet toolbar. -->
               <h2> <!-- Portlet title. -->
                 <xsl:variable name="portletMaxUrl">
-                  <portlet:url layoutId="{@ID}" state="MAXIMIZED"/>
+                  <xsl:call-template name="portletUrl">
+                    <xsl:with-param name="subscribeId" select="@ID" />
+                    <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                  </xsl:call-template>
                 </xsl:variable>
                 <a name="{@ID}" id="{@ID}" href="{$portletMaxUrl}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
-                  UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
+                  {up-portlet-title(<xsl:value-of select="@ID" />)}
                 </a>
               </h2>
               <xsl:call-template name="controls"/>
@@ -185,7 +173,10 @@
     <div class="up-portlet-controls">
       <xsl:if test="not(@hasHelp='false')"> <!-- Help. -->
         <xsl:variable name="portletHelpUrl">
-          <portlet:url layoutId="{@ID}" mode="HELP"/>
+          <xsl:call-template name="portletUrl">
+            <xsl:with-param name="subscribeId" select="@ID" />
+            <xsl:with-param name="mode">HELP</xsl:with-param>
+          </xsl:call-template>
         </xsl:variable>
         <a href="{$portletHelpUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_HELP_LONG_LABEL']}" class="up-portlet-control help">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_HELP_LABEL']"/></span>
@@ -193,7 +184,10 @@
       </xsl:if>
       <xsl:if test="not(@hasAbout='false')"> <!-- About. -->
         <xsl:variable name="portletAboutUrl">
-          <portlet:url layoutId="{@ID}" mode="ABOUT"/>
+          <xsl:call-template name="portletUrl">
+            <xsl:with-param name="subscribeId" select="@ID" />
+            <xsl:with-param name="mode">ABOUT</xsl:with-param>
+          </xsl:call-template>
         </xsl:variable>
       	<a href="{$portletAboutUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_ABOUT_LONG_LABEL']}" class="up-portlet-control about">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_ABOUT_LABEL']"/></span>
@@ -201,7 +195,10 @@
       </xsl:if>
       <xsl:if test="not(@editable='false')"> <!-- Edit. -->
         <xsl:variable name="portletEditUrl">
-          <portlet:url layoutId="{@ID}" mode="EDIT"/>
+          <xsl:call-template name="portletUrl">
+            <xsl:with-param name="subscribeId" select="@ID" />
+            <xsl:with-param name="mode">EDIT</xsl:with-param>
+          </xsl:call-template>
         </xsl:variable>
         <a href="{$portletEditUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_EDIT_LONG_LABEL']}" class="up-portlet-control edit">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_EDIT_LABEL']"/></span>
@@ -209,7 +206,10 @@
       </xsl:if>
       <xsl:if test="@printable='true'"> <!-- Print. -->
         <xsl:variable name="portletPrintUrl">
-          <portlet:url layoutId="{@ID}" state="PRINT"/>
+          <xsl:call-template name="portletUrl">
+            <xsl:with-param name="subscribeId" select="@ID" />
+            <xsl:with-param name="mode">PRINT</xsl:with-param>
+          </xsl:call-template>
         </xsl:variable>
         <a href="{$portletPrintUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_PRINT_LONG_LABEL']}" class="up-portlet-control print">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_PRINT_LABEL']"/></span>
@@ -218,14 +218,20 @@
       <xsl:if test="not(//focused) and @minimized='false'"> <!-- Focus. -->
         <!-- UNCOMMENT FOR MINIMIZE CONTROL
         <xsl:variable name="portletMinUrl">
-          <portlet:url layoutId="{@ID}" state="MINIMIZED"/>
+          <xsl:call-template name="portletUrl">
+            <xsl:with-param name="subscribeId" select="@ID" />
+            <xsl:with-param name="state">MINIMIZED</xsl:with-param>
+          </xsl:call-template>
         </xsl:variable>
         <a href="{$portletMinUrl}" title="{$TOKEN[@name='PORTLET_MINIMIZE_LONG_LABEL']}" class="up-portlet-control minimize">
           <span><xsl:value-of select="$TOKEN[@name='PORTLET_MINIMIZE_LABEL']"/></span>
         </a>
         -->
         <xsl:variable name="portletMaxUrl">
-          <portlet:url layoutId="{@ID}" state="MAXIMIZED"/>
+          <xsl:call-template name="portletUrl">
+            <xsl:with-param name="subscribeId" select="@ID" />
+            <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+          </xsl:call-template>
         </xsl:variable>
         <a href="{$portletMaxUrl}" title="{$TOKEN[@name='PORTLET_MAXIMIZE_LONG_LABEL']}" class="up-portlet-control focus">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_MAXIMIZE_LABEL']"/></span>
@@ -234,7 +240,10 @@
       <xsl:if test="@minimized='true'"> <!-- Return from Minimized. -->
         <!-- UNCOMMENT FOR UNMINIMIZE CONTROL
         <xsl:variable name="portletReturnUrl">
-          <portlet:url layoutId="{@ID}" state="NORMAL"/>
+          <xsl:call-template name="portletUrl">
+            <xsl:with-param name="subscribeId" select="@ID" />
+            <xsl:with-param name="state">NORMAL</xsl:with-param>
+          </xsl:call-template>
         </xsl:variable>
         <a href="{$portletMinUrl}" title="{$TOKEN[@name='PORTLET_RETURN_LONG_LABEL']}" class="up-portlet-control return">
           <span><xsl:value-of select="$TOKEN[@name='PORTLET_RETURN_LABEL']"/></span>
@@ -243,9 +252,15 @@
       </xsl:if>
       <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
         <xsl:variable name="removePortletUrl">
-          <layout:url layoutId="{@ID}" renderInNormal="true" action="true">
-            <layout:param name="remove_target" value="{@ID}"/>
-          </layout:url>
+          <xsl:call-template name="layoutUrl">
+            <xsl:with-param name="folderId" select="@ID" />
+            <xsl:with-param name="action">true</xsl:with-param>
+            <!-- 
+            <xsl:with-param name="parameters">
+                <layout-param name="remove_target" value="test"/>
+            </xsl:with-param>
+             -->
+          </xsl:call-template>
         </xsl:variable>
         <a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$removePortletUrl}" class="up-portlet-control remove">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_REMOVE_LABEL']"/></span>
@@ -253,7 +268,10 @@
       </xsl:if>
       <xsl:if test="//focused"> <!-- Return from Focused. -->
         <xsl:variable name="portletReturnUrl">
-          <portlet:url layoutId="{@ID}" state="NORMAL"/>
+          <xsl:call-template name="portletUrl">
+            <xsl:with-param name="subscribeId" select="@ID" />
+            <xsl:with-param name="state">NORMAL</xsl:with-param>
+          </xsl:call-template>
         </xsl:variable>
         <a href="{$portletReturnUrl}" title="{$TOKEN[@name='PORTLET_RETURN_LONG_LABEL']}" class="up-portlet-control return">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_RETURN_LABEL']"/></span>

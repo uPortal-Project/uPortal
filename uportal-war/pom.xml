@@ -47,12 +47,6 @@
             <groupId>com.googlecode.ehcache-spring-annotations</groupId>
             <artifactId>ehcache-spring-annotations</artifactId>
         </dependency>
-
-        <dependency> 
-            <groupId>com.ibm.icu</groupId> 
-            <artifactId>icu4j</artifactId> 
-            <scope>runtime</scope> 
-        </dependency> 
         
         <dependency>
             <groupId>commons-cli</groupId>
@@ -228,11 +222,6 @@
             <groupId>org.jasypt</groupId> 
             <artifactId>jasypt</artifactId>  
         </dependency> 
-        
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -335,36 +324,6 @@
         </dependency>
 
         <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xmlParserAPIs</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>xml-resolver</groupId>
-            <artifactId>xml-resolver</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>xom</groupId>
-            <artifactId>xom</artifactId>
-        </dependency>
-        
-        <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
         </dependency>
@@ -432,7 +391,6 @@
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>
-            <scope>runtime</scope>
         </dependency>
         
         <!-- ===== Test Dependencies ========================================== -->
@@ -445,6 +403,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -30,7 +30,6 @@ import org.jasig.portal.UserPreferences;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
-import org.xml.sax.ContentHandler;
 
 /**
  * An interface for abstracting operations performed on the user layout.
@@ -43,23 +42,24 @@ public interface IUserLayoutManager {
     /**
      * Represents a <folder> layout element
      */
-    public static final QName FOLDER = new QName("folder");
+    public static final String FOLDER = "folder";
     /**
      * Represents <channel> layout element
      */
-    public static final QName CHANNEL = new QName("channel");
+    public static final String CHANNEL = "channel";
     /**
      * Represents <channel> layout element
      */
-    public static final QName CHANNEL_HEADER = new QName("channel-header");
+    public static final String CHANNEL_HEADER = "channel-header";
     /**
      * Represents <parameter> layout element
      */
-    public static final QName PARAMETER = new QName("parameter");
+    public static final String PARAMETER = "parameter";
     /**
      * Represents an ID element attribute
      */
-    public static final QName ID_ATTR_NAME = new QName("ID");
+    public static final String ID_ATTR = "ID";
+    public static final QName ID_ATTR_NAME = new QName(ID_ATTR);
     
     
     /**
@@ -78,27 +78,6 @@ public interface IUserLayoutManager {
      */
     public void setUserLayout(IUserLayout userLayout) throws PortalException;
 
-    /**
-     * Output user layout (with appropriate markings) into
-     * a <code>ContentHandler</code>
-     *
-     * @param ch a <code>ContentHandler</code> value
-     * @exception PortalException if an error occurs
-     */
-    @Deprecated
-    public void getUserLayout(ContentHandler ch) throws PortalException;
-
-    /**
-     * Output subtree of a user layout (with appropriate markings) defined by a particular node into
-     * a <code>ContentHandler</code>
-     *
-     * @param nodeId a <code>String</code> a node determining a user layout subtree.
-     * @param ch a <code>ContentHandler</code> value
-     * @exception PortalException if an error occurs
-     */
-    @Deprecated
-    public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException;
-    
     public XMLEventReader getUserLayoutReader();
 
     /**

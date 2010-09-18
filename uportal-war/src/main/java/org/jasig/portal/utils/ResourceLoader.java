@@ -50,8 +50,9 @@ import org.xml.sax.SAXException;
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  * @since uPortal 2.0
+ * @deprecated use CachingResourceLoader
  */
-
+@Deprecated
 public class ResourceLoader {
 
     private static final Log log = LogFactory.getLog(ResourceLoader.class);

@@ -25,14 +25,15 @@ import java.io.InputStream;
 import org.springframework.core.io.Resource;
 
 /**
- * Responsible for parsing the {@link InputStream} from a {@link Resource} into the specified object type.
+ * Responsible for parsing the {@link Resource} into the specified object type.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface ResourceBuilder<T> {
     /**
-     * Parse the given {@link InputStream} into the appropriate object.
+     * Parse the given {@link InputStream} into the appropriate object. The original {@link Resource} is provided
+     * for context information but the InputStream it provides should not be used.
      */
-    public T buildResource(InputStream stream) throws IOException;
+    public T buildResource(Resource resource, InputStream stream) throws IOException;
 }

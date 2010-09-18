@@ -20,17 +20,10 @@
 
 -->
 
-<xsl:stylesheet 
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    xmlns:xalan="http://xml.apache.org/xalan" 
-    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-    extension-element-prefixes="portal" 
-    exclude-result-prefixes="xalan portal" 
-    version="1.0">
-
-    <xalan:component prefix="portal" elements="url param">
-        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-    </xalan:component>
+<xsl:stylesheet version="1.0" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    
+    <xsl:include href="classpath:/layout/theme/urlTemplates.xsl"/>
 
     <xsl:template match="doc">
         <out>
@@ -40,18 +33,23 @@
 
     <xsl:template match="element">
         <xsl:variable name="pageNum">42</xsl:variable>
-        <a>
-            <xsl:variable name="baseUrl">
-              <portal:url>
-                <portal:param name="foo" value="bar" />
-                <portal:param name="foo" value="bor" />
-                <portal:param name="page" value="{$pageNum}" />
-                <portal:param name="node"><xsl:value-of select="local-name()"/></portal:param>
-                <portal:param name="empty"/>
-              </portal:url>
-            </xsl:variable>
-            <xsl:attribute name="href"><xsl:value-of select="$baseUrl"/></xsl:attribute>
-            My URL
-        </a>
+        
+        <xsl:variable name="baseUrl">
+            <xsl:call-template name="portalUrl"/>
+        </xsl:variable>
+        <a><xsl:attribute name="href"><xsl:value-of select="$baseUrl"/></xsl:attribute>My URL</a>
+
+        <xsl:variable name="complexUrl">
+            <xsl:call-template name="portalUrl">
+                <xsl:with-param name="parameters">
+                    <portal-param name="foo" value="bar" />
+                    <portal-param name="foo" value="bor" />
+                    <portal-param name="page" value="{$pageNum}" />
+                    <portal-param name="node" value="element" />
+                    <portal-param name="empty" />
+                </xsl:with-param>
+            </xsl:call-template>
+        </xsl:variable>
+        <a><xsl:attribute name="href"><xsl:value-of select="$complexUrl"/></xsl:attribute>My URL</a>
     </xsl:template>
 </xsl:stylesheet>

@@ -26,7 +26,6 @@ import javax.xml.xpath.XPathExpression;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.w3c.dom.Document;
-import org.xml.sax.ContentHandler;
 
 /**
  * An interface representing the user layout.
@@ -41,24 +40,6 @@ public interface IUserLayout {
      */
     public static final String ROOT_NODE_NAME = "root";
 
-    /**
-     * Writes user layout content (with appropriate markings) into
-     * a <code>ContentHandler</code>
-     *
-     * @param ch a <code>ContentHandler</code> value
-     * @exception PortalException if an error occurs
-     */
-    public void writeTo(ContentHandler ch) throws PortalException;
-
-    /**
-     * Writes subtree of a user layout (with appropriate markings) defined by a particular node into
-     * a <code>ContentHandler</code>
-     *
-     * @param nodeId a <code>String</code> a node determining a user layout subtree.
-     * @param ch a <code>ContentHandler</code> value
-     * @exception PortalException if an error occurs
-     */
-    public void writeTo(String nodeId, ContentHandler ch) throws PortalException;
 
     /**
      * Writes user layout content (with appropriate markings) into

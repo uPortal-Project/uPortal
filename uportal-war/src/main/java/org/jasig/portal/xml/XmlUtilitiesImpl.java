@@ -21,20 +21,33 @@ package org.jasig.portal.xml;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 
-import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.jasig.portal.utils.cache.resource.CachedResource;
 import org.jasig.portal.utils.cache.resource.CachingResourceLoader;
 import org.jasig.portal.utils.cache.resource.ResourceLoaderOptions;
 import org.jasig.portal.utils.cache.resource.ResourceLoaderOptionsBuilder;
 import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Implementation of core XML related utilities
@@ -43,15 +56,31 @@ import org.springframework.stereotype.Service;
  * @version $Revision$
  */
 @Service
-public class XmlUtilitiesImpl implements XmlUtilities {
-    private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
+public class XmlUtilitiesImpl implements XmlUtilities, ResourceLoaderAware, InitializingBean {
+    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
     private final ResourceLoaderOptions templatesLoaderOptions = new ResourceLoaderOptionsBuilder().digestAlgorithm("SHA1").digestInput(true);
+
+    private URIResolver uriResolver;
+    private TemplatesBuilder templatesBuilder;
     
     private CachingResourceLoader cachingResourceLoader;
 
     @Autowired
     public void setCachingResourceLoader(CachingResourceLoader cachingResourceLoader) {
         this.cachingResourceLoader = cachingResourceLoader;
+    }
+
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        final ResourceLoaderURIResolver uriResolver = new ResourceLoaderURIResolver();
+        uriResolver.setResourceLoader(resourceLoader);
+        
+        this.uriResolver = uriResolver;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.templatesBuilder = new TemplatesBuilder(this.uriResolver);
     }
 
     /* (non-Javadoc)
@@ -82,15 +111,55 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     }
 
     private CachedResource<Templates> getStylesheetCachedResource(Resource stylesheet) throws IOException {
-        return this.cachingResourceLoader.getResource(stylesheet, TemplatesBuilder.INSTANCE, this.templatesLoaderOptions);
+        return this.cachingResourceLoader.getResource(stylesheet, this.templatesBuilder, this.templatesLoaderOptions);
+    }
+    
+    public static String getElementText(Element e) {
+        final StringBuilder text = new StringBuilder();
+        for (Node n = e.getFirstChild(); n != null; n = n.getNextSibling()) {
+            if (n.getNodeType() == Node.TEXT_NODE || 
+                n.getNodeType() == Node.CDATA_SECTION_NODE) {
+                text.append(n.getNodeValue());
+            }
+            else {
+                break;
+            }
+        }
+        return text.toString();
+    }
+    
+    public static String toString(Node node) {
+        final Transformer identityTransformer;
+        try {
+            identityTransformer = transformerFactory.newTransformer();
+        }
+        catch (TransformerConfigurationException e) {
+            throw new RuntimeException("Failed to create identity transformer to serialize Node to String", e);
+        }
+        identityTransformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        
+        final StringWriter outputWriter = new StringWriter();
+        final StreamResult outputTarget = new StreamResult(outputWriter);
+        final DOMSource xmlSource = new DOMSource(node);
+        try {
+            identityTransformer.transform(xmlSource, outputTarget);
+        }
+        catch (TransformerException e) {
+            throw new RuntimeException("Failed to convert Node to String using Transformer", e);
+        }
+        
+        return outputWriter.toString();
     }
 
+    public static String toString(XMLEvent event) {
+        final StringWriter writer = new StringWriter();
+        try {
+            event.writeAsEncodedUnicode(writer);
+        }
+        catch (XMLStreamException e) {
+            writer.write(event.toString());
+        }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.xml.XmlUtilities#getXmlEventFactory()
-     */
-    @Override
-    public XMLEventFactory getXmlEventFactory() {
-        return this.xmlEventFactory;
+        return writer.toString();
     }
 }

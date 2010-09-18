@@ -21,6 +21,7 @@ package org.jasig.portal.layout.dlm;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,7 +39,7 @@ import org.dom4j.QName;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.IndexColumn;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.XML;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -131,7 +132,7 @@ public class FragmentDefinition extends Evaluator
         catch( NumberFormatException nfe ) 
         {
             throw new RuntimeException( "Invalid format for precedence attribute " +
-                                 "of <fragment> in\n'" + XML.serializeNode(e), nfe );
+                                 "of <fragment> in\n'" + XmlUtilitiesImpl.toString(e), nfe );
         }
         
         // Audience Evaluators.
@@ -198,7 +199,7 @@ public class FragmentDefinition extends Evaluator
                 throw new RuntimeException( "Required attibute '" + 
                                      evaluatorFactoryAtt + "' " +
                                      "is missing or empty on 'audience' " +
-                                     " element in\n'" + XML.serializeNode(audience) + 
+                                     " element in\n'" + XmlUtilitiesImpl.toString(audience) + 
                                      "'" );
             String className = att.getNodeValue();
             EvaluatorFactory factory = loadEvaluatorFactory( className,
@@ -217,7 +218,7 @@ public class FragmentDefinition extends Evaluator
                                  "' failed to " +
                                  "return an evaluator for 'audience' element" +
                                  " in\n'" +
-                                 XML.serializeNode(audience) + 
+                                 XmlUtilitiesImpl.toString(audience) + 
                                  "'" );
         if (evaluators == null) {
             evaluators = new LinkedList<Evaluator>(); 
@@ -239,7 +240,7 @@ public class FragmentDefinition extends Evaluator
                                  " while loading evaluator factory class '" + 
                                  factoryClassName + "' (or one of its " +
                                  "dependent classes) for 'audience' element " +
-                                 "in\n'" + XML.serializeNode(audience) + 
+                                 "in\n'" + XmlUtilitiesImpl.toString(audience) + 
                                  "'" );
         }
         catch( ExceptionInInitializerError eiie )
@@ -249,7 +250,7 @@ public class FragmentDefinition extends Evaluator
                                  "loading evaluator factory Class '" + 
                                  factoryClassName + "' (or one of its " +
                                  "dependent classes) for 'audience' element " +
-                                 "in\n'" + XML.serializeNode(audience) + 
+                                 "in\n'" + XmlUtilitiesImpl.toString(audience) + 
                                  "'. \nThis indicates that an exception " +
                                  "occurred during evaluation of a static" +
                                  " initializer or the initializer for a " +
@@ -261,7 +262,7 @@ public class FragmentDefinition extends Evaluator
                                  "loading evaluator factory Class '" + 
                                  factoryClassName + "' for " +
                                  "'audience' element in\n'" +
-                                 XML.serializeNode(audience) + 
+                                 XmlUtilitiesImpl.toString(audience) + 
                                  "'. \nThis typically means that a " +
                                  "dependent class has changed " +
                                  "incompatibly after compiling the " +
@@ -280,7 +281,7 @@ public class FragmentDefinition extends Evaluator
                                  "while loading evaluator factory Class '" + 
                                  factoryClassName + "' (or one of its " +
                                  "dependent classes) for 'audience' element " +
-                                 "in\n'" + XML.serializeNode(audience) + 
+                                 "in\n'" + XmlUtilitiesImpl.toString(audience) + 
                                  "' \nVerify that this is a public class " +
                                  "and that it contains a public, zero " +
                                  "argument constructor.", iae );
@@ -291,7 +292,7 @@ public class FragmentDefinition extends Evaluator
                                  "while loading evaluator factory Class '" + 
                                  factoryClassName + "' (or one of its " +
                                  "dependent classes) for 'audience' element " +
-                                 "in\n'" + XML.serializeNode(audience) + 
+                                 "in\n'" + XmlUtilitiesImpl.toString(audience) + 
                                  "' \nVerify that the specified class is a " +
                                  "class and not an interface or abstract " +
                                  "class.", ie );
@@ -306,7 +307,7 @@ public class FragmentDefinition extends Evaluator
                                  "while loading evaluator factory Class '" + 
                                  factoryClassName + "' (or one of its " +
                                  "dependent classes) for 'audience' element " +
-                                 "in\n'" + XML.serializeNode(audience) + 
+                                 "in\n'" + XmlUtilitiesImpl.toString(audience) + 
                                  "'. \nVerify that the class implements the " +
                                  "EvaluatorFactory interface.", cce );
         }
@@ -355,7 +356,7 @@ public class FragmentDefinition extends Evaluator
                att.getNodeValue().equals( "" ) ) )
             throw new RuntimeException( "Missing or empty attribute '" + name +
                                  "' required by <fragment> in\n'" + 
-                                 XML.serializeNode(e) + "'" );
+                                 XmlUtilitiesImpl.toString(e) + "'" );
         if ( att == null )
             return null;
         return att.getNodeValue();

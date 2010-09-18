@@ -35,7 +35,14 @@
  | For more information on XSL, refer to [http://www.w3.org/Style/XSL/].
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    exclude-result-prefixes="upAuth upGroup upMsg" 
+    version="1.0">
 
 
 <!-- ========================================================================= -->

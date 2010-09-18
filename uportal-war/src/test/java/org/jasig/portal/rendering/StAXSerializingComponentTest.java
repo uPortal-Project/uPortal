@@ -14,7 +14,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -48,9 +47,9 @@ public class StAXSerializingComponentTest extends TestCase {
         //Setup a simple pass-through parent
         staxSerializingComponent.setParentComponent(new SimpleStAXSource());
         
-        final Map<QName, CharacterEventSource> chunkingElements = new LinkedHashMap<QName, CharacterEventSource>();
-        chunkingElements.put(new QName("portlet"), new PortletContentPlaceholderEventSource());
-        chunkingElements.put(new QName("portlet-header"), new PortletHeaderPlaceholderEventSource());
+        final Map<String, CharacterEventSource> chunkingElements = new LinkedHashMap<String, CharacterEventSource>();
+        chunkingElements.put("portlet", new PortletContentPlaceholderEventSource());
+        chunkingElements.put("portlet-header", new PortletHeaderPlaceholderEventSource());
         staxSerializingComponent.setChunkingElements(chunkingElements);
         
         final Map<String, CharacterEventSource> chunkingPatterns = new LinkedHashMap<String, CharacterEventSource>();

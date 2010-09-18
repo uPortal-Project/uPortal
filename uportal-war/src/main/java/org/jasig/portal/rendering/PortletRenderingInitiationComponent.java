@@ -31,6 +31,8 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.stream.FilteringXMLEventReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -41,6 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @version $Revision$
  */
 public class PortletRenderingInitiationComponent implements StAXPipelineComponent {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private IPortletExecutionManager portletExecutionManager;
     private StAXPipelineComponent parentComponent;
     
@@ -58,7 +62,7 @@ public class PortletRenderingInitiationComponent implements StAXPipelineComponen
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        //I don't think initiating rendering of portlets will change the stream at all
+        //Initiating rendering of portlets will change the stream at all
         return this.parentComponent.getCacheKey(request, response);
     }
 
@@ -92,16 +96,20 @@ public class PortletRenderingInitiationComponent implements StAXPipelineComponen
                 return event;
             }
             
-            if (event.isStartDocument()) {
+            if (event.isStartElement()) {
                 final StartElement startElement = event.asStartElement();
                 
                 final QName name = startElement.getName();
-                if (IUserLayoutManager.CHANNEL.equals(name)) {
+                if (IUserLayoutManager.CHANNEL.equals(name.getLocalPart())) {
                     final Attribute idAttribute = startElement.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
                     final String id = idAttribute.getValue();
 
                     if (!portletExecutionManager.isPortletRenderRequested(id, this.request, this.response)) {
                         portletExecutionManager.startPortletRender(id, this.request, this.response);
+                        logger.debug("Initiated portlet rendering for subscribeId: {}", id);
+                    }
+                    else {
+                        logger.debug("Portlet already rendered for subscribeId: {}", id);
                     }
                 }
             }

@@ -30,6 +30,8 @@ import java.util.Map;
  * @version $Revision$
  */
 public interface IPortalRequestInfo {
+    public static final String URL_TYPE_HEADER = UrlType.class.getName();
+    
     /**
      * @return The state rendered by the URL
      */
@@ -59,4 +61,10 @@ public interface IPortalRequestInfo {
      * @return Information for a request targeting a portlet. If the request doesn't target a portlet null is returned.
      */
     public IPortletRequestInfo getPortletRequestInfo();
+    
+    /**
+     * @return The canonical URL for this request information. The URL will be valid for use in markup or as a redirect
+     * and will be absolute (starting with a / or a protocol)
+     */
+    public String getCanonicalUrl();
 }

@@ -21,11 +21,15 @@ package org.jasig.portal.utils.cache.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
+
+import org.springframework.core.io.Resource;
 
 /**
  * Parses the provided input stream into a {@link Templates} object.
@@ -34,16 +38,37 @@ import javax.xml.transform.stream.StreamSource;
  * @version $Revision$
  */
 public class TemplatesBuilder implements ResourceBuilder<Templates> {
-    public static final TemplatesBuilder INSTANCE = new TemplatesBuilder();
+    private final URIResolver uriResolver;
+    
+    public TemplatesBuilder() {
+        this(null);
+    }
+
+    /**
+     * @param uriResolver Optional {@link URIResolver} the {@link TransformerFactory} should use
+     */
+    public TemplatesBuilder(URIResolver uriResolver) {
+        this.uriResolver = uriResolver;
+    }
     
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.utils.cache.ResourceBuilder#buildResource(java.io.InputStream)
+     * @see org.jasig.portal.utils.cache.resource.ResourceBuilder#buildResource(org.springframework.core.io.Resource, java.io.InputStream)
      */
     @Override
-    public Templates buildResource(InputStream stream) throws IOException {
+    public Templates buildResource(Resource resource, InputStream stream) throws IOException {
         final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        final StreamSource source = new StreamSource(stream);
+        
+        if (this.uriResolver != null) {
+            transformerFactory.setURIResolver(this.uriResolver);
+        }
+        
+        final URI resourceUri = resource.getURI();
+        final String path = resourceUri.getPath();
+
+        final String systemId = path.substring(0, path.lastIndexOf('/') + 1);
+        
+        final StreamSource source = new StreamSource(stream, systemId);
         try {
             return transformerFactory.newTemplates(source);
         }

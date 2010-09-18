@@ -19,12 +19,16 @@
 
 package org.jasig.portal.character.stream;
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.MatchResult;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
@@ -67,7 +71,33 @@ public abstract class PortletPlaceholderEventSource implements CharacterEventSou
         
         final String subscribeId = idAttribute.getValue();
         
-        return this.getCharacterEvents(subscribeId, eventReader, event);
+        final List<CharacterEvent> characterEvents = this.getCharacterEvents(subscribeId, eventReader, event);
+        
+        return characterEvents;
+    }
+    
+    /**
+     * Read {@link XMLEvent}s off the {@link XMLEventReader} until the corresponding {@link EndElement}
+     * is found.
+     */
+    protected final void readToEndElement(XMLEventReader eventReader, StartElement event) throws XMLStreamException {
+        final Deque<QName> elementStack = new LinkedList<QName>();
+        elementStack.push(event.getName());
+        
+        while (!elementStack.isEmpty()) {
+            final XMLEvent nextEvent = eventReader.nextEvent();
+            if (nextEvent.isStartElement()) {
+                final StartElement startElement = nextEvent.asStartElement();
+                elementStack.push(startElement.getName());
+            }
+            else if (nextEvent.isEndElement()) {
+                final QName lastStart = elementStack.pop();
+                final EndElement endElement = nextEvent.asEndElement();
+                if (!lastStart.equals(endElement.getName())) {
+                    throw new XMLStreamException("Invalid XML Structure, expected EndElement " + lastStart + " but found EndElment " + endElement.getName());
+                }
+            }
+        }
     }
     
     /**

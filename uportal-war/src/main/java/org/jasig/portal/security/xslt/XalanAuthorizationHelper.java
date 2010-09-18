@@ -19,26 +19,28 @@
 
 package org.jasig.portal.security.xslt;
 
-import org.jasig.portal.spring.locator.XalanAuthorizationHelperLocator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
- * Provides a Spring locating facade in front of an actual {@link IXalanAuthorizationHelper} since the Xalan
- * elements can only instantiate classes directly.
+ * Provides a static wrapper around an actual {@link IXalanAuthorizationHelper}
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class XalanAuthorizationHelper implements IXalanAuthorizationHelper {
-    private final IXalanAuthorizationHelper authorizationHelper;
+@Service
+public class XalanAuthorizationHelper {
+    private static IXalanAuthorizationHelper authorizationHelper;
     
-    public XalanAuthorizationHelper() {
-        this.authorizationHelper = XalanAuthorizationHelperLocator.getXalanAuthorizationHelper();
+    @Autowired
+    public void setAuthorizationHelper(IXalanAuthorizationHelper authorizationHelper) {
+        XalanAuthorizationHelper.authorizationHelper = authorizationHelper;
     }
 
     /**
      * @see org.jasig.portal.security.xslt.IXalanAuthorizationHelper#canRender(java.lang.String, java.lang.String)
      */
-    public boolean canRender(final String userName, final String channelFName) {
-        return this.authorizationHelper.canRender(userName, channelFName);
+    public static boolean canRender(final String userName, final String channelFName) {
+        return authorizationHelper.canRender(userName, channelFName);
     }
 }

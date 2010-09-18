@@ -23,22 +23,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     
-    <bean id="org.jasig.portal.spring.locator.XalanAuthorizationHelperLocator" 
-            class="org.jasig.portal.spring.locator.XalanAuthorizationHelperLocator">
-        <constructor-arg index="0" ref="xalanAuthorizationHelper" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.XalanGroupMembershipHelperLocator" 
-            class="org.jasig.portal.spring.locator.XalanGroupMembershipHelperLocator">
-        <constructor-arg index="0" ref="xalanGroupMembershipHelper" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.XalanMessageHelperLocator" 
-            class="org.jasig.portal.spring.locator.XalanMessageHelperLocator">
-        <constructor-arg index="0" ref="xalanMessageHelper" />
-    </bean>
-    
-    
     <!-- 
      | The beans below are deprecated and should NEVER be referenced by other beans.
      | They exist to support legacy code that is not managed by spring
@@ -54,23 +38,8 @@
         <constructor-arg index="0" ref="jpaInterceptor" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.UserInstanceManagerLocator"
-            class="org.jasig.portal.spring.locator.UserInstanceManagerLocator">
-        <constructor-arg index="0" ref="userInstanceManager" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.RequestParameterProcessorControllerLocator"  
-            class="org.jasig.portal.spring.locator.RequestParameterProcessorControllerLocator">
-        <constructor-arg index="0" ref="requestParameterProcessorController" />
-    </bean>
-    
     <bean id="org.jasig.portal.spring.locator.PersonManagerLocator" 
             class="org.jasig.portal.spring.locator.PersonManagerLocator">
-        <!--  autowired -->
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.PortalRenderingPipelineLocator" 
-            class="org.jasig.portal.spring.locator.PortalRenderingPipelineLocator">
         <!--  autowired -->
     </bean>
     
@@ -82,21 +51,6 @@
     <bean id="org.jasig.portal.spring.locator.PortalDbMetadataLocator" 
             class="org.jasig.portal.spring.locator.PortalDbMetadataLocator">
         <constructor-arg index="0" ref="PortalDB.metadata" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.DbLoaderLocator" 
-            class="org.jasig.portal.spring.locator.DbLoaderLocator">
-        <constructor-arg index="0" ref="dbLoader" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.OptionalContainerServicesLocator" 
-            class="org.jasig.portal.spring.locator.OptionalContainerServicesLocator">
-        <constructor-arg index="0" ref="optionalContainerServices" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator" 
-            class="org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator">
-        <!--  autowired -->
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.ConfigurationLoaderLocator" 

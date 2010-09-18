@@ -65,11 +65,14 @@
  | RED
  | This statement defines this document as XSL.
 -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xalan="http://xml.apache.org/xalan" 
-    xmlns:resources="http://www.jasig.org/uportal/XSL/web/skin"
-    extension-element-prefixes="resources" 
-    exclude-result-prefixes="xalan resources" >
+<xsl:stylesheet 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    exclude-result-prefixes="upAuth upGroup upMsg" 
+    version="1.0">
 
 <!-- ========================================================================= -->
 
@@ -82,15 +85,13 @@
 | Imports are the XSL files that build the theme.
 | Import statments and the XSL files they refer to should not be modified.
 -->
+<xsl:import href="../resourcesTemplates.xsl" />  <!-- Templates for Skin Resource generation -->
+<xsl:import href="../urlTemplates.xsl" />        <!-- Templates for URL generation -->
 <xsl:import href="components.xsl" />
 <xsl:import href="nonfocused.xsl" />
 <xsl:import href="focused.xsl" />
 <!-- ========================================================================= -->
 
-<xalan:component prefix="resources" elements="output">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.web.skin.ResourcesXalanElements" />
-</xalan:component>
-    
 
 <!-- ========================================= -->
 <!-- ========== OUTPUT DELCARATION =========== -->
@@ -123,11 +124,12 @@
 <xsl:variable name="SKIN" select="$skin"/>
 <xsl:variable name="MEDIA_PATH">/media/skins/universality</xsl:variable>
 <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
-<xsl:variable name="SKIN_RESOURCES_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
+<xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/')"/>
 <xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
 <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
 <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$SKIN_PATH,'/skin.xml')"/>
-<xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/s:resources/css[@type='fss-theme']/@name"/>
+<!-- <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/s:resources/css[@type='fss-theme']/@name"/> -->
+<xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/resources/css[@type='fss-theme']/@name"/>
 <xsl:variable name="FLUID_THEME_CLASS">
     <xsl:choose>
         <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>
@@ -256,7 +258,10 @@
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
-            <resources:output path="{$SKIN_RESOURCES_PATH}/"/>
+            <xsl:call-template name="skinResources">
+              <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
+            </xsl:call-template>
+
             <xsl:call-template name="page.js" />
         </head>
         <body class="up {$FLUID_THEME_CLASS}">

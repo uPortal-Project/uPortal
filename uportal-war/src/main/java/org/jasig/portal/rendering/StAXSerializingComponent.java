@@ -20,12 +20,15 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
+import org.codehaus.stax2.XMLOutputFactory2;
 import org.jasig.portal.character.stream.CharacterEventBufferReader;
 import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.CharacterEventSource;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.stream.ChunkingEventReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Converts a StAX event stream into a {@link CharacterEvent} stream. Breaking up the stream
@@ -35,15 +38,17 @@ import org.jasig.portal.xml.stream.ChunkingEventReader;
  * @version $Revision$
  */
 public class StAXSerializingComponent implements CharacterPipelineComponent {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     private StAXPipelineComponent parentComponent;
-    private Map<QName, CharacterEventSource> chunkingElements;
+    private Map<String, CharacterEventSource> chunkingElements;
     private Map<Pattern, CharacterEventSource> chunkingPatterns;
     
     public void setParentComponent(StAXPipelineComponent parentComponent) {
         this.parentComponent = parentComponent;
     }
     
-    public void setChunkingElements(Map<QName, CharacterEventSource> chunkingElements) {
+    public void setChunkingElements(Map<String, CharacterEventSource> chunkingElements) {
         this.chunkingElements = chunkingElements;
     }
 
@@ -67,13 +72,12 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
         //Writer shared by the ChunkingEventReader and the StAX Serializer
         final StringWriter writer = new StringWriter();
         
-        //Add the chunking wrapper to the XMLEventReader
-        final XMLEventReader xmlEventReader = eventReader.getEventReader();
-        final ChunkingEventReader chunkingEventReader = new ChunkingEventReader(this.chunkingElements, this.chunkingPatterns, xmlEventReader, writer); 
-        
         //Setup the serializer
-        //TODO pooling of output factories?
+        //TODO pooling of output factories - maybe come via XmlUtilties
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        
+        outputFactory.setProperty(XMLOutputFactory2.P_AUTOMATIC_EMPTY_ELEMENTS, false);
+        
         final XMLEventWriter xmlEventWriter;
         try {
             xmlEventWriter = outputFactory.createXMLEventWriter(writer);
@@ -81,6 +85,12 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
         catch (XMLStreamException e) {
             throw new RuntimeException("Failed to create XMLEventWriter", e);
         }
+        
+        //Add the chunking wrapper to the XMLEventReader
+        final XMLEventReader xmlEventReader = eventReader.getEventReader();
+        final ChunkingEventReader chunkingEventReader = new ChunkingEventReader(
+                this.chunkingElements, this.chunkingPatterns, 
+                xmlEventReader, xmlEventWriter, writer);
         
         try {
             xmlEventWriter.add(chunkingEventReader);

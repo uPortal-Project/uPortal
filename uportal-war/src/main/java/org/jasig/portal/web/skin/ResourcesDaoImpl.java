@@ -42,6 +42,7 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * {@link ResourcesDao} implementation that resolves the String argument using
@@ -114,7 +115,7 @@ public class ResourcesDaoImpl implements ResourcesDao, ServletContextAware {
 	}
 	
 	@Override
-    public DocumentFragment getResourcesFragment(String pathToSkinXml, String relativeRoot) throws ParserConfigurationException {
+    public NodeList getResourcesFragment(String pathToSkinXml, String relativeRoot) throws ParserConfigurationException {
 	    final Resources skinResources = this.getResources(pathToSkinXml);
 	    if (skinResources == null) {
 	        return null;
@@ -132,7 +133,7 @@ public class ResourcesDaoImpl implements ResourcesDao, ServletContextAware {
             appendJsNode(doc, headFragment, js, relativeRoot);
         }
         
-        return headFragment;
+        return headFragment.getChildNodes();
     }
 
     /* (non-Javadoc)
@@ -175,6 +176,8 @@ public class ResourcesDaoImpl implements ResourcesDao, ServletContextAware {
             Element element = document.createElement(SCRIPT);
             element.setAttribute(TYPE, "text/javascript");
             element.setAttribute(SRC, scriptPath);
+            element.appendChild(document.createTextNode(""));
+            
             head.appendChild(element);
         }
     }

@@ -39,45 +39,26 @@
  | used by the theme
 -->
 <xsl:stylesheet 
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-  xmlns:xalan="http://xml.apache.org/xalan" 
-  xmlns:dlm="http://www.uportal.org/layout/dlm"
-  xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-  xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-  xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
-  xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-  xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-  extension-element-prefixes="portal portlet layout" 
-  exclude-result-prefixes="xalan portal portlet layout upAuth upGroup" 
-  version="1.0">
-  
-  <xalan:component prefix="portal" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="portlet" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="layout" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
-  </xalan:component>
-<!-- ============================================= -->
-  
-  
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    exclude-result-prefixes="upAuth upGroup upMsg" 
+    version="1.0">
+
   <!-- ========== TEMPLATE: BODY COLUMNS ========== -->
   <!-- ============================================ -->
   <!--
    | This template renders the columns of the page body.
   -->
   <xsl:template name="columns">
+    <xsl:param name="COLUMNS" />
   	<div id="portalPageBodyColumns">
     	<xsl:attribute name="class"> <!-- Write appropriate FSS class based on number of columns to produce column layout. -->
         <xsl:choose>
-          <xsl:when test="$COLUMNS=1">
-          	fl-col-flex
-          </xsl:when>
-          <xsl:otherwise>
-            fl-col-flex<xsl:value-of select="$COLUMNS" />
-          </xsl:otherwise>
+          <xsl:when test="$COLUMNS=1">fl-col-flex</xsl:when>
+          <xsl:otherwise>fl-col-flex<xsl:value-of select="$COLUMNS" /></xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
       <xsl:for-each select="column">
@@ -151,17 +132,14 @@
       	<xsl:choose>
           <xsl:when test="$AUTHENTICATED='true'">
             <xsl:choose>
-              <xsl:when test="$PORTAL_VIEW='focused'">
-              	fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/> <!-- when focused -->
-              </xsl:when>
-              <xsl:otherwise>
-              	fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/> <!-- when dashboard -->
-              </xsl:otherwise>
+              <!-- when focused -->
+              <xsl:when test="$PORTAL_VIEW='focused'">fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/></xsl:when>
+              <!-- when dashboard -->
+              <xsl:otherwise>fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/></xsl:otherwise>
             </xsl:choose>
           </xsl:when>
-          <xsl:otherwise>
-            fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/> <!-- when logged out -->
-          </xsl:otherwise>
+          <!-- when logged out -->
+          <xsl:otherwise>fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/></xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
       

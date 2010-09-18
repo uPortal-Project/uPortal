@@ -38,6 +38,8 @@
         <property name="transactionManager" ref="transactionManager" />
     </bean>
 
+    <bean id="permissionStore" class="org.jasig.portal.security.provider.RDBMPermissionImpl"/>
+
     <!-- ********** JPA Beans ********** -->
     
     <aop:config>

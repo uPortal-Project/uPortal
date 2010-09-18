@@ -21,7 +21,7 @@ package org.jasig.portal.layout.dlm.providers;
 
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
-import org.jasig.portal.utils.XML;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -44,6 +44,7 @@ public class PersonEvaluatorFactory
     private static final int AND = 1;
     private static final int NOT = 2;
 
+    @Override
     public Evaluator getEvaluator( Node audience ) 
     {
         return getGroupEvaluator( OR, audience );
@@ -60,7 +61,7 @@ public class PersonEvaluatorFactory
         {
             throw new RuntimeException( "Invalid content. Expected one to many " +
                                  "<paren>, <NOT>, or <attribute> in '" + 
-                                 XML.serializeNode(node) + "'" );
+                                 XmlUtilitiesImpl.toString(node) + "'" );
         }
         return container;
     }
@@ -110,7 +111,7 @@ public class PersonEvaluatorFactory
         else if ( nodeName.equals( "attribute" ) )
             return createAttributeEvaluator( node );
         throw new RuntimeException( "Unrecognized element '" + nodeName + "' in '" +
-                XML.serializeNode(node) + "'" );
+                XmlUtilitiesImpl.toString(node) + "'" );
     }
 
     private Evaluator createParen( Node n )
@@ -122,7 +123,7 @@ public class PersonEvaluatorFactory
         if ( opNode == null )
             throw new RuntimeException( "Invalid mode. Expected 'AND','OR', or 'NOT'"
                                  + " in '" +
-                                 XML.serializeNode(n) + "'" );
+                                 XmlUtilitiesImpl.toString(n) + "'" );
         else if ( opNode.getNodeValue().equals( "OR" ))
             return getGroupEvaluator( OR, n );
         else if ( opNode.getNodeValue().equals( "NOT" ))
@@ -132,7 +133,7 @@ public class PersonEvaluatorFactory
         else
             throw new RuntimeException( "Invalid mode. Expected 'AND','OR', or 'NOT'"
                                  + " in '" +
-                                 XML.serializeNode(n) + "'" );
+                                 XmlUtilitiesImpl.toString(n) + "'" );
     }
 
     private Evaluator createAttributeEvaluator( Node n )
@@ -143,7 +144,7 @@ public class PersonEvaluatorFactory
         if ( attribNode == null ||
              attribNode.getNodeValue().equals( "" ) )
             throw new RuntimeException( "Missing or empty name attribute in '" +
-                    XML.serializeNode(n) + "'" );
+                    XmlUtilitiesImpl.toString(n) + "'" );
         String name = attribNode.getNodeValue();
         String value = null;
         attribNode = attribs.getNamedItem( "value" );
@@ -156,7 +157,7 @@ public class PersonEvaluatorFactory
         if ( attribNode == null ||
              attribNode.getNodeValue().equals( "" ) )
             throw new RuntimeException( "Missing or empty mode attribute in '" +
-                    XML.serializeNode(n) + "'" );
+                    XmlUtilitiesImpl.toString(n) + "'" );
         String mode = attribNode.getNodeValue();
         Evaluator eval = null;
         
@@ -166,7 +167,7 @@ public class PersonEvaluatorFactory
         }
         catch( Exception e )
         {
-            throw new RuntimeException( e.getMessage() + " in '" + XML.serializeNode(n), e);
+            throw new RuntimeException( e.getMessage() + " in '" + XmlUtilitiesImpl.toString(n), e);
         }
         return eval;
     }

@@ -21,6 +21,7 @@ package org.jasig.portal.url.processing;
 
 import java.util.Enumeration;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
@@ -39,7 +40,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletRequestInfo;
-import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.url.UrlState;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -77,7 +77,8 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-    public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
+    @Override
+    public boolean processParameters(HttpServletRequest request, HttpServletResponse response) {
         final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(request);
         
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);

@@ -230,6 +230,25 @@
     <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.query.FIND_FRAGMENT_BY_NAME"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches PermissionOwner objects
+     | - 1 x permission owner type
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <!-- 
+     | Caches PermissionActivity objects
+     | - 1 x permission activity
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
 
     <!-- 
      | Caches ChannelType objects
@@ -449,5 +468,25 @@
     <cache name="SpELExpressionCache"
         eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- 
+     | Caches post-layout pipeline events
+     | - 1 x user x navigational state
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.rendering.STRUCTURE_TRANSFORM"
+        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- 
+     | Caches post-layout pipeline events
+     | - 1 x user x navigational state
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.rendering.THEME_TRANSFORM"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    
     
 </ehcache>

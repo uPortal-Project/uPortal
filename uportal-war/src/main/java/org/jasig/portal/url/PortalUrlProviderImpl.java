@@ -45,7 +45,6 @@ import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
@@ -175,6 +174,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
 	/* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortalRequestInfo(javax.servlet.http.HttpServletRequest)
      */
+    @Override
     public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request) throws InvalidPortalRequestException {        
         final IPortalRequestInfo portalRequestInfo = (IPortalRequestInfo)request.getAttribute(PORTAL_REQUEST_INFO_ATTR);
         if (portalRequestInfo != null) {
@@ -280,11 +280,6 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 case TYPE: {
                     parseStep = ParseStep.COMPLETE;
                     
-                    //Types other than the default only make sense if a portlet is being targeted
-                    if (portletRequestInfoBuilder == null) {
-                        break;
-                    }
-                    
                     if (pathPartIndex == requestPathParts.length - 1 && pathPart.endsWith(REQUEST_TYPE_SUFFIX) && pathPart.length() > REQUEST_TYPE_SUFFIX.length()) {
                         final String urlTypePart = pathPart.substring(0, pathPart.length() - REQUEST_TYPE_SUFFIX.length());
                         
@@ -380,6 +375,10 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         requestInfoBuilder.setLayoutParameters(Collections.unmodifiableMap(ParameterMap.convertArrayMap(layoutParameters)));
         requestInfoBuilder.setPortalParameters(Collections.unmodifiableMap(ParameterMap.convertArrayMap(portalParameters)));
         
+        //Generate the canonical URL string
+        final String urlString = generateUrlString(request, requestInfoBuilder);
+        requestInfoBuilder.setUrlString(urlString);
+        
         request.setAttribute(PORTAL_REQUEST_INFO_ATTR, requestInfoBuilder);
         
         if(logger.isDebugEnabled()) {
@@ -387,6 +386,62 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
         
         return requestInfoBuilder;
+    }
+
+    protected String generateUrlString(HttpServletRequest request, IPortalRequestInfo portalRequestInfo) {
+        final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
+        final String targetedLayoutNodeId = portalRequestInfo.getTargetedLayoutNodeId();
+        
+        final IBasePortalUrl basePortalUrl;
+        if (portletRequestInfo != null) {
+            final UrlType urlType = portalRequestInfo.getUrlType();
+            final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
+            final IPortletPortalUrl portletPortalUrl = this.getPortletUrl(urlType.getPortletUrlType(), request, targetWindowId);
+            basePortalUrl = portletPortalUrl;
+            
+            final PortletMode portletMode = portletRequestInfo.getPortletMode();
+            if (portletMode != null) {
+                portletPortalUrl.setPortletMode(portletMode);
+            }
+            final WindowState windowState = portletRequestInfo.getWindowState();
+            if (windowState != null) {
+                portletPortalUrl.setWindowState(windowState);
+            }
+            final Map<String, List<String>> publicPortletParameters = portletRequestInfo.getPublicPortletParameters();
+            if (publicPortletParameters != null) {
+                portletPortalUrl.getPublicRenderParameters().putAll(ParameterMap.convertListMap(publicPortletParameters));
+            }
+            final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
+            if (portletParameters != null) {
+                portletPortalUrl.getPortletParameters().putAll(ParameterMap.convertListMap(portletParameters));
+            }
+            final IPortletRequestInfo delegatePortletRequestInfo = portletRequestInfo.getDelegatePortletRequestInfo();
+            if (delegatePortletRequestInfo != null) {
+                //TODO handle delegate URL generation
+            }
+        }
+        else if (targetedLayoutNodeId != null) {
+            final ILayoutPortalUrl layoutPortalUrl = this.getFolderUrlByNodeId(request, targetedLayoutNodeId);
+            basePortalUrl = layoutPortalUrl;
+            
+            final Map<String, List<String>> layoutParameters = portalRequestInfo.getLayoutParameters();
+            if (layoutParameters != null) {
+                layoutPortalUrl.setLayoutParameters(layoutParameters);
+            }
+            
+            final boolean action = UrlType.ACTION == portalRequestInfo.getUrlType();
+            layoutPortalUrl.setAction(action);
+        }
+        else {
+            basePortalUrl = this.getDefaultUrl(request);
+        }
+        
+        final Map<String, List<String>> portalParameters = portalRequestInfo.getPortalParameters();
+        if (portalParameters != null) {
+            basePortalUrl.setPortalParameters(portalParameters);
+        }
+        
+        return basePortalUrl.getUrlString();
     }
     
     protected String getParameterName(String prefix, String fullName) {
@@ -464,6 +519,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getDefaultUrl(javax.servlet.http.HttpServletRequest)
      */
+    @Override
     public IBasePortalUrl getDefaultUrl(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
@@ -481,6 +537,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getFolderUrlByNodeId(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
+    @Override
     public ILayoutPortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId) {
         final String resolvedFolderId = this.verifyLayoutNodeId(request, folderNodeId);
         return new LayoutPortalUrlImpl(request, this, resolvedFolderId);
@@ -499,6 +556,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortletUrlByNodeId(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
      */
+    @Override
     public IPortletPortalUrl getPortletUrl(TYPE type, HttpServletRequest request, IPortletWindowId portletWindowId) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
         return new PortletPortalUrlImpl(type, portletWindow, request, this);
@@ -507,6 +565,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortletUrlByFName(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
+    @Override
     public IPortletPortalUrl getPortletUrlByFName(TYPE type, HttpServletRequest request, String portletFName) {
         //Get the user's layout manager
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
@@ -525,6 +584,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortletUrlByNodeId(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
+    @Override
     public IPortletPortalUrl getPortletUrlByNodeId(TYPE type, HttpServletRequest request, String portletNodeId) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
@@ -554,6 +614,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlGenerator#generateLayoutUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.ILayoutPortalUrl)
      */
+    @Override
     public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl) {
         final String encoding = this.getEncoding(request);
         final UrlBuilder url = new UrlBuilder(encoding);
@@ -593,6 +654,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlGenerator#generatePortletUrl(javax.servlet.http.HttpServletRequest, org.jasig.portal.url.IPortletPortalUrl)
      */
+    @Override
     public String generatePortletUrl(HttpServletRequest request, IPortletPortalUrl portletPortalUrl) {
         Validate.notNull(request, "HttpServletRequest was null");
         Validate.notNull(portletPortalUrl, "IPortalPortletUrl was null");
@@ -646,7 +708,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             urlState = UrlState.EXCLUSIVE;
         }
         else {
-            if (!WindowState.NORMAL.equals(urlWindowState)) {
+            if (!WindowState.NORMAL.equals(urlWindowState) &&
+                    !WindowState.MINIMIZED.equals(urlWindowState)) {
                 this.logger.warn("Unknown WindowState '" + urlWindowState + "' specified for portlet window " + portletWindow + ", defaulting to NORMAL");
             }
             
@@ -656,9 +719,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletEntity.getPortletDefinitionId());
         final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
         final String fname = channelDefinition.getFName();
-        //TODO this replaceAll should become pointless *very soon* since all FNames should be stored using the FunctionalNameType
-        final String validFname = FunctionalNameType.INVALID_CHARS_PATTERN.matcher(fname).replaceAll("_");
-        final String targetedPortletString = validFname + PORTLET_PATH_ELEMENT_SEPERATOR + channelSubscribeId;
+        final String targetedPortletString = fname + PORTLET_PATH_ELEMENT_SEPERATOR + channelSubscribeId;
         
         //Add targeted portlet information if rendering in a single-portlet state: /fname.chanid
         if (UrlState.NORMAL != urlState) {
@@ -768,6 +829,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     /**
      * Returns an {@link XPathExpression} that represents the specified channel NodeId.
      * 
+     * TODO this is a layout structure specific XPath expression, this needs to be configurable
+     * 
      * @param channelNodeId
      * @return
      */
@@ -787,6 +850,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     
     /**
      * Returns an {@link XPathExpression} that represents the specified tab NodeId.
+     * 
+     * TODO this is a layout structure specific XPath expression, this needs to be configurable
+     * 
      * @param tabNodeId
      * @return
      */

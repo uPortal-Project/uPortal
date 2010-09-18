@@ -19,7 +19,8 @@
 
 package org.jasig.portal.security.xslt;
 
-import org.jasig.portal.spring.locator.XalanGroupMembershipHelperLocator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Provides a Spring locating facade in front of an actual {@link IXalanGroupMembershipHelper} since the Xalan
@@ -28,29 +29,30 @@ import org.jasig.portal.spring.locator.XalanGroupMembershipHelperLocator;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class XalanGroupMembershipHelper implements IXalanGroupMembershipHelper {
-    private final IXalanGroupMembershipHelper groupMembershipHelper;
-    
-    public XalanGroupMembershipHelper() {
-        this.groupMembershipHelper = XalanGroupMembershipHelperLocator.getXalanGroupMembershipHelper();
+@Service
+public class XalanGroupMembershipHelper {
+    private static IXalanGroupMembershipHelper groupMembershipHelper;
+
+    @Autowired
+    public void setGroupMembershipHelper(IXalanGroupMembershipHelper groupMembershipHelper) {
+        XalanGroupMembershipHelper.groupMembershipHelper = groupMembershipHelper;
     }
-    
+
     /* (non-Javadoc)
      * @see org.jasig.portal.security.xslt.IXalanGroupMembershipHelper#isChannelDeepMemberOf(java.lang.String, java.lang.String)
      */
-    public boolean isChannelDeepMemberOf(String fname, String groupKey) {
-        return this.groupMembershipHelper.isChannelDeepMemberOf(fname, groupKey);
+    public static boolean isChannelDeepMemberOf(String fname, String groupKey) {
+        return groupMembershipHelper.isChannelDeepMemberOf(fname, groupKey);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.security.xslt.IXalanGroupMembershipHelper#isUserDeepMemberOf(java.lang.String, java.lang.String)
      */
-    public boolean isUserDeepMemberOf(String userName, String groupKey) {
-        return this.groupMembershipHelper.isUserDeepMemberOf(userName, groupKey);
+    public static boolean isUserDeepMemberOf(String userName, String groupKey) {
+        return groupMembershipHelper.isUserDeepMemberOf(userName, groupKey);
     }
 
-    @Override
-    public boolean isUserDeepMemberOfGroupName(String userName, String groupName) {
-        return this.groupMembershipHelper.isUserDeepMemberOfGroupName(userName, groupName);
+    public static boolean isUserDeepMemberOfGroupName(String userName, String groupName) {
+        return groupMembershipHelper.isUserDeepMemberOfGroupName(userName, groupName);
     }
 }

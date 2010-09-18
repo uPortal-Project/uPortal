@@ -59,18 +59,13 @@
 -->
 <xsl:stylesheet 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    xmlns:xalan="http://xml.apache.org/xalan" 
     xmlns:dlm="http://www.uportal.org/layout/dlm"
-    xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-    xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-    xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
-    xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-    xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-    xmlns:skin="http://www.jasig.org/uportal/web/skin"
-    extension-element-prefixes="portal portlet layout skin" 
-    exclude-result-prefixes="xalan portal portlet layout upAuth upGroup skin" 
+    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    exclude-result-prefixes="upAuth upGroup upMsg" 
     version="1.0">
-  
+      
   <!-- ============================= -->
   <!-- ========== IMPORTS ========== -->
   <!-- ============================= -->
@@ -80,6 +75,8 @@
    | Import statments and the XSL files they refer to should not be modified.
    | For customization of the theme, use the Varaiables and Parameters and Templates sections below.
   -->
+  <xsl:import href="../resourcesTemplates.xsl" />  <!-- Templates for Skin Resource generation -->
+  <xsl:import href="../urlTemplates.xsl" />        <!-- Templates for URL generation -->
   <xsl:import href="page.xsl" />        <!-- Templates for page structure -->
   <xsl:import href="navigation.xsl" />  <!-- Templates for navigation structure -->
   <xsl:import href="components.xsl" />  <!-- Templates for UI components (login, web search, etc.) -->
@@ -88,17 +85,6 @@
   <xsl:import href="preferences.xsl" /> <!-- Templates for preferences-specific structures -->
   <!-- ============================= -->
 
-    <xalan:component prefix="portal" elements="url param">
-        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-    </xalan:component>
-    <xalan:component prefix="portlet" elements="url param">
-        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
-    </xalan:component>
-    <xalan:component prefix="layout" elements="url param">
-        <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
-    </xalan:component>
-<!-- ============================================= -->
-  
   
   <!-- ========================================= -->
   <!-- ========== OUTPUT DELCARATION =========== -->
@@ -106,8 +92,11 @@
   <!-- 
    | RED
    | This statement instructs the XSL how to output.
+   |
+   | NOTE: Due to the internals of the rendering pipeline the 'omit-xml-declaration', 
+   |    'doctype-public', and 'doctype-system' options have no effect here.
   -->
-  <xsl:output method="xml" indent="no" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" omit-xml-declaration="yes" />
+  <xsl:output method="xml" indent="yes"/>
   <!-- ========================================= -->
   
   
@@ -132,11 +121,12 @@
   <xsl:variable name="SKIN" select="$skin"/>
   <xsl:variable name="MEDIA_PATH">media/skins/universality</xsl:variable>
   <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
-  <xsl:variable name="SKIN_RESOURCES_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
+  <xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/')"/>
   <xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
   <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
   <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
-  <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/skin:resources/css[@type='fss-theme']/@name"/>
+  <!-- <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/skin:resources/css[@type='fss-theme']/@name"/>-->
+  <xsl:variable name="FLUID_THEME">fl-theme-mist</xsl:variable>
   <xsl:variable name="FLUID_THEME_CLASS">
     <xsl:choose>
       <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>

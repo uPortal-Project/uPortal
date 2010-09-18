@@ -39,32 +39,13 @@
  | used by the theme
 -->
 <xsl:stylesheet 
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:xalan="http://xml.apache.org/xalan"
-  xmlns:dlm="http://www.uportal.org/layout/dlm"
-  xmlns:portal="http://www.jasig.org/uportal/XSL/portal"
-  xmlns:portlet="http://www.jasig.org/uportal/XSL/portlet"
-  xmlns:layout="http://www.jasig.org/uportal/XSL/layout"
-  xmlns:upAuth="xalan://org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-  xmlns:upGroup="xalan://org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-  xmlns:resources="http://www.jasig.org/uportal/XSL/web/skin"
-  extension-element-prefixes="portal portlet layout resources" 
-  exclude-result-prefixes="xalan portal portlet layout upAuth resources"
-  version="1.0" >
-
-  <xalan:component prefix="portal" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortalUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="portlet" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.PortletUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="layout" elements="url param">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.url.xml.LayoutUrlXalanElements" />
-  </xalan:component>
-  <xalan:component prefix="resources" elements="output">
-    <xalan:script lang="javaclass" src="xalan://org.jasig.portal.web.skin.ResourcesXalanElements" />
-  </xalan:component>
-<!-- ============================================= -->
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:dlm="http://www.uportal.org/layout/dlm"
+    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    exclude-result-prefixes="upAuth upGroup upMsg" 
+    version="1.0">
   
   <!-- ========== TEMPLATE: PAGE ========== -->
   <!-- ==================================== -->
@@ -121,7 +102,9 @@
         	<link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
         </xsl:if>
         
-        <resources:output path="/{$SKIN_RESOURCES_PATH}/"/>
+        <xsl:call-template name="skinResources">
+            <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
+        </xsl:call-template>
         <script type="text/javascript">
             var up = up || {};
             up.jQuery = jQuery.noConflict(true);
@@ -317,7 +300,9 @@
                         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="page.title.row"/>
-                        <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                        <xsl:call-template name="columns"> <!-- Template located in columns.xsl. -->
+                            <xsl:with-param name="COLUMNS" select="$COLUMNS" />
+                        </xsl:call-template>
                         <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                         <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT BOTTOM BLOCK ****** -->
@@ -328,7 +313,9 @@
                       <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                       <!-- ****** CONTENT TOP BLOCK ****** -->
                       <xsl:call-template name="page.title.row"/> <!-- No Sidebar. Template located below. -->
-                      <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                      <xsl:call-template name="columns"> <!-- Template located in columns.xsl. -->
+                        <xsl:with-param name="COLUMNS" select="$COLUMNS" />
+                      </xsl:call-template>
                       <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                       <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                       <!-- ****** CONTENT BOTTOM BLOCK ****** -->
@@ -347,7 +334,9 @@
                         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="page.title.row"/>
-                        <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                        <xsl:call-template name="columns"> <!-- Template located in columns.xsl. -->
+                            <xsl:with-param name="COLUMNS" select="$COLUMNS" />
+                        </xsl:call-template>
                         <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                         <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT BOTTOM BLOCK ****** -->
@@ -358,7 +347,9 @@
                       <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                       <!-- ****** CONTENT TOP BLOCK ****** -->
                       <xsl:call-template name="page.title.row"/> <!-- No Sidebar. Template located below. -->
-                      <xsl:call-template name="columns"/> <!-- Template located in columns.xsl. -->
+                      <xsl:call-template name="columns"> <!-- Template located in columns.xsl. -->
+                        <xsl:with-param name="COLUMNS" select="$COLUMNS" />
+                      </xsl:call-template>
                       <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                       <xsl:call-template name="content.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                       <!-- ****** CONTENT BOTTOM BLOCK ****** -->

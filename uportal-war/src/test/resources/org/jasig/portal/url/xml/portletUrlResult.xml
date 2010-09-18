@@ -21,7 +21,10 @@
 -->
 
 <out>
-    <a href="/uPortal/home/normal/bookmarks.1/render.uP">
-        My URL
+    <a href="/uPortal/home/normal/bookmarks.1/render.uP">My URL
+        </a>
+    <a href="/uPortal/home/normal/bookmarks.n1/render.uP">My URL
+        </a>
+    <a href="/uPortal/home/normal/bookmarks.n1/render.uP">My URL
         </a>
 </out>

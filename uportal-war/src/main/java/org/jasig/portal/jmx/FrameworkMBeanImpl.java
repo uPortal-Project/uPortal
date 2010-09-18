@@ -25,11 +25,9 @@ import java.util.List;
 
 import org.jasig.portal.GuestUserInstance;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.PortalSessionManager;
 import org.jasig.portal.ProblemsTable;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.UserInstance;
-import org.jasig.portal.rendering.StaticRenderingPipeline;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.utils.MovingAverageSample;
 
@@ -50,7 +48,7 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
      * @return Date
      */
     public Date getStartedAt() {
-        return PortalSessionManager.STARTED_AT;
+        return new Date(0); //PortalSessionManager.STARTED_AT;
     }
 
     /*
@@ -81,7 +79,7 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
     }
 
     public MovingAverageSample getLastRender() {
-        return StaticRenderingPipeline.getLastRenderSample();
+        return null;//StaticRenderingPipeline.getLastRenderSample();
     }
 
     public String[] getRecentProblems() {
@@ -176,6 +174,6 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
 
     // Threads
     public long getThreadCount() {
-        return PortalSessionManager.getThreadGroup().activeCount();
+        return -1;//PortalSessionManager.getThreadGroup().activeCount();
     }
 }
