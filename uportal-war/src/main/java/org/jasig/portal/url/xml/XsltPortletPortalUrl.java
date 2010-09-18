@@ -60,7 +60,7 @@ public class XsltPortletPortalUrl extends XsltBasePortalUrl {
             this.basePortalUrl = this.portletPortalUrl;
         }
         catch (RuntimeException e) {
-            logger.warn("Could not create portlet URL for fname '" + fname + "', an empty string will be returned.", e);
+            logger.warn("Could not create portlet URL for fname '" + fname + "', an empty string will be returned.");
         }
     }
     public void setTargetSubscribeId(String subscribeId) {
@@ -69,7 +69,7 @@ public class XsltPortletPortalUrl extends XsltBasePortalUrl {
             this.basePortalUrl = this.portletPortalUrl;
         }
         catch (RuntimeException e) {
-            logger.warn("Could not create portlet URL for subscribeId '" + subscribeId + "', an empty string will be returned.", e);
+            logger.warn("Could not create portlet URL for subscribeId '" + subscribeId + "', an empty string will be returned.");
         }
     }
     public void setTargetWindowId(String windowId) {
@@ -79,7 +79,7 @@ public class XsltPortletPortalUrl extends XsltBasePortalUrl {
             this.basePortalUrl = this.portletPortalUrl;
         }
         catch (RuntimeException e) {
-            logger.warn("Could not create portlet URL for windowId '" + windowId + "', an empty string will be returned.", e);
+            logger.warn("Could not create portlet URL for windowId '" + windowId + "', an empty string will be returned.");
         }
     }
 

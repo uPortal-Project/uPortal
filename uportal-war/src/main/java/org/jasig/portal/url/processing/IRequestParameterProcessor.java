@@ -19,9 +19,8 @@
 
 package org.jasig.portal.url.processing;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.jasig.portal.url.IWritableHttpServletRequest;
 
 /**
  * Provides APIs a class can implement if it wishes to be part of the request parameter processing chain. Implementations
@@ -45,5 +44,5 @@ public interface IRequestParameterProcessor {
      * processor should be called again after all other processors have been executed. 
      * @throws IllegalArgumentException If req or res are null.
      */
-    public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response);
+    public boolean processParameters(HttpServletRequest request, HttpServletResponse response);
 }

@@ -52,7 +52,6 @@ public class LogoutServlet extends HttpServlet {
     private static final Log log = LogFactory.getLog(LogoutServlet.class);
     
    private static boolean INITIALIZED = false;
-   private static String DEFAULT_REDIRECT;
    private static HashMap REDIRECT_MAP;
 
    /**
@@ -61,13 +60,8 @@ public class LogoutServlet extends HttpServlet {
     */
    public void init () throws ServletException {
       if (!INITIALIZED) {
-         String upFile = UPFileSpec.RENDER_URL_ELEMENT + UPFileSpec.PORTAL_URL_SEPARATOR
-               + UPFileSpec.USER_LAYOUT_ROOT_NODE + UPFileSpec.PORTAL_URL_SEPARATOR
-               + UPFileSpec.PORTAL_URL_SUFFIX;
          HashMap rdHash = new HashMap(1);
          try {
-            upFile = UPFileSpec.buildUPFile(UPFileSpec.RENDER_METHOD, UPFileSpec.USER_LAYOUT_ROOT_NODE,
-                  null, null);
             // We retrieve the redirect strings for each context
             // from the security properties file.
             String key;
@@ -96,7 +90,6 @@ public class LogoutServlet extends HttpServlet {
             log.error( "LogoutServlet::static", ioe);
          }
          REDIRECT_MAP = rdHash;
-         DEFAULT_REDIRECT = upFile;
          INITIALIZED = true;
       }
    }
@@ -175,7 +168,7 @@ public class LogoutServlet extends HttpServlet {
    */
    private String getRedirectionUrl (HttpServletRequest request) {
       String redirect = null;
-      String defaultRedirect = request.getContextPath() + '/' + DEFAULT_REDIRECT;
+      String defaultRedirect = request.getContextPath() + "/";
       IPerson person = null;
       if (REDIRECT_MAP == null) {
          return  defaultRedirect;

@@ -24,12 +24,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.url.IWritableHttpServletRequest;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
  * Manages execution of {@link IRequestParameterProcessor}s.
@@ -37,7 +38,7 @@ import org.jasig.portal.url.IWritableHttpServletRequest;
  * @author Eric Dalquist
  * @version $Revision: 11918 $
  */
-public class RequestParameterProcessorListController implements IRequestParameterProcessorController {
+public class RequestParameterProcessorInterceptor extends HandlerInterceptorAdapter {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private List<IRequestParameterProcessor> dynamicRequestParameterProcessors = Collections.emptyList();
@@ -76,13 +77,13 @@ public class RequestParameterProcessorListController implements IRequestParamete
         this.maxNumberOfProcessingCycles = maxNumberOfProcessingCycles;
     }
 
-
     /**
      * Process the request first with the dynamic processors until all are complete and then the static processors.
      * 
      * @see org.jasig.portal.url.processing.IRequestParameterController#processParameters(org.jasig.portal.url.IWritableHttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    public void processParameters(IWritableHttpServletRequest req, HttpServletResponse res) {
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         final List<IRequestParameterProcessor> incompleteDynamicProcessors = new LinkedList<IRequestParameterProcessor>(this.dynamicRequestParameterProcessors);
 
         //Loop while there are still dynamic processors to execute
@@ -93,7 +94,7 @@ public class RequestParameterProcessorListController implements IRequestParamete
                 final IRequestParameterProcessor requestParameterProcessor = processorItr.next();
 
                 //If a dynamic processor completes remove it from the list.
-                final boolean complete = requestParameterProcessor.processParameters(req, res);
+                final boolean complete = requestParameterProcessor.processParameters(request, response);
                 if (complete) {
                     processorItr.remove();
                 }
@@ -107,5 +108,7 @@ public class RequestParameterProcessorListController implements IRequestParamete
                 break;
             }
         }
+        
+        return true;
     }
 }

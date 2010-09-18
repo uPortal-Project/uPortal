@@ -61,7 +61,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
             return portalRequest;
         }
         
-        throw new IllegalArgumentException("The orginal portal HttpServletRequest is not available from the HttpServletRequest using attribute '" + PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
+        return portletRequest;
     }
 
     @Override

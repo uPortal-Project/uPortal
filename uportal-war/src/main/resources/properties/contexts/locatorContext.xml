@@ -38,23 +38,8 @@
         <constructor-arg index="0" ref="jpaInterceptor" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.UserInstanceManagerLocator"
-            class="org.jasig.portal.spring.locator.UserInstanceManagerLocator">
-        <constructor-arg index="0" ref="userInstanceManager" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.RequestParameterProcessorControllerLocator"  
-            class="org.jasig.portal.spring.locator.RequestParameterProcessorControllerLocator">
-        <constructor-arg index="0" ref="requestParameterProcessorController" />
-    </bean>
-    
     <bean id="org.jasig.portal.spring.locator.PersonManagerLocator" 
             class="org.jasig.portal.spring.locator.PersonManagerLocator">
-        <!--  autowired -->
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.PortalRenderingPipelineLocator" 
-            class="org.jasig.portal.spring.locator.PortalRenderingPipelineLocator">
         <!--  autowired -->
     </bean>
     
@@ -66,21 +51,6 @@
     <bean id="org.jasig.portal.spring.locator.PortalDbMetadataLocator" 
             class="org.jasig.portal.spring.locator.PortalDbMetadataLocator">
         <constructor-arg index="0" ref="PortalDB.metadata" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.DbLoaderLocator" 
-            class="org.jasig.portal.spring.locator.DbLoaderLocator">
-        <constructor-arg index="0" ref="dbLoader" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.OptionalContainerServicesLocator" 
-            class="org.jasig.portal.spring.locator.OptionalContainerServicesLocator">
-        <constructor-arg index="0" ref="optionalContainerServices" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator" 
-            class="org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator">
-        <!--  autowired -->
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.ConfigurationLoaderLocator" 

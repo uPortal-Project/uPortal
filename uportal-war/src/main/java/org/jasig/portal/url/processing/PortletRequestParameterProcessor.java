@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
@@ -35,7 +36,6 @@ import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletRequestInfo;
-import org.jasig.portal.url.IWritableHttpServletRequest;
 import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.url.UrlState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,11 +66,11 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
     }
 
 
-
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.processing.IRequestParameterProcessor#processParameters(org.jasig.portal.url.IWritableHttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.jasig.portal.url.processing.IRequestParameterProcessor#processParameters(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
-    public boolean processParameters(IWritableHttpServletRequest request, HttpServletResponse response) {
+    @Override
+    public boolean processParameters(HttpServletRequest request, HttpServletResponse response) {
         final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(request);
 
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
@@ -82,7 +82,7 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
         
         return true;
     }
-    private void handlePortletRequestInfo(IWritableHttpServletRequest request, IPortalRequestInfo portalRequestInfo, IPortletRequestInfo portletRequestInfo) {
+    private void handlePortletRequestInfo(HttpServletRequest request, IPortalRequestInfo portalRequestInfo, IPortletRequestInfo portletRequestInfo) {
         final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, targetWindowId);
         if (portletWindow == null) {

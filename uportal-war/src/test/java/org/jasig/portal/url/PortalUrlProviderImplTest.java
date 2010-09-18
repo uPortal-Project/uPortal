@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.portlet.WindowState;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathExpression;
 
 import org.apache.pluto.container.PortletURLProvider.TYPE;
@@ -94,7 +95,12 @@ public class PortalUrlProviderImplTest {
     
     @Before
     public void setupPortletUrlProvider() {
-        this.portalUrlProvider = new PortalUrlProviderImpl();
+        this.portalUrlProvider = new PortalUrlProviderImpl() {
+            @Override
+            protected String generateUrlString(HttpServletRequest request, IPortalRequestInfo portalRequestInfo) {
+                return "MockUrlString";
+            } 
+        };
 
         this.userInstanceManager = createMock(IUserInstanceManager.class);
         this.portalUrlProvider.setUserInstanceManager(this.userInstanceManager);

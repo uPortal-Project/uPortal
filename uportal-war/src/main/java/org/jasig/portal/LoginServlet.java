@@ -21,7 +21,6 @@ package  org.jasig.portal;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -59,17 +58,14 @@ public class LoginServlet extends HttpServlet {
     
     private static final Log log = LogFactory.getLog(LoginServlet.class);
     private static final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
-  private static final String redirectString;
   private static HashMap credentialTokens;
   private static HashMap principalTokens;
   protected Authentication m_authenticationService = null;
 
     static {
-      String upFile=UPFileSpec.RENDER_URL_ELEMENT+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.USER_LAYOUT_ROOT_NODE+UPFileSpec.PORTAL_URL_SEPARATOR+UPFileSpec.PORTAL_URL_SUFFIX;
       HashMap cHash = new HashMap(1);
       HashMap pHash = new HashMap(1);
       try {
-         upFile = UPFileSpec.buildUPFile(UPFileSpec.RENDER_METHOD,UPFileSpec.USER_LAYOUT_ROOT_NODE,null,null);
          String key;
          // We retrieve the tokens representing the credential and principal
          // parameters from the security properties file.
@@ -92,7 +88,6 @@ public class LoginServlet extends HttpServlet {
       } catch(IOException ioe) {
           log.error("LoginServlet::static ", ioe);
       }
-      redirectString=upFile;
       credentialTokens=cHash;
       principalTokens=pHash;
     }
@@ -239,6 +234,7 @@ public class LoginServlet extends HttpServlet {
          * Also any arguments for the target
          * We will pass them  along after authentication.
          */
+        /*
         String targetFname = request.getParameter("uP_fname");
         
     	if (targetFname == null){
@@ -262,6 +258,8 @@ public class LoginServlet extends HttpServlet {
     		}		
     		redirectTarget = sb.toString();
     	}
+    	*/
+        redirectTarget = request.getContextPath() + "/";
     }
 
 	if (person == null || !person.getSecurityContext().isAuthenticated()) {

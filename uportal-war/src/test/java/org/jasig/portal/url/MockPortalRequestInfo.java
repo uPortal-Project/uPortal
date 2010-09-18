@@ -34,37 +34,51 @@ public class MockPortalRequestInfo implements IPortalRequestInfo {
     public String targetedLayoutNodeId;
     public Map<String, List<String>> layoutParameters = Collections.emptyMap();
     public IPortletRequestInfo portletRequestInfo;
-    
+    public String urlString;
+
+    @Override
+    public String getCanonicalUrl() {
+        return this.urlString;
+    }
+    public void setUrlString(String urlString) {
+        this.urlString = urlString;
+    }
+    @Override
     public UrlState getUrlState() {
         return this.urlState;
     }
     public void setUrlState(UrlState urlState) {
         this.urlState = urlState;
     }
+    @Override
     public UrlType getUrlType() {
         return this.urlType;
     }
     public void setUrlType(UrlType urlType) {
         this.urlType = urlType;
     }
+    @Override
     public Map<String, List<String>> getPortalParameters() {
         return this.portalParameters;
     }
     public void setPortalParameters(Map<String, List<String>> portalParameters) {
         this.portalParameters = portalParameters;
     }
+    @Override
     public String getTargetedLayoutNodeId() {
         return this.targetedLayoutNodeId;
     }
     public void setTargetedLayoutNodeId(String targetedLayoutNodeId) {
         this.targetedLayoutNodeId = targetedLayoutNodeId;
     }
+    @Override
     public Map<String, List<String>> getLayoutParameters() {
         return this.layoutParameters;
     }
     public void setLayoutParameters(Map<String, List<String>> layoutParameters) {
         this.layoutParameters = layoutParameters;
     }
+    @Override
     public IPortletRequestInfo getPortletRequestInfo() {
         return this.portletRequestInfo;
     }

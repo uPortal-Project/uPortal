@@ -9,11 +9,11 @@ package org.jasig.portal.rendering;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.PortalException;
 import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.events.CharacterDataEvent;
@@ -55,7 +55,7 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
     }
 
     @Override
-    public void renderState(HttpServletRequest req, HttpServletResponse res, IUserInstance userInstance) {
+    public void renderState(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         //Disable page caching
         res.setHeader("pragma", "no-cache");
         res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
@@ -65,14 +65,7 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
         res.setContentType(mimeType + "; charset=" + CHARACTER_SET);
         
         final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader = this.pipeline.getEventReader(req, res);
-        final PrintWriter writer;
-        try {
-            writer = res.getWriter();
-        }
-        catch (IOException e) {
-            //TODO throw a more sane exception here
-            throw new PortalException(e.getMessage(), e);
-        }
+        final PrintWriter writer = res.getWriter();
         
         for (final CharacterEvent event : pipelineEventReader) {
             if (CharacterEventTypes.CHARACTER != event.getEventType()) {

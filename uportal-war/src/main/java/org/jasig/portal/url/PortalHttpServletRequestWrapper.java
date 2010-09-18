@@ -20,18 +20,17 @@
 package org.jasig.portal.url;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,7 +50,7 @@ import org.jasig.portal.utils.ArrayEnumerator;
  * @author Peter Kharchenko: pkharchenko at unicon.net
  * @version $Revision: 11911 $
  */
-public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper implements IWritableHttpServletRequest {
+public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
     /**
      * {@link javax.servlet.http.HttpServletRequest} attribute that this {@link HttpServletRequest} object
      * will be available.
@@ -65,25 +64,91 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
+    private final Map<String, Object> additionalHeaders = new LinkedHashMap<String, Object>();
     private final HttpServletResponse httpServletResponse;
     private final IUserInstanceManager userInstanceManager;
-    private final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
 
     /**
      * Construct a writable this.request wrapping a real this.request
      * @param this.request Request to wrap, can not be null.
      */
-    @SuppressWarnings("unchecked")
     public PortalHttpServletRequestWrapper(HttpServletRequest request, HttpServletResponse response, IUserInstanceManager userInstanceManager) {
         super(request);
         Validate.notNull(response);
         Validate.notNull(userInstanceManager);
 
-        // place all parameters into the map, saves run-time merging
-        this.parameterMap.putAll(request.getParameterMap());
-        
         this.httpServletResponse = response;
         this.userInstanceManager = userInstanceManager;
+    }
+
+    public void setHeader(String name, String value) {
+        this.additionalHeaders.put(name, value);
+    }
+    public void setDateHeader(String name, String value) {
+        this.additionalHeaders.put(name, value);
+    }
+    public void setIntHeader(String name, String value) {
+        this.additionalHeaders.put(name, value);
+    }
+
+    @Override
+    public long getDateHeader(String name) {
+        final Object value = this.additionalHeaders.get(name);
+        if (value == null) {
+            return super.getDateHeader(name);
+        }
+        if (value instanceof Long) {
+            return (Long)value;
+        }
+        
+        throw new IllegalArgumentException("Header '" + name + "' cannot be converted to long: '" + value + "' is of type " + value.getClass().getName());
+    }
+
+    @Override
+    public String getHeader(String name) {
+        final Object value = this.additionalHeaders.get(name);
+        if (value == null) {
+            return super.getHeader(name);
+        }
+        
+        return String.valueOf(value);
+    }
+
+    @Override
+    public Enumeration<?> getHeaders(String name) {
+        final Object value = this.additionalHeaders.get(name);
+        if (value == null) {
+            return super.getHeaders(name);
+        }
+        
+        return Collections.enumeration(Collections.singleton(value));
+    }
+
+    @Override
+    public Enumeration<?> getHeaderNames() {
+        final Set<Object> headerNames = new LinkedHashSet<Object>();
+        
+        for (final Enumeration<?> headerNamesEnum = super.getHeaderNames(); headerNamesEnum.hasMoreElements();) {
+            final Object name = headerNamesEnum.nextElement();
+            headerNames.add(name);
+        }
+        
+        headerNames.addAll(this.additionalHeaders.keySet());
+        
+        return Collections.enumeration(headerNames);
+    }
+
+    @Override
+    public int getIntHeader(String name) {
+        final Object value = this.additionalHeaders.get(name);
+        if (value == null) {
+            return super.getIntHeader(name);
+        }
+        if (value instanceof Integer) {
+            return (Integer)value;
+        }
+        
+        throw new IllegalArgumentException("Header '" + name + "' cannot be converted to int: '" + value + "' is of type " + value.getClass().getName());
     }
     
     @Override
@@ -98,97 +163,6 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         return super.getAttribute(name);
     }
 
-    public boolean addParameterValue(String name, String value) {
-        Validate.notNull(name, "name can not be null");
-        Validate.notNull(value, "value can not be null");
-        
-        final String[] currentValues = this.parameterMap.get(name);
-        final String[] newValues;
-        
-        if (currentValues == null) {
-            newValues = new String[] { value };
-        }
-        else {
-            newValues = (String[])ArrayUtils.add(currentValues,  value);
-        }
-        
-        this.parameterMap.put(name, newValues);
-        return currentValues != null;
-    }
-
-    public boolean setParameterValue(String name, String value) {
-        Validate.notNull(name, "name can not be null");
-        Validate.notNull(value, "value can not be null");
-        
-        return this.parameterMap.put(name, new String[] { value }) != null;
-    }
-
-    public boolean setParameterValues(String name, String[] values) {
-        Validate.notNull(name, "name can not be null");
-        Validate.notNull(values, "values can not be null");
-        Validate.noNullElements(values, "values can not contain null elements");
-        
-        return this.parameterMap.put(name, values) != null;
-    }
-
-    public boolean deleteParameter(String name) {
-        Validate.notNull(name, "name can not be null");
-        
-        return this.parameterMap.remove(name) != null;
-    }
-
-    public boolean deleteParameterValue(String name, String value) {
-        Validate.notNull(name, "name can not be null");
-        Validate.notNull(value, "value can not be null");
-        
-        final String[] currentValues = this.parameterMap.get(name);
-        if (currentValues == null) {
-            return false;
-        }
-
-        final List<String> newValues = new ArrayList<String>(currentValues.length);
-        for (final String currentValue : currentValues) {
-            if (value != currentValue && !value.equals(currentValue)) {
-                newValues.add(currentValue);
-            }
-        }
-        
-        this.parameterMap.put(name, newValues.toArray(new String[newValues.size()]));
-
-        return currentValues.length != newValues.size();
-    }
-
-    @Override
-    public String getParameter(String name) {
-        Validate.notNull(name, "name can not be null");
-        
-        final String[] pValues = this.parameterMap.get(name);
-        
-        if (pValues != null && pValues.length > 0) {
-            return pValues[0];
-        }
-
-        return null;
-    }
-
-    @Override
-    public Map<String, String[]> getParameterMap() {
-        return this.parameterMap;
-    }
-
-    @Override
-    public Enumeration<String> getParameterNames() {
-        return Collections.enumeration(this.parameterMap.keySet());
-    }
-
-    @Override
-    public String[] getParameterValues(String name) {
-        return this.parameterMap.get(name);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.AbstractHttpServletRequestWrapper#getRemoteUser()
-     */
     @Override
     public String getRemoteUser() {
         final Principal userPrincipal = this.getUserPrincipal();
@@ -199,11 +173,12 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         return userPrincipal.getName();
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.AbstractHttpServletRequestWrapper#getUserPrincipal()
-     */
     @Override
     public Principal getUserPrincipal() {
+        if (super.getSession(false) == null) {
+            return super.getUserPrincipal();
+        }
+        
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final IPerson person = userInstance.getPerson();
         if (person == null || person.isGuest()) {
@@ -222,6 +197,10 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
      */
     @Override
     public boolean isUserInRole(String role) {
+        if (super.getSession(false) == null) {
+            return super.isUserInRole(role);
+        }
+        
         //Check the wrapped request first
         final boolean isUserInRole = super.isUserInRole(role);
         if (isUserInRole) {
@@ -257,6 +236,10 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
      */
     @Override
     public Locale getLocale() {
+        if (super.getSession(false) == null) {
+            return super.getLocale();
+        }
+        
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final LocaleManager localeManager = userInstance.getLocaleManager();
         final Locale[] locales = localeManager.getLocales();
@@ -268,6 +251,10 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
      */
     @Override
     public Enumeration<Locale> getLocales() {
+        if (super.getSession(false) == null) {
+            return super.getLocales();
+        }
+        
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(this.getWrappedRequest());
         final LocaleManager localeManager = userInstance.getLocaleManager();
         final Locale[] locales = localeManager.getLocales();

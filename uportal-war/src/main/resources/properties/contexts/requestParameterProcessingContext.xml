@@ -24,7 +24,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
  
     
-    <bean id="requestParameterProcessorController" class="org.jasig.portal.url.processing.RequestParameterProcessorListController">
+    <bean id="requestParameterProcessorInterceptor" class="org.jasig.portal.url.processing.RequestParameterProcessorInterceptor">
         <property name="dynamicRequestParameterProcessors">
             <list value-type="org.jasig.portal.url.processing.IRequestParameterProcessor">
                 <!-- note: portletRequestParameterProcessor and userLayoutRequestParameterProcessor are @Service beans - must use ref "bean" -->

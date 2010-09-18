@@ -19,11 +19,13 @@
 
 package org.jasig.portal.rendering;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.user.IUserInstance;
 
 /**
  * Describes the entry point into the uPortal rendering pipeline.
@@ -40,10 +42,9 @@ public interface IPortalRenderingPipeline {
      * 
      * @param req the <code>HttpServletRequest</code>
      * @param res the <code>HttpServletResponse</code>
-     * @param userInstance The data object containing all information needed to rendering content for the current user
      * @exception PortalException if an error occurs
      */
-    public void renderState(HttpServletRequest req, HttpServletResponse res, IUserInstance userInstance) throws PortalException;
+    public void renderState(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException;
     
     /**
      * Clear the system character cache.
