@@ -258,7 +258,8 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         final PortletRenderResult portletRenderResult = tracker.get(timeout);
         //TODO publish portlet render event - should actually be published from the portlet renderer impl
 
-        return tracker.getOutput();
+        final String output = tracker.getOutput();
+        return output != null ? output : "";
     }
     
     /* (non-Javadoc)
