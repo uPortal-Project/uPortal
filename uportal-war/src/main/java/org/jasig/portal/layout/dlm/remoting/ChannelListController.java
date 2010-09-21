@@ -19,10 +19,11 @@
 
 package org.jasig.portal.layout.dlm.remoting;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -88,20 +89,20 @@ public class ChannelListController {
 		}
 		IPerson user = personManager.getPerson(request);
 
-		Map<String,Object> registry = getRegistry(webRequest, user, type);
+		Map<String,SortedSet<?>> registry = getRegistry(webRequest, user, type);
 
 		return new ModelAndView("jsonView", "registry", registry);
 	}
 	
-	private Map<String,Object> getRegistry(WebRequest request, IPerson user, String type) {
+	private Map<String,SortedSet<?>> getRegistry(WebRequest request, IPerson user, String type) {
 		
 		// get a list of all channels 
 		List<IChannelDefinition> allChannels = channelRegistryStore.getChannelDefinitions();
 
 		// construct a new channel registry
-		Map<String,Object> registry = new HashMap<String,Object>();
-	    List<ChannelCategoryBean> categories = new ArrayList<ChannelCategoryBean>();
-	    List<ChannelBean> channels = new ArrayList<ChannelBean>();
+		Map<String,SortedSet<?>> registry = new TreeMap<String,SortedSet<?>>();
+	    SortedSet<ChannelCategoryBean> categories = new TreeSet<ChannelCategoryBean>();
+	    SortedSet<ChannelBean> channels = new TreeSet<ChannelBean>();
 
 		
 		// add the root category and all its children to the registry
@@ -171,7 +172,7 @@ public class ChannelListController {
 	
 	private ChannelBean getChannel(IChannelDefinition definition, WebRequest request) {
 	    ChannelBean channel = new ChannelBean();
-	    channel.setChanId(definition.getId());
+	    channel.setId(definition.getId());
         channel.setJavaClass(definition.getJavaClass());
         channel.setDescription(definition.getDescription());
         channel.setEditable(definition.isEditable());

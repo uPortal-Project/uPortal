@@ -194,6 +194,11 @@
         </init-param>
     </filter>
     
+    <filter>
+        <filter-name>etagFilter</filter-name>
+        <filter-class>org.springframework.web.filter.ShallowEtagHeaderFilter</filter-class>
+    </filter>
+    
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
@@ -252,6 +257,11 @@
         <url-pattern>/media/*</url-pattern>
         <url-pattern>*.js</url-pattern>
         <url-pattern>*.css</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>etagFilter</filter-name>
+        <url-pattern>/mvc/*</url-pattern>
     </filter-mapping>
 
     <servlet>

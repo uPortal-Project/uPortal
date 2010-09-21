@@ -20,34 +20,33 @@
 package org.jasig.portal.layout.dlm.remoting.registry;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.portal.ChannelCategory;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
-public class ChannelCategoryBean implements Serializable {
+public class ChannelCategoryBean implements Comparable, Serializable {
 	
 	private String id;
    	private String name;
    	private String description;
-   	private List<ChannelCategoryBean> categories;
-   	private List<ChannelBean> channels;
+   	private SortedSet<ChannelCategoryBean> categories;
+   	private SortedSet<ChannelBean> channels;
    	
    	public ChannelCategoryBean() {
-   	    channels = new ArrayList<ChannelBean>();
-   	    categories = new ArrayList<ChannelCategoryBean>();
+        categories = new TreeSet<ChannelCategoryBean>();
+        channels = new TreeSet<ChannelBean>();
    	}
    	
    	public ChannelCategoryBean(ChannelCategory category) {
    		this.id = category.getId();
    		this.name = category.getName();
    		this.description = category.getDescription();
-   		categories = new ArrayList<ChannelCategoryBean>();
-   		channels = new ArrayList<ChannelBean>();
+   		categories = new TreeSet<ChannelCategoryBean>();
+   		channels = new TreeSet<ChannelBean>();
    	}
    	
    	public void addCategory(ChannelCategoryBean category) {
@@ -82,20 +81,60 @@ public class ChannelCategoryBean implements Serializable {
 		this.description = description;
 	}
 
-	public List<ChannelCategoryBean> getCategories() {
+	public SortedSet<ChannelCategoryBean> getCategories() {
 		return this.categories;
 	}
 
-	public void setCategories(List<ChannelCategoryBean> categories) {
+	public void setCategories(SortedSet<ChannelCategoryBean> categories) {
 		this.categories = categories;
 	}
 
-	public List<ChannelBean> getChannels() {
+	public SortedSet<ChannelBean> getChannels() {
 		return this.channels;
 	}
 
-	public void setChannels(List<ChannelBean> channels) {
+	public void setChannels(SortedSet<ChannelBean> channels) {
 		this.channels = channels;
 	}
-	
+
+    public int compareTo(Object object) {
+        if (object == this) {
+            return 0;
+        }
+        if (!(object instanceof ChannelCategoryBean)) {
+            throw new IllegalArgumentException("Argument is not a ChannelCategoryBean");
+        }
+        ChannelCategoryBean rhs = (ChannelCategoryBean) object;
+        return new CompareToBuilder()
+            .append(this.id, rhs.getId())
+            .toComparison();
+    }
+
+    /**
+     * @see java.lang.Object#equals(Object)
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof ChannelCategoryBean)) {
+            return false;
+        }
+        ChannelCategoryBean rhs = (ChannelCategoryBean) object;
+        return new EqualsBuilder()
+            .append(this.id, rhs.getId())
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(464270933, -1074792143)
+            .append(this.id)
+            .toHashCode();
+    }
+
 }

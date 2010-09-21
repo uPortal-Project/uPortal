@@ -21,7 +21,11 @@ package org.jasig.portal.layout.dlm.remoting.registry;
 
 import java.io.Serializable;
 
-public class ChannelParameterBean implements Serializable {
+import org.apache.commons.lang.builder.CompareToBuilder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
+public class ChannelParameterBean implements Comparable, Serializable {
 	
 	private String name;
 	private String value;
@@ -68,5 +72,54 @@ public class ChannelParameterBean implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+    public int compareTo(Object object) {
+        if (object == this) {
+            return 0;
+        }
+        if (!(object instanceof ChannelParameterBean)) {
+            throw new IllegalArgumentException("Argument is not a ChannelParameterBean");
+        }
+        ChannelParameterBean rhs = (ChannelParameterBean) object;
+        return new CompareToBuilder()
+            .append(this.name, rhs.getName())
+            .append(this.value, rhs.getValue())
+            .append(this.description, rhs.getDescription())
+            .append(this.override, rhs.getOverride())
+            .toComparison();
+    }
+
+    /**
+     * @see java.lang.Object#equals(Object)
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof ChannelParameterBean)) {
+            return false;
+        }
+        ChannelParameterBean rhs = (ChannelParameterBean) object;
+        return new EqualsBuilder()
+            .append(this.name, rhs.getName())
+            .append(this.value, rhs.getValue())
+            .append(this.description, rhs.getDescription())
+            .append(this.override, rhs.getOverride())
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(464270933, -1074792143)
+            .append(this.name)
+            .append(this.value)
+            .append(this.description)
+            .append(this.override)
+            .toHashCode();
+    }
+
 }

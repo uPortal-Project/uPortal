@@ -20,13 +20,16 @@
 package org.jasig.portal.layout.dlm.remoting.registry;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-public class ChannelBean implements Serializable {
+import org.apache.commons.lang.builder.CompareToBuilder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
+public class ChannelBean implements Comparable, Serializable {
 	
-	private String id;
-	private int chanId;
+	private int id;
 	private String javaClass;
 	private String description;
 	private boolean editable;
@@ -41,7 +44,7 @@ public class ChannelBean implements Serializable {
 	private String state;
 	private String title;
 	private int typeId;
-   	private List<ChannelParameterBean> parameters = new ArrayList<ChannelParameterBean>();
+   	private SortedSet<ChannelParameterBean> parameters = new TreeSet<ChannelParameterBean>();
    	
    	public ChannelBean() { }
 
@@ -49,20 +52,12 @@ public class ChannelBean implements Serializable {
 		this.parameters.add(parameter);
 	}
 
-	public String getId() {
+	public int getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
-	}
-
-	public int getChanId() {
-		return this.chanId;
-	}
-
-	public void setChanId(int chanId) {
-		this.chanId = chanId;
 	}
 
 	public String getJavaClass() {
@@ -177,8 +172,48 @@ public class ChannelBean implements Serializable {
 		this.typeId = typeId;
 	}
 	
-	public List<ChannelParameterBean> getParameters() {
+	public SortedSet<ChannelParameterBean> getParameters() {
 	    return this.parameters;
 	}
+
+    public int compareTo(Object object) {
+        if (object == this) {
+            return 0;
+        }
+        if (!(object instanceof ChannelBean)) {
+            throw new IllegalArgumentException("Argument is not a ChannelParameterBean");
+        }
+        ChannelBean rhs = (ChannelBean) object;
+        return new CompareToBuilder()
+            .append(this.id, rhs.getId())
+            .toComparison();
+    }
+
+    /**
+     * @see java.lang.Object#equals(Object)
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof ChannelBean)) {
+            return false;
+        }
+        ChannelBean rhs = (ChannelBean) object;
+        return new EqualsBuilder()
+            .append(this.id, rhs.getId())
+            .isEquals();
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(464270933, -1074792143)
+            .append(this.id)
+            .toHashCode();
+    }
 
 }
