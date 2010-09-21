@@ -52,18 +52,18 @@
     <action-state id="doPersonLookup">
         <evaluate expression="personLookupHelper.doPersonQuery(externalContext, personQuery)" result="flowScope.personQueryResults" />
         
-        <transition to="personLookup" on="${flowScope.personQueryResults == null or flowScope.personQueryResults.size == 0}">
+        <transition to="personLookup" on="#{flowScope.personQueryResults == null or flowScope.personQueryResults.size() == 0}">
             <set name="requestScope.emptyQueryResults" value="'true'" />
         </transition>
-        <transition to="personDetails" on="${flowScope.personQueryResults.size == 1}">
-            <set name="flowScope.person" value="flowScope.personQueryResults[flowScope.personQueryResults.keys.iterator.next]" />
+        <transition to="personDetails" on="#{flowScope.personQueryResults.size() == 1}">
+            <set name="flowScope.person" value="flowScope.personQueryResults[flowScope.personQueryResults.keySet().iterator().next()]" />
         </transition>
         <transition to="personSearchResults" /> 
     </action-state>
 
     <view-state id="personSearchResults">
         <on-entry>
-            <evaluate expression="personLookupHelper.getQueryDisplayResults(externalContext, personQueryResults.values)" result="viewScope.queryDisplayResults" />
+            <evaluate expression="personLookupHelper.getQueryDisplayResults(externalContext, personQueryResults.values())" result="viewScope.queryDisplayResults" />
         </on-entry>
         
         <transition on="newSearch" to="personLookup" />

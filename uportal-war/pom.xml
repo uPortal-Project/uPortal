@@ -140,11 +140,6 @@
 	    </dependency>
         
         <dependency>
-            <groupId>ognl</groupId>
-            <artifactId>ognl</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.opensymphony.quartz</groupId>
             <artifactId>quartz-all</artifactId>
         </dependency> 
