@@ -30,6 +30,7 @@ import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.UserSessionCreatedPortalEvent;
 import org.jasig.portal.events.support.UserSessionDestroyedPortalEvent;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.IProfileMapper;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
@@ -65,7 +66,7 @@ public class UserInstance implements IUserInstance {
     private final IPerson person;
 
 
-    public UserInstance(IPerson person, HttpServletRequest request) {
+    public UserInstance(IPerson person, HttpServletRequest request, IProfileMapper profileMapper) {
         this.person = person;
 
         // instantiate locale manager (uPortal i18n)
@@ -73,7 +74,7 @@ public class UserInstance implements IUserInstance {
         this.localeManager = new LocaleManager(person, acceptLanguage);
 
         //Create the UserPreferencesManager
-        this.preferencesManager = new UserPreferencesManager(request, this.person, this.localeManager);
+        this.preferencesManager = new UserPreferencesManager(request, this.person, this.localeManager, profileMapper);
         if (preferencesManager.isUserAgentUnmapped()) {
             this.log.warn("A Mapping User-Agent could not be found for the UserPreferencesManager");
         }

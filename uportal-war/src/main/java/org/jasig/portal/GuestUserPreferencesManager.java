@@ -31,13 +31,13 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.IProfileMapper;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.PropsMatcher;
 
 /**
  * Multithreaded version of {@link UserPreferencesManager}.
@@ -73,7 +73,8 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
     Hashtable<Integer, StructureStylesheetDescription> ss_descripts;
     Hashtable<String, UserProfile> cached_profiles;
 
-    IPerson m_person;
+    final IPerson m_person;
+    private final IProfileMapper profileMapper;
     LocaleManager localeManager;
 
     final static boolean SAVE_PROFILE_GUESSES=PropertiesManager.getPropertyAsBoolean("org.jasig.portal.GuestUserPreferencesManager.save_profile_guesses");
@@ -82,7 +83,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
      * Initializing constructor.
      * @param person object
      */
-    public GuestUserPreferencesManager (IPerson person) {
+    public GuestUserPreferencesManager (IPerson person, IProfileMapper profileMapper) {
         super(person);
         stateTable=Collections.synchronizedMap(new HashMap<String, MState>());
         up_cleanUPs=new Hashtable<Integer, UserPreferences>();
@@ -93,6 +94,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
         ts_descripts=new Hashtable<Integer, ThemeStylesheetDescription>();
         ss_descripts=new Hashtable<Integer, StructureStylesheetDescription>();
         m_person = person;
+        this.profileMapper = profileMapper;
         userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
     }
 
@@ -138,32 +140,18 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
             if(upl==null) {
                 // try guessing the profile through pattern matching
 
-                final PropsMatcher userAgentMatcher = getUserAgentMatcher();
-
-                if(userAgentMatcher!=null) {
-                    // try matching
-                    String profileFname=userAgentMatcher.match(userAgent);
-                    if(profileFname!=null) {
-                        // user agent has been matched
-                        if (log.isDebugEnabled())
-                            log.debug("GuestUserPreferencesManager::GuestUserPreferencesManager() : " +
-                                    "userAgent \"" + userAgent + "\" has matched to a profile " + profileFname);
-                    	upl = userLayoutStore.getUserProfileByFname(m_person, profileFname);
-                    	
-                    	if (upl == null) {
-                            upl = userLayoutStore.getSystemProfileByFname(profileFname);
-                    	}
-                    	
-                        // save mapping
-//                        if(SAVE_PROFILE_GUESSES) {
-//                            userLayoutStore.setSystemBrowserMapping(userAgent,upl.getProfileId());
-//                        }
-                    } else {
-                        if (log.isDebugEnabled())
-                            log.debug("GuestUserPreferencesManager::GuestUserPreferencesManager() : " +
-                                    "userAgent \"" + userAgent + "\" has not matched any profile.");
-                    }
-                }
+                // try matching
+                final String profileFname=this.profileMapper.getProfileFname(m_person, req);
+                // user agent has been matched
+                if (log.isDebugEnabled())
+                    log.debug(
+                            "userAgent \"" + userAgent + "\" has matched to a profile " + profileFname);
+            	upl = userLayoutStore.getUserProfileByFname(m_person, profileFname);
+            	
+            	if (upl == null) {
+                    upl = userLayoutStore.getSystemProfileByFname(profileFname);
+            	}
+                	
             }
 
             if (upl != null) {
@@ -185,7 +173,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                     } catch (PortalException pe) {
                         throw pe;
                     } catch (Exception e) {
-                        throw new PortalException("GuestUserPreferencesManager::registerSession() : caught an exception while trying to retreive a userLayout for user=\"" +m_person.getID()+ "\", profile=\"" + upl.getProfileName() + "\".",e);
+                        throw new PortalException("caught an exception while trying to retreive a userLayout for user=\"" +m_person.getID()+ "\", profile=\"" + upl.getProfileName() + "\".",e);
                     }
                 }
 
@@ -226,7 +214,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                             }
                         }
                     } catch (Exception e) {
-                        log.error("GuestUserPreferencesManager::registerSession() : " +
+                        log.error("" +
                         		"unable to find UP for a profile \""+upl.getProfileName()+"\"",e);
                         cleanUP=new UserPreferences(upl);
                     }
@@ -235,7 +223,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                 if(cleanUP!=null) {
                     newState.complete_up=new UserPreferences(cleanUP);
                 } else {
-                    log.error("GuestUserPreferencesManager::registerSession() : " +
+                    log.error("" +
                     		"unable to find UP for a profile \""+upl.getProfileName()+"\"");
                     newState.complete_up=new UserPreferences(upl);
                 }
@@ -244,7 +232,7 @@ public class GuestUserPreferencesManager extends UserPreferencesManager  {
                 // user should be redirected to a browser-registration page.
                 newState.unmapped_user_agent = true;
                 if (log.isDebugEnabled())
-                    log.debug("GuestUserPreferencesManager::registerSession() : " +
+                    log.debug("" +
                             "unable to find a profile for user \"" + m_person.getID() + 
                             "\" and userAgent=\"" + userAgent + "\".");
             }

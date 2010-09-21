@@ -32,6 +32,7 @@ import org.jasig.portal.GuestUserInstance;
 import org.jasig.portal.GuestUserPreferencesManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserInstance;
+import org.jasig.portal.layout.IProfileMapper;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
@@ -59,33 +60,23 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
     
     private IPersonManager personManager;
     private IPortalRequestUtils portalRequestUtils;
+    private IProfileMapper profileMapper;
     
-    /**
-     * @return the personManager
-     */
-    public IPersonManager getPersonManager() {
-        return personManager;
-    }
-    /**
-     * @param personManager the personManager to set
-     */
-    @Autowired(required=true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
     
-    public IPortalRequestUtils getPortalRequestUtils() {
-        return portalRequestUtils;
-    }
-    /**
-     * @param portalRequestUtils 
-     */
-    @Autowired(required=true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
     
-    
+    @Autowired
+    public void setProfileMapper(IProfileMapper profileMapper) {
+        this.profileMapper = profileMapper;
+    }
+
     /**
      * Returns the UserInstance object that is associated with the given request.
      * @param request Incoming HttpServletRequest
@@ -144,7 +135,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
             synchronized (guestUserPreferencesManagers) {
                 guestUserPreferencesManager = guestUserPreferencesManagers.get(personId);
                 if (guestUserPreferencesManager == null) {
-                    guestUserPreferencesManager = new GuestUserPreferencesManager(person);
+                    guestUserPreferencesManager = new GuestUserPreferencesManager(person, this.profileMapper);
                     guestUserPreferencesManagers.put(personId, guestUserPreferencesManager);
                 }
             }
@@ -154,7 +145,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
         else {
             final ISecurityContext securityContext = person.getSecurityContext();
             if (securityContext.isAuthenticated()) {
-                userInstance = new UserInstance(person, request);
+                userInstance = new UserInstance(person, request, this.profileMapper);
             }
             else {
                 // we can't allow for unauthenticated, non-guest user to come into the system

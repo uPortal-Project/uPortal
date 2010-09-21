@@ -35,8 +35,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
-import org.apache.oro.io.GlobFilenameFilter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.EntityGroupImpl;
@@ -50,8 +52,6 @@ import org.jasig.portal.groups.IEntitySearcher;
 import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.services.GroupService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is an <code>IEntityGroupStore</code> that uses the native file
@@ -822,20 +822,27 @@ throws GroupsException
             nameFilter = query;
             break;
           case STARTS_WITH:
-            nameFilter = query+"*";
+            nameFilter = query+".*";
             break;
           case ENDS_WITH:
-           nameFilter = "*"+query;
+           nameFilter = ".*"+query;
            break;
           case CONTAINS:
-            nameFilter = "*"+query+"*";
+            nameFilter = ".*"+query+".*";
             break;
           default:
             throw new GroupsException(DEBUG_CLASS_NAME +
                 ".searchForGroups(): Unknown search method: " + searchMethod);
         }
 
-        FilenameFilter filter = new GlobFilenameFilter(nameFilter);
+        final Pattern namePattern = Pattern.compile(nameFilter);
+        final FilenameFilter filter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return namePattern.matcher(name).matches();
+            }
+        };
+            
         Set allDirs = getAllDirectoriesBelow(baseDir);
         allDirs.add(baseDir);
 

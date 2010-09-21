@@ -17,30 +17,23 @@
  * under the License.
  */
 
-package org.jasig.portal.groups.pags.testers;
+package org.jasig.portal.layout;
 
-import java.util.regex.Pattern;
+import javax.servlet.http.HttpServletRequest;
+
+import org.jasig.portal.security.IPerson;
 
 /**
- * A tester for matching the possibly multiple values of an attribute 
- * against a regular expression.  If any of the values matches the pattern, 
- * the tester returns true.
- * <p>
- * @author Dan Ellentuck
+ * Maps a layout profile name for a specific user and request.
+ * 
+ * @author Eric Dalquist
  * @version $Revision$
  */
+public interface IProfileMapper {
 
-public class RegexTester extends StringTester {
-    protected final Pattern pattern;
-
-    public RegexTester(String attribute, String test) {
-        super(attribute, test);
-        this.pattern = Pattern.compile(test);
-    }
-
-    @Override
-    public boolean test(String att) {
-        return pattern.matcher(att).matches();
-    }
+    /**
+     * Get the profile name for the specific user and request
+     */
+    public String getProfileFname(IPerson person, HttpServletRequest request);
 
 }

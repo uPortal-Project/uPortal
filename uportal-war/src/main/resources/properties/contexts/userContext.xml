@@ -27,5 +27,33 @@
      | The concrete IPersonManager implementation to be used
      +-->
    	<bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
-    
+
+
+    <bean id="profileMapper" class="org.jasig.portal.layout.UserAgentProfileMapper">
+        <property name="defaultProfileName" value="default" />
+        <property name="mappings">
+            <list>
+                <!-- Apple iPhone -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*iPhone.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+                <!-- Android -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*Android.*" />
+                    <property name="profileName" value="android" />
+                </bean>
+                <!-- Palm Pre -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*Safari.*Pre.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+                <!-- Nokia S60 web browser -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*Nokia.*AppleWebKit.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+            </list>
+        </property>
+    </bean>    
 </beans>

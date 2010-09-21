@@ -19,17 +19,14 @@
 
 package  org.jasig.portal;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.IProfileMapper;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
@@ -37,7 +34,6 @@ import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.PropsMatcher;
 
 
 /**
@@ -48,8 +44,6 @@ import org.jasig.portal.utils.PropsMatcher;
  * @version $Revision$
  */
 public class UserPreferencesManager implements IUserPreferencesManager {
-    private static final String BROWSER_MAPPINGS_PROPERTIES = "/properties/browser.mappings";
-
     private static final String USER_PREFERENCES_KEY = UserPreferencesManager.class.getName();
     
     /**
@@ -59,9 +53,6 @@ public class UserPreferencesManager implements IUserPreferencesManager {
     private static final boolean DEFAULT_SAVE_USER_PREFERENCES_AT_LOGOUT = false;
 
     private static final boolean saveUserPreferencesAtLogout = PropertiesManager.getPropertyAsBoolean(UserPreferencesManager.class.getName() + ".save_UserPreferences_at_logout", DEFAULT_SAVE_USER_PREFERENCES_AT_LOGOUT);
-
-    // user agent mapper for guessing the profile
-    private static PropsMatcher userAgentMatcher;
 
     protected final static Log logger = LogFactory.getLog(UserPreferencesManager.class);
     
@@ -79,42 +70,6 @@ public class UserPreferencesManager implements IUserPreferencesManager {
     private final IPerson person;
     IUserLayoutStore userLayoutStore = null;
     
-    
-    /**
-     * @return lazily initialized access to the UserAgentMatcher
-     * TODO this should be re-written & tested in a static initializer or injected
-     */
-    public static synchronized PropsMatcher getUserAgentMatcher() {
-        if (userAgentMatcher == null) {
-            InputStream userAgentMatcherStream = null;
-            try {
-                userAgentMatcherStream = UserPreferencesManager.class.getResourceAsStream(BROWSER_MAPPINGS_PROPERTIES);
-                userAgentMatcher = new PropsMatcher(userAgentMatcherStream);
-            }
-            catch (IOException ioe) {
-                logger.error("Failed to load browser mapping file: '" + BROWSER_MAPPINGS_PROPERTIES + "'", ioe);
-            }
-            finally {
-                IOUtils.closeQuietly(userAgentMatcherStream);
-            }
-        }
-
-        return userAgentMatcher;
-    }
-
-
-
-    /**
-     * Constructor does the following
-     *  1. Read layout.properties
-     *  2. read userLayout from the database
-     *  @param req the servlet request object
-     *  @param person the person object
-     */
-    public UserPreferencesManager (HttpServletRequest req, IPerson person) throws PortalException {
-        this(req, person, null);
-    }
-
     /**
      * Constructor does the following
      *  1. Read layout.properties
@@ -123,7 +78,7 @@ public class UserPreferencesManager implements IUserPreferencesManager {
      *  @param person the person object
      *  @param localeManager the locale manager
      */
-    public UserPreferencesManager (HttpServletRequest req, IPerson person, LocaleManager localeManager) throws PortalException {
+    public UserPreferencesManager (HttpServletRequest req, IPerson person, LocaleManager localeManager, IProfileMapper profileMapper) throws PortalException {
         this.userLayoutManager=null;
         try {
             this.person = person;
@@ -148,22 +103,13 @@ public class UserPreferencesManager implements IUserPreferencesManager {
             
             // try guessing the profile through pattern matching
             if(userProfile==null) {
-                final PropsMatcher userAgentMatcher = getUserAgentMatcher();
-                if (userAgentMatcher != null) {
-                    // try matching
-                    final String profileFname = userAgentMatcher.match(userAgent);
+                final String profileFname = profileMapper.getProfileFname(person, req);
                     
-                    // user agent has been matched
-                    if (profileFname != null) {
-                    	
-                    	userProfile = userLayoutStore.getUserProfileByFname(person, profileFname);
-                    	
-                    	if (userProfile == null) {
-                            userProfile = userLayoutStore.getSystemProfileByFname(profileFname);
-                    	}
-                    	
-                    }
-                }
+            	userProfile = userLayoutStore.getUserProfileByFname(person, profileFname);
+            	
+            	if (userProfile == null) {
+                    userProfile = userLayoutStore.getSystemProfileByFname(profileFname);
+            	}
 
             }
 

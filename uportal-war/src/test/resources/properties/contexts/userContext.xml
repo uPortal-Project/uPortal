@@ -27,6 +27,10 @@
      | This file is here for supporting legacy unit tests,   |
      | no new configuration should be added to this file.    |
      +-  ************************************************* -->
-        <bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
+    <bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
         
+        
+    <bean id="profileMapper" class="org.jasig.portal.layout.UserAgentProfileMapper">
+        <property name="defaultProfileName" value="default" />
+    </bean> 
 </beans>
