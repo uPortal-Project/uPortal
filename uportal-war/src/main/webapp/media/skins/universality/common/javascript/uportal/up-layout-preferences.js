@@ -318,7 +318,7 @@ var uportal = uportal || {};
                         listeners: {
                             // add a PortletBrowser to the use content pane
                             onInitialize: function (overallThat) {
-                                up.PortletBrowser(".use-content", {
+                                up.PortletBrowser(".use-content", overallThat, {
                                     portletRegistry: {
                                         options: { portletListUrl: that.options.channelRegistryUrl }
                                     },
@@ -363,7 +363,7 @@ var uportal = uportal || {};
                                         }
                                     },
                                     currentSkin: that.options.currentSkin,
-                                    skinListURL: (that.options.mediaPath + "/skinList.xml?noCache=" + new Date().getTime()),
+                                    skinListURL: (that.options.mediaPath + "/skinList.xml"),
                                     mediaPath: that.options.mediaPath
                                 });
                             }

@@ -318,11 +318,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         };
     
         $(document).ready(function() {
-            var browser = up.PortletBrowser("#${n}portletBrowser", 
+            var browser = up.PortletBrowser("#${n}portletBrowser", null,
                 { 
                     portletRegistry: { 
                         type: "up.PortletRegistry",
-                        options: { portletListUrl: "<c:url value="/mvc/channelList?type=manage"/>" } 
+                        options: { portletListUrl: "<c:url value="/mvc/channelList"/>" } 
                     },
                     categoryListView: {
                         type: "up.PortletAdministrationCategoryListView"

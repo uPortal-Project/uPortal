@@ -220,8 +220,7 @@ var up = up || {};
             if (!initialized) {
                 overallThat.showLoading();
                 initialized = true;
-                that.portletBrowser = fluid.initSubcomponent(that, "portletBrowser", [that.locate("pane"), fluid.COMPONENT_OPTIONS]);
-                overallThat.hideLoading();
+                that.portletBrowser = fluid.initSubcomponent(that, "portletBrowser", [that.locate("pane"), overallThat, fluid.COMPONENT_OPTIONS]);
             }
             // show the pane and mark the pane link as active
             that.locate("pane").show();
@@ -292,6 +291,11 @@ var up = up || {};
                 },
                 portletListView: {
                     type: "up.AjaxLayoutPortletListView"
+                },
+                listeners: {
+                    onLoad: function (portletBrowser, gallery) {
+                        gallery.hideLoading();
+                    }
                 }
             }
         },

@@ -47,7 +47,7 @@ var up = up || {};
      */
     var Portlet = function (json) {
         return {
-            id: json.chanId,
+            id: json.id,
             description: json.description,
             fname: json.fname,
             title: json.title,
@@ -152,7 +152,6 @@ var up = up || {};
     var getRegistry = function (that) {
         $.ajax({
             url: that.options.portletListUrl,
-            async: false,
             success: function (data) {
                 // add the reported fragments to the state array, indexing
                 // each by fragment owner username to expedite future lookups
@@ -163,6 +162,7 @@ var up = up || {};
                 $(data.registry.categories).each(function (idx, category) {
                     processCategory(that, category);
                 });
+                that.events.onLoad.fire();
             }, 
             dataType: "json"
         });
@@ -179,11 +179,6 @@ var up = up || {};
         
         // construct the new component
         var that = fluid.initView("up.PortletRegistry", container, options);
-
-        // request the portlet registry from the back-end service and 
-        // parse it as required by this component
-        getRegistry(that);
-
 
         //--------------------------------------------------
         // PUBLIC METHODS
@@ -259,13 +254,21 @@ var up = up || {};
             return that.state.portlets;
         };
         
+        
+        // request the portlet registry from the back-end service and 
+        // parse it as required by this component
+        getRegistry(that);
+
         return that;
     };
 
     
     // defaults
     fluid.defaults("up.PortletRegistry", {
-        portletListUrl: null
+        portletListUrl: null,
+        listeners: {
+            onLoad: null
+        }
     });
     
 })(jQuery, fluid);

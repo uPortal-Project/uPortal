@@ -23,12 +23,36 @@ var up = up || {};
 (function ($, fluid) {
 
     /**
-     * Instantiate a PortletBrowser component
+     * DefaultPortletSearchView component provides a generic portlet searching
+     * interface to serve as a view subcomponent of PortletBrowser.  This
+     * default implementation makes use of a simple search form and executes
+     * portlet search events as appropriate against the supplied parent component.
+     *
+     * ----------------
+     * Available selectors
+     * ----------------
      * 
+     * portletSearchView
+     *     overall container to be used while performing the Fluid rendering
+     *     operation
+     * searchForm
+     *     portlet search form
+     * searchInput
+     *     portlet search input field.  Must be contained within the search form
+     * 
+     * ---------------------------
+     * Other Configuration Options
+     * ---------------------------
+     * 
+     * searchInvitationMessage
+     *     default instructional message to be displayed within the search input
+     *     field
+     *       
      * @param {Object} component Container the element containing the fragment browser
+     * @param {Object} parent PortletBrowser component (overall that)
      * @param {Object} options configuration options for the components
      */
-    up.DefaultPortletSearchView = function (container, overallThat, options) {
+    up.DefaultPortletSearchView = function (container, portletBrowser, options) {
         var that, cutpoints, tree;
         
         // construct the new component
@@ -43,13 +67,16 @@ var up = up || {};
             { id: "searchInput", selector: that.options.selectors.searchInput }
         ];
 
+        // generate the component tree
         tree = { children: [
                 { 
                     ID: "searchForm",  
                     decorators: [
                         { type: "jQuery", func: "submit", args: 
                             function () { 
-                                overallThat.events.onPortletSearch.fire(overallThat, that.locate("searchInput").val(), true); 
+                                // Upon form submission, fire the portlet search
+                                // event on the parent component
+                                portletBrowser.events.onPortletSearch.fire(portletBrowser, that.locate("searchInput").val(), true); 
                                 return false;
                             } 
                         }
@@ -61,11 +88,18 @@ var up = up || {};
                     decorators: [
                         { type: "jQuery", func: "keyup", args: 
                             function () { 
-                                overallThat.events.onPortletSearch.fire(overallThat, $(this).val(), false);
+                                // As the user updates the search field, fire
+                                // the portlet search event on the parent
+                                // component
+                                portletBrowser.events.onPortletSearch.fire(portletBrowser, $(this).val(), false);
                             }
                         },
                         { type: "jQuery", func: "focus", args:
                             function () {
+                                // When the search input field is focused, check
+                                // if the input value matches the search 
+                                // invitation message.  If it does, clear out
+                                // the input field.
                                 if ($(this).val() === that.options.searchInvitationMessage) {
                                     $(this).val("");
                                 }
@@ -73,6 +107,9 @@ var up = up || {};
                         },
                         { type: "jQuery", func: "blur", args:
                             function () {
+                                // When the search input field loses focus, check
+                                // if the input value is empty.  If it is, set
+                                // the value back to the search invitation message.
                                 if ($(this).val().trim() === "") {
                                     $(this).val(that.options.searchInvitationMessage);
                                 }
@@ -100,19 +137,63 @@ var up = up || {};
     });
 
     /**
-     * Instantiate a PortletBrowser component
+     * PortletBrowser component provides a user interface for viewing and 
+     * selecting registered uPortal portlets.  This portlet list is collected from
+     * the configured portlet registry, and a number of view-type subcomponents
+     * govern the browsing, search, and display behaviors of this component.  The
+     * parent component itself delegates all markup generation to the view
+     * subcomponents.
+     *
+     * ----------------
+     * Available events
+     * ----------------
      * 
+     * onLoad
+     *     optional action to be executed after component initialization
+     * onCategorySelect
+     *     called when a user selects a category
+     * onPortletSearch
+     *     called when a user performs a search action
+     * onPortletSelect
+     *     called when a user selects a portlet
+     * 
+     * ---------------------------
+     * Other Configuration Options
+     * ---------------------------
+     * 
+     * portletListView
+     *       Displays the portlets themselves, potentially filtered by a search
+     *       term or category
+     * categoryListView
+     *       Displays the portlet categories and allows the user to use them as 
+     *       filters
+     * searchView
+     *       Displays a search form, allowing the user to search the portlet registry
+     * portletRegistry
+     *       PortletRegistry component
+     *       
+     *       
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
-    up.PortletBrowser = function (container, options) {
+    up.PortletBrowser = function (container, overallThat, options) {
         
         // construct the new component
         var that = fluid.initView("up.PortletBrowser", container, options);
 
         // initialize the portlet registry subcomponent
+        that.options.portletRegistry.options = that.options.portletRegistry.options || {};
+        that.options.portletRegistry.options.listeners = that.options.portletRegistry.options.listeners || {};
+        that.options.portletRegistry.options.listeners.onLoad = function () {
+            initializePortletBrowser(that, overallThat, container);
+        };
         that.registry = fluid.initSubcomponent(that, "portletRegistry", [container, fluid.COMPONENT_OPTIONS]);
         
+        // initialize a state map for this component
+        return that;
+    };
+    
+    var initializePortletBrowser = function (that, overallThat, container) {
         // initialize a state map for this component
         that.state = {};
 
@@ -122,19 +203,13 @@ var up = up || {};
         that.portletListView = fluid.initSubcomponent(that, "portletListView", [container, that, fluid.COMPONENT_OPTIONS]);
 
         // indicate to the caller that the component has been successfully loaded
-        that.events.onLoad.fire(that);
-        
-        return that;
+        that.events.onLoad.fire(that, overallThat);
     };
-
     
     // defaults
     fluid.defaults("up.PortletBrowser", {
         portletRegistry: {
-            type: "up.PortletRegistry",
-            options: {
-                portletListUrl: null
-            }
+            type: "up.PortletRegistry"
         },
         searchView: {
             type: "up.DefaultPortletSearchView"
