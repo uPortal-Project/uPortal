@@ -236,11 +236,11 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         }
         catch (NotAPortletException nape) {
             this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
-            return null;
+            return "";
         }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to output portlet: " + subscribeId, e);
-            return null;
+            return "";
         }
 
         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
@@ -275,11 +275,11 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         }
         catch (NotAPortletException nape) {
             this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
-            return null;
+            return "";
         }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to get portlet title: " + subscribeId, e);
-            return null;
+            return "";
         }
 
         return this.getPortletTitle(portletWindow.getPortletWindowId(), request, response);
@@ -295,10 +295,11 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         final PortletRenderResult portletRenderResult = tracker.get(timeout);
         
         if (portletRenderResult == null) {
-            return null;
+            return "";
         }
         
-        return portletRenderResult.getTitle();
+        final String title = portletRenderResult.getTitle();
+        return title != null ? title : "";
     }
 
     protected IPortletWindow getDefaultPortletWindow(String subscribeId, HttpServletRequest request) {
