@@ -28,22 +28,26 @@ import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.rendering.StAXPipelineComponent;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.xml.ResourceLoaderURIResolver;
 import org.jasig.portal.xml.stream.LocationOverridingEventAllocator;
 import org.jasig.portal.xml.stream.UnknownLocation;
 import org.jasig.portal.xml.stream.XMLStreamReaderAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.xml.SimpleTransformErrorListener;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class XSLTComponent implements StAXPipelineComponent, BeanNameAware {
+public class XSLTComponent implements StAXPipelineComponent, BeanNameAware, ResourceLoaderAware {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private final ErrorListener errorListener;
+    private ResourceLoaderURIResolver uriResolver;
     private StAXPipelineComponent parentComponent;
     private TransformerSource transformerSource;
     private TransformerConfigurationSource xsltParameterSource;
@@ -68,6 +72,11 @@ public class XSLTComponent implements StAXPipelineComponent, BeanNameAware {
     public void setBeanName(String name) {
         this.beanName = name;
     }
+    
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.uriResolver = new ResourceLoaderURIResolver(resourceLoader);
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.rendering.StAXPipelineComponent#getXmlStreamReader(java.lang.Object, java.lang.Object)
@@ -77,6 +86,8 @@ public class XSLTComponent implements StAXPipelineComponent, BeanNameAware {
         final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.parentComponent.getEventReader(request, response);
         
         final Transformer transformer = this.transformerSource.getTransformer(request, response);
+        
+        transformer.setURIResolver(this.uriResolver);
         
         if (this.xsltParameterSource != null) {
             final Map<String, Object> transformerParameters = this.xsltParameterSource.getParameters(request, response);

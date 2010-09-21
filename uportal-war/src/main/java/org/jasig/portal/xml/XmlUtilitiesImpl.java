@@ -31,7 +31,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -40,11 +39,8 @@ import org.jasig.portal.utils.cache.resource.CachingResourceLoader;
 import org.jasig.portal.utils.cache.resource.ResourceLoaderOptions;
 import org.jasig.portal.utils.cache.resource.ResourceLoaderOptionsBuilder;
 import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -56,11 +52,10 @@ import org.w3c.dom.Node;
  * @version $Revision$
  */
 @Service
-public class XmlUtilitiesImpl implements XmlUtilities, ResourceLoaderAware, InitializingBean {
+public class XmlUtilitiesImpl implements XmlUtilities {
     private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
     private final ResourceLoaderOptions templatesLoaderOptions = new ResourceLoaderOptionsBuilder().digestAlgorithm("SHA1").digestInput(true);
 
-    private URIResolver uriResolver;
     private TemplatesBuilder templatesBuilder;
     
     private CachingResourceLoader cachingResourceLoader;
@@ -70,17 +65,9 @@ public class XmlUtilitiesImpl implements XmlUtilities, ResourceLoaderAware, Init
         this.cachingResourceLoader = cachingResourceLoader;
     }
 
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        final ResourceLoaderURIResolver uriResolver = new ResourceLoaderURIResolver();
-        uriResolver.setResourceLoader(resourceLoader);
-        
-        this.uriResolver = uriResolver;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.templatesBuilder = new TemplatesBuilder(this.uriResolver);
+    @Autowired
+    public void setTemplatesBuilder(TemplatesBuilder templatesBuilder) {
+        this.templatesBuilder = templatesBuilder;
     }
 
     /* (non-Javadoc)

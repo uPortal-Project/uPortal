@@ -58,8 +58,7 @@ public class XalanMessageHelperTest {
     
     @Before
     public void setup() throws Exception {
-        final ResourceLoaderURIResolver resolver = new ResourceLoaderURIResolver();
-        resolver.setResourceLoader(new ClassRelativeResourceLoader(getClass()));
+        final ResourceLoaderURIResolver resolver = new ResourceLoaderURIResolver(new ClassRelativeResourceLoader(getClass()));
         
         this.tFactory = TransformerFactory.newInstance();
         this.tFactory.setURIResolver(resolver);

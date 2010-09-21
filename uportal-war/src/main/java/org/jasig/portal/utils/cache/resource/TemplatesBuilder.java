@@ -26,10 +26,15 @@ import java.net.URI;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
+import org.jasig.portal.xml.ResourceLoaderURIResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Service;
 
 /**
  * Parses the provided input stream into a {@link Templates} object.
@@ -37,20 +42,16 @@ import org.springframework.core.io.Resource;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class TemplatesBuilder implements ResourceBuilder<Templates> {
-    private final URIResolver uriResolver;
-    
-    public TemplatesBuilder() {
-        this(null);
-    }
+@Service
+public class TemplatesBuilder implements ResourceBuilder<Templates>, ResourceLoaderAware {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * @param uriResolver Optional {@link URIResolver} the {@link TransformerFactory} should use
-     */
-    public TemplatesBuilder(URIResolver uriResolver) {
-        this.uriResolver = uriResolver;
+    private ResourceLoaderURIResolver uriResolver;
+
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.uriResolver = new ResourceLoaderURIResolver(resourceLoader);
     }
-    
 
     /* (non-Javadoc)
      * @see org.jasig.portal.utils.cache.resource.ResourceBuilder#buildResource(org.springframework.core.io.Resource, java.io.InputStream)
@@ -58,15 +59,10 @@ public class TemplatesBuilder implements ResourceBuilder<Templates> {
     @Override
     public Templates buildResource(Resource resource, InputStream stream) throws IOException {
         final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setURIResolver(this.uriResolver);
         
-        if (this.uriResolver != null) {
-            transformerFactory.setURIResolver(this.uriResolver);
-        }
-        
-        final URI resourceUri = resource.getURI();
-        final String path = resourceUri.getPath();
-
-        final String systemId = path.substring(0, path.lastIndexOf('/') + 1);
+        final URI uri = resource.getURI();
+        final String systemId = uri.toString();
         
         final StreamSource source = new StreamSource(stream, systemId);
         try {
@@ -76,5 +72,4 @@ public class TemplatesBuilder implements ResourceBuilder<Templates> {
             throw new IOException("Failed to parse stream into Templates", e);
         }
     }
-
 }

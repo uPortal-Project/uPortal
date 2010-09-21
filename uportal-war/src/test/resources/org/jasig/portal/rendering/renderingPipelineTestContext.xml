@@ -168,6 +168,8 @@
     <!-- Utility Beans -->
     <bean class="org.jasig.portal.xml.XmlUtilitiesImpl" />
     
+    <bean class="org.jasig.portal.utils.cache.resource.TemplatesBuilder" />
+    
     <bean class="org.jasig.portal.utils.cache.resource.CachingResourceLoaderImpl" />
     
     <bean class="org.jasig.portal.spring.spel.PortalSpELServiceImpl" />
