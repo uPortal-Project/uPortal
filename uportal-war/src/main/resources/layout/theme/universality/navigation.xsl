@@ -77,6 +77,7 @@
                 </xsl:call-template>
               </div>
             </xsl:if>
+            <a href="javascript:;" title="{$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']}" class="portal-navigation-add"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']"/></a>
           </div>
         </div>
       
@@ -208,15 +209,21 @@
         </xsl:choose>
     </xsl:variable>
     
-    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_INLINE_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN} {$NAV_INLINE_EDITABLE}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
           <xsl:call-template name="layoutUrl">
             <xsl:with-param name="folderId" select="@ID" />
           </xsl:call-template>
       </xsl:variable>
+      <xsl:if test="$AUTHENTICATED='true' and not(@dlm:moveAllowed='false') and @activeTab='true'">
+          <span class="portal-navigation-gripper" title="{$TOKEN[@name='MOVE_TAB_LONG_LABEL']}" role="link"><span><xsl:value-of select="$TOKEN[@name='MOVE_TAB_LABEL']"/></span></span> <!-- Drag & drop gripper handle. -->
+      </xsl:if>
       <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}"><xsl:value-of select="@name"/></span>
       </a>
+      <xsl:if test="$AUTHENTICATED='true' and not(@dlm:deleteAllowed='false') and @activeTab='true'">
+        <span class="portal-navigation-delete" title="{$TOKEN[@name='DELETE_TAB_LONG_LABEL']}" role="link"><span><xsl:value-of select="$TOKEN[@name='DELETE_TAB_LABEL']"/></span></span><!-- Remove tab icon. -->
+      </xsl:if>
       <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
         <xsl:call-template name="subnavigation">
           <xsl:with-param name="CONTEXT" select="'subnav'"/>
