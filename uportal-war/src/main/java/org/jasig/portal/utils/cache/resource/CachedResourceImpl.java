@@ -20,6 +20,7 @@
 package org.jasig.portal.utils.cache.resource;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import org.springframework.core.io.Resource;
 
@@ -29,6 +30,7 @@ import org.springframework.core.io.Resource;
  */
 class CachedResourceImpl<T> implements CachedResource<T> {
     private final Resource resource;
+    private final Set<Resource> additionalResources;
     private final T cachedResource;
     private final long lastLoadTime;
     private volatile long lastCheckTime;
@@ -37,14 +39,15 @@ class CachedResourceImpl<T> implements CachedResource<T> {
     private String digestAlgorithm;
     
 
-    public CachedResourceImpl(Resource resource, T cachedResource, long lastLoadTime) {
-        this(resource, cachedResource, lastLoadTime, null, null, null);
+    public CachedResourceImpl(Resource resource, LoadedResource<T> loadedResource, long lastLoadTime) {
+        this(resource, loadedResource, lastLoadTime, null, null, null);
     }
     
-    public CachedResourceImpl(Resource resource, T cachedResource, long lastLoadTime, 
+    public CachedResourceImpl(Resource resource, LoadedResource<T> loadedResource, long lastLoadTime, 
             String lastLoadDigest, byte[] lastLoadDigestBytes, String digestAlgorithm) {
         this.resource = resource;
-        this.cachedResource = cachedResource;
+        this.cachedResource = loadedResource.getLoadedResource();
+        this.additionalResources = loadedResource.getAdditionalResources();
         this.lastLoadTime = lastLoadTime;
         this.lastCheckTime = lastLoadTime;
         this.lastLoadDigest = lastLoadDigest;
@@ -55,6 +58,11 @@ class CachedResourceImpl<T> implements CachedResource<T> {
     @Override
     public Resource getResource() {
         return this.resource;
+    }
+
+    @Override
+    public Set<Resource> getAdditionalResources() {
+        return this.additionalResources;
     }
 
     @Override

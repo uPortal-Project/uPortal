@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -42,7 +43,9 @@ import net.sf.ehcache.Element;
 import org.apache.commons.io.IOUtils;
 import org.jasig.portal.utils.cache.resource.CachedResource;
 import org.jasig.portal.utils.cache.resource.CachingResourceLoaderImpl;
-import org.jasig.portal.utils.cache.resource.ResourceBuilder;
+import org.jasig.portal.utils.cache.resource.LoadedResource;
+import org.jasig.portal.utils.cache.resource.LoadedResourceImpl;
+import org.jasig.portal.utils.cache.resource.Loader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
@@ -138,6 +141,7 @@ public class CachingResourceLoaderImplTest {
         expect(cache.get(doc1Resouce))
             .andReturn(new Element(doc1Resouce, cachedResource));
         
+        expect(cachedResource.getResource()).andReturn(doc1Resouce);
         expect(cachedResource.getLastCheckTime()).andReturn(1000000L);
         expect(cachedResource.getLastLoadTime()).andReturn(1000000L);
         
@@ -173,8 +177,10 @@ public class CachingResourceLoaderImplTest {
         final Element element = new Element("class path resource [CachingResourceLoaderImplTest_doc1.txt]", cachedResource);
         expect(cache.get(doc1Resouce)).andReturn(element);
         
+        expect(cachedResource.getResource()).andReturn(doc1Resouce);
         expect(cachedResource.getLastCheckTime()).andReturn(1000001L);
         expect(cachedResource.getLastLoadTime()).andReturn(1000001L);
+        expect(cachedResource.getAdditionalResources()).andReturn(Collections.EMPTY_SET);
         cachedResource.setLastCheckTime(anyLong());
         cache.put(element);
         expectLastCall();
@@ -220,12 +226,13 @@ public class CachingResourceLoaderImplTest {
         assertTrue(cachedResource1 == cachedResource);
     }
     
-    private static class StringResourceBuilder implements ResourceBuilder<String> {
+    private static class StringResourceBuilder implements Loader<String> {
         public static final StringResourceBuilder INSTANCE = new StringResourceBuilder();
 
         @Override
-        public String buildResource(Resource resource, InputStream stream) throws IOException {
-            return IOUtils.toString(stream);
+        public LoadedResource<String> loadResource(Resource resource, InputStream stream) throws IOException {
+            final String string = IOUtils.toString(stream);
+            return new LoadedResourceImpl<String>(string);
         }
     }
 }

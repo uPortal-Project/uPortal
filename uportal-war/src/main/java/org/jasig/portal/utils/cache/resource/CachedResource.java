@@ -20,6 +20,7 @@
 package org.jasig.portal.utils.cache.resource;
 
 import java.security.MessageDigest;
+import java.util.Set;
 
 import org.springframework.core.io.Resource;
 
@@ -36,6 +37,11 @@ public interface CachedResource<T> {
      * @return The Resource that was loaded
      */
     public Resource getResource();
+    
+    /**
+     * @return Additional resource files involved with loading
+     */
+    public Set<Resource> getAdditionalResources();
     
     /**
      * @return The cached resource

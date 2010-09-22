@@ -21,10 +21,10 @@ import org.springframework.core.io.ResourceLoader;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public final class ResourceLoaderURIResolver implements URIResolver {
+public class ResourceLoaderURIResolver implements URIResolver {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    private final ResourceLoader resourceLoader;
+    protected final ResourceLoader resourceLoader;
     
     public ResourceLoaderURIResolver(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
@@ -32,6 +32,32 @@ public final class ResourceLoaderURIResolver implements URIResolver {
 
     @Override
     public Source resolve(String href, String base) throws TransformerException {
+        final Resource resolvedResource = resolveResource(href, base);
+        
+        return createSource(resolvedResource, base);
+    }
+
+    /**
+     * Create a {@link Source} from the specified {@link Resource}
+     */
+    protected Source createSource(final Resource resolvedResource, String base) throws TransformerException {
+        final InputStream resourceStream;
+        try {
+            resourceStream = resolvedResource.getInputStream();
+        }
+        catch (IOException e) {
+            throw new TransformerException("Failed to get InputStream for " + resolvedResource, e);
+        }
+        
+        final StreamSource streamSource = new StreamSource(resourceStream);
+        streamSource.setSystemId(base);
+        return streamSource;
+    }
+
+    /**
+     * Resolve the requested {@link Resource}
+     */
+    protected Resource resolveResource(String href, String base) throws TransformerException {
         final Resource resolvedResource;
         if (base != null) {
             final Resource baseResource = this.resourceLoader.getResource(base);
@@ -50,19 +76,6 @@ public final class ResourceLoaderURIResolver implements URIResolver {
             
             this.logger.debug("Created resource {} for href: {}", resolvedResource, href);
         }
-        
-
-        final InputStream resourceStream;
-        try {
-            resourceStream = resolvedResource.getInputStream();
-        }
-        catch (IOException e) {
-            throw new TransformerException("Failed to get InputStream for " + resolvedResource, e);
-        }
-        
-        final StreamSource streamSource = new StreamSource(resourceStream);
-        streamSource.setSystemId(base);
-        
-        return streamSource;
+        return resolvedResource;
     }
 }

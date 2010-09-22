@@ -22,9 +22,12 @@ package org.jasig.portal.utils.cache.resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 
@@ -43,33 +46,59 @@ import org.springframework.stereotype.Service;
  * @version $Revision$
  */
 @Service
-public class TemplatesBuilder implements ResourceBuilder<Templates>, ResourceLoaderAware {
+public class TemplatesBuilder implements Loader<Templates>, ResourceLoaderAware {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private ResourceLoaderURIResolver uriResolver;
+    private ResourceLoader resourceLoader;
 
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.uriResolver = new ResourceLoaderURIResolver(resourceLoader);
+        this.resourceLoader = resourceLoader;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.utils.cache.resource.ResourceBuilder#buildResource(org.springframework.core.io.Resource, java.io.InputStream)
      */
     @Override
-    public Templates buildResource(Resource resource, InputStream stream) throws IOException {
+    public LoadedResource<Templates> loadResource(Resource resource, InputStream stream) throws IOException {
         final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        transformerFactory.setURIResolver(this.uriResolver);
+        
+        final ResourceTrackingURIResolver uriResolver = new ResourceTrackingURIResolver(this.resourceLoader);
+        transformerFactory.setURIResolver(uriResolver);
         
         final URI uri = resource.getURI();
         final String systemId = uri.toString();
         
         final StreamSource source = new StreamSource(stream, systemId);
+        final Templates templates;
         try {
-            return transformerFactory.newTemplates(source);
+            templates = transformerFactory.newTemplates(source);
         }
         catch (TransformerConfigurationException e) {
             throw new IOException("Failed to parse stream into Templates", e);
+        }
+        
+        final Set<Resource> resolvedResources = uriResolver.getResolvedResources();
+        
+        return new LoadedResourceImpl<Templates>(templates, resolvedResources);
+    }
+    
+    private static class ResourceTrackingURIResolver extends ResourceLoaderURIResolver {
+        private final Set<Resource> resolvedResources = new LinkedHashSet<Resource>();
+        
+        public ResourceTrackingURIResolver(ResourceLoader resourceLoader) {
+            super(resourceLoader);
+        }
+
+        @Override
+        protected Resource resolveResource(String href, String base) throws TransformerException {
+            final Resource resource = super.resolveResource(href, base);
+            resolvedResources.add(resource);
+            return resource;
+        }
+
+        public Set<Resource> getResolvedResources() {
+            return this.resolvedResources;
         }
     }
 }

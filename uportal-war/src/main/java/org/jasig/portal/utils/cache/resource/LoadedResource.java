@@ -19,21 +19,24 @@
 
 package org.jasig.portal.utils.cache.resource;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.Set;
 
 import org.springframework.core.io.Resource;
 
 /**
- * Responsible for parsing the {@link Resource} into the specified object type.
+ * Represents a resources loaded by a {@link Loader}.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface ResourceBuilder<T> {
+public interface LoadedResource<T> {
     /**
-     * Parse the given {@link InputStream} into the appropriate object. The original {@link Resource} is provided
-     * for context information but the InputStream it provides should not be used.
+     * @return The built resource object
      */
-    public T buildResource(Resource resource, InputStream stream) throws IOException;
+    public T getLoadedResource();
+    
+    /**
+     * @return Additional resource files involved with loading the Resource
+     */
+    public Set<Resource> getAdditionalResources();
 }

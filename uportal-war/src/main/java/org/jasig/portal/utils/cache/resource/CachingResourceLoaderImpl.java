@@ -33,10 +33,10 @@ import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.cache.ThreadLocalCacheEntryFactory;
 import org.jasig.portal.utils.io.MessageDigestInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
@@ -52,7 +52,7 @@ import org.springframework.stereotype.Service;
 public class CachingResourceLoaderImpl implements CachingResourceLoader {
     private static final ResourceLoaderOptions DEFAULT_OPTIONS = new ResourceLoaderOptionsBuilder();
     
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private final CachedResourceEntryFactory entryFactory = new CachedResourceEntryFactory();
     private final ConcurrentMap<String, MessageDigest> digestCache = new ConcurrentHashMap<String, MessageDigest>();
@@ -95,7 +95,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
      * @see org.jasig.portal.utils.cache.CachingResourceLoader#getResource(org.springframework.core.io.Resource, org.jasig.portal.utils.cache.ResourceBuilder)
      */
     @Override
-    public <T> CachedResource<T> getResource(Resource resource, ResourceBuilder<T> builder) throws IOException {
+    public <T> CachedResource<T> getResource(Resource resource, Loader<T> builder) throws IOException {
         return this.getResource(resource, builder, DEFAULT_OPTIONS);
     }
 
@@ -103,7 +103,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
      * @see org.jasig.portal.utils.cache.CachingResourceLoader#getResource(org.springframework.core.io.Resource, org.jasig.portal.utils.cache.ResourceBuilder, org.jasig.portal.utils.cache.ResourceLoaderOptions)
      */
     @Override
-    public <T> CachedResource<T> getResource(Resource resource, ResourceBuilder<T> builder, ResourceLoaderOptions options) throws IOException {
+    public <T> CachedResource<T> getResource(Resource resource, Loader<T> builder, ResourceLoaderOptions options) throws IOException {
         //Look for the resource in the cache, since it has been wrapped with a SelfPopulatingCache it should never return null.
         final GetResourceArguments<T> arguments = new GetResourceArguments<T>(resource, builder, options);
         final Element element = this.entryFactory.getWithData(this.resourceCache, resource, arguments);
@@ -126,19 +126,12 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
             this.logger.trace(cachedResource + " is older than checkInterval " + checkInterval + ", checking for modification");
         }
 
-        //Check if the resource has been modified since it was last loaded.
-        final long lastLoadTime = cachedResource.getLastLoadTime();
-        final long lastModified = this.getLastModified(resource);
-        if (lastLoadTime >= lastModified) {
-            if (this.logger.isTraceEnabled()) {
-                this.logger.trace(cachedResource + " has not been modified since last loaded " + lastLoadTime + ", returning");
-            }
+        //If the resource has not been modified return the cached resource. 
+        final boolean resourceModified = this.checkIfModified(cachedResource);
+        if (!resourceModified) {
             cachedResource.setLastCheckTime(System.currentTimeMillis());
             this.resourceCache.put(element); //do a cache put to notify the cache the object has been modified
             return cachedResource;
-        }
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace(cachedResource + " was modified at " + lastModified + ", reloading");
         }
         
         //The resource has been modified, reload it.
@@ -155,10 +148,40 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
     }
     
     /**
-     * Determine the last modified timestamp for the resource
+     * Check if any of the Resources used to load the {@link CachedResource} have
+     * been modified.
+     */
+    protected <T> boolean checkIfModified(CachedResource<T> cachedResource) {
+        final Resource resource = cachedResource.getResource();
+
+        //Check if the resource has been modified since it was last loaded.
+        final long lastLoadTime = cachedResource.getLastLoadTime();
+        final long mainLastModified = this.getLastModified(resource);
+        boolean resourceModified = lastLoadTime < mainLastModified;
+        if (resourceModified) {
+            this.logger.trace("Resource {} was modified at {}, reloading", 
+                    new Object[] {resource, mainLastModified});
+            return true;
+        }
+        
+        //If the main resource hasn't changed check additional resources for modifications
+        for (final Resource additionalResource : cachedResource.getAdditionalResources()) {
+            final long lastModified = this.getLastModified(additionalResource);
+            if (lastLoadTime < lastModified) {
+                this.logger.trace("Additional resource {} for {} was modified at {}, reloading", 
+                        new Object[] {additionalResource, resource, lastModified});
+                return true;
+            }
+        }
+        
+        this.logger.trace("{} has not been modified since last loaded {}, returning", cachedResource, lastLoadTime);
+        return false;
+    }
+    
+    /**
+     * Determine the last modified time stamp for the resource
      */
     protected long getLastModified(Resource resource) {
-        //TODO lastModified may not work for URL resources :(
         try {
             return resource.lastModified();
         }
@@ -169,10 +192,10 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
         return 0;
     }
 
-    private <T> CachedResource<T> loadResource(Resource resource, ResourceBuilder<T> builder, ResourceLoaderOptions options) throws IOException {
-        final long lastModified = this.getLastModified(resource);
+    private <T> CachedResource<T> loadResource(Resource resource, Loader<T> builder, ResourceLoaderOptions options) throws IOException {
+        final long lastLoadTime = System.currentTimeMillis();
         InputStream stream = resource.getInputStream();
-        final T builtResource;
+        final LoadedResource<T> loadedResource;
         final boolean digestInput = this.isDigestInput(options);
         MessageDigest messageDigest = null;
         try {
@@ -184,7 +207,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
             }
             
             //Build the resource using the callback
-            builtResource = builder.buildResource(resource, stream);
+            loadedResource = builder.loadResource(resource, stream);
         }
         finally {
             IOUtils.closeQuietly(stream);
@@ -197,10 +220,10 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
             final byte[] digestBytes = messageDigest.digest();
             final String digest = Base64.encodeBase64URLSafeString(digestBytes);
             
-            cachedResource = new CachedResourceImpl<T>(resource, builtResource, lastModified, digest, digestBytes, algorithm);
+            cachedResource = new CachedResourceImpl<T>(resource, loadedResource, lastLoadTime, digest, digestBytes, algorithm);
         }
         else {
-            cachedResource = new CachedResourceImpl<T>(resource, builtResource, lastModified);
+            cachedResource = new CachedResourceImpl<T>(resource, loadedResource, lastLoadTime);
         }
         
         return cachedResource;
@@ -273,10 +296,10 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
     
     private static class GetResourceArguments<T> {
         public final Resource resource;
-        public final ResourceBuilder<T> builder;
+        public final Loader<T> builder;
         public final ResourceLoaderOptions options;
 
-        public GetResourceArguments(Resource resource, ResourceBuilder<T> builder, ResourceLoaderOptions options) {
+        public GetResourceArguments(Resource resource, Loader<T> builder, ResourceLoaderOptions options) {
             this.resource = resource;
             this.builder = builder;
             this.options = options;

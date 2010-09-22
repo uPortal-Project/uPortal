@@ -20,28 +20,20 @@
 package org.jasig.portal.utils.cache.resource;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.springframework.core.io.Resource;
 
 /**
- * A utility for loading resources from files, URLs or similar locations and building/compiling a
- * domain object from the resource. The domain object is cached and automatically re-loaded if the
- * underlying {@link Resource} changes.
- * 
- * Clients should call {@link #getResource(Resource, Loader)} every time they need the 
- * object and rely on the {@link CachingResourceLoader} implementation to manage caching and reloading.
+ * Responsible for parsing the {@link Resource} into the specified object type.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface CachingResourceLoader {
+public interface Loader<T> {
     /**
-     * Same as {@link #getResource(Resource, Loader, ResourceLoaderOptions)} but uses the default configuration.
+     * Parse the given {@link InputStream} into the appropriate object. The original {@link Resource} is provided
+     * for context information but the InputStream it provides should not be used.
      */
-    public <T> CachedResource<T> getResource(Resource resource, Loader<T> builder) throws IOException;
-    
-    /**
-     * Get the {@link Resource} using the {@link Loader} to compile it if needed using the specified options.
-     */
-    public <T> CachedResource<T> getResource(Resource resource, Loader<T> builder, ResourceLoaderOptions options) throws IOException;
+    public LoadedResource<T> loadResource(Resource resource, InputStream stream) throws IOException;
 }
