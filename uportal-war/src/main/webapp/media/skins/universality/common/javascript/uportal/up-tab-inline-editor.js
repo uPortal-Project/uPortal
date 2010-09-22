@@ -18,11 +18,11 @@
  */
 
 /**
- * The TabInlineEditor component houses the tab renaming functionality. This
+ * The TabManger component houses the tab renaming functionality. This
  * component is a custom wrapper for the fluid simple text inline editor component.
- * The TabInlineEditor component is most likely a temporary solution as wrapping the
+ * The TabManger component is most likely a temporary solution as wrapping the
  * the fluid simple text inline editor component is somewhat overkill. As work continues
- * on enhancing uPortal's Tab management, the TabInlineEditor component will most likely
+ * on enhancing uPortal's Tab management, the TabManger component will most likely
  * be renamed to house forthcoming tab management features.
  * 
  * For more information on planned tab management options, please see the below url:
@@ -69,11 +69,11 @@ var up = up || {};
     
     /**
      * Initializes the fluid.inlineEditor component to be used with
-     * the current or active portal tab, as long as the current tab is editable.
+     * the active portal tab, as long as the active tab is editable.
      * 
-     * @param {Object} that- reference to an instance of the TabInlineEditor component.
+     * @param {Object} that- reference to an instance of the TabManger component.
      */
-    var initialize = function (that) {
+    var editTabHandler = function (that) {
         var edit, text, editorOptions;
         
         edit = that.locate("edit");
@@ -106,30 +106,66 @@ var up = up || {};
     };//end:function.
     
     /**
-     * Creator function for the TabInlineEditor component.
+     * Fires the onRemove event when the 'remove' icon is clicked. Passes a 
+     * reference to the onRemove listener.
+     * 
+     * @param {Object} that- reference to an instance of the TabManger component.
+     */
+    var removeTabHandler = function (that) {
+        var remove;
+        remove = that.locate("remove");
+        remove.bind("click", function () {
+            that.events.onRemove.fire(this);
+        });
+    };//end: function.
+    
+    /**
+     * Fires the onAdd event when the 'Add Tab' link is clicked. Passes new 
+     * tab configurations to the onAdd listener.
+     * 
+     * @param {Object} that- reference to an instance of the TabManger component.
+     */
+    var addTabHandler = function (that) {
+        var add;
+        add = that.locate("add");
+        add.bind("click", function () {
+            that.events.onAdd.fire(that.options.addTabLabel, that.options.addTabWidths);
+        });
+    };//end: function.
+    
+    /**
+     * Creator function for the TabManger component.
      * 
      * @param {Object} container - reference to HTML DOM element by ID.
      * @param {Object} options - reference to object containing all configurations.
      -------------------------------------------------------*/
-    up.TabInlineEditor = function (container, options) {
+    up.TabManager = function (container, options) {
         var that;
-        that = fluid.initView("up.TabInlineEditor", container, options);
+        that = fluid.initView("up.TabManager", container, options);
         
-        initialize(that);
+        editTabHandler(that);
+        removeTabHandler(that);
+        addTabHandler(that);
         return that;
     };//end:component.
     
     /**
-     * Defaults function for the TabInlineEditor component.
+     * Defaults function for the TabManger component.
      -------------------------------------------------------*/
-    fluid.defaults("up.TabInlineEditor", {
+    fluid.defaults("up.TabManager", {
         selectors: {
             text: ".flc-inlineEdit-text",
-            edit: ".flc-inlineEditable"
+            edit: ".flc-inlineEditable",
+            remove: ".portal-navigation-delete",
+            add: ".portal-navigation-add"
         },
-        listeners: {
-            afterFinishEdit: null
+        events: {
+            afterFinishEdit: null,
+            onRemove: null,
+            onAdd: null
         },
+        addTabLabel: "My Tab",
+        addTabWidths: [50, 50],
         submitOnEnter: true,
         selectOnEdit: true,
         lazyEditView: true

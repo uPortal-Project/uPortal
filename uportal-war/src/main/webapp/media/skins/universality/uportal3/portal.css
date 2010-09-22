@@ -193,7 +193,7 @@
 
 /* Navigation */
 .up #portalNavigation {background-color:#375695;}
-.up #portalNavigationInner {}
+.up #portalNavigationInner {position: relative;}
 .up #portalNavigation .fl-tabs,
 .up #portalNavigation .fl-tabs li,
 .up #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:transparent;}
@@ -209,6 +209,24 @@
 .up #portalNavigation .fl-tabs > li:focus a,
 .up #portalNavigation .fl-tabs > li a:hover,
 .up #portalNavigation .fl-tabs > li a:focus {background:#333;}
+
+/* Delete Tab Icon */
+.up #portalNavigation .fl-tabs .portal-navigation-delete {position: absolute; top: 6px; right: 2px; cursor: pointer; background: transparent url("images/remove.png") 0px 0px no-repeat;}
+.up #portalNavigation .fl-tabs .portal-navigation-delete:hover {background-position: 0px -16px;}
+.up #portalNavigation .fl-tabs .portal-navigation-delete,
+.up #portalNavigation .fl-tabs .portal-navigation-delete span {display: block; width: 16px; height: 16px; overflow: hidden;}
+.up #portalNavigation .fl-tabs .portal-navigation-delete span {visibility: hidden;}
+
+/* Gripper Tab Icon */
+.up #portalNavigation .fl-tabs .portal-navigation-gripper {position: absolute; top: 0px; left: 0px; cursor: move; background: transparent url("images/gripper.png") 0px 0px no-repeat;}
+.up #portalNavigation .fl-tabs .portal-navigation-gripper,
+.up #portalNavigation .fl-tabs .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
+.up #portalNavigation .fl-tabs .portal-navigation-gripper span {visibility: hidden;}
+
+/* Add Tab Icon */
+.up #portalNavigation .portal-navigation-add {display: block; height:16px; overflow: hidden; position: absolute; top: 6px; right: 2em; text-decoration: none; text-transform: capitalize; color: #FFF; font-weight: bold;
+    background: transparent url("images/add.png") 0px 0px no-repeat; padding:0px 0px 0px 16px;}
+.up #portalNavigation .portal-navigation-add:hover {background-position: 0px -16px;}
 
 /* Flyout Navigation */
 .up #portalNavigation .portal-flyout-container {

@@ -398,11 +398,39 @@ var uportal = uportal || {};
             }
         );
         
-        // Tab inline editor.
-        that.components.tabEditor = up.TabInlineEditor("#portalNavigationList", {
+        // Tab manager.
+        that.components.tabManager = up.TabManager("#portalNavigation", {
             listeners: {
                 afterFinishEdit: function (newValue, oldValue, editNode, viewNode) {
                     that.persistence.update({action: 'renameTab', tabId: getActiveTabId(), tabName: newValue});
+                },
+                onRemove: function (anchor) {
+                    if (!confirm(that.options.messages.confirmRemoveTab)) return false;
+                    
+                    var li, id
+                    li = anchor.parentNode;
+                    id = up.defaultNodeIdExtractor(li);
+                    that.persistence.update(
+                        {
+                            action: 'removeElement',
+                            elementID: id
+                        },
+                        function(data) {
+                            window.location =  that.urlProvider.options.portalContext + "?uP_root=root&uP_sparam=activeTab&activeTab=1";
+                        }
+                    );
+                },
+                onAdd: function (tabLabel, tabWidths) {
+                    that.persistence.update(
+                        {
+                            action: "addTab",
+                            tabName: tabLabel,
+                            widths: tabWidths
+                        },
+                        function (data) {
+                            window.location = that.urlProvider.getTabUrl(data.tabId);
+                        }
+                    );
                 }
             }
         });
