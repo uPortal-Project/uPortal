@@ -689,6 +689,14 @@ public class UpdatePreferencesServlet implements InitializingBean {
                 log.error("Error saving new column widths", e);
             }
             count++;
+            
+        }
+
+        try {
+            // save the user's layout
+            saveLayout(per, ulm, upm, ssup);
+        } catch (Exception e) {
+            log.warn("Error saving layout", e);
         }
 
 		return new ModelAndView("jsonView", Collections.singletonMap("tabId", tabId));
@@ -822,86 +830,6 @@ public class UpdatePreferencesServlet implements InitializingBean {
     
     }
 
-    protected List<String> updateColumns(String tabId, String[] widths, String acceptor, String[] deleted, IPerson per, UserPreferencesManager upm, IUserLayoutManager ulm) throws IOException, PortalException {
-
-        int columnNumber = widths.length;
-        @SuppressWarnings("unchecked")
-        Enumeration columns = ulm.getChildIds(tabId);
-        List<String> columnList = new ArrayList<String>();
-        while (columns.hasMoreElements()) {
-            columnList.add((String) columns.nextElement());
-        }
-        List<String> newColumns = new ArrayList<String>();
-        
-        if (columnList.size() != widths.length + deleted.length) {
-            // TODO: error
-        }
-
-        if (columnNumber > columnList.size()) {
-            for (int i = columnList.size(); i < columnNumber; i++) {
-
-                // create new column element
-                IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
-                newColumn.setName("Column");
-                newColumn.setId("tbd");
-                newColumn
-                        .setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
-                newColumn.setHidden(false);
-                newColumn.setUnremovable(false);
-                newColumn.setImmutable(false);
-
-                // add the column to our layout
-                IUserLayoutNodeDescription node = ulm.addNode(newColumn, tabId,
-                        null);
-                newColumns.add(node.getId());
-
-            }
-        } else if (columnNumber < columnList.size()) {
-            
-            for (String columnId : columnList) {
-                if (Arrays.binarySearch(deleted, columnId) < 0) {
-                    // move all channels in the current column to the last valid column
-                    @SuppressWarnings("unchecked")
-                    Enumeration channels = ulm.getChildIds(columnId);
-                    while (channels.hasMoreElements()) {
-                        ulm.addNode(ulm.getNode((String) channels.nextElement()),
-                                acceptor, null);
-                    }
-
-                    // delete the column from the user's layout
-                    ulm.deleteNode(columnId);                    
-                }
-            }
-
-        }
-
-        int count = 0;
-        columns = ulm.getChildIds(tabId);
-        StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
-            .getStructureStylesheetUserPreferences();
-        
-        while (columns.hasMoreElements()) {
-            String columnId = (String) columns.nextElement();
-            ssup.setFolderAttributeValue(columnId, "width", widths[count] + "%");
-            Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
-            try {
-                // This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
-                UserPrefsHandler.setUserPreference(folder, "width", per);
-            } catch (Exception e) {
-                log.error("Error saving new column widths", e);
-            }
-            count++;
-        }
-
-        try {
-            saveLayout(per, ulm, upm, ssup);
-        } catch (Exception e) {
-            log.warn("Error saving layout", e);
-        }
-
-        return newColumns;
-
-    }
 	/**
 	 * Save the user's layout while preserving the current in-storage default
 	 * tab.
