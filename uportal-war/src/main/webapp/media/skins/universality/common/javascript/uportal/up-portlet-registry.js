@@ -51,9 +51,10 @@ var up = up || {};
             description: json.description,
             fname: json.fname,
             title: json.title,
+            name: json.name,
             state: json.state,
             type: json.typeId,
-            parameters: json.parameters
+            iconUrl: json.iconUrl
         };
     };
     

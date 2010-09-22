@@ -20,173 +20,92 @@
 package org.jasig.portal.layout.dlm.remoting.registry;
 
 import java.io.Serializable;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public class ChannelBean implements Comparable, Serializable {
-	
-	private int id;
-	private String javaClass;
-	private String description;
-	private boolean editable;
-	private String fname;
-	private boolean hasAbout;
-	private boolean hasHelp;
-	private boolean isPortlet;
-	private String locale;
-	private String name;
-	private boolean secure;
-	private int timeout;
-	private String state;
-	private String title;
-	private int typeId;
-   	private SortedSet<ChannelParameterBean> parameters = new TreeSet<ChannelParameterBean>();
-   	
-   	public ChannelBean() { }
+public class ChannelBean implements Comparable<ChannelBean>, Serializable {
 
-	public void addParameter(ChannelParameterBean parameter) {
-		this.parameters.add(parameter);
-	}
+    private int id;
+    private String description;
+    private String fname;
+    private String name;
+    private String state;
+    private String title;
+    private int typeId;
+    private String iconUrl;
 
-	public int getId() {
-		return this.id;
-	}
+    public ChannelBean() {
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getJavaClass() {
-		return this.javaClass;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setJavaClass(String javaClass) {
-		this.javaClass = javaClass;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getDescription() {
-		return this.description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getFname() {
+        return fname;
+    }
 
-	public boolean isEditable() {
-		return this.editable;
-	}
+    public void setFname(String fname) {
+        this.fname = fname;
+    }
 
-	public void setEditable(boolean editable) {
-		this.editable = editable;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getFname() {
-		return this.fname;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setFname(String fname) {
-		this.fname = fname;
-	}
+    public String getState() {
+        return state;
+    }
 
-	public boolean isHasAbout() {
-		return this.hasAbout;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public void setHasAbout(boolean hasAbout) {
-		this.hasAbout = hasAbout;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public boolean isHasHelp() {
-		return this.hasHelp;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public void setHasHelp(boolean hasHelp) {
-		this.hasHelp = hasHelp;
-	}
+    public int getTypeId() {
+        return typeId;
+    }
 
-	public boolean isPortlet() {
-		return this.isPortlet;
-	}
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
+    }
 
-	public void setPortlet(boolean isPortlet) {
-		this.isPortlet = isPortlet;
-	}
+    public String getIconUrl() {
+        return iconUrl;
+    }
 
-	public String getLocale() {
-		return this.locale;
-	}
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
 
-	public void setLocale(String locale) {
-		this.locale = locale;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public boolean isSecure() {
-		return this.secure;
-	}
-
-	public void setSecure(boolean secure) {
-		this.secure = secure;
-	}
-
-	public int getTimeout() {
-		return this.timeout;
-	}
-
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
-	}
-
-	public String getState() {
-		return this.state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getTitle() {
-		return this.title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public int getTypeId() {
-		return this.typeId;
-	}
-
-	public void setTypeId(int typeId) {
-		this.typeId = typeId;
-	}
-	
-	public SortedSet<ChannelParameterBean> getParameters() {
-	    return this.parameters;
-	}
-
-    public int compareTo(Object object) {
-        if (object == this) {
-            return 0;
-        }
-        if (!(object instanceof ChannelBean)) {
-            throw new IllegalArgumentException("Argument is not a ChannelParameterBean");
-        }
-        ChannelBean rhs = (ChannelBean) object;
-        return new CompareToBuilder()
-            .append(this.id, rhs.getId())
-            .toComparison();
+    public int compareTo(ChannelBean channel) {
+        return new CompareToBuilder().append(this.id, channel.getId())
+                .toComparison();
     }
 
     /**
@@ -201,9 +120,7 @@ public class ChannelBean implements Comparable, Serializable {
             return false;
         }
         ChannelBean rhs = (ChannelBean) object;
-        return new EqualsBuilder()
-            .append(this.id, rhs.getId())
-            .isEquals();
+        return new EqualsBuilder().append(this.id, rhs.getId()).isEquals();
     }
 
     /**
@@ -211,9 +128,8 @@ public class ChannelBean implements Comparable, Serializable {
      */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(464270933, -1074792143)
-            .append(this.id)
-            .toHashCode();
+        return new HashCodeBuilder(464270933, -1074792143).append(this.id)
+                .toHashCode();
     }
 
 }

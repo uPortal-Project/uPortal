@@ -510,7 +510,6 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .portlet-wrapper:hover a {display:block;}
 .up-gallery .portlet-wrapper img {width:37px; height:37px; float:left; margin-right:5px; margin-bottom:5px;}
 /* temporary icon */
-.up-gallery .portlet-wrapper img {background:transparent url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png) 0 0 no-repeat;}
 .up-gallery .results-wrapper .package-list {list-style:none; padding:0; margin:0; position:relative;}
 .up-gallery .results-wrapper .package-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:25%; height:50%;}
 .up-gallery .results-wrapper .package-list li .package-wrapper {height:66px; padding:5px; margin:5px 5px 0 0; overflow:hidden; position:relative;}

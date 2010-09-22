@@ -28,7 +28,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.portal.ChannelCategory;
 
-public class ChannelCategoryBean implements Comparable, Serializable {
+public class ChannelCategoryBean implements Comparable<ChannelCategoryBean>, Serializable {
 	
 	private String id;
    	private String name;
@@ -97,16 +97,9 @@ public class ChannelCategoryBean implements Comparable, Serializable {
 		this.channels = channels;
 	}
 
-    public int compareTo(Object object) {
-        if (object == this) {
-            return 0;
-        }
-        if (!(object instanceof ChannelCategoryBean)) {
-            throw new IllegalArgumentException("Argument is not a ChannelCategoryBean");
-        }
-        ChannelCategoryBean rhs = (ChannelCategoryBean) object;
+    public int compareTo(ChannelCategoryBean category) {
         return new CompareToBuilder()
-            .append(this.id, rhs.getId())
+            .append(this.id, category.getId())
             .toComparison();
     }
 

@@ -253,12 +253,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     portlets.push(portlet);
                 }
             });
-            portlets.sort(up.getStringPropertySortFunction("title"));
+            portlets.sort(up.getStringPropertySortFunction("name"));
 
             var options = {
                 dataModel: portlets,
                 columnDefs: [
-                    { key: "name", valuebinding: "*.title", sortable: true },
+                    { key: "name", valuebinding: "*.name", sortable: true },
                     { key: "type", valuebinding: "*.type", sortable: true,
                         components: function(row) {
                                 return { value: channelTypes[row.type] };
@@ -306,11 +306,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 portlets = [];
                 var members = overallThat.state.currentCategory ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
                 $(members).each(function(idx, portlet){
-                    if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.title) || overallThat.state.portletRegex.test(portlet.description)) {
+                    if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.name) || overallThat.state.portletRegex.test(portlet.description)) {
                         portlets.push(portlet);
                     }
                 });
-                portlets.sort(up.getStringPropertySortFunction("title"));
+                portlets.sort(up.getStringPropertySortFunction("name"));
                 up.refreshPager(that.state.pager, portlets);
             };
 

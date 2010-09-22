@@ -131,12 +131,8 @@ var up = up || {};
             members = (overallThat.state.currentCategory && overallThat.state.currentCategory !== "") ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
             $(members).each(function (idx, portlet) {
                 if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.title) || overallThat.state.portletRegex.test(portlet.description)) {
-                    for (var i = 0; i < portlet.parameters.length; i++) {
-                        var parameter = portlet.parameters[i];
-                        if (parameter.name === "iconUrl") {
-                            portlet.iconUrl = parameter.value;
-                            break;
-                        }
+                    if (!portlet.iconUrl) {
+                        portlet.iconUrl = that.options.defaultIconUrl;
                     }
                     portlets.push(portlet);
                 }
@@ -209,6 +205,10 @@ var up = up || {};
         that.refresh();
         return that;
     };
+
+    fluid.defaults("up.AjaxLayoutPortletListView", {
+        defaultIconUrl: "/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png"
+    });
 
     up.BrowseContentPane = function (container, overallThat, options) {
         

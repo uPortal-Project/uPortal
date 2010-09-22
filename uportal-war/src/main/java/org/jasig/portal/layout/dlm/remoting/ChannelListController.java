@@ -173,26 +173,17 @@ public class ChannelListController {
 	private ChannelBean getChannel(IChannelDefinition definition, WebRequest request) {
 	    ChannelBean channel = new ChannelBean();
 	    channel.setId(definition.getId());
-        channel.setJavaClass(definition.getJavaClass());
         channel.setDescription(definition.getDescription());
-        channel.setEditable(definition.isEditable());
         channel.setFname(definition.getFName());
-        channel.setHasAbout(definition.hasAbout());
-        channel.setHasHelp(definition.hasHelp());
-        channel.setPortlet(definition.isPortlet());
-        channel.setLocale(definition.getLocale());
         channel.setName(definition.getName());
-        channel.setSecure(definition.isSecure());
-        channel.setTimeout(definition.getTimeout());
         channel.setState(definition.getLifecycleState().toString());
         channel.setTitle(definition.getTitle());
         channel.setTypeId(definition.getType().getId());
 	        
-        for (IChannelParameter param : definition.getParameters()) {
-            ChannelParameterBean parameter = new ChannelParameterBean(param
-                    .getName(), spELService.parseString(param.getValue(),
-                    request), param.getDescription(), param.getOverride());
-            channel.addParameter(parameter);
+        IChannelParameter iconParameter = definition.getParameter("iconUrl");
+        if (iconParameter != null) {
+            String iconUrl = spELService.parseString(iconParameter.getValue(), request);
+            channel.setIconUrl(iconUrl);
         }
 
         return channel;
