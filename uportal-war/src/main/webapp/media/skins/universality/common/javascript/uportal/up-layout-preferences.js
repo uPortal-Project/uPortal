@@ -270,7 +270,7 @@ var uportal = uportal || {};
                                         
                                         that.persistence.update(options,
                                            function(data) {
-                                              window.location = that.options.pageUrl; 
+                                              window.location = that.urlProvider.getTabUrl(getActiveTabId());
                                            }
                                         );
                                     }
@@ -357,7 +357,7 @@ var uportal = uportal || {};
                                             that.persistence.update(
                                                 { action: 'chooseSkin', skinName: skin.key }, 
                                                 function (data) {
-                                                    window.location = that.options.pageUrl;
+                                                    window.location = that.urlProvider.getTabUrl(getActiveTabId());
                                                 }
                                             );
                                         }
@@ -416,16 +416,16 @@ var uportal = uportal || {};
                             elementID: id
                         },
                         function(data) {
-                            window.location =  that.urlProvider.options.portalContext + "?uP_root=root&uP_sparam=activeTab&activeTab=1";
+                            window.location =  that.urlProvider.getPortalHomeUrl();
                         }
                     );
                 },
-                onAdd: function (tabLabel, tabWidths) {
+                onAdd: function (tabLabel, columns) {
                     that.persistence.update(
                         {
                             action: "addTab",
                             tabName: tabLabel,
-                            widths: tabWidths
+                            widths: columns
                         },
                         function (data) {
                             window.location = that.urlProvider.getTabUrl(data.tabId);
@@ -484,7 +484,6 @@ var uportal = uportal || {};
     // defaults
     fluid.defaults("up.LayoutPreferences", {
         portalContext: "/uPortal",
-        pageUrl: null,
         layoutPersistenceUrl: '/uPortal/mvc/layout',
         channelRegistryUrl: '/uPortal/mvc/channelList',
         subscribableTabUrl: '/uPortal/mvc/tabList',

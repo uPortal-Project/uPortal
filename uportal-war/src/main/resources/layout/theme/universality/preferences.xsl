@@ -524,7 +524,6 @@
           up.LayoutPreferences(
             "body",
             {
-              pageUrl: '<xsl:call-template name="portalUrl"/>',
               portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
               mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
               currentSkin: '<xsl:value-of select="$SKIN"/>',

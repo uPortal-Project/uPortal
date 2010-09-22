@@ -41,6 +41,10 @@ var uportal = uportal || {};
             return that.options.portalContext + "/f/" + tabId;
         };
         
+        that.getPortalHomeUrl = function () {
+            return that.options.portalContext + "/";
+        };
+        
         return that;
     };
 
