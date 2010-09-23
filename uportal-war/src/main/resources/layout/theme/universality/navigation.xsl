@@ -217,14 +217,16 @@
             <xsl:with-param name="folderId" select="@ID" />
           </xsl:call-template>
       </xsl:variable>
-      <xsl:if test="$AUTHENTICATED='true' and not(@dlm:moveAllowed='false') and @activeTab='true'">
-          <a href="javascript:;" class="portal-navigation-gripper" title="{$TOKEN[@name='MOVE_TAB_LONG_LABEL']}"><span><xsl:value-of select="$TOKEN[@name='MOVE_TAB_LABEL']"/></span></a> <!-- Drag & drop gripper handle. -->
-      </xsl:if>
       <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}"><xsl:value-of select="@name"/></span>
       </a>
-      <xsl:if test="$AUTHENTICATED='true' and not(@dlm:deleteAllowed='false') and @activeTab='true'">
-        <a href="javascript:;" class="portal-navigation-delete" title="{$TOKEN[@name='DELETE_TAB_LONG_LABEL']}"><span><xsl:value-of select="$TOKEN[@name='DELETE_TAB_LABEL']"/></span></a><!-- Remove tab icon. -->
+      <xsl:if test="$NAV_POSITION != 'single'">
+          <xsl:if test="$AUTHENTICATED='true' and not(@dlm:moveAllowed='false') and @activeTab='true'">
+            <a href="javascript:;" class="portal-navigation-gripper" title="{$TOKEN[@name='MOVE_TAB_LONG_LABEL']}"><span><xsl:value-of select="$TOKEN[@name='MOVE_TAB_LABEL']"/></span></a> <!-- Drag & drop gripper handle. -->
+          </xsl:if>
+          <xsl:if test="$AUTHENTICATED='true' and not(@dlm:deleteAllowed='false') and @activeTab='true'">
+            <a href="javascript:;" class="portal-navigation-delete" title="{$TOKEN[@name='DELETE_TAB_LONG_LABEL']}"><span><xsl:value-of select="$TOKEN[@name='DELETE_TAB_LABEL']"/></span></a><!-- Remove tab icon. -->
+          </xsl:if>
       </xsl:if>
       <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
         <xsl:call-template name="subnavigation">
