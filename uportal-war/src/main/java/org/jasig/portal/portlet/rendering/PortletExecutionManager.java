@@ -38,6 +38,7 @@ import javax.persistence.PersistenceException;
 import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -84,10 +85,13 @@ import org.springframework.web.context.request.RequestContextHolder;
 public class PortletExecutionManager implements EventCoordinationService, ApplicationEventPublisherAware, IPortletExecutionManager {
     private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
     
+    protected static final String SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP = PortletExecutionManager.class.getName() + ".PORTLET_FAILURE_CAUSE_MAP";
+    
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private ApplicationEventPublisher applicationEventPublisher;
     
+    private String errorPortletFname;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private ExecutorService portletThreadPool;
@@ -125,7 +129,21 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         this.entityManagerFactory = entityManagerFactory;
     }
 
-    @Override
+    /**
+	 * @return the errorPortletFname
+	 */
+	public String getErrorPortletFname() {
+		return errorPortletFname;
+	}
+
+	/**
+	 * @param errorPortletFname the errorPortletFname to set
+	 */
+	public void setErrorPortletFname(String errorPortletFname) {
+		this.errorPortletFname = errorPortletFname;
+	}
+
+	@Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
@@ -153,11 +171,15 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
          * TODO an action will include generated event handling, need to make sure we don't timeout portlets whos actions have completed
          * but are waiting on event handlers to complete
          */
-        final Long actualExecutionTime = portletActionExecutionWorker.get(timeout);
-        
-        //TODO publish portlet action event
-        
-        //TODO on error redirect to appropriate render URL
+        try {
+			final Long actualExecutionTime = portletActionExecutionWorker.get(timeout);
+			 //TODO publish portlet action event
+		} catch (Exception e) {
+			// put the exception into the error map for the session
+	    	HttpSession session = request.getSession();
+	    	Map<IPortletWindowId, Exception> portletFailureMap = safeRetrieveErrorMapFromSession(session);
+			portletFailureMap.put(portletWindowId, e);
+		}
     }
     
     /* (non-Javadoc)
@@ -252,14 +274,56 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      */
     @Override
     public String getPortletOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final PortletRenderExecutionWorker tracker = getRenderedPortlet(portletWindowId, request, response);
+    	final PortletRenderExecutionWorker tracker = getRenderedPortlet(portletWindowId, request, response);
         final int timeout = getPortletRenderTimeout(portletWindowId, request);
 
-        final PortletRenderResult portletRenderResult = tracker.get(timeout);
-        //TODO publish portlet render event - should actually be published from the portlet renderer impl
-
-        final String output = tracker.getOutput();
-        return output != null ? output : "";
+		try {
+			final PortletRenderResult portletRenderResult = tracker.get(timeout);
+			 //TODO publish portlet render event - should actually be published from the portlet renderer impl
+			final String output = tracker.getOutput();
+			return output == null ? "" : output;
+		} catch (Exception e) {
+			return getErrorPortletOutput(portletWindowId, e, request, response);
+		}
+    }
+    
+    /**
+     * Null safe means for retrieving the {@link Map} from the specified session
+     * keyed by {@link #SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP}.
+     * 
+     * @param session
+     * @return a never null {@link Map} in the session for storing portlet failure causes.
+     */
+    protected Map<IPortletWindowId, Exception> safeRetrieveErrorMapFromSession(HttpSession session) {
+    	Map<IPortletWindowId, Exception> portletFailureMap = (Map<IPortletWindowId, Exception>) session.getAttribute("portletErrorMap");
+    	if(portletFailureMap == null) {
+    		portletFailureMap = new ConcurrentHashMap<IPortletWindowId, Exception>();
+			session.setAttribute(SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP, portletFailureMap);
+    	}
+    	return portletFailureMap;
+    }
+    /**
+     * 
+     * @param failedPortletWindowId
+     * @param request
+     * @param response
+     * @return
+     */
+    protected String getErrorPortletOutput(IPortletWindowId failedPortletWindowId, Exception cause, HttpServletRequest request, HttpServletResponse response) {
+    	// place the cause in the session attached to the failed portletWindowId
+    	HttpSession session = request.getSession();
+    	Map<IPortletWindowId, Exception> portletFailureMap = safeRetrieveErrorMapFromSession(session);
+		portletFailureMap.put(failedPortletWindowId, cause);
+		
+		// dispatch to the error portlet and capture the output
+    	IPortletWindowId errorPortletWindowId = this.portletWindowRegistry.getPortletWindowId(errorPortletFname);
+    	final StringWriter writer = new StringWriter();
+    	this.portletRenderer.doRender(errorPortletWindowId, request, response, writer);
+    	
+    	// once we've grabbed the output, remove the throwable from the session map
+    	portletFailureMap.remove(failedPortletWindowId);
+    	
+    	return writer.toString();
     }
     
     /* (non-Javadoc)
@@ -292,14 +356,23 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     public String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
         final PortletRenderExecutionWorker tracker = getRenderedPortlet(portletWindowId, request, response);
         final int timeout = getPortletRenderTimeout(portletWindowId, request);
-        final PortletRenderResult portletRenderResult = tracker.get(timeout);
         
-        if (portletRenderResult == null) {
-            return "";
-        }
-        
-        final String title = portletRenderResult.getTitle();
-        return title != null ? title : "";
+		try {
+			PortletRenderResult portletRenderResult = tracker.get(timeout);
+			if (portletRenderResult == null) {
+	            return "";
+	        }
+	        
+	        final String title = portletRenderResult.getTitle();
+	        return title != null ? title : "";
+		} catch (Exception e) {
+			logger.warn("unable to get portlet title, falling back to title defined in channel definition for portletWindowId " + portletWindowId);
+			// return portlet title from channel definition
+			final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
+            final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
+            final IChannelDefinition channelDefinition = parentPortletDefinition.getChannelDefinition();
+			return channelDefinition.getTitle();
+		}   
     }
 
     protected IPortletWindow getDefaultPortletWindow(String subscribeId, HttpServletRequest request) {
@@ -370,9 +443,21 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      * create and submit the rendering job to the thread pool
      */
     protected PortletRenderExecutionWorker startPortletRenderInternal(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final PortletRenderExecutionWorker portletRenderExecutionWorker = new PortletRenderExecutionWorker(this.portletThreadPool, portletWindowId, request, response);
-        portletRenderExecutionWorker.submit();
-        
+    	// first check to see if there is a Throwable in the session for this IPortletWindowId
+    	HttpSession session = request.getSession();
+    	Map<IPortletWindowId, Exception> portletFailureMap = safeRetrieveErrorMapFromSession(session);
+    	Exception cause = portletFailureMap.remove(portletWindowId);
+    	
+    	final PortletRenderExecutionWorker portletRenderExecutionWorker;
+    	if(null != cause) {
+    		// previous action failed, dispatch to errorPortlet immediately and return a dummy worker that already has it's output
+    		String errorOutput = getErrorPortletOutput(portletWindowId, cause, request, response);
+    		portletRenderExecutionWorker = new PortletFailureExecutionWorker(this.portletThreadPool, portletWindowId, request, response, cause, errorOutput);
+    	} else {
+    		portletRenderExecutionWorker = new PortletRenderExecutionWorker(this.portletThreadPool, portletWindowId, request, response);
+            portletRenderExecutionWorker.submit();
+    	}
+    	
         final Map<IPortletWindowId, PortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
         portletRenderingMap.put(portletWindowId, portletRenderExecutionWorker);
         
@@ -517,7 +602,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
             return this.started;
         }
         
-        public V get(long timeout) {
+        public V get(long timeout) throws Exception {
             try {
                 //TODO we probably don't want to wait here forever for the worker to start, what is a reasonable wait time?
                 final long startTime = this.waitForStart();
@@ -527,13 +612,15 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
                 // TODO ErrorPortlet handling an unhandled exception from the portlet
                 this.logger.warn("Execution failed on portlet " + this.portletWindowId, e);
 //                throw new RuntimeException("Portlet window id " + this.portletWindowId + " failed execution due to an exception.", e);
-                return null;
+                //return null;
+                throw e;
             }
             catch (ExecutionException e) {
                 // TODO ErrorPortlet handling an unhandled exception from the portlet
                 this.logger.warn("Execution failed on portlet " + this.portletWindowId, e);
 //                throw new RuntimeException("Portlet window id " + this.portletWindowId + " failed execution due to an exception.", e);
-                return null;
+                //return null;
+                throw e;
             }
             catch (TimeoutException e) {
                 // TODO ErrorPortlet handling a timeout from the portlet
@@ -548,7 +635,8 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
                 this.logger.warn("Execution failed on portlet " + this.portletWindowId, e);
                 this.future.cancel(true);
 //                throw new RuntimeException("Portlet window id " + this.portletWindowId + " failed execution due to timeout.", e);
-                return null;
+                //return null;
+                throw e;
             }
         }
         
@@ -642,5 +730,36 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         public String getOutput() {
             return this.output;
         }
+    }
+    
+    private class PortletFailureExecutionWorker extends PortletRenderExecutionWorker {
+    	
+		private final Exception cause;
+		private String errorOutput;
+    	
+    	public PortletFailureExecutionWorker(ExecutorService executorService,
+				IPortletWindowId portletWindowId, HttpServletRequest request,
+				HttpServletResponse response, Exception cause, String errorOutput) {
+			super(executorService, portletWindowId, request, response);
+			this.cause = cause;
+			this.errorOutput = errorOutput;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.jasig.portal.portlet.rendering.PortletExecutionManager.PortletExecutionWorker#callInternal()
+		 */
+		@Override
+		protected PortletRenderResult callInternal() throws Exception {
+			throw cause;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.jasig.portal.portlet.rendering.PortletExecutionManager.PortletRenderExecutionWorker#getOutput()
+		 */
+		@Override
+		public String getOutput() {
+			return this.errorOutput;
+		}
+		
     }
 }
