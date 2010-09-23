@@ -62,14 +62,14 @@
         <div id="portalNavigation">
         	<div id="portalNavigationInner" class="{$CONTEXT}">
           	<a name="mainNavigation" class="skip-link" title="Reference anchor: main nagivation"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
-            <ul id="portalNavigationList" class="fl-tabs">
+            <ul id="portalNavigationList" class="fl-tabs flc-reorderer-column">
               <xsl:apply-templates select="tab">
                 <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
               </xsl:apply-templates>
               <xsl:call-template name="add.tab"/>
             </ul>
             
-          	<xsl:if test="$USE_SUBNAVIGATION_ROW='true'">
+            <xsl:if test="$USE_SUBNAVIGATION_ROW='true'">
               <div id="portalNavigationSubrow" class="fl-tab-content">
                 <xsl:call-template name="subnavigation">
                   <xsl:with-param name="CONTEXT" select="'subnav'"/>
@@ -77,7 +77,9 @@
                 </xsl:call-template>
               </div>
             </xsl:if>
-            <a href="javascript:;" title="{$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']}" class="portal-navigation-add"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']"/></a>
+            <xsl:if test="$AUTHENTICATED='true'">
+                <a href="javascript:;" title="{$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']}" class="portal-navigation-add"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']"/></a>
+            </xsl:if>
           </div>
         </div>
       
@@ -136,7 +138,7 @@
     <xsl:variable name="NAV_MOVABLE"> <!-- Determine whether the navigation tab is movable and add a css hook. -->
       <xsl:choose>
         <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when>
-        <xsl:otherwise></xsl:otherwise>
+        <xsl:otherwise>locked</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <xsl:variable name="NAV_DELETABLE">
@@ -216,13 +218,13 @@
           </xsl:call-template>
       </xsl:variable>
       <xsl:if test="$AUTHENTICATED='true' and not(@dlm:moveAllowed='false') and @activeTab='true'">
-          <span class="portal-navigation-gripper" title="{$TOKEN[@name='MOVE_TAB_LONG_LABEL']}" role="link"><span><xsl:value-of select="$TOKEN[@name='MOVE_TAB_LABEL']"/></span></span> <!-- Drag & drop gripper handle. -->
+          <a href="javascript:;" class="portal-navigation-gripper" title="{$TOKEN[@name='MOVE_TAB_LONG_LABEL']}"><span><xsl:value-of select="$TOKEN[@name='MOVE_TAB_LABEL']"/></span></a> <!-- Drag & drop gripper handle. -->
       </xsl:if>
       <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}"><xsl:value-of select="@name"/></span>
       </a>
       <xsl:if test="$AUTHENTICATED='true' and not(@dlm:deleteAllowed='false') and @activeTab='true'">
-        <span class="portal-navigation-delete" title="{$TOKEN[@name='DELETE_TAB_LONG_LABEL']}" role="link"><span><xsl:value-of select="$TOKEN[@name='DELETE_TAB_LABEL']"/></span></span><!-- Remove tab icon. -->
+        <a href="javascript:;" class="portal-navigation-delete" title="{$TOKEN[@name='DELETE_TAB_LONG_LABEL']}"><span><xsl:value-of select="$TOKEN[@name='DELETE_TAB_LABEL']"/></span></a><!-- Remove tab icon. -->
       </xsl:if>
       <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
         <xsl:call-template name="subnavigation">
