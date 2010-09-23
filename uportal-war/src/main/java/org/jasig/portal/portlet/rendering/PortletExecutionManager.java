@@ -45,12 +45,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.EventCoordinationService;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletWindow;
+import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.registry.NotAPortletException;
@@ -71,6 +74,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.util.WebUtils;
 
 /**
  * requests always end up targeting a portlet window
@@ -86,12 +90,15 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
     
     protected static final String SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP = PortletExecutionManager.class.getName() + ".PORTLET_FAILURE_CAUSE_MAP";
+    public static final String REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID = PortletExecutionManager.class.getName() + ".CURRENT_FAILED_PORTLET_WINDOW_ID";
+    public static final String REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE = PortletExecutionManager.class.getName() + ".CURRENT_EXCEPTION_CAUSE";
+    public static final String DEFAULT_ERROR_PORTLET_FNAME = "error";
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private ApplicationEventPublisher applicationEventPublisher;
     
-    private String errorPortletFname;
+    private String errorPortletFname = DEFAULT_ERROR_PORTLET_FNAME;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private ExecutorService portletThreadPool;
@@ -129,7 +136,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         this.entityManagerFactory = entityManagerFactory;
     }
 
-    /**
+	/**
 	 * @return the errorPortletFname
 	 */
 	public String getErrorPortletFname() {
@@ -294,13 +301,18 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      * @param session
      * @return a never null {@link Map} in the session for storing portlet failure causes.
      */
-    protected Map<IPortletWindowId, Exception> safeRetrieveErrorMapFromSession(HttpSession session) {
-    	Map<IPortletWindowId, Exception> portletFailureMap = (Map<IPortletWindowId, Exception>) session.getAttribute("portletErrorMap");
-    	if(portletFailureMap == null) {
-    		portletFailureMap = new ConcurrentHashMap<IPortletWindowId, Exception>();
-			session.setAttribute(SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP, portletFailureMap);
+    @SuppressWarnings("unchecked")
+	protected Map<IPortletWindowId, Exception> safeRetrieveErrorMapFromSession(HttpSession session) {
+    	Object mutex = WebUtils.getSessionMutex(session);
+    	synchronized(mutex) {
+    		Map<IPortletWindowId, Exception> portletFailureMap = (Map<IPortletWindowId, Exception>) session.getAttribute("portletErrorMap");
+    		if(portletFailureMap == null) {
+    			portletFailureMap = new ConcurrentHashMap<IPortletWindowId, Exception>();
+    			session.setAttribute(SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP, portletFailureMap);
+    		}
+    		return portletFailureMap;
     	}
-    	return portletFailureMap;
+    	
     }
     /**
      * 
@@ -315,9 +327,20 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     	Map<IPortletWindowId, Exception> portletFailureMap = safeRetrieveErrorMapFromSession(session);
 		portletFailureMap.put(failedPortletWindowId, cause);
 		
-		// dispatch to the error portlet and capture the output
-    	IPortletWindowId errorPortletWindowId = this.portletWindowRegistry.getPortletWindowId(errorPortletFname);
+		// BEGIN code block required to find the IPortletWindowId for the portlet with this.errorPortletFname
+		final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+		final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        final String errorPortletSubscribeId = userLayoutManager.getSubscribeId(this.errorPortletFname);
+		IPortletEntity errorPortletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, errorPortletSubscribeId);
+		final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, errorPortletEntity.getPortletEntityId());
+    	IPortletWindowId errorPortletWindowId = portletWindow.getPortletWindowId();
+    	// END code block required to find the IPortletWindowId for the portlet with this.errorPortletFname
+    	
+    	// dispatch to the error portlet and capture the output
     	final StringWriter writer = new StringWriter();
+    	request.setAttribute(REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID, errorPortletWindowId);
+    	request.setAttribute(REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE, cause);
     	this.portletRenderer.doRender(errorPortletWindowId, request, response, writer);
     	
     	// once we've grabbed the output, remove the throwable from the session map
