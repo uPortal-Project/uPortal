@@ -57,7 +57,7 @@
             settings.pagePermissionsManager = uportal.FragmentPermissionsManager(".edit-page-permissions-dialog", {
                 savePermissionsUrl: settings.preferencesUrl,
                 elementExtractor: function(that, link){
-                    return $(link).parents(".portal-navigation:first"); 
+                    return $("#portalNavigationList li.active"); 
                 },
                 titleExtractor: function(element){ return "tab"; },
                 selectors: {

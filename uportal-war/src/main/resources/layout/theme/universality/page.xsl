@@ -135,6 +135,9 @@
                 <xsl:if test="not(//focused)">
                     <xsl:call-template name="gallery"/>
                 </xsl:if>
+                <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+                    <p id="editPagePermissionsLink" style="text-align:right; margin-top: 10px;"><a href="javascript:;">Edit Page Permissions</a></p>
+                </xsl:if>
                 <xsl:apply-templates select="content"/>
                 <xsl:apply-templates select="footer"/>
                 <xsl:if test="$USE_FLYOUT_MENUS='true'">
