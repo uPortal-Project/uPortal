@@ -291,6 +291,25 @@
     </portlet>
     
     <portlet>
+        <portlet-name>Error</portlet-name>
+        <display-name xml:lang="en">Error</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/Error-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Error</title>
+        </portlet-info>
+    </portlet>
+    
+    <portlet>
         <portlet-name>GroupsAdministration</portlet-name>
         <display-name xml:lang="en">Groups Administration Portlet</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
