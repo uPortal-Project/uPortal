@@ -18,6 +18,20 @@
     under the License.
 
 --%>
-<div class="error">
-<p>This portlet failed to render.</p>
-</div>
+<%@ include file="/WEB-INF/jsp/include.jsp"%>
+<div class="fl-widget portlet error view-detailed" role="section">
+
+<div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+<p><spring:message code="errorportlet.main"/></p>
+<%-- 
+<div class="breadcrumb">
+<portlet:renderURL var="retryUrl"></portlet:renderURL>
+<portlet:renderURL var="resetUrl"></portlet:renderURL>
+<span class="breadcrumb-1"><a href="${ retryUrl }"><spring:message code="errorportlet.retry"/></a></span>
+<span class="separator">&nbsp;</span>
+<span class="breadcrumb-2"><a href="${ resetUrl }"><spring:message code="errorportlet.reset"/></a></span>
+</div> <!-- end breadcrumbs -->
+--%>
+</div> <!-- end sectionhead -->
+
+</div> <!--  end portlet -->
