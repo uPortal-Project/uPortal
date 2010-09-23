@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.portlets.error;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +28,12 @@ import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.services.AuthorizationService;
@@ -51,7 +58,8 @@ public class PortletErrorController extends AbstractController {
 	protected static final String ERROR_TARGET = "DETAILS";
 	private IUserInstanceManager userInstanceManager;
 	private IPortalRequestUtils portalRequestUtils;
-	//private IPortletWindowRegistry portletWindowRegistry;
+	private IPortletWindowRegistry portletWindowRegistry;
+	private IPortletEntityRegistry portletEntityRegistry;
 	
 	/**
 	 * @param userInstanceManager the userInstanceManager to set
@@ -60,13 +68,28 @@ public class PortletErrorController extends AbstractController {
 	public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
 		this.userInstanceManager = userInstanceManager;
 	}
-
 	/**
 	 * @param portalRequestUtils the portalRequestUtils to set
 	 */
 	@Autowired
 	public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
 		this.portalRequestUtils = portalRequestUtils;
+	}
+	/**
+	 * @param portletWindowRegistry the portletWindowRegistry to set
+	 */
+	@Autowired
+	public void setPortletWindowRegistry(
+			IPortletWindowRegistry portletWindowRegistry) {
+		this.portletWindowRegistry = portletWindowRegistry;
+	}
+	/**
+	 * @param portletEntityRegistry the portletEntityRegistry to set
+	 */
+	@Autowired
+	public void setPortletEntityRegistry(
+			IPortletEntityRegistry portletEntityRegistry) {
+		this.portletEntityRegistry = portletEntityRegistry;
 	}
 
 	/* (non-Javadoc)
@@ -79,12 +102,21 @@ public class PortletErrorController extends AbstractController {
 		HttpServletRequest httpRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
 		IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpRequest);
 		if(canSeeErrorDetails(userInstance)) {
-			// error controller needs to know which portletWindowId is the source
-			// to be able to locate the Exception that was raised to bring it into existence
 			IPortletWindowId currentFailedPortletWindowId = (IPortletWindowId) request.getAttribute(PortletExecutionManager.REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID);
-			Exception cause = (Exception) request.getAttribute(PortletExecutionManager.REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE);
 			model.put("portletWindowId", currentFailedPortletWindowId);
+			
+			final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(httpRequest, currentFailedPortletWindowId);
+            final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
+            final IChannelDefinition channelDefinition = parentPortletDefinition.getChannelDefinition();
+            model.put("channelDefinition", channelDefinition);
+            
+			Exception cause = (Exception) request.getAttribute(PortletExecutionManager.REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE);
 			model.put("exception", cause);
+			StringWriter stackTraceWriter = new StringWriter();
+			cause.printStackTrace(new PrintWriter(stackTraceWriter));
+			
+			model.put("stackTrace", stackTraceWriter.toString());
+			
 			return new ModelAndView("/jsp/PortletError/detailed", model);
 		} else {
 			return new ModelAndView("/jsp/PortletError/generic", model);
