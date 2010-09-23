@@ -119,19 +119,19 @@
 .up .button,
 .up input[type="submit"],
 .up input[type="button"] {
-	border-width:1px;
-	border-style:solid;
-	border-color:#000;
-	background:#336699 url(../common/images/button_bkd.png) top left repeat-x;
-	color:#fff;
-	font-size:11px;
-	font-weight:bold;
-	font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
-	text-transform:capitalize;
-	text-shadow:0 -1px 1px rgba(0,0,0,.5);
-	-webkit-box-shadow:0 1px 2px rgba(0,0,0,.5);
-	-moz-box-shadow:0 1px 2px rgba(0,0,0,.5);
-	box-shadow:0 1px 2px rgba(0,0,0,.5);
+    border-width:1px;
+    border-style:solid;
+    border-color:#000;
+    background:#336699 url(../common/images/button_bkd.png) top left repeat-x;
+    color:#fff;
+    font-size:11px;
+    font-weight:bold;
+    font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
+    text-transform:capitalize;
+    text-shadow:0 -1px 1px rgba(0,0,0,.5);
+    -webkit-box-shadow:0 1px 2px rgba(0,0,0,.5);
+    -moz-box-shadow:0 1px 2px rgba(0,0,0,.5);
+    box-shadow:0 1px 2px rgba(0,0,0,.5);
 }
 .up a.button {color:#fff !important;  text-decoration:none !important;}
 .up .buttons {border-top:0.2em solid #ccc;}
@@ -209,44 +209,44 @@
 .up #portalNavigation .fl-tabs > li:focus a,
 .up #portalNavigation .fl-tabs > li a:hover,
 .up #portalNavigation .fl-tabs > li a:focus {background:#333;}
-
 /* Delete Tab Icon */
-.up #portalNavigation .fl-tabs .portal-navigation-delete {position: absolute; top: 6px; right: 2px; cursor: pointer; background: transparent url("images/remove.png") 0px 0px no-repeat;}
+.up #portalNavigation .fl-tabs .portal-navigation-delete,
+.up #portalNavigation .fl-tabs > .fl-tabs-active > .portal-navigation-delete {position: absolute; top: 6px; right: 2px; cursor: pointer; background: transparent url("images/remove.png") 0px 0px no-repeat; padding: 0 0;}
 .up #portalNavigation .fl-tabs .portal-navigation-delete:hover {background-position: 0px -16px;}
 .up #portalNavigation .fl-tabs .portal-navigation-delete,
 .up #portalNavigation .fl-tabs .portal-navigation-delete span {display: block; width: 16px; height: 16px; overflow: hidden;}
 .up #portalNavigation .fl-tabs .portal-navigation-delete span {visibility: hidden;}
-
 /* Gripper Tab Icon */
-.up #portalNavigation .fl-tabs .portal-navigation-gripper {position: absolute; top: 0px; left: 0px; cursor: move; background: transparent url("images/gripper.png") 0px 0px no-repeat;}
+.up #portalNavigation .fl-tabs .portal-navigation-gripper,
+.up #portalNavigation .fl-tabs > .fl-tabs-active > .portal-navigation-gripper {position: absolute; top: 0px; left: 2px; cursor: move; background: transparent url("images/gripper.png") 0px 0px no-repeat; padding: 0 0;}
 .up #portalNavigation .fl-tabs .portal-navigation-gripper,
 .up #portalNavigation .fl-tabs .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
 .up #portalNavigation .fl-tabs .portal-navigation-gripper span {visibility: hidden;}
-
 /* Add Tab Icon */
 .up #portalNavigation .portal-navigation-add {display: block; height:16px; overflow: hidden; position: absolute; top: 6px; right: 2em; text-decoration: none; text-transform: capitalize; color: #FFF; font-weight: bold;
     background: transparent url("images/add.png") 0px 0px no-repeat; padding:0px 0px 0px 16px;}
 .up #portalNavigation .portal-navigation-add:hover {background-position: 0px -16px;}
-
 /* Flyout Navigation */
 .up #portalNavigation .portal-flyout-container {
-	background-color:#333;
-	padding-bottom:1px;
-	border:4px solid #333;
-	-webkit-border-bottom-left-radius: 5px;
-	-webkit-border-bottom-right-radius: 5px;
-	-moz-border-radius-bottomright: 5px;
-	-moz-border-radius-bottomleft: 5px;
-	border-bottom-right-radius: 5px;
-	border-bottom-left-radius: 5px;
-	-webkit-box-shadow:4px 4px 8px rgba(0,0,0,.5); 
-	-moz-box-shadow:4px 4px 8px rgba(0,0,0,.5);
-	box-shadow:4px 4px 8px rgba(0,0,0,.5);
+    background-color:#333;
+    padding-bottom:1px;
+    border:4px solid #333;
+    -webkit-border-bottom-left-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    -webkit-box-shadow:4px 4px 8px rgba(0,0,0,.5); 
+    -moz-box-shadow:4px 4px 8px rgba(0,0,0,.5);
+    box-shadow:4px 4px 8px rgba(0,0,0,.5);
 }
 .up #portalNavigation .fl-tabs .portal-flyout-container li a {padding:0.7em 2em; border-top:1px solid #333; background-color:#fff; color:#666 !important; font-size:85%; }
 .up #portalNavigation .fl-tabs .portal-flyout-container li:first-child a {border:none;}
 .up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:hover,
 .up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:focus {color:#fff !important; background-color:#4065AF;}
+/* Tab Drop Marker */
+.up #portalNavigation .fl-tabs .fl-reorderer-tab-dropMarker {background-color:#F68922; padding:.5em .31em;}
 
 /* Body */
 .up #portalPageBodyInner {padding:2.5em 2em;}
@@ -399,6 +399,19 @@
 .up #portalPageFooter #silkIconsAttribution a:hover,
 .up #portalPageFooter #silkIconsAttribution a:focus {color:#666 !important;}
 
+/* Fluid Layout Tab Customizer (drag and drop) */
+.up .fl-reorderer-tab-avatar {background-color:#333; padding:.3em 0em 0em 0em; position:relative; border: 1px solid #F68922; filter:alpha(opacity=70); opacity:.7;}
+.up .fl-reorderer-tab-avatar a {padding:0em 2em; font-weight:bold; color:#fff !important; text-decoration:none; text-shadow:1px 1px 1px rgba(0,0,0,.5);}
+.up .fl-reorderer-tab-avatar .portal-navigation-delete {position: absolute; top: 6px; right: 2px; cursor: pointer; background: transparent url("images/remove.png") 0px 0px no-repeat; padding: 0 0;}
+.up .fl-reorderer-tab-avatar .portal-navigation-delete,
+.up .fl-reorderer-tab-avatar .portal-navigation-delete span {display: block; width: 16px; height: 16px; overflow: hidden;}
+.up .fl-reorderer-tab-avatar .portal-navigation-delete span {visibility: hidden;}
+.up .fl-reorderer-tab-avatar .portal-navigation-gripper {position: absolute; top: 0px; left: 2px; cursor: move; background: transparent url("images/gripper.png") 0px 0px no-repeat; padding: 0 0;}
+.up .fl-reorderer-tab-avatar .portal-navigation-gripper,
+.up .fl-reorderer-tab-avatar .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
+.up .fl-reorderer-tab-avatar .portal-navigation-gripper span {visibility: hidden;}
+.up .fl-reorderer-tab-avatar .portal-flyout-container{display: none !important;}
+
 /* Fluid Layout Customizer (drag and drop) */
 .up .fl-reorderer-movable-hover {cursor:move;}
 .up .fl-reorderer-movable-dragging-mouse {display:none;}
@@ -413,9 +426,9 @@
 .up :focus{outline:1px dotted #f68922;}
 .up .fl-reorderer-movable-selected:focus,
 .up .fl-reorderer-movable-dragging:focus {outline:2px solid #f68922;}
+.up .fl-reorderer-tab-movable-selected:focus,
+.up .fl-reorderer-tab-movable-dragging:focus {outline: none;}
 
 .fragment-disabled, .fragment-disabled h2.fragment-title {color:#666;}
-
 .layout-option { padding: 5px; }
-
 .layout-option.selected { border: thin solid #999; }

@@ -68,7 +68,7 @@ var up = up || {};
 (function ($, fluid) {
     
     /**
-     * Initializes the fluid.inlineEditor component to be used with
+     * Private. Initializes the fluid.inlineEditor component to be used with
      * the active portal tab, as long as the active tab is editable.
      * 
      * @param {Object} that- reference to an instance of the TabManger component.
@@ -106,7 +106,7 @@ var up = up || {};
     };//end:function.
     
     /**
-     * Fires the onRemove event when the 'remove' icon is clicked. Passes a 
+     * Private. Fires the onRemove event when the 'remove' icon is clicked. Passes a 
      * reference to the onRemove listener.
      * 
      * @param {Object} that- reference to an instance of the TabManger component.
@@ -120,7 +120,7 @@ var up = up || {};
     };//end: function.
     
     /**
-     * Fires the onAdd event when the 'Add Tab' link is clicked. Passes new 
+     * Private. Fires the onAdd event when the 'Add Tab' link is clicked. Passes new 
      * tab configurations to the onAdd listener.
      * 
      * @param {Object} that- reference to an instance of the TabManger component.
@@ -134,6 +134,124 @@ var up = up || {};
     };//end: function.
     
     /**
+     * Private. Initializes & configures the fluid.reorderLayout component
+     * based upon the TabManager options.
+     * 
+     * @param {Object} that- reference to an instance of the TabManger component.
+     */
+    var moveTabHandler = function (that) {
+        // Initialize fluid.reorderLayout component.
+        that.reorderLayout = fluid.reorderLayout (that.container, {
+            selectors: {
+                columns: that.options.selectors.columns,
+                modules: that.options.selectors.modules,
+                lockedModules: that.options.selectors.lockedModules,
+                grabHandle: that.options.selectors.grabHandle
+            },
+            styles: {
+                defaultStyle: that.options.styles.defaultStyle,
+                selected: that.options.styles.selected,
+                dragging: that.options.styles.dragging,
+                mouseDrag: that.options.styles.mouseDrag,
+                hover: that.options.styles.hover,
+                dropMarker: that.options.styles.dropMarker,
+                avatar: that.options.styles.avatar
+            },
+            listeners: {
+                afterMove: function (item, requestedPosition, movables) {
+                    var tab, tabShortId, method, targetTab, targetTabShortId, tabPosition, listItems;
+                    
+                    // Capture moved tab & set defaults.
+                    tab = item;
+                    tabShortId = up.defaultNodeIdExtractor(tab.context);
+                    method = that.options.insertBefore;
+                    targetTab = null;
+                    targetTabShortId = null;
+                    tabPosition = 1;
+                    listItems = that.locate("tabListItems");
+                    
+                    // Determine when tab is the last tab and
+                    // calculate the targetTab and targetTabShortId.
+                    if (tab.is(":last-child")) {
+                        method = that.options.appendAfter;
+                        targetTab = tab.prev();
+                        targetTabShortId = tab.prev().attr("id").split("_")[1];
+                    } else {
+                        targetTab = tab.next();
+                        targetTabShortId = tab.next().attr("id").split("_")[1];
+                    }//end:if.
+                    
+                    // Calculate tab position and apply styles based upon 
+                    // tab position.
+                    $.each(listItems, function (idx, obj) {
+                        var li = $(obj);
+                        
+                        // Find position of moved item.
+                        if (li.attr("id") === tab.attr("id")) {
+                            tabPosition = (idx + 1);
+                        }//end:if.
+                        
+                        if (listItems.length === 1) {
+                            // Apply & remove styles for a single tab.
+                            li.removeClass(that.options.styles.firstTab).removeClass(that.options.styles.lastTab).addClass(that.options.styles.singleTab);
+                        } else if (idx === 0) {
+                            // Apply & remove styles for the first tab.
+                            li.removeClass(that.options.styles.singleTab).removeClass(that.options.styles.lastTab).addClass(that.options.styles.firstTab);
+                        } else if (idx === (listItems.length - 1)) {
+                            // Apply & remove styles for the last tab.
+                            li.removeClass(that.options.styles.singleTab).removeClass(that.options.styles.firstTab).addClass(that.options.styles.lastTab);
+                        } else {
+                            // Apply & remove styles for all other tabs.
+                            li.removeClass(that.options.styles.singleTab).removeClass(that.options.styles.lastTab).removeClass(that.options.styles.firstTab);
+                        }//end:if.
+                    });//end:loop.
+                    
+                    // Fire afterTabMove event.
+                    that.events.afterTabMove.fire(tabShortId, method, targetTabShortId, tabPosition);
+                }
+            }
+        });
+    };//end: function.
+    
+    /**
+     * Private. Evaluates the list of tabs for the last instance of a 'locked' tab.
+     * Once found, this function adds a 'locked' class to all previously rendered tabs
+     * and it also hides the drag & drop grab handle from 'locked' tabs.
+     * 
+     * @param {Object} that- reference to an instance of the TabManger component.
+     */
+    var manageLockedTabs = function (that) {
+        var tabList, lastLockedTab;
+        
+        // Find the last instance of a locked tab and add a 'locked' class name
+        // to all previous tabs. Hide all drag & drop grab handles from 'locked' tabs.
+        tabList = that.locate("tabList");
+        lastLockedTab = tabList.find(that.options.selectors.lockedModules + ":last");
+        
+        if (lastLockedTab.length > 0) {
+            lastLockedTab.find(that.options.selectors.grabHandle).hide();
+            lastLockedTab.prevAll()
+                         .addClass(that.options.styles.lockedTab)
+                         .find(that.options.selectors.grabHandle).hide();
+        }//end:if.
+        
+        // Initialize drag & drop.
+        moveTabHandler(that);
+    };//end:function.
+    
+    /**
+     * Private. Executes initialization functions for the TabManager component.
+     * 
+     * @param {Object} that- reference to an instance of the TabManger component.
+     */
+    var initialize = function (that) {
+        editTabHandler(that);
+        removeTabHandler(that);
+        addTabHandler(that);
+        manageLockedTabs(that);
+    };//end:function.
+    
+    /**
      * Creator function for the TabManger component.
      * 
      * @param {Object} container - reference to HTML DOM element by ID.
@@ -143,9 +261,7 @@ var up = up || {};
         var that;
         that = fluid.initView("up.TabManager", container, options);
         
-        editTabHandler(that);
-        removeTabHandler(that);
-        addTabHandler(that);
+        initialize(that);
         return that;
     };//end:component.
     
@@ -157,17 +273,39 @@ var up = up || {};
             text: ".flc-inlineEdit-text",
             edit: ".flc-inlineEditable",
             remove: ".portal-navigation-delete",
-            add: ".portal-navigation-add"
+            add: ".portal-navigation-add",
+            columns: ".flc-reorderer-column",
+            modules: ".movable",
+            lockedModules: ".locked",
+            grabHandle: ".portal-navigation-gripper",
+            tabList: ".fl-tabs",
+            tabListItems: ".portal-navigation"
         },
         events: {
             afterFinishEdit: null,
             onRemove: null,
-            onAdd: null
+            onAdd: null,
+            afterTabMove: null
+        },
+        styles: {
+            defaultStyle: "fl-reorderer-tab-movable-default",
+            selected: "fl-reorderer-tab-movable-selected",
+            dragging: "fl-reorderer-tab-movable-dragging",
+            mouseDrag: "fl-reorderer-tab-movable-dragging",
+            hover: "fl-reorderer-tab-movable-hover",
+            dropMarker: "fl-reorderer-tab-dropMarker",
+            avatar: "fl-reorderer-tab-avatar",
+            lockedTab: "locked",
+            singleTab: "single",
+            firstTab: "first",
+            lastTab: "last"
         },
         addTabLabel: "My Tab",
         addTabWidths: [50, 50],
         submitOnEnter: true,
         selectOnEdit: true,
-        lazyEditView: true
+        lazyEditView: true,
+        insertBefore: "insertBefore",
+        appendAfter: "appendAfter"
     });
 })(jQuery, fluid);

@@ -431,6 +431,17 @@ var uportal = uportal || {};
                             window.location = that.urlProvider.getTabUrl(data.tabId);
                         }
                     );
+                },
+                afterTabMove: function (sourceId, method, elementId, tabPosition) {
+                    that.persistence.update(
+                        {
+                            action: "moveTab",
+                            sourceID: sourceId,
+                            method: method,
+                            elementID: elementId,
+                            tabPosition: tabPosition
+                        }
+                    );
                 }
             }
         });
