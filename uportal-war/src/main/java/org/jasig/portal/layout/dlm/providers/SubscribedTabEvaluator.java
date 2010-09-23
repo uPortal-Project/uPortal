@@ -21,6 +21,8 @@ package org.jasig.portal.layout.dlm.providers;
 
 import java.util.List;
 
+import javax.persistence.Column;
+
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
@@ -43,9 +45,13 @@ import org.jasig.portal.spring.locator.UserFragmentSubscriptionDaoLocator;
  */
 public class SubscribedTabEvaluator extends Evaluator {
     
+    @Column(name = "OWNER_ID")
     private final String ownerId;
 
-    private final IUserFragmentSubscriptionDao userFragmentInfoDao;
+    @SuppressWarnings("unused")
+    private SubscribedTabEvaluator() {
+        this.ownerId = null;
+    }
     
     /**
      * Construct a new SubscribedTabEvaluator for the specified fragment owner.
@@ -53,7 +59,6 @@ public class SubscribedTabEvaluator extends Evaluator {
      * @param ownerId
      */
     public SubscribedTabEvaluator(String ownerId) {
-        this.userFragmentInfoDao = UserFragmentSubscriptionDaoLocator.getUserIdentityStore();
         this.ownerId = ownerId;
     }
 
@@ -65,6 +70,8 @@ public class SubscribedTabEvaluator extends Evaluator {
     @Override
     public boolean isApplicable(IPerson person) {
         
+        IUserFragmentSubscriptionDao userFragmentInfoDao = UserFragmentSubscriptionDaoLocator.getUserIdentityStore();
+
         // get the list of current fragment subscriptions for this person
         List<IUserFragmentSubscription> fragments = userFragmentInfoDao
                 .getUserFragmentInfo(person);
