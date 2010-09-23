@@ -93,7 +93,9 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
                 final Expression expression = expressionEntry.getValue();
                 final Object value = this.portalSpELService.getValue(expression, webRequest);
                 
-                parameters.put(expressionEntry.getKey(), value);
+                if (value != null) {
+                    parameters.put(expressionEntry.getKey(), value);
+                }
             }
         }
         

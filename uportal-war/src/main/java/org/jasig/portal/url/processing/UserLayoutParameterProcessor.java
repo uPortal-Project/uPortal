@@ -130,8 +130,6 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         //TODO after portlet processing is complete set minimized theme flags by subscribeId
         //TODO how are we going to track portlet minimization, what will the authoritative source of that info be? PortletWindow objects?
 
-        userLayoutManager.processLayoutParameters(person, userPreferences, request);
-
         return true;
     }
     

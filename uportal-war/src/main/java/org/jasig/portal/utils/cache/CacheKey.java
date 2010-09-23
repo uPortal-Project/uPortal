@@ -21,10 +21,12 @@ public class CacheKey implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final Serializable key;
+    private final int hashCode;
 
     public CacheKey(Serializable key) {
         Assert.notNull(key);
         this.key = key;
+        this.hashCode = this.key.hashCode();
     }
     
     /**
@@ -33,11 +35,13 @@ public class CacheKey implements Serializable {
     public CacheKey(Serializable... keyParts) {
         Assert.notEmpty(keyParts);
         this.key = new ArrayList<Serializable>(Arrays.asList(keyParts));
+        this.hashCode = this.key.hashCode();
     }
     
     public CacheKey(Collection<? extends Serializable> keyParts) {
         Assert.notEmpty(keyParts);
         this.key = new ArrayList<Serializable>(keyParts);
+        this.hashCode = this.key.hashCode();
     }
     
     public Serializable getKey() {
@@ -46,7 +50,7 @@ public class CacheKey implements Serializable {
     
     @Override
     public int hashCode() {
-        return this.key.hashCode();
+        return this.hashCode;
     }
 
     @Override

@@ -84,16 +84,6 @@
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
-     | Caches remote data for CGenericXSLT and CWebProxy
-     | - 1 x subscribed user of either channel
-     | - not replicated - retrieved content is a per-server action
-     | - TODO if content can be verified as Serializable this can be replicated fully (actual copying of data across nodes)
-     +-->
-    <cache name="org.jasig.portal.channels.CONTENT_CACHE"
-        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
      | Caches layout DOM
      | - 1 x user
      | - replicated by invalidation
@@ -138,15 +128,6 @@
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
-    <!-- 
-     | Caches IChannel output marked as system wide
-     | - 1 x system wide channel cache content
-     | - not replicated - pertains to locally generated content
-     +-->
-    <cache name="org.jasig.portal.ChannelRenderer.SYSTEM_WIDE_CHANNEL_CACHE"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
     <!-- ******************** Per-Datasource Person Directory Caches ******************** -->
     <!-- 
      | Caches the final merge results of a person directory query, short cache to ensure the
@@ -453,14 +434,6 @@
      | Note: overflowToDisk MUST be false for XSLT caches as these caches store "javax.xml.transform.Templates" or
      | "org.jasig.portal.StylesheetSet" instances which are not Serializable
      +-->
-    <cache name="org.jasig.portal.utils.XSLT.STYLESHEET_ROOT_CACHE"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <cache name="org.jasig.portal.utils.XSLT.STYLESHEET_SET_CACHE"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
     <cache name="org.jasig.portal.utils.cache.resource.CachingResourceLoader"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />

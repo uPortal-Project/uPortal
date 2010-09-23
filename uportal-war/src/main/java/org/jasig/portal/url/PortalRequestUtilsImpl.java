@@ -25,9 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.portlet.PortletHttpServletRequestWrapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.portlet.context.PortletRequestAttributes;
 
 /**
@@ -43,6 +45,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalRequestUtils#getOriginalPortalRequest(javax.portlet.PortletRequest)
      */
+    @Override
     public HttpServletRequest getOriginalPortalRequest(PortletRequest portletRequest) {
         final HttpServletRequest portalRequest = (HttpServletRequest)portletRequest.getAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
         if (portalRequest != null) {
@@ -55,6 +58,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalRequestUtils#getOriginalPortalRequest(javax.servlet.http.HttpServletRequest)
      */
+    @Override
     public HttpServletRequest getOriginalPortalRequest(HttpServletRequest portletRequest) {
         final HttpServletRequest portalRequest = (HttpServletRequest)portletRequest.getAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
         if (portalRequest != null) {
@@ -62,6 +66,26 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         }
         
         return portletRequest;
+    }
+    
+
+    @Override
+    public HttpServletRequest getOriginalPortalRequest(WebRequest request) {
+        final HttpServletRequest portalRequest = (HttpServletRequest)request.getAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, WebRequest.SCOPE_REQUEST);
+        if (portalRequest != null) {
+            return portalRequest;
+        }
+        
+        if (request instanceof NativeWebRequest) {
+            final NativeWebRequest nativeWebRequest = (NativeWebRequest)request;
+            
+            final Object nativeRequest = nativeWebRequest.getNativeRequest();
+            if (nativeRequest instanceof HttpServletRequest) {
+                return (HttpServletRequest)nativeRequest;
+            }
+        }
+        
+        throw new IllegalArgumentException("The orginal portal HttpServletRequest is not available from the WebRequest using attribute '" + PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
     }
 
     @Override
@@ -87,6 +111,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalRequestUtils#getCurrentPortalRequest()
      */
+    @Override
     public HttpServletRequest getCurrentPortalRequest() {
         final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         
@@ -111,6 +136,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalRequestUtils#getOriginalPortletAdaptorRequest(javax.portlet.PortletRequest)
      */
+    @Override
     public HttpServletRequest getOriginalPortletAdaptorRequest(PortletRequest portletRequest) {
         final HttpServletRequest originalPortletRequest = (HttpServletRequest)portletRequest.getAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
         if (originalPortletRequest != null) {
@@ -123,6 +149,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalRequestUtils#getOriginalPortletAdaptorRequest(javax.servlet.http.HttpServletRequest)
      */
+    @Override
     public HttpServletRequest getOriginalPortletAdaptorRequest(HttpServletRequest portletRequest) {
         final HttpServletRequest originalPortletRequest = (HttpServletRequest)portletRequest.getAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
         if (originalPortletRequest != null) {

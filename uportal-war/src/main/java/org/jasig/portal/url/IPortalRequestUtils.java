@@ -23,6 +23,8 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.context.request.WebRequest;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -61,6 +63,11 @@ public interface IPortalRequestUtils {
      * @see #getOriginalPortalRequest(PortletRequest)
      */
     public HttpServletRequest getOriginalPortalRequest(HttpServletRequest portletRequest);
+    
+    /**
+     * @see #getOriginalPortalRequest(PortletRequest)
+     */
+    public HttpServletRequest getOriginalPortalRequest(WebRequest request);
     
     /**
      * Useful for container service callbacks and service portlets that are provided with

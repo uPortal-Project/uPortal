@@ -116,6 +116,9 @@
                                 <map>
                                     <entry key="CURRENT_REQUEST" value="request.nativeRequest" />
                                     <entry key="CONTEXT_PATH" value="request.contextPath" />
+                                    <entry key="AUTHENTICATED" value="!person.guest" />
+                                    <entry key="userName" value="person.fullName" />
+                                    <entry key="USER_ID" value="person.userName" />
                                 </map>
                             </property>
                             <property name="cacheKeyExcludedParameters">

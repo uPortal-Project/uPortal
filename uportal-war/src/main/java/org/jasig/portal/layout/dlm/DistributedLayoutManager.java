@@ -39,7 +39,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -63,7 +62,6 @@ import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutMoveEvent;
-import org.jasig.portal.layout.dlm.processing.ProcessingPipe;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -84,7 +82,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.ContentHandler;
 
 /**
  * A layout manager that provides layout control through
@@ -135,16 +132,6 @@ IFolderLocalNameResolver
             return null;
         }
     }
-
-    /**
-     * The following variable contains the configured processing pipe which 
-     * conceptually sits between any class calling processLayoutParemeters() a
-     * and getUserLayout() enabling pluggable URL handlers for layout activities
-     * of custome renderign theme stylesheets.
-     * 
-     * @see org.jasig.portal.layout.dlm.processing.ProcessingPipe
-     */
-    private ProcessingPipe processingPipe = null;
 
     public DistributedLayoutManager(IPerson owner, UserProfile profile,
             IUserLayoutStore store) throws PortalException
@@ -348,44 +335,6 @@ IFolderLocalNameResolver
             throw new PortalException( ex );
         }
     }
-
-    /**
-     * Loads instances of handlers to assist with layout parameter processing 
-     * and layout rendering for the current user's layout.
-     *
-     */
-    private void loadProcessingPipe()
-    {
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        processingPipe = (ProcessingPipe)applicationContext.getBean(ProcessingPipe.PROCESSING_PIPE_BEAN_ID, ProcessingPipe.class);
-        processingPipe.setResources(owner, this);
-    }
-    
-    public void getUserLayout(ContentHandler ch) throws PortalException {
-        Document ul=this.getUserLayoutDOM();
-        if(ul==null) {
-            throw new PortalException("User layout has not been initialized for " 
-                        + owner.getAttribute(IPerson.USERNAME)+".");
-        } else {
-            getUserLayout(ul,ch);
-        }
-    }
-
-    public void getUserLayout(String nodeId, ContentHandler ch) throws PortalException {
-        Document ul=this.getUserLayoutDOM();
-
-        if(ul==null) {
-            throw new PortalException("User layout has not been initialized for " 
-                        + owner.getAttribute(IPerson.USERNAME)+".");
-        }
-            Node rootNode=ul.getElementById(nodeId);
-            if(rootNode==null) {
-                throw new PortalException("A requested root node (with id=\"" 
-                        + nodeId + "\") is not in the user layout for " 
-                        + owner.getAttribute(IPerson.USERNAME)+".");
-        }
-        getUserLayout(rootNode,ch);
-    }
     
     @Override
     public XMLEventReader getUserLayoutReader() {
@@ -404,47 +353,6 @@ IFolderLocalNameResolver
         }
         catch (XMLStreamException e) {
             throw new RuntimeException("Failed to create Layout XMLStreamReader for user: " + owner.getAttribute(IPerson.USERNAME), e);
-        }
-    }
-
-    protected void getUserLayout(Node n,ContentHandler ch) throws PortalException {
-        if (LOG.isDebugEnabled())
-        {
-            LOG.debug("Layout event stream for "
-                    + owner.getAttribute(IPerson.USERNAME)
-                    + " starting.");
-        }
-        // do a DOM2SAX transformation
-        Transformer xfrmr = null;
-        xfrmr = getEmptyTransformer();
-
-        try 
-        {
-            ProcessingPipe pipe = getProcessingPipe();
-            ch = pipe.getContentHandler(ch);
-            xfrmr.transform(new DOMSource(n), new SAXResult(ch));
-        } 
-        catch (Exception e) 
-        {
-            if (LOG.isDebugEnabled())
-            {
-                LOG.debug("Layout event stream for "
-                        + owner.getAttribute(IPerson.USERNAME)
-                        + " incurred exception.", e);
-            }
-            // if exception occurs during rendering then the state held in the
-            // pipe's processors will be messed up for the next rendering.
-            // So force reloading of pipe.
-            processingPipe = null;
-            throw new PortalException("Unable to output user layout for " 
-                    + owner.getAttribute(IPerson.USERNAME) 
-                    + ". Resetting processing pipe.",e);
-        }
-        if (LOG.isDebugEnabled())
-        {
-            LOG.debug("Layout event stream for "
-                    + owner.getAttribute(IPerson.USERNAME)
-                    + " finished.");
         }
     }
 
@@ -1502,23 +1410,7 @@ IFolderLocalNameResolver
     }
 
     public String getCacheKey() {
-        String compositeKey = getProcessingPipe().getCacheKey() + ":" 
-        + this.cacheKey;
-        return compositeKey;
-    }
-
-    /**
-     * Gets the current processing pipe instance or instantiates one if not 
-     * found due to starting up or occurrence of exceptions.
-     * @return
-     */
-    private ProcessingPipe getProcessingPipe()
-    {
-        if (processingPipe == null)
-        {
-            loadProcessingPipe();
-        }
-        return processingPipe;
+        return this.cacheKey;
     }
 
     /**
@@ -1655,22 +1547,6 @@ IFolderLocalNameResolver
             return new UserLayoutFolderDescription();
         }
         return new ChannelDescription();
-    }
-
-    /**
-     * Handle layout specific parameters posted with the request.
-     */
-    public void processLayoutParameters(IPerson person,
-            UserPreferences userPrefs, HttpServletRequest req)
-            throws PortalException
-    {
-        try
-        {
-            getProcessingPipe().processParameters(userPrefs, req);
-        } catch (Exception e)
-        {
-            throw new PortalException(e);
-        }
     }
 
     /**

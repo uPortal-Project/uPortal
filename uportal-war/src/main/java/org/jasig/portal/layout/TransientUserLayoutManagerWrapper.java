@@ -462,14 +462,5 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         mSubId ++;
         return SUBSCRIBE_PREFIX + mSubId;
     }
-
-
-    /**
-     * Delegates to the wrapped layout manager's implementation.
-     */
-    public void processLayoutParameters(IPerson person, UserPreferences userPrefs, HttpServletRequest req) throws PortalException
-    {
-        man.processLayoutParameters(person, userPrefs, req);
-    }
 }
 

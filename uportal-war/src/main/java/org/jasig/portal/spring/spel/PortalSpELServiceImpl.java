@@ -3,12 +3,18 @@ package org.jasig.portal.spring.spel;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.expression.EvaluationContext;
@@ -41,6 +47,20 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
     private ExpressionParser expressionParser = new SpelExpressionParser();
     private Ehcache expressionCache;
     
+    private IPortalRequestUtils portalRequestUtils;
+    private IUserInstanceManager userInstanceManager;
+
+    @Autowired
+    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        this.portalRequestUtils = portalRequestUtils;
+    }
+    
+    @Autowired
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        this.userInstanceManager = userInstanceManager;
+    }
+
+
     public void setExpressionParser(ExpressionParser expressionParser) {
         Validate.notNull(expressionParser);
         this.expressionParser = expressionParser;
@@ -135,7 +155,11 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
      * @return
      */
     protected EvaluationContext getEvaluationContext(WebRequest request) {
-        final SpELEnvironmentRoot root = new SpELEnvironmentRoot(request);
+        final HttpServletRequest httpRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpRequest);
+        final IPerson person = userInstance.getPerson();
+        
+        final SpELEnvironmentRoot root = new SpELEnvironmentRoot(request, person);
         return new StandardEvaluationContext(root);
     }
 
@@ -149,6 +173,7 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
     private static class SpELEnvironmentRoot {
         
         private final WebRequest request;
+        private final IPerson person;
         
         /**
          * Create a new SpEL environment root for use in a SpEL evaluation
@@ -156,19 +181,24 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
          * 
          * @param request  web request
          */
-        private SpELEnvironmentRoot(WebRequest request) {
+        private SpELEnvironmentRoot(WebRequest request, IPerson person) {
             this.request = request;
+            this.person = person;
         }
 
         /**
          * Get the request associated with this environment root.
-         * 
-         * @return
          */
         public WebRequest getRequest() {
             return request;
         }
 
+        /**
+         * The person associated with this environment root
+         */
+        public IPerson getPerson() {
+            return this.person;
+        }
     }
 
 }

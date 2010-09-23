@@ -174,12 +174,18 @@
     
     <bean class="org.jasig.portal.spring.spel.PortalSpELServiceImpl" />
     
+    <bean class="org.jasig.portal.url.PortalRequestUtilsImpl" />
+    
     <bean id="org.jasig.portal.utils.cache.resource.CachingResourceLoader" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
     <bean id="SpELExpressionCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
 
     <bean id="xslPortalUrlProvider" class="org.jasig.portal.url.xml.XsltPortalUrlProvider" />
     
     <bean id="resourcesElementsProvider" class="org.jasig.portal.web.skin.ResourcesElementsProvider" />
+    
+    <bean id="userInstanceManager" class="org.jasig.portal.spring.EasyMockFactoryBean">
+        <constructor-arg value="org.jasig.portal.user.IUserInstanceManager" />
+    </bean>
     
     <bean id="portalUrlProvider" class="org.jasig.portal.spring.EasyMockFactoryBean">
         <constructor-arg value="org.jasig.portal.url.IPortalUrlProvider" />

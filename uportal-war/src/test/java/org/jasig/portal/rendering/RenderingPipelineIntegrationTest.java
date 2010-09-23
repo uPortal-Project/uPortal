@@ -29,6 +29,7 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.web.skin.ResourcesDao;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.XMLStreamConstantsUtils;
@@ -60,6 +61,7 @@ public class RenderingPipelineIntegrationTest {
     private IPortalUrlProvider portalUrlProvider;
     private IPortletWindowRegistry portletWindowRegistry;
     private ResourcesDao resourcesDao;
+    private IUserInstanceManager userInstanceManager;
 
     @Autowired
     public void setComponent(
@@ -82,7 +84,10 @@ public class RenderingPipelineIntegrationTest {
         this.resourcesDao = resourcesDao;
     }
 
-
+    @Autowired
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        this.userInstanceManager = userInstanceManager;
+    }
 
     @Test
     public void testRenderingPipeline() throws Exception {
@@ -96,7 +101,7 @@ public class RenderingPipelineIntegrationTest {
                 .andReturn(headFragment.getChildNodes());
         
         
-        replay(this.resourcesDao, this.portalUrlProvider, this.portletWindowRegistry);
+        replay(this.resourcesDao, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager);
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -107,7 +112,7 @@ public class RenderingPipelineIntegrationTest {
             logger.debug(toString(event));
         }
         
-        verify(this.resourcesDao, this.portalUrlProvider, this.portletWindowRegistry);
+        verify(this.resourcesDao, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager);
     }
     
     private String toString(Object event) throws Exception {
