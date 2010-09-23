@@ -339,7 +339,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     	
     	// dispatch to the error portlet and capture the output
     	final StringWriter writer = new StringWriter();
-    	request.setAttribute(REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID, errorPortletWindowId);
+    	request.setAttribute(REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID, failedPortletWindowId);
     	request.setAttribute(REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE, cause);
     	this.portletRenderer.doRender(errorPortletWindowId, request, response, writer);
     	
