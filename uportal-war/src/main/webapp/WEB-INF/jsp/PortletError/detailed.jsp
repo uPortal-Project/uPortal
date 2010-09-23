@@ -49,9 +49,11 @@ border: 1px solid gray;
 <li>Channel Definition Name: ${channelDefinition.name}</li>
 <li><spring:message code="errorportlet.exception"/>: ${exception}</li>
 </ul>
-<p><button id="${n}stacktraceshow"><spring:message code="errorportlet.toggleshow"/></button></p>
-<div id="${n}stacktrace" class="stacktrace" >
+<div id="${n}stacktracecontainer">
+<p><button class="stacktracetoggle"><spring:message code="errorportlet.toggleshow"/></button></p>
+<div class="stacktrace" >
 <pre>${stackTrace}</pre>
+</div>
 </div>
 </div> <!-- end content -->
 
@@ -61,19 +63,11 @@ up.jQuery(function() {
     var $ = up.jQuery;
 
     $(document).ready(function(){
-		$('#${n}stacktrace').hide();
-		$('#${n}stacktraceshow').toggle(
-			function() {
-				$('#${n}stacktrace').show('fast', function() {
-					$('#${n}stacktraceshow').text('<spring:message code="errorportlet.togglehide"/>');
-				});
-			},
-			function() {
-				$('#${n}stacktrace').hide('fast', function() { 
-					$('#${n}stacktraceshow').text('<spring:message code="errorportlet.toggleshow"/>');
-				});
-			}
-		);
+    	up.showHideToggle('#${n}stacktracecontainer', { 
+        	showmessage: '<spring:message code="errorportlet.toggleshow"/>',
+        	hidemessage: '<spring:message code="errorportlet.togglehide"/>'
+    	});
     });
+
 });
 </script>
