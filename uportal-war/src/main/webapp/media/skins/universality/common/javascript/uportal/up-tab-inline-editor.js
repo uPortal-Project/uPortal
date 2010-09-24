@@ -146,16 +146,16 @@ var up = up || {};
                 columns: that.options.selectors.columns,
                 modules: that.options.selectors.modules,
                 lockedModules: that.options.selectors.lockedModules,
-                grabHandle: that.options.selectors.grabHandle
+                grabHandle: (that.options.tabContext === "header") ? that.options.selectors.grabHandle : ""
             },
             styles: {
-                defaultStyle: that.options.styles.defaultStyle,
-                selected: that.options.styles.selected,
-                dragging: that.options.styles.dragging,
-                mouseDrag: that.options.styles.mouseDrag,
-                hover: that.options.styles.hover,
-                dropMarker: that.options.styles.dropMarker,
-                avatar: that.options.styles.avatar
+                defaultStyle: "fl-reorderer-" + that.options.tabContext + "-movable-default",
+                selected: "fl-reorderer-" + that.options.tabContext + "-movable-selected",
+                dragging: "fl-reorderer-" + that.options.tabContext + "-movable-dragging",
+                mouseDrag: "fl-reorderer-" + that.options.tabContext + "-movable-dragging",
+                hover: "fl-reorderer-" + that.options.tabContext + "-movable-hover",
+                dropMarker: "fl-reorderer-" + that.options.tabContext + "-dropMarker",
+                avatar: "fl-reorderer-" + that.options.tabContext + "-avatar"
             },
             listeners: {
                 afterMove: function (item, requestedPosition, movables) {
@@ -278,7 +278,7 @@ var up = up || {};
             modules: ".movable",
             lockedModules: ".locked",
             grabHandle: ".portal-navigation-gripper",
-            tabList: ".fl-tabs",
+            tabList: "#portalNavigationList",
             tabListItems: ".portal-navigation"
         },
         events: {
@@ -288,13 +288,6 @@ var up = up || {};
             afterTabMove: null
         },
         styles: {
-            defaultStyle: "fl-reorderer-tab-movable-default",
-            selected: "fl-reorderer-tab-movable-selected",
-            dragging: "fl-reorderer-tab-movable-dragging",
-            mouseDrag: "fl-reorderer-tab-movable-dragging",
-            hover: "fl-reorderer-tab-movable-hover",
-            dropMarker: "fl-reorderer-tab-dropMarker",
-            avatar: "fl-reorderer-tab-avatar",
             lockedTab: "locked",
             singleTab: "single",
             firstTab: "first",
@@ -306,6 +299,7 @@ var up = up || {};
         selectOnEdit: true,
         lazyEditView: true,
         insertBefore: "insertBefore",
-        appendAfter: "appendAfter"
+        appendAfter: "appendAfter",
+        tabContext: "header"
     });
 })(jQuery, fluid);

@@ -69,7 +69,7 @@ var uportal = uportal || {};
                     foTop = (flyout.outerHeight() - tab.outerHeight()) * -1;
                 }
             }
-
+            
             // set the mouseout event
             $(that.container).mouseout(function(){
                 that.closeFlyout();
@@ -82,7 +82,6 @@ var uportal = uportal || {};
                 left: foLeft
             }).bgiframe();
         });
-
     };
     
     /**
@@ -96,29 +95,21 @@ var uportal = uportal || {};
             that.locate('flyoutMenu').parents().each(function() {
                 var p = $(this);
                 var pos = p.css("position");
-    
+                
                 // If it's positioned,
                 if(pos == "relative" || pos == "absolute" || pos == "fixed") {
                     /*
-                     * Add the "ieZindex-fix_on-top" class name when the mouse is hovering over it, and remove
-                     * it when the mouse leaves. This class is defined in:
+                     * Add the "ieZindex-fix_on-top" class name This class is defined in:
                      *  uportal-war/src/main/webapp/media/skins/universality/common/css/layout.css 
                      */
-                    p.hover(function() {
-                            $(this).addClass("ieZindex-fix_on-top");
-                        },
-                        function() {
-                            $(this).removeClass("ieZindex-fix_on-top");
-                        }
-                    );
+                    $(this).addClass("ieZindex-fix_on-top");
                 }
             });
             
             return;
         }
     };
-
-
+    
     /**
      * Create a new flyout menu component
      */
@@ -135,9 +126,8 @@ var uportal = uportal || {};
         that.closeFlyout = function() {
             that.locate('flyoutMenu').hide();
         };
-
     };
-
+    
     // defaults
     fluid.defaults("uportal.flyoutmenu", {
         orientation: 'horizontal',

@@ -398,7 +398,6 @@ var uportal = uportal || {};
             }
         );
         
-        // Tab manager.
         that.components.tabManager = up.TabManager("#portalNavigation", {
             listeners: {
                 afterFinishEdit: function (newValue, oldValue, editNode, viewNode) {
@@ -443,7 +442,8 @@ var uportal = uportal || {};
                         }
                     );
                 }
-            }
+            },
+            tabContext: that.options.tabContext
         });
         
         // initialize the portlet reorderer
@@ -494,6 +494,7 @@ var uportal = uportal || {};
     
     // defaults
     fluid.defaults("up.LayoutPreferences", {
+        tabContext: "header",
         portalContext: "/uPortal",
         layoutPersistenceUrl: '/uPortal/mvc/layout',
         channelRegistryUrl: '/uPortal/mvc/channelList',
