@@ -524,6 +524,7 @@
           up.LayoutPreferences(
             "body",
             {
+              tabContext: '<xsl:value-of select="$TAB_CONTEXT"/>',
               portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
               mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
               currentSkin: '<xsl:value-of select="$SKIN"/>',

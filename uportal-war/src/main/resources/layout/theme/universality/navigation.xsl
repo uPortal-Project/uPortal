@@ -88,14 +88,16 @@
       	<div id="portalNavigation" class="fl-widget">
         	<div id="portalNavigationInner" class="fl-widget-inner {$CONTEXT}">
           	<div class="fl-widget-titlebar">
-            	<h2>
-              	<a name="mainNavigation" title="Reference anchor: main nagivation">  <!-- Skip navigation target. -->
-                	<xsl:value-of select="$TOKEN[@name='MAIN_NAVIGATION_LABEL']"/>
-                </a>
-              </h2>
+                <h2>
+                    <a name="mainNavigation" class="skip-link" title="Reference anchor: main nagivation"><xsl:value-of select="$TOKEN[@name='MAIN_NAVIGATION_LABEL']"/></a>  <!-- Skip navigation target. -->
+                    <xsl:value-of select="$TOKEN[@name='MAIN_NAVIGATION_LABEL']"/>
+                </h2>
+                <xsl:if test="$AUTHENTICATED='true' and $USE_ADD_TAB='true' and not(//focused)">
+                    <a href="javascript:;" title="{$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']}" class="portal-navigation-add"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']"/></a>
+                </xsl:if>
           	</div>
             <div class="fl-widget-content">
-            	<ul id="portalNavigationList" class="fl-listmenu">
+            	<ul id="portalNavigationList" class="fl-listmenu flc-reorderer-column">
               	<xsl:apply-templates select="tab">
                 	<xsl:with-param name="CONTEXT" select="$CONTEXT"/>
                 </xsl:apply-templates>
@@ -219,11 +221,11 @@
       <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}"><xsl:value-of select="@name"/></span>
       </a>
-      <xsl:if test="$NAV_POSITION != 'single'">
-          <xsl:if test="$AUTHENTICATED='true' and not(@dlm:moveAllowed='false') and @activeTab='true'">
+      <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
+          <xsl:if test="not(@dlm:moveAllowed='false')">
             <a href="javascript:;" class="portal-navigation-gripper" title="{$TOKEN[@name='MOVE_TAB_LONG_LABEL']}"><span><xsl:value-of select="$TOKEN[@name='MOVE_TAB_LABEL']"/></span></a> <!-- Drag & drop gripper handle. -->
           </xsl:if>
-          <xsl:if test="$AUTHENTICATED='true' and not(@dlm:deleteAllowed='false') and @activeTab='true'">
+          <xsl:if test="not(@dlm:deleteAllowed='false')">
             <a href="javascript:;" class="portal-navigation-delete" title="{$TOKEN[@name='DELETE_TAB_LONG_LABEL']}"><span><xsl:value-of select="$TOKEN[@name='DELETE_TAB_LABEL']"/></span></a><!-- Remove tab icon. -->
           </xsl:if>
       </xsl:if>

@@ -222,6 +222,7 @@
   -->
   <xsl:param name="USE_FLYOUT_MENUS" select="'true'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
   <xsl:param name="USE_ADD_TAB" select="'true'" /> <!-- Sets the use of a "+" button at the end of the tab list for adding a new tab.  Values are 'true' or 'false'. -->
+  <xsl:param name="TAB_CONTEXT">header</xsl:param><!-- Sets the location of the navigation. Values are 'header' or 'sidebar'. -->
   
   <!-- USE_SUBNAVIGATION_ROW
    | Sets the use of the sub navigation row, which lists out links to the portlets on the active tab.
@@ -583,9 +584,11 @@
   -->
   <xsl:template name="main.navigation.block">
   	<!-- Main Navigation -->
-    <xsl:apply-templates select="//navigation">
-      <xsl:with-param name="CONTEXT" select="'header'"/>
-    </xsl:apply-templates>
+    <xsl:if test="$TAB_CONTEXT = 'header'">
+        <xsl:apply-templates select="//navigation">
+          <xsl:with-param name="CONTEXT" select="'header'"/>
+        </xsl:apply-templates>
+    </xsl:if>
     <!-- Main Navigation -->
   </xsl:template>
   <!-- ================================================= -->
@@ -697,10 +700,12 @@
     <xsl:call-template name="quicklinks"/>
     <!-- Quicklinks -->
     
-    <!-- Main Navigation
-    <xsl:apply-templates select="//navigation">
-      <xsl:with-param name="CONTEXT" select="'sidebar'"/>
-    </xsl:apply-templates> -->
+    <!-- Main Navigation-->
+    <xsl:if test="$TAB_CONTEXT = 'sidebar'">
+        <xsl:apply-templates select="//navigation">
+          <xsl:with-param name="CONTEXT" select="'sidebar'"/>
+        </xsl:apply-templates>
+    </xsl:if> 
     <!-- Main Navigation -->
     
     <!-- SAMPLE:
@@ -725,9 +730,11 @@
   -->
   <xsl:template name="content.sidebar.focused.block">
     <!-- Main Navigation
-    <xsl:apply-templates select="//navigation">
-      <xsl:with-param name="CONTEXT" select="'focused'"/>
-    </xsl:apply-templates> -->
+    <xsl:if test="$TAB_CONTEXT = 'sidebar'">
+        <xsl:apply-templates select="//navigation">
+          <xsl:with-param name="CONTEXT" select="'focused'"/>
+        </xsl:apply-templates>
+    </xsl:if>-->
     <!-- Main Navigation -->
     
     <!-- Portlet Navigation -->
@@ -784,10 +791,12 @@
     <xsl:call-template name="quicklinks"/> -->
     <!-- Quicklinks -->
     
-    <!-- Main Navigation
-    <xsl:apply-templates select="//navigation">
-      <xsl:with-param name="CONTEXT" select="'sidebar'"/>
-    </xsl:apply-templates> -->
+    <!-- Main Navigation 
+    <xsl:if test="$TAB_CONTEXT = 'sidebar'">
+        <xsl:apply-templates select="//navigation">
+          <xsl:with-param name="CONTEXT" select="'sidebar'"/>
+        </xsl:apply-templates>
+    </xsl:if>-->
     <!-- Main Navigation -->
     
     <!-- SAMPLE:
