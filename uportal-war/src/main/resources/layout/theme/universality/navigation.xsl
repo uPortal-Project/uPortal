@@ -66,7 +66,6 @@
               <xsl:apply-templates select="tab">
                 <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
               </xsl:apply-templates>
-              <xsl:call-template name="add.tab"/>
             </ul>
             
             <xsl:if test="$USE_SUBNAVIGATION_ROW='true'">
@@ -77,7 +76,7 @@
                 </xsl:call-template>
               </div>
             </xsl:if>
-            <xsl:if test="$AUTHENTICATED='true'">
+            <xsl:if test="$AUTHENTICATED='true' and $USE_ADD_TAB='true' and not(//focused)">
                 <a href="javascript:;" title="{$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']}" class="portal-navigation-add"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']"/></a>
             </xsl:if>
           </div>
@@ -402,25 +401,6 @@
     	</div> 
     </div>
     
-  </xsl:template>
-  <!-- ================================================== -->
-  
-  
-  <!-- ================ TEMPLATE: ADD TAB ================ -->
-  <!-- =================================================== -->
-  <!--
-   | This template renders the add tab "+" link at the end of the tab list.
-  -->
-  <xsl:template name="add.tab">  
-    <xsl:if test="$USE_ADD_TAB='true'">
-      <xsl:if test="$AUTHENTICATED='true' and $USE_AJAX='true'">
-      	<li id="addTabLink" class="portal-navigation">
-          <a class="portal-navigation-link add-tab" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LONG_LABEL']}">
-            <span class="portal-navigation-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LABEL']"/></span>
-          </a>
-        </li>
-      </xsl:if>
-    </xsl:if>
   </xsl:template>
   <!-- ================================================== -->
   

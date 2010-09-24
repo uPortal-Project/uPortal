@@ -221,7 +221,7 @@
    | Navigation Settings can be used to change the navigation.
   -->
   <xsl:param name="USE_FLYOUT_MENUS" select="'true'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
-  <xsl:param name="USE_ADD_TAB" select="'false'" /> <!-- UNDER DEVELOPMENT, not yet functional (leave false). Sets the use of a "+" button at the end of the tab list for adding a new tab.  Values are 'true' or 'false'. -->
+  <xsl:param name="USE_ADD_TAB" select="'true'" /> <!-- Sets the use of a "+" button at the end of the tab list for adding a new tab.  Values are 'true' or 'false'. -->
   
   <!-- USE_SUBNAVIGATION_ROW
    | Sets the use of the sub navigation row, which lists out links to the portlets on the active tab.
