@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
-  <title>NY Times - Education</title>
-  <name>NY Times Education</name>
-  <fname>ny-times-education</fname>
-  <desc>Recent education news from the New York Times.</desc>
+  <title>Word of the Day</title>
+  <name>Word of the Day</name>
+  <fname>word-of-the-day</fname>
+  <desc>Word of the Day channel</desc>
   <type>RSS</type>
   <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>10000</timeout>
@@ -13,7 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>News</category>
+    <category>Entertainment</category>
   </categories>
   <groups>
     <group>Everyone</group>
@@ -35,15 +35,19 @@
   <portletPreferences>
     <portletPreference> 
       <name>name</name>
-      <values><value>New York Times: Education</value></values>
+      <values><value>Word of the Day</value></values>
     </portletPreference>
     <portletPreference> 
       <name>url</name>
-      <values><value>http://feeds.nytimes.com/nyt/rss/Education</value></values>
+      <values><value>http://www.dictionary.com/wordoftheday/wotd.rss</value></values>
     </portletPreference>
     <portletPreference> 
       <name>summaryView</name>
-      <values><value>flyout</value></values>
+      <values><value>full</value></values>
+    </portletPreference>
+    <portletPreference> 
+      <name>maxStories</name>
+      <values><value>1</value></values>
     </portletPreference>
   </portletPreferences>
 </channel-definition>

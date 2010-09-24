@@ -24,7 +24,7 @@
         <module>FunctionalTestsPortlet</module>
         <module>jasig-widget-portlets</module>
         <module>pluto-testsuite</module>
-        <module>RssPortlet</module>
+        <module>NewsReaderPortlet</module>
         <module>SimpleContentPortlet</module>
         <module>WeatherPortlet</module>
         <module>WebProxyPortlet</module>

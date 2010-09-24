@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
-  <title>NY Times - Education</title>
-  <name>NY Times Education</name>
-  <fname>ny-times-education</fname>
-  <desc>Recent education news from the New York Times.</desc>
+  <title>Motley Fool</title>
+  <name>The Motley Fool</name>
+  <fname>motley-fool</fname>
+  <desc>Motley Fool channel</desc>
   <type>RSS</type>
   <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>10000</timeout>
@@ -13,7 +13,7 @@
   <secure>N</secure>
   <locale>en_US</locale>
   <categories>
-    <category>News</category>
+    <category>Entertainment</category>
   </categories>
   <groups>
     <group>Everyone</group>
@@ -35,11 +35,11 @@
   <portletPreferences>
     <portletPreference> 
       <name>name</name>
-      <values><value>New York Times: Education</value></values>
+      <values><value>Motley Fool</value></values>
     </portletPreference>
     <portletPreference> 
       <name>url</name>
-      <values><value>http://feeds.nytimes.com/nyt/rss/Education</value></values>
+      <values><value>http://www.fool.com/xml/foolnews_rss091.xml</value></values>
     </portletPreference>
     <portletPreference> 
       <name>summaryView</name>

@@ -10,21 +10,22 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>RssPortlet</artifactId>
+    <artifactId>NewsReaderPortlet</artifactId>
     <packaging>war</packaging>
 
-    <name>RSS Portlet</name>
-    <description>Overlay on RSS Portlet.</description>
+    <name>News Reader Portlet</name>
+    <description>Overlay on News Reader Portlet.</description>
 
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
-            <groupId>com.plumtree.portlets</groupId>
-            <artifactId>RssPortlet</artifactId>
-            <version>${RssPortlet.version}</version>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>NewsReaderPortlet</artifactId>
+            <version>${NewsReaderPortlet.version}</version>
             <type>war</type>
         </dependency>
     </dependencies>
+    
 
     <build>
         <plugins>
@@ -34,4 +35,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

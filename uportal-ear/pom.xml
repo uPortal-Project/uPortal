@@ -75,7 +75,7 @@
         
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>RssPortlet</artifactId>
+            <artifactId>NewsReaderPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -199,9 +199,9 @@
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>RssPortlet</artifactId>
-                            <bundleFileName>RssPortlet.war</bundleFileName>
-                            <contextRoot>/RssPortlet</contextRoot>
+                            <artifactId>NewsReaderPortlet</artifactId>
+                            <bundleFileName>NewsReaderPortlet.war</bundleFileName>
+                            <contextRoot>/NewsReaderPortlet</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
