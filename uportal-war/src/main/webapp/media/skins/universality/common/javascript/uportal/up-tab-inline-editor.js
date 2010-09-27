@@ -54,7 +54,7 @@ var up = up || {};
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var editTabHandler = function (that) {
-        var edit, text, editorOptions;
+        var edit, text, editorOptions, numOfPortlets;
         
         edit = that.locate("edit");
         if (edit.length > 0) {
@@ -91,6 +91,12 @@ var up = up || {};
                 text.css("cursor", "pointer");
                 text.blur();
             });
+            
+            // Trigger edit mode.
+            numOfPortlets = parseInt(that.options.numberOfPortlets);
+            if (numOfPortlets === 0 && text.text() === that.options.addTabLabel) {
+                text.trigger("click");
+            }//end:if.
         }//end:if.
     };//end:function.
     
@@ -287,6 +293,7 @@ var up = up || {};
         insertBefore: "insertBefore",
         appendAfter: "appendAfter",
         tabContext: "header",
+        numberOfPortlets: 0,
         submitOnEnter: true
     });
 })(jQuery, fluid);

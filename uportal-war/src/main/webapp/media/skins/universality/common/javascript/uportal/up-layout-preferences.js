@@ -443,7 +443,8 @@ var uportal = uportal || {};
                     );
                 }
             },
-            tabContext: that.options.tabContext
+            tabContext: that.options.tabContext,
+            numberOfPortlets: that.options.numberOfPortlets
         });
         
         // initialize the portlet reorderer
@@ -495,6 +496,7 @@ var uportal = uportal || {};
     // defaults
     fluid.defaults("up.LayoutPreferences", {
         tabContext: "header",
+        numberOfPortlets: 0,
         portalContext: "/uPortal",
         layoutPersistenceUrl: '/uPortal/mvc/layout',
         channelRegistryUrl: '/uPortal/mvc/channelList',
