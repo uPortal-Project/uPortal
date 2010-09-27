@@ -140,6 +140,8 @@
         <token name="CHANNEL_ADD_TARGET_LABEL">Add Portlet Here</token>
         <token name="CHANNEL_ADD_TARGET_LONG_LABEL">To add the Portlet to this location</token>
         <!-- Preferences -->
+        <token name="PREFERENCES_PAGE_CUSTOMIZE_TITLE">Customize this page.</token>
+        <token name="PREFERENCES_PAGE_CUSTOMIZE_MESSAGE">You can Add Stuff, change the page Layout, and pick your Colors.</token>
         <token name="PREFERENCES_PAGE_TITLE">Customize My Portal</token>
         <token name="PREFERENCES_SAVE_BUTTON">Save &amp; Exit</token>
         <token name="PREFERENCES_SAVE_BUTTON_TITLE">To Save all changes and exit the customization mode</token>
@@ -147,6 +149,8 @@
         <token name="PREFERENCES_CANCEL_BUTTON_TITLE">To discard all changes and exit the customization mode</token>
         <token name="PREFERENCES_USER_ACTIONS">User Preferences Actions</token>
         <token name="PREFERENCES_FRAGMENT_ACTIONS">Fragment Content Actions</token>
+        <token name="PREFERENCES_FRAGMENT_EDIT_PAGE_PERMISSIONS_LABEL">Edit Page Permissions</token>
+        <token name="PREFERENCES_FRAGMENT_EDIT_PAGE_PERMISSIONS_LONG_LABEL">Edit Page Permissions</token>
         <token name="PREFERENCES_CANCEL_ACTION_LABEL_PRE">Cancel </token><!-- Precedes dynamic target action -->
         <token name="PREFERENCES_CANCEL_ACTION_LABEL_POST"></token><!-- Follows dynamic target action -->
         <token name="PREFERENCES_CANCEL_ACTION_LONG_LABEL">To cancel the current action</token>

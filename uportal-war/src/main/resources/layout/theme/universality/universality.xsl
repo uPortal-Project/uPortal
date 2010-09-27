@@ -627,6 +627,17 @@
   </xsl:template>
   <!-- ==================================================== -->
   
+  <!-- ==== TEMPLATE: CONTENT CUSTOMIZE MESSAGE BLOCK ==== -->
+  <!-- =================================================== -->
+  <!-- 
+   | GREEN
+   | This template renders content into the page body in the top row of the content layout table.
+   | Template contents can be any valid XSL or XHTML.
+  -->
+  <xsl:template name="content.customize.message.block">
+    <xsl:call-template name="page.customize.message"/>
+  </xsl:template>
+  <!-- =================================================== -->
   
   <!-- ========== TEMPLATE: CONTENT TITLE BLOCK ========== -->
   <!-- =================================================== -->

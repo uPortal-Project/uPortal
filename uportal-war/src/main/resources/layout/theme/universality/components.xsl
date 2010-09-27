@@ -575,6 +575,17 @@
   </xsl:template>
   <!-- ============================================ -->
   
+  <!-- ====== TEMPLATE: CUSTOMIZE MESSAGE ======= -->
+  <!-- ========================================== -->
+  <!--
+   | This template renders the customize page message. This message should only 
+   | render when no portlets have been added to a users layout.
+  -->
+  <xsl:template name="page.customize.message">
+      <h1><span class="fl-font-blue">Customize</span> this page.</h1>
+      <span>You can <span class="fl-font-blue">Add Stuff</span>, change the page <span class="fl-font-blue">Layout</span>, and pick your <span class="fl-font-blue">Colors.</span></span>
+  </xsl:template>
+  <!-- ========================================== -->
   
   <!-- ========== TEMPLATE: CUSTOMIZE LINKS ========== -->
   <!-- =============================================== -->

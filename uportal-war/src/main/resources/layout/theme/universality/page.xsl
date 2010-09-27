@@ -136,7 +136,9 @@
                     <xsl:call-template name="gallery"/>
                 </xsl:if>
                 <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                    <p id="editPagePermissionsLink" style="text-align:right; margin-top: 10px;"><a href="javascript:;">Edit Page Permissions</a></p>
+                    <div id="portalEditPagePermissions" class="ui-helper-clearfix"><a id="editPagePermissionsLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_FRAGMENT_EDIT_PAGE_PERMISSIONS_LONG_LABEL']}">
+                        <xsl:value-of select="$TOKEN[@name='PREFERENCES_FRAGMENT_EDIT_PAGE_PERMISSIONS_LABEL']"/>
+                    </a></div>
                 </xsl:if>
                 <xsl:apply-templates select="content"/>
                 <xsl:apply-templates select="footer"/>
@@ -215,7 +217,6 @@
         <xsl:otherwise><xsl:value-of select="count(column)"/></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    
     <div id="portalPageBody" class="fl-container-flex">  <!-- Div for presentation/formatting options. -->
     	<div id="portalPageBodyInner">  <!-- Inner div for additional presentation/formatting options. -->
       
@@ -302,6 +303,7 @@
                       	<!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT TOP BLOCK ****** -->
+                        <xsl:call-template name="page.customize.row"/>
                         <xsl:call-template name="page.title.row"/>
                         <xsl:call-template name="columns"> <!-- Template located in columns.xsl. -->
                             <xsl:with-param name="COLUMNS" select="$COLUMNS" />
@@ -315,6 +317,7 @@
                     	<!-- ****** CONTENT TOP BLOCK ****** -->
                       <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                       <!-- ****** CONTENT TOP BLOCK ****** -->
+                      <xsl:call-template name="page.customize.row"/>
                       <xsl:call-template name="page.title.row"/> <!-- No Sidebar. Template located below. -->
                       <xsl:call-template name="columns"> <!-- Template located in columns.xsl. -->
                         <xsl:with-param name="COLUMNS" select="$COLUMNS" />
@@ -377,6 +380,21 @@
   </xsl:template>
   <!-- ========================================= -->
 
+  <!-- ======= TEMPLATE: CUSTOMIZE MESSAGE ======= -->
+  <!-- =========================================== -->
+  <!-- 
+   | This template renders the customize page message.
+  -->
+  <xsl:template name="page.customize.row">
+    <xsl:if test="count(column/channel) = 0">
+        <div id="portalPageBodyCustomizeMessageRow">
+            <div id="portalPageBodyCustomizeMessageRowContents">
+                <xsl:call-template name="content.customize.message.block"/>
+            </div>
+        </div>
+    </xsl:if>
+  </xsl:template>
+  <!-- =========================================== -->
 
   <!-- ========== TEMPLATE: PAGE TITLE ========== -->
   <!-- =========================================== -->
