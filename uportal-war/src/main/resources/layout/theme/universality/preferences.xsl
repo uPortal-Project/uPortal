@@ -525,6 +525,7 @@
             "body",
             {
               tabContext: '<xsl:value-of select="$TAB_CONTEXT"/>',
+              numberOfPortlets: '<xsl:value-of select="count(content/column/channel)"/>',
               portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
               mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
               currentSkin: '<xsl:value-of select="$SKIN"/>',
