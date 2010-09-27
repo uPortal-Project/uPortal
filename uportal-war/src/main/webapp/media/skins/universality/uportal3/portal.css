@@ -255,16 +255,27 @@
 /* Tab Drop Marker */
 .up #portalNavigation .fl-tabs .fl-reorderer-header-dropMarker {background-color: #F68922 !important; background: #F68922 !important; padding:.5em .31em; *zoom: 1;}
 
+/*  */
+.up #editPagePermissionsLink {float: right; display: block; margin-top: .75em; margin-right: 2em;}
+
 /* Body */
 .up #portalPageBodyInner {padding:2.5em 2em;}
+.up .fragment-admin-mode #portalPageBodyInner {padding:1.2em 2em 2.5em 2em;}
 .up #portalPageBodyTitleRow h1 {display:none;}
 /* Focused */
 .up #portalPageBodyBreadcrumb {display:none;}
 .up #portalPageBodyBreadcrumb a {font-weight:normal;}
 
+/* Customize Page Message */
+.up #portalPageBodyCustomizeMessageRow {background: transparent url("images/customize_message_arrow.png") 40px 0px no-repeat; padding-top: 4px; margin-bottom: 1em;}
+.up #portalPageBodyCustomizeMessageRowContents {
+    background-color: #FFF; border: 2px solid #F68923; -webkit-border-radius: 7px; -moz-border-radius: 7px; border-radius: 7px; padding: 10px 20px;}
+.up #portalPageBodyCustomizeMessageRowContents h1 {margin: 0 0 .3em 0; font-weight: normal; color: #333; text-decoration: none; border: none;}
+.up #portalPageBodyCustomizeMessageRowContents .fl-font-blue {color: #336699; font-weight: bold;}
+
 /* Columns */
 .up #portalPageBodyColumns.fl-col-flex,
-.up .layout-1-columns .portal-page-column.fl-col-flex {padding:0;} /* Removes default padding from FSS  */
+.up .layout-1-columns .portal-page-column.fl-col-flex {padding:0;} /* Removes default padding from FSS */
 
 /* Sidebar */
 .up #portalSidebar {}

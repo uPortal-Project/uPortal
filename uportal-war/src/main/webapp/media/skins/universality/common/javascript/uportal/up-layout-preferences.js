@@ -400,10 +400,10 @@ var uportal = uportal || {};
         
         that.components.tabManager = up.TabManager("#portalNavigation", {
             listeners: {
-                afterFinishEdit: function (newValue, oldValue, editNode, viewNode) {
+                onTabEdit: function (newValue, oldValue, editNode, viewNode) {
                     that.persistence.update({action: 'renameTab', tabId: getActiveTabId(), tabName: newValue});
                 },
-                onRemove: function (anchor) {
+                onTabRemove: function (anchor) {
                     if (!confirm(that.options.messages.confirmRemoveTab)) return false;
                     
                     var li, id
@@ -419,7 +419,7 @@ var uportal = uportal || {};
                         }
                     );
                 },
-                onAdd: function (tabLabel, columns) {
+                onTabAdd: function (tabLabel, columns) {
                     that.persistence.update(
                         {
                             action: "addTab",
@@ -431,7 +431,7 @@ var uportal = uportal || {};
                         }
                     );
                 },
-                afterTabMove: function (sourceId, method, elementId, tabPosition) {
+                onTabMove: function (sourceId, method, elementId, tabPosition) {
                     that.persistence.update(
                         {
                             action: "moveTab",

@@ -91,23 +91,25 @@ var uportal = uportal || {};
      */
     var zIndexWorkaround = function(that) {
         if($.browser.msie) {
-            // Iterate over the parents of the flyout containers
-            that.locate('flyoutMenu').parents().each(function() {
-                var p = $(this);
-                var pos = p.css("position");
+            if ($.browser.version === "7.0") {
+                // Iterate over the parents of the flyout containers
+                that.locate('flyoutMenu').parents().each(function(){
+                    var p = $(this);
+                    var pos = p.css("position");
+                    
+                    // If it's positioned,
+                    if (pos == "relative" || pos == "absolute" || pos == "fixed") {
+                        /*
+                         * Add the "ieZindex-fix_on-top" class name This class is defined in:
+                         *  uportal-war/src/main/webapp/media/skins/universality/common/css/layout.css
+                         */
+                        $(this).addClass("ieZindex-fix_on-top");
+                    }
+                });
                 
-                // If it's positioned,
-                if(pos == "relative" || pos == "absolute" || pos == "fixed") {
-                    /*
-                     * Add the "ieZindex-fix_on-top" class name This class is defined in:
-                     *  uportal-war/src/main/webapp/media/skins/universality/common/css/layout.css 
-                     */
-                    $(this).addClass("ieZindex-fix_on-top");
-                }
-            });
-            
-            return;
-        }
+                return;
+            }//end:if.
+        }//end:if.
     };
     
     /**

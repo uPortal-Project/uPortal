@@ -32,34 +32,14 @@
  * Available selectors
  * -------------------
  * 
- * text
- *         :
- *         
- * edit
- *         :
- *         
  * ----------------
  * Available events
  * ----------------
  * 
- * afterFinishEdit
- *         :boolean
- *         :Fires just after the newly edited value is stored in the model.
- *         
  * ---------------------------
  * Other Configuration Options
  * ---------------------------
  * 
- * submitOnEnter
- *         :boolean
- *         :Causes the component to finish editing and commit changes to
- *          the component's model when the "Enter" button is clicked.
- *         
- * selectOnEdit
- *         :boolean
- *         :Automactically selects the editable text when the component
- *          switches into edit mode.
- *         
  */
 
 "use strict";
@@ -78,11 +58,20 @@ var up = up || {};
         
         edit = that.locate("edit");
         if (edit.length > 0) {
-            // Map default options to the fluid.inlineEdit component.
-            editorOptions = that.options;
-            
-            // Initialize fluid.inlineEdit component.
-            that.inlineEditor = fluid.inlineEdits(that.container, editorOptions);
+            // Initialize & configure fluid.inlineEdit component.
+            that.inlineEditor = fluid.inlineEdits(that.container, {
+                selectors: {
+                    text: that.options.selectors.text,
+                    edit: that.options.selectors.edit
+                },
+                listeners: {
+                    afterFinishEdit: function (newValue, oldValue, editNode, viewNode) {
+                        // Fire afterFinishEdit event.
+                        that.events.onTabEdit.fire(newValue, oldValue, editNode, viewNode);
+                    }
+                },
+                submitOnEnter: that.options.submitOnEnter
+            });
             
             // Mouseenter event listener. Give focus to the
             // tab name on mouseenter. The mouseenter event
@@ -115,13 +104,13 @@ var up = up || {};
         var remove;
         remove = that.locate("remove");
         remove.bind("click", function () {
-            that.events.onRemove.fire(this);
+            that.events.onTabRemove.fire(this);
         });
     };//end: function.
     
     /**
-     * Private. Fires the onAdd event when the 'Add Tab' link is clicked. Passes new 
-     * tab configurations to the onAdd listener.
+     * Private. Fires the onAddTab event when the 'Add Tab' link is clicked. Passes new 
+     * tab configurations to the onAddTab listener.
      * 
      * @param {Object} that- reference to an instance of the TabManger component.
      */
@@ -129,7 +118,7 @@ var up = up || {};
         var add;
         add = that.locate("add");
         add.bind("click", function () {
-            that.events.onAdd.fire(that.options.addTabLabel, that.options.addTabWidths);
+            that.events.onTabAdd.fire(that.options.addTabLabel, that.options.addTabWidths, that.options.selectors.text);
         });
     };//end: function.
     
@@ -140,8 +129,8 @@ var up = up || {};
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var moveTabHandler = function (that) {
-        // Initialize fluid.reorderLayout component.
-        that.reorderLayout = fluid.reorderLayout (that.container, {
+        // Initialize & configure fluid.reorderLayout component.
+        that.reorderLayout = fluid.reorderLayout(that.container, {
             selectors: {
                 columns: that.options.selectors.columns,
                 modules: that.options.selectors.modules,
@@ -207,7 +196,7 @@ var up = up || {};
                     });//end:loop.
                     
                     // Fire afterTabMove event.
-                    that.events.afterTabMove.fire(tabShortId, method, targetTabShortId, tabPosition);
+                    that.events.onTabMove.fire(tabShortId, method, targetTabShortId, tabPosition);
                 }
             }
         });
@@ -282,10 +271,10 @@ var up = up || {};
             tabListItems: ".portal-navigation"
         },
         events: {
-            afterFinishEdit: null,
-            onRemove: null,
-            onAdd: null,
-            afterTabMove: null
+            onTabEdit: null,
+            onTabRemove: null,
+            onTabAdd: null,
+            onTabMove: null
         },
         styles: {
             lockedTab: "locked",
@@ -295,11 +284,9 @@ var up = up || {};
         },
         addTabLabel: "My Tab",
         addTabWidths: [50, 50],
-        submitOnEnter: true,
-        selectOnEdit: true,
-        lazyEditView: true,
         insertBefore: "insertBefore",
         appendAfter: "appendAfter",
-        tabContext: "header"
+        tabContext: "header",
+        submitOnEnter: true
     });
 })(jQuery, fluid);
