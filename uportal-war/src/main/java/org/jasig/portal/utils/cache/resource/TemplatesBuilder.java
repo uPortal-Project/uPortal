@@ -22,8 +22,8 @@ package org.jasig.portal.utils.cache.resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
@@ -31,6 +31,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.IOUtils;
 import org.jasig.portal.xml.ResourceLoaderURIResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,18 +51,29 @@ public class TemplatesBuilder implements Loader<Templates>, ResourceLoaderAware 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ResourceLoader resourceLoader;
+    private Map<String, Object> transformerAttributes;
 
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
+    }
+    
+    public void setTransformerAttributes(Map<String, Object> transformerAttributes) {
+        this.transformerAttributes = transformerAttributes;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.utils.cache.resource.ResourceBuilder#buildResource(org.springframework.core.io.Resource, java.io.InputStream)
      */
     @Override
-    public LoadedResource<Templates> loadResource(Resource resource, InputStream stream) throws IOException {
+    public LoadedResource<Templates> loadResource(Resource resource) throws IOException {
         final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        
+        if (this.transformerAttributes != null) {
+            for (final Map.Entry<String, Object> attributeEntry : this.transformerAttributes.entrySet()) {
+                transformerFactory.setAttribute(attributeEntry.getKey(), attributeEntry.getValue());
+            }
+        }
         
         final ResourceTrackingURIResolver uriResolver = new ResourceTrackingURIResolver(this.resourceLoader);
         transformerFactory.setURIResolver(uriResolver);
@@ -69,22 +81,26 @@ public class TemplatesBuilder implements Loader<Templates>, ResourceLoaderAware 
         final URI uri = resource.getURI();
         final String systemId = uri.toString();
         
-        final StreamSource source = new StreamSource(stream, systemId);
+        final InputStream stream = resource.getInputStream();
         final Templates templates;
         try {
+            final StreamSource source = new StreamSource(stream, systemId);
             templates = transformerFactory.newTemplates(source);
         }
         catch (TransformerConfigurationException e) {
             throw new IOException("Failed to parse stream into Templates", e);
         }
+        finally {
+            IOUtils.closeQuietly(stream);
+        }
         
-        final Set<Resource> resolvedResources = uriResolver.getResolvedResources();
+        final Map<Resource, Long> resolvedResources = uriResolver.getResolvedResources();
         
         return new LoadedResourceImpl<Templates>(templates, resolvedResources);
     }
     
     private static class ResourceTrackingURIResolver extends ResourceLoaderURIResolver {
-        private final Set<Resource> resolvedResources = new LinkedHashSet<Resource>();
+        private final Map<Resource, Long> resolvedResources = new LinkedHashMap<Resource, Long>();
         
         public ResourceTrackingURIResolver(ResourceLoader resourceLoader) {
             super(resourceLoader);
@@ -93,11 +109,20 @@ public class TemplatesBuilder implements Loader<Templates>, ResourceLoaderAware 
         @Override
         protected Resource resolveResource(String href, String base) throws TransformerException {
             final Resource resource = super.resolveResource(href, base);
-            resolvedResources.add(resource);
+
+            long lastModified = 0;
+            try {
+                lastModified = resource.lastModified();
+            }
+            catch (IOException e) {
+                //Ignore, not all resources can have a valid lastModified returned
+            }
+            resolvedResources.put(resource, lastModified);
+            
             return resource;
         }
 
-        public Set<Resource> getResolvedResources() {
+        public Map<Resource, Long> getResolvedResources() {
             return this.resolvedResources;
         }
     }

@@ -14,9 +14,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.resource.aggr.om.Included;
+import org.jasig.resource.aggr.util.ResourcesElementsProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Pays attention to the state of skin aggregation and only applies the fitler if it is disabled
@@ -28,6 +32,7 @@ public class AggregationAwareFilterBean implements Filter {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private Filter filter;
+    private ResourcesElementsProvider elementsProvider;
 
     /**
      * The filter to delegate to
@@ -35,7 +40,12 @@ public class AggregationAwareFilterBean implements Filter {
     public void setFilter(Filter filter) {
         this.filter = filter;
     }
-    
+
+    @Autowired
+    public void setElementsProvider(ResourcesElementsProvider elementsProvider) {
+        this.elementsProvider = elementsProvider;
+    }
+
     @Override
     public void destroy() {
         this.filter.destroy();
@@ -51,7 +61,7 @@ public class AggregationAwareFilterBean implements Filter {
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (this.isAggregationEnabled()) {
+        if (this.elementsProvider.getIncludedType((HttpServletRequest)request) == Included.AGGREGATED) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Aggregation enabled, delegating to filter: " + this.filter);
             }
@@ -63,9 +73,5 @@ public class AggregationAwareFilterBean implements Filter {
             }
             chain.doFilter(request, response);
         }
-    }
-
-    private boolean isAggregationEnabled() {
-        return Boolean.parseBoolean(System.getProperty(ResourcesAggregationHelper.AGGREGATED_THEME_PARAMETER, ResourcesAggregationHelper.DEFAULT_AGGREGATION_ENABLED));
     }
 }

@@ -46,6 +46,8 @@ import org.jasig.portal.utils.cache.resource.CachingResourceLoaderImpl;
 import org.jasig.portal.utils.cache.resource.LoadedResource;
 import org.jasig.portal.utils.cache.resource.LoadedResourceImpl;
 import org.jasig.portal.utils.cache.resource.Loader;
+import org.jasig.resource.aggr.om.Included;
+import org.jasig.resource.aggr.util.ResourcesElementsProvider;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
@@ -76,27 +78,27 @@ public class CachingResourceLoaderImplTest {
         final Resource doc1Resouce = new FileSystemResource(doc1);
         
         final CachingResourceLoaderImpl loader = new CachingResourceLoaderImpl();
-        loader.setDigestInput(false);
         
         final Ehcache cache = createMock(Ehcache.class);
+        final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
+        expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
         expect(cache.getInternalContext()).andReturn(null);
         expect(cache.get(doc1Resouce)).andReturn(null);
         expect(cache.getQuiet(doc1Resouce)).andReturn(null);
         cache.put(anyObject(Element.class));
         expectLastCall();
         
-        replay(cache);
+        replay(cache, elementsProvider);
         
         loader.setResourceCache(cache);
+        loader.setResourcesElementsProvider(elementsProvider);
         
         final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
         
-        verify(cache);
+        verify(cache, elementsProvider);
         
         assertNotNull(cachedResource1);
-        assertEquals(null, cachedResource1.getDigestAlgorithm());
-        assertEquals(null, cachedResource1.getLastLoadDigest());
         assertEquals("My Test Resource", cachedResource1.getCachedResource());
     }
     
@@ -107,24 +109,25 @@ public class CachingResourceLoaderImplTest {
         final CachingResourceLoaderImpl loader = new CachingResourceLoaderImpl();
         
         final Ehcache cache = createMock(Ehcache.class);
+        final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
+        expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
         expect(cache.getInternalContext()).andReturn(null);
         expect(cache.get(doc1Resouce)).andReturn(null);
         expect(cache.getQuiet(doc1Resouce)).andReturn(null);
         cache.put(anyObject(Element.class));
         expectLastCall();
         
-        replay(cache);
+        replay(cache, elementsProvider);
         
         loader.setResourceCache(cache);
+        loader.setResourcesElementsProvider(elementsProvider);
         
         final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
         
-        verify(cache);
+        verify(cache, elementsProvider);
         
         assertNotNull(cachedResource1);
-        assertEquals("MD5", cachedResource1.getDigestAlgorithm());
-        assertEquals("-1zbTdqQDChT-t3UTtOLew", cachedResource1.getLastLoadDigest());
         assertEquals("My Test Resource", cachedResource1.getCachedResource());
     }
     
@@ -136,7 +139,9 @@ public class CachingResourceLoaderImplTest {
         
         final Ehcache cache = createMock(Ehcache.class);
         final CachedResource<?> cachedResource = createMock(CachedResource.class);
+        final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
+        expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
         expect(cache.getInternalContext()).andReturn(null);
         expect(cache.get(doc1Resouce))
             .andReturn(new Element(doc1Resouce, cachedResource));
@@ -148,19 +153,18 @@ public class CachingResourceLoaderImplTest {
         cache.put(anyObject(Element.class));
         expectLastCall();
         
-        replay(cache, cachedResource);
+        replay(cache, cachedResource, elementsProvider);
         
         loader.setResourceCache(cache);
+        loader.setResourcesElementsProvider(elementsProvider);
         
         doc1.setLastModified(2000000);
         
         final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
         
-        verify(cache, cachedResource);
+        verify(cache, cachedResource, elementsProvider);
         
         assertNotNull(cachedResource1);
-        assertEquals("MD5", cachedResource1.getDigestAlgorithm());
-        assertEquals("-1zbTdqQDChT-t3UTtOLew", cachedResource1.getLastLoadDigest());
         assertEquals("My Test Resource", cachedResource1.getCachedResource());
     }
     
@@ -172,7 +176,9 @@ public class CachingResourceLoaderImplTest {
         
         final Ehcache cache = createMock(Ehcache.class);
         final CachedResource<?> cachedResource = createMock(CachedResource.class);
+        final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
+        expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
         expect(cache.getInternalContext()).andReturn(null);
         final Element element = new Element("class path resource [CachingResourceLoaderImplTest_doc1.txt]", cachedResource);
         expect(cache.get(doc1Resouce)).andReturn(element);
@@ -180,20 +186,21 @@ public class CachingResourceLoaderImplTest {
         expect(cachedResource.getResource()).andReturn(doc1Resouce);
         expect(cachedResource.getLastCheckTime()).andReturn(1000001L);
         expect(cachedResource.getLastLoadTime()).andReturn(1000001L);
-        expect(cachedResource.getAdditionalResources()).andReturn(Collections.EMPTY_SET);
+        expect(cachedResource.getAdditionalResources()).andReturn(Collections.EMPTY_MAP);
         cachedResource.setLastCheckTime(anyLong());
         cache.put(element);
         expectLastCall();
         
-        replay(cache, cachedResource);
+        replay(cache, cachedResource, elementsProvider);
         
         loader.setResourceCache(cache);
+        loader.setResourcesElementsProvider(elementsProvider);
         
         doc1.setLastModified(1000000);
         
         final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
         
-        verify(cache, cachedResource);
+        verify(cache, cachedResource, elementsProvider);
         
         assertNotNull(cachedResource1);
         assertTrue(cachedResource1 == cachedResource);
@@ -207,20 +214,23 @@ public class CachingResourceLoaderImplTest {
         
         final Ehcache cache = createMock(Ehcache.class);
         final CachedResource<?> cachedResource = createMock(CachedResource.class);
+        final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
+        expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
         expect(cache.getInternalContext()).andReturn(null);
         expect(cache.get(doc1Resouce))
             .andReturn(new Element(doc1Resouce, cachedResource));
         
         expect(cachedResource.getLastCheckTime()).andReturn(System.currentTimeMillis());
         
-        replay(cache, cachedResource);
+        replay(cache, cachedResource, elementsProvider);
         
         loader.setResourceCache(cache);
+        loader.setResourcesElementsProvider(elementsProvider);
         
         final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
         
-        verify(cache, cachedResource);
+        verify(cache, cachedResource, elementsProvider);
         
         assertNotNull(cachedResource1);
         assertTrue(cachedResource1 == cachedResource);
@@ -230,9 +240,15 @@ public class CachingResourceLoaderImplTest {
         public static final StringResourceBuilder INSTANCE = new StringResourceBuilder();
 
         @Override
-        public LoadedResource<String> loadResource(Resource resource, InputStream stream) throws IOException {
-            final String string = IOUtils.toString(stream);
-            return new LoadedResourceImpl<String>(string);
+        public LoadedResource<String> loadResource(Resource resource) throws IOException {
+            final InputStream stream = resource.getInputStream();
+            try {
+                final String string = IOUtils.toString(stream);
+                return new LoadedResourceImpl<String>(string);
+            }
+            finally {
+                IOUtils.closeQuietly(stream);
+            }
         }
     }
 }

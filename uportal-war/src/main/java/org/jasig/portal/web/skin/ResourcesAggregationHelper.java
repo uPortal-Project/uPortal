@@ -24,7 +24,8 @@ package org.jasig.portal.web.skin;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.rendering.IPortalRenderingPipeline;
+import org.jasig.resource.aggr.om.Included;
+import org.jasig.resource.aggr.util.ResourcesElementsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,45 +44,33 @@ public class ResourcesAggregationHelper {
     public static final String DEFAULT_AGGREGATION_ENABLED = Boolean.TRUE.toString();
     
 	protected final Log logger = LogFactory.getLog(this.getClass());
+
+	private ResourcesElementsProvider resourcesElementsProvider;
+
+	@Autowired
+    public void setResourcesElementsProvider(ResourcesElementsProvider resourcesElementsProvider) {
+        this.resourcesElementsProvider = resourcesElementsProvider;
+    }
 	
-	private IPortalRenderingPipeline portalRenderingPipeline;
 	
-	/**
-	 * @param portalRenderingPipeline the portalRenderingPipeline to set
-	 */
-	@Autowired(required=true)
-	public void setPortalRenderingPipeline(
-			IPortalRenderingPipeline portalRenderingPipeline) {
-		this.portalRenderingPipeline = portalRenderingPipeline;
-	}
-	/**
+    /**
 	 * 
 	 * @return true if aggregation is currently enabled.
 	 */
 	public boolean isAggregationEnabled() {
-		return Boolean.parseBoolean(System.getProperty(AGGREGATED_THEME_PARAMETER, DEFAULT_AGGREGATION_ENABLED));
+		return Included.AGGREGATED == this.resourcesElementsProvider.getIncludedType(null);
 	}
-	/**
-	 * Invokes {@link Boolean#parseBoolean(String)} on the argument and passes the result
-	 * into {@link #setAggregationEnabled(boolean)}.
-	 * @see Boolean#parseBoolean(String)
-	 * @param valueAsString 
-	 */
-	public void setAggregationEnabled(String valueAsString) {
-		setAggregationEnabled(Boolean.parseBoolean(valueAsString));
-	}
+	
 	/**
 	 * Toggle resources aggregation (if and only if value parameter differs from current value).
-	 * Additionally invokes {@link IPortalRenderingPipeline#clearSystemCharacterCache()}.
-	 * @param value
 	 */
-	public void setAggregationEnabled(boolean value) {
-		boolean currentValue = isAggregationEnabled();
-		if(currentValue != value) {
-			System.setProperty(AGGREGATED_THEME_PARAMETER, Boolean.toString(value));
-			logger.warn("resources aggregation set: " + value);
-			portalRenderingPipeline.clearSystemCharacterCache();
-		}
+	public void setAggregationEnabled(boolean enabled) {
+	    if (enabled) {
+	        this.resourcesElementsProvider.setDefaultIncludedType(Included.AGGREGATED);
+        }
+	    else {
+	        this.resourcesElementsProvider.setDefaultIncludedType(Included.PLAIN);
+	    }
 	}
 	
 	/**
@@ -90,12 +79,11 @@ public class ResourcesAggregationHelper {
 	public void enableAggregation() {
 		setAggregationEnabled(true);
 	}
+	
 	/**
 	 * shortcut to {@link #setAggregationEnabled(boolean)} with false.
 	 */
 	public void disableAggregation() {
 		setAggregationEnabled(false);
 	}
-	
-	
 }

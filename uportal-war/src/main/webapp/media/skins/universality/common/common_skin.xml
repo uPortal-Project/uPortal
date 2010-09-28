@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<resources xmlns="http://www.jasig.org/uportal/web/skin"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/sandbox/resource-aggregator/tags/resource-aggregator-parent-1.0.0/resource-aggregator-api/src/main/resources/skin-configuration.xsd">
+  
+  <!-- For printing of portal pages. Common to all skins using the universality theme -->
+  <css>css/print.css</css>
+  
+  <!-- For layout of portal pages. Common to all skins using the universality theme. -->
+  <css>css/layout-portal.css</css>
+	
+  <!-- Support for the JSR-168 portlet specficiation. Common to all skins using the universality theme. -->
+  <css>css/jsr168.css</css>
+	
+  <!-- For layout of portlet content. Common to all skins using the universality theme. -->
+  <css>css/layout-portlet.css</css>
+  
+  <!-- Default visual style for portlet content. -->
+  <css>css/portlet.css</css>
+
+  <!-- Styles for the tokeninput jQuery plugin. -->
+  <css>css/token-input.css</css>
+
+
+  <js included="plain">/ResourceServingWebapp/rs/jquery/1.4.2/jquery-1.4.2.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.4.2/jquery-1.4.2.min.js</js>
+  
+  <js included="plain">/ResourceServingWebapp/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.min.js</js>
+  
+  <js included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
+  
+  <js included="plain">/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.min.js</js>
+  
+  <js>javascript/uportal/up-util.js</js>
+  <js>javascript/uportal/ajax-preferences-jquery.js</js>
+  <js>javascript/uportal/search.js</js>
+  <js>javascript/uportal/up-portlet-registry.js</js>
+  <js>javascript/uportal/up-portlet-browser.js</js>
+  <js>javascript/uportal/up-layout-gallery.js</js>
+  <js>javascript/uportal/up-fragment-permissions-manager.js</js>
+  <js>javascript/uportal/up-subscription-browser.js</js>
+  <js>javascript/uportal/up-layout-selector.js</js>
+  <js>javascript/uportal/up-group-browser.js</js>
+  <js>javascript/uportal/up-skin-selector.js</js>
+  <js>javascript/uportal/up-tab-inline-editor.js</js>
+  <js>javascript/uportal/up-layout-persistence.js</js>
+  <js>javascript/uportal/up-url-provider.js</js>
+  <js>javascript/uportal/up-layout-preferences.js</js>
+  <js>javascript/uportal/up-showHideToggle.js</js>
+  <js>javascript/uportal/flyout-nav.js</js>
+  <js>javascript/jquery.tokeninput.js</js>
+</resources>

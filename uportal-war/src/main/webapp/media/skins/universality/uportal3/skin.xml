@@ -20,34 +20,28 @@
 
 -->
 
-<s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
+<resources xmlns="http://www.jasig.org/uportal/web/skin"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/sandbox/resource-aggregator/tags/resource-aggregator-parent-1.0.0/resource-aggregator-api/src/main/resources/skin-configuration.xsd">
+  
+  <parameter name="fss-theme">fl-theme-mist</parameter>
   
   <!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
-  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
   
   <!-- Fluid Skinning System (FSS) theme. -->
-  <css type="fss-theme" name="fl-theme-mist">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-theme-mist.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-theme-mist.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-theme-mist.min.css</css>
   
   <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
-  <css>/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css>
-
-  <!-- For printing of portal pages. Common to all skins using the universality theme -->
-  <css>../common/css/print.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css>
   
-  <!-- For layout of portal pages. Common to all skins using the universality theme. -->
-  <css>../common/css/layout-portal.css</css>
-	
-  <!-- Support for the JSR-168 portlet specficiation. Common to all skins using the universality theme. -->
-  <css>../common/css/jsr168.css</css>
-	
-  <!-- For layout of portlet content. Common to all skins using the universality theme. -->
-  <css>../common/css/layout-portlet.css</css>
+  <css import="true">../common/common_skin.xml</css>
   
   <!-- Visual style for the portal. -->
   <css>portal.css</css>
-  
-  <!-- Default visual style for portlet content. -->
-  <css>../common/css/portlet.css</css>
   
   <!-- Local skin override for visual style for portlet content. -->
   <css>portlet.css</css>
@@ -55,33 +49,8 @@
   <!-- Support for legacy uPortal css classes. -->
   <css>legacy.css</css>
     
-  <!-- Styles for the tokeninput jQuery plugin. -->
-  <css>../common/css/token-input.css</css>
-
   <!-- Optional overrides specific to IE6.  This file needs to be created if you want IE6 specific CSS. -->
   <css conditional="if IE 6">ie6.css</css>
   
-  <js>/ResourceServingWebapp/rs/jquery/1.4.2/jquery-1.4.2.min.js</js>
-  <js>/ResourceServingWebapp/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.min.js</js>
-  <js>/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
-  <js>/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.min.js</js>
-  
-  <js>../common/javascript/uportal/up-util.js</js>
-  <js>../common/javascript/uportal/ajax-preferences-jquery.js</js>
-  <js>../common/javascript/uportal/search.js</js>
-  <js>../common/javascript/uportal/up-portlet-registry.js</js>
-  <js>../common/javascript/uportal/up-portlet-browser.js</js>
-  <js>../common/javascript/uportal/up-layout-gallery.js</js>
-  <js>../common/javascript/uportal/up-fragment-permissions-manager.js</js>
-  <js>../common/javascript/uportal/up-subscription-browser.js</js>
-  <js>../common/javascript/uportal/up-layout-selector.js</js>
-  <js>../common/javascript/uportal/up-group-browser.js</js>
-  <js>../common/javascript/uportal/up-skin-selector.js</js>
-  <js>../common/javascript/uportal/up-tab-inline-editor.js</js>
-  <js>../common/javascript/uportal/up-layout-persistence.js</js>
-  <js>../common/javascript/uportal/up-url-provider.js</js>
-  <js>../common/javascript/uportal/up-layout-preferences.js</js>
-  <js>../common/javascript/uportal/up-showHideToggle.js</js>
-  <js>../common/javascript/uportal/flyout-nav.js</js>
-  <js>../common/javascript/jquery.tokeninput.js</js>
-</s:resources>
+  <js import="true">../common/common_skin.xml</js>
+</resources>

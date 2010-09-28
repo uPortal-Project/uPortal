@@ -36,12 +36,12 @@ import org.springframework.core.io.Resource;
  */
 public interface CachingResourceLoader {
     /**
-     * Same as {@link #getResource(Resource, Loader, ResourceLoaderOptions)} but uses the default configuration.
+     * Same as {@link #getResource(Resource, Loader, long)} with a 60 second check interval
      */
     public <T> CachedResource<T> getResource(Resource resource, Loader<T> builder) throws IOException;
     
     /**
      * Get the {@link Resource} using the {@link Loader} to compile it if needed using the specified options.
      */
-    public <T> CachedResource<T> getResource(Resource resource, Loader<T> builder, ResourceLoaderOptions options) throws IOException;
+    public <T> CachedResource<T> getResource(Resource resource, Loader<T> builder, long checkInterval) throws IOException;
 }

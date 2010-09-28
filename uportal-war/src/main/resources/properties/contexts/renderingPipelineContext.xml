@@ -24,7 +24,12 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+                           
+    <bean id="resourcesElementsProvider" class="org.jasig.resource.aggr.util.ResourcesElementsProviderImpl">
+        <property name="resourcesDao" ref="resourcesDao" />
+    </bean>
+    <bean id="resourcesDao" class="org.jasig.resource.aggr.ResourcesDaoImpl" />
     
     <!-- 
      | Due to the fairly generic nature of each component in the rendering 
@@ -102,10 +107,6 @@
                             <property name="parameters">
                                 <map>
                                     <entry>
-                                        <key><util:constant static-field="org.jasig.portal.web.skin.ResourcesElementsProvider.RESOURCES_ELEMENTS_PROVIDER" /></key>
-                                        <ref bean="resourcesElementsProvider"/>
-                                    </entry>
-                                    <entry>
                                         <key><util:constant static-field="org.jasig.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" /></key>
                                         <ref bean="xslPortalUrlProvider"/>
                                     </entry>
@@ -124,12 +125,13 @@
                             <property name="cacheKeyExcludedParameters">
                                 <set>
                                     <value>CURRENT_REQUEST</value>
-                                    <util:constant static-field="org.jasig.portal.web.skin.ResourcesElementsProvider.RESOURCES_ELEMENTS_PROVIDER" />
+                                    <util:constant static-field="org.jasig.portal.web.skin.ResourcesElementsXsltcHelper.RESOURCES_ELEMENTS_HELPER" />
                                     <util:constant static-field="org.jasig.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" />
                                 </set>
                             </property>
                         </bean>
                         <bean class="org.jasig.portal.rendering.xslt.LocaleTransformerConfigurationSource" />
+                        <bean class="org.jasig.portal.web.skin.ResourcesElementsXsltcHelper" />
                     </list>
                 </property>
             </bean>

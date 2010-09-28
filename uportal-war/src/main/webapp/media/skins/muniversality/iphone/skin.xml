@@ -20,15 +20,24 @@
 
 -->
 
-<s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
+<resources xmlns="http://www.jasig.org/uportal/web/skin"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/sandbox/resource-aggregator/tags/resource-aggregator-parent-1.0.0/resource-aggregator-api/src/main/resources/skin-configuration.xsd">
+ 
+  <parameter name="fss-theme">fl-theme-iphone</parameter>
 
-  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
-  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-layout.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
+  
+  <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-layout.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-layout.min.css</css>
     
   <!-- Default jqueryui css -->
-  <css>/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css>
     
-  <css type="fss-theme" name="fl-theme-iphone">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-theme-iphone.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-theme-iphone.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-theme-iphone.min.css</css>
 
   <!-- Support for legacy uPortal css classes. -->
   <css>legacy.css</css>
@@ -37,8 +46,12 @@
   <css>../../universality/uportal3/portlet.css</css>
       
 
-  <js>/ResourceServingWebapp/rs/jquery/1.4.2/jquery-1.4.2.min.js</js>
-  <js>/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
-  <js>/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.min.js</js>
-    
-</s:resources>
+  <js included="plain">/ResourceServingWebapp/rs/jquery/1.4.2/jquery-1.4.2.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.4.2/jquery-1.4.2.min.js</js>
+  
+  <js included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
+  
+  <js included="plain">/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.min.js</js>
+</resources>

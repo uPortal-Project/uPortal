@@ -36,8 +36,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.jasig.portal.utils.cache.resource.CachedResource;
 import org.jasig.portal.utils.cache.resource.CachingResourceLoader;
-import org.jasig.portal.utils.cache.resource.ResourceLoaderOptions;
-import org.jasig.portal.utils.cache.resource.ResourceLoaderOptionsBuilder;
 import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -54,7 +52,6 @@ import org.w3c.dom.Node;
 @Service
 public class XmlUtilitiesImpl implements XmlUtilities {
     private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    private final ResourceLoaderOptions templatesLoaderOptions = new ResourceLoaderOptionsBuilder().digestAlgorithm("SHA1").digestInput(true);
 
     private TemplatesBuilder templatesBuilder;
     
@@ -94,11 +91,11 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     @Override
     public Serializable getStylesheetCacheKey(Resource stylesheet) throws TransformerConfigurationException, IOException {
         final CachedResource<Templates> templates = this.getStylesheetCachedResource(stylesheet);
-        return templates.getLastLoadDigest();
+        return templates.getCacheKey();
     }
 
     private CachedResource<Templates> getStylesheetCachedResource(Resource stylesheet) throws IOException {
-        return this.cachingResourceLoader.getResource(stylesheet, this.templatesBuilder, this.templatesLoaderOptions);
+        return this.cachingResourceLoader.getResource(stylesheet, this.templatesBuilder);
     }
     
     public static String getElementText(Element e) {

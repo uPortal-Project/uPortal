@@ -21,7 +21,6 @@ package org.jasig.portal.rendering.xslt;
 
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class PreferencesTransformerConfigurationSource implements TransformerConfigurationSource {
+public abstract class PreferencesTransformerConfigurationSource extends TransformerConfigurationSourceAdapter {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private IUserInstanceManager userInstanceManager;
@@ -59,14 +58,6 @@ public abstract class PreferencesTransformerConfigurationSource implements Trans
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final LinkedHashMap<String, Object> transformerParameters = this.getParameters(request, response);
         return new CacheKey(transformerParameters);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.rendering.xslt.TransformerConfigurationSource#getTransformerOutputProperties(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public final Properties getOutputProperties(HttpServletRequest request, HttpServletResponse response) {
-        return null;
     }
 
     /* (non-Javadoc)

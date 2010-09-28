@@ -48,12 +48,6 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
         this.pipeline = pipeline;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void clearSystemCharacterCache() {
-        // NOOP  
-    }
-
     @Override
     public void renderState(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         //Disable page caching
@@ -75,6 +69,7 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
             final String data = ((CharacterDataEvent)event).getData();
             writer.print(data);
             writer.flush();
+            res.flushBuffer();
         }
     }
     

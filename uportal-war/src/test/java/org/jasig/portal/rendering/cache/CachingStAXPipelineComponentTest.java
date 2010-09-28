@@ -6,6 +6,13 @@
 
 package org.jasig.portal.rendering.cache;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.notNull;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -15,13 +22,13 @@ import javax.xml.stream.events.XMLEvent;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
-import org.easymock.EasyMock;
 import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.rendering.StAXPipelineComponent;
-import org.jasig.portal.rendering.cache.CachingStAXPipelineComponent;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.stream.XMLEventBufferReader;
+import org.jasig.resource.aggr.om.Included;
+import org.jasig.resource.aggr.util.ResourcesElementsProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -40,21 +47,23 @@ public class CachingStAXPipelineComponentTest {
         final List<XMLEvent> eventBuffer = Collections.emptyList();
         final PipelineEventReader<XMLEventReader, XMLEvent> eventReader = new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(new XMLEventBufferReader(eventBuffer.listIterator()));
         
-        final Ehcache cache = EasyMock.createMock(Ehcache.class);
-
-        final StAXPipelineComponent targetComponent = EasyMock.createMock(StAXPipelineComponent.class);
+        final Ehcache cache = createMock(Ehcache.class);
+        final StAXPipelineComponent targetComponent = createMock(StAXPipelineComponent.class);
+        final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
-        EasyMock.expect(targetComponent.getCacheKey(mockReq, mockRes)).andReturn(cacheKey);
-        EasyMock.expect(cache.get(cacheKey)).andReturn(null);
-        EasyMock.expect(targetComponent.getEventReader(mockReq, mockRes)).andReturn(eventReader);
-        cache.put((Element)EasyMock.notNull());
-        EasyMock.expectLastCall();
+        expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
+        expect(targetComponent.getCacheKey(mockReq, mockRes)).andReturn(cacheKey);
+        expect(cache.get(cacheKey)).andReturn(null);
+        expect(targetComponent.getEventReader(mockReq, mockRes)).andReturn(eventReader);
+        cache.put((Element)notNull());
+        expectLastCall();
         
-        EasyMock.replay(cache, targetComponent);
+        replay(cache, targetComponent, elementsProvider);
         
         final CachingStAXPipelineComponent cachingComponent = new CachingStAXPipelineComponent();
         cachingComponent.setCache(cache);
         cachingComponent.setParentComponent(targetComponent);
+        cachingComponent.setResourcesElementsProvider(elementsProvider);
         
         final PipelineEventReader<XMLEventReader, XMLEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
 
@@ -62,7 +71,7 @@ public class CachingStAXPipelineComponentTest {
         Assert.assertNotNull(actualEventReader.getEventReader());
         Assert.assertFalse(actualEventReader.getEventReader().hasNext());
         
-        EasyMock.verify(cache, targetComponent);
+        verify(cache, targetComponent, elementsProvider);
     }
     
     @Test
@@ -73,18 +82,20 @@ public class CachingStAXPipelineComponentTest {
         final List<XMLEvent> eventBuffer = Collections.emptyList();
         final Element cacheElement = new Element(cacheKey, eventBuffer);
         
-        final Ehcache cache = EasyMock.createMock(Ehcache.class);
-
-        final StAXPipelineComponent targetComponent = EasyMock.createMock(StAXPipelineComponent.class);
+        final Ehcache cache = createMock(Ehcache.class);
+        final StAXPipelineComponent targetComponent = createMock(StAXPipelineComponent.class);
+        final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
-        EasyMock.expect(targetComponent.getCacheKey(mockReq, mockRes)).andReturn(cacheKey);
-        EasyMock.expect(cache.get(cacheKey)).andReturn(cacheElement);
+        expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
+        expect(targetComponent.getCacheKey(mockReq, mockRes)).andReturn(cacheKey);
+        expect(cache.get(cacheKey)).andReturn(cacheElement);
         
-        EasyMock.replay(cache, targetComponent);
+        replay(cache, targetComponent, elementsProvider);
         
         final CachingStAXPipelineComponent cachingComponent = new CachingStAXPipelineComponent();
         cachingComponent.setCache(cache);
         cachingComponent.setParentComponent(targetComponent);
+        cachingComponent.setResourcesElementsProvider(elementsProvider);
         
         final PipelineEventReader<XMLEventReader, XMLEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
 
@@ -92,6 +103,6 @@ public class CachingStAXPipelineComponentTest {
         Assert.assertNotNull(actualEventReader.getEventReader());
         Assert.assertFalse(actualEventReader.getEventReader().hasNext());
         
-        EasyMock.verify(cache, targetComponent);
+        verify(cache, targetComponent, elementsProvider);
     }
 }

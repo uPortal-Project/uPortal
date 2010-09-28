@@ -19,7 +19,7 @@
 
 package org.jasig.portal.utils.cache.resource;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.springframework.core.io.Resource;
 
@@ -38,5 +38,5 @@ public interface LoadedResource<T> {
     /**
      * @return Additional resource files involved with loading the Resource
      */
-    public Set<Resource> getAdditionalResources();
+    public Map<Resource, Long> getAdditionalResources();
 }

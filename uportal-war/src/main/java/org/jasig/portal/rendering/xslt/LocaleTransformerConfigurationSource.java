@@ -22,7 +22,6 @@ package org.jasig.portal.rendering.xslt;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class LocaleTransformerConfigurationSource implements TransformerConfigurationSource {
+public class LocaleTransformerConfigurationSource extends TransformerConfigurationSourceAdapter {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private IUserInstanceManager userInstanceManager;
@@ -75,20 +74,19 @@ public class LocaleTransformerConfigurationSource implements TransformerConfigur
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.rendering.xslt.TransformerConfigurationSource#getOutputProperties(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public Properties getOutputProperties(HttpServletRequest request, HttpServletResponse response) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
      * @see org.jasig.portal.rendering.xslt.TransformerConfigurationSource#getCacheKey(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        // TODO Auto-generated method stub
+        final LocaleManager localeManager = this.getLocaleManager(request);
+        
+        final Locale[] locales = localeManager.getLocales();
+        if (locales != null && locales.length > 0 && locales[0] != null) {
+            final String locale = locales[0].toString();
+            final String xslLocale = locale.replace('_', '-');
+            return new CacheKey(xslLocale);
+        }
+        
         return null;
     }
 

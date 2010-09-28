@@ -30,8 +30,6 @@ import org.jasig.portal.PortalException;
 /**
  * Describes the entry point into the uPortal rendering pipeline.
  * 
- * TODO move statistics methods into this interface
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -45,10 +43,4 @@ public interface IPortalRenderingPipeline {
      * @exception PortalException if an error occurs
      */
     public void renderState(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException;
-    
-    /**
-     * Clear the system character cache.
-     */
-    @Deprecated
-    public void clearSystemCharacterCache();
 }

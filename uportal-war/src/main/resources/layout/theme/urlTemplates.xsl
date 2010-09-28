@@ -31,12 +31,12 @@
     <xsl:param name="XSLT_PORTAL_URL_PROVIDER" />
     <xsl:param name="CURRENT_REQUEST" />
     
-    <xsl:variable name="urlProvider" select="url:getUrlProvider($XSLT_PORTAL_URL_PROVIDER)" />
-    <xsl:variable name="request" select="url:getHttpServletRequest($CURRENT_REQUEST)" />
-    
     <xsl:template name="portalUrl">
         <xsl:param name="parameters" />
         
+        <xsl:variable name="urlProvider" select="url:getUrlProvider($XSLT_PORTAL_URL_PROVIDER)" />
+        <xsl:variable name="request" select="url:getHttpServletRequest($CURRENT_REQUEST)" />
+    
         <xsl:variable name="url" select="java:getDefaultUrl($urlProvider, $request)" />
 
         <xsl:if test="exslt:object-type($parameters) = 'RTF'">
@@ -58,6 +58,9 @@
         <xsl:param name="state" />
         <xsl:param name="mode" />
 
+        <xsl:variable name="urlProvider" select="url:getUrlProvider($XSLT_PORTAL_URL_PROVIDER)" />
+        <xsl:variable name="request" select="url:getHttpServletRequest($CURRENT_REQUEST)" />
+        
         <xsl:variable name="url" select="java:getPortletUrl($urlProvider, $request, $type)" />
         <xsl:choose>
             <xsl:when test="$fname">
@@ -96,6 +99,9 @@
         <xsl:param name="parameters" />
         <xsl:param name="action" />
 
+        <xsl:variable name="urlProvider" select="url:getUrlProvider($XSLT_PORTAL_URL_PROVIDER)" />
+        <xsl:variable name="request" select="url:getHttpServletRequest($CURRENT_REQUEST)" />
+        
         <xsl:variable name="url" select="java:getFolderUrlByNodeId($urlProvider, $request, $folderId)" />
 
         <xsl:value-of select="java:setAction($url, $action)" />

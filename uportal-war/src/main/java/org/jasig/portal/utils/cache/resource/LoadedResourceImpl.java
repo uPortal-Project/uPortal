@@ -20,8 +20,8 @@
 package org.jasig.portal.utils.cache.resource;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.springframework.core.io.Resource;
 
@@ -33,20 +33,20 @@ import org.springframework.core.io.Resource;
  */
 public class LoadedResourceImpl<T> implements LoadedResource<T> {
     private final T resource;
-    private final Set<Resource> additionalSources;
+    private final Map<Resource, Long> additionalSources;
     
     public LoadedResourceImpl(T resource) {
         this(resource, null);
     }
 
-    public LoadedResourceImpl(T resource, Set<Resource> additionalSources) {
+    public LoadedResourceImpl(T resource, Map<Resource, Long> additionalSources) {
         this.resource = resource;
         
         if (additionalSources == null) {
-            this.additionalSources = Collections.emptySet();
+            this.additionalSources = Collections.emptyMap();
         }
         else {
-            this.additionalSources = Collections.unmodifiableSet(new LinkedHashSet<Resource>(additionalSources));
+            this.additionalSources = Collections.unmodifiableMap(new LinkedHashMap<Resource, Long>(additionalSources));
         }
     }
 
@@ -62,7 +62,7 @@ public class LoadedResourceImpl<T> implements LoadedResource<T> {
      * @see org.jasig.portal.utils.cache.resource.LoadedResource#getAdditionalSources()
      */
     @Override
-    public Set<Resource> getAdditionalResources() {
+    public Map<Resource, Long> getAdditionalResources() {
         return this.additionalSources;
     }
 

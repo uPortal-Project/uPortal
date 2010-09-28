@@ -19,8 +19,8 @@
 
 package org.jasig.portal.utils.cache.resource;
 
-import java.util.Arrays;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.Map;
 
 import org.springframework.core.io.Resource;
 
@@ -30,29 +30,21 @@ import org.springframework.core.io.Resource;
  */
 class CachedResourceImpl<T> implements CachedResource<T> {
     private final Resource resource;
-    private final Set<Resource> additionalResources;
+    private final Map<Resource, Long> additionalResources;
     private final T cachedResource;
     private final long lastLoadTime;
+    private final Serializable cacheKey;
     private volatile long lastCheckTime;
-    private String lastLoadDigest;
-    private byte[] lastLoadDigestBytes;
-    private String digestAlgorithm;
     
 
-    public CachedResourceImpl(Resource resource, LoadedResource<T> loadedResource, long lastLoadTime) {
-        this(resource, loadedResource, lastLoadTime, null, null, null);
-    }
-    
     public CachedResourceImpl(Resource resource, LoadedResource<T> loadedResource, long lastLoadTime, 
-            String lastLoadDigest, byte[] lastLoadDigestBytes, String digestAlgorithm) {
+            Serializable cacheKey) {
         this.resource = resource;
         this.cachedResource = loadedResource.getLoadedResource();
         this.additionalResources = loadedResource.getAdditionalResources();
         this.lastLoadTime = lastLoadTime;
         this.lastCheckTime = lastLoadTime;
-        this.lastLoadDigest = lastLoadDigest;
-        this.lastLoadDigestBytes = lastLoadDigestBytes;
-        this.digestAlgorithm = digestAlgorithm;
+        this.cacheKey = cacheKey;
     }
     
     @Override
@@ -61,7 +53,7 @@ class CachedResourceImpl<T> implements CachedResource<T> {
     }
 
     @Override
-    public Set<Resource> getAdditionalResources() {
+    public Map<Resource, Long> getAdditionalResources() {
         return this.additionalResources;
     }
 
@@ -86,32 +78,19 @@ class CachedResourceImpl<T> implements CachedResource<T> {
     }
 
     @Override
-    public String getLastLoadDigest() {
-        return this.lastLoadDigest;
-    }
-
-    @Override
-    public byte[] getLastLoadDigestBytes() {
-        if (this.lastLoadDigestBytes == null) {
-            return null;
-        }
-        
-        return Arrays.copyOf(this.lastLoadDigestBytes, this.lastLoadDigestBytes.length);
-    }
-
-    @Override
-    public String getDigestAlgorithm() {
-        return this.digestAlgorithm;
+    public Serializable getCacheKey() {
+        return this.cacheKey;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.digestAlgorithm == null) ? 0 : this.digestAlgorithm.hashCode());
-        result = prime * result + ((this.lastLoadDigest == null) ? 0 : this.lastLoadDigest.hashCode());
-        result = prime * result + (int) (this.lastLoadTime ^ (this.lastLoadTime >>> 32));
+        result = prime * result + ((this.additionalResources == null) ? 0 : this.additionalResources.hashCode());
+        result = prime * result + ((this.cacheKey == null) ? 0 : this.cacheKey.hashCode());
+        result = prime * result + ((this.cachedResource == null) ? 0 : this.cachedResource.hashCode());
         result = prime * result + (int) (this.lastCheckTime ^ (this.lastCheckTime >>> 32));
+        result = prime * result + (int) (this.lastLoadTime ^ (this.lastLoadTime >>> 32));
         result = prime * result + ((this.resource == null) ? 0 : this.resource.hashCode());
         return result;
     }
@@ -128,26 +107,34 @@ class CachedResourceImpl<T> implements CachedResource<T> {
             return false;
         }
         CachedResourceImpl<?> other = (CachedResourceImpl<?>) obj;
-        if (this.digestAlgorithm == null) {
-            if (other.digestAlgorithm != null) {
+        if (this.additionalResources == null) {
+            if (other.additionalResources != null) {
                 return false;
             }
         }
-        else if (!this.digestAlgorithm.equals(other.digestAlgorithm)) {
+        else if (!this.additionalResources.equals(other.additionalResources)) {
             return false;
         }
-        if (this.lastLoadDigest == null) {
-            if (other.lastLoadDigest != null) {
+        if (this.cacheKey == null) {
+            if (other.cacheKey != null) {
                 return false;
             }
         }
-        else if (!this.lastLoadDigest.equals(other.lastLoadDigest)) {
+        else if (!this.cacheKey.equals(other.cacheKey)) {
             return false;
         }
-        if (this.lastLoadTime != other.lastLoadTime) {
+        if (this.cachedResource == null) {
+            if (other.cachedResource != null) {
+                return false;
+            }
+        }
+        else if (!this.cachedResource.equals(other.cachedResource)) {
             return false;
         }
         if (this.lastCheckTime != other.lastCheckTime) {
+            return false;
+        }
+        if (this.lastLoadTime != other.lastLoadTime) {
             return false;
         }
         if (this.resource == null) {
@@ -163,8 +150,8 @@ class CachedResourceImpl<T> implements CachedResource<T> {
 
     @Override
     public String toString() {
-        return "CachedResourceImpl [resource=" + this.resource + ", lastLoadTime=" + this.lastLoadTime
-                + ", lastCheckTime=" + this.lastCheckTime + ", lastLoadDigest=" + this.lastLoadDigest
-                + ", digestAlgorithm=" + this.digestAlgorithm + "]";
+        return "CachedResourceImpl [resource=" + this.resource + ", additionalResources=" + this.additionalResources
+                + ", cachedResource=" + this.cachedResource + ", lastLoadTime=" + this.lastLoadTime + ", cacheKey="
+                + this.cacheKey + ", lastCheckTime=" + this.lastCheckTime + "]";
     }
 }

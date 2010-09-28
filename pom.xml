@@ -162,7 +162,8 @@
         <pluto.version>2.1.0-SNAPSHOT</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.6.1</quartz.version>
-        <resource-server.version>1.0.11-SNAPSHOT</resource-server.version>
+        <resource-aggregator.version>1.0.1</resource-aggregator.version>
+        <resource-server.version>1.0.11</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
         <slf4j.version>1.6.1</slf4j.version>
         <spring-framework.version>3.0.4.RELEASE</spring-framework.version>
@@ -538,6 +539,11 @@
                 <artifactId>hibernate-tools</artifactId>
                 <version>${hibernate-tools.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.jasig</groupId>
+                <artifactId>resource-aggregator-util</artifactId>
+                <version>${resource-aggregator.version}</version>
+                </dependency>
             <dependency>
                 <groupId>org.jasig.cas</groupId>
                 <artifactId>cas-client-core</artifactId>

@@ -22,19 +22,29 @@
 
 <xsl:stylesheet version="1.0" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    xmlns:resources="http://xml.apache.org/xalan/java/org.jasig.portal.web.skin.ResourcesElementsProvider"
+    xmlns:resources="http://xml.apache.org/xalan/java/org.jasig.portal.web.skin.ResourcesElementsXsltcHelper"
     exclude-result-prefixes="resources">
 
     <xsl:param name="RESOURCES_ELEMENTS_PROVIDER" />
     <xsl:param name="CURRENT_REQUEST" />
     
-    <xsl:variable name="resourceProvider" select="resources:getElmenentsProvider($RESOURCES_ELEMENTS_PROVIDER)" />
-    <xsl:variable name="request" select="resources:getHttpServletRequest($CURRENT_REQUEST)" />
-
-
     <xsl:template name="skinResources">
         <xsl:param name="path" />
-        <xsl:copy-of select="resources:output($resourceProvider, $request, $path)" />
+ 
+        <xsl:variable name="resourceHelper" select="resources:getElmenentsProvider($RESOURCES_ELEMENTS_HELPER)" />
+        <xsl:variable name="request" select="resources:getHttpServletRequest($CURRENT_REQUEST)" />
+ 
+        <xsl:copy-of select="resources:getResourcesXmlFragment($resourceHelper, $request, $path)" />
+    </xsl:template>
+    
+    <xsl:template name="skinParameter">
+        <xsl:param name="path" />
+        <xsl:param name="name" />
+        
+        <xsl:variable name="resourceHelper" select="resources:getElmenentsProvider($RESOURCES_ELEMENTS_HELPER)" />
+        <xsl:variable name="request" select="resources:getHttpServletRequest($CURRENT_REQUEST)" />
+
+        <xsl:value-of select="resources:getResourcesParameter($resourceHelper, $request, $path, $name)" />
     </xsl:template>
 
 </xsl:stylesheet>

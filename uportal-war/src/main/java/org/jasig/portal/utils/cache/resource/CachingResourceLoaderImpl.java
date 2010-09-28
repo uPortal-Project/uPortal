@@ -20,21 +20,18 @@
 package org.jasig.portal.utils.cache.resource;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.ConcurrentMap;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
-import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.jasig.portal.utils.cache.ThreadLocalCacheEntryFactory;
-import org.jasig.portal.utils.io.MessageDigestInputStream;
+import org.jasig.resource.aggr.om.Included;
+import org.jasig.resource.aggr.util.ResourcesElementsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,19 +47,14 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CachingResourceLoaderImpl implements CachingResourceLoader {
-    private static final ResourceLoaderOptions DEFAULT_OPTIONS = new ResourceLoaderOptionsBuilder();
-    
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private final CachedResourceEntryFactory entryFactory = new CachedResourceEntryFactory();
-    private final ConcurrentMap<String, MessageDigest> digestCache = new ConcurrentHashMap<String, MessageDigest>();
-    private final ConcurrentMap<String, String> unclonableDigestCache = new ConcurrentHashMap<String, String>();
     
     private long checkInterval = TimeUnit.MINUTES.toMillis(1);
-    private boolean digestInput = true;
-    private String digestAlgorithm = "MD5";
     
     private Ehcache resourceCache;
+    private ResourcesElementsProvider resourcesElementsProvider;
 
     @Autowired
     public void setResourceCache(
@@ -70,24 +62,16 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
         this.resourceCache = new SelfPopulatingCache(resourceCache, this.entryFactory);
     }
     
+    @Autowired
+    public void setResourcesElementsProvider(ResourcesElementsProvider resourcesElementsProvider) {
+        this.resourcesElementsProvider = resourcesElementsProvider;
+    }
+
     /**
      * How frequently the resource should be checked for updates (in ms). Defaults to 1 minute.
      */
     public void setCheckInterval(long checkInterval) {
         this.checkInterval = checkInterval;
-    }
-    /**
-     * If the input should be run through a {@link MessageDigest} to generate a hash code. Useful for cache
-     * keys based on the input. Defaults to true
-     */
-    public void setDigestInput(boolean digestInput) {
-        this.digestInput = digestInput;
-    }
-    /**
-     * The {@link MessageDigest} algorithm to use if {@link #setDigestInput(boolean)} is true. Defaults to MD5
-     */
-    public void setDigestAlgorithm(String digestAlgorithm) {
-        this.digestAlgorithm = digestAlgorithm;
     }
 
 
@@ -96,26 +80,30 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
      */
     @Override
     public <T> CachedResource<T> getResource(Resource resource, Loader<T> builder) throws IOException {
-        return this.getResource(resource, builder, DEFAULT_OPTIONS);
+        return this.getResource(resource, builder, this.checkInterval);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.utils.cache.CachingResourceLoader#getResource(org.springframework.core.io.Resource, org.jasig.portal.utils.cache.ResourceBuilder, org.jasig.portal.utils.cache.ResourceLoaderOptions)
      */
     @Override
-    public <T> CachedResource<T> getResource(Resource resource, Loader<T> builder, ResourceLoaderOptions options) throws IOException {
+    public <T> CachedResource<T> getResource(Resource resource, Loader<T> builder, long checkInterval) throws IOException {
+        if (Included.PLAIN == this.resourcesElementsProvider.getDefaultIncludedType()) {
+            this.logger.trace("Resoure Aggregation Disabled, ignoring resource cache and loading '" + resource + "' directly");
+            return this.loadResource(resource, builder);
+        }
+        
         //Look for the resource in the cache, since it has been wrapped with a SelfPopulatingCache it should never return null.
-        final GetResourceArguments<T> arguments = new GetResourceArguments<T>(resource, builder, options);
+        final GetResourceArguments<T> arguments = new GetResourceArguments<T>(resource, builder);
         final Element element = this.entryFactory.getWithData(this.resourceCache, resource, arguments);
 
         CachedResource<T> cachedResource = (CachedResource<T>)element.getObjectValue();
-        if (this.logger.isTraceEnabled()) {
+        if (cachedResource != null && this.logger.isTraceEnabled()) {
             this.logger.trace("Found " + cachedResource + " in cache");
         }
         
         //Found it, now check if the last-load time is within the check interval
         final long lastCheckTime = cachedResource.getLastCheckTime();
-        final long checkInterval = this.getCheckInterval(options);
         if (lastCheckTime + checkInterval >= System.currentTimeMillis()) {
             if (this.logger.isTraceEnabled()) {
                 this.logger.trace(cachedResource + " is within checkInterval " + checkInterval + ", returning");
@@ -135,7 +123,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
         }
         
         //The resource has been modified, reload it.
-        cachedResource = this.loadResource(resource, builder, options);
+        cachedResource = this.loadResource(resource, builder);
         
         //Cache the loaded resource
         this.resourceCache.put(new Element(resource, cachedResource));
@@ -165,9 +153,12 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
         }
         
         //If the main resource hasn't changed check additional resources for modifications
-        for (final Resource additionalResource : cachedResource.getAdditionalResources()) {
+        for (final Map.Entry<Resource, Long> additionalResourceEntry : cachedResource.getAdditionalResources().entrySet()) {
+            final Resource additionalResource = additionalResourceEntry.getKey();
+            final Long resourceLastLoadTime = additionalResourceEntry.getValue();
+            
             final long lastModified = this.getLastModified(additionalResource);
-            if (lastLoadTime < lastModified) {
+            if (resourceLastLoadTime < lastModified) {
                 this.logger.trace("Additional resource {} for {} was modified at {}, reloading", 
                         new Object[] {additionalResource, resource, lastModified});
                 return true;
@@ -192,117 +183,33 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
         return 0;
     }
 
-    private <T> CachedResource<T> loadResource(Resource resource, Loader<T> builder, ResourceLoaderOptions options) throws IOException {
+    private <T> CachedResource<T> loadResource(Resource resource, Loader<T> builder) throws IOException {
         final long lastLoadTime = System.currentTimeMillis();
-        InputStream stream = resource.getInputStream();
-        final LoadedResource<T> loadedResource;
-        final boolean digestInput = this.isDigestInput(options);
-        MessageDigest messageDigest = null;
+
+        long lastModified = 0;
         try {
-            //Setup the MessageDigest if it is being used 
-            if (digestInput) {
-                final String digestAlgorithm = this.getDigestAlgorithm(options);
-                messageDigest = this.getMessageDigest(digestAlgorithm);
-                stream = new MessageDigestInputStream(messageDigest, stream);
-            }
-            
-            //Build the resource using the callback
-            loadedResource = builder.loadResource(resource, stream);
+            lastModified = resource.lastModified();
         }
-        finally {
-            IOUtils.closeQuietly(stream);
+        catch (IOException e) {
+            //Ignore, not all resources can have a valid lastModified returned
         }
+        
+        //Build the resource using the callback
+        final LoadedResource<T> loadedResource = builder.loadResource(resource);
+        
+        final Serializable cacheKey = (Serializable)Arrays.asList(lastModified, loadedResource.getAdditionalResources());
         
         //Create the CachedResource based on if digesting was enabled
-        final CachedResource<T> cachedResource;
-        if (digestInput) {
-            final String algorithm = messageDigest.getAlgorithm();
-            final byte[] digestBytes = messageDigest.digest();
-            final String digest = Base64.encodeBase64URLSafeString(digestBytes);
-            
-            cachedResource = new CachedResourceImpl<T>(resource, loadedResource, lastLoadTime, digest, digestBytes, algorithm);
-        }
-        else {
-            cachedResource = new CachedResourceImpl<T>(resource, loadedResource, lastLoadTime);
-        }
-        
-        return cachedResource;
-    }
-
-    private long getCheckInterval(ResourceLoaderOptions options) {
-        final Long optionsCheckInterval = options.getCheckInterval();
-        if (optionsCheckInterval != null) {
-            return optionsCheckInterval;
-        }
-        
-        return this.checkInterval;
-    }
-    
-    private boolean isDigestInput(ResourceLoaderOptions options) {
-        final Boolean optionsDigestInput = options.isDigestInput();
-        if (optionsDigestInput != null) {
-            return optionsDigestInput;
-        }
-        
-        return this.digestInput;
-    }
-    
-    private String getDigestAlgorithm(ResourceLoaderOptions options) {
-        final String optionsDigestAlgorithm = options.getDigestAlgorithm();
-        if (optionsDigestAlgorithm != null) {
-            return optionsDigestAlgorithm;
-        }
-        
-        return this.digestAlgorithm;
-    }
-    
-    private MessageDigest getMessageDigest(String algorithm) {
-        MessageDigest messageDigest = this.digestCache.get(algorithm);
-        
-        //If there is a cached instance return a clone of it
-        if (messageDigest != null) {
-            try {
-                return (MessageDigest)messageDigest.clone();
-            }
-            catch (CloneNotSupportedException e) {
-                throw new IllegalStateException("MessageDigest for '" + algorithm + "' that was previously clonable is no longer. This is a programming error.", e);
-            }
-        }
-        
-        //Create a new instance for the algorithm
-        try {
-            messageDigest = MessageDigest.getInstance(algorithm);
-        }
-        catch (NoSuchAlgorithmException e) {
-            throw new IllegalArgumentException("Requested digest algorithm '" + algorithm + "' could not be found", e);
-        }
-        
-        //Check if this algorithm can be cloned, if not return the new instance immediately
-        if (this.unclonableDigestCache.containsKey(algorithm)) {
-            return messageDigest;
-        }
-        
-        //Try cloning the digest and caching it or if the clone fails registering that and returning the new instance
-        try {
-            final MessageDigest digestToReturn = (MessageDigest)messageDigest.clone();
-            this.digestCache.put(algorithm, digestToReturn);
-            return digestToReturn;
-        }
-        catch (CloneNotSupportedException e) {
-            this.unclonableDigestCache.put(algorithm, algorithm);
-            return messageDigest;
-        }
+        return new CachedResourceImpl<T>(resource, loadedResource, lastLoadTime, cacheKey);
     }
     
     private static class GetResourceArguments<T> {
         public final Resource resource;
         public final Loader<T> builder;
-        public final ResourceLoaderOptions options;
 
-        public GetResourceArguments(Resource resource, Loader<T> builder, ResourceLoaderOptions options) {
+        public GetResourceArguments(Resource resource, Loader<T> builder) {
             this.resource = resource;
             this.builder = builder;
-            this.options = options;
         }
     }
     
@@ -310,7 +217,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
 
         @Override
         protected Object createEntry(Object key, GetResourceArguments<?> threadData) throws Exception {
-            return loadResource(threadData.resource, threadData.builder, threadData.options);
+            return loadResource(threadData.resource, threadData.builder);
         }
     }
 }

@@ -19,10 +19,13 @@
 
 package org.jasig.portal.rendering;
 
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.events.XMLEvent;
@@ -30,9 +33,9 @@ import javax.xml.stream.events.XMLEvent;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.jasig.portal.web.skin.ResourcesDao;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.XMLStreamConstantsUtils;
+import org.jasig.resource.aggr.util.ResourcesElementsProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -60,7 +63,7 @@ public class RenderingPipelineIntegrationTest {
     //Mocked Beans
     private IPortalUrlProvider portalUrlProvider;
     private IPortletWindowRegistry portletWindowRegistry;
-    private ResourcesDao resourcesDao;
+    private ResourcesElementsProvider resourcesElementsProvider;
     private IUserInstanceManager userInstanceManager;
 
     @Autowired
@@ -80,8 +83,8 @@ public class RenderingPipelineIntegrationTest {
     }
 
     @Autowired
-    public void setResourcesDao(ResourcesDao resourcesDao) {
-        this.resourcesDao = resourcesDao;
+    public void setResourcesElementsProvider(ResourcesElementsProvider resourcesElementsProvider) {
+        this.resourcesElementsProvider = resourcesElementsProvider;
     }
 
     @Autowired
@@ -96,15 +99,19 @@ public class RenderingPipelineIntegrationTest {
         final Document doc = builder.newDocument();
         final DocumentFragment headFragment = doc.createDocumentFragment();
         
-        expect(this.resourcesDao
-                .getResourcesFragment("/media/skins/universality/uportal3/uportal3_aggr.skin.xml", "/media/skins/universality/uportal3/"))
-                .andReturn(headFragment.getChildNodes());
-        
-        
-        replay(this.resourcesDao, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager);
-        
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        
+        expect(this.resourcesElementsProvider
+                .getResourcesXmlFragment(isA(HttpServletRequest.class), eq("/media/skins/universality/uportal3/skin.xml")))
+                .andReturn(headFragment.getChildNodes()).anyTimes();
+        expect(this.resourcesElementsProvider
+                .getResourcesParameter(isA(HttpServletRequest.class), eq("/media/skins/universality/uportal3/skin.xml"), eq("fss-theme")))
+                .andReturn(".fl-mist").anyTimes();
+        
+        
+        replay(this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager);
         
         final PipelineEventReader<?, ?> eventReader = this.component.getEventReader(request, response);
         
@@ -112,7 +119,7 @@ public class RenderingPipelineIntegrationTest {
             logger.debug(toString(event));
         }
         
-        verify(this.resourcesDao, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager);
+        verify(this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager);
     }
     
     private String toString(Object event) throws Exception {

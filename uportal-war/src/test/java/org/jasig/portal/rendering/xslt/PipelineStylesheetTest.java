@@ -19,14 +19,7 @@
 
 package org.jasig.portal.rendering.xslt;
 
-import java.io.InputStream;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamSource;
-
-import org.jasig.portal.utils.SystemErrorListener;
-import org.jasig.portal.xml.ResourceLoaderURIResolver;
+import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -34,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.ClassRelativeResourceLoader;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * @author Eric Dalquist
@@ -42,42 +36,40 @@ import org.springframework.core.io.Resource;
 public class PipelineStylesheetTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private TransformerFactory tFactory;
+    private ResourceLoader resourceLoader;
+    private TemplatesBuilder templatesBuilder;
     
     @Before
     public void setup() throws Exception {
-        final ResourceLoaderURIResolver resolver = new ResourceLoaderURIResolver(new ClassRelativeResourceLoader(getClass()));
+        this.resourceLoader = new ClassRelativeResourceLoader(getClass());
         
-        this.tFactory = TransformerFactory.newInstance();
-        this.tFactory.setURIResolver(resolver);
-        this.tFactory.setErrorListener(new SystemErrorListener());
+        templatesBuilder = new TemplatesBuilder();
+        templatesBuilder.setResourceLoader(this.resourceLoader);
+
     }
     
     @Test
     public void testStructureColumnsCompile() throws Exception {
-        this.testXslCompile("/layout/structure/columns/", "columns.xsl");
+        this.testXslCompile("/layout/structure/columns/columns.xsl");
     }
     
     @Test
     public void testStructureMobileColumnCompile() throws Exception {
-        this.testXslCompile("/layout/structure/mobile-column/", "mobile-column.xsl");
+        this.testXslCompile("/layout/structure/mobile-column/mobile-column.xsl");
     }
     
     @Test
     public void testThemeUniversalityCompile() throws Exception {
-        this.testXslCompile("/layout/theme/universality/", "universality.xsl");
+        this.testXslCompile("/layout/theme/universality/universality.xsl");
     }
     
     @Test
     public void testThemeMuniversalityCompile() throws Exception {
-        this.testXslCompile("/layout/theme/muniversality/", "muniversality.xsl");
+        this.testXslCompile("/layout/theme/muniversality/muniversality.xsl");
     }
     
-    private void testXslCompile(String directory, String file) throws Exception {
-        final Resource resource = new ClassPathResource(directory + file);
-        final InputStream xslStream = resource.getInputStream();
-
-        final Source xslSource = new StreamSource(xslStream, "classpath:" + directory);
-        tFactory.newTransformer(xslSource);
+    private void testXslCompile(String file) throws Exception {
+        final Resource resource = new ClassPathResource(file);
+        templatesBuilder.loadResource(resource);
     }
 }

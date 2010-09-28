@@ -112,6 +112,16 @@
 | Changing the values of the variables and parameters signals the theme to reconfigure use 
 | and location of user interface components. Most text used within the theme is localized.  
 -->
+  
+  
+<!-- ****** XSL UTILITY PARAMETERS ****** -->
+<!-- 
+| RED
+| Parameters used by XSL->Java Callbacks
+-->
+<xsl:param name="CURRENT_REQUEST" />
+<xsl:param name="RESOURCES_ELEMENTS_HELPER" />
+<xsl:param name="XSLT_PORTAL_URL_PROVIDER" />
 
 
 <!-- ****** SKIN SETTINGS ****** -->
@@ -124,12 +134,16 @@
 <xsl:variable name="SKIN" select="$skin"/>
 <xsl:variable name="MEDIA_PATH">/media/skins/universality</xsl:variable>
 <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
-<xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/')"/>
+<xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
 <xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
 <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
 <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$SKIN_PATH,'/skin.xml')"/>
-<!-- <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/s:resources/css[@type='fss-theme']/@name"/> -->
-<xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/resources/css[@type='fss-theme']/@name"/>
+<xsl:variable name="FLUID_THEME">
+    <xsl:call-template name="skinParameter">
+        <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
+        <xsl:with-param name="name">fss-theme</xsl:with-param>
+    </xsl:call-template>
+  </xsl:variable>
 <xsl:variable name="FLUID_THEME_CLASS">
     <xsl:choose>
         <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>

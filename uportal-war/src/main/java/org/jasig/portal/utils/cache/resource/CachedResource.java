@@ -19,8 +19,8 @@
 
 package org.jasig.portal.utils.cache.resource;
 
-import java.security.MessageDigest;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.Map;
 
 import org.springframework.core.io.Resource;
 
@@ -41,7 +41,7 @@ public interface CachedResource<T> {
     /**
      * @return Additional resource files involved with loading
      */
-    public Set<Resource> getAdditionalResources();
+    public Map<Resource, Long> getAdditionalResources();
     
     /**
      * @return The cached resource
@@ -66,24 +66,7 @@ public interface CachedResource<T> {
     public void setLastCheckTime(long lastCheckTime);
     
     /**
-     * Optional, may return null if no digesting was done.
-     * 
-     * @return The Base64 encoded {@link MessageDigest} output from digesting the resource during loading.
+     * A serializable key that represents the state of the cached resource
      */
-    public String getLastLoadDigest();
-    
-    /**
-     * Optional, may return null if no digesting was done.
-     * Warning, this method makes a COPY of the returned byte[] for every invocation.
-     * 
-     * @return The byte[] {@link MessageDigest} output from digesting the resource during loading.
-     */
-    public byte[] getLastLoadDigestBytes();
-    
-    /**
-     * Optional, may return null if no digesting was done.
-     * 
-     * @return The {@link MessageDigest} algorithm used for digesting the loaded resource
-     */
-    public String getDigestAlgorithm();
+    public Serializable getCacheKey();
 }

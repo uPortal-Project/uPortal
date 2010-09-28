@@ -20,7 +20,6 @@
 package org.jasig.portal.utils.cache.resource;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.springframework.core.io.Resource;
 
@@ -32,8 +31,7 @@ import org.springframework.core.io.Resource;
  */
 public interface Loader<T> {
     /**
-     * Parse the given {@link InputStream} into the appropriate object. The original {@link Resource} is provided
-     * for context information but the InputStream it provides should not be used.
+     * Parse the given {@link Resource} into the appropriate object.
      */
-    public LoadedResource<T> loadResource(Resource resource, InputStream stream) throws IOException;
+    public LoadedResource<T> loadResource(Resource resource) throws IOException;
 }

@@ -22,17 +22,17 @@ import org.jasig.portal.utils.cache.CacheKey;
  */
 public interface TransformerConfigurationSource {
     /**
-     * Passed on to {@link Transformer#setParameter(String, Object)}
+     * Passed on to {@link Transformer#setParameter(String, Object)}, ignored if null is returned
      */
     public Map<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response);
     
     /**
-     * Passed on to {@link Transformer#setOutputProperties(Properties)}
+     * Passed on to {@link Transformer#setOutputProperties(Properties)}, ignored if null is returned
      */
     public Properties getOutputProperties(HttpServletRequest request, HttpServletResponse response);
     
     /**
-     * A key representing the state of the parameters and properties for the request.
+     * A key representing the state of the parameters and properties for the request, ignored if null is returned
      */
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response);
 }

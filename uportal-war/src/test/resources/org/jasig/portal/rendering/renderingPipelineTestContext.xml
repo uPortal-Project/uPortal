@@ -84,10 +84,6 @@
                                         <key><util:constant static-field="org.jasig.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" /></key>
                                         <ref bean="xslPortalUrlProvider"/>
                                     </entry>
-                                    <entry>
-                                        <key><util:constant static-field="org.jasig.portal.web.skin.ResourcesElementsProvider.RESOURCES_ELEMENTS_PROVIDER" /></key>
-                                        <ref bean="resourcesElementsProvider"/>
-                                    </entry>
                                     <entry key="EXTERNAL_LOGIN_URL" value="Login" />
                                     <entry key="CONTEXT_PATH" value="/uPortal" />
                                     <entry key="CURRENT_REQUEST">
@@ -96,6 +92,7 @@
                                 </map>
                             </property>
                         </bean>
+                        <bean class="org.jasig.portal.web.skin.ResourcesElementsXsltcHelper" />
                     </list>
                 </property>
             </bean>
@@ -168,7 +165,19 @@
     <!-- Utility Beans -->
     <bean class="org.jasig.portal.xml.XmlUtilitiesImpl" />
     
-    <bean class="org.jasig.portal.utils.cache.resource.TemplatesBuilder" />
+    <bean class="org.jasig.portal.utils.cache.resource.TemplatesBuilder">
+        <!-- 
+        <property name="transformerAttributes">
+            <map>
+                <entry key="generate-translet" value="true" />
+                <entry key="package-name" value="org.jasig.universality" />
+                <entry key="jar-name" value="uportal-xsl.jar" />
+                <entry key="destination-directory" value="xsltc" />
+                <entry key="debug" value="true" />
+            </map>
+        </property>
+         -->
+    </bean>
     
     <bean class="org.jasig.portal.utils.cache.resource.CachingResourceLoaderImpl" />
     
@@ -180,8 +189,6 @@
     <bean id="SpELExpressionCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
 
     <bean id="xslPortalUrlProvider" class="org.jasig.portal.url.xml.XsltPortalUrlProvider" />
-    
-    <bean id="resourcesElementsProvider" class="org.jasig.portal.web.skin.ResourcesElementsProvider" />
     
     <bean id="userInstanceManager" class="org.jasig.portal.spring.EasyMockFactoryBean">
         <constructor-arg value="org.jasig.portal.user.IUserInstanceManager" />
@@ -195,8 +202,8 @@
         <constructor-arg value="org.jasig.portal.portlet.registry.IPortletWindowRegistry" />
     </bean>
     
-    <bean id="resourcesDao" class="org.jasig.portal.spring.EasyMockFactoryBean">
-        <constructor-arg value="org.jasig.portal.web.skin.ResourcesDao" />
+    <bean id="resourcesElementsProvider" class="org.jasig.portal.spring.EasyMockFactoryBean">
+        <constructor-arg value="org.jasig.resource.aggr.util.ResourcesElementsProvider" />
     </bean>
     
 </beans>
