@@ -255,11 +255,9 @@
           <xsl:call-template name="layoutUrl">
             <xsl:with-param name="folderId" select="@ID" />
             <xsl:with-param name="action">true</xsl:with-param>
-            <!-- 
             <xsl:with-param name="parameters">
                 <layout-param name="remove_target" value="test"/>
             </xsl:with-param>
-             -->
           </xsl:call-template>
         </xsl:variable>
         <a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$removePortletUrl}" class="up-portlet-control remove">
