@@ -26,7 +26,7 @@
  
   <parameter name="fss-theme">fl-theme-android</parameter>
 
-<css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
   
   <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-layout.css</css>
@@ -52,7 +52,7 @@
   <js included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
   
-  <js included="plain">/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/js/fluid-all-1.2.min.js</js>
+  <js included="plain">/ResourceServingWebapp/rs/fluid/1.2.1/js/fluid-all-1.2.1.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.2.1/js/fluid-all-1.2.1.min.js</js>
     
 </resources>
