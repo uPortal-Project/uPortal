@@ -21,7 +21,11 @@ package org.jasig.portal.xml;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -50,5 +54,10 @@ public interface XmlUtilities {
      * and {@link Templates} based on this stylesheet.
      */
     public Serializable getStylesheetCacheKey(Resource stylesheet) throws TransformerConfigurationException, IOException;
+ 
+    public XMLOutputFactory getXmlOutputFactory();
     
+    public XMLInputFactory getXmlInputFactory();
+    
+    public String serializeXMLEvents(List<XMLEvent> xmlEvents);
 }

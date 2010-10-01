@@ -32,6 +32,11 @@ import org.jasig.portal.UserPreferences;
 public class ThemeTransformerConfigurationSource extends PreferencesTransformerConfigurationSource {
     
     @Override
+    protected String getName() {
+        return "ThemeTransformerConfigurationSource";
+    }
+    
+    @Override
     protected StylesheetUserPreferences getStylesheetUserPreferences(UserPreferences userPreferences) {
         return userPreferences.getThemeStylesheetUserPreferences();
     }

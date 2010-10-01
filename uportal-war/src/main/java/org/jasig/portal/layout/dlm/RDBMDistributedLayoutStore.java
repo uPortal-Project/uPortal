@@ -45,6 +45,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import net.sf.ehcache.Ehcache;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.danann.cernunnos.Attributes;
@@ -80,12 +82,12 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
-import org.jasig.portal.spring.locator.ConfigurationLoaderLocator;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -115,9 +117,14 @@ public class RDBMDistributedLayoutStore
 
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
+    
+    // Cache for theme stylesheet descriptors
+    private Ehcache tsdCache;
+    // Cache for structure stylesheet descriptors
+    private Ehcache ssdCache;
     private ConfigurationLoader configurationLoader;
-    private Map<String, FragmentNodeInfo> fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
-    private LayoutDecorator decorator = null;
+
+    private final Map<String, FragmentNodeInfo> fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
 
     // fragmentActivator
     private FragmentActivator fragmentActivator;
@@ -134,18 +141,12 @@ public class RDBMDistributedLayoutStore
     
     static final String TEMPLATE_USER_NAME
         = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
-    static final String DECORATOR_PROPERTY = "layoutDecorator";
     
     private static final int THEME = 0;
     private static final int STRUCT = 1;
 
     final static String DELETE_FROM_UP_SS_USER_ATTS_SQL = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = ? AND PROFILE_ID = ? AND SS_ID = ? AND SS_TYPE = ?";
     final static String DELETE_FROM_UP_USER_PARM = "DELETE FROM UP_SS_USER_PARM WHERE USER_ID=?  AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=?";
-    
-    // Cache for theme stylesheet descriptors
-    private static SmartCache tsdCache;
-    // Cache for structure stylesheet descriptors
-    private static SmartCache ssdCache;
     
     // Used in Import/Export operations
     private final org.dom4j.DocumentFactory fac = new org.dom4j.DocumentFactory();
@@ -187,35 +188,24 @@ public class RDBMDistributedLayoutStore
         }
         return layouts;
     }
-
-    public RDBMDistributedLayoutStore ( )
-        throws Exception
-    {
-        super();
-        
-        tsdCache = new SmartCache();
-        ssdCache = new SmartCache();
-        
-        this.configurationLoader = ConfigurationLoaderLocator.getConfigurationLoader();
-
-        try
-        {
-
-            String decoratorClass = configurationLoader.getProperty( DECORATOR_PROPERTY );
-
-            if ( decoratorClass != null )
-                decorator = DecoratorLoader.load( decoratorClass );
-        }
-        catch( Exception e )
-        {
-            LOG.error("\n\n---------- Warning ---------\nUnable to load "
-                        + "layout decorator '"
-                        + configurationLoader.getProperty(DECORATOR_PROPERTY)
-                        + "' specified in dlm.xml. It will not be used.", e);
-        }
-
+    
+    @Autowired
+    public void setConfigurationLoader(ConfigurationLoader configurationLoader) {
+        this.configurationLoader = configurationLoader;
     }
     
+    @Autowired
+    public void setThemeStylesheetDescriptorCache(
+            @Qualifier("org.jasig.portal.layout.ThemeStylesheetDescriptor") Ehcache tsdCache) {
+        this.tsdCache = tsdCache;
+    }
+
+    @Autowired
+    public void setStructureStylesheetDescriptorCache(
+            @Qualifier("org.jasig.portal.layout.StructureStylesheetDescriptor") Ehcache ssdCache) {
+        this.ssdCache = ssdCache;
+    }
+
     private FragmentActivator getFragmentActivator() {
         return this.fragmentActivatorCreator.get(this);
     }
@@ -231,7 +221,7 @@ public class RDBMDistributedLayoutStore
         throws Exception
     {
         Integer id = super.addStructureStylesheetDescription(ssd);
-        ssdCache.put(new Integer(id.intValue()), ssd);
+        ssdCache.put(new net.sf.ehcache.Element(id, ssd));
         return id;                // Put into TSD cache
     }
 
@@ -245,7 +235,7 @@ public class RDBMDistributedLayoutStore
         throws Exception
     {
         Integer id = super.addThemeStylesheetDescription(tsd);
-        tsdCache.put(new Integer(id.intValue()), tsd);
+        tsdCache.put(new net.sf.ehcache.Element(id, tsd));
         return id;
     }
 
@@ -262,15 +252,15 @@ public class RDBMDistributedLayoutStore
     {
         // See if it's in the cache
         StructureStylesheetDescription ssd = null;
-        ssd = (StructureStylesheetDescription) ssdCache.get(new Integer(
-                stylesheetId));
+        final net.sf.ehcache.Element element = ssdCache.get(stylesheetId);
+        ssd = (StructureStylesheetDescription) (element != null ? element.getObjectValue() : null);
 
         if (ssd != null)
             return ssd;
         ssd = super.getStructureStylesheetDescription(stylesheetId);
 
         // Put this value in the cache
-        ssdCache.put(new Integer(stylesheetId), ssd);
+        ssdCache.put(new net.sf.ehcache.Element(stylesheetId, ssd));
         return ssd;
     }
 
@@ -287,9 +277,8 @@ public class RDBMDistributedLayoutStore
         ThemeStylesheetDescription tsd = null;
 
         // Get it from the cache if it's there
-        tsd =
-            (ThemeStylesheetDescription) tsdCache.get(
-                new Integer(stylesheetId));
+        final net.sf.ehcache.Element element = tsdCache.get(stylesheetId);
+        tsd = (ThemeStylesheetDescription) (element != null ? element.getObjectValue() : null);
         if (tsd != null)
         {
             return tsd;
@@ -297,7 +286,7 @@ public class RDBMDistributedLayoutStore
         tsd = super.getThemeStylesheetDescription(stylesheetId);
 
         // Put it in the cache.
-        tsdCache.put(new Integer(stylesheetId), tsd);
+        tsdCache.put(new net.sf.ehcache.Element(stylesheetId, tsd));
         return tsd;
     }
 
@@ -345,7 +334,7 @@ public class RDBMDistributedLayoutStore
             super.updateStructureStylesheetDescription(ssd);
 
             // Update the cached value
-            ssdCache.put(new Integer(ssd.getId()), ssd);
+            ssdCache.put(new net.sf.ehcache.Element(ssd.getId(), ssd));
     }
 
     /**
@@ -362,7 +351,7 @@ public class RDBMDistributedLayoutStore
         super.updateThemeStylesheetDescription(tsd);
 
         // Set the new one in the cache
-        tsdCache.put(new Integer(tsd.getId()), tsd);
+        tsdCache.put(new net.sf.ehcache.Element(tsd.getId(), tsd));
     }
 
     /**
@@ -425,7 +414,7 @@ public class RDBMDistributedLayoutStore
                 updateCachedLayout( layout, profile, fragment );
             }
         }
-        fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
+        fragmentInfoCache.clear();
     }
 
     /**
@@ -472,9 +461,6 @@ public class RDBMDistributedLayoutStore
 
         Document layout = _getUserLayout( person, profile );
 
-        if ( decorator != null )
-            decorator.decorate( layout, person, profile );
-
         return layout;
     }
     
@@ -486,7 +472,6 @@ public class RDBMDistributedLayoutStore
             throw new IllegalArgumentException(msg);
         }
         
-        final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(RDBMServices.getDataSource());
         final int struct_count = jdbcTemplate.queryForInt("SELECT COUNT(*) FROM up_layout_struct WHERE user_id = ?", person.getID());
         return struct_count == 0 ? false : true;
         
@@ -738,7 +723,6 @@ public class RDBMDistributedLayoutStore
             nextId = addIdAttributesIfNecessary(it.next(), nextId);
         }
         // Now update UP_USER...
-        final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(RDBMServices.getDataSource());
         jdbcTemplate.update("UPDATE up_user SET next_struct_id = ? WHERE user_id = ?", nextId, person.getID());
 
         // (4) Convert external DLM pathrefs to internal form (noderefs)...
@@ -1211,7 +1195,7 @@ public class RDBMDistributedLayoutStore
         {
             activator.fragmentizeLayout( view, fragment );
             activator.setUserView(fragment.getOwnerId(), view);
-            this.fragmentInfoCache = new HashMap<String, FragmentNodeInfo>();
+            this.fragmentInfoCache.clear();
         }
         catch( Exception e )
         {
@@ -1328,7 +1312,8 @@ public class RDBMDistributedLayoutStore
 
                 if ( fragmentDefinition.isApplicable(person) )
                 {
-                    applicables.add( activator.getUserView(fragmentDefinition).layout );
+                    final UserView userView = activator.getUserView(fragmentDefinition);
+                    applicables.add( userView.layout );
                 }
             }
         }
@@ -1575,7 +1560,7 @@ public class RDBMDistributedLayoutStore
         // get stylesheet description
         StructureStylesheetDescription ssd = getStructureStylesheetDescription(stylesheetId);
         
-        Connection con = RDBMServices.getConnection();
+        Connection con = this.dataSource.getConnection();
         try {
             int origId;
             int origProfileId;
@@ -1772,7 +1757,7 @@ public class RDBMDistributedLayoutStore
             }
         }
         finally {
-            RDBMServices.releaseConnection(con);
+            JdbcUtils.closeConnection(con);
         }
         return  ssup;
     }
@@ -1782,7 +1767,7 @@ public class RDBMDistributedLayoutStore
     {
         int userId = person.getID();
         ThemeStylesheetUserPreferences tsup;
-        Connection con = RDBMServices.getConnection();
+        Connection con = this.dataSource.getConnection();
         try
         {
             // get stylesheet description
@@ -1978,7 +1963,7 @@ public class RDBMDistributedLayoutStore
             }
         } finally
         {
-            RDBMServices.releaseConnection(con);
+            JdbcUtils.closeConnection(con);
         }
         return tsup;
     }
@@ -2601,7 +2586,7 @@ public class RDBMDistributedLayoutStore
         StructureStylesheetDescription ssDesc =
             getStructureStylesheetDescription(stylesheetId);
 
-        Connection con = RDBMServices.getConnection();
+        Connection con = this.dataSource.getConnection();
         try
         {
             // Set autocommit false for the connection
@@ -2710,7 +2695,7 @@ public class RDBMDistributedLayoutStore
                     }
                 }
                 // Commit the transaction
-                RDBMServices.commit(con);
+                con.commit();
                 if (this.fragmentActivatorCreator.isCreated()) {
                     // We want to update cached fragment SSUPs, but not at 
                     // the cost of triggering fragment activation;  if we 
@@ -2722,12 +2707,12 @@ public class RDBMDistributedLayoutStore
                 if (LOG.isDebugEnabled())
                     LOG.debug("Problem occurred ", e);
                 // Roll back the transaction
-                RDBMServices.rollback(con);
+                con.rollback();
                 throw new Exception("Exception setting Structure Sylesheet " +
                         "User Preferences",e);
             }
         } finally {
-            RDBMServices.releaseConnection(con);
+            JdbcUtils.closeConnection(con);
         }
     }
 
@@ -2744,7 +2729,7 @@ public class RDBMDistributedLayoutStore
         int stylesheetId = tsup.getStylesheetId();
         ThemeStylesheetDescription tsDesc =
             getThemeStylesheetDescription(stylesheetId);
-        Connection con = RDBMServices.getConnection();
+        Connection con = this.dataSource.getConnection();
         try {
             // Set autocommit false for the connection
             con.setAutoCommit(false);
@@ -2815,19 +2800,19 @@ public class RDBMDistributedLayoutStore
                     }
                 }
                 // Commit the transaction
-                RDBMServices.commit(con);
+                con.commit();
                 // add a method nearly identical to updateFragmentSSUP() if
                 // we want to push things like minimized state of a channel in
                 // a fragment. (TBD: mboyd if needed)
                 // updateFragmentTSUP();
             } catch (Exception e) {
                 // Roll back the transaction
-                RDBMServices.rollback(con);
+                con.rollback();
                 throw new Exception("Exception setting Theme Sylesheet " +
                         "User Preferences",e);
             }
         } finally {
-            RDBMServices.releaseConnection(con);
+            JdbcUtils.closeConnection(con);
         }
     }
 

@@ -78,6 +78,6 @@ public class StaticAttributeSource implements AttributeSource {
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        return new CacheKey();
+        return new CacheKey("StaticAttributeSource");
     }
 }

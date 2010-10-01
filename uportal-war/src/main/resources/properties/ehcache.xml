@@ -438,6 +438,11 @@
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
+    <!-- 
+     | Caches compiled SpEL Expression objects
+     | - 1 x expression used in the portal
+     | - not replicated
+     +-->
     <cache name="SpELExpressionCache"
         eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
@@ -460,6 +465,22 @@
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
-    
+    <!-- 
+     | Caches Theme Stylesheet Descriptors
+     | - 1 x theme
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.layout.ThemeStylesheetDescriptor"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- 
+     | Caches Structure Stylesheet Descriptors
+     | - 1 x structure
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.layout.StructureStylesheetDescriptor"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
 </ehcache>

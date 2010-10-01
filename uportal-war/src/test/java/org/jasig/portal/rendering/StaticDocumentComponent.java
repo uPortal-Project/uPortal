@@ -61,7 +61,7 @@ public class StaticDocumentComponent implements StAXPipelineComponent {
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        return new CacheKey(this.document.getDescription());
+        return new CacheKey("StaticDocumentComponent", this.document.getDescription());
     }
     
     /* (non-Javadoc)

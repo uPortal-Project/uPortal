@@ -20,8 +20,6 @@
 package org.jasig.portal.layout.dlm;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.dlm.Constants;
-import org.jasig.portal.layout.dlm.DistributedLayoutManager;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -74,14 +72,6 @@ public class LPAChangeAttribute implements ILayoutProcessingAction
              * locale specific version and persisted via a different mechanism.
              */
             EditManager.addEditDirective(plfNode, name, person);
-
-            // name attribute takes special handling since it is localizable
-            final IFolderLabelPolicy labelPolicy = DistributedLayoutManager.ContextHolder.getLabelPolicy();
-            if (name.equals(Constants.ATT_NAME) && labelPolicy != null)
-            {
-                String plfId = plfNode.getAttribute(Constants.ATT_PLF_ID);
-                labelPolicy.updateNodeLabel(plfId, person.getID(), false, value);
-            }
         }
         else
         {
@@ -90,17 +80,7 @@ public class LPAChangeAttribute implements ILayoutProcessingAction
             Element plfNode = plf.getElementById(nodeId);
             if (plfNode != null) // should always be non-null
             {
-                // name attribute takes special handling since it is localizable
-                final IFolderLabelPolicy labelPolicy = DistributedLayoutManager.ContextHolder.getLabelPolicy();
-                if (name.equals(Constants.ATT_NAME) && labelPolicy != null)
-                {
-                    String plfId = plfNode.getAttribute(Constants.ATT_PLF_ID);
-                    labelPolicy.updateNodeLabel(nodeId, person.getID(), isFragmentOwner, value);
-                }
-                else
-                {
-                    plfNode.setAttribute(name, value);
-                }
+                plfNode.setAttribute(name, value);
             }
         }
         /*
@@ -108,8 +88,7 @@ public class LPAChangeAttribute implements ILayoutProcessingAction
          * the rendering will inject the localized name via a special processor.
          * So it doesn't matter what is in the ILF's folder name attribute.
          */
-        final IFolderLabelPolicy labelPolicy = DistributedLayoutManager.ContextHolder.getLabelPolicy();
-        if (!name.equals(Constants.ATT_NAME) || labelPolicy == null)
+        if (!name.equals(Constants.ATT_NAME))
         		// should always be non-null
         {
             ilfNode.setAttribute(name, value);

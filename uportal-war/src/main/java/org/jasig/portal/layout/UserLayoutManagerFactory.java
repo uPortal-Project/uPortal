@@ -19,17 +19,14 @@
 
 package org.jasig.portal.layout;
 
-import java.lang.reflect.Constructor;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.layout.dlm.DistributedLayoutManager;
 import org.jasig.portal.layout.immutable.ImmutableUserLayoutManagerWrapper;
-import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.stats.StatsRecorderLayoutEventListener;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 
 /**
@@ -38,24 +35,22 @@ import org.jasig.portal.services.stats.StatsRecorderLayoutEventListener;
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version 1.0
  */
-public class UserLayoutManagerFactory {
+public class UserLayoutManagerFactory implements ApplicationContextAware {
+    public static final String USER_LAYOUT_MANAGER_PROTOTYPE_BEAN_NAME = "userLayoutManager";
     
-	private static final Log LOG = LogFactory.getLog(UserLayoutManagerFactory.class);
+    private static ApplicationContext applicationContext;
     
-    private static Class coreUserLayoutManagerImpl=DistributedLayoutManager.class;
-
-    static {
-        // Retrieve the class name of the core IUserLayoutManager implementation
-        String className = PropertiesManager.getProperty("org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation", null);
-        if (className == null)
-            LOG.error( "UserLayoutManagerFactory: org.jasig.portal.layout.UserLayoutManagerFactory.coreImplementation must be specified in portal.properties");
-        try {
-            Class newClass = Class.forName(className);
-            coreUserLayoutManagerImpl=newClass;
-            LOG.info("UserLayoutManagerFactory: Layout Manager Factory successfully loaded: "+className);
-        } catch (Exception e) {
-            LOG.error( "UserLayoutManagerFactory: Could not instantiate " + className, e);
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        UserLayoutManagerFactory.applicationContext = applicationContext;
+    }
+    
+    private static ApplicationContext getApplicationContext() {
+        if (applicationContext != null) {
+            return applicationContext;
         }
+        
+        return PortalApplicationContextLocator.getApplicationContext();
     }
 
     /**
@@ -64,21 +59,9 @@ public class UserLayoutManagerFactory {
      * @return an <code>IUserLayoutManager</code> value
      */
     public static IUserLayoutManager getUserLayoutManager(IPerson person, UserProfile profile) throws PortalException {
-        try {
-            Class[] cArgsClasses={IPerson.class,UserProfile.class,IUserLayoutStore.class};
-            Constructor c=coreUserLayoutManagerImpl.getConstructor(cArgsClasses);
-            Object[] cArgs={person,profile,UserLayoutStoreFactory.getUserLayoutStoreImpl()};
-            IUserLayoutManager ulm = (IUserLayoutManager)c.newInstance(cArgs);
-            ulm.addLayoutEventListener(new StatsRecorderLayoutEventListener(person, profile));
-            
-            // Wrap the implementation to provide lookup by fname
-            // support which basically merges a non-persisted channel
-            // into the layout
-            IUserLayoutManager ulmWrapper = new TransientUserLayoutManagerWrapper(ulm);
-            return ulmWrapper;
-        } catch (Exception e) {
-            throw new PortalException("Unable to instantiate a \""+coreUserLayoutManagerImpl.getName()+"\"",e);
-        }
+        final ApplicationContext applicationContext = getApplicationContext();
+        final IUserLayoutManager userLayoutManager = (IUserLayoutManager)applicationContext.getBean(USER_LAYOUT_MANAGER_PROTOTYPE_BEAN_NAME, person, profile);
+        return new TransientUserLayoutManagerWrapper(userLayoutManager);
     }
 
     /**

@@ -103,7 +103,7 @@ public class ThemeAttributeSource implements AttributeSource {
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final ThemeStylesheetUserPreferences themeStylesheetUserPreferences = this.getThemeStylesheetUserPreferences(request);
         final String cacheKey = themeStylesheetUserPreferences.getCacheKey();
-        return new CacheKey(cacheKey);
+        return new CacheKey("ThemeAttributeSource", cacheKey);
     }
 
     private ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences(HttpServletRequest request) {

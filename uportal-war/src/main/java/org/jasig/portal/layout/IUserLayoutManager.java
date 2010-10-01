@@ -78,13 +78,6 @@ public interface IUserLayoutManager {
     public XMLEventReader getUserLayoutReader();
 
     /**
-     * Set a user layout store implementation.
-     *
-     * @param ls an <code>IUserLayoutStore</code> value
-     */
-    public void setLayoutStore(IUserLayoutStore ls);
-
-    /**
      * Calls {@link #loadUserLayout(boolean)} passing false.
      */
     public void loadUserLayout() throws PortalException;

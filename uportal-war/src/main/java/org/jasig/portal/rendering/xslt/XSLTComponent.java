@@ -169,6 +169,6 @@ public class XSLTComponent implements StAXPipelineComponent, BeanNameAware, Reso
             transformerConfigurationKey = null;
         }
         
-        return new CacheKey(parentCacheKey, transformerKey, transformerConfigurationKey);
+        return new CacheKey(this.beanName, parentCacheKey, transformerKey, transformerConfigurationKey);
     }
 }

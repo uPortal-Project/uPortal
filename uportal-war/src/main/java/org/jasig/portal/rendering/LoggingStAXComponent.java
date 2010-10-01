@@ -19,11 +19,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.FilteringXMLEventReader;
-import org.jasig.portal.xml.stream.XMLEventBufferReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Logs the StAX events
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
 public class LoggingStAXComponent implements StAXPipelineComponent {
     private Logger logger = LoggerFactory.getLogger(getClass());
     
+    private XmlUtilities xmlUtilities;
     private StAXPipelineComponent parentComponent;
     private boolean logFullDocument = true;
     private boolean logEvents = true;
@@ -49,6 +51,11 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
     }
     public void setLogEvents(boolean logEvents) {
         this.logEvents = logEvents;
+    }
+    
+    @Autowired
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
     }
     
     @Override
@@ -90,10 +97,9 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
                 
                 if (event.isEndDocument()) {
                     
-                    //TODO move this into XmlUtilities
                     final StringWriter writer = new StringWriter();
                     
-                    final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+                    final XMLOutputFactory outputFactory = xmlUtilities.getXmlOutputFactory();
                     final XMLEventWriter xmlEventWriter;
                     try {
                         xmlEventWriter = outputFactory.createXMLEventWriter(writer);
@@ -103,7 +109,9 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
                     }
                     
                     try {
-                        xmlEventWriter.add(new XMLEventBufferReader(this.eventBuffer.listIterator()));
+                        for (final XMLEvent bufferedEvent : this.eventBuffer) {
+                            xmlEventWriter.add(bufferedEvent);
+                        }
                         xmlEventWriter.flush();
                         xmlEventWriter.close();
                     }

@@ -130,7 +130,7 @@ public class StructureAttributeSource implements AttributeSource {
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final StructureStylesheetUserPreferences structureStylesheetUserPreferences = this.getStructureStylesheetUserPreferences(request);
         final String cacheKey = structureStylesheetUserPreferences.getCacheKey();
-        return new CacheKey(cacheKey);
+        return new CacheKey("StructureAttributeSource", cacheKey);
     }
 
     private StructureStylesheetUserPreferences getStructureStylesheetUserPreferences(HttpServletRequest request) {

@@ -55,7 +55,7 @@ public class MergingTransformerConfigurationSource implements TransformerConfigu
             mergedKeys.add(key);
         }
         
-        return new CacheKey(mergedKeys);
+        return new CacheKey("MergingTransformerConfigurationSource", mergedKeys);
     }
 
     /* (non-Javadoc)

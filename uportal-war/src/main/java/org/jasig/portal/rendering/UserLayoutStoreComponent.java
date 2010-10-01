@@ -37,7 +37,7 @@ public class UserLayoutStoreComponent implements StAXPipelineComponent {
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final IUserLayoutManager userLayoutManager = this.getUserLayoutManager(request);
         final String cacheKey = userLayoutManager.getCacheKey();
-        return new CacheKey(cacheKey);
+        return new CacheKey("UserLayoutStoreComponent", cacheKey);
     }
 
     @Override

@@ -134,7 +134,7 @@ public class StAXSerializingComponentTest extends TestCase {
     private static final class SimpleStAXSource implements StAXPipelineComponent {
         @Override
         public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-            return new CacheKey(1);
+            return new CacheKey("SimpleStAXSource", 1);
         }
 
         @Override

@@ -105,10 +105,6 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return new TransientUserLayoutXMLEventReader(this, userLayoutReader);
     }
 
-    public void setLayoutStore(IUserLayoutStore ls) {
-        man.setLayoutStore(ls);
-    }
-
     public Document getUserLayoutDOM() throws PortalException {
         return man.getUserLayoutDOM();
     }

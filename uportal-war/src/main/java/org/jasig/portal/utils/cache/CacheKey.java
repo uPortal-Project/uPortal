@@ -8,10 +8,7 @@ package org.jasig.portal.utils.cache;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-
-import org.springframework.util.Assert;
 
 /**
  * @author Eric Dalquist
@@ -20,32 +17,59 @@ import org.springframework.util.Assert;
 public class CacheKey implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private final String source;
     private final Serializable key;
     private final int hashCode;
 
-    public CacheKey(Serializable key) {
-        Assert.notNull(key);
+    public CacheKey(String source, Serializable key) {
+        this.source = source;
         this.key = key;
-        this.hashCode = this.key.hashCode();
+        this.hashCode = this.internalHashCode();
     }
     
     /**
      * Takes a list of serializable objects and stores them in an {@link ArrayList} to create a single serializable key object
      */
-    public CacheKey(Serializable... keyParts) {
-        Assert.notEmpty(keyParts);
-        this.key = new ArrayList<Serializable>(Arrays.asList(keyParts));
-        this.hashCode = this.key.hashCode();
+    public CacheKey(String source, Serializable... keyParts) {
+        this.source = source;
+        if (keyParts == null) {
+            this.key = null;
+        }
+        else {
+            final ArrayList<Serializable> keyList = new ArrayList<Serializable>(keyParts.length);
+            for (final Serializable keyPart : keyParts) {
+                keyList.add(keyPart);
+            }
+            this.key = keyList;
+        }
+        this.hashCode = this.internalHashCode();
     }
     
-    public CacheKey(Collection<? extends Serializable> keyParts) {
-        Assert.notEmpty(keyParts);
-        this.key = new ArrayList<Serializable>(keyParts);
-        this.hashCode = this.key.hashCode();
+    public CacheKey(String source, Collection<? extends Serializable> keyParts) {
+        this.source = source;
+        if (keyParts == null) {
+            this.key = null;
+        }
+        else {
+            this.key = new ArrayList<Serializable>(keyParts);
+        }
+        this.hashCode = this.internalHashCode();
     }
     
     public Serializable getKey() {
         return this.key;
+    }
+    
+    public String getSource() {
+        return this.source;
+    }
+    
+    private int internalHashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.key == null) ? 0 : this.key.hashCode());
+        result = prime * result + ((this.source == null) ? 0 : this.source.hashCode());
+        return result;
     }
     
     @Override
@@ -65,6 +89,14 @@ public class CacheKey implements Serializable {
             return false;
         }
         CacheKey other = (CacheKey) obj;
+        if (this.source == null) {
+            if (other.source != null) {
+                return false;
+            }
+        }
+        else if (!this.source.equals(other.source)) {
+            return false;
+        }
         if (this.key == null) {
             if (other.key != null) {
                 return false;
@@ -78,6 +110,6 @@ public class CacheKey implements Serializable {
 
     @Override
     public String toString() {
-        return "CacheKey [" + this.key + "]";
+        return "CacheKey [" + this.source + ":" + this.key + "]";
     }
 }

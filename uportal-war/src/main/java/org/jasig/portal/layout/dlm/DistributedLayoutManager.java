@@ -32,7 +32,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -51,16 +50,15 @@ import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserIdentityStoreFactory;
-import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
+import org.jasig.portal.layout.LayoutEventListenerAdapter;
 import org.jasig.portal.layout.LayoutMoveEvent;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
@@ -73,11 +71,10 @@ import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.AuthorizationImpl;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.xml.stream.LocationOverridingEventAllocator;
-import org.jasig.portal.xml.stream.UnknownLocation;
-import org.springframework.context.ApplicationContext;
+import org.jasig.portal.xml.XmlUtilities;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -91,16 +88,17 @@ import org.w3c.dom.NodeList;
  * @version 1.0  $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class DistributedLayoutManager implements IUserLayoutManager, 
-IFolderLocalNameResolver
+public class DistributedLayoutManager implements IUserLayoutManager, IFolderLocalNameResolver, InitializingBean
 {
     public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(DistributedLayoutManager.class);
 
+    private XmlUtilities xmlUtilities;
+    private ILayoutCachingService layoutCachingService;
+    private RDBMDistributedLayoutStore distributedLayoutStore;
+    
     protected final IPerson owner;
     protected final UserProfile profile;
-    protected final ILayoutCachingService layoutCachingService;
-    protected RDBMDistributedLayoutStore store=null;
     protected Set<LayoutEventListener> listeners=new HashSet<LayoutEventListener>();
 
     /**
@@ -116,25 +114,7 @@ IFolderLocalNameResolver
     private boolean channelsAdded = false;
     private boolean isFragmentOwner = false;
 
-    /**
-     * Holder of dlm context configuration bean factory. This is implemented
-     * using the thread safe initialization-on-demand-holder idiom.
-     */
-    static class ContextHolder
-    {
-        public static IFolderLabelPolicy getLabelPolicy() {
-            final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-            if (applicationContext.containsBean(FOLDER_LABEL_POLICY)) {
-                final IFolderLabelPolicy folderLabelPolicy = (IFolderLabelPolicy)applicationContext.getBean(FOLDER_LABEL_POLICY, IFolderLabelPolicy.class);
-                return folderLabelPolicy;
-            }
-
-            return null;
-        }
-    }
-
-    public DistributedLayoutManager(IPerson owner, UserProfile profile,
-            IUserLayoutStore store) throws PortalException
+    public DistributedLayoutManager(IPerson owner, UserProfile profile) throws PortalException
     {
         if (owner == null)
         {
@@ -151,87 +131,54 @@ IFolderLocalNameResolver
                             + "non-null profile must to be specified.");
         }
         
-        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        this.layoutCachingService = (ILayoutCachingService)applicationContext.getBean("layoutCachingService", ILayoutCachingService.class);
-        
-        // Ensure a new layout gets loaded whenever a user logs in...
-        this.layoutCachingService.removeCachedLayout(owner, profile);
-
         // cache the relatively lightwieght userprofile for use in 
         // in layout PLF loading
         owner.setAttribute(UserProfile.USER_PROFILE, profile);
-        try
+        
+        this.owner = owner;
+        this.profile = profile;
+    }
+    
+    @Autowired
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
+    }
+
+    @Autowired
+    public void setLayoutCachingService(ILayoutCachingService layoutCachingService) {
+        this.layoutCachingService = layoutCachingService;
+    }
+
+    @Autowired
+    public void setDistributedLayoutStore(RDBMDistributedLayoutStore distributedLayoutStore) {
+        this.distributedLayoutStore = distributedLayoutStore;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // Ensure a new layout gets loaded whenever a user logs in...
+        this.layoutCachingService.removeCachedLayout(owner, profile);
+        
+        this.loadUserLayout();
+        
+        // verify that we have the minimum layout necessary to render the
+        // portal and reset it if we do not.
+        this.getRootFolderId();
+
+        // This listener determines if one or more channels have been
+        // added, and sets a state variable which is reset when the
+        // layout saved event is triggered.
+        this.addLayoutEventListener(new LayoutEventListenerAdapter()
         {
-
-            this.owner = owner;
-            this.profile = profile;
-            this.setLayoutStore(store);
-            this.loadUserLayout();
-            // verify that we have the minimum layout necessary to render the
-            // portal and reset it if we do not.
-            this.getRootFolderId();
-
-            // This listener determines if one or more channels have been
-            // added, and sets a state variable which is reset when the
-            // layout saved event is triggered.
-            this.addLayoutEventListener(new LayoutEventListener()
-            {
-                public void channelAdded(LayoutEvent ev)
-                {
-                    channelsAdded = true;
-                }
-
-                public void channelUpdated(LayoutEvent ev)
-                {
-                    // ignore
-                }
-
-                public void channelMoved(LayoutMoveEvent ev)
-                {
-                    // ignore
-                }
-
-                public void channelDeleted(LayoutMoveEvent ev)
-                {
-                    // ignore
-                }
-
-                public void folderAdded(LayoutEvent ev)
-                {
-                    // ignore
-                }
-
-                public void folderUpdated(LayoutEvent ev)
-                {
-                    // ignore
-                }
-
-                public void folderMoved(LayoutMoveEvent ev)
-                {
-                    // ignore
-                }
-
-                public void folderDeleted(LayoutMoveEvent ev)
-                {
-                    // ignore
-                }
-
-                public void layoutLoaded()
-                {
-                    // ignore
-                }
-
-                public void layoutSaved()
-                {
-                    channelsAdded = false;
-                }
-            });
-        } catch (Throwable e)
-        {
-            throw new PortalException(
-                    "Unable to instantiate DistributedLayoutManager for " 
-                        + owner.getAttribute(IPerson.USERNAME)+".", e);
-        }
+            @Override
+            public void channelAdded(LayoutEvent ev) {
+                channelsAdded = true;
+            }
+            @Override
+            public void layoutSaved() {
+                channelsAdded = false;
+            }
+        });
     }
 
     private void setUserLayoutDOM(Document doc) {
@@ -245,15 +192,6 @@ IFolderLocalNameResolver
         Node attr = layout.getAttributeNodeNS( Constants.NS_URI,
                                                Constants.LCL_FRAGMENT_NAME );
         this.isFragmentOwner = attr != null;
-        /*
-         * Handle inline migration of user layout folder labels into an I18N
-         * store if an I18N label policy is in place.
-         */
-        final IFolderLabelPolicy labelPolicy = ContextHolder.getLabelPolicy();
-        if (labelPolicy != null) {
-            labelPolicy.coordinateFolderLabels(owner.getID(), isFragmentOwner, doc);
-        }
-        
     }
     private int domRequests = 0;
 
@@ -275,14 +213,12 @@ IFolderLocalNameResolver
             Document userLayoutDocument = this.layoutCachingService.getCachedLayout(owner, profile);
             if ( null == userLayoutDocument )
             {
-                IUserLayoutStore layoutStore = getLayoutStore();
-                
                 if (LOG.isDebugEnabled())
                 {
                     LOG.debug("Load from store for " +
                         owner.getAttribute(IPerson.USERNAME));
                 }
-                userLayoutDocument = layoutStore.getUserLayout(this.owner,this.profile);
+                userLayoutDocument = this.distributedLayoutStore.getUserLayout(this.owner,this.profile);
 
                 // DistributedLayoutManager shall gracefully remove channels 
                 // that the user isn't authorized to render from folders of type 
@@ -343,13 +279,11 @@ IFolderLocalNameResolver
             throw new PortalException("User layout has not been initialized for " + owner.getAttribute(IPerson.USERNAME));
         }
         
-        //TODO XMLInputFactory can be shared once created and configured. Need a central place for doing that
-        final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        inputFactory.setEventAllocator(new LocationOverridingEventAllocator(new UnknownLocation()));
+        final XMLInputFactory xmlInputFactory = this.xmlUtilities.getXmlInputFactory();
         
         final DOMSource layoutSoure = new DOMSource(ul);
         try {
-            return inputFactory.createXMLEventReader(layoutSoure);
+            return xmlInputFactory.createXMLEventReader(layoutSoure);
         }
         catch (XMLStreamException e) {
             throw new RuntimeException("Failed to create Layout XMLStreamReader for user: " + owner.getAttribute(IPerson.USERNAME), e);
@@ -376,26 +310,11 @@ IFolderLocalNameResolver
         return xfrmr;
     }
 
-    public void setLayoutStore(IUserLayoutStore store) {
-        this.store=(RDBMDistributedLayoutStore) store;
-    }
-
-    protected IUserLayoutStore getLayoutStore() {
-        return this.store;
-    }
-
     public synchronized void loadUserLayout() throws PortalException {
         this.loadUserLayout(false);
     }
 
     public synchronized void loadUserLayout(boolean reload) throws PortalException {
-        IUserLayoutStore layoutStore = getLayoutStore();
-
-        if(layoutStore==null) {
-            throw new PortalException("Store implementation has not been " 
-                    + "set for " 
-                    + owner.getAttribute(IPerson.USERNAME) + ".");
-        }
         Document uli= null;
         try {
             //Clear the loaded document first if this is a forced reload
@@ -416,12 +335,10 @@ IFolderLocalNameResolver
                     + "\", layoutId=\"" + profile.getLayoutId() + "\"");
         }
         try {
-            if(uli!=null) {
-                // inform listeners
-                for(Iterator i=listeners.iterator();i.hasNext();) {
-                    LayoutEventListener lel=(LayoutEventListener)i.next();
-                    lel.layoutLoaded();
-                }
+            // inform listeners
+            for(Iterator i=listeners.iterator();i.hasNext();) {
+                LayoutEventListener lel=(LayoutEventListener)i.next();
+                lel.layoutLoaded();
             }
         } catch (Exception e) {
                throw new PortalException("Exception encountered contacting " +
@@ -438,14 +355,8 @@ IFolderLocalNameResolver
             throw new PortalException("UserLayout has not been initialized for " 
                     + owner.getAttribute(IPerson.USERNAME) + ".");
         }
-        IUserLayoutStore layoutStore = getLayoutStore();
-
-        if(layoutStore==null) {
-            throw new PortalException("Store implementation has not been set for " 
-                + owner.getAttribute(IPerson.USERNAME) + ".");
-        }
         try {
-            layoutStore.setUserLayout(this.owner,this.profile,uld,channelsAdded);
+            this.distributedLayoutStore.setUserLayout(this.owner,this.profile,uld,channelsAdded);
         } catch (Exception e) {
             throw new PortalException("Exception encountered while " +
                     "saving layout for userId=" + this.owner.getID() +
@@ -491,7 +402,7 @@ IFolderLocalNameResolver
         if (nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)
                 && desc instanceof ChannelDescription)
         {
-            FragmentChannelInfo info = store.getFragmentChannelInfo(nodeId);
+            FragmentChannelInfo info = this.distributedLayoutStore.getFragmentChannelInfo(nodeId);
             ((ChannelDescription)desc).setFragmentChannelInfo(info);
         }
         return desc;
@@ -507,26 +418,12 @@ IFolderLocalNameResolver
         if( canAddNode( node, parent, nextSiblingId ) )
         {
             // assign new Id
-            IUserLayoutStore layoutStore = getLayoutStore();
-
-            if(layoutStore==null) {
-                throw new PortalException("Store implementation has not been set for " 
-                    + owner.getAttribute(IPerson.USERNAME) + ".");
-            }
             try {
-                    if(node instanceof IUserLayoutChannelDescription) {
-                        isChannel=true;
-                        node.setId(layoutStore.generateNewChannelSubscribeId(owner));
-                    } else {
-                        node.setId(layoutStore.generateNewFolderId(owner));
-
-                    final IFolderLabelPolicy labelPolicy = ContextHolder.getLabelPolicy();
-                    if (labelPolicy != null)
-                    {
-                        labelPolicy.addNodeLabel(node.getId(),
-                                parentId, getUserLayoutDOM(), owner.getID(),
-                                isFragmentOwner, node.getName());
-                    }
+                if(node instanceof IUserLayoutChannelDescription) {
+                    isChannel=true;
+                    node.setId(this.distributedLayoutStore.generateNewChannelSubscribeId(owner));
+                } else {
+                    node.setId(this.distributedLayoutStore.generateNewFolderId(owner));
                 }
             } catch (Exception e) {
                     throw new PortalException("Exception encountered while " +
@@ -818,7 +715,7 @@ IFolderLocalNameResolver
                 /*
                  * Is a change to this attribute allowed?
                  */
-                FragmentNodeInfo fragNodeInf = store.getFragmentNodeInfo(nodeId);
+                FragmentNodeInfo fragNodeInf = this.distributedLayoutStore.getFragmentNodeInfo(nodeId);
                 if (fragNodeInf == null )
                 {
                     /*
@@ -937,7 +834,7 @@ IFolderLocalNameResolver
                 newChanDesc.getChannelPublishId());
         
         if (isIncorporated)
-            fragChanInf = store.getFragmentChannelInfo(nodeId);
+            fragChanInf = this.distributedLayoutStore.getFragmentChannelInfo(nodeId);
         Map oldParms = new HashMap(oldChanDesc.getParameterMap());
         for (Iterator itr = newChanDesc.getParameterMap().entrySet()
                 .iterator(); itr.hasNext();)
@@ -1623,7 +1520,7 @@ IFolderLocalNameResolver
          * isFramentOwner variable in this class since we could be resetting 
          * another user's layout.
          */
-        if (store.isFragmentOwner(person))
+        if (this.distributedLayoutStore.isFragmentOwner(person))
         {
             // set template user override so reload of layout comes from
             // fragment template user
@@ -1639,12 +1536,6 @@ IFolderLocalNameResolver
             userStore.removePortalUID( person.getID() );
             userStore.getPortalUID( person, true );
 
-            final IFolderLabelPolicy labelPolicy = ContextHolder.getLabelPolicy();
-            if (labelPolicy != null)
-            {
-                labelPolicy.purgeFolderLabels(person.getID(), isFragmentOwner);
-            }
-            
             // see if the current user was the one to reset their layout and if
             // so we need to refresh our local copy of their layout
             if (person == owner)
@@ -1768,16 +1659,6 @@ IFolderLocalNameResolver
                 plfId = null; // no user mods exist for this node
         }
     
-        final IFolderLabelPolicy labelPolicy = ContextHolder.getLabelPolicy();
-        if (labelPolicy != null)
-        {
-            label = labelPolicy.getNodeLabel(nodeId, 
-                    plfId, 
-                    editAllowed, 
-                    this.owner.getID(), 
-                    this.isFragmentOwner, 
-                    label);
-        }
         return label;
     }
 }

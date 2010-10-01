@@ -57,7 +57,7 @@ public abstract class PreferencesTransformerConfigurationSource extends Transfor
     @Override
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final LinkedHashMap<String, Object> transformerParameters = this.getParameters(request, response);
-        return new CacheKey(transformerParameters);
+        return new CacheKey(this.getName(), transformerParameters);
     }
 
     /* (non-Javadoc)
@@ -76,6 +76,8 @@ public abstract class PreferencesTransformerConfigurationSource extends Transfor
         
         return new LinkedHashMap<String, Object>(parameterValues);
     }
+    
+    protected abstract String getName();
     
     protected abstract StylesheetUserPreferences getStylesheetUserPreferences(UserPreferences userPreferences);
 }

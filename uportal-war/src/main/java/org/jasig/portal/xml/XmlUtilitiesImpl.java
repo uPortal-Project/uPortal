@@ -22,7 +22,11 @@ package org.jasig.portal.xml;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.List;
 
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.OutputKeys;
@@ -37,6 +41,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.jasig.portal.utils.cache.resource.CachedResource;
 import org.jasig.portal.utils.cache.resource.CachingResourceLoader;
 import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
+import org.jasig.portal.xml.stream.LocationOverridingEventAllocator;
+import org.jasig.portal.xml.stream.UnknownLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -53,9 +59,18 @@ import org.w3c.dom.Node;
 public class XmlUtilitiesImpl implements XmlUtilities {
     private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
+    private final XMLOutputFactory xmlOutputFactory;
+    private final XMLInputFactory xmlInputFactory;
     private TemplatesBuilder templatesBuilder;
     
     private CachingResourceLoader cachingResourceLoader;
+    
+    public XmlUtilitiesImpl() {
+        this.xmlOutputFactory = XMLOutputFactory.newFactory();
+        
+        this.xmlInputFactory = XMLInputFactory.newInstance();
+        this.xmlInputFactory.setEventAllocator(new LocationOverridingEventAllocator(new UnknownLocation()));
+    }
 
     @Autowired
     public void setCachingResourceLoader(CachingResourceLoader cachingResourceLoader) {
@@ -92,6 +107,43 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     public Serializable getStylesheetCacheKey(Resource stylesheet) throws TransformerConfigurationException, IOException {
         final CachedResource<Templates> templates = this.getStylesheetCachedResource(stylesheet);
         return templates.getCacheKey();
+    }
+    
+    @Override
+    public XMLOutputFactory getXmlOutputFactory() {
+        return this.xmlOutputFactory;
+    }
+
+    @Override
+    public XMLInputFactory getXmlInputFactory() {
+        return this.xmlInputFactory;
+    }
+
+    @Override
+    public String serializeXMLEvents(List<XMLEvent> xmlEvents) {
+        final StringWriter writer = new StringWriter();
+        
+        final XMLOutputFactory outputFactory = this.getXmlOutputFactory();
+        final XMLEventWriter xmlEventWriter;
+        try {
+            xmlEventWriter = outputFactory.createXMLEventWriter(writer);
+        }
+        catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to create XMLEventWriter", e);
+        }
+        
+        try {
+            for (final XMLEvent bufferedEvent : xmlEvents) {
+                xmlEventWriter.add(bufferedEvent);
+            }
+            xmlEventWriter.flush();
+            xmlEventWriter.close();
+        }
+        catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to write XMLEvents to XMLEventWriter", e);
+        }
+        
+        return writer.toString();
     }
 
     private CachedResource<Templates> getStylesheetCachedResource(Resource stylesheet) throws IOException {

@@ -33,6 +33,11 @@
         <constructor-arg index="0" ref="channelRegistryStore" />
     </bean>
     
+    <bean id="org.jasig.portal.spring.locator.UserLayoutStoreLocator"
+            class="org.jasig.portal.spring.locator.UserLayoutStoreLocator">
+        <constructor-arg index="0" ref="userLayoutStore" />
+    </bean>
+    
     <bean id="org.jasig.portal.spring.locator.JpaInterceptorLocator"
             class="org.jasig.portal.spring.locator.JpaInterceptorLocator">
         <constructor-arg index="0" ref="jpaInterceptor" />
@@ -51,11 +56,6 @@
     <bean id="org.jasig.portal.spring.locator.PortalDbMetadataLocator" 
             class="org.jasig.portal.spring.locator.PortalDbMetadataLocator">
         <constructor-arg index="0" ref="PortalDB.metadata" />
-    </bean>
-    
-    <bean id="org.jasig.portal.spring.locator.ConfigurationLoaderLocator" 
-            class="org.jasig.portal.spring.locator.ConfigurationLoaderLocator">
-        <constructor-arg index="0" ref="dlmConfigurationLoader" />
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.EntityCachingServiceLocator" 

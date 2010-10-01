@@ -32,6 +32,11 @@ import org.jasig.portal.UserPreferences;
 public class StructureTransformerConfigurationSource extends PreferencesTransformerConfigurationSource {
     
     @Override
+    protected String getName() {
+        return "StructureTransformerConfigurationSource";
+    }
+
+    @Override
     protected StylesheetUserPreferences getStylesheetUserPreferences(UserPreferences userPreferences) {
         return userPreferences.getStructureStylesheetUserPreferences();
     }

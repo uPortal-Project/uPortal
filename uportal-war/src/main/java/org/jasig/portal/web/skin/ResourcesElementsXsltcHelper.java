@@ -80,7 +80,7 @@ public class ResourcesElementsXsltcHelper extends TransformerConfigurationSource
 
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        return new CacheKey(this.resourcesElementsProvider.getIncludedType(request));
+        return new CacheKey("ResourcesElementsXsltcHelper", this.resourcesElementsProvider.getIncludedType(request));
     }
     
 }

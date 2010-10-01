@@ -21,48 +21,48 @@ package org.jasig.portal.spring.locator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.layout.dlm.ConfigurationLoader;
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.springframework.context.ApplicationContext;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
- * @deprecated code that needs an ConfigurationLoader should use direct dependency injection where possible
+ * @deprecated code that needs an IUserLayoutStore should use direct dependency injection where possible
  */
 @Deprecated
-public class ConfigurationLoaderLocator extends AbstractBeanLocator<ConfigurationLoader> {
-    public static final String BEAN_NAME = "dlmConfigurationLoader";
+public class UserLayoutStoreLocator extends AbstractBeanLocator<IUserLayoutStore> {
+    public static final String BEAN_NAME = "userLayoutStore";
     
-    private static final Log LOG = LogFactory.getLog(ConfigurationLoaderLocator.class);
-    private static AbstractBeanLocator<ConfigurationLoader> locatorInstance;
+    private static final Log LOG = LogFactory.getLog(UserLayoutStoreLocator.class);
+    private static AbstractBeanLocator<IUserLayoutStore> locatorInstance;
 
-    public static ConfigurationLoader getConfigurationLoader() {
-        AbstractBeanLocator<ConfigurationLoader> locator = locatorInstance;
+    public static IUserLayoutStore getUserLayoutStore() {
+        AbstractBeanLocator<IUserLayoutStore> locator = locatorInstance;
         if (locator == null) {
             LOG.info("Looking up bean '" + BEAN_NAME + "' in ApplicationContext due to context not yet being initialized");
             final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-            applicationContext.getBean(ConfigurationLoaderLocator.class.getName());
+            applicationContext.getBean(UserLayoutStoreLocator.class.getName());
             
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (ConfigurationLoader)applicationContext.getBean(BEAN_NAME, ConfigurationLoader.class);
+                return (IUserLayoutStore)applicationContext.getBean(BEAN_NAME, IUserLayoutStore.class);
             }
         }
         
         return locator.getInstance();
     }
 
-    public ConfigurationLoaderLocator(ConfigurationLoader instance) {
-        super(instance, ConfigurationLoader.class);
+    public UserLayoutStoreLocator(IUserLayoutStore instance) {
+        super(instance, IUserLayoutStore.class);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.spring.locator.AbstractBeanLocator#getLocator()
      */
     @Override
-    protected AbstractBeanLocator<ConfigurationLoader> getLocator() {
+    protected AbstractBeanLocator<IUserLayoutStore> getLocator() {
         return locatorInstance;
     }
 
@@ -70,7 +70,7 @@ public class ConfigurationLoaderLocator extends AbstractBeanLocator<Configuratio
      * @see org.jasig.portal.spring.locator.AbstractBeanLocator#setLocator(org.jasig.portal.spring.locator.AbstractBeanLocator)
      */
     @Override
-    protected void setLocator(AbstractBeanLocator<ConfigurationLoader> locator) {
+    protected void setLocator(AbstractBeanLocator<IUserLayoutStore> locator) {
         locatorInstance = locator;
     }
 }
