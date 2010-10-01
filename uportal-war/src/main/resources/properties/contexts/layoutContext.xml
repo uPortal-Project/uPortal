@@ -34,7 +34,10 @@
     
     <bean id="userLayoutManagerFactory" class="org.jasig.portal.layout.UserLayoutManagerFactory"/>
     
-    <bean id="userLayoutStore" class="org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore" />
+    <bean id="userLayoutStore" class="org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore">
+        <property name="lookupNoderefTask" ref="lookup-dlm-noderef"/>
+        <property name="lookupPathrefTask" ref="lookup-dlm-pathref_v3-2"/>
+    </bean>
     
     <bean id="userLayoutManager" class="org.jasig.portal.layout.dlm.DistributedLayoutManager" scope="prototype">
         <constructor-arg value="" />

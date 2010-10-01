@@ -979,15 +979,7 @@ public class RDBMDistributedLayoutStore
             tr.setAttribute(Attributes.RETURN_VALUE, rvi);
             tr.setAttribute("USER_NAME", layoutOwnerUsername);
             tr.setAttribute("DLM_NODEREF", dlmNoderef);
-            // The 'layoutStoreProvider' attribute could use some rework;  
-            // adding it like this to avoid circular dependency issues
-            final RDBMDistributedLayoutStore layoutStore = this;
-            tr.setAttribute("layoutStoreProvider", new LayoutStoreProvider() {
-                @Override
-                public RDBMDistributedLayoutStore getLayoutStore() {
-                    return layoutStore;
-                }
-            });
+            tr.setAttribute("userLayoutStore", this);
             this.lookupNoderefTask.perform(tr, new RuntimeRequestResponse());
             
             rslt = (String[]) rvi.getValue();
@@ -1037,21 +1029,13 @@ public class RDBMDistributedLayoutStore
             tr.setAttribute(Attributes.RETURN_VALUE, rvi);
             tr.setAttribute("USER_NAME", layoutOwner);
             tr.setAttribute("DLM_PATHREF", pathref);
+            tr.setAttribute("userLayoutStore", this);
             if (fname != null) {
                 tr.setAttribute("FNAME", fname);
             }
             if (isStructRef) {
                 tr.setAttribute("IS_STRUCT_REF", Boolean.TRUE);
             }
-            // The 'layoutStoreProvider' attribute could use some rework;  
-            // adding it like this to avoid circular dependency issues
-            final RDBMDistributedLayoutStore layoutStore = this;
-            tr.setAttribute("layoutStoreProvider", new LayoutStoreProvider() {
-                @Override
-                public RDBMDistributedLayoutStore getLayoutStore() {
-                    return layoutStore;
-                }
-            });
             this.lookupPathrefTask.perform(tr, new RuntimeRequestResponse());
             
             String val = (String) rvi.getValue();

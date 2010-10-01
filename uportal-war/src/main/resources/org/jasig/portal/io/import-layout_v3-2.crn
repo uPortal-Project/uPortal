@@ -37,8 +37,7 @@
         </if>
         <groovy>
             <script>
-                def layoutStore = layoutStoreProvider.getLayoutStore();
-                layoutStore.importLayout(Attributes.NODE);
+                userLayoutStore.importLayout(Attributes.NODE);
             </script>
         </groovy>
         <!-- Now do portlet entity preferences -->
