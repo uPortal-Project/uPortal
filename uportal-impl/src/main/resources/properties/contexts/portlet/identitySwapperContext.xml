@@ -33,6 +33,7 @@
 
     <!-- Maps portlet modes to handlers --> 
     <bean id="portletModeHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+        <property name="interceptors" ref="minimizedStateHandlerInterceptor" />
         <property name="portletModeMap">
             <map>
                 <entry key="view">
