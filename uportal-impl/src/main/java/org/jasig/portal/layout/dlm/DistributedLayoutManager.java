@@ -149,8 +149,10 @@ IFolderLocalNameResolver
         final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
         this.layoutCachingService = (ILayoutCachingService)applicationContext.getBean("layoutCachingService", ILayoutCachingService.class);
         
-        // Ensure a new layout gets loaded whenever a user logs in...
-        this.layoutCachingService.removeCachedLayout(owner, profile);
+        // Ensure a new layout gets loaded whenever a user logs in except for guest users
+        if (!owner.isGuest()) {
+            this.layoutCachingService.removeCachedLayout(owner, profile);
+        }
 
         // cache the relatively lightwieght userprofile for use in 
         // in layout PLF loading
