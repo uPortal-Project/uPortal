@@ -9,7 +9,11 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">           
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+           
+    <bean id="minimizedStateHandlerInterceptor" class="org.jasig.portal.portlets.MinimizedStateHandlerInterceptor" />           
+
+    <!-- ********** Servlet Filters ********** -->
 
     <!--
      | Message source for this context, loaded from localized "messages_xx" files
