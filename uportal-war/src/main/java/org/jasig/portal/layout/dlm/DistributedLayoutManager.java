@@ -156,8 +156,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // Ensure a new layout gets loaded whenever a user logs in...
-        this.layoutCachingService.removeCachedLayout(owner, profile);
+        // Ensure a new layout gets loaded whenever a user logs in exceot for guest users
+        if (!owner.isGuest()) {
+            this.layoutCachingService.removeCachedLayout(owner, profile);
+        }
         
         this.loadUserLayout();
         
