@@ -65,6 +65,10 @@ public class LayoutCachingService implements ApplicationListener, ILayoutCaching
         if (event instanceof UserLoggedOutPortalEvent || event instanceof UserSessionDestroyedPortalEvent) {
             final PortalEvent portalEvent = (PortalEvent)event;
             final IPerson person = portalEvent.getPerson();
+            //We don't want to clear out the guest layout
+            if (person.isGuest()) {
+                return;
+            }
             
             //Try invalidating just the layout associated with the current user and profile
             final UserProfile currentUserProfile = (UserProfile)person.getAttribute(UserProfile.USER_PROFILE);
