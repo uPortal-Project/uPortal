@@ -32,6 +32,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pluto.PortletContainer;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.descriptors.portlet.PortletDD;
 import org.jasig.portal.ChannelCacheKey;
@@ -305,8 +306,8 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         //If this window is targeted invalidate the cache
-        final IPortletWindowId targetedPortletWindowId = this.portletRequestParameterManager.getTargetedPortletWindowId(httpServletRequest);
-        if (portletWindowId.equals(targetedPortletWindowId)) {
+        final PortletUrl portletUrl = this.portletRequestParameterManager.getPortletRequestInfo(httpServletRequest, portletWindowId);
+        if (portletUrl != null) {
             return false;
         }
         
@@ -415,7 +416,8 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
             break;
             
             //All of these events require the portlet re-render so the portlet parameter
-            //manager is notified of the render request targing the portlet
+            //manager is notified of the render request targeting the portlet
+            case PortalEvent.DETACH_BUTTON_EVENT:
             case PortalEvent.MINIMIZE_EVENT:
             case PortalEvent.NORMAL_EVENT:
             case PortalEvent.MAXIMIZE_EVENT:
@@ -454,7 +456,7 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
 
                 switch (portalEvent.getEventNumber()) {
                     case PortalEvent.DETACH_BUTTON_EVENT: {
-                        portletUrl.setWindowState(IPortletAdaptor.DETACHED);
+                        //Ignore, this will always be handled by the portlet URL parameter processor
                     }
                     break;
                     case PortalEvent.MINIMIZE_EVENT: {
@@ -515,12 +517,17 @@ public class SpringPortletChannelImpl implements ISpringPortletChannel {
         final HttpServletRequest httpServletRequest = portalControlStructures.getHttpServletRequest();
         final HttpServletResponse httpServletResponse = portalControlStructures.getHttpServletResponse();
         final IPortletWindowId portletWindowId = this.getPortletWindowId(channelStaticData, channelRuntimeData, portalControlStructures);
+        IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+        
+        portletWindow.setPortletMode(PortletMode.VIEW);
+        portletWindow.setRequestParameters(null);
+        portletWindow.setExpirationCache(null);
         
         try {
             this.portletRenderer.doReset(portletWindowId, httpServletRequest, httpServletResponse);
         }
         catch (PortletDispatchException e) {
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+            portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
             throw new PortletDispatchException("Exception executing portlet reset: " + this.getChannelLogInfo(channelStaticData, portletWindow), portletWindow, e);
         }
     }
