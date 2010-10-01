@@ -76,10 +76,10 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     private static final String PORTLET_PARAM_PREFIX = "pltp" + SEPERATOR;
 
     private static final String PARAM_REQUEST_TARGET = PORTLET_CONTROL_PREFIX + "target";
-    private static final String PARAM_REQUEST_TYPE_PREFIX = PORTLET_CONTROL_PREFIX + "type" + SEPERATOR;
-    private static final String PARAM_WINDOW_STATE_PREFIX = PORTLET_CONTROL_PREFIX + "state" + SEPERATOR;
-    private static final String PARAM_PORTLET_MODE_PREFIX = PORTLET_CONTROL_PREFIX + "mode" + SEPERATOR;
-    private static final String PARAM_DELEGATE_PREFIX = PORTLET_CONTROL_PREFIX + "delegate" + SEPERATOR;
+    private static final String PARAM_REQUEST_TYPE_PREFIX = PORTLET_CONTROL_PREFIX + "type";
+    private static final String PARAM_WINDOW_STATE_PREFIX = PORTLET_CONTROL_PREFIX + "state";
+    private static final String PARAM_PORTLET_MODE_PREFIX = PORTLET_CONTROL_PREFIX + "mode";
+    private static final String PARAM_DELEGATE_PREFIX = PORTLET_CONTROL_PREFIX + "delegate";
     
     private static final Pattern URL_PARAM_NAME = Pattern.compile("&([^&?=\n]*)");
    
@@ -250,24 +250,35 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
     public PortletUrl parsePortletUrl(HttpServletRequest request) {
         Validate.notNull(request, "request can not be null");
         
-        final IPortletWindowId targetedPortletWindowId = resolveTargetWindowId(request);
-        if (targetedPortletWindowId == null) {
+        final UrlTarget urlTarget = resolveTargetWindowId(request);
+        if (urlTarget == null) {
             return null;
         }
         
-        final PortletUrl portletUrl = new PortletUrl(targetedPortletWindowId);
+        final PortletUrl portletUrl = new PortletUrl(urlTarget.portletWindowId);
         
-        this.parsePortletParameters(request, portletUrl);
+        this.parsePortletParameters(request, portletUrl, urlTarget);
     
         return portletUrl;
     }
     
     @SuppressWarnings("unchecked")
-    protected void parsePortletParameters(HttpServletRequest request, PortletUrl portletUrl) {
+    protected void parsePortletParameters(HttpServletRequest request, PortletUrl portletUrl, UrlTarget urlTarget) {
         final IPortletWindowId portletWindowId = portletUrl.getTargetWindowId();
-        final String portletWindowIdStr = portletWindowId.toString();
+
+        //Setup the namespace string used for parsing parameters, fname targets won't have namespaced parameters
+        final String controlNamespace;
+        final String parameterNamespace;
+        if (urlTarget != null && urlTarget.fnameTarget) {
+            controlNamespace = "";
+            parameterNamespace = "";
+        }
+        else {
+            controlNamespace = SEPERATOR + portletWindowId.toString();
+            parameterNamespace = portletWindowId.toString() + SEPERATOR;
+        }
         
-        final String requestTypeStr = request.getParameter(PARAM_REQUEST_TYPE_PREFIX + portletWindowIdStr);
+        final String requestTypeStr = request.getParameter(PARAM_REQUEST_TYPE_PREFIX + controlNamespace);
         if (requestTypeStr != null) {
             final RequestType requestType = RequestType.valueOf(requestTypeStr);
             portletUrl.setRequestType(requestType);
@@ -277,13 +288,13 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             portletUrl.setRequestType(RequestType.RENDER);
         }
         
-        final String windowStateStr = request.getParameter(PARAM_WINDOW_STATE_PREFIX + portletWindowIdStr);
+        final String windowStateStr = request.getParameter(PARAM_WINDOW_STATE_PREFIX + controlNamespace);
         if (windowStateStr != null) {
             final WindowState windowState = new WindowState(windowStateStr);
             portletUrl.setWindowState(windowState);
         }
         
-        final String portletModeStr = request.getParameter(PARAM_PORTLET_MODE_PREFIX + portletWindowIdStr);
+        final String portletModeStr = request.getParameter(PARAM_PORTLET_MODE_PREFIX + controlNamespace);
         if (portletModeStr != null) {
             final PortletMode portletMode = new PortletMode(portletModeStr);
             portletUrl.setPortletMode(portletMode);
@@ -293,7 +304,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         final Set<String> urlParameterNames = this.getUrlParameterNames(request);
         
         final Map<String, List<String>> portletParameters = new LinkedHashMap<String, List<String>>(requestParameters.size());
-        final String fqParameterName = PORTLET_PARAM_PREFIX + portletWindowIdStr + SEPERATOR;
+        final String fqParameterName = PORTLET_PARAM_PREFIX + parameterNamespace;
         for (final Map.Entry<String, String[]> parameterEntry : requestParameters.entrySet()) {
             final String parameterName = parameterEntry.getKey();
             
@@ -326,7 +337,7 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         portletUrl.setSecure(request.isSecure());
 
         //If delegating recurse
-        final String delegateWindowIdStr = request.getParameter(PARAM_DELEGATE_PREFIX + portletWindowIdStr);
+        final String delegateWindowIdStr = request.getParameter(PARAM_DELEGATE_PREFIX + controlNamespace);
         if (delegateWindowIdStr != null) {
             final IPortletWindowId delegateWindowId = this.portletWindowRegistry.getPortletWindowId(delegateWindowIdStr);
             
@@ -343,14 +354,16 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
             final PortletUrl delegatePortletUrl = new PortletUrl(delegateWindowId);
             portletUrl.setDelegatePortletUrl(delegatePortletUrl);
             
-            this.parsePortletParameters(request, delegatePortletUrl);
+            this.parsePortletParameters(request, delegatePortletUrl, null);
         }
     }
     
-    protected IPortletWindowId resolveTargetWindowId(HttpServletRequest request) {
+    protected UrlTarget resolveTargetWindowId(HttpServletRequest request) {
         final String targetedPortletWindowIdStr = request.getParameter(PARAM_REQUEST_TARGET);
         if (targetedPortletWindowIdStr != null) {
-            return this.portletWindowRegistry.getPortletWindowId(targetedPortletWindowIdStr);
+            return new UrlTarget(
+                    this.portletWindowRegistry.getPortletWindowId(targetedPortletWindowIdStr),
+                    false);
         }
         
         //Fail over to looking for a fname
@@ -387,7 +400,9 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinition.getPortletDefinitionId(), channelSubscribeId, person.getID());
         final IPortletWindow defaultPortletWindow = this.portletWindowRegistry.createDefaultPortletWindow(request, portletEntity.getPortletEntityId());
 
-        return this.portletWindowRegistry.createTransientPortletWindowId(request, defaultPortletWindow.getPortletWindowId());
+        return new UrlTarget(
+                this.portletWindowRegistry.createTransientPortletWindowId(request, defaultPortletWindow.getPortletWindowId()),
+                true);
     }
     
 
@@ -584,17 +599,17 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         
         //Only if actually delegating rendering
         if (delegationChildId != null) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_DELEGATE_PREFIX + portletWindowIdString, delegationChildId.toString());
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_DELEGATE_PREFIX + SEPERATOR + portletWindowIdString, delegationChildId.toString());
         }
         
         //Set the request type
         final RequestType requestType = portletUrl.getRequestType();
         final String requestTypeString = requestType != null ? requestType.toString() : RequestType.RENDER.toString();
-        this.encodeAndAppend(url.append("&"), encoding, PARAM_REQUEST_TYPE_PREFIX + portletWindowIdString, requestTypeString);
+        this.encodeAndAppend(url.append("&"), encoding, PARAM_REQUEST_TYPE_PREFIX + SEPERATOR + portletWindowIdString, requestTypeString);
         
         // If set add the window state
         if (windowState != null && (forceWindowState || !previousWindowState.equals(windowState))) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE_PREFIX + portletWindowIdString, windowState.toString());
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE_PREFIX + SEPERATOR + portletWindowIdString, windowState.toString());
             
             //uPortal specific parameters are only needed the top most parent portlet window
             if (delegationParentId == null) {
@@ -623,16 +638,16 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
         }
         //Or for any transient state always add the window state
         else if (this.transientWindowStates.contains(windowState) || this.transientWindowStates.contains(previousWindowState)) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE_PREFIX + portletWindowIdString, previousWindowState.toString());
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_WINDOW_STATE_PREFIX + SEPERATOR + portletWindowIdString, previousWindowState.toString());
         }
         
         //If set add the portlet mode
         if (portletMode != null) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE_PREFIX + portletWindowIdString, portletMode.toString());
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE_PREFIX + SEPERATOR + portletWindowIdString, portletMode.toString());
         }
         //Or for any transient state always add the portlet mode
         else if (this.transientWindowStates.contains(windowState) || this.transientWindowStates.contains(previousWindowState)) {
-            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE_PREFIX + portletWindowIdString, portletWindow.getPortletMode().toString());
+            this.encodeAndAppend(url.append("&"), encoding, PARAM_PORTLET_MODE_PREFIX + SEPERATOR + portletWindowIdString, portletWindow.getPortletMode().toString());
         }
         
         //Add the parameters to the URL
@@ -714,6 +729,21 @@ public class PortletUrlSyntaxProviderImpl implements IPortletUrlSyntaxProvider {
                 url.append(name).append("=").append(value);
                 first = false;
             }
+        }
+    }
+    
+
+    
+    /**
+     * Wrapper for determining the targeted URL
+     */
+    private static class UrlTarget {
+        public final IPortletWindowId portletWindowId;
+        public final boolean fnameTarget;
+        
+        private UrlTarget(IPortletWindowId portletWindowId, boolean fnameTarget) {
+            this.portletWindowId = portletWindowId;
+            this.fnameTarget = fnameTarget;
         }
     }
 }
