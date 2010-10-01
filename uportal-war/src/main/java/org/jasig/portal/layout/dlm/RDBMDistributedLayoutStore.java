@@ -374,14 +374,17 @@ public class RDBMDistributedLayoutStore
             final Map<IPerson, FragmentDefinition> owners = new HashMap<IPerson, FragmentDefinition>();
             for (final FragmentDefinition fragmentDefinition : definitions) {
                 String ownerId = fragmentDefinition.getOwnerId();
-                int userId  = activator.getUserView(fragmentDefinition).getUserId();
-
-                if ( null != ownerId )
-                {
-                    IPerson p = new PersonImpl();
-                    p.setID( userId );
-                    p.setAttribute( "username", ownerId );
-                    owners.put(p, fragmentDefinition);
+                final UserView userView = activator.getUserView(fragmentDefinition);
+                if (userView != null) {
+                    int userId  = userView.getUserId();
+    
+                    if ( null != ownerId )
+                    {
+                        IPerson p = new PersonImpl();
+                        p.setID( userId );
+                        p.setAttribute( "username", ownerId );
+                        owners.put(p, fragmentDefinition);
+                    }
                 }
             }
 
@@ -762,15 +765,14 @@ public class RDBMDistributedLayoutStore
         }
 
         // (3) Restore chanID attributes on <channel> elements...
-        try {
-            for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//channel").iterator(); it.hasNext();) {
-                org.dom4j.Element c = it.next();
-                IChannelDefinition cd = this.channelRegistryStore.getChannelDefinition(c.valueOf("@fname"));
-                c.addAttribute("chanID", String.valueOf(cd.getId()));
+        for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//channel").iterator(); it.hasNext();) {
+            org.dom4j.Element c = it.next();
+            final String fname = c.valueOf("@fname");
+            IChannelDefinition cd = this.channelRegistryStore.getChannelDefinition(fname);
+            if (cd == null) {
+                throw new IllegalArgumentException("No published channel for fname=" + fname + " referenced by layout for " + ownerUsername);
             }
-        } catch (Throwable t) {
-            String msg = "Error linking channels contained in layout for user:  " + ownerUsername;
-            throw new RuntimeException(msg, t);
+            c.addAttribute("chanID", String.valueOf(cd.getId()));
         }
         
         // (2) Restore locale info...
@@ -1447,7 +1449,13 @@ public class RDBMDistributedLayoutStore
         if (info == null)
         {
             for (final FragmentDefinition fragmentDefinition : fragments) {
-                Element node = activator.getUserView(fragmentDefinition).layout.getElementById(sId);
+                final UserView userView = activator.getUserView(fragmentDefinition);
+                if (userView == null) {
+                    log.warn("No UserView is present for fragment " + fragmentDefinition.getName() + " it will be skipped when fragment node information");
+                    continue;
+                }
+                
+                Element node = userView.layout.getElementById(sId);
                 if (node != null) // found it
                 {
                     if (node.getTagName().equals(Constants.ELM_CHANNEL))
@@ -1995,8 +2003,13 @@ public class RDBMDistributedLayoutStore
         {
             for (final FragmentDefinition fragmentDefinition : fragments) {
                 if ( fragmentDefinition.isApplicable(person) ) {
-                    loadIncorporatedPreferences( person, STRUCT, ssup,
-                            activator.getUserView(fragmentDefinition).structUserPrefs );
+                    final UserView userView = activator.getUserView(fragmentDefinition);
+                    if (userView != null) {
+                        loadIncorporatedPreferences( person, STRUCT, ssup, userView.structUserPrefs );
+                    }
+                    else {
+                        log.warn("No UserView is present for fragment " + fragmentDefinition.getName() + " it will be skipped when loading structure preferences");
+                    }
                 }
             }
         }
@@ -2035,8 +2048,13 @@ public class RDBMDistributedLayoutStore
         {
             for (final FragmentDefinition fragmentDefinition : fragments) {
                 if ( fragmentDefinition.isApplicable(person) ) {
-                    loadIncorporatedPreferences( person, THEME, tsup,
-                            activator.getUserView(fragmentDefinition).themeUserPrefs);
+                    final UserView userView = activator.getUserView(fragmentDefinition);
+                    if (userView != null) {
+                        loadIncorporatedPreferences( person, THEME, tsup, userView.themeUserPrefs);
+                    }
+                    else {
+                        log.warn("No UserView is present for fragment " + fragmentDefinition.getName() + " it will be skipped when loading theme preferences");
+                    }
                 }
             }
         }
