@@ -84,7 +84,7 @@ public class QueueingEventHandler extends AbstractLimitedSupportEventHandler imp
      * @see org.springframework.beans.factory.DisposableBean#destroy()
      */
     public void destroy() throws Exception {
-        this.flush();
+        this.flush(true);
     }
     
     /* (non-Javadoc)
@@ -96,14 +96,21 @@ public class QueueingEventHandler extends AbstractLimitedSupportEventHandler imp
     }
     
     /**
+     * @see #flush(boolean)
+     */
+    public void flush() {
+        this.flush(false);
+    }
+    
+    /**
      * Flushes the queued PortalEvents to the configured {@link BatchingEventHandler}. If <code>force</code> is false
      * flushing only happens if there are enough events in the queue and a flush isn't already under way. If 
      * <code>force</code> is true all queued events will be flushed and the calling thread will wait until any previously
      * executing flush call completes before flushing
      * 
-     * @param force Forces flushing events to the {@link BatchingEventHandler} even if there are fewer than <code>flushCount</code> PortalEvents in the queue.
+     * @param ignoreFailure Ignore failures while flushing, don't log anything
      */
-    public void flush() {
+    public void flush(boolean ignoreFailure) {
         boolean hasMoreEvents = true;
         while (hasMoreEvents) {
             //Use a Lock instead of synchronized to avoid threads potentially waiting to flush
@@ -146,22 +153,24 @@ public class QueueingEventHandler extends AbstractLimitedSupportEventHandler imp
                     this.batchingEventHandler.handleEvents(flushedEvents);
                 }
                 catch (Throwable t) {
-                    this.logger.error("An exception was thrown while trying to flush " + flushedEvents.length + " PortalEvents to " + this.batchingEventHandler, t);
-                    
-                    final StringBuilder failedEvents = new StringBuilder();
-                    failedEvents.append("The following is the list of events that was being flushed, some may have been persisted correctly");
-                    
-                    for (final PortalEvent portalEvent : flushedEvents) {
-                        failedEvents.append("\n\t");
-                        try {
-                            failedEvents.append(portalEvent.toString());
+                    if (!ignoreFailure) {
+                        this.logger.error("An exception was thrown while trying to flush " + flushedEvents.length + " PortalEvents to " + this.batchingEventHandler, t);
+                        
+                        final StringBuilder failedEvents = new StringBuilder();
+                        failedEvents.append("The following is the list of events that was being flushed, some may have been persisted correctly");
+                        
+                        for (final PortalEvent portalEvent : flushedEvents) {
+                            failedEvents.append("\n\t");
+                            try {
+                                failedEvents.append(portalEvent.toString());
+                            }
+                            catch (Exception e) {
+                                failedEvents.append("toString failed on a PortalEvent of type '" + portalEvent.getClass() + "': " + e);
+                            }
                         }
-                        catch (Exception e) {
-                            failedEvents.append("toString failed on a PortalEvent of type '" + portalEvent.getClass() + "': " + e);
-                        }
+                        
+                        this.logger.error(failedEvents, t);
                     }
-                    
-                    this.logger.error(failedEvents, t);
                 }
             }
             finally {
