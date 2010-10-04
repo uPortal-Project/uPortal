@@ -273,6 +273,25 @@ var uportal = uportal || {};
                                               window.location = that.urlProvider.getTabUrl(getActiveTabId());
                                            }
                                         );
+                                    },
+                                    onPortletDrag: function (portletID, method, columnID) {
+                                        var activeTab, targetID;
+                                        // Use active tab as the target id.
+                                        activeTab = $("#portalNavigationList").find(".fl-tabs-active");
+                                        targetID = up.defaultNodeIdExtractor(activeTab);
+                                        
+                                        // Persist the portlet addition.
+                                        that.persistence.update(
+                                            {
+                                                action: "addPortlet",
+                                                channelID: portletID,
+                                                position: method,
+                                                elementID: targetID
+                                            },
+                                            function(xml) {
+                                                window.location = that.urlProvider.getTabUrl(getActiveTabId());
+                                            }
+                                        );
                                     }
                                 }
                             }
@@ -538,7 +557,7 @@ var uportal = uportal || {};
             $(".focused-content-dialog").dialog({ width: 500, modal: true });
             
             // wire the form to persist portlet addition
-            $(".focused-content-dialog form").submit(function () {                    
+            $(".focused-content-dialog form").submit(function () {
                 var portletId, tabId, form;
                 
                 // collect form data

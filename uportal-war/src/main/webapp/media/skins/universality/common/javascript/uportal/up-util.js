@@ -114,5 +114,25 @@ var up = up || {};
         fluid.model.copyModel(pager.model, newModel);
     };
     
+    /**
+     * Shows a "loading" screen.
+     * 
+     * @param {Object} selector - reference to jQuery selector.
+     */
+    up.showLoader = function (selector) {
+        selector.show();
+    };//end:function.
+    
+    /**
+     * Hides a "loading" screen after a 1.5 second delay.
+     * 
+     * @param {Object} selector - reference to jQuery selector.
+     */
+    up.hideLoader = function (selector) {
+        var t;
+        t = setTimeout(function () {
+            selector.fadeOut("slow");
+            clearInterval(t);
+        }, 1500);
+    };//end:function.
 })(jQuery, fluid);
-

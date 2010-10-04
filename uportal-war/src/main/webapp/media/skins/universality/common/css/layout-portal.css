@@ -286,7 +286,7 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Add Tab */
 #portalNavigation .add-tab {display:inline-block;}
 
-/* quicklinks */	
+/* quicklinks */    
 #portalQuicklinks {}
 
 #portalQuicklinks ul, 
@@ -398,8 +398,8 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Gallery Modal Loaders 
  * Preloaders while the content loads, following the opening of the drawer.
  */
-.up-gallery .gallery-inner .gallery-modal {position:absolute; top:7px; bottom:0; left:0; right:0; background: #333 url(../images/gallery-preloader.gif) center center no-repeat;}
-.up-gallery .content-wrapper .content-modal {display:none; position:absolute; top:7px; bottom:0; left:0; right:0; background: url(../images/gallery-content-preloader.gif) 50% 80% no-repeat;}
+.up-gallery .gallery-loader {display: block; margin: 7px 0px 0px 127px; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; background: #333 url("../images/gallery-content-preloader.gif") 50% 50% no-repeat;}
+.up-gallery .gallery-loader span {display: none;}
 
 /* Gallery Close Button 
  * An explicit close button, that closes the drawer.
@@ -423,27 +423,27 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .categories-column, .up-gallery .packages-column{clear:both;}
 .up-gallery .content-filters-wrapper h3 {margin:0; padding:7px 0 0 0; cursor:pointer; font-size:12px; color:#c5c5c6;}
 .up-gallery .categories-column h3 {
-	background:#333;
-	-webkit-border-top-left-radius: 2px;
-	-webkit-border-top-right-radius: 2px;
-	-moz-border-radius-topleft: 2px;
-	-moz-border-radius-topright: 2px;
-	border-top-left-radius: 2px;
-	border-top-right-radius: 2px;
-	
+    background:#333;
+    -webkit-border-top-left-radius: 2px;
+    -webkit-border-top-right-radius: 2px;
+    -moz-border-radius-topleft: 2px;
+    -moz-border-radius-topright: 2px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    
 }
 .up-gallery .packages-column h3 {position:absolute; top:0; left:56px;}
 .up-gallery .content-filters-wrapper .active h3 {color:#f68923;}
 .up-gallery .content-filters-wrapper h3 span {
-	padding:1px 10px; 
-	border:2px solid #424243; 
-	border-bottom:none;
-	-webkit-border-top-left-radius: 5px;
-	-webkit-border-top-right-radius: 5px;
-	-moz-border-radius-topleft: 5px;
-	-moz-border-radius-topright: 5px;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
+    padding:1px 10px; 
+    border:2px solid #424243; 
+    border-bottom:none;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 .up-gallery .content-filters-wrapper .active h3 span {background:#424243;}
 .up-gallery .content-filters-wrapper h3 span:hover,
@@ -496,19 +496,30 @@ table.purpose-layout td {margin:0; padding:0;}
  */
 .up-gallery .results-wrapper {font-size:10px; position:relative; color:#AAA;}
 .up-gallery .results-wrapper .portlet-list {list-style:none; padding:0; margin:0; position:relative;}
-.up-gallery .results-wrapper .portlet-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:25%; height:50%;}
-.up-gallery .results-wrapper .portlet-list li .portlet-wrapper {height:66px; padding:5px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
+.up-gallery .results-wrapper .portlet-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; /*width:25%;*/ width: 33%; height:50%;}
+.up-gallery .results-wrapper .portlet-list li .portlet-wrapper {height:75px; padding:0px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
 .up-gallery .results-wrapper a {text-decoration:none;}
 .up-gallery .results-column.fl-col-main {margin:0 74px 0 0; padding:0px; position:relative;}
 .up-gallery .results-wrapper .pager-column.fl-col-side {float:right; width:74px; margin:0px; padding:0px;}
 .up-gallery .results-wrapper .portlet-list {position:relative; width:100%;}
-.up-gallery .portlet-wrapper a {width:25px; cursor:pointer; color:#000; position:absolute; padding:3px 8px; top:0; right:0; display:none; background:#f68923; background-image:-moz-linear-gradient(90deg,#f68923,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(#ffffff)); border-bottom-left-radius:3px; -moz-border-radius-bottomleft:3px; -webkit-border-bottom-left-radius:3px; }
-.up-gallery .portlet-description {clear:right; color:#AAA; display:inline;}
-.up-gallery .portlet-titlebar {padding:5px 0 3px 0; font-size:12px; font-weight:bold; color:#DDD;}
-.up-gallery .portlet-wrapper  {border:1px solid #333; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;}
+.up-gallery .portlet-wrapper {
+    background: #333; border:1px solid #666; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;
+    -moz-box-shadow: 0px 0px 2px 0px #000; -webkit-box-shadow: 0px 0px 2px 0px #000; box-shadow: 0px 0px 2px 0px #000;}
 .up-gallery .portlet-wrapper:hover {border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); border-top-right-radius:0px;    -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;}
-.up-gallery .portlet-wrapper:hover a {display:block;}
-.up-gallery .portlet-wrapper img {width:37px; height:37px; float:left; margin-right:5px; margin-bottom:5px;}
+.up-gallery .portlet-wrapper:hover .portlet-link {color: #000; background:#f68923; background-image:-moz-linear-gradient(90deg,#f68923,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(#ffffff));}
+.up-gallery .portlet-wrapper-inner{padding: 0px 5px 0px 5px;}
+/* Add Link */
+.up-gallery .portlet-link {position: absolute; top: 0px; right: 0px; display: block; cursor:pointer; color:#000; padding:2px 8px; background:#666;
+    background-image:-moz-linear-gradient(90deg,#666,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center;}
+.up-gallery .portlet-link:hover {color: #000; background: #F68923; background-image:-moz-linear-gradient(90deg,#F68923,#FFF); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#FFF));}
+/* Drag Hanle */
+.up-gallery .portlet-gripper {
+    display: block; background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px; cursor: move;}
+.up-gallery .portlet-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
+.up-gallery .portlet-description {clear:right; color:#AAA; display:inline;}
+.up-gallery .portlet-titlebar {padding:5px 0 2px 0; font-size:11px; font-weight:bold; color:#DDD;}
+.up-gallery .portlet-wrapper img {width:32px; height:32px; float:left; margin-right:5px; margin-bottom:5px;}
+
 /* temporary icon */
 .up-gallery .results-wrapper .package-list {list-style:none; padding:0; margin:0; position:relative;}
 .up-gallery .results-wrapper .package-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:25%; height:50%;}
@@ -559,3 +570,30 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .layout-wrapper:hover a {display:block;}
 .up-gallery .layout-wrapper.selected {border:1px solid #f68923; background:#f68d29; background-image:-moz-linear-gradient(90deg,#d87516,#222222); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#d87516), to(#222222));}
 .up-gallery .selected .layout-titlebar {color:#fff;}
+
+/* Gallery: Avatar */
+.up .ui-draggable-dragging {
+    border: 1px solid #F68923; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;
+    padding: 0; margin: 0; list-style: none; -moz-box-shadow: 0px 0px 4px 0px #333; -webkit-box-shadow: 0px 0px 4px 0px #333; box-shadow: 0px 0px 4px 0px #333; background: #333;
+    background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); position: relative; height: 80px; min-width: 200px;}
+.up .ui-draggable-dragging .portlet-wrapper {overflow: hidden;}
+.up .ui-draggable-dragging .portlet-wrapper-inner {padding:0px 10px 0px 10px;}
+.up .ui-draggable-dragging .portlet-link {
+    position: absolute; top: 0px; right: 0px; display: block; color: #000; text-decoration: none; font-size: 77%; padding: 2px 8px; background: #666; background-image: -moz-linear-gradient(90deg,#666,#ffffff); 
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center; cursor: move; background: #F68923; background-image: -moz-linear-gradient(90deg,#F68923,#ffffff);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#ffffff));}
+.up .ui-draggable-dragging .portlet-gripper {
+    display: block; background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat; cursor: move; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px;}
+.up .ui-draggable-dragging .portlet-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
+.up .ui-draggable-dragging .portlet-titlebar {padding:5px 0 3px 0; font-size: 93%; font-weight: bold; color: #DDD;}
+.up .ui-draggable-dragging .portlet-icon {float: left; margin: 0 5px 5px 0;}
+.up .ui-draggable-dragging .portlet-description {float: left; color: #AAA; font-size: 77%;}
+
+/* Gallery: Drop Target */
+.up .layout-draggable-drop-target {display: none; background: #FF0000; padding: 5px; height: 150px; text-align: center; margin-bottom: 1em;  border: 2px dashed #960000; font-weight: bold; color: #960000;}
+.up .layout-draggable-drop-target span {display: block; padding: 65px 5px 5px 5px;}
+.up .layout-draggable-drop-target-active {}
+.up .layout-draggable-target-dropped {border: 1px solid #CCC; background: #EFEFEF url("../../uportal3/images/loading.gif") 50% 50% no-repeat;}
+.up .layout-draggable-target-dropped span {display:none;}
+
+/* Gallery: Loader */

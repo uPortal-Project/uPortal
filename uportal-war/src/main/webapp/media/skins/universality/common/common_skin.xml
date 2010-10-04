@@ -60,6 +60,7 @@
   <js>javascript/uportal/search.js</js>
   <js>javascript/uportal/up-portlet-registry.js</js>
   <js>javascript/uportal/up-portlet-browser.js</js>
+  <js>javascript/uportal/up-layout-draggable-manager.js</js>
   <js>javascript/uportal/up-layout-gallery.js</js>
   <js>javascript/uportal/up-fragment-permissions-manager.js</js>
   <js>javascript/uportal/up-subscription-browser.js</js>

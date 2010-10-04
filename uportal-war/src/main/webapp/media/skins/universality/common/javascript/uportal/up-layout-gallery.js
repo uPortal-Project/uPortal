@@ -95,7 +95,7 @@ var up = up || {};
         };
 
         that.refresh();
-        return that;        
+        return that;
     };
     
     fluid.defaults("up.AjaxLayoutCategoryListView", {
@@ -104,17 +104,26 @@ var up = up || {};
     });
 
     up.AjaxLayoutPortletListView = function (container, overallThat, options) {
-    
         var that, cutpoints;
-
-        // construct the new component
+        
+        // Construct the new component.
         that = fluid.initView("up.AjaxLayoutPortletListView", container, options);
-
+        
+        // Initialize draggable manager.
+        that.dragManager = fluid.initSubcomponent(that, "dragManager",
+            [that.container, fluid.COMPONENT_OPTIONS]);
+            
+        // DragManger 'onDropTarget' callback.
+        that.dragManager.events.onDropTarget.addListener(function (columnID, method) {
+            that.state.drag.overall.events.onPortletDrag.fire(that.state.drag.data.id, method, columnID);
+        });
+        
         // initialize a state map for this component
         that.state = {};
-
+        
         cutpoints = [
             { id: "portlet:", selector: ".portlet" },
+            { id: "portletWrapper", selector: ".portlet-wrapper"},
             { id: "portletLink", selector: ".portlet-link" },
             { id: "portletTitle", selector: ".portlet-titlebar" },
             { id: "portletDescription", selector: ".portlet-description" },
@@ -122,9 +131,8 @@ var up = up || {};
         ];
         
         that.refresh = function () {
-            
             var portlets, members;
-
+            
             // Build a list of all portlets that are a deep member of the
             // currently-selected category, sorted by title
             portlets = [];
@@ -138,32 +146,70 @@ var up = up || {};
                 }
             });
             portlets.sort(up.getStringPropertySortFunction("title"));
-
+            
             if (that.state.pager) {
                 up.refreshPager(that.state.pager, portlets);
             } else {
-
                 // define the column structure for the portlets pager
                 var columnDefs = [
-                    { key: "portletLink", valuebinding: "*.id", 
+                    {
+                        key: "portletWrapper",
+                        valuebinding: "*.id",
                         components: function (row) {
-                            return { decorators: [
-                                { type: "jQuery", func: "click", args: function () {
-                                        overallThat.events.onPortletSelect.fire(overallThat, row);
-                                    } 
-                                }
-                            ] };
+                            return {
+                                decorators: 
+                                [
+                                    { 
+                                        type: "jQuery",
+                                        func: "mousedown",
+                                        args: function () {
+                                            // Update drag state. This state object is read
+                                            // when a thumbnail is dropped into a portal column.
+                                            that.state.drag = {
+                                                overall: overallThat,
+                                                data: row
+                                            };
+                                        } 
+                                    }
+                                ]
+                            };
                         }
                     },
-                    { key: "portletTitle", valuebinding: "*.title" },
-                    { key: "portletDescription", valuebinding: "*.description" },
-                    { key: "portletIcon", valuebinding: "*.id",
+                    {
+                        key: "portletLink",
+                        valuebinding: "*.id", 
+                        components: function (row) {
+                            return {
+                                decorators: 
+                                [
+                                    { 
+                                        type: "jQuery",
+                                        func: "click",
+                                        args: function () {
+                                            overallThat.events.onPortletSelect.fire(overallThat, row);
+                                        } 
+                                    }
+                                ]
+                            };
+                        }
+                    },
+                    {
+                        key: "portletTitle",
+                        valuebinding: "*.title"
+                    },
+                    {
+                        key: "portletDescription",
+                        valuebinding: "*.description"
+                    },
+                    {
+                        key: "portletIcon",
+                        valuebinding: "*.id",
                         components: function (row) {
                             return { decorators: [ { type: "attrs", attributes: { src: row.iconUrl } } ] };
                         }
                     }
                 ];
-
+                
                 // set the other pager options
                 var pagerOptions = {
                     dataModel: portlets,
@@ -179,7 +225,7 @@ var up = up || {};
                                 cutpoints: cutpoints
                             }
                         }
-
+                        
                     },
                     pagerBar: {
                         type: "fluid.pager.pagerBar", 
@@ -193,20 +239,26 @@ var up = up || {};
                         }
                     }
                 };
-    
-                // initialize the pager and set it to 8 items per page
-                that.state.pager = fluid.pager($(container).find(".portlet-results"), pagerOptions);
-                that.state.pager.events.initiatePageSizeChange.fire(8);
                 
-            }
-            
-        };
-
+                // initialize the pager and set it to 6 items per page.
+                that.state.pager = fluid.pager($(container).find(".portlet-results"), pagerOptions);
+                that.state.pager.events.onModelChange.addListener(that.dragManager.initDragAndDrop);
+                that.state.pager.events.initiatePageSizeChange.fire(that.options.pageSize);
+            }//end:if.
+        };//end:function.
         that.refresh();
+        
         return that;
     };
-
+    
     fluid.defaults("up.AjaxLayoutPortletListView", {
+        dragManager: {
+            type: "up.LayoutDraggableManager"
+        },
+        selectors: {
+            galleryList: "#galleryPortletList"
+        },
+        pageSize: 6,
         defaultIconUrl: "/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png"
     });
 
@@ -423,8 +475,16 @@ var up = up || {};
         };
         
         that.hideLoading = function () {
-            that.locate("loading").hide();
-            that.locate("ui").show();
+            var modal, ui, t;
+            
+            modal = that.locate("loading");
+            ui = that.locate("ui");
+            
+            ui.show();
+            t = setTimeout(function () {
+                    modal.fadeOut("slow");
+                    clearInterval(t);
+            }, 1500);
         };
         
         // wire the gallery handle to open and close the gallery panel
@@ -502,7 +562,7 @@ var up = up || {};
             galleryInner: ".gallery-inner",
             galleryHandle: ".handle span",
             closeLink: ".close-button",
-            loading: ".gallery-loading",
+            loading: ".gallery-loader",
             ui: ".content-wrapper .content"
         }
     });

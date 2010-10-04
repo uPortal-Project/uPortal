@@ -228,7 +228,8 @@ var up = up || {};
             },
             onPortletSelect: function (that, portlet) {
                 that.portletListView.refresh();
-            }
+            },
+            onPortletDrag: null
         }
     });
     
