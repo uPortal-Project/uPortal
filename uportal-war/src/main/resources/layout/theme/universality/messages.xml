@@ -172,6 +172,7 @@
         <token name="AJAX_ADD_FOCUSED_PORTLET_SUBMIT_BUTTON">Add</token>
         <token name="AJAX_ADD_PORTLET_BROWSE">Browse portlets</token>
         <token name="AJAX_ADD_PORTLET_SEARCH">Search</token>
+        <token name="AJAX_LOADING_GALLERY">Loading . . . </token>
         <token name="AJAX_LOADING_PORTLET_LIST">Loading portlet list . . . </token>
         <token name="AJAX_ADD_PORTLET_DIALOG_TITLE">Add Content</token>
         <token name="AJAX_ADD_PORTLET_CATEGORY_COLUMN">Column</token>

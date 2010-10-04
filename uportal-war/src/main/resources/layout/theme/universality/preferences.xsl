@@ -174,14 +174,17 @@
                     <xsl:call-template name="gallery-pager"/>
                 </div>
             </div>
-            <div class="results-column fl-col-main fl-fix">
-                <ul class="portlet-list">
+            <div class="results-column fl-col-main ui-helper-clearfix">
+                <ul id="galleryPortletList" class="portlet-list">
                     <li class="portlet">
                         <div class="portlet-wrapper">
+                            <a class="portlet-gripper" href="javascript:;" title="Drag to add content"><span>Drag Handle</span></a>
                             <a href="javascript:;" class="portlet-link"><span><xsl:value-of select="upMsg:getMessage('add', $USER_LANG)"/></span></a>
-                            <div class="portlet-titlebar"></div>
-                            <img class="portlet-icon"/>
-                            <div class="portlet-description"></div>
+                            <div class="portlet-wrapper-inner ui-helper-clearfix">
+                                <div class="portlet-titlebar"></div>
+                                <img class="portlet-icon"/>
+                                <div class="portlet-description"></div>
+                            </div>
                         </div>
                     </li>
                 </ul>
@@ -351,8 +354,8 @@
                         <xsl:call-template name="gallery-skin-pane"/>
                         <xsl:call-template name="gallery-layout-pane"/>
                     </div>
-                    <div class="content-modal gallery-loading"></div>
                 </div>
+                <div id="galleryLoader" class="gallery-loader"><span><xsl:value-of select="$TOKEN[@name='AJAX_LOADING_GALLERY']"/></span></div>
             </div>
         </div>
         </xsl:if>
