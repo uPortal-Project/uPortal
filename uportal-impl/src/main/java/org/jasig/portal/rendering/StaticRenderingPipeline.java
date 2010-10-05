@@ -501,7 +501,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Initia
                     // structure transformation to a log file serializer to a printstream
                     StringWriter dbwr1 = null;
                     OutputFormat outputFormat = null;
-                    if (logXMLBeforeStructureTransformation) {
+                    if (logXMLBeforeStructureTransformation && log.isDebugEnabled()) {
                         dbwr1 = new StringWriter();
                         outputFormat = new OutputFormat();
                         outputFormat.setIndenting(true);
@@ -543,10 +543,8 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Initia
                     // all channels should be rendering now
 
                     // Debug piece to print out the recorded pre-structure transformation XML
-                    if (logXMLBeforeStructureTransformation) {
-                        if (log.isDebugEnabled())
-                            log
-                                    .debug("XML incoming to the structure transformation :\n\n"
+                    if (logXMLBeforeStructureTransformation && log.isDebugEnabled()) {
+                            log.debug("XML incoming to the structure transformation :\n\n"
                                             + dbwr1.toString() + "\n\n");
                     }
 
@@ -597,7 +595,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Initia
                     // This is a debug statement that will print out XML incoming to the
                     // theme transformation to a log file serializer to a printstream
                     StringWriter dbwr2 = null;
-                    if (logXMLBeforeThemeTransformation) {
+                    if (logXMLBeforeThemeTransformation && log.isDebugEnabled()) {
                         dbwr2 = new StringWriter();
                         XMLSerializer dbser2 = new XMLSerializer(dbwr2, outputFormat);
                         SAX2DuplicatingFilterImpl dupl2 = new SAX2DuplicatingFilterImpl(tsth, dbser2);
