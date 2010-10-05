@@ -83,6 +83,7 @@ import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
@@ -687,6 +688,34 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	public boolean hasLifecyclePermission(IPerson person, ChannelLifecycleState state, List<JsonEntityBean> categories) {
 		EntityIdentifier ei = person.getEntityIdentifier();
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+	    
+        final String activity;
+        switch (state) {
+            case APPROVED: {
+                activity = IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY;
+                break;
+            }
+            case CREATED: {
+                activity = IPermission.CHANNEL_MANAGER_CREATED_ACTIVITY;
+                break;
+            }
+            case PUBLISHED: {
+                activity = IPermission.CHANNEL_MANAGER_ACTIVITY;
+                break;
+            }
+            case EXPIRED: {
+                activity = IPermission.CHANNEL_MANAGER_EXPIRED_ACTIVITY;
+                break;
+            }
+            default: {
+                throw new IllegalArgumentException("");
+            }
+        }
+        if (ap.hasPermission("UP_FRAMEWORK", activity, "ALL_CHANNELS")) {
+            logger.debug("Found permission for category ALL_CHANNELS and lifecycle state " + state.toString());
+            return true;
+        }
+	    
 		for (JsonEntityBean category : categories) {
 			if (ap.canManage(state, category.getId())) {
 				logger.debug("Found permission for category " + category.getName() + " and lifecycle state " + state.toString());
