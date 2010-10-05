@@ -82,6 +82,7 @@
 
                     <!-- UP_PERSON_DIR info, if it exists -->
                     <with>
+                        <attribute key="accountStore">${groovy(PORTAL_CONTEXT.getBean('localAccountDao'))}</attribute>
                         <attribute key="ENCRPTD_PSWD">${groovy(Attributes.NODE.selectSingleNode('person-directory/encrptd-pswd')?.valueOf('.'))}</attribute>
                         <attribute key="LST_PSWD_CGH_DT">${groovy(Attributes.NODE.selectSingleNode('person-directory/lst-pswd-cgh-dt')?.valueOf('.'))}</attribute>
                         <attribute key="FIRST_NAME">${groovy(Attributes.NODE.selectSingleNode('person-directory/first-name')?.valueOf('.'))}</attribute>
@@ -90,32 +91,18 @@
                         <subtasks>
                             <if test="${jexl(ENCRPTD_PSWD != null || LST_PSWD_CGH_DT != null
                                 || FIRST_NAME != null || LAST_NAME != null || EMAIL != null)}">
-                                <sql-upsert>
-                                    <update-statement>
-                                        UPDATE UP_PERSON_DIR SET ENCRPTD_PSWD=?,
-                                        LST_PSWD_CGH_DT=?, FIRST_NAME=?, LAST_NAME=?,
-                                        EMAIL=? WHERE USER_NAME=?
-                                    </update-statement>
-                                    <insert-statement>
-                                        INSERT INTO UP_PERSON_DIR (USER_NAME, ENCRPTD_PSWD,
-                                        LST_PSWD_CGH_DT, FIRST_NAME, LAST_NAME, EMAIL)
-                                        VALUES (?, ?, ?, ?, ?, ?)
-                                    </insert-statement>
-                                    
-                                    <update-parameter value="${ENCRPTD_PSWD}"/>
-                                    <update-parameter value="${org.jasig.portal.io.SqlTimestampPhrase(${LST_PSWD_CGH_DT})}"/>
-                                    <update-parameter value="${FIRST_NAME}"/>
-                                    <update-parameter value="${LAST_NAME}"/>
-                                    <update-parameter value="${EMAIL}"/>
-                                    <update-parameter value="${USER_NAME}"/>
-                                    
-                                    <insert-parameter value="${USER_NAME}"/>
-                                    <insert-parameter value="${ENCRPTD_PSWD}"/>
-                                    <insert-parameter value="${org.jasig.portal.io.SqlTimestampPhrase(${LST_PSWD_CGH_DT})}"/>
-                                    <insert-parameter value="${FIRST_NAME}"/>
-                                    <insert-parameter value="${LAST_NAME}"/>
-                                    <insert-parameter value="${EMAIL}"/>
-                                </sql-upsert>
+                                <groovy>
+                                    <script>
+                                        def account = new org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl()
+                                        account.setName(USER_NAME)
+                                        account.setPassword(ENCRPTD_PSWD)
+                                        account.setLastPasswordChange(LST_PSWD_CGH_DT)
+                                        account.setAttribute("given", FIRST_NAME)
+                                        account.setAttribute("sn", LAST_NAME)
+                                        account.setAttribute("mail", EMAIL)
+                                        accountStore.updateAccount(account)
+                                    </script>
+                                </groovy>
                             </if>
                         </subtasks>
                     </with>

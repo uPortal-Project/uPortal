@@ -137,38 +137,6 @@
   </table>
 
   <table sinceMajor="2" sinceMinor="1">
-    <name>UP_PERSON_DIR</name>
-    <desc>Directory information for a given person, including the MD5 password. Emulates a simple external authentication service, like LDAP.</desc>
-    <columns>
-      <column> <name>USER_NAME</name>       <type>VARCHAR</type>   <param>35</param>
-        <desc>Authentication prinicipal - Primary key and foreign key foreign key to external authentication system (which is what up_person_dir emulates)</desc>
-      </column>
-      <column> <name>ENCRPTD_PSWD</name>    <type>VARCHAR</type>   <param>64</param>
-        <desc>MD5 authentication credential - or user's password</desc>
-      </column>
-      <column> <name>LST_PSWD_CGH_DT</name> <type>TIMESTAMP</type>
-        <desc>Date of last password change</desc>
-      </column>
-      <column> <name>FIRST_NAME</name>      <type>VARCHAR</type>   <param>15</param>
-        <desc>Person's first name</desc>
-      </column>
-      <column> <name>LAST_NAME</name>       <type>VARCHAR</type>   <param>15</param>
-        <desc>Person's last name</desc>
-      </column>
-      <column> <name>EMAIL</name>           <type>VARCHAR</type>   <param>60</param>
-        <desc>Person's e-mail address</desc>
-      </column>
-    </columns>
-    <not-null>USER_NAME</not-null>
-    <primary-key>USER_NAME</primary-key>
-    <index>
-        <name>UPPD_NAME_PSWD_IDX</name>
-        <column-ref>USER_NAME</column-ref>
-        <column-ref>ENCRPTD_PSWD</column-ref>
-    </index>
-  </table>
-
-  <table sinceMajor="2" sinceMinor="1">
     <name>UP_PERMISSION</name>
     <desc>Permission access to framework channels</desc>
     <columns>

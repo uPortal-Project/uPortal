@@ -21,10 +21,13 @@ package org.jasig.portal.security.provider;
 
 import java.security.MessageDigest;
 
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PortalSecurityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.persondir.ILocalAccountDao;
+import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.spring.locator.LocalAccountDaoLocator;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's
@@ -58,12 +61,13 @@ public class SimpleSecurityContext extends ChainingSecurityContext
       String first_name = null, last_name = null, md5_passwd = null;
 
       try {
-        String acct[] = AccountStoreFactory.getAccountStoreImpl().getUserAccountInformation(this.myPrincipal.UID);
-        if (acct[0] != null) {
+          ILocalAccountDao accountStore = LocalAccountDaoLocator.getLocalAccountDao();
+          ILocalAccountPerson account = accountStore.getPerson(this.myPrincipal.UID);
+        if (account != null) {
 
-          first_name = acct[1];
-          last_name = acct[2];
-          md5_passwd = acct[0];
+          first_name = (String) account.getAttributeValue("given");
+          last_name = (String) account.getAttributeValue("sn");
+          md5_passwd = account.getPassword();
           if (!md5_passwd.substring(0, 5).equals("(MD5)")) {
             log.error( "Password not an MD5 hash: " + md5_passwd.substring(0, 5));
             return;

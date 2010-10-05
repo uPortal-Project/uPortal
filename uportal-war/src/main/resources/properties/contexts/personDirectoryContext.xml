@@ -134,7 +134,7 @@
 					<ref bean="cachinguPortalJdbcAttributeSource"/> <ref
 					bean="cachinguPortalJdbcUserSource"/>
 				-->
-				<ref bean="uPortalJdbcAttributeSource" />
+                <ref bean="localAccountDao" />
 				<ref bean="uPortalJdbcUserSource" />
 			</list>
 		</property>
@@ -164,64 +164,6 @@
 		</property>
 		<property name="resultAttributeMapping">
 			<map>
-				<entry key="USER_NAME">
-					<set>
-						<value>uid</value>
-						<value>username</value>
-						<value>user.login.id</value>
-					</set>
-				</entry>
-			</map>
-		</property>
-	</bean>
-
-	<!--
-	 | Looks in the local person-directory table. This table is only used for portal-local users such as fragment owners 
-	 | All attributes are searchable via this configuration, results are cached by the outer caching DAO
-	 +-->
-	<bean id="uPortalJdbcAttributeSource"
-		class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
-		<constructor-arg index="0" ref="PersonDB" />
-		<constructor-arg>
-			<value>
-				SELECT FIRST_NAME||' '||LAST_NAME AS FIRST_LAST, FIRST_NAME, LAST_NAME,
-				EMAIL, USER_NAME
-				FROM UP_PERSON_DIR
-				WHERE {0}
-                    </value>
-		</constructor-arg>
-		<property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
-		<!-- Allow for querying using any field in the table -->
-		<property name="queryAttributeMapping">
-			<map>
-				<entry key="username" value="USER_NAME" />
-				<entry key="givenName" value="FIRST_NAME" />
-				<entry key="sn" value="LAST_NAME" />
-				<entry key="mail" value="EMAIL" />
-			</map>
-		</property>
-		<!-- Map the table fields to P3P attribute names -->
-		<property name="resultAttributeMapping">
-			<map>
-				<entry key="FIRST_LAST" value="displayName" />
-				<entry key="FIRST_NAME">
-					<set>
-						<value>givenName</value>
-						<value>user.name.given</value>
-					</set>
-				</entry>
-				<entry key="LAST_NAME">
-					<set>
-						<value>sn</value>
-						<value>user.name.family</value>
-					</set>
-				</entry>
-				<entry key="EMAIL">
-					<set>
-						<value>mail</value>
-						<value>user.home-info.online.email</value>
-					</set>
-				</entry>
 				<entry key="USER_NAME">
 					<set>
 						<value>uid</value>

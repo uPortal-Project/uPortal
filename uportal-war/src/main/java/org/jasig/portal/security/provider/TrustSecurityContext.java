@@ -19,8 +19,11 @@
 
 package org.jasig.portal.security.provider;
 
+import org.jasig.portal.persondir.ILocalAccountDao;
+import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.spring.locator.LocalAccountDaoLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -57,10 +60,11 @@ class TrustSecurityContext extends ChainingSecurityContext
     if (this.myPrincipal.UID != null) {
       try {
         String first_name, last_name;
-        String acct[] = AccountStoreFactory.getAccountStoreImpl().getUserAccountInformation(this.myPrincipal.UID);
-        if (acct[0] != null) {
-          first_name = acct[1];
-          last_name = acct[2];
+        ILocalAccountDao accountStore = LocalAccountDaoLocator.getLocalAccountDao();
+        ILocalAccountPerson account = accountStore.getPerson(this.myPrincipal.UID);
+        if (account != null) {
+            first_name = (String) account.getAttributeValue("given");
+            last_name = (String) account.getAttributeValue("sn");
           this.myPrincipal.FullName = first_name + " " + last_name;
           if (log.isInfoEnabled())
               log.info( "User " + this.myPrincipal.UID + " is authenticated");

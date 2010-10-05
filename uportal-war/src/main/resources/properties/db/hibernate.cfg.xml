@@ -53,6 +53,8 @@
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" />
         <mapping class="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
+        <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>
+        <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
         
         <class-cache class="org.jasig.portal.layout.dlm.Evaluator" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl" usage="nonstrict-read-write"/>
@@ -63,6 +65,7 @@
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" usage="nonstrict-read-write"/>
+        <class-cache class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl" usage="nonstrict-read-write"/>
         
         <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences" usage="nonstrict-read-write"/>
         <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values" usage="nonstrict-read-write"/>
