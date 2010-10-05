@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
@@ -26,9 +25,11 @@ import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.CharacterEventSource;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.stream.ChunkingEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Converts a StAX event stream into a {@link CharacterEvent} stream. Breaking up the stream
@@ -43,6 +44,7 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
     private StAXPipelineComponent parentComponent;
     private Map<String, CharacterEventSource> chunkingElements;
     private Map<Pattern, CharacterEventSource> chunkingPatterns;
+    private XmlUtilities xmlUtilities;
     
     public void setParentComponent(StAXPipelineComponent parentComponent) {
         this.parentComponent = parentComponent;
@@ -50,6 +52,11 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
     
     public void setChunkingElements(Map<String, CharacterEventSource> chunkingElements) {
         this.chunkingElements = chunkingElements;
+    }
+
+    @Autowired
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
     }
 
     public void setChunkingPatterns(Map<String, CharacterEventSource> chunkingPatterns) {
@@ -73,9 +80,9 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
         final StringWriter writer = new StringWriter();
         
         //Setup the serializer
-        //TODO pooling of output factories - maybe come via XmlUtilties
-        final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        final XMLOutputFactory outputFactory = this.xmlUtilities.getXmlOutputFactory();
         
+        //Don't shortcut empty elements
         outputFactory.setProperty(XMLOutputFactory2.P_AUTOMATIC_EMPTY_ELEMENTS, false);
         
         final XMLEventWriter xmlEventWriter;

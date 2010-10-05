@@ -41,6 +41,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.jasig.portal.utils.cache.resource.CachedResource;
 import org.jasig.portal.utils.cache.resource.CachingResourceLoader;
 import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
+import org.jasig.portal.xml.stream.IndentingXMLEventWriter;
 import org.jasig.portal.xml.stream.LocationOverridingEventAllocator;
 import org.jasig.portal.xml.stream.UnknownLocation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,7 +127,7 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         final XMLOutputFactory outputFactory = this.getXmlOutputFactory();
         final XMLEventWriter xmlEventWriter;
         try {
-            xmlEventWriter = outputFactory.createXMLEventWriter(writer);
+            xmlEventWriter = new IndentingXMLEventWriter(outputFactory.createXMLEventWriter(writer));
         }
         catch (XMLStreamException e) {
             throw new RuntimeException("Failed to create XMLEventWriter", e);

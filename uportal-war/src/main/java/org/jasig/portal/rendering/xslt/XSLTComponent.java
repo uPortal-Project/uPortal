@@ -5,13 +5,13 @@
  */
 package org.jasig.portal.rendering.xslt;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
@@ -19,8 +19,7 @@ import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stax.StAXSource;
 
 import org.apache.commons.logging.LogFactory;
@@ -29,15 +28,18 @@ import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.rendering.StAXPipelineComponent;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.ResourceLoaderURIResolver;
-import org.jasig.portal.xml.stream.LocationOverridingEventAllocator;
-import org.jasig.portal.xml.stream.UnknownLocation;
-import org.jasig.portal.xml.stream.XMLStreamReaderAdapter;
+import org.jasig.portal.xml.StaxEventContentHandler;
+import org.jasig.portal.xml.stream.XMLEventBufferReader;
+import org.jasig.portal.xml.stream.XMLEventBufferWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.xml.SimpleTransformErrorListener;
+import org.springframework.util.xml.StaxUtils;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.helpers.LocatorImpl;
 
 /**
  * @author Eric Dalquist
@@ -86,9 +88,11 @@ public class XSLTComponent implements StAXPipelineComponent, BeanNameAware, Reso
         final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.parentComponent.getEventReader(request, response);
         
         final Transformer transformer = this.transformerSource.getTransformer(request, response);
-        
+
+        //Setup a URIResolver based on the current resource loader
         transformer.setURIResolver(this.uriResolver);
         
+        //Configure the Transformer via injected class
         if (this.xsltParameterSource != null) {
             final Map<String, Object> transformerParameters = this.xsltParameterSource.getParameters(request, response);
             if (transformerParameters != null) {
@@ -106,24 +110,31 @@ public class XSLTComponent implements StAXPipelineComponent, BeanNameAware, Reso
                 transformer.setOutputProperties(outputProperties);
             }
         }
-            
+
+        //The event reader from the previous component in the pipeline
         final XMLEventReader eventReader = pipelineEventReader.getEventReader();
         
         //Wrap the event reader in a stream reader to avoid a JDK bug
         final XMLStreamReader streamReader;
         try {
-            streamReader = new XMLStreamReaderAdapter(eventReader);
+            streamReader = StaxUtils.createEventStreamReader(eventReader);
         }
         catch (XMLStreamException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to create XMLStreamReader from XMLEventReader", e);
         }
         final Source xmlReaderSource = new StAXSource(streamReader);
         
         //Setup logging for the transform
         transformer.setErrorListener(this.errorListener);
 
-        //Transform to a DOM to avoid JDK bug: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6775588
-        final DOMResult outputTarget = new DOMResult();
+        //Transform to a SAX ContentHandler to avoid JDK bug: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6775588
+        final XMLEventBufferWriter eventWriterBuffer = new XMLEventBufferWriter();
+        //Using a local patched version of StaxEventContentHandler due to SPR-7620 and SPR-7621
+//        final ContentHandler contentHandler = StaxUtils.createContentHandler(eventWriterBuffer);
+        final ContentHandler contentHandler = new StaxEventContentHandler(eventWriterBuffer);
+        contentHandler.setDocumentLocator(new LocatorImpl());
+        
+        final SAXResult outputTarget = new SAXResult(contentHandler);
         try {
             this.logger.debug("{} - Begining XML Transformation", this.beanName);
             transformer.transform(xmlReaderSource, outputTarget);
@@ -133,20 +144,9 @@ public class XSLTComponent implements StAXPipelineComponent, BeanNameAware, Reso
             throw new RuntimeException("Failed to transform document", e);
         }
         
-        //TODO XMLInputFactory can be shared once created and configured. Need a central place for doing that
-        final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        inputFactory.setEventAllocator(new LocationOverridingEventAllocator(new UnknownLocation()));
-        
-        final DOMSource layoutSoure = new DOMSource(outputTarget.getNode());
-        final XMLEventReader eventWriterBuffer;
-        try {
-            eventWriterBuffer = inputFactory.createXMLEventReader(layoutSoure);
-        }
-        catch (XMLStreamException e) {
-            throw new RuntimeException(e);
-        }
-        
-        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(eventWriterBuffer);
+        final List<XMLEvent> eventBuffer = eventWriterBuffer.getEventBuffer();
+        final XMLEventReader outputEventReader = new XMLEventBufferReader(eventBuffer.listIterator()); 
+        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(outputEventReader);
     }
 
     @Override

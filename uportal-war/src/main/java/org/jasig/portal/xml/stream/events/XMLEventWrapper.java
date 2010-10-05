@@ -42,66 +42,82 @@ public class XMLEventWrapper implements XMLEvent {
         this.event = event;
     }
 
+    @Override
     public Characters asCharacters() {
         return this.event.asCharacters();
     }
 
+    @Override
     public EndElement asEndElement() {
         return this.event.asEndElement();
     }
 
+    @Override
     public StartElement asStartElement() {
         return this.event.asStartElement();
     }
 
+    @Override
     public int getEventType() {
         return this.event.getEventType();
     }
 
+    @Override
     public Location getLocation() {
         return this.event.getLocation();
     }
 
+    @Override
     public QName getSchemaType() {
         return this.event.getSchemaType();
     }
 
+    @Override
     public boolean isAttribute() {
         return this.event.isAttribute();
     }
 
+    @Override
     public boolean isCharacters() {
         return this.event.isCharacters();
     }
 
+    @Override
     public boolean isEndDocument() {
         return this.event.isEndDocument();
     }
 
+    @Override
     public boolean isEndElement() {
         return this.event.isEndElement();
     }
 
+    @Override
     public boolean isEntityReference() {
         return this.event.isEntityReference();
     }
 
+    @Override
     public boolean isNamespace() {
         return this.event.isNamespace();
     }
 
+    @Override
     public boolean isProcessingInstruction() {
         return this.event.isProcessingInstruction();
     }
 
+    @Override
     public boolean isStartDocument() {
         return this.event.isStartDocument();
     }
 
+    @Override
     public boolean isStartElement() {
         return this.event.isStartElement();
     }
 
+    @Override
     public void writeAsEncodedUnicode(Writer writer) throws XMLStreamException {
         this.event.writeAsEncodedUnicode(writer);
     }

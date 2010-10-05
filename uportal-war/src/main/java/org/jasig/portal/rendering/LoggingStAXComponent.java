@@ -6,15 +6,12 @@
 
 package org.jasig.portal.rendering;
 
-import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
@@ -96,35 +93,17 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
                 eventBuffer.add(event);
                 
                 if (event.isEndDocument()) {
-                    
-                    final StringWriter writer = new StringWriter();
-                    
-                    final XMLOutputFactory outputFactory = xmlUtilities.getXmlOutputFactory();
-                    final XMLEventWriter xmlEventWriter;
-                    try {
-                        xmlEventWriter = outputFactory.createXMLEventWriter(writer);
-                    }
-                    catch (XMLStreamException e) {
-                        throw new RuntimeException("Failed to create XMLEventWriter", e);
-                    }
-                    
-                    try {
-                        for (final XMLEvent bufferedEvent : this.eventBuffer) {
-                            xmlEventWriter.add(bufferedEvent);
-                        }
-                        xmlEventWriter.flush();
-                        xmlEventWriter.close();
-                    }
-                    catch (XMLStreamException e) {
-                        throw new RuntimeException("Failed to write events to Writer", e);
-                    }
-                    
-                    logger.debug(writer.toString());
+                    final String xmlOutput = xmlUtilities.serializeXMLEvents(eventBuffer);
+                    logger.debug("\n" + xmlOutput);
                 }
             }
             
-            
             return event;
+        }
+
+        @Override
+        public void close() throws XMLStreamException {
+            this.eventBuffer.clear();
         }
     }
 }

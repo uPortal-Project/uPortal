@@ -44,6 +44,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -392,47 +393,63 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
         final String targetedLayoutNodeId = portalRequestInfo.getTargetedLayoutNodeId();
         
-        final IBasePortalUrl basePortalUrl;
-        if (portletRequestInfo != null) {
-            final UrlType urlType = portalRequestInfo.getUrlType();
-            final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
-            final IPortletPortalUrl portletPortalUrl = this.getPortletUrl(urlType.getPortletUrlType(), request, targetWindowId);
-            basePortalUrl = portletPortalUrl;
-            
-            final PortletMode portletMode = portletRequestInfo.getPortletMode();
-            if (portletMode != null) {
-                portletPortalUrl.setPortletMode(portletMode);
-            }
-            final WindowState windowState = portletRequestInfo.getWindowState();
-            if (windowState != null) {
-                portletPortalUrl.setWindowState(windowState);
-            }
-            final Map<String, List<String>> publicPortletParameters = portletRequestInfo.getPublicPortletParameters();
-            if (publicPortletParameters != null) {
-                portletPortalUrl.getPublicRenderParameters().putAll(ParameterMap.convertListMap(publicPortletParameters));
-            }
-            final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
-            if (portletParameters != null) {
-                portletPortalUrl.getPortletParameters().putAll(ParameterMap.convertListMap(portletParameters));
-            }
-            final IPortletRequestInfo delegatePortletRequestInfo = portletRequestInfo.getDelegatePortletRequestInfo();
-            if (delegatePortletRequestInfo != null) {
-                //TODO handle delegate URL generation
+        IBasePortalUrl basePortalUrl = null;
+        
+        try {
+            if (portletRequestInfo != null) {
+                final UrlType urlType = portalRequestInfo.getUrlType();
+                final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
+                final IPortletPortalUrl portletPortalUrl = this.getPortletUrl(urlType.getPortletUrlType(), request, targetWindowId);
+                basePortalUrl = portletPortalUrl;
+                
+                final PortletMode portletMode = portletRequestInfo.getPortletMode();
+                if (portletMode != null) {
+                    portletPortalUrl.setPortletMode(portletMode);
+                }
+                final WindowState windowState = portletRequestInfo.getWindowState();
+                if (windowState != null) {
+                    portletPortalUrl.setWindowState(windowState);
+                }
+                final Map<String, List<String>> publicPortletParameters = portletRequestInfo.getPublicPortletParameters();
+                if (publicPortletParameters != null) {
+                    portletPortalUrl.getPublicRenderParameters().putAll(ParameterMap.convertListMap(publicPortletParameters));
+                }
+                final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
+                if (portletParameters != null) {
+                    portletPortalUrl.getPortletParameters().putAll(ParameterMap.convertListMap(portletParameters));
+                }
+                final IPortletRequestInfo delegatePortletRequestInfo = portletRequestInfo.getDelegatePortletRequestInfo();
+                if (delegatePortletRequestInfo != null) {
+                    //TODO handle delegate URL generation
+                }
             }
         }
-        else if (targetedLayoutNodeId != null) {
-            final ILayoutPortalUrl layoutPortalUrl = this.getFolderUrlByNodeId(request, targetedLayoutNodeId);
-            basePortalUrl = layoutPortalUrl;
-            
-            final Map<String, List<String>> layoutParameters = portalRequestInfo.getLayoutParameters();
-            if (layoutParameters != null) {
-                layoutPortalUrl.setLayoutParameters(layoutParameters);
-            }
-            
-            final boolean action = UrlType.ACTION == portalRequestInfo.getUrlType();
-            layoutPortalUrl.setAction(action);
+        catch (PortalException e) {
+            //TODO really need a better exception type here
+            //Failed to generate layout URL (generally due to invalid portletWindowId in this request scope)
         }
-        else {
+        
+        try {
+            if (basePortalUrl == null && targetedLayoutNodeId != null) {
+                final ILayoutPortalUrl layoutPortalUrl = this.getFolderUrlByNodeId(request, targetedLayoutNodeId);
+                
+                basePortalUrl = layoutPortalUrl;
+                
+                final Map<String, List<String>> layoutParameters = portalRequestInfo.getLayoutParameters();
+                if (layoutParameters != null) {
+                    layoutPortalUrl.setLayoutParameters(layoutParameters);
+                }
+                
+                final boolean action = UrlType.ACTION == portalRequestInfo.getUrlType();
+                layoutPortalUrl.setAction(action);
+            }
+        }
+        catch (PortalException e) {
+            //TODO really need a better exception type here
+            //Failed to generate layout URL (generally due to invalid nodeId in this request scope)
+        }
+        
+        if (basePortalUrl == null) {
             basePortalUrl = this.getDefaultUrl(request);
         }
         
