@@ -1,3 +1,117 @@
+/*
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/**
+ * The LayoutDraggableManager component houses the UI Gallery's initial drag 
+ * and drop implementation. The implementation makes use of jQuery UI draggable
+ * and droppable objects. As of this implementation, a user can drag a 'portlet'
+ * thumbnail that appears in the gallery 'Add Stuff' tab and drag it to the top
+ * of any available column. The ability to drag and drop a 'portlet' thumbnail
+ * into a specific location does not yet exist.
+ * 
+ * For more information on the portal gallery, please see the below url:
+ * https://wiki.jasig.org/display/UPC/Customize+Portal+Gallery
+ * 
+ * Some configurations listed below stem from jQuery UI droppable and draggable objects.
+ * For more information, please see the below urls:
+ * http://jqueryui.com/demos/droppable/
+ * http://jqueryui.com/demos/draggable/
+ * 
+ * -------------------
+ * Available selectors
+ * -------------------
+ * body: reference to portal's <body> element.
+ * Default: Selector "#portal"
+ * 
+ * galleryList: reference to the list of portlets rendered by the portal gallery. 
+ * Default: Selector "#galleryPortletList"
+ * 
+ * columnContainer: reference to outermost container to envelopes all portal columns. 
+ * Default: Selector "#portalPageBodyColumns"
+ * 
+ * column: reference to portal column container.
+ * Default: Selector ".portal-page-column"
+ * 
+ * innerColumn: reference to inner portal column container.
+ * Default: Selector ".portal-page-column-inner"
+ * 
+ * dragHandle: reference to 'gripper' handle rendered out by the portal gallery. 
+ * Default: Selector ".portlet-gripper"
+ * 
+ * pseudoDropTarget: reference to visual indicator that appears when a gallery list item is dragged
+ * over a portal column.
+ * Default: Selector ".layout-draggable-drop-target"
+ * 
+ * loader: reference to the gallery loading screen.
+ * Default: Selector "#galleryLoader"
+ * 
+ * accept:  reference to acceptable draggable element. All draggables that match the selector will be accepted.
+ * Default: Selector ".portlet"
+ * 
+ * ----------------
+ * Available styles
+ * ----------------
+ * pseudoDropTarget: reference to a class name that is applied by default to the drop target <div>.
+ * Default: String "layout-draggable-drop-target"
+ * 
+ * targetDropped: reference to a class name that is applied to the drop target <div> when an item has been dropped.
+ * Default: String "layout-draggable-target-dropped"
+ * 
+ * ----------------
+ * Available events
+ * ----------------
+ * onDropTarget: reference to an event that is triggered when a list item is successfully dropped.
+ * Default: null
+ * 
+ * ---------------------------
+ * Other Configuration Options
+ * ---------------------------
+ * pseudoDropTargetLabel: reference to label that appears within the drop target <div>.
+ * Default: Drop Here
+ * 
+ * iframeFix: Prevent iframes from capturing the mousemove events during a drag.
+ * Default: Boolean true
+ * 
+ * opacity: Opacity for the helper (avatar) while being dragged.
+ * Default: Number .80
+ * 
+ * helper: Allows for a helper (avatar) element to be used for dragging display. Possible values: 'original', 'clone', Function.
+ * Default: String "clone"
+ * 
+ * revert: If set to true, the element will return to its start position when dragging stops. Possible string values: 'valid', 'invalid'.
+ * If set to invalid, revert will only occur if the draggable has not been dropped on a droppable. For valid, it's the other way around.
+ * Default: Boolean, String "invalid"
+ * 
+ * cursor: The css cursor during the drag operation.
+ * Default: String "move"
+ * 
+ * cursorAt: Moves the dragging helper so the cursor always appears to drag from the same position.
+ * Default: Object {top: 7, left: 100 }
+ * 
+ * stack: Controls the z-Index of the set of elements that match the selector, always brings to front the dragged item.
+ * Default: Selector ".ui-draggable-dragging"
+ * 
+ * tolerance: Specifies which mode to use for testing whether a draggable is 'over' a droppable. Possible values: 'fit', 'intersect', 'pointer', 'touch'. 
+ * Default: String "intersect"
+ * 
+ */
+
 "use strict";
 var up = up || {};
 
@@ -7,9 +121,9 @@ var up = up || {};
      * This function handles the UI interactions that occur once a portlet thumbnail
      * or icon is dropped into the body of the portal.
      * 
-     * @param {Object} that
-     * @param {Object} action
-     * @param {Object} target
+     * @param {Object} that - reference to LayoutDraggableManager instance.
+     * @param {String} action - reference to jQuery UI droppable events (over, out & drop).
+     * @param {Object} target - reference to a DOM element. Specifically, a portal column. 
      */
     var dropTargetHandler = function (that, action, target) {
         var column, columnID, method, placeholder;
@@ -69,9 +183,8 @@ var up = up || {};
          * @param {Object} that - reference to an instance of the LayoutDraggableManager component.
          */
         that.insertDropTarget = function () {
-            var columnContainer, column, target;
+            var column, target;
             
-            //columnContainer = $(that.options.selectors.body).find(that.options.selectors.columnContainer);
             column = that.elem.columnContainer.find(that.options.selectors.innerColumn);
             target = column.find(that.options.selectors.pseudoDropTarget);
             
@@ -98,7 +211,9 @@ var up = up || {};
          */
         that.makeDroppable = function (selector) {
             selector.droppable({
+                accept: that.options.selectors.accept,
                 over: function (event, ui) {
+                    console.log(event, ui);
                     dropTargetHandler(that, "over", event.target);
                 },
                 out: function (event, ui) {
@@ -123,15 +238,16 @@ var up = up || {};
             dragHandle = selector.find(that.options.selectors.dragHandle)
             selector.draggable({
                 handle: dragHandle,
-                appendTo: "body",
-                iframeFix: true,
-                opacity: .80,
-                helper: "clone",
-                revert: "invalid",
-                cursor: "move",
-                cursorAt: {top: 7, left: 100 },
-                stack: ".ui-draggable-dragging",
-                tolerance: "intersect",
+                appendTo: that.options.selectors.body,
+                iframeFix: that.options.iframeFix,
+                opacity: that.options.opacity,
+                helper: that.options.helper,
+                revert: that.options.revert,
+                cursor: that.options.cursor,
+                cursorAt: that.options.cursorAt,
+                stack: that.options.stack,
+                tolerance: that.options.tolerance,
+                containment: that.options.selectors.body,
                 start: function (event, ui) {
                     that.insertDropTarget();
                 }
@@ -176,7 +292,8 @@ var up = up || {};
             innerColumn: ".portal-page-column-inner",
             dragHandle: ".portlet-gripper",
             pseudoDropTarget: ".layout-draggable-drop-target",
-            loader: "#galleryLoader"
+            loader: "#galleryLoader",
+            accept: ".portlet"
         },
         styles: {
             pseudoDropTarget: "layout-draggable-drop-target",
@@ -185,6 +302,14 @@ var up = up || {};
         events: {
             onDropTarget: null
         },
-        pseudoDropTargetLabel: "Drop Here"
+        pseudoDropTargetLabel: "Drop Here",
+        iframeFix: true,
+        opacity: .80,
+        helper: "clone",
+        revert: "invalid",
+        cursor: "move",
+        cursorAt: {top: 7, left: 100 },
+        stack: ".ui-draggable-dragging",
+        tolerance: "intersect"
     });
 })(jQuery, fluid);
