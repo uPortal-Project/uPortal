@@ -460,7 +460,7 @@
                 <artifactId>maven-pluto-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>process-resources</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>assemble</goal>
                         </goals>
