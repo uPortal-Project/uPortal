@@ -152,17 +152,13 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     }
     
     public static String getElementText(Element e) {
-        final StringBuilder text = new StringBuilder();
+        final StringBuilder val = new StringBuilder();
         for (Node n = e.getFirstChild(); n != null; n = n.getNextSibling()) {
-            if (n.getNodeType() == Node.TEXT_NODE || 
-                n.getNodeType() == Node.CDATA_SECTION_NODE) {
-                text.append(n.getNodeValue());
-            }
-            else {
-                break;
+            if (n.getNodeType() == Node.TEXT_NODE || n.getNodeType() == Node.CDATA_SECTION_NODE) {
+                val.append(n.getNodeValue());
             }
         }
-        return text.toString();
+        return val.toString();
     }
     
     public static String toString(Node node) {
