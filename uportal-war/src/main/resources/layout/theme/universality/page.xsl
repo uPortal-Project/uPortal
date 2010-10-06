@@ -84,7 +84,7 @@
         <title>
           <xsl:choose>
             <xsl:when test="/layout_fragment">
-            	<xsl:value-of select="$TOKEN[@name='PORTAL_PAGE_TITLE']" />: <xsl:value-of select="content/channel/@name"/>
+            	<xsl:value-of select="$TOKEN[@name='PORTAL_PAGE_TITLE']" />: <xsl:value-of select="content/channel/@title"/>
             </xsl:when>
             <xsl:otherwise>
             	<xsl:value-of select="$TOKEN[@name='PORTAL_PAGE_TITLE']" />

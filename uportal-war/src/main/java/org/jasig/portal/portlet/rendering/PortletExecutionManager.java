@@ -53,7 +53,6 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.registry.NotAPortletException;
@@ -381,21 +380,23 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         final int timeout = getPortletRenderTimeout(portletWindowId, request);
         
 		try {
-			PortletRenderResult portletRenderResult = tracker.get(timeout);
-			if (portletRenderResult == null) {
-	            return "";
-	        }
-	        
-	        final String title = portletRenderResult.getTitle();
-	        return title != null ? title : "";
-		} catch (Exception e) {
+			final PortletRenderResult portletRenderResult = tracker.get(timeout);
+			if (portletRenderResult != null) {
+    	        final String title = portletRenderResult.getTitle();
+    	        if (title != null) {
+    	            return title;
+    	        }
+			}
+		}
+		catch (Exception e) {
 			logger.warn("unable to get portlet title, falling back to title defined in channel definition for portletWindowId " + portletWindowId);
-			// return portlet title from channel definition
-			final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
-            final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
-            final IChannelDefinition channelDefinition = parentPortletDefinition.getChannelDefinition();
-			return channelDefinition.getTitle();
-		}   
+		}
+		
+		// return portlet title from channel definition
+		final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
+        final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
+        final IChannelDefinition channelDefinition = parentPortletDefinition.getChannelDefinition();
+        return channelDefinition.getTitle();
     }
 
     protected IPortletWindow getDefaultPortletWindow(String subscribeId, HttpServletRequest request) {

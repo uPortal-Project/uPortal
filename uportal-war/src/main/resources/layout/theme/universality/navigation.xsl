@@ -366,8 +366,8 @@
                       <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
                     </xsl:call-template>
                   </xsl:variable>
-                  <a href="{$portletSubNavLink}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
-                      <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
+                  <a href="{$portletSubNavLink}" title="{@title}" class="portal-subnav-link">  <!-- Navigation item link. -->
+                      <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
                   </a>
                 </li>
               </xsl:for-each>
@@ -391,8 +391,8 @@
                       <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
                     </xsl:call-template>
                   </xsl:variable>
-                  <a href="{$portletSubNavLink}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
-                    <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
+                  <a href="{$portletSubNavLink}" title="{@title}" class="portal-subnav-link">  <!-- Navigation item link. -->
+                    <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
                   </a>
                 </li>
               </xsl:for-each>

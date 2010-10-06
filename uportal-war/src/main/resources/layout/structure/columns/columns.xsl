@@ -144,7 +144,7 @@
             <xsl:value-of select="@name"/>
           </xsl:attribute>
         <xsl:for-each select="./descendant::channel">
-          <tabChannel name="{@name}" ID="{@ID}" fname="{@fname}">
+          <tabChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}">
             <xsl:choose>
               <xsl:when test="parameter[@name='PORTLET.quicklink']">
                 <xsl:attribute name="quicklink">

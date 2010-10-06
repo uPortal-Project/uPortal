@@ -457,7 +457,7 @@
           <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
         </xsl:call-template>
       </xsl:variable>
-      <a href="{$subNavUrl}" title="{@name}">  <!-- Navigation item link. -->
+      <a href="{$subNavUrl}" title="{@title}">  <!-- Navigation item link. -->
         <span>
           {up-portlet-title(<xsl:value-of select="@ID" />)}
         </span>
