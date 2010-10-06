@@ -39,14 +39,14 @@ public class XML {
    * @return the the text value of the element
    */
   public static String getElementText(Element e) {
-    String val = "";
+    StringBuilder val = new StringBuilder();
+      
     for (Node n = e.getFirstChild(); n != null; n = n.getNextSibling()) {
-      if (n.getNodeType() == Node.TEXT_NODE) {
-        val = n.getNodeValue();
-        break;
+      if (n.getNodeType() == Node.TEXT_NODE || n.getNodeType() == Node.CDATA_SECTION_NODE) {
+          val.append(n.getNodeValue());
       }
     }
-    return val;
+    return val.toString();
   }
   
   /**
