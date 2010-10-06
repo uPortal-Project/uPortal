@@ -6,6 +6,11 @@ import java.util.Map;
 
 import org.jasig.services.persondir.IPersonAttributes;
 
+/**
+ * A person account stored in the local uPortal database
+ * 
+ * @version $Revision$
+ */
 public interface ILocalAccountPerson extends IPersonAttributes {
 
     public String getName();

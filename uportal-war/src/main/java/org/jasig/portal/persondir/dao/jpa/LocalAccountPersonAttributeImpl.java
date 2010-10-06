@@ -1,10 +1,8 @@
 package org.jasig.portal.persondir.dao.jpa;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -48,19 +45,13 @@ public class LocalAccountPersonAttributeImpl implements Serializable {
     @Type(type = "nullSafeText")
     @Column(name = "ATTR_VALUE")
     @Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
-    private List<String> values = new ArrayList<String>(0);
+    private List<String> values = null;
 
-    @ManyToOne(targetEntity = LocalAccountPersonImpl.class, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "USER_DIR_ID", nullable = false, updatable = false)
-    private final LocalAccountPersonImpl person;
-    
     @SuppressWarnings("unused")
     private LocalAccountPersonAttributeImpl() { 
-        this.person = null;
     }
     
-    public LocalAccountPersonAttributeImpl(LocalAccountPersonImpl person, String name, List<String> values) {
-        this.person = person;
+    public LocalAccountPersonAttributeImpl(String name, List<String> values) {
         this.name = name;
         this.values = values;
     }
@@ -81,6 +72,46 @@ public class LocalAccountPersonAttributeImpl implements Serializable {
         this.name = name;
     }
     
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((values == null) ? 0 : values.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof LocalAccountPersonAttributeImpl)) {
+            return false;
+        }
+        LocalAccountPersonAttributeImpl other = (LocalAccountPersonAttributeImpl) obj;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        }
+        else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (values == null) {
+            if (other.values != null) {
+                return false;
+            }
+        }
+        else if (!values.equals(other.values)) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)

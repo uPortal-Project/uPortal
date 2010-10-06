@@ -363,7 +363,49 @@
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values"
         eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
+        
+    <!-- 
+     | Caches local users
+     | - 1 x local user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />        
+    <!-- 
+     | Caches query results for all local users
+     | - 1
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.query.FIND_ALL_ACCOUNTS"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />        
+    <!-- 
+     | Caches query results for finding a local user by name
+     | - 1 x local user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.query.FIND_ACCOUNT_BY_NAME"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <!-- 
+     | Caches local users attributes
+     | - 1 x local user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />       
+    <!-- 
+     | Caches local users attributes
+     | - 10 x local user (approx)
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"
+        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+        
     
     <!-- 
      | Caches last updated timestamp for each hibernate managed table

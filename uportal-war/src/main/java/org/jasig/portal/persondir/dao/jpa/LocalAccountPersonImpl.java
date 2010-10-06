@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -49,7 +51,8 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     @Transient
     private Date lastPasswordChange;
 
-    @OneToMany(targetEntity = LocalAccountPersonAttributeImpl.class, mappedBy = "person", fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+    @OneToMany(targetEntity = LocalAccountPersonAttributeImpl.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "USER_DIR_ID", nullable = false)
     @Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
     private Collection<LocalAccountPersonAttributeImpl> attributes = new ArrayList<LocalAccountPersonAttributeImpl>(0);
 
@@ -103,46 +106,54 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getAttributeValue(java.lang.String)
      */
     public Object getAttributeValue(String name) {
-        Map<String, List<Object>> attributeMap  = getAttributes();
-        List<Object> values = attributeMap.get(name);
+        final List<Object> values = this.getAttributeValues(name);
         if (values != null && values.size() > 0) {
             return values.get(0);
-        } else {
-            return null;
         }
+        
+        return null;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getAttributeValues(java.lang.String)
      */
     public List<Object> getAttributeValues(String name) {
-        Map<String, List<Object>> attributeMap  = getAttributes();
-        return attributeMap.get(name);
+        if (name == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        
+        for (LocalAccountPersonAttributeImpl attribute : attributes) {
+            if (name.equals(attribute.getName())) {
+                return this.getObjectValues(attribute);
+            }
+        }
+        
+        return null;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getAttributes()
      */
     public Map<String, List<Object>> getAttributes() {
-        final Map<String, List<Object>> attributeMap = new HashMap<String, List<Object>>();
-        for (LocalAccountPersonAttributeImpl attribute : attributes) {
-            List<Object> values = new ArrayList<Object>();
-            values.addAll(attribute.getValues());
-            attributeMap.put(attribute.getName(), values);
+        final Map<String, List<Object>> attributeMap = new LinkedHashMap<String, List<Object>>();
+        
+        for (final LocalAccountPersonAttributeImpl attribute : attributes) {
+            final List<Object> objValues = this.getObjectValues(attribute);
+            attributeMap.put(attribute.getName(), objValues);
         }
         
-        List<Object> firstNames = attributeMap.get("given");
-        List<Object> lastNames = attributeMap.get("sn");
-        String displayName = "";
-        if (firstNames != null && firstNames.size() > 0) {
-            displayName = displayName.concat((String) firstNames.get(0) + " ");
+        final Object firstNames = getAttributeValue("given");
+        final Object lastNames = getAttributeValue("sn");
+        final StringBuilder displayName = new StringBuilder();
+        if (firstNames != null) {
+            displayName.append(firstNames).append(" ");
         }
-        if (lastNames != null && lastNames.size() > 0) {
-            displayName = displayName.concat((String) lastNames.get(0));
+        if (lastNames != null) {
+            displayName.append(lastNames);
         }
-        attributeMap.put("displayName", Collections.<Object>singletonList(displayName));
+        attributeMap.put("displayName", Collections.<Object>singletonList(displayName.toString()));
         
-        return attributeMap;
+        return Collections.unmodifiableMap(attributeMap);
     }
     
     /* (non-Javadoc)
@@ -156,7 +167,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
             }
         }
         
-        attributes.add(new LocalAccountPersonAttributeImpl(this, name, values));
+        attributes.add(new LocalAccountPersonAttributeImpl(name, values));
     }
 
     public void setAttribute(String name, String value) {
@@ -167,18 +178,105 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
             }
         }
         
-        attributes.add(new LocalAccountPersonAttributeImpl(this, name, Collections.singletonList(value)));
+        attributes.add(new LocalAccountPersonAttributeImpl(name, Collections.singletonList(value)));
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#setAttributes(java.util.Map)
      */
     public void setAttributes(Map<String, List<String>> attributes) {
-        List<LocalAccountPersonAttributeImpl> a = new ArrayList<LocalAccountPersonAttributeImpl>();
-        for (Map.Entry<String, List<String>> attribute : attributes.entrySet()) {
-            a.add(new LocalAccountPersonAttributeImpl(this, attribute.getKey(), attribute.getValue()));
+        //Tries to modify as many of the existing attributes in place to reduce DB churn in hibernate
+        
+        //Make a local copy so we don't edit the original reference
+        attributes = new LinkedHashMap<String, List<String>>(attributes);
+        
+        for (final Iterator<LocalAccountPersonAttributeImpl> attributesItr = this.attributes.iterator(); attributesItr.hasNext(); ) {
+            final LocalAccountPersonAttributeImpl attribute = attributesItr.next();
+            
+            //Remove the new values for the attribute from the input map
+            final String name = attribute.getName();
+            final List<String> newValues = attributes.remove(name);
+
+            //If no new values remove the attribute
+            if (newValues == null) {
+                attributesItr.remove();
+            }
+            //Otherwise update the existing values
+            else {
+                attribute.setValues(new ArrayList<String>(newValues));
+            }
         }
-        this.attributes = a;
+        
+        //Add any remaining new attributes to the list
+        for (final Map.Entry<String, List<String>> attribute : attributes.entrySet()) {
+            final String name = attribute.getKey();
+            final List<String> values = attribute.getValue();
+            this.attributes.add(new LocalAccountPersonAttributeImpl(name, values));
+        }
+    }
+    
+    protected List<Object> getObjectValues(LocalAccountPersonAttributeImpl attribute) {
+        final List<String> values = attribute.getValues();
+        final List<Object> objValues = new ArrayList<Object>(values.size());
+        return Collections.unmodifiableList(objValues);
+    }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+        result = prime * result + ((lastPasswordChange == null) ? 0 : lastPasswordChange.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((password == null) ? 0 : password.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof LocalAccountPersonImpl)) {
+            return false;
+        }
+        LocalAccountPersonImpl other = (LocalAccountPersonImpl) obj;
+        if (attributes == null) {
+            if (other.attributes != null) {
+                return false;
+            }
+        }
+        else if (!attributes.equals(other.attributes)) {
+            return false;
+        }
+        if (lastPasswordChange == null) {
+            if (other.lastPasswordChange != null) {
+                return false;
+            }
+        }
+        else if (!lastPasswordChange.equals(other.lastPasswordChange)) {
+            return false;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        }
+        else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (password == null) {
+            if (other.password != null) {
+                return false;
+            }
+        }
+        else if (!password.equals(other.password)) {
+            return false;
+        }
+        return true;
     }
 
     @Override

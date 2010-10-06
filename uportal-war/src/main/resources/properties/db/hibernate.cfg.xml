@@ -31,6 +31,7 @@
         
         <property name="hibernate.cache.use_query_cache">true</property>
         <property name="hibernate.cache.use_second_level_cache">true</property>
+        <property name="hibernate.cache.use_minimal_puts">true</property>
         <property name="hibernate.jdbc.batch_size">25</property>
         
         <property name="hibernate.current_session_context_class">thread</property>
@@ -66,8 +67,10 @@
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl" usage="nonstrict-read-write"/>
+        <class-cache class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl" usage="nonstrict-read-write"/>
         
         <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences" usage="nonstrict-read-write"/>
         <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values" usage="nonstrict-read-write"/>
+        <collection-cache collection="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes" usage="nonstrict-read-write"/>
     </session-factory>
 </hibernate-configuration>
