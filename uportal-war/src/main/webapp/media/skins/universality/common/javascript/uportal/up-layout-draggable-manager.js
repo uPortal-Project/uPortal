@@ -172,7 +172,7 @@ var up = up || {};
                 dropTarget.insertAfter(children.get((children.length - 1)));
             } else {
                 // Column does not contain children. Insert dropTarget at top of column.
-                dropTarget.prepend(column);
+                column.prepend(dropTarget);
             }//end:if.
         }//end:if.
         
@@ -347,7 +347,7 @@ var up = up || {};
                 cursorAt: that.options.cursorAt,
                 stack: that.options.stack,
                 tolerance: that.options.tolerance,
-                containment: that.options.selectors.body,
+                //containment: that.options.selectors.body,
                 start: function (event, ui) {
                     that.enableEligibleColumns(event, ui);
                 }
@@ -418,6 +418,7 @@ var up = up || {};
         stack: ".ui-draggable-dragging",
         tolerance: "intersect",
         insertBefore: "insertBefore",
-        appendAfter: "appendAfter"
+        appendAfter: "appendAfter",
+        nbsp: "&nbsp;"
     });
 })(jQuery, fluid);
