@@ -274,13 +274,9 @@ var uportal = uportal || {};
                                            }
                                         );
                                     },
-                                    onPortletDrag: function (portletID, method, columnID) {
-                                        var activeTab, targetID;
-                                        // Use active tab as the target id.
-                                        activeTab = $("#portalNavigationList").find(".fl-tabs-active");
-                                        targetID = up.defaultNodeIdExtractor(activeTab);
-                                        
+                                    onPortletDrag: function (fname, method, targetID) {
                                         // Persist the portlet addition.
+                                        /*
                                         that.persistence.update(
                                             {
                                                 action: "addPortlet",
@@ -292,6 +288,10 @@ var uportal = uportal || {};
                                                 window.location = that.urlProvider.getTabUrl(getActiveTabId());
                                             }
                                         );
+                                        */
+                                        
+                                        // Reload the page until persistence is completed.
+                                        window.location = that.urlProvider.getTabUrl(getActiveTabId());
                                     }
                                 }
                             }

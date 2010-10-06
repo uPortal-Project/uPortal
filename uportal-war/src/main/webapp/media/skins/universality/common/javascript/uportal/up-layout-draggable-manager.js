@@ -118,39 +118,147 @@ var up = up || {};
 (function ($, fluid) {
     
     /**
-     * This function handles the UI interactions that occur once a portlet thumbnail
-     * or icon is dropped into the body of the portal.
+     * Private. Utility function that returns a boolean if the passed selector
+     * is found within the passed container.
+     * 
+     * @param {Object} container - reference to jQuery DOM object.
+     * @param {Object} selector - reference to a jQuery selector that may exist within the container.
+     */
+    var doesContain = function (container, selector) {
+        var value;
+        
+        if (container.find(selector).length > 0) {
+            value = true;
+        } else {
+            value = false;
+        }//end:if.
+        
+        return value;
+    };//end:function.
+    
+    /**
+     * Private. This function handles the placement of the dropTarget within the portal's columns.
+     * This function is triggered when a gallery list item is dragged over a portal column.
      * 
      * @param {Object} that - reference to LayoutDraggableManager instance.
-     * @param {String} action - reference to jQuery UI droppable events (over, out & drop).
-     * @param {Object} target - reference to a DOM element. Specifically, a portal column. 
+     * @param {Object} target - reference to a DOM element. Specifically, a portal column.
      */
-    var dropTargetHandler = function (that, action, target) {
-        var column, columnID, method, placeholder;
+    var dragOverHandler = function (that, target) {
+        var column, portlets, portlet_locked, portlet_movable, children, dropTarget;
         
+        // Obtain reference to column, contained portlets and the dropTarget.
         column = $(target);
-        columnID = up.defaultNodeIdExtractor(target);
-        method = "insertBefore";
-        placeholder = column.find(that.options.selectors.pseudoDropTarget);
+        portlets = column.find(that.options.selectors.portlet);
+        dropTarget = $(that.elem.pseudoDropTargetMarkUp);
         
-        switch (action) {
-            case "over":
-                placeholder.show();
-            break;
-            case "out":
-                placeholder.hide().removeClass(that.options.styles.targetDropped);
-            break;
-            case "drop":
-                that.elem.loader.css({
-                    "margin" : "7px 0 0 0",
-                    "opacity" : .70,
-                    "background-color" : "#000"
-                });
-                up.showLoader(that.elem.loader);
-                placeholder.addClass(that.options.styles.targetDropped);
-                that.events.onDropTarget.fire(method, columnID);
-            break;
-        }//end:switch.
+        // Determine the contents of a column. Does the column contain any portlets?
+        if (portlets.length > 0) {
+            // Column contains portlets. Are any portlets locked?
+            portlet_locked = column.find(that.options.selectors.lastPortletLocked);
+            if (portlet_locked.length > 0) {
+                // Insert drop target after last instance of locked portlet.
+                dropTarget.insertAfter(portlet_locked);
+            } else {
+                // Insert drop target before the first movable portlet.
+                portlet_movable = column.find(that.options.selectors.firstPortletMovable);
+                dropTarget.insertBefore(portlet_movable);
+            }//end:if.
+        } else {
+            // Column does not contain portlets. Does the column contain any children
+            // such as a permissions header?
+            children = column.children();
+            if (children.length > 0) {
+                // Column contains children. Insert drop target after last child in column.
+                dropTarget.insertAfter(children.get((children.length - 1)));
+            } else {
+                // Column does not contain children. Insert dropTarget at top of column.
+                dropTarget.prepend(column);
+            }//end:if.
+        }//end:if.
+        
+        // Reveal dropTarget.
+        dropTarget.show();
+    };//end:function.
+    
+    /**
+     * Private. Removes dropTarget from portal columns.
+     * 
+     * @param {Object} that - reference to LayoutDraggableManager instance.
+     * @param {Object} target - reference to a DOM element. Specifically, a portal column.
+     */
+    var dragOutHandler = function (that, target) {
+        var column, dropTarget;
+        
+        // Obtain reference to the column & contained dropTarget.
+        column = $(target);
+        dropTarget = column.find(that.options.selectors.pseudoDropTarget);
+        dropTarget.remove();
+    };//end:function.
+    
+    /**
+     * Private. Manages the UI when a gallery list item is dropped onto a dropTarget.
+     * 
+     * @param {Object} that - reference to LayoutDraggableManager instance.
+     * @param {Object} target - reference to a DOM element. Specifically, a portal column.
+     */
+    var dragDropHandler = function (that, target) {
+        var loader, column, isPortlets, isPortletsMovable, dropTarget, sibling, targetID, method;
+        
+        // Obtain reference to the loading screen, column and contained dropTarget.
+        loader = that.elem.loader;
+        column = $(target);
+        dropTarget = column.find(that.options.selectors.pseudoDropTarget);
+        
+        // Reveal gallery loader.
+        loader.css({
+            "margin" : "7px 0 0 0",
+            "opacity" : ".70",
+            "background-color" : "#000"
+        });
+        up.showLoader(loader);
+        
+        // Apply visual loading to dropTarget.
+        dropTarget.addClass(that.options.styles.targetDropped);
+        
+        // The logic below determines the value of the 'targetID' and 'method' variables,
+        // which are then broadcast to the onDropTarget event. The logic below is as follows:
+        // 
+        // 1. If a column contains no portlets. (targetID = column id, method = 'appendAfter').
+        // 2. If all portlets within a column are locked. (targetID = column id, method = 'appendAfter').
+        // 3. If a column contains movable portlets.
+        //    a] Detect portlet siblings around the drop target.
+        //       1) If previous sibling: (targetID = previous portlet id, method = 'appendAfter').
+        //       2) If next sibling: (targetID = next portlet id, method = 'insertBefore').
+        
+        // Determine the contents of a column. Does the column contain any portlets?
+        isPortlets = doesContain(column, that.options.selectors.portlet);
+        if (isPortlets) {
+            // When portlets exist, are any of them movable?
+            isPortletsMovable = doesContain(column, that.options.selectors.portletMovable);
+            if (isPortletsMovable) {
+                // Movable portlets exist. Detect placement of dropTarget.
+                sibling = dropTarget.prev(that.options.selectors.portlet + ":first");
+                if (sibling.length > 0) {
+                    targetID = up.defaultNodeIdExtractor(sibling[0]);
+                    method = that.options.appendAfter;
+                } else {
+                    sibling = dropTarget.next(that.options.selectors.portlet + ":first");
+                    targetID = up.defaultNodeIdExtractor(sibling[0]);
+                    method = that.options.insertBefore;
+                }//end:if.
+            } else {
+                // All portlets are locked. Pass the column ID.
+                targetID = up.defaultNodeIdExtractor(target);
+                method = that.options.appendAfter;
+            }//end:if.
+        } else {
+            // No portlets exist. Pass the column ID.
+            targetID = up.defaultNodeIdExtractor(target);
+            method = that.options.appendAfter;
+        }//end:if.
+        
+        // Fire onDropTarget event.
+        that.events.onDropTarget.fire(method, targetID);
     };//end:function.
     
     /**
@@ -160,9 +268,10 @@ var up = up || {};
      * @param {Object} that - reference to LayoutDraggableManager instance.
      */
     var initialize = function (that) {
+        // Element mapping. Caches elements that mostly exist outside the realm of the component's scope.
         that.elem = {};
         that.elem.columnContainer = $(that.options.selectors.body).find(that.options.selectors.columnContainer);
-        that.elem.pseudoDropTargetMarkUp = '<div class="' + that.options.styles.pseudoDropTarget + '"><span>' + that.options.pseudoDropTargetLabel +'</span></div>';
+        that.elem.pseudoDropTargetMarkUp = '<div class="' + that.options.styles.pseudoDropTarget + '"><span>' + that.options.pseudoDropTargetLabel + '</span></div>';
         that.elem.loader = $(that.options.selectors.loader);
     };//end:function.
     
@@ -182,23 +291,15 @@ var up = up || {};
          * 
          * @param {Object} that - reference to an instance of the LayoutDraggableManager component.
          */
-        that.insertDropTarget = function () {
-            var column, target;
+        that.enableEligibleColumns = function (event, ui) {
+            var eligibleColumns, droppableInnerColumns;
             
-            column = that.elem.columnContainer.find(that.options.selectors.innerColumn);
-            target = column.find(that.options.selectors.pseudoDropTarget);
+            // Obtain a reference to all eligible or "droppable" columns.
+            eligibleColumns = that.elem.columnContainer.find(that.options.selectors.canAddChildren);
+            droppableInnerColumns = eligibleColumns.find(that.options.selectors.innerColumn);
             
-            // The number of columns should match the number of drop targets.
-            // If they do not match, remove all instances of the target and prepend
-            // new drop targets.
-            if (column.length !== target.length) {
-                // Remove targets.
-                target.remove();
-                
-                // Add droppables & targets.
-                column.prepend(that.elem.pseudoDropTargetMarkUp);
-                that.makeDroppable(column);
-            }//end:if.
+            // Make columns droppable.
+            that.makeDroppable(droppableInnerColumns);
         };//end:function.
         
         /**
@@ -213,14 +314,13 @@ var up = up || {};
             selector.droppable({
                 accept: that.options.selectors.accept,
                 over: function (event, ui) {
-                    console.log(event, ui);
-                    dropTargetHandler(that, "over", event.target);
+                    dragOverHandler(that, event.target);
                 },
                 out: function (event, ui) {
-                    dropTargetHandler(that, "out", event.target);
+                    dragOutHandler(that, event.target);
                 },
-                drop: function(event, ui) {
-                    dropTargetHandler(that, "drop", event.target);
+                drop: function (event, ui) {
+                    dragDropHandler(that, event.target);
                 }
             });
         };//end:function.
@@ -235,7 +335,7 @@ var up = up || {};
         that.makeDraggable = function (selector) {
             var dragHandle;
             
-            dragHandle = selector.find(that.options.selectors.dragHandle)
+            dragHandle = selector.find(that.options.selectors.dragHandle);
             selector.draggable({
                 handle: dragHandle,
                 appendTo: that.options.selectors.body,
@@ -249,7 +349,7 @@ var up = up || {};
                 tolerance: that.options.tolerance,
                 containment: that.options.selectors.body,
                 start: function (event, ui) {
-                    that.insertDropTarget();
+                    that.enableEligibleColumns(event, ui);
                 }
             });
         };//end:function.
@@ -293,23 +393,31 @@ var up = up || {};
             dragHandle: ".portlet-gripper",
             pseudoDropTarget: ".layout-draggable-drop-target",
             loader: "#galleryLoader",
-            accept: ".portlet"
+            accept: ".portlet",
+            canAddChildren: ".canAddChildren",
+            portlet: "div[id*=portlet_]",
+            lastPortletLocked: "div[id*=portlet_].locked:last",
+            firstPortletMovable: "div[id*=portlet_].movable:first",
+            portletMovable: "div[id*=portlet_].movable"
         },
         styles: {
             pseudoDropTarget: "layout-draggable-drop-target",
-            targetDropped: "layout-draggable-target-dropped"
+            targetDropped: "layout-draggable-target-dropped",
+            canAddChildren: "canAddChildren"
         },
         events: {
             onDropTarget: null
         },
         pseudoDropTargetLabel: "Drop Here",
         iframeFix: true,
-        opacity: .80,
+        opacity: ".80",
         helper: "clone",
         revert: "invalid",
         cursor: "move",
         cursorAt: {top: 7, left: 100 },
         stack: ".ui-draggable-dragging",
-        tolerance: "intersect"
+        tolerance: "intersect",
+        insertBefore: "insertBefore",
+        appendAfter: "appendAfter"
     });
 })(jQuery, fluid);

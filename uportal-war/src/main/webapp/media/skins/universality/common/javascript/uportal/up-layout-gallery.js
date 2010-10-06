@@ -114,8 +114,8 @@ var up = up || {};
             [that.container, fluid.COMPONENT_OPTIONS]);
             
         // DragManger 'onDropTarget' callback.
-        that.dragManager.events.onDropTarget.addListener(function (columnID, method) {
-            that.state.drag.overall.events.onPortletDrag.fire(that.state.drag.data.id, method, columnID);
+        that.dragManager.events.onDropTarget.addListener(function (method, targetID) {
+            that.state.drag.overall.events.onPortletDrag.fire(that.state.drag.data.fname, method, targetID);
         });
         
         // initialize a state map for this component
