@@ -110,7 +110,10 @@ var up = up || {};
                                 // When the search input field loses focus, check
                                 // if the input value is empty.  If it is, set
                                 // the value back to the search invitation message.
-                                if ($(this).val().trim() === "") {
+                                
+                                var str;
+                                str = $.trim($(this).val());
+                                if (str === "") {
                                     $(this).val(that.options.searchInvitationMessage);
                                 }
                             }
