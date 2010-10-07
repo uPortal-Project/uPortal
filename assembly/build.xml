@@ -40,7 +40,7 @@
         <antcall target="quickstart" />
     </target>
 
-    <target name="clean" description="Remove files used in packaging and generated packages and runs 'mvn clean' on the uPortal project.">
+    <target name="clean" depends="prepare" description="Remove files used in packaging and generated packages and runs 'mvn clean' on the uPortal project.">
         <delete dir="${target.dir}" />
 
         <ant target="mvn" antfile="${uportal.source.dir}/build.xml" dir="${uportal.source.dir}">
@@ -241,6 +241,15 @@
 
     <target name="prepare">
         <mkdir dir="${target.dir}" />
+        
+        <if>
+            <not>
+                <available file="${uportal.source.dir}/build.properties" />
+            </not>
+            <then>
+                <copy file="${uportal.source.dir}/build.properties.sample" tofile="${uportal.source.dir}/build.properties" />
+            </then>
+        </if>
     </target>
 
     <target name="prepare-qs" depends="prepare">
