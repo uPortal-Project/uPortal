@@ -347,7 +347,7 @@ var up = up || {};
                 cursorAt: that.options.cursorAt,
                 stack: that.options.stack,
                 tolerance: that.options.tolerance,
-                //containment: that.options.selectors.body,
+                containment: that.options.selectors.body,
                 start: function (event, ui) {
                     that.enableEligibleColumns(event, ui);
                 }
