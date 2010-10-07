@@ -115,7 +115,7 @@ var up = up || {};
             
         // DragManger 'onDropTarget' callback.
         that.dragManager.events.onDropTarget.addListener(function (method, targetID) {
-            that.state.drag.overall.events.onPortletDrag.fire(that.state.drag.data.fname, method, targetID);
+            that.state.drag.overall.events.onPortletDrag.fire(that.state.drag.data, method, targetID);
         });
         
         // initialize a state map for this component
