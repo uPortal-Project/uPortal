@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
-    <version>3.2.3-SNAPSHOT</version>
+    <version>3.2.3</version>
     <packaging>pom</packaging>
 
     <name>uPortal</name>
@@ -18,9 +18,9 @@
     <url>${jasig-site-base}/uportal/${project.version}</url>
     
     <scm>
-        <connection>scm:svn:https://source.jasig.org/uPortal/branches/rel-3-2-patches</connection>
-        <developerConnection>scm:svn:https://source.jasig.org/uPortal/branches/rel-3-2-patches</developerConnection>
-        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/branches/rel-3-2-patches</url>
+        <connection>scm:svn:https://source.jasig.org/uPortal/tags/rel-3-2-3</connection>
+        <developerConnection>scm:svn:https://source.jasig.org/uPortal/tags/rel-3-2-3</developerConnection>
+        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/tags/rel-3-2-3</url>
     </scm>
     
     <distributionManagement>
