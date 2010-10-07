@@ -222,9 +222,10 @@ var up = up || {};
                 that.portletListView.refresh();
             },
             onPortletSearch: function (that, searchTerm, submitted) {
-                searchTerm = searchTerm.trim();
+                searchTerm = $.trim(searchTerm);
                 that.state.portletRegex = searchTerm.length > 0 ? new RegExp(up.escapeSpecialChars(searchTerm), "i") : undefined;
                 that.portletListView.refresh();
+                
             },
             onPortletSelect: function (that, portlet) {
                 that.portletListView.refresh();
