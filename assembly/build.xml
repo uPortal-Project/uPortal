@@ -112,6 +112,19 @@
             </then>
         </if>
     </target>
+    
+    <target name="prepare-deploy" depends="source, quickstart" description="Prepare the generated source and quickstart files for deployment to the Jasig download server">
+        <property name="deploy.dir" value="${target.dir}/deploy/${uportal.finalName}" />
+        
+        <mkdir dir="${deploy.dir}" />
+        
+        <copy todir="${deploy.dir}">
+            <fileset dir="${target.dir}" defaultexcludes="false">
+                <exclude name="${uportal.finalName}" />
+                <include name="${uportal.finalName}*.*" />
+            </fileset>
+        </copy>
+    </target>
             
     <target name="qs-package" depends="prepare-qs">
         <property name="quickstart.file_base" value="${target.dir}/${quickstart.name}${qs-file-ext}" />
