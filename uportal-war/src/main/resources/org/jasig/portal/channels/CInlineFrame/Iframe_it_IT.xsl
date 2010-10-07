@@ -3,7 +3,13 @@
     <xsl:param name="locale">it_IT</xsl:param>
 
     <xsl:template match="iframe">
-        <iframe src="{url}" height="{height}" frameborder="0" width="100%">Questo browser non supporta gli inline frames.<br/>
+        <iframe src="{url}" height="{height}" frameborder="0" width="100%">
+            <xsl:if test="name!=''">
+                <xsl:attribute name="name">
+                        <xsl:value-of select="name"/>
+                </xsl:attribute>
+            </xsl:if>
+            Questo browser non supporta gli inline frames.<br/>
             <a href="{url}" target="_blank">Seleziona qui per vedere il contenuto</a> in una nuova finestra.</iframe>
     </xsl:template>
 </xsl:stylesheet>
