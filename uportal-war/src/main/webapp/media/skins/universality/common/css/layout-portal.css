@@ -516,9 +516,9 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .portlet-gripper {
     display: block; background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px; cursor: move;}
 .up-gallery .portlet-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
-.up-gallery .portlet-description {clear:right; color:#AAA; display:inline;}
-.up-gallery .portlet-titlebar {padding:5px 0 2px 0; font-size:11px; font-weight:bold; color:#DDD;}
-.up-gallery .portlet-wrapper img {width:32px; height:32px; float:left; margin-right:5px; margin-bottom:5px;}
+.up-gallery .portlet-description {color: #AAA; padding: 0 8px 0 8px; margin-left: 36px;}
+.up-gallery .portlet-titlebar {padding:5px 8px 2px 8px; font-size:11px; font-weight:bold; color:#DDD;}
+.up-gallery .portlet-wrapper img {position: absolute; top: 38px; left: 8px; margin: 0; width: 32px; height: 32px;}
 
 /* temporary icon */
 .up-gallery .results-wrapper .package-list {list-style:none; padding:0; margin:0; position:relative;}
@@ -529,7 +529,7 @@ table.purpose-layout td {margin:0; padding:0;}
 *:first-child+html .up-gallery .results-wrapper .portlet-list li {width:24%;} 
 *:first-child+html .up-gallery .results-wrapper .package-list li {width:24%;} 
 
-.up-gallery .package-wrapper a {width:25px; cursor:pointer; color:#000; position:absolute; padding:3px 8px; top:0; right:0; display:none; background:#f68923; background-image:-moz-linear-gradient(90deg,#f68923,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(#ffffff)); border-bottom-left-radius:3px; -moz-border-radius-bottomleft:3px; -webkit-border-bottom-left-radius:3px; }
+.up-gallery .package-wrapper a {cursor:pointer; color:#000; position:absolute; padding:3px 8px; top:0; right:0; display:none; background:#f68923; background-image:-moz-linear-gradient(90deg,#f68923,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(#ffffff)); border-bottom-left-radius:3px; -moz-border-radius-bottomleft:3px; -webkit-border-bottom-left-radius:3px; }
 .up-gallery .package-description {clear:right; color:#AAA; display:inline;}
 .up-gallery .package-titlebar {padding:5px 0 3px 0; font-size:12px; font-weight:bold; color:#DDD;}
 .up-gallery .package-wrapper  {border:1px solid #333; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;}
@@ -572,22 +572,23 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .selected .layout-titlebar {color:#fff;}
 
 /* Gallery: Avatar */
-.up .ui-draggable-dragging {
+.up .portlet.ui-draggable-dragging {
     border: 1px solid #F68923; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;
-    padding: 0; margin: 0; list-style: none; -moz-box-shadow: 0px 0px 4px 0px #333; -webkit-box-shadow: 0px 0px 4px 0px #333; box-shadow: 0px 0px 4px 0px #333; background: #333;
-    background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); position: relative; height: 80px; min-width: 200px;}
-.up .ui-draggable-dragging .portlet-wrapper {overflow: hidden;}
-.up .ui-draggable-dragging .portlet-wrapper-inner {padding:0px 10px 0px 10px;}
-.up .ui-draggable-dragging .portlet-link {
+    padding: 0; margin: 0; list-style: none; -moz-box-shadow: 0px 0px 4px 0px #333; -webkit-box-shadow: 0px 0px 4px 0px #333; box-shadow: 0px 0px 4px 0px #333; background: #333; position: relative;
+    background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); height: 80px; width: auto; min-width: 200px; max-width: 200px;
+    overflow: hidden;}
+.up .portlet.ui-draggable-dragging .portlet-wrapper {overflow: hidden;}
+.up .portlet.ui-draggable-dragging .portlet-wrapper-inner {padding:0px 10px 0px 10px; position: relative;}
+.up .portlet.ui-draggable-dragging .portlet-link {
     position: absolute; top: 0px; right: 0px; display: block; color: #000; text-decoration: none; font-size: 77%; padding: 2px 8px; background: #666; background-image: -moz-linear-gradient(90deg,#666,#ffffff); 
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center; cursor: move; background: #F68923; background-image: -moz-linear-gradient(90deg,#F68923,#ffffff);
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#ffffff));}
-.up .ui-draggable-dragging .portlet-gripper {
+.up .portlet.ui-draggable-dragging .portlet-gripper {
     display: block; background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat; cursor: move; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px;}
-.up .ui-draggable-dragging .portlet-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
-.up .ui-draggable-dragging .portlet-titlebar {padding:5px 0 3px 0; font-size: 93%; font-weight: bold; color: #DDD;}
-.up .ui-draggable-dragging .portlet-icon {float: left; margin: 0 5px 5px 0;}
-.up .ui-draggable-dragging .portlet-description {float: left; color: #AAA; font-size: 77%;}
+.up .portlet.ui-draggable-dragging .portlet-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
+.up .portlet.ui-draggable-dragging .portlet-titlebar {padding:5px 8px 3px 8px; font-size: 11px; font-weight: bold; color: #DDD;}
+.up .portlet.ui-draggable-dragging .portlet-icon {position: absolute; top: 38px; left: 8px; margin: 0; width: 32px; height: 32px;}
+.up .portlet.ui-draggable-dragging .portlet-description {color: #AAA; font-size: 77%; padding: 0 8px 0 8px; margin-left: 36px;}
 
 /* Gallery: Drop Target */
 .up .layout-draggable-drop-target {display: none; background: #FF0000; padding: 5px; height: 150px; text-align: center; margin-bottom: 1em;  border: 2px dashed #960000; font-weight: bold; color: #960000;}
