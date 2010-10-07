@@ -1,13 +1,24 @@
 <project name="uPortal_Includes" basedir="." xmlns:artifact="urn:maven-artifact-ant">
     <dirname property="imported.basedir" file="${ant.file.uPortal_Includes}"/>
     
-    <fail message="The nested macros in this build.xml do not work with '${ant.version}', the current recommended version is 1.6.5">
-        <condition>
-            <not>
-                <contains string="${ant.version}" substring="1.7.1" />
-            </not>
-        </condition>
-    </fail>
+    <fail message="Ant 1.7.1 is required, version ${ant.version} is not supported">
+            <condition>
+                <not>
+                    <antversion exactly="1.7.1"/>
+                </not>
+            </condition>
+        </fail>
+        <fail message="Unsupported Java version: ${java.version}. Make sure that the version of the Java compiler is 1.6 (6.0) or greater.">
+            <condition>
+                <not>
+                    <or>
+                        <contains string="${java.version}" substring="1.5" casesensitive="false" />
+                        <contains string="${java.version}" substring="1.6" casesensitive="false" />
+                        <contains string="${java.version}" substring="1.7" casesensitive="false" />
+                    </or>
+                </not>
+            </condition>
+        </fail>
 
     <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant">
         <classpath>
