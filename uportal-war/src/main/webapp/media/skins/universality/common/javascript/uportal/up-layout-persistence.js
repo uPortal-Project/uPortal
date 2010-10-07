@@ -39,6 +39,7 @@ var up = up || {};
                 type: "POST",
                 data: data,
                 dataType: "json",
+                async: false,
                 success: success,
                 error: function(request, text, error) {
                     that.events.onError.fire(that, request, text, error);
