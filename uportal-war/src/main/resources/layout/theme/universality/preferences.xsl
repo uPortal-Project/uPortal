@@ -9,7 +9,7 @@
     except in compliance with the License. You may obtain a
     copy of the License at:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0portlet-search-view
 
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on
@@ -61,10 +61,10 @@
                 <div class="categories-column active">
                     <h3 class="portlet-list-link"><span><xsl:value-of select="upMsg:getMessage('stuff', $USER_LANG)"/></span></h3>
                     <div class="categories-wrapper active">
-                    	<div class="portlet-search-view">
+                       <div class="portlet-search-view">
                             <form class="portlet-search-form">
                                 <label for="portletSearch"><xsl:value-of select="upMsg:getMessage('search.stuff.add', $USER_LANG)"/></label>
-                                <input id="portletSearch" name="portletSearch" class="portlet-search-input"/>
+                                <input id="portletSearch" name="portletSearch" class="portlet-search-input" value="Search" />
                                 <input type="submit" value="Search" class="portlet-search-submit"/>
                             </form>
                         </div>
@@ -181,7 +181,7 @@
             </div>
             <div class="results-column fl-col-main ui-helper-clearfix">
                 <ul id="galleryPortletList" class="portlet-list">
-                    <li class="portlet" title="{$CONTEXT}">
+                    <li class="portlet">
                         <div class="portlet-wrapper">
                             <xsl:choose>
                                 <xsl:when test="$CONTEXT = 'add-content'">
