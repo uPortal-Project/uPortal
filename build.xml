@@ -339,6 +339,7 @@
     </target>
     
     <target name="clean-shared" depends="checkForTomcat" description="Removes the ALL shared libraries from the container.">
+        <mkdir dir="${server.base}/shared/lib"/>
         <delete>
             <fileset dir="${server.base}/shared/lib">
                 <include name="*"/>
