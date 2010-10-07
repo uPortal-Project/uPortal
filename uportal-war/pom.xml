@@ -190,7 +190,7 @@
         </dependency>
         
         <dependency>
-            <groupId>org.jasig</groupId>
+            <groupId>org.jasig.resource-aggregator</groupId>
             <artifactId>resource-aggregator-util</artifactId>
         </dependency>
         
@@ -468,7 +468,7 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.jasig</groupId>
+                <groupId>org.jasig.resource-aggregator</groupId>
                 <artifactId>resource-aggregator-plugin</artifactId>
                 <version>${resource-aggregator.version}</version>
                 <configuration>
