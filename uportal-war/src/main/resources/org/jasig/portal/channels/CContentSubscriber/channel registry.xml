@@ -33,7 +33,7 @@
             </channel>
             <channel id="chan6" view="condensed" chanid="6" class="org.jasig.portal.channels.CGenericXSLT" description="UNICON News channel" editable="false" fname="unicon-news" hasabout="false" hashelp="false" name="UNICON News" secure="false" timeout="10000" title="UNICON News" typeid="0">
               <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
-              <parameter name="xmlUri" value="http://www.unicon.net/publish/uniconnews.rss"/>
+              <parameter name="xmlUri" value="http://www.unicon.net/about/news/feed"/>
             </channel>
             <channel id="chan5" view="condensed" chanid="5" class="org.jasig.portal.channels.CGenericXSLT" description="uPortal Demos channel" editable="false" fname="uportal-powered-sites" hasabout="false" hashelp="false" name="uPortal-Powered Sites" secure="false" timeout="10000" title="uPortal-Powered Sites" typeid="0">
               <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
@@ -98,7 +98,7 @@
             </channel>
             <channel id="chan6" view="condensed" chanid="6" class="org.jasig.portal.channels.CGenericXSLT" description="UNICON News channel" editable="false" fname="unicon-news" hasabout="false" hashelp="false" name="UNICON News" secure="false" timeout="10000" title="UNICON News" typeid="0">
               <parameter name="sslUri" value="CGenericXSLT/RSS/RSS-0_9x.ssl"/>
-              <parameter name="xmlUri" value="http://www.unicon.net/publish/uniconnews.rss"/>
+              <parameter name="xmlUri" value="http://www.unicon.net/about/news/feed"/>
             </channel>
           </category>
           <channel id="chan8" view="condensed" chanid="8" class="org.jasig.portal.channels.CInlineFrame" description="uPortal Home Page channel" editable="false" fname="uportal-home-page" hasabout="false" hashelp="false" name="uPortal Home Page" secure="false" timeout="20000" title="uPortal Home Page" typeid="2">
