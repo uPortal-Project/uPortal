@@ -36,7 +36,7 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
  */
 @Entity
 @Table(name = "UP_PORTLET_PREFS")
-class PortletPreferencesImpl implements IPortletPreferences {
+public class PortletPreferencesImpl implements IPortletPreferences {
     @Id
     @GeneratedValue
     @Column(name = "PORTLET_PREFS_ID")
