@@ -24,7 +24,13 @@
     <xsl:param name="locale">sv_SE</xsl:param>
     
     <xsl:template match="iframe">
-        <iframe src="{url}" height="{height}" frameborder="0" width="100%">Denna webläsare stödjer inte inline frames.<br/>
+        <iframe src="{url}" height="{height}" frameborder="0" width="100%">
+            <xsl:if test="name!=''">
+                <xsl:attribute name="name">
+                        <xsl:value-of select="name"/>
+                </xsl:attribute>
+            </xsl:if>
+            Denna webläsare stödjer inte inline frames.<br/>
             <a href="{url}" target="_blank">Klicka här för att öppna sidan</a> i ett eget fönster.</iframe>
     </xsl:template>
 </xsl:stylesheet>

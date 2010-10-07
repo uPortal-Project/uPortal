@@ -66,6 +66,7 @@ public class CInlineFrame extends BaseChannel implements ICacheable {
     // Obtain url and height, both static parameters
     String srcUrl = staticData.getParameter("url"); // the url for the IFrame content
     String frameHeight = staticData.getParameter("height"); // the height of the IFrame in pixels
+    String name = staticData.getParameter("name");
 
     Document doc = null;
     try {
@@ -84,6 +85,12 @@ public class CInlineFrame extends BaseChannel implements ICacheable {
     heightE.appendChild(doc.createTextNode(frameHeight));
     iframeE.appendChild(heightE);
     doc.appendChild(iframeE);
+    if (name != null) {
+      Element nameE = doc.createElement("name");
+      nameE.appendChild(doc.createTextNode(name));
+      iframeE.appendChild(nameE);
+    }
+
 
     XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
     xslt.setXML(doc);
