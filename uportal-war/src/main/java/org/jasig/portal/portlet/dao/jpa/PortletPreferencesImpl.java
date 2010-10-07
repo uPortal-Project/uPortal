@@ -61,7 +61,7 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
             @Parameter(name = "column", value = "NEXT_UP_PORTLET_PREFS_HI")
         }
     )
-class PortletPreferencesImpl implements IPortletPreferences {
+public class PortletPreferencesImpl implements IPortletPreferences {
     @Id
     @GeneratedValue(generator = "UP_PORTLET_PREFS_GEN")
     @Column(name = "PORTLET_PREFS_ID")

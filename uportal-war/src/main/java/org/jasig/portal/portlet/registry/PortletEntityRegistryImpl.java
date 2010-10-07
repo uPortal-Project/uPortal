@@ -91,7 +91,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
         Validate.notNull(channelSubscribeId, "channelSubscribeId can not be null");
         
-        return this.portletEntityDao.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
+        return new InterimPortletEntityImpl(portletDefinitionId, channelSubscribeId, userId);
     }
     
     /* (non-Javadoc)
@@ -99,8 +99,15 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
      */
     public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId) {
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
-        
-        return this.portletEntityDao.getPortletEntity(portletEntityId);
+        IPortletEntity portletEntity = null;
+
+        if (InterimPortletEntityImpl.isInterimPortletEntityId(portletEntityId)) {
+            portletEntity = new InterimPortletEntityImpl(portletEntityId);
+        } else {
+            portletEntity = this.portletEntityDao.getPortletEntity(portletEntityId);
+        }
+
+        return portletEntity;
     }
     
     /* (non-Javadoc)
@@ -109,16 +116,24 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public IPortletEntity getPortletEntity(String portletEntityIdString) {
         Validate.notNull(portletEntityIdString, "portletEntityId can not be null");
         
-        final long portletEntityIdLong;
-        try {
-            portletEntityIdLong = Long.parseLong(portletEntityIdString);
-        }
-        catch (NumberFormatException nfe) {
-            throw new IllegalArgumentException("PortletEntityId must parsable as a long", nfe);
+        IPortletEntity portletEntity = null;
+
+        if (InterimPortletEntityImpl.isInterimPortletEntityId(portletEntityIdString)) {
+            portletEntity = new InterimPortletEntityImpl(portletEntityIdString);
+        } else {
+            final long portletEntityIdLong;
+            try {
+                portletEntityIdLong = Long.parseLong(portletEntityIdString);
+            } catch (NumberFormatException nfe) {
+                throw new IllegalArgumentException(
+                        "PortletEntityId must parsable as a long", nfe);
+            }
+
+            final PortletEntityIdImpl portletEntityId = new PortletEntityIdImpl(portletEntityIdLong);
+            portletEntity = this.portletEntityDao.getPortletEntity(portletEntityId);
         }
         
-        final PortletEntityIdImpl portletEntityId = new PortletEntityIdImpl(portletEntityIdLong);
-        return this.portletEntityDao.getPortletEntity(portletEntityId);
+        return portletEntity;
     }
     
     /* (non-Javadoc)
@@ -174,7 +189,24 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public void storePortletEntity(IPortletEntity portletEntity) {
         Validate.notNull(portletEntity, "portletEntity can not be null");
         
-        this.portletEntityDao.updatePortletEntity(portletEntity);
+        // only persist IF preferences exist.
+        if (portletEntity.getPortletPreferences().getPortletPreferences()
+                .size() > 0) {
+            if (InterimPortletEntityImpl.isInterimPortletEntityId(portletEntity.getPortletEntityId())) {
+                IPortletEntity persistantEntity = this.portletEntityDao
+                        .createPortletEntity(portletEntity
+                                .getPortletDefinitionId(), portletEntity
+                                .getChannelSubscribeId(), portletEntity
+                                .getUserId());
+
+                persistantEntity.setPortletPreferences(portletEntity
+                        .getPortletPreferences());
+                this.portletEntityDao.updatePortletEntity(persistantEntity);
+            } else {
+                this.portletEntityDao.updatePortletEntity(portletEntity);
+            }
+        }
+        
     }
     
     /* (non-Javadoc)
@@ -183,7 +215,10 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public void deletePortletEntity(IPortletEntity portletEntity) {
         Validate.notNull(portletEntity, "portletEntity can not be null");
         
-        this.portletEntityDao.deletePortletEntity(portletEntity);
+        if ((portletEntity != null) && (!InterimPortletEntityImpl
+                .isInterimPortletEntityId(portletEntity.getPortletEntityId()))) {
+            this.portletEntityDao.deletePortletEntity(portletEntity);
+        }
     }
 
     /* (non-Javadoc)
@@ -192,8 +227,15 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public IPortletDefinition getParentPortletDefinition(IPortletEntityId portletEntityId) {
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
         
-        final IPortletEntity portletEntity = this.getPortletEntity(portletEntityId);
-        final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
+        IPortletDefinitionId portletDefinitionId = null;
+        if (InterimPortletEntityImpl.isInterimPortletEntityId(portletEntityId)) {
+            IPortletEntity portletEntity = new InterimPortletEntityImpl(portletEntityId);
+            portletDefinitionId = portletEntity.getPortletDefinitionId();
+        } else {
+            final IPortletEntity portletEntity = this.getPortletEntity(portletEntityId);
+            portletDefinitionId = portletEntity.getPortletDefinitionId();
+        }
+
         return this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
     }
 }
