@@ -27,7 +27,7 @@
     </parameter>
     <parameter> 
       <name>xmlUri</name>  
-      <value>http://www.unicon.net/publish/uniconnews.rss</value>  
+      <value>http://www.unicon.net/about/news/feed</value>  
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
