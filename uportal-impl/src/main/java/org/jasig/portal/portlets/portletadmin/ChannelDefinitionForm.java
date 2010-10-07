@@ -66,7 +66,7 @@ public class ChannelDefinitionForm implements Serializable {
 	private String description = "";
 	private String title = "";
 	private String javaClass = "";
-	private int timeout = 500;
+	private int timeout = 5000;
 	private int typeId;
 	
 	/**
