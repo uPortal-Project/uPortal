@@ -10,7 +10,13 @@
     <xsl:param name="locale">ja_JP</xsl:param>
     
     <xsl:template match="iframe">
-        <iframe src="{url}" height="{height}" frameborder="0" width="100%">ダミー文字列 いません． <br/> 別のウィンドウでコンテンツを表示する場合は，<a href="{url}" target="_blank">ここt</a>
+        <iframe src="{url}" height="{height}" frameborder="0" width="100%">
+            <xsl:if test="name!=''">
+                <xsl:attribute name="name">
+                        <xsl:value-of select="name"/>
+                </xsl:attribute>
+            </xsl:if>
+            ダミー文字列 いません． <br/> 別のウィンドウでコンテンツを表示する場合は，<a href="{url}" target="_blank">ここt</a>
         </iframe>
     </xsl:template>
 </xsl:stylesheet>
