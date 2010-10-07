@@ -98,7 +98,9 @@
                             </div>
                         </div>
                         <div class="results-column fl-col-main fl-fix">
-                            <xsl:call-template name="gallery-add-content-pane-portlet-list"/>
+                            <xsl:call-template name="gallery-add-content-pane-portlet-list">
+                                <xsl:with-param name="CONTEXT" select="'add-content'"/>
+                            </xsl:call-template>
                             <xsl:call-template name="gallery-add-content-pane-fragment-list"/>
                         </div>
                         <div class="clear-float"></div>
@@ -152,7 +154,9 @@
                             </div>
                         </div>
                         <div class="results-column fl-col-main fl-fix">
-                            <xsl:call-template name="gallery-add-content-pane-portlet-list"/>
+                            <xsl:call-template name="gallery-add-content-pane-portlet-list">
+                                <xsl:with-param name="CONTEXT" select="'use-content'"/>
+                            </xsl:call-template>
                         </div>
                         <div class="clear-float"></div>
                     </div>
@@ -168,6 +172,7 @@
 | both the add portlet and use portlet views of the gallery.
 -->    
     <xsl:template name="gallery-add-content-pane-portlet-list">
+        <xsl:param name="CONTEXT"/><!--Catches the context parameter.-->
         <div class="results-wrapper portlet-results fl-col-mixed2">
             <div class="pager-column fl-col-side fl-force-right">
                 <div class="column-inner">
@@ -176,15 +181,18 @@
             </div>
             <div class="results-column fl-col-main ui-helper-clearfix">
                 <ul id="galleryPortletList" class="portlet-list">
-                    <li class="portlet">
+                    <li class="portlet" title="{$CONTEXT}">
                         <div class="portlet-wrapper">
-                            <a class="portlet-gripper" href="javascript:;" title="Drag to add content"><span>Drag Handle</span></a>
+                            <xsl:choose>
+                                <xsl:when test="$CONTEXT = 'add-content'">
+                                    <a class="portlet-gripper" href="javascript:;" title="Drag to add content"><span>Drag Handle</span></a>
+                                </xsl:when>
+                                <xsl:otherwise></xsl:otherwise>
+                            </xsl:choose>
                             <a href="javascript:;" class="portlet-link"><span><xsl:value-of select="upMsg:getMessage('add', $USER_LANG)"/></span></a>
-                            <div class="portlet-wrapper-inner ui-helper-clearfix">
-                                <div class="portlet-titlebar"></div>
-                                <img class="portlet-icon"/>
-                                <div class="portlet-description"></div>
-                            </div>
+                            <div class="portlet-titlebar"></div>
+                            <img class="portlet-icon"/>
+                            <div class="portlet-description"></div>
                         </div>
                     </li>
                 </ul>
