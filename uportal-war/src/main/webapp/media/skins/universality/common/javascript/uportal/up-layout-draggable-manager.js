@@ -414,7 +414,7 @@ var up = up || {};
         helper: "clone",
         revert: "invalid",
         cursor: "move",
-        cursorAt: {top: 7, left: 100 },
+        cursorAt: {top: 10, left: 12 },
         stack: ".ui-draggable-dragging",
         tolerance: "intersect",
         insertBefore: "insertBefore",

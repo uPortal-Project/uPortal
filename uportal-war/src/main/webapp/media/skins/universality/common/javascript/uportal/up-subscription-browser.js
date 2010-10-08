@@ -172,7 +172,7 @@ var up = up || {};
                 };
                 
                 that.state.pager = fluid.pager($(container).find(".package-results"), pagerOptions);
-                that.state.pager.events.initiatePageSizeChange.fire(8);
+                that.state.pager.events.initiatePageSizeChange.fire(6);
             }
         };
 
