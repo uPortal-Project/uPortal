@@ -311,7 +311,7 @@
                                     <a class="layout-link" href="javascript:;">
                                         <div class="layout-titlebar"></div>
                                         <div class="layout-thumb">
-                                            <img class="layout-image"/>
+                                            <span>Thumbnail</span>
                                         </div>
                                         <div class="layout-description"></div>
                                     </a>
