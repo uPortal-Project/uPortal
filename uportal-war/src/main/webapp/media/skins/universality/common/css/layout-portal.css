@@ -555,6 +555,9 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .skins-wrapper:hover a {display:block;}
 .up-gallery .skins-wrapper.selected {border:1px solid #f68923; background:#f68d29; background-image:-moz-linear-gradient(90deg,#d87516,#222222); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#d87516), to(#222222)); color:#fff;}
 .up-gallery .selected .skin-titlebar {color:#fff;}
+.up-gallery .skins-wrapper .skin-thumb {width: 120px; height: 70px;}
+.up-gallery .skins-wrapper .skin-thumb span {visibility: hidden;}
+
 
 /* Gallery Layout List 
  * The list of page layouts.
