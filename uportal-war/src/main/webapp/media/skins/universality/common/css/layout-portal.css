@@ -348,9 +348,9 @@ table.purpose-layout td {margin:0; padding:0;}
  */
 .clear-float {clear:both;}
 .up-gallery {min-width:900px; position:relative;}
-.up-gallery .gallery-inner {display:none; overflow:visible; padding-top:7px; background:url(../images/gallery-bar.png) top left repeat-x; height:190px;  position:relative;}
+.up-gallery .gallery-inner {display:none; overflow: hidden; padding-top:7px; background:url(../images/gallery-bar.png) top left repeat-x; height:200px;  position:relative;}
 .up-gallery .column-inner {position:relative;}
-.up-gallery .menu-wrapper {width:130px; display:block; height:190px; position:relative;}
+.up-gallery .menu-wrapper {width:130px; display:block; height:200px; position:relative;}
 .up-gallery .content-wrapper {margin:0 0 0 127px; padding:8px 0; display:block; height:174px;}
 .up-gallery .content {padding-right:8px; }
 .up-gallery .content-filters-wrapper {width:200px; padding:0px; display:block; height:174px; position:relative;}
@@ -362,6 +362,8 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .layouts .content-results-wrapper {margin-left:0px; margin-right:0px;}
 .up-gallery .results-wrapper {overflow:hidden;}
 .up-gallery .fl-col-mixed2 .fl-col-main {padding-left:0px;}
+.up-gallery .content .add-content,
+.up-gallery .content .use-content {overflow-y: hidden;}
 
 /* Gallery General Coloring
  * Override these vales on a per-skin basis by adding the overrides to portal.css within the desired skin folder.
@@ -375,8 +377,9 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Gallery Menu Items 
  * The navigation menu of gallery views.
  */
-.up-gallery .menu {height:180px; background:#424243; padding:10px 0 0 0; position:relative; margin-top:0; margin-bottom:0; margin-left:15px; margin-right:auto; width:100px; border-left:1px solid #979797; border-right:1px solid #979797;}
+.up-gallery .menu {height:190px; background:#424243; padding:10px 0 0 0; position:relative; margin-top:0; margin-bottom:0; margin-left:15px; margin-right:auto; width:100px; border-left:1px solid #979797; border-right:1px solid #979797;}
 .up-gallery .menu li {position:relative; height:28px; cursor:pointer; list-style:none; margin:0; background:#525252; border-top:1px solid #979797;}
+.up-gallery .menu li a {text-decoration: none; cursor: pointer;}
 .up-gallery .menu li.last {border-bottom:1px solid #979797;}
 .up-gallery .menu li.active {background:#333}
 .up-gallery .menu li span {padding:7px; display:block; height:14px; width:110px; bottom:0; font-weight:bold; color:#fff; font-size:12px;}
