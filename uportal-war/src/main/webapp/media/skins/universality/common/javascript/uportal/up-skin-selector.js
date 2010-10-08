@@ -171,8 +171,7 @@ var up = up || {};
                             {
                                 type: "attrs",
                                 attributes: {
-                                    src: obj.thumbnailPath,
-                                    alt: obj.thumbnailAlt
+                                    style: 'background: url(' + obj.thumbnailPath + ') top left no-repeat;'
                                 }
                             }
                         ]
@@ -322,7 +321,7 @@ var up = up || {};
             skinWrapper: ".skins-wrapper",
             skinLink: ".skin-link",
             skinName: ".skin-titlebar",
-            skinThumbnail: ".skin-image"
+            skinThumbnail: ".skin-thumb"
         },
         events: {
             onSelectSkin: null
