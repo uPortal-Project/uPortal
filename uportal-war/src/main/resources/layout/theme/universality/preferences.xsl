@@ -235,29 +235,33 @@
 -->
     <xsl:template name="gallery-pager">
         <div class="pager flc-pager-top">
+            <!--Previous-->
             <div class="pager-button-up flc-pager-previous">
                 <a class="pager-button-up-inner" href="javascript:;">
                     <span><xsl:value-of select="upMsg:getMessage('up', $USER_LANG)"/></span>
                 </a>
             </div>
-            <li style="display:none">
+            <!--Pager Links-->
+            <div style="display:none">
                 <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
                     <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
                     <li class="flc-pager-pageLink-disabled">2</li>
                     <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
                 </ul>
-            </li>
+            </div>
+            <!--Pagination-->
             <div class="pager-pagination"></div>
+            <!--Pager Summary-->
+            <div style="display:none">
+                <span class="flc-pager-summary"><xsl:value-of select="upMsg:getMessage('show', $USER_LANG)"/></span>
+                <span><select class="pager-page-size flc-pager-page-size"></select></span>
+            </div>
+            <!--Next-->
             <div class="pager-button-down flc-pager-next">
                 <a class="pager-button-down-inner" href="javascript:;">
                     <span><xsl:value-of select="upMsg:getMessage('down', $USER_LANG)"/></span>
                 </a>
             </div>
-            <li style="display:none">
-                <span class="flc-pager-summary"><xsl:value-of select="upMsg:getMessage('show', $USER_LANG)"/></span>
-                <span><select class="pager-page-size flc-pager-page-size">
-                </select></span>
-            </li>
         </div>
     </xsl:template>
 
