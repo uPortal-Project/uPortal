@@ -124,10 +124,10 @@ var up = up || {};
         cutpoints = [
             { id: "portlet:", selector: ".portlet" },
             { id: "portletWrapper", selector: ".portlet-wrapper"},
-            { id: "portletLink", selector: ".portlet-link" },
-            { id: "portletTitle", selector: ".portlet-titlebar" },
-            { id: "portletDescription", selector: ".portlet-description" },
-            { id: "portletIcon", selector: ".portlet-icon" }
+            { id: "portletLink", selector: ".portlet-thumb-link" },
+            { id: "portletTitle", selector: ".portlet-thumb-titlebar" },
+            { id: "portletDescription", selector: ".portlet-thumb-description" },
+            { id: "portletIcon", selector: ".portlet-thumb-icon" }
         ];
         
         that.refresh = function () {
@@ -205,7 +205,17 @@ var up = up || {};
                         key: "portletIcon",
                         valuebinding: "*.id",
                         components: function (row) {
-                            return { decorators: [ { type: "attrs", attributes: { src: row.iconUrl } } ] };
+                            return {
+                                decorators: [
+                                    {
+                                        type: "attrs",
+                                        attributes:
+                                        {
+                                            style: 'background: url(' + row.iconUrl + ') top left no-repeat;'
+                                        }
+                                    }
+                                ]
+                            };
                         }
                     }
                 ];

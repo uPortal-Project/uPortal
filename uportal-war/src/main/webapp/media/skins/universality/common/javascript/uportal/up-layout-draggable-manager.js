@@ -52,7 +52,7 @@
  * Default: Selector ".portal-page-column-inner"
  * 
  * dragHandle: reference to 'gripper' handle rendered out by the portal gallery. 
- * Default: Selector ".portlet-gripper"
+ * Default: Selector ".portlet-thumb-gripper"
  * 
  * pseudoDropTarget: reference to visual indicator that appears when a gallery list item is dragged
  * over a portal column.
@@ -390,7 +390,7 @@ var up = up || {};
             columnContainer: "#portalPageBodyColumns",
             column: ".portal-page-column",
             innerColumn: ".portal-page-column-inner",
-            dragHandle: ".portlet-gripper",
+            dragHandle: ".portlet-thumb-gripper",
             pseudoDropTarget: ".layout-draggable-drop-target",
             loader: "#galleryLoader",
             accept: ".portlet",
