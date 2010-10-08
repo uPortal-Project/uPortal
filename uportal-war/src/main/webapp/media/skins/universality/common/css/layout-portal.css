@@ -509,19 +509,23 @@ table.purpose-layout td {margin:0; padding:0;}
     background: #333; border:1px solid #666; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;
     -moz-box-shadow: 0px 0px 2px 0px #000; -webkit-box-shadow: 0px 0px 2px 0px #000; box-shadow: 0px 0px 2px 0px #000;}
 .up-gallery .portlet-wrapper:hover {border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); border-top-right-radius:0px;    -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;}
-.up-gallery .portlet-wrapper:hover .portlet-link {color: #000; background:#f68923; background-image:-moz-linear-gradient(90deg,#f68923,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(#ffffff));}
+.up-gallery .portlet-wrapper:hover .portlet-thumb-link {color: #000; background:#f68923; background-image:-moz-linear-gradient(90deg,#f68923,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(#ffffff));}
 .up-gallery .portlet-wrapper-inner{padding: 0px 5px 0px 5px;}
 /* Add Link */
-.up-gallery .portlet-link {position: absolute; top: 0px; right: 0px; display: block; cursor:pointer; color:#000; padding:2px 8px; background:#666;
+.up-gallery .portlet-thumb-link {position: absolute; top: 0px; right: 0px; display: block; cursor:pointer; color:#000; padding:2px 8px; background:#666;
     background-image:-moz-linear-gradient(90deg,#666,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center;}
-.up-gallery .portlet-link:hover {color: #000; background: #F68923; background-image:-moz-linear-gradient(90deg,#F68923,#FFF); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#FFF));}
-/* Drag Hanle */
-.up-gallery .portlet-gripper {
-    display: block; background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px; cursor: move;}
-.up-gallery .portlet-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
-.up-gallery .portlet-description {color: #AAA; padding: 0 8px 0 8px; margin-left: 36px;}
-.up-gallery .portlet-titlebar {padding:5px 8px 2px 8px; font-size:11px; font-weight:bold; color:#DDD;}
-.up-gallery .portlet-wrapper img {position: absolute; top: 38px; left: 8px; margin: 0; width: 32px; height: 32px;}
+.up-gallery .portlet-thumb-link:hover {color: #000; background: #F68923; background-image:-moz-linear-gradient(90deg,#F68923,#FFF); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#FFF));}
+/* Drag Handle */
+.up-gallery .portlet-thumb-gripper {display: block; background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px;
+    border-top-left-radius: 5px; cursor: move;}
+.up-gallery .add-content .portlet-thumb-gripper {background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat;}
+.up-gallery .use-content .portlet-thumb-gripper {background: #444444; cursor: default;}
+.up-gallery .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
+.up-gallery .portlet-thumb-titlebar {padding: 5px 8px 3px 8px; font-size:11px; font-weight:bold; color:#DDD;}
+.up-gallery .portlet-thumb-content {padding: 0px 8px 0px 8px;}
+.up-gallery .portlet-thumb-icon {width:37px; height:37px;}
+.up-gallery .portlet-thumb-icon span {visibility: hidden;}
+.up-gallery .portlet-thumb-description {color: #AAA; padding: 0; margin-left: 36px;}
 
 /* temporary icon */
 .up-gallery .results-wrapper .package-list {list-style:none; padding:0; margin:0; position:relative;}
@@ -583,20 +587,22 @@ table.purpose-layout td {margin:0; padding:0;}
 .up .portlet.ui-draggable-dragging {
     border: 1px solid #F68923; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;
     padding: 0; margin: 0; list-style: none; -moz-box-shadow: 0px 0px 4px 0px #333; -webkit-box-shadow: 0px 0px 4px 0px #333; box-shadow: 0px 0px 4px 0px #333; background: #333; position: relative;
-    background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); height: 80px; width: auto; min-width: 200px; max-width: 200px;
-    overflow: hidden;}
+    background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); height: 80px; width: auto;
+    overflow: hidden; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)"; filter: alpha(opacity=80);}
 .up .portlet.ui-draggable-dragging .portlet-wrapper {overflow: hidden;}
 .up .portlet.ui-draggable-dragging .portlet-wrapper-inner {padding:0px 10px 0px 10px; position: relative;}
-.up .portlet.ui-draggable-dragging .portlet-link {
+.up .portlet.ui-draggable-dragging .portlet-thumb-link {
     position: absolute; top: 0px; right: 0px; display: block; color: #000; text-decoration: none; font-size: 77%; padding: 2px 8px; background: #666; background-image: -moz-linear-gradient(90deg,#666,#ffffff); 
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center; cursor: move; background: #F68923; background-image: -moz-linear-gradient(90deg,#F68923,#ffffff);
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#ffffff));}
-.up .portlet.ui-draggable-dragging .portlet-gripper {
+.up .portlet.ui-draggable-dragging .portlet-thumb-gripper {
     display: block; background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat; cursor: move; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px;}
-.up .portlet.ui-draggable-dragging .portlet-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
-.up .portlet.ui-draggable-dragging .portlet-titlebar {padding:5px 8px 3px 8px; font-size: 11px; font-weight: bold; color: #DDD;}
-.up .portlet.ui-draggable-dragging .portlet-icon {position: absolute; top: 38px; left: 8px; margin: 0; width: 32px; height: 32px;}
-.up .portlet.ui-draggable-dragging .portlet-description {color: #AAA; font-size: 77%; padding: 0 8px 0 8px; margin-left: 36px;}
+.up .portlet.ui-draggable-dragging .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
+.up .portlet.ui-draggable-dragging .portlet-thumb-titlebar {padding: 5px 8px 3px 8px; font-size:11px; font-weight:bold; color:#DDD;}
+.up .portlet.ui-draggable-dragging .portlet-thumb-content {padding: 0px 8px 0px 8px;}
+.up .portlet.ui-draggable-dragging .portlet-thumb-icon {width:37px; height:37px;}
+.up .portlet.ui-draggable-dragging .portlet-thumb-icon span {visibility: hidden;}
+.up .portlet.ui-draggable-dragging .portlet-thumb-description {color: #AAA; padding: 0; margin-left: 36px; font-size: 11px;}
 
 /* Gallery: Drop Target */
 .up .layout-draggable-drop-target {display: none; background: #FF0000; padding: 5px; height: 150px; text-align: center; margin-bottom: 1em;  border: 2px dashed #960000; font-weight: bold; color: #960000;}
@@ -604,5 +610,3 @@ table.purpose-layout td {margin:0; padding:0;}
 .up .layout-draggable-drop-target-active {}
 .up .layout-draggable-target-dropped {border: 1px solid #CCC; background: #EFEFEF url("../../uportal3/images/loading.gif") 50% 50% no-repeat;}
 .up .layout-draggable-target-dropped span {display:none;}
-
-/* Gallery: Loader */
