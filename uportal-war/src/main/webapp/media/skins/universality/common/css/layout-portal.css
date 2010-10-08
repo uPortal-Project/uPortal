@@ -199,7 +199,7 @@ table.purpose-layout td {margin:0; padding:0;}
 
 
 /* page */
-#portalPage {min-width:700px; clear:both;}
+#portalPage {min-width:750px; clear:both;}
 
 
 /* header */
@@ -347,7 +347,7 @@ table.purpose-layout td {margin:0; padding:0;}
  * If needed, override these vales on a per-skin basis by adding the overrides to portal.css within the desired skin folder.
  */
 .clear-float {clear:both;}
-.up-gallery {min-width:900px; position:relative;}
+.up-gallery {position:relative;}
 .up-gallery .gallery-inner {display:none; overflow: hidden; padding-top:7px; background:url(../images/gallery-bar.png) top left repeat-x; height:200px;  position:relative;}
 .up-gallery .column-inner {position:relative;}
 .up-gallery .menu-wrapper {width:130px; display:block; height:200px; position:relative;}
@@ -516,10 +516,10 @@ table.purpose-layout td {margin:0; padding:0;}
     background-image:-moz-linear-gradient(90deg,#666,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center;}
 .up-gallery .portlet-thumb-link:hover {color: #000; background: #F68923; background-image:-moz-linear-gradient(90deg,#F68923,#FFF); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#FFF));}
 /* Drag Handle */
-.up-gallery .portlet-thumb-gripper {display: block; background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px;
+.up-gallery .portlet-thumb-gripper {display: block; background: #444444 url("../images/gripper.png") 5px 0px no-repeat; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px;
     border-top-left-radius: 5px; cursor: move;}
-.up-gallery .add-content .portlet-thumb-gripper {background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat;}
-.up-gallery .use-content .portlet-thumb-gripper {background: #444444; cursor: default;}
+.up-gallery .add-content .portlet-thumb-gripper {background: #444444 url("../images/gripper.png") 5px 0px no-repeat;}
+.up-gallery .use-content .portlet-thumb-gripper {background: transparent; cursor: default;}
 .up-gallery .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
 .up-gallery .portlet-thumb-titlebar {padding: 5px 8px 3px 8px; font-size:11px; font-weight:bold; color:#DDD;}
 .up-gallery .portlet-thumb-content {padding: 0px 8px 0px 8px;}
@@ -529,20 +529,28 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* temporary icon */
 .up-gallery .results-wrapper .package-list {list-style:none; padding:0; margin:0; position:relative;}
-.up-gallery .results-wrapper .package-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:25%; height:50%;}
-.up-gallery .results-wrapper .package-list li .package-wrapper {height:66px; padding:5px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
+.up-gallery .results-wrapper .package-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:33%; height:50%;}
+.up-gallery .results-wrapper .package-list li .package-wrapper {height:66px; padding:5px 8px 5px 8px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
 .up-gallery .results-wrapper .package-list {position:relative; width:100%;}
 /* IE7 adjustments*/
 *:first-child+html .up-gallery .results-wrapper .portlet-list li {width:24%;} 
 *:first-child+html .up-gallery .results-wrapper .package-list li {width:24%;} 
 
-.up-gallery .package-wrapper a {cursor:pointer; color:#000; position:absolute; padding:3px 8px; top:0; right:0; display:none; background:#f68923; background-image:-moz-linear-gradient(90deg,#f68923,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(#ffffff)); border-bottom-left-radius:3px; -moz-border-radius-bottomleft:3px; -webkit-border-bottom-left-radius:3px; }
-.up-gallery .package-description {clear:right; color:#AAA; display:inline;}
-.up-gallery .package-titlebar {padding:5px 0 3px 0; font-size:12px; font-weight:bold; color:#DDD;}
-.up-gallery .package-wrapper  {border:1px solid #333; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;}
-.up-gallery .package-wrapper:hover {border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); border-top-right-radius:0px;    -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;}
-.up-gallery .package-wrapper:hover a {display:block;}
-.up-gallery .package-wrapper img {width:37px; height:37px; float:left; margin-right:5px; margin-bottom:5px;}
+.up-gallery .package-wrapper {background: #333; border:1px solid #666; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px;
+    -webkit-border-top-right-radius:0px; -moz-box-shadow: 0px 0px 2px 0px #000; -webkit-box-shadow: 0px 0px 2px 0px #000; box-shadow: 0px 0px 2px 0px #000;}
+.up-gallery .package-wrapper:hover {
+    border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333));
+    border-top-right-radius:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;}
+
+.up-gallery .package-wrapper .package-link {position: absolute; top: 0px; right: 0px; display: block; cursor:pointer; color:#000; padding:2px 8px; background:#666; display: block;
+    background-image:-moz-linear-gradient(90deg,#666,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center;}
+.up-gallery .package-wrapper .package-link:hover,
+.up-gallery .package-wrapper:hover .package-link {color: #000; background: #F68923; background-image:-moz-linear-gradient(90deg,#F68923,#FFF); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#FFF));}
+.up-gallery .package-titlebar {padding:16px 0 3px 0; font-size:11px; font-weight:bold; color:#DDD;}
+.up-gallery .package-content {}
+.up-gallery .package-icon {width:37px; height:37px;}
+.up-gallery .package-icon span {visibility: hidden;}
+.up-gallery .package-description {color: #AAA; padding: 0; margin-left: 36px;}
 
 /* Gallery Skin List 
  * The list of skins.
@@ -596,7 +604,7 @@ table.purpose-layout td {margin:0; padding:0;}
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center; cursor: move; background: #F68923; background-image: -moz-linear-gradient(90deg,#F68923,#ffffff);
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#ffffff));}
 .up .portlet.ui-draggable-dragging .portlet-thumb-gripper {
-    display: block; background: #444444 url("../../uportal3/images/gripper.png") 50% 50% no-repeat; cursor: move; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px;}
+    display: block; background: #444444 url("../images/gripper.png") 5px 0px no-repeat; cursor: move; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px;}
 .up .portlet.ui-draggable-dragging .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
 .up .portlet.ui-draggable-dragging .portlet-thumb-titlebar {padding: 5px 8px 3px 8px; font-size:11px; font-weight:bold; color:#DDD;}
 .up .portlet.ui-draggable-dragging .portlet-thumb-content {padding: 0px 8px 0px 8px;}
