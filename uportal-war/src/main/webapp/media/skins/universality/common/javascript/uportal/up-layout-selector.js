@@ -66,9 +66,14 @@ var up = up || {};
                     { ID: "layoutTitle", value: layout.columns.length + " Column" },
                     { ID: "layoutDescription", value: layout.name },
                     {
-                        ID: "layoutImage", 
+                        ID: "layoutThumb", 
                         decorators: [
-                            { type: "attrs", attributes: { src: that.options.imagePath + "layout_" + layoutString + ".gif" } }
+                            {
+                                type: "attrs",
+                                attributes: {
+                                    style: 'background: url(' + that.options.imagePath + 'layout_' + layoutString + '.gif' + ') top left no-repeat;'
+                                }
+                            }
                         ]
                     }
                 ]
@@ -91,7 +96,7 @@ var up = up || {};
             { id: "layoutLink", selector: that.options.selectors.layoutLink },
             { id: "layoutTitle", selector: that.options.selectors.layoutTitle },
             { id: "layoutDescription", selector: that.options.selectors.layoutDescription },
-            { id: "layoutImage", selector: that.options.selectors.layoutImage }
+            { id: "layoutThumb", selector: that.options.selectors.layoutThumb }
         ];
         
         /**
@@ -127,7 +132,7 @@ var up = up || {};
             layoutLink: ".layout-link",
             layoutTitle: ".layout-titlebar",
             layoutDescription: ".layout-description",
-            layoutImage: ".layout-image"
+            layoutThumb: ".layout-thumb"
         },
         listeners: {
             onLayoutSelect: null
