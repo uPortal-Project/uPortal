@@ -214,14 +214,18 @@
                     <xsl:call-template name="gallery-pager"/>
                 </div>
             </div>
-            <div class="results-column fl-col-main fl-fix">
-                <ul class="package-list">
+            <div class="results-column fl-col-main">
+                <ul class="package-list ui-helper-clearfix">
                     <li class="package">
                        <div class="package-wrapper">
                            <a href="javascript:;" class="package-link"><span><xsl:value-of select="upMsg:getMessage('subscribe', $USER_LANG)"/></span></a>
-                           <div class="package-titlebar"></div>
-                           <img class="package-icon"/>
-                           <div class="package-description"></div>
+                           <div class="package-titlebar">Titlebar</div>
+                           <div class="package-content ui-helper-clearfix">
+                               <div class="fl-force-left">
+                                    <div class="package-icon"><span>Thumbnail</span></div>
+                                </div>
+                                <div class="package-description">Description</div>
+                           </div>
                        </div>
                     </li>
                 </ul>
