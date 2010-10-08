@@ -183,16 +183,17 @@
                 <ul id="galleryPortletList" class="portlet-list">
                     <li class="portlet">
                         <div class="portlet-wrapper">
-                            <xsl:choose>
-                                <xsl:when test="$CONTEXT = 'add-content'">
-                                    <a class="portlet-gripper" href="javascript:;" title="Drag to add content"><span>Drag Handle</span></a>
-                                </xsl:when>
-                                <xsl:otherwise></xsl:otherwise>
-                            </xsl:choose>
-                            <a href="javascript:;" class="portlet-link"><span><xsl:value-of select="upMsg:getMessage('add', $USER_LANG)"/></span></a>
-                            <div class="portlet-titlebar"></div>
-                            <img class="portlet-icon"/>
-                            <div class="portlet-description"></div>
+                            <a class="portlet-thumb-gripper" href="javascript:;" title="Drag to add content"><span>Drag Handle</span></a>
+                            <a href="javascript:;" class="portlet-thumb-link">
+                                <span><xsl:value-of select="upMsg:getMessage('add', $USER_LANG)"/></span>
+                            </a>
+                            <div class="portlet-thumb-titlebar"></div>
+                            <div class="portlet-thumb-content ui-helper-clearfix">
+                                <div class="fl-force-left">
+                                    <div class="portlet-thumb-icon"><span>Thumbnail</span></div>
+                                </div>
+                                <div class="portlet-thumb-description">Description</div>
+                            </div>
                         </div>
                     </li>
                 </ul>
