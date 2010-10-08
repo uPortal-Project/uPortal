@@ -282,7 +282,7 @@
                                     <a class="skin-link" href="javascript:;">
                                         <div class="skin-titlebar"></div>
                                         <div class="skin-thumb">
-                                            <img class="skin-image"/>
+                                            <span>Thumbnail</span>
                                         </div>
                                     </a>
                                 </div>
