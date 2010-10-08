@@ -576,6 +576,8 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .layout-wrapper:hover a {display:block;}
 .up-gallery .layout-wrapper.selected {border:1px solid #f68923; background:#f68d29; background-image:-moz-linear-gradient(90deg,#d87516,#222222); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#d87516), to(#222222));}
 .up-gallery .selected .layout-titlebar {color:#fff;}
+.up-gallery .layout-wrapper .layout-thumb {width: 27px; height:27px;}
+.up-gallery .layout-wrapper .layout-thumb span {visibility: hidden;}
 
 /* Gallery: Avatar */
 .up .portlet.ui-draggable-dragging {
