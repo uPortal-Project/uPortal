@@ -99,7 +99,7 @@
                         </div>
                         <div class="results-column fl-col-main fl-fix">
                             <xsl:call-template name="gallery-add-content-pane-portlet-list">
-                                <xsl:with-param name="CONTEXT" select="'add-content'"/>
+                                <xsl:with-param name="CONTEXT" select="'addContent'"/>
                             </xsl:call-template>
                             <xsl:call-template name="gallery-add-content-pane-fragment-list"/>
                         </div>
@@ -155,7 +155,7 @@
                         </div>
                         <div class="results-column fl-col-main fl-fix">
                             <xsl:call-template name="gallery-add-content-pane-portlet-list">
-                                <xsl:with-param name="CONTEXT" select="'use-content'"/>
+                                <xsl:with-param name="CONTEXT" select="'useContent'"/>
                             </xsl:call-template>
                         </div>
                         <div class="clear-float"></div>
@@ -180,7 +180,7 @@
                 </div>
             </div>
             <div class="results-column fl-col-main ui-helper-clearfix">
-                <ul id="galleryPortletList" class="portlet-list">
+                <ul id="{$CONTEXT}PortletList" class="portlet-list">
                     <li class="portlet">
                         <div class="portlet-wrapper">
                             <a class="portlet-thumb-gripper" href="javascript:;" title="Drag to add content"><span>Drag Handle</span></a>
