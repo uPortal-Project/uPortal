@@ -368,11 +368,14 @@ var up = up || {};
             
             // DOM Caching.
             galleryList = pager.container.find(that.options.selectors.galleryList);
-            listItem = galleryList.find("li");
             
-            // Set gallery items as draggable. Delay setting columns
-            // as droppable until an item is dragged.
-            that.makeDraggable(listItem);
+            // Enforce constraint. Only list items on the 'Add Stuff' tab should be draggable.
+            if (galleryList.attr("id") !== that.options.useContentPortletListID) {
+                // Set gallery items as draggable. Delay setting columns
+                // as droppable until an item is dragged.
+                listItem = galleryList.find("li");
+                that.makeDraggable(listItem);
+            }//end:if.
         };//end:function.
         
         initialize(that);
@@ -386,7 +389,7 @@ var up = up || {};
     fluid.defaults("up.LayoutDraggableManager", {
         selectors: {
             body: "#portal",
-            galleryList: "#galleryPortletList",
+            galleryList: ".portlet-list",
             columnContainer: "#portalPageBodyColumns",
             column: ".portal-page-column",
             innerColumn: ".portal-page-column-inner",
@@ -419,6 +422,7 @@ var up = up || {};
         tolerance: "intersect",
         insertBefore: "insertBefore",
         appendAfter: "appendAfter",
-        nbsp: "&nbsp;"
+        nbsp: "&nbsp;",
+        useContentPortletListID: "useContentPortletList"
     });
 })(jQuery, fluid);

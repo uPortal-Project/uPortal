@@ -266,7 +266,7 @@ var up = up || {};
             type: "up.LayoutDraggableManager"
         },
         selectors: {
-            galleryList: "#galleryPortletList"
+            galleryList: ".portlet-list"
         },
         pageSize: 6,
         defaultIconUrl: "/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png"
