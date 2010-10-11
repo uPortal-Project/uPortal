@@ -67,7 +67,7 @@
   <js>javascript/uportal/up-layout-selector.js</js>
   <js>javascript/uportal/up-group-browser.js</js>
   <js>javascript/uportal/up-skin-selector.js</js>
-  <js>javascript/uportal/up-tab-inline-editor.js</js>
+  <js>javascript/uportal/up-tab-manager.js</js>
   <js>javascript/uportal/up-layout-persistence.js</js>
   <js>javascript/uportal/up-url-provider.js</js>
   <js>javascript/uportal/up-layout-preferences.js</js>
