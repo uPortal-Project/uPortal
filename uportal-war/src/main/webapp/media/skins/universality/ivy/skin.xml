@@ -24,10 +24,15 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/sandbox/resource-aggregator/tags/resource-aggregator-parent-1.0.0/resource-aggregator-api/src/main/resources/skin-configuration.xsd">
 
+  <parameter name="fss-theme">fl-theme-mist</parameter>
   
-	<!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
+  <!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
   <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
+  
+  <!-- Fluid Skinning System (FSS) theme. -->
+  <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-theme-mist.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-theme-mist.min.css</css>
   
   <!-- Default jQuery UI theme.  Comment this out if you are using your own custom jQuery UI theme. -->
   <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.css</css>
