@@ -54,9 +54,13 @@ var up = up || {};
      * @param {Object} that- reference to an instance of the TabManger component.
      */
     var editTabHandler = function (that) {
-        var edit, text, editorOptions, numOfPortlets;
+        var edit, remove, text, gripper, editorOptions, numOfPortlets;
         
+        // Cache DOM elements.
         edit = that.locate("edit");
+        remove = that.locate("remove");
+        gripper = that.locate("grabHandle");
+        
         if (edit.length > 0) {
             // Initialize & configure fluid.inlineEdit component.
             that.inlineEditor = fluid.inlineEdits(that.container, {
@@ -65,7 +69,16 @@ var up = up || {};
                     edit: that.options.selectors.edit
                 },
                 listeners: {
+                    afterBeginEdit: function () {
+                        // Hide gripper & remove icon.
+                        remove.hide();
+                        gripper.hide();
+                    },
                     afterFinishEdit: function (newValue, oldValue, editNode, viewNode) {
+                        // Show gripper & remove icon.
+                        remove.show();
+                        gripper.show();
+                        
                         // Fire afterFinishEdit event.
                         that.events.onTabEdit.fire(newValue, oldValue, editNode, viewNode);
                     }
