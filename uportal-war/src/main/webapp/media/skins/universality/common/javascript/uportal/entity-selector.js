@@ -17,7 +17,7 @@
  * under the License.
  */
 
-var uportal = uportal || {};
+var up = up || {};
 
 (function($, fluid){
     
@@ -191,8 +191,8 @@ var uportal = uportal || {};
     /**
      * Create a new Entity Selection component
      */
-    uportal.entityselection = function(container, options) {
-        var that = fluid.initView("uportal.entityselection", container, options);
+    up.entityselection = function(container, options) {
+        var that = fluid.initView("up.entityselection", container, options);
         
         // assign a new entity browser for retrieving groups, categories, and person
         // information from the portal
@@ -213,7 +213,7 @@ var uportal = uportal || {};
 
     
     // defaults
-    fluid.defaults("uportal.entityselection", {
+    fluid.defaults("up.entityselection", {
         entityTypes: [],
         selected: [],
         findEntityUrl: "mvc/findEntity",
@@ -235,4 +235,4 @@ var uportal = uportal || {};
         }
     });
     
-})(up.jQuery, up.fluid);
+})(jQuery, fluid);

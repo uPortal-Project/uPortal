@@ -123,7 +123,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             <div id="${n}entityBrowsingBreadcrumbs" class="breadcrumb"></div>
                             <h5 class="title" id="${n}currentEntityName"></h5>
                             <div class="actions">
-                                <a class="select button" id="${n}selectEntityLink" href="javascript:;"><span><spring:message code="chooseGroups.selectButton"/></span></a>
+                                <a class="select button" id="${n}selectEntityLink" href="javascript:;"><span><spring:message code="select"/></span></a>
                             </div>
                         </div> <!-- end: titlebar -->    
                         <!-- entity selections -->
@@ -172,14 +172,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-content -->
 </div> <!-- end: portlet -->
 
-<script src="<c:url value="/media/org/jasig/portal/flows/groups-selector/groups-selector.min.js"/>" language="JavaScript" type="text/javascript"></script>
-
 <script type="text/javascript">
 	up.jQuery(function() {
 		var $ = up.jQuery;
 
 		$(document).ready(function(){
-			uportal.entityselection("#${n}chooseGroupsBody", {
+			up.entityselection("#${n}chooseGroupsBody", {
                 findEntityUrl: "<c:url value="/mvc/findEntity"/>",
                 searchEntitiesUrl: "<c:url value="/mvc/searchEntities"/>",
 		        entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
