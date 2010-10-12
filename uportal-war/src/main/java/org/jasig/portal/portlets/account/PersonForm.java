@@ -1,5 +1,6 @@
 package org.jasig.portal.portlets.account;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,17 +8,17 @@ import org.apache.commons.collections.map.LazyMap;
 import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.portlets.StringListAttributeFactory;
 
-public class PersonForm {
+public class PersonForm implements Serializable {
     
     private String username;
+    private String password;
+    private String confirmPassword;
+    
     
     @SuppressWarnings("unchecked")
     private Map<String, StringListAttribute> attributes = LazyMap.decorate(
             new HashMap<String, StringListAttribute>(), new StringListAttributeFactory());
 
-    
-    private String password;
-    private String confirmPassword;
     
     public PersonForm() { }
 

@@ -143,6 +143,22 @@ public class Md5Passwd {
 // Java Cryptography published by O'Reilly Associates (1st Edition 1998)
 //
 
+    public static String encode(String str) {
+        try {
+            byte[] hash, rnd = new byte[8], fin = new byte[24];
+            Long date = new Long((new Date()).getTime());
+            SecureRandom r = new SecureRandom((date.toString()).getBytes());
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            r.nextBytes(rnd);
+            md.update(rnd);
+            hash = md.digest(str.getBytes());
+            System.arraycopy(rnd, 0, fin, 0, 8);
+            System.arraycopy(hash, 0, fin, 8, 16);
+            return "(MD5)" + encode(fin);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
   private static String encode(byte[] raw) {
     StringBuffer encoded = new StringBuffer();
