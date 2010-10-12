@@ -110,7 +110,7 @@
             up.jQuery = jQuery.noConflict(true);
             up.fluid = fluid;
             fluid = null;
-            fluid_1_1 = null;
+            fluid_1_2 = null;
         </script>
       </head>
       
