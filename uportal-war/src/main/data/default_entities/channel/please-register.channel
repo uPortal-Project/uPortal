@@ -1,0 +1,59 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
+  <title>Please Register</title>
+  <name>Please Register</name>
+  <fname>please-register</fname>
+  <desc>uPortal registration message.</desc>
+  <type>CMS</type>
+  <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Information</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter>
+      <name>portletApplicationId</name>
+      <value>/SimpleContentPortlet</value> 
+      <description/>  
+      <ovrd>N</ovrd>
+    </parameter>
+    <parameter>
+      <name>portletName</name>
+      <value>cms</value> 
+      <description/>
+      <ovrd>N</ovrd>
+    </parameter>
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
+      <description/>  
+      <ovrd>N</ovrd>
+    </parameter>
+  </parameters>
+  <portletPreferences>
+    <portletPreference>
+        <name>content</name>
+        <values><value>
+            <![CDATA[
+                <h2>Please register</h2>
+                
+                <p>
+                    Please <a href="http://www.jasig.org/uportal/deployments" 
+                    target="_blank">list your deployment of uPortal alongside 
+                    the many others already registered</a> so that the many 
+                    people who have made uPortal possible can know that their 
+                    code is working for you as well.
+                </p>
+            ]]>
+        </value></values>
+    </portletPreference>
+  </portletPreferences>
+</channel-definition>

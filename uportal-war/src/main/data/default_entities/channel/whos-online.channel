@@ -1,0 +1,56 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
+  <title>Who's Online</title>
+  <name>Who's Online</name>
+  <fname>whos-online</fname>
+  <desc>Mockup of a Who's Online portlet.</desc>
+  <type>CMS</type>
+  <class>org.jasig.portal.channels.webproxy.CWebProxy</class>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>Information</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter>
+      <name>portletApplicationId</name>
+      <value>/SimpleContentPortlet</value> 
+      <description/>  
+      <ovrd>N</ovrd>
+    </parameter>
+    <parameter>
+      <name>portletName</name>
+      <value>cms</value> 
+      <description/>
+      <ovrd>N</ovrd>
+    </parameter>
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
+      <description/>  
+      <ovrd>N</ovrd>
+    </parameter>
+  </parameters>
+  <portletPreferences>
+    <portletPreference>
+        <name>content</name>
+        <values><value>
+            <![CDATA[
+                <img src="/uPortal/media/org/jasig/portal/channels/webproxy/whosonline.png" 
+                alt="uP3 Mock My Courses" border="0" />
+                
+                <p>Mock of Who's Online.  This is a sample screen for 
+                demonstration purposes only.</p>
+                
+            ]]>
+        </value></values>
+    </portletPreference>
+  </portletPreferences>
+</channel-definition>
