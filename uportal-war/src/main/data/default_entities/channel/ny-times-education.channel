@@ -1,9 +1,9 @@
 
 <channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
-  <title>Salon.com</title>
-  <name>Salon.com</name>
-  <fname>salon</fname>
-  <desc>Salon.com channel</desc>
+  <title>NY Times - Education</title>
+  <name>NY Times Education</name>
+  <fname>ny-times-education</fname>
+  <desc>Recent education news from the New York Times.</desc>
   <type>RSS</type>
   <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
   <timeout>10000</timeout>
@@ -41,11 +41,11 @@
   <portletPreferences>
     <portletPreference> 
       <name>name</name>
-      <values><value>Salon</value></values>
+      <values><value>New York Times: Education</value></values>
     </portletPreference>
     <portletPreference> 
       <name>url</name>
-      <values><value>http://www.salon.com/feed/RDF/salon_use.rdf</value></values>
+      <values><value>http://feeds.nytimes.com/nyt/rss/Education</value></values>
     </portletPreference>
     <portletPreference> 
       <name>summaryView</name>
