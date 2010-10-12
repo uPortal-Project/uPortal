@@ -6,11 +6,6 @@
 
 package org.jasig.portal.rendering;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -25,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
@@ -42,7 +36,6 @@ import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
 import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.portal.xml.XmlUtilities;
 import org.junit.Test;
 
 /**
@@ -53,14 +46,7 @@ public class StAXSerializingComponentTest {
 
     @Test
     public void testSerializing() throws Exception {
-        final XmlUtilities xmlUtilities = createMock(XmlUtilities.class);
-        
-        expect(xmlUtilities.getXmlOutputFactory()).andReturn(XMLOutputFactory.newFactory());
-        
         final StAXSerializingComponent staxSerializingComponent = new StAXSerializingComponent();
-        staxSerializingComponent.setXmlUtilities(xmlUtilities);
-        
-        replay(xmlUtilities);
         
         //Setup a simple pass-through parent
         staxSerializingComponent.setParentComponent(new SimpleStAXSource());
@@ -147,8 +133,6 @@ public class StAXSerializingComponentTest {
         }
         
         assertFalse("The number of events returned by the eventReader is more than the expected event count of: " + expectedEvents.size(), eventItr.hasNext());
-        
-        verify(xmlUtilities);
     }
     
     private static final class SimpleStAXSource implements StAXPipelineComponent {
