@@ -287,9 +287,6 @@ var uportal = uportal || {};
                                                 window.location = that.urlProvider.getTabUrl(getActiveTabId());
                                             }
                                         );
-                                        
-                                        // Reload the page until persistence is completed.
-                                        window.location = that.urlProvider.getTabUrl(getActiveTabId());
                                     }
                                 }
                             }
