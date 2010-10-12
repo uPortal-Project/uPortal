@@ -241,12 +241,6 @@
           <xsl:with-param name="TAB_POSITION" select="position()"/>
         </xsl:call-template>
       </xsl:if>
-      <!-- 
-      !!!! DEPRECATED !!!!
-      If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu.
-      <xsl:if test="$USE_AJAX='true' and $AUTHENTICATED='true' and @activeTab='true' and not($PORTAL_VIEW='focused')"> 
-        <xsl:call-template name="preferences.editpage"/>
-      </xsl:if> -->
     </li>
   
   </xsl:template>
@@ -407,57 +401,6 @@
   <!-- ================================================== -->
   
   
-  
-  <!-- ========= TEMPLATE: PREFERENCES EDIT PAGE ========= -->
-  <!-- =================================================== -->
-  <!--
-   | !!!! DEPRECATED !!!!
-   | !!!! Tab management has been redesigned and tab editing will no longer be rendered in the flyout !!!!
-   | This template renders the tab preferences menu for the active tab when flyout menus are used.
-  -->
-  <xsl:template name="preferences.editpage">
-      <div id="portalFlyoutNavigation_{@ID}" class="portal-flyout-container" style="display: none;"> <!-- Unique ID is needed for the flyout menus javascript. -->
-        
-        <div id="portalFlyoutNavigationInner_{@ID}" class="portal-flyout-container-inner">  <!-- Inner div for additional presentation/formatting options. -->
-          <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
-            <xsl:if test="not(@dlm:moveAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
-              <li id="movePageLeftLink" class="portal-subnav move-left">
-                <xsl:if test="position()=1">
-                  <xsl:attribute name="style">display: none;</xsl:attribute>
-                </xsl:if>
-                <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_LEFT_LONG_LABEL']}">
-                  <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_LEFT_LABEL']"/></span>
-                </a>
-              </li>
-              <li id="movePageRightLink" class="portal-subnav move-right">
-                <xsl:if test="position()=last()">
-                  <xsl:attribute name="style">display: none;</xsl:attribute>
-                </xsl:if>
-                <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_RIGHT_LONG_LABEL']}">
-                  <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_MOVE_TAB_RIGHT_LABEL']"/></span>
-                </a>
-              </li>
-            </xsl:if>
-            <xsl:if test="not(@dlm:deleteAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
-              <li id="deletePageLink" class="portal-subnav delete">
-              <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_DELETE_TAB_LONG_LABEL']}">
-                <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_DELETE_TAB_LABEL']"/></span>
-              </a>
-              </li>
-            </xsl:if>
-            <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-              <li id="editPagePermissionsLink" class="portal-subnav permissions">
-              <a href="javascript:;" class="portal-subnav-link" title="{$TOKEN[@name='PREFERENCES_LINK_EDIT_TAB_PERMISSIONS_LONG_LABEL']}">
-                <span class="portal-subnav-label"><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_EDIT_TAB_PERMISSIONS_LABEL']"/></span>
-              </a>
-              </li>
-            </xsl:if>
-          </ul>
-        </div> 
-      </div>
-  </xsl:template>
-  <!-- ============================================= -->
-	
   
   <!-- ========== TEMPLATE: FLYOUT MENU SCRIPTS ========== -->
   <!-- =================================================== -->
