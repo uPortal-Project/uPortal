@@ -1,0 +1,7 @@
+
+<channel-type script="classpath://org/jasig/portal/io/import-channel-type_v2-6.crn">
+  <name>CMS</name>
+  <type>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</type>
+  <desc>Displays configured HTML content after performing validation.</desc>
+  <uri>/org/jasig/portal/channels/CMS/CMSPortlet.cpd</uri>
+</channel-type>
