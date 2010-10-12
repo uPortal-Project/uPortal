@@ -47,8 +47,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     @Column(name = "ENCRPTD_PSWD", length = 256)
     private String password;
     
-//    @Column(name = "LST_PSWD_CGH_DT", nullable = false)
-    @Transient
+    @Column(name = "LST_PSWD_CGH_DT")
     private Date lastPasswordChange;
 
     @OneToMany(targetEntity = LocalAccountPersonAttributeImpl.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -218,6 +217,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     protected List<Object> getObjectValues(LocalAccountPersonAttributeImpl attribute) {
         final List<String> values = attribute.getValues();
         final List<Object> objValues = new ArrayList<Object>(values.size());
+        objValues.addAll(values);
         return Collections.unmodifiableList(objValues);
     }
     
