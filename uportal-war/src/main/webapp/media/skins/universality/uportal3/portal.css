@@ -62,8 +62,8 @@
 .fl-listmenu {-moz-border-radius:5px; -webkit-border-radius:5px; border-radius:5px;}
 
 /* Helper: fluid tabs. */
-.fl-theme-mist .fl-tabs {*padding: 0 0 5px 0;}
-.fl-theme-mist .fl-tabs li {*display:inline; *padding: 5px 20px 6px 20px;}
+.fl-theme-mist .fl-tabs {*padding: 0 0 0 0;}
+.fl-theme-mist .fl-tabs li {*display:inline; *padding: 5px 20px 5px 20px;}
 /* 
 ------------------------------------
   jQuery UI overrides.
@@ -199,7 +199,7 @@
 .up #webSearchContainer #webSearchSubmit:focus { cursor:pointer; color:#000 !important; border-color:#F90; }
 
 /* Navigation */
-.up #portalNavigationInner {border-bottom: none; background-color: #375695; *padding-top: 5px}
+.up #portalNavigationInner {border-bottom: none; background-color: #375695;}
 .up #portalNavigationList .portal-navigation {background:#5E7EC4; background-image:-moz-linear-gradient(0% 100% 90deg,#3E61A8, #4065AF, #4065AF 50%,#5e7ec4 0%);
     background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#5E7EC4), to(#3E61A8), color-stop(.5,#5e7ec4),color-stop(.5,#4065AF)); border-top: none;
     border-left: 1px solid #708CC3; border-right: 1px solid #465E93; border-left:1px solid rgba(255,255,255,0.25); border-right:1px solid rgba(0,0,0,0.25);}

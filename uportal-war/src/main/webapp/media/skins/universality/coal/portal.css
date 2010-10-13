@@ -60,6 +60,9 @@
 .fl-widget-content,
 .fl-listmenu {-moz-border-radius:5px; -webkit-border-radius:5px; border-radius:5px;}
 
+/* Helper: fluid tabs. */
+.fl-theme-coal .fl-tabs {*padding: 0 0 0 0;}
+.fl-theme-coal .fl-tabs li {*display:inline; *padding: 5px 20px 5px 20px;}
 
 /* 
 ------------------------------------
@@ -172,7 +175,7 @@ html,
 
 /* Portal Page Bar */
 .up #portalPageBar {text-align:right; text-transform:uppercase;}
-.up #portalPageBarLinks {float:right;}
+.up #portalPageBarLinks {display: inline;}
 .up #portalPageBarLinks,
 .up #portalPageBarLinks a {color:#999; text-decoration:none;}
 .up #portalPageBarLinks a:hover,
@@ -216,64 +219,50 @@ html,
 
 /* Navigation */
 .up #portalNavigation {background-color:#000;}
-.up #portalNavigationInner {}
-.up #portalNavigation .fl-tabs,
-.up #portalNavigation .fl-tabs li,
-.up #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:none;}
-.up #portalNavigation .fl-tabs {padding:5px 0; text-align:left;}
-.up #portalNavigation .fl-tabs > li {position:relative; margin-right:2px; padding:5px 0;}
-.up #portalNavigation .fl-tabs > li > a {
-	border:1px solid #666;
-	border:1px solid rgba(153,153,153,.5);
-	border-bottom:none;
-	-webkit-border-top-left-radius: 5px;
-	-webkit-border-top-right-radius: 5px;
-	-moz-border-radius-topleft: 5px;
-	-moz-border-radius-topright: 5px;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-	padding:5px 20px;
-	background:#333 url(../common/images/light_top_15px_30.png) top left repeat-x;
-	background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#222222), to(#333333), color-stop(.5,#333333),color-stop(.5,#000000));
-	background-image:-moz-linear-gradient(0% 100% 90deg,#333333, #000000, #222222 50%,#333333 0%);
-	text-transform:uppercase;
-	text-shadow:0 -1px 1px rgba(0,0,0,.5);
-	color:#999 !important;	
-}
-*:first-child+html .up #portalNavigation .fl-tabs,
-*:first-child+html .up #portalNavigation .fl-tabs li.portal-navigation {padding:0;} /* hack needed for IE7 */
-.up #portalNavigation .fl-tabs > li a:hover,
-.up #portalNavigation .fl-tabs > li a:focus {background:#333; color:#fff !important; border-color:#333;}
-.up #portalNavigation .fl-tabs > .fl-tabs-active > a,
-.up #portalNavigation .fl-tabs > .fl-tabs-active > a:hover {
-	background-color:#000;
-	color:#fff !important;
-	border-color:#999;
-	border-color:rgba(204,204,204,8);
-	background-image:-moz-linear-gradient(0% 100% 90deg,#333333, #000000, #222222 50%,#666666 0%);
-	background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#222222), to(#333333), color-stop(.5,#666666),color-stop(.5,#000000)); 
-	text-shadow:-1px -1px 1px rgba(0,0,0,.7);
-}
+.up #portalNavigationInner {border-bottom: none; *padding-top: 5px;}
+.up #portalNavigationList .portal-navigation {border:1px solid #666; border:1px solid rgba(153,153,153,.5); border-bottom:none; -webkit-border-top-left-radius: 5px; -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px; background:#333 url(../common/images/light_top_15px_30.png) top left repeat-x;
+    background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#222222), to(#333333), color-stop(.5,#333333),color-stop(.5,#000000)); background-image:-moz-linear-gradient(0% 100% 90deg,#333333, #000000, #222222 50%,#333333 0%);
+    text-transform:uppercase; text-shadow:0 -1px 1px rgba(0,0,0,.5); margin-right:2px;}
+.up #portalNavigationList .portal-navigation:hover,
+.up #portalNavigationList .portal-navigation:focus {background:#333; background:#333 url(../common/images/light_top_15px_30.png) top left repeat-x; border-color:#333;}
+.up #portalNavigationList .portal-navigation .portal-navigation-link {color:#999 !important;}
+.up #portalNavigationList .portal-navigation:hover .portal-navigation-link,
+.up #portalNavigationList .portal-navigation:focus .portal-navigation-link {color:#FFF !important;}
+.up #portalNavigationList .active,
+.up #portalNavigationList .active:hover,
+.up #portalNavigationList .active:focus {background-color:#000; border-color:#999; border-color:rgba(204,204,204,8); background-image:-moz-linear-gradient(0% 100% 90deg,#333333, #000000, #222222 50%,#666666 0%);
+    background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#222222), to(#333333), color-stop(.5,#666666),color-stop(.5,#000000)); text-shadow:-1px -1px 1px rgba(0,0,0,.7);}
+.up #portalNavigationList .active .portal-navigation-link,
+.up #portalNavigationList .active:hover .portal-navigation-link,
+.up #portalNavigationList .active:focus .portal-navigation-link {color:#FFF !important;}
+/* Navigation: icons */
+.up #portalNavigation .portal-navigation-add {color: #999;}
+.up #portalNavigation .portal-navigation-add:hover {color: #DDD;}
+/* Navigation: avatar */
+.up .fl-reorderer-header-avatar {background-color: #000; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; -moz-box-shadow: 0px 0px 4px 0px #333; -webkit-box-shadow: 0px 0px 4px 0px #333;
+    box-shadow: 0px 0px 4px 0px #333;}
+.up .fl-reorderer-header-avatar .portal-navigation-link {color: #FFF !important; text-transform: uppercase; text-decoration: none; font-weight: bold;}
+/* Navigation: dropMarker */
+.fl-reorderer-header-dropMarker {margin: 0 2px 0 0 !important; }
+/* Navigation: flyout */
+.up #portalNavigation .portal-flyout-container {background-color:#000;
+    -webkit-border-bottom-left-radius: 5px; -webkit-border-bottom-right-radius: 5px; -moz-border-radius-bottomright: 5px; -moz-border-radius-bottomleft: 5px; border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px; -webkit-box-shadow:4px 4px 8px rgba(0,0,0,.5);  -moz-box-shadow:4px 4px 8px rgba(0,0,0,.5); box-shadow:4px 4px 8px rgba(0,0,0,.5);}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list li a {background-color:#000; color:#CCC !important;}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav .portal-subnav-link:hover,
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav .portal-subnav-link:focus {background-color:#F90;}
 
-/* Flyout Navigation */
-.up #portalNavigation .portal-flyout-container {
-	background-color:#000;
-	padding-bottom:1px;
-	border:4px solid #333;
-	-webkit-border-bottom-left-radius: 5px;
-	-webkit-border-bottom-right-radius: 5px;
-	-moz-border-radius-bottomright: 5px;
-	-moz-border-radius-bottomleft: 5px;
-	border-bottom-right-radius: 5px;
-	border-bottom-left-radius: 5px;
-	-webkit-box-shadow:4px 4px 8px rgba(0,0,0,.5); 
-	-moz-box-shadow:4px 4px 8px rgba(0,0,0,.5);
-	box-shadow:4px 4px 8px rgba(0,0,0,.5);
-}
-.up #portalNavigation .fl-tabs .portal-flyout-container li a {padding:0.7em 2em; border-top:1px solid #333; background-color:#000; color:#ccc !important; font-size:85%; }
-.up #portalNavigation .fl-tabs .portal-flyout-container li:first-child a {border:none;}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:hover,
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:focus {color:#fff !important; background-color:#F90;}
+/* Edit Permisssions */
+.up #portalEditPagePermissions {}
+.up #editPagePermissionsLink {padding-bottom: 5px; color: #999; text-decoration: none;}
+.up #editPagePermissionsLink:hover {color: #DDD; text-decoration: underline;}
+
+/* Customize Page Message */
+.up #portalPageBodyCustomizeMessageRow {}
+.up #portalPageBodyCustomizeMessageRowContents {
+    border: 2px solid #F90; -webkit-border-radius: 7px; -moz-border-radius: 7px; border-radius: 7px;}
+.up #portalPageBodyCustomizeMessageRowContents h1 {color: #333;}
 
 /* Body */
 .up #portalPageBody {background:#333 url(images/page_bg_flat.png) repeat 0 0; border-top:1px solid #666;}

@@ -84,7 +84,7 @@
 .fl-theme-mist .fl-grid li { background-color:#dfefff; border:1px solid #000000 }
 .fl-theme-mist .fl-grid .caption { background-color:#dfefff; color:#5a95cf; }
 /* Helper: fluid tabs. */
-.fl-theme-mist .fl-tabs {*padding: 0 0 5px 0;}
+.fl-theme-mist .fl-tabs {*padding: 0 0 0 0;}
 .fl-theme-mist .fl-tabs li {*display:inline; *padding: 5px 20px 5px 20px;}
 /* Helper: Widgets */
 /* Widget core */
@@ -197,17 +197,17 @@ html { background-color:#E6EEFB; }
 .up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav .portal-subnav-link:focus {color:#FFF; background-color: #4C5D82;}
 
 /* Edit Permisssions */
-.up #editPagePermissionsLink {float: right; display: block; margin-top: .75em; margin-right: 2em;}
-
-/* Body */
-.up #portalPageBodyInner {padding:2.5em 2em;}
-.up #portalPageBodyTitleRow h1 {display:none;}
+.up #editPagePermissionsLink {}
 
 /* Customize Page Message */
 .up #portalPageBodyCustomizeMessageRow {background: transparent;}
 .up #portalPageBodyCustomizeMessageRowContents {border: 2px solid #336699;}
 .up #portalPageBodyCustomizeMessageRowContents h1 {font-weight: normal; color: #333; text-decoration: none;}
 .up #portalPageBodyCustomizeMessageRowContents .fl-font-blue {color: #336699; font-weight: bold;}
+
+/* Body */
+.up #portalPageBodyInner {padding:2.5em 2em;}
+.up #portalPageBodyTitleRow h1 {display:none;}
 
 /* Customize/Gallery */
 

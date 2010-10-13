@@ -163,7 +163,7 @@
 .layout-1-columns #portalPageBodyColumns .fl-col-flex {margin:0;}
 
 
-/* Reset: fluid tabs. */
+/* Reset: tabs. */
 .fl-tabs {margin: 0 0 0 0; border-bottom: none; text-align: inherit; padding-bottom:0;}
 .fl-tabs li {list-style-type: none; display:inline;}
 .fl-tabs li a {padding:0 0 0 0; background-color: transparent; margin-left: 0; *margin-bottom: 0px; zoom:1; border: none; color:#999;}
@@ -174,11 +174,10 @@
 .fl-tabs-left {text-align: left; padding-left: 10px;}
 .fl-tabs-right {text-align: right; padding-right: 15px;}
 
-
-/* Reset: fluid tabs for mist. */
+/* Reset: mist. */
 .fl-theme-mist .fl-tabs {border: none; border-bottom: none; margin: 0; padding-bottom: 0;}
 .fl-theme-mist .fl-tabs li,
-.fl-theme-mist .fl-tabs li a {font-weight: normal; border: none; background-color: transparent; color: #555555;}
+.fl-theme-mist .fl-tabs li a {font-weight: bold; border: none; background-color: transparent; color: #555555;}
 .fl-theme-mist .fl-tabs li a:hover {background-color: transparent; color: #222222 !important;}
 .fl-theme-mist .fl-tabs li.fl-activeTab,
 .fl-theme-mist .fl-tabs li.fl-activeTab:hover,
@@ -189,10 +188,23 @@
 .fl-theme-mist .fl-tabs li.fl-tabs-active a:hover {background-color: transparent; color: #222222 !important;}
 .fl-theme-mist .fl-tabs-content {background-color: transparent; border: none; margin-top: 0;}
 
+/* Reset: coal. */
+.fl-theme-coal .fl-tabs {}
+.fl-theme-coal .fl-tabs li,
+.fl-theme-coal .fl-tabs li a {font-weight: bold; color: #FFF !important; background-color: transparent; text-decoration: none;}
+.fl-theme-coal .fl-tabs li a:hover {background-color: transparent; color:#FFF !important;}
+.fl-theme-coal .fl-tabs li.fl-activeTab,
+.fl-theme-coal .fl-tabs li.fl-activeTab:hover,
+.fl-theme-coal .fl-tabs li.fl-activeTab a,
+.fl-theme-coal .fl-tabs li.fl-activeTab a:hover,
+.fl-theme-coal .fl-tabs li.fl-tabs-active,
+.fl-theme-coal .fl-tabs li.fl-tabs-active a,
+.fl-theme-coal .fl-tabs li.fl-tabs-active a:hover {background-color: transparent; color:#000 !important;}
+.fl-theme-coal .fl-tabs-content {background-color: transparent; color:#000; border: none;}
 
-/* Set: fluid tabs for mist. */
+/* Set: mist. */
 .fl-theme-mist .fl-tabs {padding: 0 0 0 0; text-align: left;}
-.fl-theme-mist .fl-tabs li {display: inline-block; *display:inline; position: relative; background-color: #EDEDED; padding: 5px 20px 5px 20px; border-left: 1px solid #EFEFEF; border-right: 1px solid #D3D3D3;
+.fl-theme-mist .fl-tabs li {display: inline-block; position: relative; background-color: #EDEDED; padding: 5px 20px 5px 20px; border-left: 1px solid #EFEFEF; border-right: 1px solid #D3D3D3;
     border-top: 1px solid #D3D3D3; cursor: pointer; white-space: nowrap;}
 .fl-theme-mist .fl-tabs li:hover {background-color: #DADADA;}
 .fl-theme-mist .fl-tabs li.fl-tabs-active,
@@ -200,6 +212,15 @@
 .fl-theme-mist .fl-tabs li.fl-activeTab,
 .fl-theme-mist .fl-tabs li.fl-activeTab:hover {background-color: #FFF;}
 
+/* Set: coal. */
+.fl-theme-coal .fl-tabs {padding: 0 0 0 0; text-align: left;}
+.fl-theme-coal .fl-tabs li {display: inline-block; position: relative; background-color: #666; padding: 5px 20px 5px 20px; border-left: 1px solid #333; border-right: 1px solid #333;
+    border-top: 1px solid #333; cursor: pointer; white-space: nowrap;}
+.fl-theme-coal .fl-tabs li:hover {background-color: #333;}
+.fl-theme-coal .fl-tabs li.fl-tabs-active,
+.fl-theme-coal .fl-tabs li.fl-tabs-active:hover,
+.fl-theme-coal .fl-tabs li.fl-activeTab,
+.fl-theme-coal .fl-tabs li.fl-activeTab:hover {background-color: #EBEBEB;}
 
 /* 
 ------------------------------------
@@ -365,13 +386,16 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Navigation: z-index (Fix for IE) */
 .on-top {z-index:1000000;}
 
+/* Edit Permisssions */
+#portalEditPagePermissions {}
+#editPagePermissionsLink {float: right; display: block; margin-top: .75em; margin-right: 2em;}
+
 /* Customize Page Message */
 #portalPageBodyCustomizeMessageRow {background: transparent; padding-top: 4px; margin-bottom: 1em;}
 #portalPageBodyCustomizeMessageRowContents {
     background-color: #FFF; padding: 10px 20px; border: 1px solid #000;}
 #portalPageBodyCustomizeMessageRowContents h1 {margin: 0 0 .3em 0; font-weight: normal; border: none;}
-#portalPageBodyCustomizeMessageRowContents .fl-font-blue {}
-
+#portalPageBodyCustomizeMessageRowContents .fl-font-blue {font-weight: bold;}
 
 /* quicklinks */
 #portalQuicklinks {}
