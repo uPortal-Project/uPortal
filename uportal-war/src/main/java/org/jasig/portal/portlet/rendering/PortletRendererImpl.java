@@ -217,7 +217,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing render.", portletWindow, pe);
         }
         catch (PortletContainerException pce) {
-            throw new PortletDispatchException("The portlet container threw an exception while executing action on portlet window '" + portletWindow + "'.", portletWindow, pce);
+            throw new PortletDispatchException("The portlet container threw an exception while executing render on portlet window '" + portletWindow + "'.", portletWindow, pce);
         }
         catch (IOException ioe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing render.", portletWindow, ioe);
@@ -232,7 +232,42 @@ public class PortletRendererImpl implements IPortletRenderer {
         return new PortletRenderResult(title, System.currentTimeMillis() - start);
     }
     
-    @Override
+    /* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.rendering.IPortletRenderer#doServeResource(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.Writer)
+	 */
+	@Override
+	public PortletResourceResult doServeResource(
+			IPortletWindowId portletWindowId,
+			HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse) {
+		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+		
+		final Map<String, String[]> parameters = portletWindow.getRequestParameters();
+        
+        //Setup the request and response
+        httpServletRequest = this.setupPortletRequest(httpServletRequest, portletWindow, parameters);
+        
+	    final long start = System.currentTimeMillis();
+		try {
+			this.portletContainer.doServeResource(portletWindow, httpServletRequest, httpServletResponse);
+		}
+		catch (PortletException pe) {
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, pe);
+        }
+        catch (PortletContainerException pce) {
+            throw new PortletDispatchException("The portlet container threw an exception while executing serveResource on portlet window '" + portletWindow + "'.", portletWindow, pce);
+        }
+        catch (IOException ioe) {
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, ioe);
+        }
+        final String title = (String)httpServletRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE);
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Retrieved title '" + title + "' from resource request for: " + portletWindow);
+        }
+		return new PortletResourceResult(System.currentTimeMillis() - start);
+	}
+	
+	@Override
     public void doReset(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         

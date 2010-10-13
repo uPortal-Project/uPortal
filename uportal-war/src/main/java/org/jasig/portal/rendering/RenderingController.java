@@ -103,6 +103,25 @@ public class RenderingController {
             sendRedirect(portalUrl, response);
         }
     }
+    
+    /**
+     * 
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(headers="org.jasig.portal.url.UrlType=RESOURCE")
+    public void resourceRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    	final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(request);
+        final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
+        if (portletRequestInfo != null) {
+            final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
+            this.portletExecutionManager.doPortletServeResource(targetWindowId, request, response);
+        } else {
+        	this.logger.error("portletRequestInfo was null for resourceRequest");
+        }
+    }
+    
     private void sendRedirect(final IBasePortalUrl portalUurl, HttpServletResponse response) throws IOException {
         final String url = portalUurl.getUrlString();
         final String encodedUrl = response.encodeRedirectURL(url);

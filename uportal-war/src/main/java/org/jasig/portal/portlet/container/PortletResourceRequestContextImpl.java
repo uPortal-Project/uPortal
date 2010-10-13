@@ -29,6 +29,7 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResourceRequestContext;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.url.IPortletRequestInfo;
 
 /**
  * @author Eric Dalquist
@@ -36,11 +37,14 @@ import org.jasig.portal.portlet.om.IPortletWindow;
  */
 public class PortletResourceRequestContextImpl extends PortletRequestContextImpl implements PortletResourceRequestContext {
 
+	private final IPortletRequestInfo portletRequestInfo;
+	
     public PortletResourceRequestContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager) {
+            IRequestPropertiesManager requestPropertiesManager, IPortletRequestInfo portletRequestInfo) {
         
         super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager);
+        this.portletRequestInfo = portletRequestInfo;
     }
 
     /* (non-Javadoc)
@@ -48,8 +52,7 @@ public class PortletResourceRequestContextImpl extends PortletRequestContextImpl
      */
     @Override
     public String getCacheability() {
-        // TODO See constants on javax.portlet.ResourceURL
-        return null;
+        return this.portletRequestInfo.getCacheability();
     }
 
     /* (non-Javadoc)
@@ -66,8 +69,7 @@ public class PortletResourceRequestContextImpl extends PortletRequestContextImpl
      */
     @Override
     public String getResourceID() {
-        // TODO read the portlet spec about resource ids?
-        return null;
+       return this.portletRequestInfo.getResourceId();
     }
 
 }

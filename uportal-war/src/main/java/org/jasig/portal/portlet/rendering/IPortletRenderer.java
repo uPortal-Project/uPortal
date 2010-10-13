@@ -104,6 +104,16 @@ public interface IPortletRenderer {
     public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer);
     
     /**
+     * Executes a portlet resource request.
+     * 
+     * @param portletWindowId
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @param writer
+     * @return
+     */
+    public PortletResourceResult doServeResource(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+    /**
      * Resets a portlet's window data to the defaults and clears all portlet scoped session data
      * 
      * @param portletWindowId Portlet to target with the render

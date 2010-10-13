@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlet.rendering;
 
-import java.io.IOException;
 import java.io.Writer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +49,13 @@ public interface IPortletExecutionManager {
      */
     public void startPortletRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
+    /**
+     * 
+     * @param portletWindowId
+     * @param request
+     * @param response
+     */
+    public void doPortletServeResource(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
     /**
      * @see #isPortletRenderRequested(IPortletWindowId, HttpServletRequest, HttpServletResponse)

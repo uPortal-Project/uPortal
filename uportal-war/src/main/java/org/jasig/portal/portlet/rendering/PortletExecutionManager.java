@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.rendering;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Locale;
@@ -218,8 +219,42 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     public void startPortletRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
         this.startPortletRenderInternal(portletWindowId, request, response);
     }
+    
+    
 
     /* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#serveResource(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	public void doPortletServeResource(IPortletWindowId portletWindowId,
+			HttpServletRequest request, HttpServletResponse response) {
+		final int timeout = getPortletRenderTimeout(portletWindowId, request);
+		
+		PortletResourceExecutionWorker resourceWorker = new PortletResourceExecutionWorker(portletThreadPool, portletWindowId, request, response);
+		resourceWorker.submit();
+        
+        try {
+        	final PortletResourceResult resourceResult = resourceWorker.get(timeout);
+			final Long actualExecutionTime = resourceResult.getRenderTime();
+			// TODO publish portlet resource event
+		} catch (Exception e) {
+			//log the exception
+			this.logger.error("resource worker failed with exception", e);
+			// render generic serveResource error
+			try {
+				if(!response.isCommitted()) {
+					response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "resource unavailable");
+				}
+			} catch (IOException e1) {
+				logger.fatal("caught IOException trying to send error response for failed resource worker", e);
+			}
+		}
+	}
+	
+
+	
+
+	/* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletRenderRequested(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
@@ -754,6 +789,37 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         public String getOutput() {
             return this.output;
         }
+    }
+    
+    private class PortletResourceExecutionWorker extends PortletExecutionWorker<PortletResourceResult> {
+
+    	//private String output = null;
+		public PortletResourceExecutionWorker(ExecutorService executorService,
+				IPortletWindowId portletWindowId, HttpServletRequest request,
+				HttpServletResponse response) {
+			super(executorService, portletWindowId, request, response);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.jasig.portal.portlet.rendering.PortletExecutionManager.PortletExecutionWorker#callInternal()
+		 */
+		@Override
+		protected PortletResourceResult callInternal() throws Exception {
+			//final StringWriter writer = new StringWriter();
+            final PortletResourceResult result = portletRenderer.doServeResource(portletWindowId, request, response);
+            //this.output = writer.toString();
+            return result;
+		}
+
+		/**
+		 * @return the output
+		 */
+		/*
+		public String getOutput() {
+			return output;
+		}
+		*/
+    	
     }
     
     private class PortletFailureExecutionWorker extends PortletRenderExecutionWorker {
