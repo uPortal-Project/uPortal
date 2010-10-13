@@ -30,45 +30,48 @@ var uportal = uportal || {};
         
         // set the mouseover event
         $(that.container).mouseover(function(){
+            var tab, flyout, flyoutList, foTop, foLeft;
             
-            //Show first so calculations are accurate
-            that.openFlyout();
+            // Cache DOM elements.
+            tab = $(this);
+            flyout = that.locate('flyoutMenu');
+            flyoutList = that.locate('flyoutList');
             
-            var tab = $(this);
-            var flyout = that.locate('flyoutMenu');
+            // Only open flyout if it contains content.
+            if (flyoutList.html() !== "") {
+                that.openFlyout();
+            }//end:if.
             
-            var foTop;
-            var foLeft;
-            if (that.options.orientation == 'horizontal') {
-                if (that.options.horzalign == 'left') {
+            // Horizontal.
+            if (that.options.orientation === 'horizontal') {
+                // Left.
+                if (that.options.horzalign === 'left') {
                     foLeft = 0;
-                }
-                else {
+                } else {
                     foLeft = tab.outerWidth() - flyout.outerWidth();
-                }
+                }//end:if.
                 
-                if (that.options.vertalign == 'bottom') {
-                    foTop = tab.outerHeight();
-                }
-                else {
+                // Bottom.
+                if (that.options.vertalign === 'bottom') {
+                    foTop = (tab.outerHeight() - that.options.offset);
+                } else {
                     foTop = flyout.outerHeight() * -1;
-                }
-            }
-            else {
-                if (that.options.horzalign == 'left') {
+                }//end:if.
+            } else {
+                // Left.
+                if (that.options.horzalign === 'left') {
                     foLeft = flyout.outerWidth() * -1;
-                }
-                else {
+                } else {
                     foLeft = tab.outerWidth();
-                }
+                }//end:if.
                 
+                // Bottom.
                 if (that.options.vertalign == 'bottom') {
                     foTop = 0;
-                }
-                else {
+                } else {
                     foTop = (flyout.outerHeight() - tab.outerHeight()) * -1;
-                }
-            }
+                }//end:if.
+            }//end:if.
             
             // set the mouseout event
             $(that.container).mouseout(function(){
@@ -100,10 +103,10 @@ var uportal = uportal || {};
                     // If it's positioned,
                     if (pos == "relative" || pos == "absolute" || pos == "fixed") {
                         /*
-                         * Add the "ieZindex-fix_on-top" class name This class is defined in:
-                         *  uportal-war/src/main/webapp/media/skins/universality/common/css/layout.css
+                         * Add the "on-top" class name This class is defined in:
+                         * uportal-war/src/main/webapp/media/skins/universality/common/css/layout-portal.css
                          */
-                        $(this).addClass("ieZindex-fix_on-top");
+                        $(this).addClass(that.options.styles.onTop);
                     }
                 });
                 
@@ -135,8 +138,13 @@ var uportal = uportal || {};
         orientation: 'horizontal',
         horzalign: 'left',
         vertalign: 'bottom',
+        offset: 1,
         selectors: {
-            flyoutMenu: '.portal-flyout-container'
+            flyoutMenu: '.portal-flyout-container',
+            flyoutList: '.portal-subnav-list'
+        },
+        styles: {
+            onTop: "on-top"
         }
     });
     

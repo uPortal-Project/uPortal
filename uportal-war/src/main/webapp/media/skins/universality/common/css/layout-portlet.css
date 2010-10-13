@@ -379,7 +379,7 @@ ul.permission_info li.last {border-right:none;}
  * is defined here:
  *  uportal-war/src/main/webapp/media/skins/universality/common/javascript/uportal/flyout-nav.js
  */
-.ieZindex-fix_on-top
+on-top
 {
   z-index: 10000;
 }

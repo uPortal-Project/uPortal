@@ -53,7 +53,7 @@
  */
 
 .fl-theme-mist :focus, 
-.fl-theme-mist .selectable {  }
+.fl-theme-mist .selectable {outline: none;}
 .fl-theme-mist { color:#344461; font-size:90%; border-color:#000; }
 .fl-theme-mist a { color:#2758b3; text-decoration:none; }
 .fl-theme-mist a:hover { color:#39f; text-decoration:underline; }
@@ -72,19 +72,6 @@
 .fl-theme-mist .fl-button-left { background-image:url(../images/themes/mist/buttons-med-cap.png); }
 .fl-theme-mist .fl-button-right { background-image:url(../images/themes/mist/buttons-med-cap.png); }
 .fl-theme-mist .fl-button-inner { background-image:url(../images/themes/mist/buttons-med-bg.png); }
-/* Helper: Tabs */
-.fl-theme-mist .fl-tabs { border-bottom-color:#000000; }
-.fl-theme-mist .fl-tabs li, 
-.fl-theme-mist .fl-tabs li a { font-weight:bold; color:#293b5a; border-color:#000000; border-bottom-color:#000000; text-decoration:none; background-color:#dfefff; }
-.fl-theme-mist .fl-tabs li a:hover { background-color:#5a95cf; color:#fff; }
-.fl-theme-mist .fl-tabs li.fl-activeTab, /* Deprecated syntax */
-.fl-theme-mist .fl-tabs li.fl-activeTab:hover, 
-.fl-theme-mist .fl-tabs li.fl-activeTab a, 
-.fl-theme-mist .fl-tabs li.fl-activeTab a:hover, /* New syntax */
-.fl-theme-mist .fl-tabs li.fl-tabs-active, 
-.fl-theme-mist .fl-tabs li.fl-tabs-active a, 
-.fl-theme-mist .fl-tabs li.fl-tabs-active a:hover { background-color: #f4f4f4; border-bottom-color:#f4f4f4; color:#000; }
-.fl-theme-mist .fl-tabs-content { background-color:#f4f4f4; color:#000; border:1px solid #61c5ff; border-top:none; margin-top:-4px; }
 /* Helper: Menu */
 .fl-theme-mist .fl-listmenu { border:1px solid #000000; border-bottom-width:2px; background-color:#fff; }
 .fl-theme-mist .fl-listmenu li, 
@@ -96,6 +83,9 @@
 .fl-theme-mist .fl-grid { border:2px solid #000000; background-color:#fff; }
 .fl-theme-mist .fl-grid li { background-color:#dfefff; border:1px solid #000000 }
 .fl-theme-mist .fl-grid .caption { background-color:#dfefff; color:#5a95cf; }
+/* Helper: fluid tabs. */
+.fl-theme-mist .fl-tabs {*padding: 0 0 5px 0;}
+.fl-theme-mist .fl-tabs li {*display:inline; *padding: 5px 20px 5px 20px;}
 /* Helper: Widgets */
 /* Widget core */
 .fl-theme-mist .fl-widget { background:#efefef url(../images/themes/mist/widget-bg.png) repeat-x top left; border:1px solid #CCCCCC; }
@@ -151,7 +141,7 @@ html { background-color:#E6EEFB; }
 
 /* Portal Page Bar */
 .up #portalPageBar {padding:0.4em 2em; background:#180884 url("images/headerbar.jpg") 0 0 repeat-x; color:#9999cc; text-align:right; text-transform:uppercase;}
-.up #portalPageBarLinks {float:right;}
+.up #portalPageBarLinks {display: inline;}
 .up #portalPageBarLinks,
 .up #portalPageBarLinks a {color:#E6EEFB; text-decoration:none;}
 .up #portalPageBarLinks a:hover,
@@ -179,49 +169,45 @@ html { background-color:#E6EEFB; }
 .up #webSearchContainer #webSearchSubmit:focus { cursor:pointer; color:#000 !important; border-color:#F90; }
 
 /* Navigation */
-.up #portalNavigation {background-color:#4c5d82;}
-.up #portalNavigationInner {}
-.up #portalNavigation .fl-tabs,
-.up #portalNavigation .fl-tabs li,
-.up #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:none;}
-.up #portalNavigation .fl-tabs {padding:5px 0; text-align:left; border:none;}
-.up #portalNavigation .fl-tabs > li {position:relative; margin-right:2px; padding:5px 0;}
-.up #portalNavigation .fl-tabs > li > a {
-	border:1px solid #000;
-	border:1px solid rgba(0,0,0,.8);
-	border-bottom:none;
-	padding:5px 20px;
-	background:#9999cc url(images/tab.gif) 0 0 repeat-x;
-	text-transform:uppercase;
-	text-shadow:0 1px 1px rgba(255,255,255,.5);	
-}
-*:first-child+html .up #portalNavigation .fl-tabs,
-*:first-child+html .up #portalNavigation .fl-tabs li.portal-navigation {padding:0;} /* hack needed for IE7 */
-.up #portalNavigation .fl-tabs > li > a:hover,
-.up #portalNavigation .fl-tabs > li > a:focus {background:#9999cc url(images/tab_hover.gif) 0 0 repeat-x; color:#000;}
-.up #portalNavigation .fl-tabs > .fl-tabs-active > a,
-.up #portalNavigation .fl-tabs > .fl-tabs-active > a:hover {
-	background:#E6EEFB url(images/tab_selected.gif) top left repeat-x;
-}
+.up #portalNavigationInner {border-bottom: none; padding: 5px 2em 0 2em; background-color: #4C5D82;}
+.up #portalNavigationList {}
+.up #portalNavigationList .portal-navigation {border:1px solid #000; margin-right:2px; border:1px solid rgba(0,0,0,.8); border-bottom:none; background: #9999CC url("images/tab.gif") 0 0 repeat-x;
+    text-transform:uppercase; text-shadow:0 1px 1px rgba(255,255,255,.5);}
+.up #portalNavigationList .portal-navigation:hover {background: #9999CC url("images/tab_hover.gif") 0 0 repeat-x;}
+.up #portalNavigationList .portal-navigation:hover .portal-navigation-link {color: #000;}
+.up #portalNavigationList .portal-navigation.first {border-left: 1px solid #000000;}
+.up #portalNavigationList .portal-navigation-link {font-weight:bold; color:#293b5A; text-decoration:none;}
+.up #portalNavigationList .active,
+.up #portalNavigationList .active:hover {background: #E6EEFB url("images/tab_selected.gif") top left repeat-x;}
+.up #portalNavigationList .single.active {border-left: 1px solid #000000;}
+/* Navigation: icons */
+.up #portalNavigation .portal-navigation-add {background: transparent url("images/add.png") 0px 0px no-repeat; color: #FFF; top: 3px;}
+.up #portalNavigation .portal-navigation-gripper {background: transparent url("images/gripper.png") 0px 0px no-repeat;}
+.up #portalNavigation .portal-navigation-delete {background: transparent url("images/remove.png") 0px 0px no-repeat;}
+/* Navigation: avatar */
+.up .fl-reorderer-header-avatar {-webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; -moz-box-shadow: 0px 0px 4px 0px #333;
+    -webkit-box-shadow: 0px 0px 4px 0px #333; box-shadow: 0px 0px 4px 0px #333; background: #E6EEFB url("images/tab_selected.gif") top left repeat-x;}
+.up .fl-reorderer-header-avatar .portal-navigation-link {color: #000000 !important; text-transform: uppercase; text-decoration: none;}
+.up .fl-reorderer-header-avatar .portal-navigation-delete {background: transparent url("images/remove.png") 0px 0px no-repeat;}
+.up .fl-reorderer-header-avatar .portal-navigation-gripper {background: transparent url("images/gripper.png") 0px 0px no-repeat;}
+/* Navigation: flyout */
+.up #portalNavigation .portal-flyout-container {background-color: #E6EEFB; padding: 0; border: 1px solid #000; border-top: none; -webkit-box-shadow:4px 4px 8px rgba(0,0,0,.5); -moz-box-shadow:4px 4px 8px rgba(0,0,0,.5); box-shadow:4px 4px 8px rgba(0,0,0,.5);}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list li a {padding: 0.7em 2em; border-top: 1px solid #000; color: #4C5D82; font-size: 85%;}
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav .portal-subnav-link:hover,
+.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav .portal-subnav-link:focus {color:#FFF; background-color: #4C5D82;}
 
-/* Flyout Navigation */
-.up #portalNavigation .portal-flyout-container {
-	background-color:#E6EEFB;
-	padding:3px;
-	border:1px solid #000;
-	border-top:none;
-	-webkit-box-shadow:4px 4px 8px rgba(0,0,0,.5); 
-	-moz-box-shadow:4px 4px 8px rgba(0,0,0,.5);
-	box-shadow:4px 4px 8px rgba(0,0,0,.5);
-}
-.up #portalNavigation .fl-tabs .portal-flyout-container li a {padding:0.7em 2em; border-top:1px solid #9999cc; color:#4c5d82; font-size:85%; }
-.up #portalNavigation .fl-tabs .portal-flyout-container li:first-child a {border:none;}
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:hover,
-.up #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav a.portal-subnav-link:focus {color:#fff; background-color:#4c5d82;}
+/* Edit Permisssions */
+.up #editPagePermissionsLink {float: right; display: block; margin-top: .75em; margin-right: 2em;}
 
 /* Body */
 .up #portalPageBodyInner {padding:2.5em 2em;}
 .up #portalPageBodyTitleRow h1 {display:none;}
+
+/* Customize Page Message */
+.up #portalPageBodyCustomizeMessageRow {background: transparent;}
+.up #portalPageBodyCustomizeMessageRowContents {border: 2px solid #336699;}
+.up #portalPageBodyCustomizeMessageRowContents h1 {font-weight: normal; color: #333; text-decoration: none;}
+.up #portalPageBodyCustomizeMessageRowContents .fl-font-blue {color: #336699; font-weight: bold;}
 
 /* Customize/Gallery */
 
