@@ -37,7 +37,12 @@ public enum UrlType {
     /**
      * Performs an action, the result from this type of URL will always be a redirect
      */
-    ACTION;
+    ACTION,
+    /**
+     * Portlet Resource: renders content direct from the portlet
+     */
+    RESOURCE;
+    
     
     private final String lowercase;
     
@@ -55,6 +60,9 @@ public enum UrlType {
             }
             case RENDER: {
                 return TYPE.RENDER;
+            }
+            case RESOURCE: {
+            	return TYPE.RESOURCE;
             }
         }
         

@@ -37,5 +37,7 @@ public interface IPortletRequestInfo {
     public Map<String, List<String>> getPublicPortletParameters();
     public WindowState getWindowState();
     public PortletMode getPortletMode();
+    public String getResourceId();
+    public String getCacheability();
     public IPortletRequestInfo getDelegatePortletRequestInfo();
 }

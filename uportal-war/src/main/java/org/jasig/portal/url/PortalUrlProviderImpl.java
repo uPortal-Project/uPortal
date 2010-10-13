@@ -87,6 +87,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     public static final String PARAM_WINDOW_STATE   = PORTLET_CONTROL_PREFIX + "s";
     public static final String PARAM_PORTLET_MODE   = PORTLET_CONTROL_PREFIX + "m";
     public static final String PARAM_TARGET_PORTLET = PORTLET_CONTROL_PREFIX + "t";
+    public static final String PARAM_PORTLET_RESOURCE_ID   = PORTLET_CONTROL_PREFIX + "resId";
+    public static final String PARAM_PORTLET_CACHEABILITY   = PORTLET_CONTROL_PREFIX + "cache";
     
     public static final String SLASH = "/";
     public static final char PORTLET_PATH_ELEMENT_SEPERATOR = '.';
@@ -330,6 +332,16 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 portletRequestInfoBuilder.setPortletMode(new PortletMode(portletModeName));
             }
             
+            final String portletResourceId = request.getParameter(PARAM_PORTLET_RESOURCE_ID);
+            if(portletResourceId != null) {
+            	portletRequestInfoBuilder.setResourceId(portletResourceId);
+            }
+            
+            final String portletCacheability = request.getParameter(PARAM_PORTLET_CACHEABILITY);
+            if(portletCacheability != null) {
+            	portletRequestInfoBuilder.setCacheability(portletCacheability);
+            }
+            
             //If a portlet is targeted but no layout node is targeted must be maximized
             if (requestInfoBuilder.getTargetedLayoutNodeId() == null && (requestedUrlState == null || requestedUrlState == UrlState.NORMAL)) {
                 requestInfoBuilder.setUrlState(UrlState.MAX);
@@ -409,6 +421,14 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 final WindowState windowState = portletRequestInfo.getWindowState();
                 if (windowState != null) {
                     portletPortalUrl.setWindowState(windowState);
+                }
+                final String resourceId = portletRequestInfo.getResourceId();
+                if(resourceId != null) {
+                	portletPortalUrl.setResourceID(resourceId);
+                }
+                final String cacheability = portletRequestInfo.getCacheability();
+                if(cacheability != null) {
+                	portletPortalUrl.setCacheability(cacheability);
                 }
                 final Map<String, List<String>> publicPortletParameters = portletRequestInfo.getPublicPortletParameters();
                 if (publicPortletParameters != null) {
@@ -567,7 +587,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     @Override
     public IPortletResourcePortalUrl getPortletResourceUrl(HttpServletRequest request, IPortletWindowId portletWindowId) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-        return new ResourceUrlProviderImpl(portletWindow, request);
+        ResourceUrlProviderImpl resourcePortalUrl = new ResourceUrlProviderImpl(portletWindow, request);
+        return resourcePortalUrl;
     }
 
     /* (non-Javadoc)
@@ -762,6 +783,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             }
             break;
             
+            case RESOURCE: {
+            	url.addPath(UrlType.RESOURCE.toLowercaseString() + REQUEST_TYPE_SUFFIX);
+            }
+            break;
+            
             default: {
                 throw new IllegalArgumentException("Unsupported URL type: " + portletPortalUrl.getType()); 
             }
@@ -778,6 +804,16 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         if (requestedWindowState != null && !requestedWindowState.equals(currentWindowState) 
                 && (WindowState.MINIMIZED.equals(urlWindowState) || WindowState.NORMAL.equals(urlWindowState))) {
             url.addParameter(PARAM_WINDOW_STATE, requestedWindowState.toString());
+        }
+        
+        final String cacheability = portletPortalUrl.getCacheability();
+        if(cacheability != null) {
+        	url.addParameter(PARAM_PORTLET_CACHEABILITY, cacheability);
+        }
+        
+        final String resourceId = portletPortalUrl.getResourceID();
+        if(resourceId != null) {
+        	url.addParameter(PARAM_PORTLET_RESOURCE_ID, resourceId);
         }
         
         //Add all portal parameters
