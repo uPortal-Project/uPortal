@@ -66,7 +66,7 @@ var uportal = uportal || {};
                 }//end:if.
                 
                 // Bottom.
-                if (that.options.vertalign == 'bottom') {
+                if (that.options.vertalign === 'bottom') {
                     foTop = 0;
                 } else {
                     foTop = (flyout.outerHeight() - tab.outerHeight()) * -1;
@@ -138,7 +138,7 @@ var uportal = uportal || {};
         orientation: 'horizontal',
         horzalign: 'left',
         vertalign: 'bottom',
-        offset: 1,
+        offset: 0,
         selectors: {
             flyoutMenu: '.portal-flyout-container',
             flyoutList: '.portal-subnav-list'

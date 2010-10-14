@@ -202,6 +202,27 @@
 .fl-theme-coal .fl-tabs li.fl-tabs-active a:hover {background-color: transparent; color:#000 !important;}
 .fl-theme-coal .fl-tabs-content {background-color: transparent; color:#000; border: none;}
 
+/* Reset: hc. 
+.fl-theme-hc .fl-tabs {}
+.fl-theme-hc .fl-tabs li,
+.fl-theme-hc .fl-tabs li * {}
+.fl-theme-hc .fl-tabs li {}
+.fl-theme-hc .fl-tabs li * {color: #fff !important; background-color: transparent !important;}
+.fl-theme-hc .fl-tabs li:hover,
+.fl-theme-hc .fl-tabs li:hover *,
+.fl-theme-hc .fl-tabs li a:hover {color:#000 !important;}
+.fl-theme-hc .fl-tabs li.fl-tabs-active,
+.fl-theme-hc .fl-tabs li.fl-tabs-active a,
+.fl-theme-hc .fl-tabs li.fl-tabs-active a:hover,
+.fl-theme-hc .fl-tabs li.fl-tabs-active a span,
+.fl-theme-hc .fl-tabs li.fl-activeTab,
+.fl-theme-hc .fl-tabs li.fl-activeTab:hover,
+.fl-theme-hc .fl-tabs li.fl-activeTab a,
+.fl-theme-hc .fl-tabs li.fl-activeTab a:hover,
+.fl-theme-hc .fl-tabs li.fl-activeTab a span {color:#000 !important;}
+.fl-theme-hc .fl-tab-content{}
+*/
+
 /* Set: mist. */
 .fl-theme-mist .fl-tabs {padding: 0 0 0 0; text-align: left;}
 .fl-theme-mist .fl-tabs li {display: inline-block; position: relative; background-color: #EDEDED; padding: 5px 20px 5px 20px; border-left: 1px solid #EFEFEF; border-right: 1px solid #D3D3D3;
@@ -221,6 +242,17 @@
 .fl-theme-coal .fl-tabs li.fl-tabs-active:hover,
 .fl-theme-coal .fl-tabs li.fl-activeTab,
 .fl-theme-coal .fl-tabs li.fl-activeTab:hover {background-color: #EBEBEB;}
+
+/* Set: hc. 
+.fl-theme-hc .fl-tabs {padding: 0 0 0 0; text-align: left;}
+.fl-theme-hc .fl-tabs li {display: inline-block; position: relative; background-color: #000; padding: 5px 20px 5px 20px; border-left: 1px solid #000; border-right: 1px solid #000;
+    border-top: 1px solid #000; cursor: pointer; white-space: nowrap;}
+.fl-theme-hc .fl-tabs li:hover {background-color: #FFF;}
+.fl-theme-hc .fl-tabs li.fl-tabs-active,
+.fl-theme-hc .fl-tabs li.fl-tabs-active:hover,
+.fl-theme-hc .fl-tabs li.fl-activeTab,
+.fl-theme-hc .fl-tabs li.fl-activeTab:hover {background-color: #FFF;}
+*/
 
 /* 
 ------------------------------------
@@ -320,9 +352,7 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* Navigation */
 #portalNavigation, #portalNavigationInner {background-color: transparent;}
-#portalNavigationInner {position: relative; border-bottom: 1px solid #D3D3D3;}
-/* Navigation: first */
-#portalNavigationList .portal-navigation.first {border-left: 1px solid #D3D3D3;}
+#portalNavigationInner {position: relative;}
 /* Navigation: icons (common) */
 #portalNavigation .portal-navigation-add,
 #portalNavigation .portal-navigation-delete,
@@ -392,8 +422,7 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* Customize Page Message */
 #portalPageBodyCustomizeMessageRow {background: transparent; padding-top: 4px; margin-bottom: 1em;}
-#portalPageBodyCustomizeMessageRowContents {
-    background-color: #FFF; padding: 10px 20px; border: 1px solid #000;}
+#portalPageBodyCustomizeMessageRowContents {background-color: #FFF; padding: 10px 20px; border: 1px solid #000;}
 #portalPageBodyCustomizeMessageRowContents h1 {margin: 0 0 .3em 0; font-weight: normal; border: none;}
 #portalPageBodyCustomizeMessageRowContents .fl-font-blue {font-weight: bold;}
 

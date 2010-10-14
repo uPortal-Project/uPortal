@@ -54,6 +54,7 @@
  * If a FSS theme is used with this skin, it is specified in skin.xml and applied first (from the resource server).
  * These are any overrides to the FSS theme.
  */
+.fl-theme-hc :focus,.fl-theme-hc .selectable{outline:.15em solid #F00;}
 .fl-widget {-moz-border-radius:7px; -webkit-border-radius:7px; border-radius:7px;}
 .fl-widget-titlebar,
 .fl-widget-content,
@@ -93,7 +94,7 @@
 
 /* Portal Page Bar */
 .up #portalPageBar {text-align:right; text-transform:uppercase;}
-.up #portalPageBarLinks {float:right;}
+.up #portalPageBarLinks {display: inline;}
 .up #portalPageBarLinks .portal-pipe {}
 .up .logged-in #portalPageBarLogout .portal-pipe {display:none;}
 .up .not-logged-in #portalPageBarHelp .portal-pipe {display:none;}
@@ -128,19 +129,8 @@
 .up #portalNavigation .fl-tabs li a {padding:0; margin:0; border:none; background:transparent;}
 .up #portalNavigation .fl-tabs {padding:5px 0; text-align:left;}
 .up #portalNavigation .fl-tabs > li {position:relative; margin-right:2px; padding:5px 0;}
-.up #portalNavigation .fl-tabs > li > a {
-	border:3px solid #000;
-	border-bottom:none;
-	-webkit-border-top-left-radius: 5px;
-	-webkit-border-top-right-radius: 5px;
-	-moz-border-radius-topleft: 5px;
-	-moz-border-radius-topright: 5px;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-	padding:5px 20px;
-	background:#000;
-	text-transform:uppercase;	
-}
+.up #portalNavigation .fl-tabs > li > .portal-navigation-link {border:3px solid #000; border-bottom:none; -webkit-border-top-left-radius: 5px; -webkit-border-top-right-radius: 5px; -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px; padding:5px 20px; background:#000; text-transform:uppercase;}
 *:first-child+html .up #portalNavigation .fl-tabs,
 *:first-child+html .up #portalNavigation .fl-tabs li.portal-navigation {padding:0;} /* hack needed for IE7 */
 .up #portalNavigation .fl-tabs > li:hover,
@@ -148,32 +138,41 @@
 .up #portalNavigation .fl-tabs > li:hover a,
 .up #portalNavigation .fl-tabs > li:focus a,
 .up #portalNavigation .fl-tabs > li a:hover,
-.up #portalNavigation .fl-tabs > li a:focus {background:#fff;}
+.up #portalNavigation .fl-tabs > li a:focus {}
 .up #portalNavigation .fl-tabs li.fl-tabs-active > a,
 .up #portalNavigation .fl-tabs li.fl-tabs-active > a span {color:#000 !important;}
 .up #portalNavigation .fl-tabs li span {background-color:transparent !important;}
-
+/* Navigation: icons */
+.up #portalNavigation .portal-navigation-add {padding:0px 0px 0px 16px; background: transparent url("images/add.png") 0px 0px no-repeat !important;}
+.up #portalNavigation .portal-navigation-add:hover {background: #000 url("images/add.png") 0px -16px no-repeat !important;}
+.up #portalNavigation .fl-tabs li .portal-navigation-gripper,
+.up #portalNavigation .fl-tabs li .portal-navigation-gripper:hover {left: 2px; background: transparent url("images/gripper.png") 0px 0px no-repeat !important; padding: 0;}
+.up #portalNavigation .fl-tabs li .portal-navigation-delete,
+.up #portalNavigation .fl-tabs li .portal-navigation-delete:hover {right: 2px; background: transparent url("images/remove.png") 0px 0px no-repeat !important; padding: 0;}
 /* Flyout Navigation */
 .up #portalNavigation .fl-tabs .portal-flyout-container * {margin:0; padding:0; background:none; border:none;}
-.up #portalNavigation .fl-tabs .portal-flyout-container {
-	background-color:#fff; 
-	border:3px solid #000;
-	border-top:none;
-	-webkit-border-bottom-left-radius: 5px;
-	-webkit-border-bottom-right-radius: 5px;
-	-moz-border-radius-bottomright: 5px;
-	-moz-border-radius-bottomleft: 5px;
-	border-bottom-right-radius: 5px;
-	border-bottom-left-radius: 5px;
-	-webkit-box-shadow:4px 4px 8px rgba(0,0,0,.8); 
-	-moz-box-shadow:4px 4px 8px rgba(0,0,0,.8);
-	box-shadow:4px 4px 8px rgba(0,0,0,.8);;
-}
+.up #portalNavigation .fl-tabs .portal-flyout-container {background-color:#fff; border:3px solid #000; border-top:none; -webkit-border-bottom-left-radius: 5px; -webkit-border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomright: 5px; -moz-border-radius-bottomleft: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; -webkit-box-shadow:4px 4px 8px rgba(0,0,0,.8);
+    -moz-box-shadow:4px 4px 8px rgba(0,0,0,.8); box-shadow:4px 4px 8px rgba(0,0,0,.8);}
 .up #portalNavigation .fl-tabs .portal-flyout-container li a  {padding:10px 25px; color:#eee !important; font-size:85%;}
 .up #portalNavigation .fl-tabs .portal-flyout-container li {border-top:1px dotted #999;}
 .up #portalNavigation .fl-tabs .portal-flyout-container li a:hover {color:#fff !important; background-color:#000 !important;}
 .up #portalNavigation .fl-tabs .portal-flyout-container li a:hover span {color:#fff !important;}
+/* Navigation: avatar */
+.up .fl-reorderer-header-avatar {background-color: #FFF; border: 3px solid #000; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px;}
+.up .fl-reorderer-header-avatar .portal-navigation-link {color: #000 !important; text-decoration: uppercase;}
+.up .fl-reorderer-header-avatar .portal-navigation-delete {right: 2px; background: transparent url("images/remove.png") 0px 0px no-repeat !important;}
+.up .fl-reorderer-header-avatar .portal-navigation-gripper {left: 2px; background: transparent url("images/gripper.png") 0px 0px no-repeat !important;}
+.up .fl-reorderer-header-avatar .portal-flyout-container{display: none !important;}
+/* Navigation: dropMarker */
+.up .fl-reorderer-header-dropMarker {border: 1px solid #000 !important; background-color: #000 !important; margin: 0 4px 0 4px !important; filter:alpha(opacity=9) !important; opacity: .99 !important;}
+/* Edit Permisssions */
+.up #portalEditPagePermissions {}
+.up #editPagePermissionsLink {}
 
+/* Customize Page Message */
+.up #portalPageBodyCustomizeMessageRow {padding-top: 50px;}
+.up #portalPageBodyCustomizeMessageRowContents {border: 3px solid #000;}
 
 /* Body */
 .up #portalPageBody {}
@@ -209,32 +208,35 @@
 .fl-theme-hc .gallery-inner * {background-color:#000 !important; color:#fff !important; border-color:#fff !important;}
 .up .up-gallery .gallery-inner {background:none; border-top:0.5em solid #333;}
 .up .up-gallery .handle {background:#333 !important; bottom:-0.5em; height:0.5em;}
-.up .up-gallery .handle a {
-	-moz-border-radius-bottomleft:3px;
-	-moz-border-radius-bottomright:3px;
-	background:#333 !important;
-	border:3px solid #333333;
-	font-size:70%;
-	left:0;
-	margin-left:2em;
-	padding:0.1em 1em;
-	top:0.5em;
-	width:auto;
-	-moz-box-shadow:none;
-	-webkit-box-shadow:none;
-	box-shadow:none;
-}
-.up-gallery .handle a span {
-	background-image:url(images/gallery-handle-arrow-down.png);
-	color:#fff;
-	border-bottom:0.2em double #333;
-	margin-right:0;
-	padding:0.1em 2em 0.2em 1em;
-	text-transform:uppercase;
-}
+.up .up-gallery .handle a {-moz-border-radius-bottomleft:3px; -moz-border-radius-bottomright:3px; background:#333 !important; border:3px solid #333333; font-size:70%; left:0; margin-left:2em; 
+    padding:0.1em 1em; top:0.5em; width:auto; -moz-box-shadow:none; -webkit-box-shadow:none; box-shadow:none;}
+.up-gallery .handle a span {background-image:url(images/gallery-handle-arrow-down.png); color:#fff; border-bottom:0.2em double #333; margin-right:0; padding:0.1em 2em 0.2em 1em; text-transform:uppercase;}
 .up .up-gallery .handle a:hover span,
 .up .up-gallery .handle a:focus span {border-bottom-color:red !important;}
 .up-gallery .handle-arrow-up {background-image:url(images/gallery-handle-arrow-up.png) !important;}
+.up-gallery .close-button {background-image:-moz-linear-gradient(90deg,#000000,#000000); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#000000));}
+.up-gallery .portlet-thumb-link {background: #000; background-image:-moz-linear-gradient(90deg,#000000,#000000); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#000000));}
+.up-gallery .portlet-wrapper:hover .portlet-thumb-link {background:#FFFFFF; background-image:-moz-linear-gradient(90deg,#FFFFFF,#FFFFFF); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF), to(#FFFFFF));}
+.up-gallery .package-wrapper .package-link {background:#000000; background-image:-moz-linear-gradient(90deg,#000000,#000000); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#000000));}
+.up-gallery .package-wrapper .package-link:hover,
+.up-gallery .package-wrapper:hover .package-link {background: #FFFFFF; background-image:-moz-linear-gradient(90deg,#FFFFFF,#FFFFFF); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#FFFFFF),to(#FFFFFF));}
+.up-gallery .package-wrapper:hover {background:#000000; background-image:-moz-linear-gradient(90deg,#000000,#000000); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#000000));}
+.up-gallery .skins-wrapper:hover {background:#000000; background-image:-moz-linear-gradient(90deg,#000000,#000000); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#000000));}
+.up-gallery .skins-wrapper.selected {background:#000000; background-image:-moz-linear-gradient(90deg,#000000,#000000); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#000000)); color:#FFFFFF;}
+.up-gallery .layout-wrapper:hover {background:#000000; background-image:-moz-linear-gradient(90deg,#000000,#000000); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#000000));}
+.up-gallery .layout-wrapper.selected {background:#000000; background-image:-moz-linear-gradient(90deg,#000000,#000000); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#000000));}
+
+/* Gallery: Avatar */
+.up .portlet.ui-draggable-dragging {background-color: #000000; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=99)"; filter: alpha(opacity=99); border:2px solid #FFF;
+    background-image:-moz-linear-gradient(90deg,#000000,#000000); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#000000));}
+.up .portlet.ui-draggable-dragging .portlet-thumb-titlebar{background-color: #000000; padding-top: 20px;}
+.up .portlet.ui-draggable-dragging .portlet-thumb-gripper,
+.up .portlet.ui-draggable-dragging .portlet-thumb-link,
+.up .portlet.ui-draggable-dragging .portlet-thumb-content{display: none;}
+
+/* Gallery: Drop Target */
+.up .layout-draggable-drop-target {background: #FFFFFF; border: 2px dashed #000000; color: #000000;}
+.up .layout-draggable-target-dropped {border: 2px solid #000000; background: #FFFFFF url("images/loading.gif") 50% 50% no-repeat;}
 
 /* Ajax Menus */
 .up #changeColumns tr td {text-align:center;}
