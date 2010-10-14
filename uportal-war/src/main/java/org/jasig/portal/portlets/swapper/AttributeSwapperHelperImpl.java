@@ -79,7 +79,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     /**
      * The {@link IPersonManager} to use to access the current IPerson
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
@@ -90,7 +90,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     /**
      * Utility class to access the original portal request
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }

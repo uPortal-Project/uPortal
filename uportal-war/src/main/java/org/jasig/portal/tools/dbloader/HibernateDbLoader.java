@@ -75,7 +75,7 @@ public class HibernateDbLoader implements IDbLoader {
     /**
      * @param jdbcTemplate the jdbcTemplate to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setDataSource(@Qualifier("PortalDb") DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
@@ -83,7 +83,7 @@ public class HibernateDbLoader implements IDbLoader {
     /**
      * @param transactionTemplate the transactionTemplate to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager transactionManager) {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
@@ -97,7 +97,7 @@ public class HibernateDbLoader implements IDbLoader {
     /**
      * @param dialect the dialect to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setDialect(Dialect dialect) {
         this.dialect = dialect;
     }

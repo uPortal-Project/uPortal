@@ -52,7 +52,7 @@ public class CacheFactoryEntityCachingService extends AbstractEntityCachingServi
     /**
      * @param cacheFactory the cacheFactory to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setCacheFactory(CacheFactory cacheFactory) {
         this.cacheFactory = cacheFactory;
     }

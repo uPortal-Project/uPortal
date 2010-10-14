@@ -60,7 +60,7 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
@@ -74,7 +74,7 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
@@ -88,7 +88,7 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }

@@ -192,7 +192,7 @@ public class ChannelListController {
 	/**
 	 * @param channelRegistryStore
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
 		this.channelRegistryStore = channelRegistryStore;
 	}
@@ -201,12 +201,12 @@ public class ChannelListController {
 	 * <p>For injection of the person manager.  Used for authorization.</p>
 	 * @param personManager IPersonManager instance
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setPersonManager(IPersonManager personManager) {
 		this.personManager = personManager;
 	}
 	
-	@Autowired(required=true)
+	@Autowired
 	public void setPortalSpELProvider(IPortalSpELService spELProvider) {
 	    this.spELService = spELProvider;
 	}

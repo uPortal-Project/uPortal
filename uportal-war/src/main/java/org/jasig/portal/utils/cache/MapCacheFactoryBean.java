@@ -46,7 +46,7 @@ public class MapCacheFactoryBean extends AbstractFactoryBean<Map> {
     /**
      * @param cacheFactory the cacheFactory to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setCacheFactory(CacheFactory cacheFactory) {
         this.cacheFactory = cacheFactory;
     }

@@ -54,7 +54,7 @@ public class EhCacheProvider implements CacheProvider {
     /**
      * @param cacheManager the cacheManager to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
     }

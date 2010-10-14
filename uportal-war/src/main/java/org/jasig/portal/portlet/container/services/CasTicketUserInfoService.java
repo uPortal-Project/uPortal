@@ -77,7 +77,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
@@ -97,7 +97,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
 	/**
 	 * @param userInstanceManager the UserInstanceManager
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
 		this.userInstanceManager = userInstanceManager;
 	}
@@ -111,7 +111,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
@@ -125,7 +125,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
@@ -139,7 +139,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }

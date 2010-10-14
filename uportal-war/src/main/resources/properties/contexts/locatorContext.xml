@@ -20,8 +20,11 @@
 
 -->
 
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans" 
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+       default-autowire="constructor">
     
     <!-- 
      | The beans below are deprecated and should NEVER be referenced by other beans.
@@ -45,7 +48,6 @@
     
     <bean id="org.jasig.portal.spring.locator.PersonManagerLocator" 
             class="org.jasig.portal.spring.locator.PersonManagerLocator">
-        <!--  autowired -->
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.PortalDbLocator" 
@@ -90,17 +92,14 @@
     
     <bean id="org.jasig.portal.spring.locator.UserIdentityStoreLocator" 
         class="org.jasig.portal.spring.locator.UserIdentityStoreLocator">
-        <!--  autowired -->
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.UserFragmentSubscriptionDaoLocator" 
         class="org.jasig.portal.spring.locator.UserFragmentSubscriptionDaoLocator">
-        <!--  autowired -->
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.LocalAccountDaoLocator" 
         class="org.jasig.portal.spring.locator.LocalAccountDaoLocator">
-        <!--  autowired -->
     </bean>
     
 </beans>

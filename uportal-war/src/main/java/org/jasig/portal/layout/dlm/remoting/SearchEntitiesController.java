@@ -93,7 +93,7 @@ public class SearchEntitiesController {
 	 * <p>For injection of the group list helper.</p>
 	 * @param groupListHelper IGroupListHelper instance
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setGroupListHelper(IGroupListHelper groupListHelper) {
 		this.groupListHelper = groupListHelper;
 	}
@@ -102,7 +102,7 @@ public class SearchEntitiesController {
 	 * <p>For injection of the person manager.  Used for authorization.</p>
 	 * @param personManager IPersonManager instance
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setPersonManager(IPersonManager personManager) {
 		this.personManager = personManager;
 	}

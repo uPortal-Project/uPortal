@@ -49,7 +49,7 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     /**
      * @param userInfoService the userInfoService to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setUserInfoService(@Qualifier("main") UserInfoService userInfoService) {
         this.userInfoService = userInfoService;
     }
@@ -57,7 +57,7 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     /**
      * @param portalAdministrationService the portalAdministrationService to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortalAdministrationService(PortalAdministrationService portalAdministrationService) {
         this.portalAdministrationService = portalAdministrationService;
     }
@@ -65,7 +65,7 @@ public class OptionalContainerServicesImpl extends DefaultOptionalContainerServi
     /**
      * @param portletPreferencesService the portletPreferencesService to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletPreferencesService(PortletPreferencesService portletPreferencesService) {
         this.portletPreferencesService = portletPreferencesService;
     }

@@ -66,7 +66,7 @@ public class PortletEntityPreferenceHandler {
     /**
      * @param channelRegistryStore the channelRegistryStore to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
         this.channelRegistryStore = channelRegistryStore;
     }
@@ -79,7 +79,7 @@ public class PortletEntityPreferenceHandler {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
@@ -92,7 +92,7 @@ public class PortletEntityPreferenceHandler {
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
@@ -105,7 +105,7 @@ public class PortletEntityPreferenceHandler {
     /**
      * @param dataSource the dataSource to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setDataSource(@Qualifier("PortalDb") DataSource dataSource) {
         this.dataSource = dataSource;
     }

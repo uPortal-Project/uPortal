@@ -62,7 +62,7 @@ public class PermissionsOwnerSuggestController extends AbstractPermissionsContro
 
     public static final String TEXT_PARAMETER = "q";
 
-    @Autowired(required=true)
+    @Autowired
     public void setPermissionStore(IPermissionStore permissionStore) {
         this.permissionStore = permissionStore;
     }

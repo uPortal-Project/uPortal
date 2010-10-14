@@ -46,7 +46,7 @@ public class PersonQueryValidator {
     /**
      * {@link IPersonLookupHelper} to use for getting configuration and query information from for validation.
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPersonLookupHelper(IPersonLookupHelper personLookupHelper) {
         this.personLookupHelper = personLookupHelper;
     }

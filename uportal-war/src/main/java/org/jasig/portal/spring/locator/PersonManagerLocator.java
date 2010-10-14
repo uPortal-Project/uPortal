@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -55,7 +54,6 @@ public class PersonManagerLocator extends AbstractBeanLocator<IPersonManager> {
         return locator.getInstance();
     }
 
-    @Autowired(required=true)
     public PersonManagerLocator(IPersonManager instance) {
         super(instance, IPersonManager.class);
     }

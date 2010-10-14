@@ -69,7 +69,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /**
      * @param portletDefinitionDao the portletDefinitionDao to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
         this.portletDefinitionDao = portletDefinitionDao;
     }
@@ -84,7 +84,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
      * 
      * @param portalDriverContainerServices
      */
-    @Autowired(required=true)
+    @Autowired
 	public void setPortalDriverContainerServices(
 			PortalDriverContainerServices portalDriverContainerServices) {
 		this.portalDriverContainerServices = portalDriverContainerServices;
@@ -98,7 +98,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /**
      * @param channelRegistryStore the channelRegistryStore to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
         this.channelRegistryStore = channelRegistryStore;
     }

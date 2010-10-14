@@ -54,7 +54,7 @@ public class UserLayoutHelperImpl extends SimpleJdbcDaoSupport implements IUserL
 	/**
 	 * @param userIdentityStore the userIdentityStore to set
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
 		this.userIdentityStore = userIdentityStore;
 	}

@@ -52,7 +52,7 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
@@ -65,7 +65,7 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
 	/**
 	 * @param portalRequestUtils the portalRequestUtils to set
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
 		this.portalRequestUtils = portalRequestUtils;
 	}

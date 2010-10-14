@@ -62,7 +62,7 @@ public class HibernateJpaVendorAdapter extends org.springframework.orm.jpa.vendo
     /**
      * @param cacheProvider the cacheProvider to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setCacheProvider(CacheProvider cacheProvider) {
         this.cacheProvider = cacheProvider;
     }

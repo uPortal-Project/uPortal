@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -55,7 +54,6 @@ public class LocalAccountDaoLocator extends AbstractBeanLocator<ILocalAccountDao
         return locator.getInstance();
     }
 
-    @Autowired(required=true)
     public LocalAccountDaoLocator(ILocalAccountDao instance) {
         super(instance, ILocalAccountDao.class);
     }

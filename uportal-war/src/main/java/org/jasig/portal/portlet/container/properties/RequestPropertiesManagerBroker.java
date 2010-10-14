@@ -62,7 +62,7 @@ public class RequestPropertiesManagerBroker implements IRequestPropertiesManager
     /**
      * @param propertiesManagers the propertiesManagers to set
      */
-	@Autowired(required=true)
+	@Autowired
     public void setPropertiesManagers(List<IRequestPropertiesManager> propertiesManagers) {
         this.propertiesManagers = propertiesManagers;
     }

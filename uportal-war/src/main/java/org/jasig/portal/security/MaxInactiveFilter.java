@@ -61,7 +61,7 @@ public class MaxInactiveFilter implements Filter {
     /**
      * @param personManager the personManager to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }

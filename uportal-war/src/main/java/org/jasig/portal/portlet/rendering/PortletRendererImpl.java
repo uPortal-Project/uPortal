@@ -260,10 +260,6 @@ public class PortletRendererImpl implements IPortletRenderer {
         catch (IOException ioe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, ioe);
         }
-        final String title = (String)httpServletRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE);
-        if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Retrieved title '" + title + "' from resource request for: " + portletWindow);
-        }
 		return new PortletResourceResult(System.currentTimeMillis() - start);
 	}
 	

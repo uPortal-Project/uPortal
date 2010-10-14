@@ -20,9 +20,8 @@
 
 -->
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans" 
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
            
@@ -30,7 +29,8 @@
     
     <bean name="xmlView" class="org.jasig.portal.spring.web.servlet.view.XmlView"/>
     
-    <bean name="sitemapView" class="org.springframework.web.servlet.view.xslt.XsltView"
-        p:sourceKey="source" p:url="classpath:/org/jasig/portal/portlets/sitemap/sitemap.xsl"/>
-    
+    <bean name="sitemapView" class="org.springframework.web.servlet.view.xslt.XsltView">
+        <property name="sourceKey" value="source" />
+        <property name="url" value="classpath:/org/jasig/portal/portlets/sitemap/sitemap.xsl" />
+    </bean>
 </beans>

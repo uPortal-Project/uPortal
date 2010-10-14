@@ -58,12 +58,12 @@ public abstract class AbstractPermissionsController {
     public static final String ACTIVITY_PARAMETER = "activity";
     public static final String TARGET_PARAMETER = "target";
 
-    @Autowired(required=true)
+    @Autowired
     public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
         this.channelRegistryStore = channelRegistryStore;
     }
 
-    @Autowired(required=true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }

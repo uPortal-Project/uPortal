@@ -85,7 +85,7 @@ public class PermissionsListController extends AbstractPermissionsController {
     public static final String TARGET_PARAMETER = "target";
     private static final String PRINCIPAL_SEPARATOR = "\\.";
 
-    @Autowired(required=true)
+    @Autowired
     public void setPermissionStore(IPermissionStore permissionStore) {
         this.permissionStore = permissionStore;
     }

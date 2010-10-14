@@ -64,7 +64,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     /**
      * @param portletEntityDao the portletEntityDao to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletEntityDao(@Qualifier("main") IPortletEntityDao portletEntityDao) {
         this.portletEntityDao = portletEntityDao;
     }
@@ -78,7 +78,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }

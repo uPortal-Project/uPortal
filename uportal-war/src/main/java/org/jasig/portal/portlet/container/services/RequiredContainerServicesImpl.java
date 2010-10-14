@@ -87,7 +87,7 @@ public class RequiredContainerServicesImpl implements RequiredContainerServices 
 	 /**
      * @param portalContext the portalContext to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortalContext(PortalContext portalContext) {
         this.portalContext = portalContext;
     }
@@ -95,7 +95,7 @@ public class RequiredContainerServicesImpl implements RequiredContainerServices 
      * 
      * @param eventCoordinationService
      */
-    @Autowired(required=true)
+    @Autowired
 	public void setEventCoordinationService(
 			EventCoordinationService eventCoordinationService) {
 		this.eventCoordinationService = eventCoordinationService;
@@ -104,7 +104,7 @@ public class RequiredContainerServicesImpl implements RequiredContainerServices 
      * 
      * @param filterManagerService
      */
-    @Autowired(required=true)
+    @Autowired
 	public void setFilterManagerService(FilterManagerService filterManagerService) {
 		this.filterManagerService = filterManagerService;
 	}
@@ -112,7 +112,7 @@ public class RequiredContainerServicesImpl implements RequiredContainerServices 
      * 
      * @param portletRequestContextService
      */
-    @Autowired(required=true)
+    @Autowired
 	public void setPortletRequestContextService(
 			PortletRequestContextService portletRequestContextService) {
 		this.portletRequestContextService = portletRequestContextService;
@@ -121,7 +121,7 @@ public class RequiredContainerServicesImpl implements RequiredContainerServices 
      * 
      * @param portletURLListenerService
      */
-    @Autowired(required=true)
+    @Autowired
 	public void setPortletURLListenerService(
 			PortletURLListenerService portletURLListenerService) {
 		this.portletURLListenerService = portletURLListenerService;

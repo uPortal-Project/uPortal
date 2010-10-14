@@ -53,7 +53,7 @@ public class CacheProviderFactory implements CacheFactory {
     /**
      * @param cacheManager the cacheManager to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
     }

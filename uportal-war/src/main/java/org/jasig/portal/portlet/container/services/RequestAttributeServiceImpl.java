@@ -62,24 +62,24 @@ public class RequestAttributeServiceImpl  {
     public void setPersonAttributeDao(IPersonAttributeDao personAttributeDao) {
         this.personAttributeDao = personAttributeDao;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-    @Autowired(required=true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
 
-    @Autowired(required=true)
+    @Autowired
 	public void setOptionalContainerServices(
 			OptionalContainerServices optionalContainerServices) {
 		this.optionalContainerServices = optionalContainerServices;

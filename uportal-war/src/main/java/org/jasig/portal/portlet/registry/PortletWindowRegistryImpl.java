@@ -77,7 +77,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     /**
      * @param userInstanceManager the userInstanceManager to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
@@ -91,7 +91,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
@@ -105,7 +105,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
@@ -120,7 +120,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
      * 
      * @param portalRequestUtils
      */
-    @Autowired(required=true)
+    @Autowired
 	public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
 		this.portalRequestUtils = portalRequestUtils;
 	}

@@ -50,7 +50,7 @@ public class HttpRequestPropertiesManager extends BaseRequestPropertiesManager {
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }

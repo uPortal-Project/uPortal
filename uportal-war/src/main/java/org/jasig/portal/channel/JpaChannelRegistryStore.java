@@ -76,7 +76,7 @@ public final class JpaChannelRegistryStore extends AbstractChannelRegistryStore 
 	 * 
 	 * @param portletDefinitionRegistry
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setPortletDefinitionRegistry(
 			IPortletDefinitionRegistry portletDefinitionRegistry) {
 		this.portletDefinitionRegistry = portletDefinitionRegistry;

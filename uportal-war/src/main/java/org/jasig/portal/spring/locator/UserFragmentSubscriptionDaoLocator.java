@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.cache.CacheFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 @Deprecated
@@ -52,7 +51,6 @@ public class UserFragmentSubscriptionDaoLocator  extends
         
         return locator.getInstance();
     }
-    @Autowired(required=true)
     public UserFragmentSubscriptionDaoLocator(IUserFragmentSubscriptionDao instance) {
         super(instance, IUserFragmentSubscriptionDao.class);
     }

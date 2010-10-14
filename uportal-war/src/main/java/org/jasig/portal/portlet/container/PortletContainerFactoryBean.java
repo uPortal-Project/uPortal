@@ -66,7 +66,7 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean<PortletCont
 	/**
 	 * @param requiredContainerServices the requiredContainerServices to set
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setRequiredContainerServices(
 			RequiredContainerServices requiredContainerServices) {
 		this.requiredContainerServices = requiredContainerServices;
@@ -74,13 +74,13 @@ public class PortletContainerFactoryBean extends AbstractFactoryBean<PortletCont
 	/**
 	 * @param optionalContainerServices the optionalContainerServices to set
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setOptionalContainerServices(
 			OptionalContainerServices optionalContainerServices) {
 		this.optionalContainerServices = optionalContainerServices;
 	}
     
-	@Autowired(required=true)
+	@Autowired
     public void setDriverContainerServices(PortalDriverContainerServices driverContainerServices) {
         this.driverContainerServices = driverContainerServices;
     }

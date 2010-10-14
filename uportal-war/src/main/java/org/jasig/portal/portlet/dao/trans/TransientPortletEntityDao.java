@@ -71,7 +71,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /**
      * The IPortletEntityDao to delegate calls to for actualy persistence
      */
-    @Autowired(required=true)
+    @Autowired
     public void setDelegatePortletEntityDao(@Qualifier("persistence") IPortletEntityDao delegatePortletEntityDao) {
         this.delegatePortletEntityDao = delegatePortletEntityDao;
     }
@@ -82,7 +82,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /**
      * Registry for looking up data related to portlet definitions
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
@@ -93,7 +93,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /**
      * Used to get access to the user's layout manager
      */
-    @Autowired(required=true)
+    @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
@@ -104,7 +104,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /**
      * Used to get access to the current portal request
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }

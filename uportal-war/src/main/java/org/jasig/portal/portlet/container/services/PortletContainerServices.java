@@ -61,17 +61,17 @@ public class PortletContainerServices implements ContainerServices, Initializing
     private RequestDispatcherService requestDispatcherService;
     private UserInfoService userInfoService;
     
-    @Autowired(required=true)
+    @Autowired
     public void setPortalContext(PortalContext portalContext) {
         this.portalContext = portalContext;
     }
     
-    @Autowired(required=true)
+    @Autowired
     public void setPortletEnvironmentService(PortletEnvironmentService portletEnvironmentService) {
         this.portletEnvironmentService = portletEnvironmentService;
     }
     
-    @Autowired(required=true)
+    @Autowired
     public void setPortletPreferencesService(PortletPreferencesService portletPreferencesService) {
         this.portletPreferencesService = portletPreferencesService;
     }
@@ -81,7 +81,7 @@ public class PortletContainerServices implements ContainerServices, Initializing
         this.requestDispatcherService = requestDispatcherService;
     }
     
-    @Autowired(required=true)
+    @Autowired
     public void setUserInfoService(@Qualifier("main") UserInfoService userInfoService) {
         this.userInfoService = userInfoService;
     }

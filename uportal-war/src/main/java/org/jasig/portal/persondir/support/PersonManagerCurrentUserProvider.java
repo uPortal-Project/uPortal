@@ -48,7 +48,7 @@ public class PersonManagerCurrentUserProvider implements ICurrentUserProvider {
     /**
      * @param personManager the personManager to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
@@ -59,7 +59,7 @@ public class PersonManagerCurrentUserProvider implements ICurrentUserProvider {
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }

@@ -90,7 +90,7 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     /**
      * @param portletDefinitionDao the portletDefinitionDao to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
         this.portletDefinitionDao = portletDefinitionDao;
     }

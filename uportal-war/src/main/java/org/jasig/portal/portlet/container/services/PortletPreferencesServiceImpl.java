@@ -88,7 +88,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
@@ -102,7 +102,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
@@ -116,7 +116,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
@@ -130,7 +130,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
@@ -144,7 +144,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * @param personManager the personManager to set
      */
-    @Autowired(required=true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }

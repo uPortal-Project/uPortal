@@ -113,11 +113,11 @@ public class PortletAdministrationHelper implements ServletContextAware {
     public void setServletContext(ServletContext servletContext) {
 	    this.servletContext = servletContext;
     }
-	@Autowired(required=true)
+	@Autowired
     public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
         this.portletDelegationLocator = portletDelegationLocator;
     }
-	@Autowired(required=true)
+	@Autowired
     public void setGroupListHelper(IGroupListHelper groupListHelper) {
 		this.groupListHelper = groupListHelper;
 	}
@@ -127,21 +127,21 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * 
 	 * @param channelRegistryStore
 	 */
-	@Autowired(required=true)
+	@Autowired
 	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
 		this.channelRegistryStore = channelRegistryStore;
 	}
-	@Autowired(required=true)
+	@Autowired
 	public void setPortalDriverContainerServices(
 			PortalDriverContainerServices portalDriverContainerServices) {
 		this.portalDriverContainerServices = portalDriverContainerServices;
 	}
-	@Autowired(required=true)
+	@Autowired
 	public void setChannelPublishingService(
 			IChannelPublishingService channelPublishingService) {
 		this.channelPublishingService = channelPublishingService;
 	}
-	@Autowired(required=true)
+	@Autowired
 	public void setChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao channelPublishingDefinitionDao) {
         this.channelPublishingDefinitionDao = channelPublishingDefinitionDao;
     }
