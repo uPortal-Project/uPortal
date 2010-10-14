@@ -28,7 +28,7 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
  * @version
  * 
  */
-public class InterimPortletEntityImpl implements IPortletEntity {
+class InterimPortletEntityImpl implements IPortletEntity {
     private String channelSubscribeId;
     private int userId;
     private IPortletDefinitionId portletDefinitionId;
@@ -39,8 +39,7 @@ public class InterimPortletEntityImpl implements IPortletEntity {
     private static final String INTERIM_ID_PATTERN = "%s_%s_%s_%s";
     private static final char INTERIM_SEPARATOR = '_';
 
-    static class InterimPortletEntityIdImpl extends AbstractObjectId implements
-            IPortletEntityId {
+    static class InterimPortletEntityIdImpl extends AbstractObjectId implements IPortletEntityId {
         private static final long serialVersionUID = 1L;
 
         public InterimPortletEntityIdImpl(String portletEntityId) {
@@ -48,13 +47,9 @@ public class InterimPortletEntityImpl implements IPortletEntity {
         }
     }
 
-    static class PortletDefinitionIdImpl extends AbstractObjectId implements
-            IPortletDefinitionId {
+    static class PortletDefinitionIdImpl extends AbstractObjectId implements IPortletDefinitionId {
         private static final long serialVersionUID = 1L;
 
-        /**
-         * @param objectId
-         */
         public PortletDefinitionIdImpl(long portletDefinitionId) {
             super(Long.toString(portletDefinitionId));
         }
@@ -69,23 +64,31 @@ public class InterimPortletEntityImpl implements IPortletEntity {
     }
 
     private void initFromIdString(String portletEntityIdStr) {
-        String[] vars = StringUtils
-                .split(portletEntityIdStr, INTERIM_SEPARATOR);
-        this.portletDefinitionId = new PortletDefinitionIdImpl(Long
-                .parseLong(vars[1]));
+        final String[] vars = StringUtils.split(portletEntityIdStr, INTERIM_SEPARATOR);
+        if (vars.length != 4) {
+            throw new IllegalArgumentException("'" + portletEntityIdStr + "' is not a valid InterimPortletEntityId");
+        }
+        
+        this.portletDefinitionId = new PortletDefinitionIdImpl(Long.parseLong(vars[1]));
         this.channelSubscribeId = vars[2];
         this.userId = Integer.parseInt(vars[3]);
     }
 
+    /**
+     * Only valid if passed a portletEntityId that returns true from
+     * {@link InterimPortletEntityImpl#isInterimPortletEntityId(IPortletEntityId)}
+     */
     public InterimPortletEntityImpl(IPortletEntityId portletEntityId) {
-        super();
         initFromIdString(portletEntityId.getStringId());
         this.portletEntityId = portletEntityId;
         this.portletPreferences = new PortletPreferencesImpl();
     }
 
+    /**
+     * Only valid if passed a portletEntityId that returns true from
+     * {@link InterimPortletEntityImpl#isInterimPortletEntityId(String)}
+     */
     public InterimPortletEntityImpl(String portletEntityIdStr) {
-        super();
         initFromIdString(portletEntityIdStr);
         this.portletEntityId = new InterimPortletEntityIdImpl(
                 portletEntityIdStr);
@@ -94,7 +97,6 @@ public class InterimPortletEntityImpl implements IPortletEntity {
 
     public InterimPortletEntityImpl(IPortletDefinitionId portletDefinitionId,
             String channelSubscribeId, int userId) {
-        super();
         this.portletDefinitionId = portletDefinitionId;
         this.channelSubscribeId = channelSubscribeId;
         this.userId = userId;
