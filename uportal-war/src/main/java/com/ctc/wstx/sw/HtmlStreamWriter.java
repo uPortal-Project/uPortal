@@ -340,17 +340,17 @@ public class HtmlStreamWriter extends BaseNsStreamWriter {
     }
     
     private final static Set<String> SELF_CLOSING_ELEMENTS = Collections.unmodifiableSet(
-            new TreeSet<String>(String.CASE_INSENSITIVE_ORDER) {{
-               add("area");
-               add("base");
-               add("basefont");
-               add("br");
-               add("hr");
-               add("input");
-               add("img");
-               add("link");
-               add("meta");
-            }}
+        new TreeSet<String>(String.CASE_INSENSITIVE_ORDER) {{
+           add("area");
+           add("base");
+           add("basefont");
+           add("br");
+           add("hr");
+           add("input");
+           add("img");
+           add("link");
+           add("meta");
+        }}
     );
 
     /* (non-Javadoc)
