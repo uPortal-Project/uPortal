@@ -163,6 +163,14 @@
 .layout-1-columns #portalPageBodyColumns .fl-col-flex {margin:0;}
 
 
+/* Prevent scrollbars on fluid containers. */
+.fl-fix, .fl-col-justified, .fl-col-flex2, .fl-col-flex3, .fl-col-flex4, .fl-col-flex5,
+.fl-col-mixed, .fl-col-mixed2, .fl-col-mixed3, .fl-listmenu li, .fl-list-menu li,
+.fl-listmenu a, .fl-list-menu a, ul.fl-grid, .fl-grid ul, .fl-grid li,
+.fl-icon, .fl-widget .fl-widget-options ul, .fl-widget .fl-widget-content,
+.fl-offScreen-hidden {overflow: visible;}
+
+
 /* Reset: tabs. */
 .fl-tabs {margin: 0 0 0 0; border-bottom: none; text-align: inherit; padding-bottom:0;}
 .fl-tabs li {list-style-type: none; display:inline;}
@@ -174,7 +182,8 @@
 .fl-tabs-left {text-align: left; padding-left: 10px;}
 .fl-tabs-right {text-align: right; padding-right: 15px;}
 
-/* Reset: mist. */
+
+/* Reset: mist theme. */
 .fl-theme-mist .fl-tabs {border: none; border-bottom: none; margin: 0; padding-bottom: 0;}
 .fl-theme-mist .fl-tabs li,
 .fl-theme-mist .fl-tabs li a {font-weight: bold; border: none; background-color: transparent; color: #555555;}
@@ -188,7 +197,8 @@
 .fl-theme-mist .fl-tabs li.fl-tabs-active a:hover {background-color: transparent; color: #222222 !important;}
 .fl-theme-mist .fl-tabs-content {background-color: transparent; border: none; margin-top: 0;}
 
-/* Reset: coal. */
+
+/* Reset: coal theme. */
 .fl-theme-coal .fl-tabs {}
 .fl-theme-coal .fl-tabs li,
 .fl-theme-coal .fl-tabs li a {font-weight: bold; color: #FFF !important; background-color: transparent; text-decoration: none;}
@@ -202,28 +212,8 @@
 .fl-theme-coal .fl-tabs li.fl-tabs-active a:hover {background-color: transparent; color:#000 !important;}
 .fl-theme-coal .fl-tabs-content {background-color: transparent; color:#000; border: none;}
 
-/* Reset: hc. 
-.fl-theme-hc .fl-tabs {}
-.fl-theme-hc .fl-tabs li,
-.fl-theme-hc .fl-tabs li * {}
-.fl-theme-hc .fl-tabs li {}
-.fl-theme-hc .fl-tabs li * {color: #fff !important; background-color: transparent !important;}
-.fl-theme-hc .fl-tabs li:hover,
-.fl-theme-hc .fl-tabs li:hover *,
-.fl-theme-hc .fl-tabs li a:hover {color:#000 !important;}
-.fl-theme-hc .fl-tabs li.fl-tabs-active,
-.fl-theme-hc .fl-tabs li.fl-tabs-active a,
-.fl-theme-hc .fl-tabs li.fl-tabs-active a:hover,
-.fl-theme-hc .fl-tabs li.fl-tabs-active a span,
-.fl-theme-hc .fl-tabs li.fl-activeTab,
-.fl-theme-hc .fl-tabs li.fl-activeTab:hover,
-.fl-theme-hc .fl-tabs li.fl-activeTab a,
-.fl-theme-hc .fl-tabs li.fl-activeTab a:hover,
-.fl-theme-hc .fl-tabs li.fl-activeTab a span {color:#000 !important;}
-.fl-theme-hc .fl-tab-content{}
-*/
 
-/* Set: mist. */
+/* Redefine: mist theme. */
 .fl-theme-mist .fl-tabs {padding: 0 0 0 0; text-align: left;}
 .fl-theme-mist .fl-tabs li {display: inline-block; position: relative; background-color: #EDEDED; padding: 5px 20px 5px 20px; border-left: 1px solid #EFEFEF; border-right: 1px solid #D3D3D3;
     border-top: 1px solid #D3D3D3; cursor: pointer; white-space: nowrap;}
@@ -233,7 +223,8 @@
 .fl-theme-mist .fl-tabs li.fl-activeTab,
 .fl-theme-mist .fl-tabs li.fl-activeTab:hover {background-color: #FFF;}
 
-/* Set: coal. */
+
+/* Redefine: coal theme. */
 .fl-theme-coal .fl-tabs {padding: 0 0 0 0; text-align: left;}
 .fl-theme-coal .fl-tabs li {display: inline-block; position: relative; background-color: #666; padding: 5px 20px 5px 20px; border-left: 1px solid #333; border-right: 1px solid #333;
     border-top: 1px solid #333; cursor: pointer; white-space: nowrap;}
@@ -243,16 +234,11 @@
 .fl-theme-coal .fl-tabs li.fl-activeTab,
 .fl-theme-coal .fl-tabs li.fl-activeTab:hover {background-color: #EBEBEB;}
 
-/* Set: hc. 
-.fl-theme-hc .fl-tabs {padding: 0 0 0 0; text-align: left;}
-.fl-theme-hc .fl-tabs li {display: inline-block; position: relative; background-color: #000; padding: 5px 20px 5px 20px; border-left: 1px solid #000; border-right: 1px solid #000;
-    border-top: 1px solid #000; cursor: pointer; white-space: nowrap;}
-.fl-theme-hc .fl-tabs li:hover {background-color: #FFF;}
-.fl-theme-hc .fl-tabs li.fl-tabs-active,
-.fl-theme-hc .fl-tabs li.fl-tabs-active:hover,
-.fl-theme-hc .fl-tabs li.fl-activeTab,
-.fl-theme-hc .fl-tabs li.fl-activeTab:hover {background-color: #FFF;}
-*/
+
+/* Redefine: focus */
+:focus,
+.fl-theme-mist :focus, .fl-theme-mist .selectable,
+.fl-theme-coal :focus, .fl-theme-coal .selectable {outline:1px dotted #CCC;}
 
 /* 
 ------------------------------------
@@ -261,9 +247,10 @@
  * uPortal is namespaced with "up", a class of the <body> tag.
  */
 
-/* forms */
+/* Forms */
 input[type="checkbox"] {margin-right:0.5em;}
 fieldset input[type="checkbox"] {margin-bottom:1em;}
+
 
 /* Buttons */
 /*
@@ -277,11 +264,13 @@ a.button {display:inline-block;}
 .buttons {padding:1em 0;}
 .button:hover {cursor:pointer;}
 
-/* common */
+
+/* Common */
 .portal-pipe {padding:0 0.5em;}
 
 ul.horizontal-list-floated li {list-style:none; float:left; padding-left:1em;}
 ul.horizontal-list-inline li {list-style:none; display:inline; padding-left:1em;}
+
 
 /* Add the "purpose-layout" class to any table you are using for layout purposes. */
 table.purpose-layout,
@@ -289,11 +278,11 @@ table.purpose-layout th,
 table.purpose-layout td {margin:0; padding:0;}
 
 
-/* page */
+/* Page */
 #portalPage {min-width:750px; clear:both;}
 
 
-/* header */
+/* Header */
 #portalPageHeader {position:relative;}
 #portalPageBar {padding:0.5em 0;}
 #portalPageBar h2 {margin:0; padding:0.5em 0 0 1em; position:absolute; top:0; left:0;}
@@ -308,52 +297,102 @@ table.purpose-layout td {margin:0; padding:0;}
 .focused #portalPageBar img {float:left; margin:3px 0 0 10px}
 
 
-/* body */
+/* Body */
 #portalPageBodyTitleRowContents {position:relative; padding:0 1em;} /* Sets this container as positioned to have other elements poisitioned relative to it. */
 .breadcrumb-separator {padding:0 0.5em;}
 #portalPageBodyTitleRow h1 {margin:0;}
+
+
 /* Columns */
 .portal-page-column-inner {padding-left:1em; min-height:100px;}
 #portalPageBodyColumns .single .portal-page-column-inner, 
 #portalPageBodyColumns .right .portal-page-column-inner {}
 #portalPageBodyColumns .single .portal-page-column-inner, 
 #portalPageBodyColumns .left .portal-page-column-inner {padding-left:0;}
-/* focused */
+/* Focused */
 .focused #portalPageBodyTitleRow {padding:1em 1em 0 1em;}
 #portalPageBodyBreadcrumb {margin-bottom:0.5em;}
 .focused .portal-page-column-inner {padding:0em 2em 2em 2em;}
 .focused .up-portlet-content {padding:0;}
 
+
 /* Sidebar */
 #portalSidebar {padding:0;}
 #portalSidebarInner {padding:0 1em 2em 1em;}
 #portalSidebar #portalCustomizationLinks .portal-pipe {display:none;}
+/* Sidebar Widgets & Navigation */
+#portalSidebar .fl-widget {padding:7px; font-size:85%; background:transparent; border:1px solid #CCC;}
+#portalSidebar .fl-widget .fl-widget-titlebar {margin:0;}
+#portalSidebar .fl-widget .fl-widget-titlebar h2 {color:#808080; font-size:1em; font-weight:bold; border:none;}
+#portalSidebar .fl-widget-content,
+#portalSidebar .fl-widget .fl-listmenu {background-color:#CCC; padding: .1em; border-width: 0px; border-bottom-width: 1px; border-color: #AAA;}
+#portalSidebar .fl-widget .fl-listmenu ul{margin: 0;}
+#portalSidebar .fl-widget .fl-listmenu a {padding-left:28px; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); background-position:0.5em 0.5em; background-repeat:no-repeat;}
+#portalSidebar .fl-widget .fl-listmenu li,
+#portalSidebar .fl-widget .fl-listmenu li a {background-color:#CCC; color:#000 !important; overflow: visible; *overflow: hidden; border: none;}
+#portalSidebar .fl-widget .fl-listmenu li {border: none; position: relative;}
+#portalSidebar .fl-widget .fl-listmenu li.first {border-left: none;}
+#portalSidebar .fl-widget .fl-listmenu li:hover,
+#portalSidebar .fl-widget .fl-listmenu li:focus,
+#portalSidebar .fl-widget .fl-listmenu li a:hover,
+#portalSidebar .fl-widget .fl-listmenu li a:focus {color:#000 !important; background-color:#EFEFEF; outline:none;}
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu,
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu a {background-color:#000; color:#FFF !important;}
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu:hover,
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu:focus,
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu a:hover,
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu a:focus {background-color:#000; color:#FFF !important;}
+/* Sidebar Subnavigation */
+#portalSidebar #portalNavigationInner {padding: 0 0 0 0; background-color: transparent;}
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list a {padding-left:40px; padding-bottom: 7px; background-position:1.7em 0.5em; font-size: 83%;}
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list,
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list a {background-color:#000; color:#FFF !important;}
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list:hover,
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list:focus,
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list a:hover,
+#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list a:focus {color:#FFF !important; background-color:#333; outline:none;}
+/* Sidebar Navigation: Icons */
+#portalSidebar #portalNavigation .portal-navigation-add,
+#portalSidebar #portalNavigation .portal-navigation-delete,
+#portalSidebar #portalNavigation .portal-navigation-gripper {display: block; position: absolute; text-decoration: none; border: none;}
+#portalSidebar #portalNavigation .portal-navigation-add:hover,
+#portalSidebar #portalNavigation .portal-navigation-delete:hover {background-position: 0px -16px;}
+#portalSidebar #portalNavigation .portal-navigation-delete,
+#portalSidebar #portalNavigation .portal-navigation-delete span,
+#portalSidebar #portalNavigation .portal-navigation-gripper,
+#portalSidebar #portalNavigation .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
+#portalSidebar #portalNavigation .portal-navigation-delete span,
+#portalSidebar #portalNavigation .portal-navigation-gripper span {visibility: hidden;}
+#portalSidebar #portalNavigation .portal-navigation-add {height:16px; top: 1px; left: auto; right: 2px; padding:0px 0px 0px 16px; color: #000; text-transform: capitalize; background: transparent url("../images/add.png") 0px 0px no-repeat;}
+#portalSidebar #portalNavigation .portal-navigation-gripper {top: 0px; left: auto; right: 18px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat; padding: 0;}
+#portalSidebar #portalNavigation .portal-navigation-delete {top: 0px; right: 0px; cursor: pointer; background: transparent url("../images/remove.png") 0px 0px no-repeat; padding: 0;}
 
-/* portlet wrappers */
+
+/* Portlet Wrappers */
 .up-portlet-wrapper {margin-bottom:1em;}
 .up-portlet-titlebar {position:relative;}
 .up-portlet-titlebar h2 {margin:0; padding:2px 20px 3px 20px;}
 .up-portlet-controls {position:absolute; top:4px; right:0;}
 .dashboard .up-portlet-controls .up-portlet-control {padding-right:1em;}
 .up-portlet-content-wrapper {padding:1em;}
-/* No chrome */
+/* No Chrome */
 .fl-widget.no-chrome .up-portlet-titlebar {display:none;}
 .fl-widget.no-chrome,
 .fl-widget.no-chrome .up-portlet-content-wrapper {padding:0; border:none; background:none;}
 
-/* footer */
+/* Footer */
 #portalPageFooter {}
 #portalPageFooterInner {}
 #portalProductAndVersion {margin-top:1em;}
 
-/* login */
+/* Login */
 #portalLogin label {display:block; margin-bottom:0.3em;}
 #portalLogin input {margin-bottom:1em;}
 
 /* Navigation */
 #portalNavigation, #portalNavigationInner {background-color: transparent;}
 #portalNavigationInner {position: relative;}
-/* Navigation: icons (common) */
+/* Navigation: Icons (common) */
 #portalNavigation .portal-navigation-add,
 #portalNavigation .portal-navigation-delete,
 #portalNavigation .portal-navigation-gripper {display: block; position: absolute; text-decoration: none; border: none;}
@@ -365,30 +404,10 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigation .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
 #portalNavigation .portal-navigation-delete span,
 #portalNavigation .portal-navigation-gripper span {visibility: hidden;}
-/* Navigation: icons */
 #portalNavigation .portal-navigation-add {height:16px; top: 1px; right: 2em;  padding:0px 0px 0px 16px; background: transparent url("../images/add.png") 0px 0px no-repeat;}
 #portalNavigation .portal-navigation-gripper {top: 0px; left: 0px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat; padding: 0;}
 #portalNavigation .portal-navigation-delete {top: 0px; right: 0px; cursor: pointer; background: transparent url("../images/remove.png") 0px 0px no-repeat; padding: 0;}
-/* Navigation: avatar icons (common) */
-.fl-reorderer-header-avatar .portal-navigation-delete,
-.fl-reorderer-header-avatar .portal-navigation-gripper {display: block; position: absolute; padding: 0; border: none; text-decoration: none;}
-.fl-reorderer-header-avatar .portal-navigation-delete,
-.fl-reorderer-header-avatar .portal-navigation-delete span,
-.fl-reorderer-header-avatar .portal-navigation-gripper,
-.fl-reorderer-header-avatar .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
-.fl-reorderer-header-avatar .portal-navigation-delete span,
-.fl-reorderer-header-avatar .portal-navigation-gripper span {visibility: hidden;}
-/* Navigation: avatar */
-.fl-reorderer-header-avatar {display: inline; position: relative; padding: 5px 20px 5px 20px; cursor: pointer; background-color: #FFF; border: 2px solid #F68922; filter:alpha(opacity=70); opacity:.7;}
-.fl-reorderer-header-avatar .portal-navigation-link {color: #222222 !important; text-decoration: none;}
-.fl-reorderer-header-avatar .portal-navigation-delete {top: 0px; right: 0px; cursor: pointer; background: transparent url("../images/remove.png") 0px 0px no-repeat;}
-.fl-reorderer-header-avatar .portal-navigation-gripper {top: 0px; left: 0px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat;}
-.fl-reorderer-header-avatar .portal-flyout-container{display: none !important;}
-/* Navigation: dropMarker */
-.fl-reorderer-header-dropMarker {display: inline-block; border: 1px solid #d26600 !important; background-color: #F68922 !important; margin: 0 2px !important; filter:alpha(opacity=80) !important;
-    opacity:.8 !important; padding: .5em .31em !important; *display: inline !important; *height: 10px; *padding: 0em .13em !important; *zoom: 1 !important;}
-
-/* Navigation: subrow */
+/* Navigation: Subrow */
 #portalNavigationSubrow {padding:0.5em 0;}
 .sidebar-left-100 #portalNavigationSubrow ul {margin-left:120px;}
 .sidebar-left-150 #portalNavigationSubrow ul {margin-left:170px;}
@@ -402,8 +421,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .sidebar-right-300 #portalNavigationSubrow ul {margin-right:320px;}
 #portalNavigationSubrow li {list-style-type:none; display:inline;}
 #portalNavigationSubrow a {padding:0em 1em;}
-
-/* Navigation: flyout */
+/* Navigation: Flyout */
 #portalNavigation .portal-flyout-container {width: 200px; position: absolute; z-index: 100000; display: none; background-color:#333; padding-bottom:1px; border:4px solid #333;}
 #portalNavigation .portal-flyout-container .portal-subnav-list {margin: 0;}
 #portalNavigation .portal-flyout-container .portal-subnav-list li {display: list-item; position: static; padding: 0; list-style: none; border: none;}
@@ -412,13 +430,23 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav .portal-subnav-link:hover,
 #portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav .portal-subnav-link:focus {color:#fff !important; background-color:#AAA;}
 #portalNavigation .portal-flyout-iframe {position:absolute; z-index:9;}
-
-/* Navigation: z-index (Fix for IE) */
+/* Navigation: Flyout (Fix for IE7) */
 .on-top {z-index:1000000;}
+/* Navigation: Flyout (Legacy) */
+#portalNavigation .portal-flyout-container .portal-subnav-list #movePageLeftLink,
+#portalNavigation .portal-flyout-container .portal-subnav-list #movePageRightLink,
+#portalNavigation .portal-flyout-container .portal-subnav-list #editPageLink,
+#portalNavigation .portal-flyout-container .portal-subnav-list #deletePageLink {display: none;}
+#portalNavigation .movable .portal-subnav-list #movePageLeftLink,
+#portalNavigation .movable .portal-subnav-list #movePageRightLink,
+#portalNavigation .editable .portal-subnav-list #editPageLink,
+#portalNavigation .deletable .portal-subnav-list #deletePageLink {display: list-item;}
+
 
 /* Edit Permisssions */
 #portalEditPagePermissions {}
 #editPagePermissionsLink {float: right; display: block; margin-top: .75em; margin-right: 2em;}
+
 
 /* Customize Page Message */
 #portalPageBodyCustomizeMessageRow {background: transparent; padding-top: 4px; margin-bottom: 1em;}
@@ -426,13 +454,14 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalPageBodyCustomizeMessageRowContents h1 {margin: 0 0 .3em 0; font-weight: normal; border: none;}
 #portalPageBodyCustomizeMessageRowContents .fl-font-blue {font-weight: bold;}
 
-/* quicklinks */
-#portalQuicklinks {}
 
+/* Quick Links */
+#portalQuicklinks {}
 #portalQuicklinks ul, 
 #portalQuicklinks li {margin:0; padding:0;}
 
-/* web search */
+
+/* Web Search */
 #webSearchContainer form {}
 #webSearchContainer input, 
 #webSearchContainer select {margin-bottom:0.5em;}
@@ -441,8 +470,11 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalPageHeader #webSearchContainer input,
 #portalPageHeader #webSearchContainer select {margin-left:0.3em;}
 
+
+/* Tooltip */
 #tooltip h3, #tooltip div { margin: 0; }
 #tooltip {position:absolute; z-index:3000; opacity:0.85; max-width:400px; padding:4px;}
+
 
 /* Fragment Administration */
 #fragmentAdminForm {margin:0; padding:0;}
@@ -452,9 +484,12 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalFragAdminExit form {display:inline;}
 #portalFragAdminExit h2 {padding-right:1em;}
 #portalFragAdminExit #exitFragment {margin-left:1em; padding:0.3em 1em;}
+.fragment-disabled .add-fragment-link { display:none }
+
 
 /* Portlet Navigation */
 #portletNavigation h3 {margin:0.5em 0 0 0; padding:0.2em 0.5em;}
+
 
 /* Ajax Menus */
 #changeColumns tr td { text-align: center; }
@@ -463,16 +498,6 @@ table.purpose-layout td {margin:0; padding:0;}
 #skinList h2 {display:inline; margin-left:0.5em;}
 #skinList .fl-widget-content {padding:1em;}
 
-.fragment-disabled .add-fragment-link { display:none }
-
-#portalNavigation .portal-flyout-container .portal-subnav-list #movePageLeftLink,
-#portalNavigation .portal-flyout-container .portal-subnav-list #movePageRightLink,
-#portalNavigation .portal-flyout-container .portal-subnav-list #editPageLink,
-#portalNavigation .portal-flyout-container .portal-subnav-list #deletePageLink { display: none; }
-#portalNavigation .movable .portal-subnav-list #movePageLeftLink,
-#portalNavigation .movable .portal-subnav-list #movePageRightLink,
-#portalNavigation .editable .portal-subnav-list #editPageLink,
-#portalNavigation .deletable .portal-subnav-list #deletePageLink { display: list-item; }
 
 /* 
 ------------------------------------
@@ -505,6 +530,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .content .add-content,
 .up-gallery .content .use-content {overflow-y: hidden;}
 
+
 /* Gallery General Coloring
  * Override these vales on a per-skin basis by adding the overrides to portal.css within the desired skin folder.
  */
@@ -513,6 +539,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .content-wrapper .content-filters-wrapper {padding-right:5px; background:transparent url(../images/gallery-search-active-arrow.png) right 20% no-repeat;}
 .up-gallery .content-wrapper .content-filters-wrapper .categories-column,
 .up-gallery .content-wrapper .content-filters-wrapper .packages-column {background:#424243; /*border:3px solid #424243; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;*/}
+
 
 /* Gallery Menu Items 
  * The navigation menu of gallery views.
@@ -530,6 +557,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .menu li :focus {outline:none;}
 *:first-child+html .up-gallery .menu li {height:25px;}
 
+
 /* Gallery Handle 
  * Clickable handle that opens the drawer. Once open, the handle can be clicked to close the drawer.
  */
@@ -539,11 +567,13 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .handle a span {text-transform:uppercase; color:#888; font-weight:bold; padding:1px 25px 2px 10px; margin-right:5px; display:block; background-image: url(../images/gallery-handle-arrow-down.png); background-position: right center; background-repeat: no-repeat;}
 .up-gallery .handle-arrow-up {background-image: url(../images/gallery-handle-arrow-up.png) !important;}
 
+
 /* Gallery Modal Loaders 
  * Preloaders while the content loads, following the opening of the drawer.
  */
 .up-gallery .gallery-loader {display: block; margin: 7px 0px 0px 127px; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; background: #333 url("../images/gallery-content-preloader.gif") 50% 50% no-repeat;}
 .up-gallery .gallery-loader span {display: none;}
+
 
 /* Gallery Close Button 
  * An explicit close button, that closes the drawer.
@@ -552,6 +582,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .close-button a {color: #000;}
 .up-gallery .close-button a:hover {color:#fff; text-decoration: none;}
 .up-gallery .close-button span{font-weight:bold; font-size:13px;}
+
 
 /* Gallery Add/Use Portlet Filters 
  * Search and category filters for the add portlet and use portlet views.
@@ -566,29 +597,12 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .categories,.up-gallery .packages {}
 .up-gallery .categories-column, .up-gallery .packages-column{clear:both;}
 .up-gallery .content-filters-wrapper h3 {margin:0; padding:7px 0 0 0; cursor:pointer; font-size:12px; color:#c5c5c6;}
-.up-gallery .categories-column h3 {
-    background:#333;
-    -webkit-border-top-left-radius: 2px;
-    -webkit-border-top-right-radius: 2px;
-    -moz-border-radius-topleft: 2px;
-    -moz-border-radius-topright: 2px;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
-    
-}
+.up-gallery .categories-column h3 {background:#333; -webkit-border-top-left-radius: 2px; -webkit-border-top-right-radius: 2px; -moz-border-radius-topleft: 2px; -moz-border-radius-topright: 2px; 
+    border-top-left-radius: 2px; border-top-right-radius: 2px;}
 .up-gallery .packages-column h3 {position:absolute; top:0; left:56px;}
 .up-gallery .content-filters-wrapper .active h3 {color:#f68923;}
-.up-gallery .content-filters-wrapper h3 span {
-    padding:1px 10px; 
-    border:2px solid #424243; 
-    border-bottom:none;
-    -webkit-border-top-left-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
-    -moz-border-radius-topleft: 5px;
-    -moz-border-radius-topright: 5px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
+.up-gallery .content-filters-wrapper h3 span {padding:1px 10px; border:2px solid #424243; border-bottom:none; -webkit-border-top-left-radius: 5px; -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;}
 .up-gallery .content-filters-wrapper .active h3 span {background:#424243;}
 .up-gallery .content-filters-wrapper h3 span:hover,
 .up-gallery .content-filters-wrapper h3 span:focus {background:#000; color:#f68923;}
@@ -605,6 +619,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .categories li a:hover, .up-gallery .categories li a:focus, .up-gallery .categories li.active a {color:#fff;}
 .up-gallery .categories li a:hover, .up-gallery .categories li a:focus {background-color:rgba(0,0,0,.25);}
 .up-gallery .categories li.active a {text-decoration:underline;}
+
 
 /* Gallery List Pager 
  * Pagination controls for lists in the gallery.
@@ -634,6 +649,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .pager-button-down.fl-pager-disabled:hover,
 .up-gallery .pager-button-up.fl-pager-disabled:focus,
 .up-gallery .pager-button-down.fl-pager-disabled:focus {background:#333; border-color:#666;}
+
 
 /* Gallery Portlet List 
  * The list of portlets for add and use.
@@ -667,8 +683,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .portlet-thumb-icon {width:37px; height:37px;}
 .up-gallery .portlet-thumb-icon span {visibility: hidden;}
 .up-gallery .portlet-thumb-description {color: #AAA; padding: 0; margin-left: 36px;}
-
-/* temporary icon */
+/* Temporary Icon */
 .up-gallery .results-wrapper .package-list {list-style:none; padding:0; margin:0; position:relative;}
 .up-gallery .results-wrapper .package-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:33%; height:50%;}
 .up-gallery .results-wrapper .package-list li .package-wrapper {height:66px; padding:5px 8px 5px 8px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
@@ -676,13 +691,11 @@ table.purpose-layout td {margin:0; padding:0;}
 /* IE7 adjustments*/
 *:first-child+html .up-gallery .results-wrapper .portlet-list li {width:24%;} 
 *:first-child+html .up-gallery .results-wrapper .package-list li {width:24%;} 
-
 .up-gallery .package-wrapper {background: #333; border:1px solid #666; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px;
     -webkit-border-top-right-radius:0px; -moz-box-shadow: 0px 0px 2px 0px #000; -webkit-box-shadow: 0px 0px 2px 0px #000; box-shadow: 0px 0px 2px 0px #000;}
 .up-gallery .package-wrapper:hover {
     border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333));
     border-top-right-radius:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;}
-
 .up-gallery .package-wrapper .package-link {position: absolute; top: 0px; right: 0px; display: block; cursor:pointer; color:#000; padding:2px 8px; background:#666; display: block;
     background-image:-moz-linear-gradient(90deg,#666,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center;}
 .up-gallery .package-wrapper .package-link:hover,
@@ -692,6 +705,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .package-icon {width:37px; height:37px;}
 .up-gallery .package-icon span {visibility: hidden;}
 .up-gallery .package-description {color: #AAA; padding: 0; margin-left: 36px;}
+
 
 /* Gallery Skin List 
  * The list of skins.
@@ -734,6 +748,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .layout-wrapper .layout-thumb {width: 27px; height:27px;}
 .up-gallery .layout-wrapper .layout-thumb span {visibility: hidden;}
 
+
 /* Gallery: Avatar */
 .portlet.ui-draggable-dragging {
     border: 1px solid #F68923; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;
@@ -755,9 +770,63 @@ table.purpose-layout td {margin:0; padding:0;}
 .portlet.ui-draggable-dragging .portlet-thumb-icon span {visibility: hidden;}
 .portlet.ui-draggable-dragging .portlet-thumb-description {color: #AAA; padding: 0; margin-left: 36px; font-size: 11px;}
 
+
 /* Gallery: Drop Target */
-.layout-draggable-drop-target {display: none; background: #FF0000; padding: 5px; height: 150px; text-align: center; margin-bottom: 1em;  border: 2px dashed #960000; font-weight: bold; color: #960000;}
+.layout-draggable-drop-target {display: none; background: #FF0000; padding: 5px; height: 150px; text-align: center; margin-bottom: 1em;  border: 2px dotted #960000; font-weight: bold; color: #960000;}
 .layout-draggable-drop-target span {display: block; padding: 65px 5px 5px 5px;}
 .layout-draggable-drop-target-active {}
 .layout-draggable-target-dropped {border: 1px solid #CCC; background: #EFEFEF url("../../uportal3/images/loading.gif") 50% 50% no-repeat;}
 .layout-draggable-target-dropped span {display:none;}
+
+
+/* Fluid Layout Customizer (Generic: drag and drop) */
+.fl-reorderer-movable-hover {cursor:move;}
+.fl-reorderer-movable-dragging-mouse {display:none;}
+.fl-reorderer-movable-dragging {filter:alpha(opacity=50); opacity:.5;}
+.fl-reorderer-movable-selected {outline-color: #F68922;}
+.fl-reorderer-avatar {background-color:#fff; border:1px dotted #999; width:auto; filter:alpha(opacity=60); opacity:.6;}
+.fl-reorderer-dropMarker {height:200px !important; background-color:#FF0000; border:2px dotted #960000; margin-bottom:1em;}
+.drop-warning {position:absolute; top:50px; left:10px; border:2px solid red; background-color:#ffd7d7; display:none; padding:10px; margin:5px; z-index:65535;}
+.drop-warning p {margin:0em; padding:0.5em 1em;}
+
+
+/* Fluid Layout Customizer (Header: drag and drop) */
+/* Avatar Icons (common) */
+.fl-reorderer-header-avatar .portal-navigation-delete,
+.fl-reorderer-header-avatar .portal-navigation-gripper {display: block; position: absolute; padding: 0; border: none; text-decoration: none;}
+.fl-reorderer-header-avatar .portal-navigation-delete,
+.fl-reorderer-header-avatar .portal-navigation-delete span,
+.fl-reorderer-header-avatar .portal-navigation-gripper,
+.fl-reorderer-header-avatar .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
+.fl-reorderer-header-avatar .portal-navigation-delete span,
+.fl-reorderer-header-avatar .portal-navigation-gripper span {visibility: hidden;}
+/* Avatar */
+.fl-reorderer-header-avatar {display: inline; position: relative; padding: 5px 20px 5px 20px; cursor: pointer; background-color: #FFF; border: 2px solid #F68922; filter:alpha(opacity=70); opacity:.7;}
+.fl-reorderer-header-avatar .portal-navigation-link {color: #222222 !important; text-decoration: none;}
+.fl-reorderer-header-avatar .portal-navigation-delete {top: 0px; right: 0px; cursor: pointer; background: transparent url("../images/remove.png") 0px 0px no-repeat;}
+.fl-reorderer-header-avatar .portal-navigation-gripper {top: 0px; left: 0px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat;}
+.fl-reorderer-header-avatar .portal-flyout-container{display: none !important;}
+/* Drop Marker */
+.fl-reorderer-header-dropMarker {display: inline-block; border: 1px solid #d26600 !important; background-color: #F68922 !important; margin: 0 2px !important; filter:alpha(opacity=80) !important;
+    opacity:.8 !important; padding: .5em .31em !important; *display: inline !important; *height: 10px; *padding: 0em .13em !important; *zoom: 1 !important;}
+
+
+/* Fluid Layout Customizer (Sidebar: drag and drop) */
+/* Avatar Icons (common) */
+.fl-reorderer-sidebar-avatar .portal-navigation-delete,
+.fl-reorderer-sidebar-avatar .portal-navigation-gripper {display: block; position: absolute; padding: 0; border: none; text-decoration: none;}
+.fl-reorderer-sidebar-avatar .portal-navigation-delete,
+.fl-reorderer-sidebar-avatar .portal-navigation-delete span,
+.fl-reorderer-sidebar-avatar .portal-navigation-gripper,
+.fl-reorderer-sidebar-avatar .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
+.fl-reorderer-sidebar-avatar .portal-navigation-delete span,
+.fl-reorderer-sidebar-avatar .portal-navigation-gripper span {visibility: hidden;}
+/* Avatar */
+.fl-reorderer-sidebar-avatar {display: inline; position: relative; padding: 5px 0 5px 20px; width: 150px; height: 30px; overflow: hidden; cursor: pointer; background-color: #FFF; border: 2px solid #F68922; filter:alpha(opacity=70); opacity:.7;}
+.fl-reorderer-sidebar-avatar .portal-navigation-link {color: #222222 !important; text-decoration: none;}
+.fl-reorderer-sidebar-avatar .portal-navigation-delete {top: 0px; right: 0px; cursor: pointer; background: transparent url("../images/remove.png") 0px 0px no-repeat;}
+.fl-reorderer-sidebar-avatar .portal-navigation-gripper {top: 0px; left: auto; right: 18px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat;}
+.fl-reorderer-sidebar-avatar .portal-flyout-container, .up .fl-reorderer-sidebar-avatar .portal-subnav-list{display: none !important;}
+/* Drop Marker */
+.fl-reorderer-sidebar-dropMarker {display: inline-block; border: 1px solid #d26600 !important; background-color: #F68922 !important; margin: 0 2px !important; filter:alpha(opacity=80) !important;
+    opacity:.8 !important; padding: .31em 1em !important; *display: inline !important; *height: 10px; *padding: 0em .13em !important; *zoom: 1 !important;}
