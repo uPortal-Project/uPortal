@@ -48,6 +48,7 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -411,26 +412,30 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
      */
     @Override
     public String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final PortletRenderExecutionWorker tracker = getRenderedPortlet(portletWindowId, request, response);
-        final int timeout = getPortletRenderTimeout(portletWindowId, request);
-        
-		try {
-			final PortletRenderResult portletRenderResult = tracker.get(timeout);
-			if (portletRenderResult != null) {
-    	        final String title = portletRenderResult.getTitle();
-    	        if (title != null) {
-    	            return title;
-    	        }
-			}
-		}
-		catch (Exception e) {
-			logger.warn("unable to get portlet title, falling back to title defined in channel definition for portletWindowId " + portletWindowId);
-		}
-		
-		// return portlet title from channel definition
-		final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
+        final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
         final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
         final IChannelDefinition channelDefinition = parentPortletDefinition.getChannelDefinition();
+        final IChannelParameter disableDynamicTitle = channelDefinition.getParameter("disableDynamicTitle");
+        
+        if (disableDynamicTitle == null || !Boolean.parseBoolean(disableDynamicTitle.getValue())) {
+            final PortletRenderExecutionWorker tracker = getRenderedPortlet(portletWindowId, request, response);
+            final int timeout = getPortletRenderTimeout(portletWindowId, request);
+            
+    		try {
+    			final PortletRenderResult portletRenderResult = tracker.get(timeout);
+    			if (portletRenderResult != null) {
+        	        final String title = portletRenderResult.getTitle();
+        	        if (title != null) {
+        	            return title;
+        	        }
+    			}
+    		}
+    		catch (Exception e) {
+    			logger.warn("unable to get portlet title, falling back to title defined in channel definition for portletWindowId " + portletWindowId);
+    		}
+        }
+        
+		// return portlet title from channel definition
         return channelDefinition.getTitle();
     }
 
