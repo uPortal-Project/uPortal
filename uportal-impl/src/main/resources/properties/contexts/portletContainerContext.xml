@@ -176,6 +176,7 @@
     <bean id="portletEntityRegistry" class="org.jasig.portal.portlet.registry.PortletEntityRegistryImpl">
         <property name="portletDefinitionRegistry" ref="portletDefinitionRegistry" />
         <property name="portletEntityDao" ref="portletEntityDao" />
+        <property name="portalRequestUtils" ref="portalRequestUtils" />
     </bean>
     
     <bean id="portletDefinitionRegistry" class="org.jasig.portal.portlet.registry.PortletDefinitionRegistryImpl">
