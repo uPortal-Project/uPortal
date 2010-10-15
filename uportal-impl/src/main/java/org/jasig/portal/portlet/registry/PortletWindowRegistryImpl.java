@@ -257,7 +257,13 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         final String portletApplicationId = portletDescriptorKeys.first;
         final String portletName = portletDescriptorKeys.second;
-        return new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName);
+        final PortletWindowImpl portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletApplicationId, portletName);
+        
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace("Created PortletWindow " + portletWindow.getId() + " for PortletEntity " + portletEntityId);
+        }
+        
+        return portletWindow;
     }
     
     /**
