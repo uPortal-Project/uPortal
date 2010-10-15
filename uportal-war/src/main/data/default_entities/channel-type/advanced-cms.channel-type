@@ -3,5 +3,5 @@
   <name>Advanced CMS</name>
   <type>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</type>
   <desc>Displays configured HTML content.</desc>
-  <uri>/org/jasig/portal/channels/CMS/AdvancedCMSPortlet.cpd</uri>
+  <uri>/org/jasig/portal/portlets/CMS/AdvancedCMSPortlet.cpd</uri>
 </channel-type>
