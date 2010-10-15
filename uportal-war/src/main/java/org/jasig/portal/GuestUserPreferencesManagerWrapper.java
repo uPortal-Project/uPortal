@@ -19,6 +19,7 @@
 
 package  org.jasig.portal;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -58,6 +59,14 @@ public class GuestUserPreferencesManagerWrapper implements IUserPreferencesManag
         return this.gulm.getPerson();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jasig.portal.IUserPreferencesManager#reloadStructureStylesheet(javax.servlet.http.HttpServletRequest)
+     */
+    public void reloadStructureStylesheet(HttpServletRequest req) throws Exception { 
+        this.gulm.reloadStructureStylesheet(req);
+    }
+    
     /**
      * Determine if the user agent associated with this session has been successfuly mapped to a profile
      * @return <code>true</code> if no mapping was found

@@ -168,6 +168,21 @@ public class UserPreferencesManager implements IUserPreferencesManager {
         this.person = person;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.jasig.portal.IUserPreferencesManager#reloadStructureStylesheet(javax.servlet.http.HttpServletRequest)
+     */
+    public void reloadStructureStylesheet(HttpServletRequest req) throws Exception {
+        StructureStylesheetUserPreferences ssup = userLayoutStore.getStructureStylesheetUserPreferences(this.person, this.completeUserPreferences.getProfile().getProfileId(), this.completeUserPreferences.getStructureStylesheetUserPreferences().getStylesheetId());
+        if (ssup != null) {
+            this.completeUserPreferences.setStructureStylesheetUserPreferences(ssup);
+            HttpSession session = req.getSession(true);
+            if (session != null) {
+                session.setAttribute(USER_PREFERENCES_KEY, this.completeUserPreferences);
+            }
+        }        
+    }
+    
     /**
      * Returns current person object
      * @return current <code>IPerson</code>

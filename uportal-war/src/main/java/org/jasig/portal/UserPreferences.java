@@ -55,7 +55,7 @@ public class UserPreferences implements Serializable {
     public UserProfile getProfile() { return profile; }
 
     public UserPreferences(UserProfile p) { this.profile=p; }
-
+    
     public void setStructureStylesheetUserPreferences(StructureStylesheetUserPreferences up) {
         this.fsup=up;
     }

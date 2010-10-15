@@ -34,6 +34,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import net.sf.ehcache.Ehcache;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
@@ -64,6 +66,7 @@ import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -112,7 +115,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
-    
+
 	// default tab name
 	protected final static String DEFAULT_TAB_NAME = "New Tab";
 
@@ -209,7 +212,9 @@ public class UpdatePreferencesServlet implements InitializingBean {
         }
         
         try {
+            // reload user layout and stylesheet to incorporate new DLM fragment
             ulm.loadUserLayout(true);
+            upm.reloadStructureStylesheet(request);
 
             // get the target node this new tab should be moved after
             String destinationId = request.getParameter("elementID");

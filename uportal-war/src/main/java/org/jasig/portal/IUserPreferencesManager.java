@@ -19,6 +19,7 @@
 
 package  org.jasig.portal;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -43,6 +44,14 @@ public interface IUserPreferencesManager {
      * @return an <code>IUserLayoutManager</code> value
      */
     public IUserLayoutManager getUserLayoutManager();
+
+    /**
+     * Reload the user's structure stylesheet
+     * 
+     * @param req
+     * @throws Exception
+     */
+    public void reloadStructureStylesheet(HttpServletRequest req) throws Exception;
 
     /**
      * Returns a global channel Id given a channel instance Id
