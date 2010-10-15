@@ -103,7 +103,7 @@
         <BookmarksPortlet.version>1.0.10</BookmarksPortlet.version>
         <cas-server.version>3.3.5</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC2</cas-proxy-test-portlet.version>
-        <FunctionalTestsPortlet.version>1.0.2</FunctionalTestsPortlet.version>
+        <FunctionalTestsPortlet.version>1.0.3-SNAPSHOT</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.0-RC2</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
         <NewsReaderPortlet.version>2.0.0-RC1</NewsReaderPortlet.version>

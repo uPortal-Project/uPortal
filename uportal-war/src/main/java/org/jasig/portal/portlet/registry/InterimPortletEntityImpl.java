@@ -5,13 +5,11 @@
  */
 package org.jasig.portal.portlet.registry;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl;
-import org.jasig.portal.portlet.om.AbstractObjectId;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -34,75 +32,14 @@ class InterimPortletEntityImpl implements IPortletEntity {
     private IPortletDefinitionId portletDefinitionId;
     private IPortletPreferences portletPreferences = null;
     private IPortletEntityId portletEntityId = null;
-    // package access intended <'i'nterim><'p'ortlet><'e'ntity>
-    static final String INTERIM_PREFIX = "ipe";
-    private static final String INTERIM_ID_PATTERN = "%s_%s_%s_%s";
-    private static final char INTERIM_SEPARATOR = '_';
-
-    static class InterimPortletEntityIdImpl extends AbstractObjectId implements IPortletEntityId {
-        private static final long serialVersionUID = 1L;
-
-        public InterimPortletEntityIdImpl(String portletEntityId) {
-            super(portletEntityId);
-        }
-    }
-
-    static class PortletDefinitionIdImpl extends AbstractObjectId implements IPortletDefinitionId {
-        private static final long serialVersionUID = 1L;
-
-        public PortletDefinitionIdImpl(long portletDefinitionId) {
-            super(Long.toString(portletDefinitionId));
-        }
-    }
-
-    // package access intended
-    static boolean isInterimPortletEntityId(IPortletEntityId portletEntityId) {
-        return isInterimPortletEntityId(portletEntityId.getStringId());
-    }
-    static boolean isInterimPortletEntityId(String portletEntityIdStr) {
-        return portletEntityIdStr.startsWith(INTERIM_PREFIX);
-    }
-
-    private void initFromIdString(String portletEntityIdStr) {
-        final String[] vars = StringUtils.split(portletEntityIdStr, INTERIM_SEPARATOR);
-        if (vars.length != 4) {
-            throw new IllegalArgumentException("'" + portletEntityIdStr + "' is not a valid InterimPortletEntityId");
-        }
-        
-        this.portletDefinitionId = new PortletDefinitionIdImpl(Long.parseLong(vars[1]));
-        this.channelSubscribeId = vars[2];
-        this.userId = Integer.parseInt(vars[3]);
-    }
-
-    /**
-     * Only valid if passed a portletEntityId that returns true from
-     * {@link InterimPortletEntityImpl#isInterimPortletEntityId(IPortletEntityId)}
-     */
-    public InterimPortletEntityImpl(IPortletEntityId portletEntityId) {
-        initFromIdString(portletEntityId.getStringId());
-        this.portletEntityId = portletEntityId;
-        this.portletPreferences = new PortletPreferencesImpl();
-    }
-
-    /**
-     * Only valid if passed a portletEntityId that returns true from
-     * {@link InterimPortletEntityImpl#isInterimPortletEntityId(String)}
-     */
-    public InterimPortletEntityImpl(String portletEntityIdStr) {
-        initFromIdString(portletEntityIdStr);
-        this.portletEntityId = new InterimPortletEntityIdImpl(
-                portletEntityIdStr);
-        this.portletPreferences = new PortletPreferencesImpl();
-    }
+    
 
     public InterimPortletEntityImpl(IPortletDefinitionId portletDefinitionId,
             String channelSubscribeId, int userId) {
         this.portletDefinitionId = portletDefinitionId;
         this.channelSubscribeId = channelSubscribeId;
         this.userId = userId;
-        this.portletEntityId = new InterimPortletEntityIdImpl(String.format(
-                INTERIM_ID_PATTERN, INTERIM_PREFIX, portletDefinitionId
-                        .getStringId(), channelSubscribeId, userId));
+        this.portletEntityId = new PortletEntityIdImpl(portletDefinitionId, channelSubscribeId, userId);
         this.portletPreferences = new PortletPreferencesImpl();
     }
 
@@ -111,6 +48,7 @@ class InterimPortletEntityImpl implements IPortletEntity {
      * 
      * @see org.jasig.portal.portlet.om.IPortletEntity#getChannelSubscribeId()
      */
+    @Override
     public String getChannelSubscribeId() {
         return channelSubscribeId;
     }
@@ -120,6 +58,7 @@ class InterimPortletEntityImpl implements IPortletEntity {
      * 
      * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletDefinitionId()
      */
+    @Override
     public IPortletDefinitionId getPortletDefinitionId() {
         return portletDefinitionId;
     }
@@ -129,6 +68,7 @@ class InterimPortletEntityImpl implements IPortletEntity {
      * 
      * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletEntityId()
      */
+    @Override
     public IPortletEntityId getPortletEntityId() {
         return portletEntityId;
     }
@@ -138,6 +78,7 @@ class InterimPortletEntityImpl implements IPortletEntity {
      * 
      * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletPreferences()
      */
+    @Override
     public IPortletPreferences getPortletPreferences() {
         return portletPreferences;
     }
@@ -147,6 +88,7 @@ class InterimPortletEntityImpl implements IPortletEntity {
      * 
      * @see org.jasig.portal.portlet.om.IPortletEntity#getUserId()
      */
+    @Override
     public int getUserId() {
         return userId;
     }
@@ -158,6 +100,7 @@ class InterimPortletEntityImpl implements IPortletEntity {
      * org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(org.
      * jasig.portal.portlet.om.IPortletPreferences)
      */
+    @Override
     public void setPortletPreferences(IPortletPreferences portletPreferences) {
         this.portletPreferences = portletPreferences;
 

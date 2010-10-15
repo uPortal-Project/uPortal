@@ -395,6 +395,10 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletDescriptor, delegateParent);
         }
         
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace("Created PortletWindow " + portletWindow.getId() + " for PortletEntity " + portletEntityId);
+        }
+        
         this.initializePortletWindow(request, portletEntityId, portletWindow);
         
         return portletWindow;
