@@ -12,6 +12,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -39,6 +40,10 @@ public class JpaLocalAccountDaoImpl implements ILocalAccountDao {
         this.entityManager = entityManager;
     }
 
+    public ILocalAccountPerson getPerson(long id) {
+        return entityManager.find(LocalAccountPersonImpl.class, id);
+    }
+    
     public ILocalAccountPerson getPerson(String username) {
         final Query query = this.entityManager.createQuery(FIND_ACCOUNT_BY_NAME);
         query.setParameter("name", username);

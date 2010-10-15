@@ -42,9 +42,11 @@
         <transition to="finish"/>
     </action-state>
     
-    <end-state id="cancel"/>
+    <end-state id="cancel">
+        <output name="person" value="localAccountDao.getPerson(person.username)"/>
+    </end-state>
     <end-state id="finish">
-        <!--<output name="person" value="flowScope.person"/>-->
+        <output name="person" value="localAccountDao.getPerson(person.username)"/>
     </end-state>
     
 </flow>

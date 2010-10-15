@@ -24,6 +24,11 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
+    <view-state id="selectUserAction">
+        <transition to="personLookup" on="findUser"/>
+        <transition to="createLocalAccount" on="createUser"/>
+    </view-state>
+
     <subflow-state id="personLookup" subflow="person-lookup">
         <input name="showCancelButton" value="'false'" />
         <input name="personSearchResults_selectAndGoButtonTextKey" value="'search.users'" />
@@ -59,8 +64,19 @@
     
     <subflow-state id="editLocalAccount" subflow="edit-account">
         <input name="person" value="userAccountHelper.getForm(person.name)"/>
-        <transition on="finish" to="finish"/>
+        <output name="person" value="flowScope.person"/>
+        
+        <transition on="finish" to="viewUserDetails"/>
         <transition on="cancel" to="viewUserDetails"/>
+    </subflow-state>
+
+    <subflow-state id="createLocalAccount" subflow="edit-account">
+        
+        <input name="person" value="userAccountHelper.getNewAccountForm()"/>
+        <output name="person" value="flowScope.person"/>
+        
+        <transition on="finish" to="viewUserDetails"/>
+        <transition on="cancel" to="selectUserAction"/>
     </subflow-state>
 
     <!-- 
@@ -75,7 +91,7 @@
                 value="personManager.getPerson(servletRequest)"/>
             <evaluate expression="userAccountHelper.deleteAccount(flashScope.user, person.name)"/>
         </transition>
-        <transition on="cancel" to="viewUserDetails"/>
+        <transition on="cancel" to="finish"/>
     </view-state>
 
     <end-state id="swapIdentity" view="contextRelative:/Login">

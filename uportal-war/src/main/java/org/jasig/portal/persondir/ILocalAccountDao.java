@@ -10,7 +10,9 @@ import org.jasig.services.persondir.IPersonAttributes;
 public interface ILocalAccountDao extends IPersonAttributeDao {
     
     public ILocalAccountPerson updateAccount(ILocalAccountPerson account);
-    
+
+    public ILocalAccountPerson getPerson(long id);
+
     public ILocalAccountPerson getPerson(String username);
     
     public List<ILocalAccountPerson> getAllAccounts();

@@ -37,6 +37,42 @@
     <div class="fl-widget-content content portlet-content" role="main">
 
         <form:form modelAttribute="person" action="${formUrl}" method="POST">
+
+            <!-- Portlet Messages -->
+            <spring:hasBindErrors name="person">
+                <div class="portlet-msg-error portlet-msg error" role="alert">
+                    <form:errors path="*" element="div"/>
+                </div> <!-- end: portlet-msg -->
+            </spring:hasBindErrors>
+        
+            <c:if test="${ person.id < 0 }">
+                <!-- Portlet Section -->
+                <div class="portlet-section" role="region">
+                    <div class="titlebar">
+                        <h3 class="title" role="heading"><spring:message code="attributes"/></h3>
+                    </div>
+                    <div class="content">
+                    
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><spring:message code="attribute.name"/></th>
+                                    <th><spring:message code="attribute.value"/></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            
+                                <tr>
+                                    <td class="attribute-name"><spring:message code="username"/></td>
+                                    <td><form:input path="username"/></td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+    
+                    </div>
+                </div>
+            </c:if>
         
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
@@ -59,11 +95,20 @@
                                 <tr>
                                     <td class="attribute-name">${ attribute.key }</td>
                                     <td>
-                                        <c:forEach var="value" items="${ attribute.value.value }">
-                                            <div>
-                                                 <input name="attributes['${attribute.key}'].value" value="${ value }" />
-                                            </div>
-                                        </c:forEach>
+                                        <c:choose>
+                                            <c:when test="${ fn:length(attribute.value.value) > 0 }">
+                                                <c:forEach var="value" items="${ attribute.value.value }">
+                                                    <div>
+                                                         <input name="attributes['${attribute.key}'].value" value="${ value }" />
+                                                    </div>
+                                                </c:forEach>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div>
+                                                    <input name="attributes['${attribute.key}'].value" value=""/>
+                                                </div>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
                                 </tr>
                             </c:forEach>

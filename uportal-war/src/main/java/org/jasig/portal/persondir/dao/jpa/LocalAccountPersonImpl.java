@@ -59,6 +59,10 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
         this.id = -1;
     }
     
+    public long getId() {
+        return id;
+    }
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getName()
      */

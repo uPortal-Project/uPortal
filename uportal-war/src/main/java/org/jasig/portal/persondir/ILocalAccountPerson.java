@@ -13,6 +13,8 @@ import org.jasig.services.persondir.IPersonAttributes;
  */
 public interface ILocalAccountPerson extends IPersonAttributes {
 
+    public long getId();
+    
     public String getName();
 
     public void setName(String name);

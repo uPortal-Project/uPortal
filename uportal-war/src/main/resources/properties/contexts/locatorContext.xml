@@ -102,4 +102,8 @@
         class="org.jasig.portal.spring.locator.LocalAccountDaoLocator">
     </bean>
     
+    <bean id="org.jasig.portal.spring.locator.PortalPasswordServiceLocator" 
+        class="org.jasig.portal.spring.locator.PortalPasswordServiceLocator">
+    </bean>
+    
 </beans>

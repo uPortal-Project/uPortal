@@ -1,25 +1,32 @@
 package org.jasig.portal.portlets.account;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl;
 import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.Md5Passwd;
+import org.jasig.portal.security.IPortalPasswordService;
 import org.jasig.portal.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("userAccountHelper")
 public class UserAccountHelper {
+
+    protected final Log log = LogFactory.getLog(getClass());
     
     private ILocalAccountDao accountDao;
 
@@ -28,24 +35,42 @@ public class UserAccountHelper {
         this.accountDao = accountDao;
     }
     
+    private IPortalPasswordService passwordService;
+    
+    @Autowired(required = true)
+    public void setPortalPasswordService(IPortalPasswordService passwordService) {
+        this.passwordService = passwordService;
+    }
+    
+    public PersonForm getNewAccountForm() {
+        
+        PersonForm form = new PersonForm();
+        
+        Set<String> attributeNames = accountDao.getPossibleUserAttributeNames();
+        for (String name : attributeNames) {
+            form.getAttributes().put(name, new StringListAttribute(Collections.<String>emptyList()));
+        }
+        
+        return form;
+    }
+
     public PersonForm getForm(String username) {
         
         ILocalAccountPerson person = accountDao.getPerson(username);
         
         PersonForm form = new PersonForm();
         form.setUsername(person.getName());
+        form.setId(person.getId());
         
-        Map<String, StringListAttribute> attributes = new HashMap<String, StringListAttribute>();
-        for (Map.Entry<String, List<Object>> attribute : person.getAttributes().entrySet()) {
+        Set<String> attributeNames = accountDao.getPossibleUserAttributeNames();
+        for (String name : attributeNames) {
             List<String> values = new ArrayList<String>();
-            for (Object value : attribute.getValue()) {
+            for (Object value : person.getAttributeValues(name)) {
                 values.add((String) value);
             }
-            
-            attributes.put(attribute.getKey(), new StringListAttribute(values));
+            form.getAttributes().put(name, new StringListAttribute(values));
         }
-        form.setAttributes(attributes);
-        
+
         return form;
     }
 
@@ -91,12 +116,34 @@ public class UserAccountHelper {
     }
     
     public void deleteAccount(IPerson currentUser, String target) {
+        
+        if (!canDeleteUser(currentUser, target)) {
+            throw new RuntimeException("Current user " + currentUser.getName()
+                    + " does not have permissions to update person " + target);
+        }
+        
         ILocalAccountPerson person = accountDao.getPerson(target);
+        
         accountDao.deleteAccount(person);
+        log.info("Account " + person.getName() + " successfully deleted");
+        
     }
     
     public void updateAccount(IPerson currentUser, PersonForm form) {
-        ILocalAccountPerson account = accountDao.getPerson(form.getUsername());
+        
+        ILocalAccountPerson account;
+        
+        // if this is a new user, create an account object with the specified
+        // username
+        if (form.getId() < 0) {
+            account = new LocalAccountPersonImpl();
+            account.setName(form.getUsername());
+        } 
+        
+        // otherwise, get the existing account from the database
+        else {
+            account = accountDao.getPerson(form.getId());
+        }
         
         // update the account attributes to match those specified in the form
         Map<String, List<String>> attributes = new HashMap<String, List<String>>();        
@@ -108,12 +155,13 @@ public class UserAccountHelper {
         account.setAttributes(attributes);
         
         // if a new password has been specified, update the account password
-        if (StringUtils.isNotBlank(form.getPassword()) && StringUtils.isNotBlank(form.getConfirmPassword())) {
-            account.setPassword(Md5Passwd.encode(form.getPassword()));
+        if (StringUtils.isNotBlank(form.getPassword())) {
+            account.setPassword(passwordService.encryptPassword(form.getPassword()));
             account.setLastPasswordChange(new Date());
         }
         
         accountDao.updateAccount(account);
+        log.info("Account " + account.getName() + " successfully updated");
     }
     
 }
