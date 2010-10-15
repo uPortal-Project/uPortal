@@ -70,23 +70,31 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
         final UrlType urlType = portalRequestInfo.getUrlType();
         if ("GET".equals(request.getMethod())) {
             final String canonicalUrl = portalRequestInfo.getCanonicalUrl();
-            final String queryString = request.getQueryString();
+            
+            final String canonicalUri;
+            final int queryStringIndex = canonicalUrl.indexOf("?");
+            if (queryStringIndex < 0) {
+                canonicalUri = canonicalUrl;
+            }
+            else {
+                canonicalUri = canonicalUrl.substring(0, queryStringIndex);
+            }
+            
             final String requestURI = request.getRequestURI();
             
-            final String requestUrl = requestURI + (queryString != null ? "?" + queryString : "");
             final int redirectCount = this.getRedirectCount(request);
-            if (!canonicalUrl.equals(requestUrl)) {
+            if (!canonicalUri.equals(requestURI)) {
                 if (redirectCount < this.maximumRedirects) {
                     this.setRedirectCount(response, redirectCount + 1);
                     
                     final String encodeCanonicalUrl = response.encodeRedirectURL(canonicalUrl);
                     response.sendRedirect(encodeCanonicalUrl);
-                    logger.debug("Redirecting from {} to canonicalized URL {}, redirect {}", new Object[] {requestUrl, canonicalUrl, redirectCount});
+                    logger.debug("Redirecting from {} to canonicalized URL {}, redirect {}", new Object[] {requestURI, canonicalUri, redirectCount});
+                    return;
                 }
-                else {
-                    this.clearRedirectCount(response);
-                    logger.debug("Not redirecting from {} to canonicalized URL {} due to limit of {} redirects", new Object[] {requestUrl, canonicalUrl, redirectCount});
-                }
+
+                this.clearRedirectCount(response);
+                logger.debug("Not redirecting from {} to canonicalized URL {} due to limit of {} redirects", new Object[] {requestURI, canonicalUri, redirectCount});
             }
             else if (redirectCount > 0) {
                 this.clearRedirectCount(response);
