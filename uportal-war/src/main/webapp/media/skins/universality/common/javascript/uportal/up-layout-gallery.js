@@ -491,10 +491,7 @@ var up = up || {};
             ui = that.locate("ui");
             
             ui.show();
-            t = setTimeout(function () {
-                    modal.fadeOut("slow");
-                    clearInterval(t);
-            }, 1500);
+            modal.fadeOut("slow");
         };
         
         // wire the gallery handle to open and close the gallery panel
