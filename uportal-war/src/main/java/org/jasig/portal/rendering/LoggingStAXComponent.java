@@ -36,6 +36,7 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
     private StAXPipelineComponent parentComponent;
     private boolean logFullDocument = true;
     private boolean logEvents = true;
+    private boolean logFullDocumentAsHtml = false;
 
     public void setLoggerName(String loggerName) {
         logger = LoggerFactory.getLogger(loggerName);
@@ -45,6 +46,9 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
     }
     public void setLogFullDocument(boolean logFullDocument) {
         this.logFullDocument = logFullDocument;
+    }
+    public void setLogFullDocumentAsHtml(boolean logFullDocumentAsHtml) {
+        this.logFullDocumentAsHtml = logFullDocumentAsHtml;
     }
     public void setLogEvents(boolean logEvents) {
         this.logEvents = logEvents;
@@ -93,7 +97,7 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
                 eventBuffer.add(event);
                 
                 if (event.isEndDocument()) {
-                    final String xmlOutput = xmlUtilities.serializeXMLEvents(eventBuffer);
+                    final String xmlOutput = xmlUtilities.serializeXMLEvents(eventBuffer, logFullDocumentAsHtml);
                     logger.debug("\n" + xmlOutput);
                 }
             }

@@ -50,6 +50,8 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.ctc.wstx.sw.HtmlWstxOutputFactory;
+
 /**
  * Implementation of core XML related utilities
  * 
@@ -61,6 +63,7 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
     private final XMLOutputFactory xmlOutputFactory;
+    private final XMLOutputFactory htmlOutputFactory;
     private final XMLInputFactory xmlInputFactory;
     private TemplatesBuilder templatesBuilder;
     
@@ -71,6 +74,8 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         
         this.xmlInputFactory = XMLInputFactory.newInstance();
         this.xmlInputFactory.setEventAllocator(new LocationOverridingEventAllocator(new UnknownLocation()));
+        
+        this.htmlOutputFactory = XMLOutputFactory.newFactory(HtmlWstxOutputFactory.class.getName(), HtmlWstxOutputFactory.class.getClassLoader());
     }
 
     @Autowired
@@ -83,27 +88,18 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         this.templatesBuilder = templatesBuilder;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.xml.XmlUtilities#getTemplates(org.springframework.core.io.Resource)
-     */
     @Override
     public Templates getTemplates(Resource stylesheet) throws TransformerConfigurationException, IOException {
         final CachedResource<Templates> templates = this.getStylesheetCachedResource(stylesheet);
         return templates.getCachedResource();
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.xml.XmlUtilities#getTransformer(org.springframework.core.io.Resource)
-     */
     @Override
     public Transformer getTransformer(Resource stylesheet) throws TransformerConfigurationException, IOException {
         final Templates templates = this.getTemplates(stylesheet);
         return templates.newTransformer();
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.xml.XmlUtilities#getStylesheetCacheKey(org.springframework.core.io.Resource)
-     */
     @Override
     public Serializable getStylesheetCacheKey(Resource stylesheet) throws TransformerConfigurationException, IOException {
         final CachedResource<Templates> templates = this.getStylesheetCachedResource(stylesheet);
@@ -114,6 +110,11 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     public XMLOutputFactory getXmlOutputFactory() {
         return this.xmlOutputFactory;
     }
+    
+    @Override
+    public XMLOutputFactory getHtmlOutputFactory() {
+        return this.htmlOutputFactory;
+    }
 
     @Override
     public XMLInputFactory getXmlInputFactory() {
@@ -122,9 +123,20 @@ public class XmlUtilitiesImpl implements XmlUtilities {
 
     @Override
     public String serializeXMLEvents(List<XMLEvent> xmlEvents) {
-        final StringWriter writer = new StringWriter();
+        return this.serializeXMLEvents(xmlEvents, false);
+    }
+    
+    @Override
+    public String serializeXMLEvents(List<XMLEvent> xmlEvents, boolean isHtml) {
+        final XMLOutputFactory outputFactory;
+        if (isHtml) {
+            outputFactory = this.getHtmlOutputFactory();
+        }
+        else {
+            outputFactory = this.getXmlOutputFactory();
+        }
         
-        final XMLOutputFactory outputFactory = this.getXmlOutputFactory();
+        final StringWriter writer = new StringWriter();
         final XMLEventWriter xmlEventWriter;
         try {
             xmlEventWriter = new IndentingXMLEventWriter(outputFactory.createXMLEventWriter(writer));

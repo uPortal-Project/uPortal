@@ -83,6 +83,7 @@
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_THEME" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
+        <property name="logFullDocumentAsHtml" value="true" />
     </bean>
     
     <bean id="dtdSettingPipelineComponent" class="org.jasig.portal.rendering.DTDSettingPipelineComponent">

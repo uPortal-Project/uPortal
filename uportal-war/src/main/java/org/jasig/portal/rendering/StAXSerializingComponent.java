@@ -24,11 +24,12 @@ import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.CharacterEventSource;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.stream.ChunkingEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ctc.wstx.sw.HtmlWstxOutputFactory;
 
 /**
  * Converts a StAX event stream into a {@link CharacterEvent} stream. Breaking up the stream
@@ -40,14 +41,17 @@ import com.ctc.wstx.sw.HtmlWstxOutputFactory;
 public class StAXSerializingComponent implements CharacterPipelineComponent {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    //TODO move into XmlUtilities?
-    //Using a custom XMLOutputFactory
-    private final XMLOutputFactory outputFactory = XMLOutputFactory.newFactory(HtmlWstxOutputFactory.class.getName(), HtmlWstxOutputFactory.class.getClassLoader());
+    private XmlUtilities xmlUtilities;
     
     private StAXPipelineComponent parentComponent;
     private Map<String, CharacterEventSource> chunkingElements;
     private Map<Pattern, CharacterEventSource> chunkingPatterns;
-    
+
+    @Autowired
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
+    }
+
     public void setParentComponent(StAXPipelineComponent parentComponent) {
         this.parentComponent = parentComponent;
     }
@@ -76,6 +80,7 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
         //Writer shared by the ChunkingEventReader and the StAX Serializer
         final StringWriter writer = new StringWriter();
         
+        final XMLOutputFactory outputFactory = this.xmlUtilities.getHtmlOutputFactory();
         final XMLEventWriter xmlEventWriter;
         try {
             xmlEventWriter = outputFactory.createXMLEventWriter(writer);

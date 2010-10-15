@@ -55,9 +55,31 @@ public interface XmlUtilities {
      */
     public Serializable getStylesheetCacheKey(Resource stylesheet) throws TransformerConfigurationException, IOException;
  
+    /**
+     * The standard shared XMLOutputFactory to be used by uPortal code. Clients should not set any properties
+     * on this XMLOutputFactory.  
+     */
     public XMLOutputFactory getXmlOutputFactory();
     
+    /**
+     * The standard shared XMLOutputFactory to be used by uPortal code writing StAX to HTML. Clients should not
+     * set any properties on this XMLOutputFactory
+     */
+    public XMLOutputFactory getHtmlOutputFactory();
+    
+    /**
+     * The standard shared XMLInputFactory to be used by uPortal code. Clients should not set any properties
+     * on this XMLInputFactory.  
+     */
     public XMLInputFactory getXmlInputFactory();
     
+    /**
+     * Serializes the List of XMLEvents into a XML String
+     */
     public String serializeXMLEvents(List<XMLEvent> xmlEvents);
+    
+    /**
+     * Serializes the List of XMLEvents into a XML String using HTML safe formatting
+     */
+    public String serializeXMLEvents(List<XMLEvent> xmlEvents, boolean isHtml);
 }
