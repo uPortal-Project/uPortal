@@ -33,7 +33,7 @@
     extension-element-prefixes="resources" 
     exclude-result-prefixes="xalan resources" >
 
-  <xalan:component prefix="resources" elements="output">
+  <xalan:component prefix="resources" elements="output parameter">
     <xalan:script lang="javaclass" src="xalan://org.jasig.portal.web.skin.ResourcesXalanElements" />
   </xalan:component>
   
@@ -92,7 +92,7 @@
         	<link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
         </xsl:if>
         
-        <resources:output path="{$SKIN_PATH}/"/>
+        <resources:output path="{$SKIN_RESOURCES_PATH}"/>
         <script type="text/javascript">
             var up = up || {};
             up.jQuery = jQuery.noConflict(true);
@@ -102,6 +102,13 @@
         </script>
       </head>
       
+      <xsl:variable name="FLUID_THEME"><resources:parameter path="{$SKIN_RESOURCES_PATH}" name="fss-theme"/></xsl:variable>
+      <xsl:variable name="FLUID_THEME_CLASS">
+        <xsl:choose>
+          <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>
+          <xsl:otherwise>fl-theme-uportal</xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
       <body id="portal" class="up {$FLUID_THEME_CLASS}">
         <div id="portalPage" class="{$LOGIN_STATE} {$PORTAL_VIEW} fl-container-flex">  <!-- Main div for presentation/formatting options. -->
         	<div id="portalPageInner" class="{$PAGE_COLUMN_CLASS} {$SIDEBAR_CLASS} {$FRAGMENT_ADMIN_CLASS}">  <!-- Inner div for additional presentation/formatting options. -->

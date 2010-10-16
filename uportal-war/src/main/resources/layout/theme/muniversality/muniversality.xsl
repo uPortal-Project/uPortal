@@ -87,7 +87,7 @@
 <xsl:import href="focused.xsl" />
 <!-- ========================================================================= -->
 
-<xalan:component prefix="resources" elements="output">
+<xalan:component prefix="resources" elements="output parameter">
     <xalan:script lang="javaclass" src="xalan://org.jasig.portal.web.skin.ResourcesXalanElements" />
 </xalan:component>
     
@@ -123,14 +123,7 @@
 <xsl:variable name="MEDIA_PATH">media/skins/muniversality</xsl:variable>
 <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
 <xsl:variable name="PORTAL_SHORTCUT_ICON">/favicon.ico</xsl:variable>
-<xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$SKIN_PATH,'/skin.xml')"/>
-<xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/s:resources/css[@type='fss-theme']/@name"/>
-<xsl:variable name="FLUID_THEME_CLASS">
-    <xsl:choose>
-        <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>
-        <xsl:otherwise>fl-theme-iphone</xsl:otherwise>
-    </xsl:choose>
-</xsl:variable>
+<xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
 <!-- ======================================== -->
 
 
@@ -250,9 +243,17 @@
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
-            <resources:output path="{$SKIN_PATH}/"/>
+            <resources:output path="{$SKIN_RESOURCES_PATH}"/>
             <xsl:call-template name="page.js" />
         </head>
+
+        <xsl:variable name="FLUID_THEME"><resources:parameter path="{$SKIN_RESOURCES_PATH}" name="fss-theme"/></xsl:variable>
+        <xsl:variable name="FLUID_THEME_CLASS">
+            <xsl:choose>
+                <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>
+                <xsl:otherwise>fl-theme-iphone</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <body class="up {$FLUID_THEME_CLASS}">
             <xsl:choose>
                 <xsl:when test="//focused">

@@ -96,8 +96,8 @@ import org.jasig.portal.utils.SAX2BufferImpl;
 import org.jasig.portal.utils.SAX2DuplicatingFilterImpl;
 import org.jasig.portal.utils.URLUtil;
 import org.jasig.portal.utils.XSLT;
-import org.jasig.portal.web.skin.ResourcesDao;
 import org.jasig.portal.web.skin.ResourcesXalanElements;
+import org.jasig.resource.aggr.util.ResourcesElementsProvider;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationEventPublisher;
@@ -181,7 +181,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     private IPortletWindowRegistry portletWindowRegistry;
     private ApplicationEventPublisher applicationEventPublisher;
     private CarResources carResources;
-    private ResourcesDao resourcesDao;
+    private ResourcesElementsProvider resourcesElementsProvider;
     
     /**
      * @return the portletRequestParameterManager
@@ -223,18 +223,13 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     public void setCarResources(CarResources carResources) {
         this.carResources = carResources;
     }
+
     /**
-	 * @return the resourcesDao
-	 */
-	public ResourcesDao getResourcesDao() {
-		return resourcesDao;
-	}
-	/**
 	 * @param resourcesDao the resourcesDao to set
 	 */
 	@Required
-	public void setResourcesDao(ResourcesDao resourcesDao) {
-		this.resourcesDao = resourcesDao;
+	public void setResourcesElementsProvider(ResourcesElementsProvider resourcesElementsProvider) {
+		this.resourcesElementsProvider = resourcesElementsProvider;
 	}
 	
 	/* (non-Javadoc)
@@ -533,7 +528,8 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     tst.setErrorListener(cErrListener);
                     
                     // pass resourcesDao into transformer
-                    tst.setParameter(ResourcesXalanElements.SKIN_RESOURCESDAO_PARAMETER_NAME, resourcesDao);
+                    tst.setParameter(ResourcesXalanElements.SKIN_RESOURCESDAO_PARAMETER_NAME, resourcesElementsProvider);
+                    tst.setParameter(ResourcesXalanElements.CURRENT_REQUEST, req);
 
                     // initialize ChannelRenderingBuffer and attach it downstream of the structure transformer
                     ChannelRenderingBuffer crb = new ChannelRenderingBuffer(channelManager, ccaching, req, res);

@@ -110,14 +110,7 @@
   <xsl:variable name="MEDIA_PATH">media/skins/universality</xsl:variable>
   <xsl:variable name="SKIN_PATH" select="concat($MEDIA_PATH,'/',$SKIN)"/>
   <xsl:variable name="PORTAL_SHORTCUT_ICON">favicon.ico</xsl:variable>
-  <xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$SKIN_PATH,'/skin.xml')"/>
-  <xsl:variable name="FLUID_THEME" select="document($SKIN_CONFIG_URL)/skin:resources/css[@type='fss-theme']/@name"/>
-  <xsl:variable name="FLUID_THEME_CLASS">
-    <xsl:choose>
-      <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>
-      <xsl:otherwise>fl-theme-uportal</xsl:otherwise>
-    </xsl:choose>
-  </xsl:variable>
+  <xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
   
   <!-- 
    | The unofficial "theme-switcher".

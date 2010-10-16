@@ -20,7 +20,11 @@
 
 -->
 
-<s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
+<resources xmlns="http://www.jasig.org/uportal/web/skin"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/sandbox/resource-aggregator/tags/resource-aggregator-parent-1.0.0/resource-aggregator-api/src/main/resources/skin-configuration.xsd">
+
+  <parameter name="fss-theme">fl-theme-android</parameter>
 
   <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
   <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-layout.min.css</css>
@@ -28,7 +32,7 @@
   <!-- Default jqueryui css -->
   <css>/ResourceServingWebapp/rs/jqueryui/1.7.2/theme/ui-darkness/jquery-ui-1.7.2-darkness.min.css</css>
     
-  <css type="fss-theme" name="fl-theme-android">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-theme-android.min.css</css>
+  <css>/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-theme-android.min.css</css>
     
   <!-- Support for legacy uPortal css classes. -->
   <css>legacy.css</css>
@@ -41,4 +45,4 @@
   <js>/ResourceServingWebapp/rs/jqueryui/1.7.2/jquery-ui-1.7.2-v2.min.js</js>
   <js>/ResourceServingWebapp/rs/fluid/1.1.3/js/fluid-all-1.1.3.min.js</js>
     
-</s:resources>
+</resources>

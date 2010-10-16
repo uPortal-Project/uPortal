@@ -193,6 +193,11 @@
         </dependency>
         
         <dependency>
+            <groupId>org.jasig.resource-aggregator</groupId>
+            <artifactId>resource-aggregator-util</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-utils</artifactId>
         </dependency>

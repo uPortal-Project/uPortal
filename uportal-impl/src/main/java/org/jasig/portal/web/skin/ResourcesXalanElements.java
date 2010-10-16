@@ -22,16 +22,18 @@
  */
 package org.jasig.portal.web.skin;
 
-import javax.xml.parsers.ParserConfigurationException;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xalan.extensions.XSLProcessorContext;
 import org.apache.xalan.templates.ElemExtensionCall;
 import org.apache.xalan.transformer.TransformerImpl;
-import org.w3c.dom.DocumentFragment;
+import org.jasig.resource.aggr.om.Resources;
+import org.jasig.resource.aggr.util.ResourcesElementsProvider;
+import org.w3c.dom.NodeList;
 
 /**
  * Used by Xalan to transform a {@link Resources} to the correct HTML head elements
@@ -45,67 +47,32 @@ public class ResourcesXalanElements {
 	protected final Log logger = LogFactory.getLog(this.getClass());
 	
 	/**
-	 * Name of {@link Transformer} parameter used to retrieve the {@link ResourcesDao}.
+	 * Name of {@link Transformer} parameter used to retrieve the {@link ResourcesElementsProvider}.
 	 */
-	public static final String SKIN_RESOURCESDAO_PARAMETER_NAME = ResourcesXalanElements.class.getName() + "SKIN_RESOURCESDAO";
-	/**
-	 * Name of {@link System} property used to toggle default/aggregated skin output.
-	 */
-	public static final String AGGREGATED_THEME_PARAMETER = "org.jasig.portal.web.skin.aggregated_theme";
-	public static final String DEFAULT_AGGREGATION_ENABLED = "true";
-    /**
-     * File name for default skin configuration (non-aggregated).
-     */
-	public static final String DEFAULT_SKIN_FILENAME = "skin.xml";
-	/**
-	 * File name for aggregated skin configuraiton.
-	 */
-	public static final String AGGREGATED_SKIN_FILENAME = "uportal3_aggr.skin.xml";
+	public static final String SKIN_RESOURCESDAO_PARAMETER_NAME = ResourcesXalanElements.class.getName() + ".SKIN_RESOURCESDAO";
 	
-	/**
-	 * Pulls the {@link Resources} to render from the Transformer parameter
-	 * named {@link #SKIN_RESOURCESDAO_PARAMETER_NAME}.
-	 * 
-	 * @param context
-	 * @param elem
-	 * @return
-	 * @throws TransformerException
-	 * @throws ParserConfigurationException
-	 */
-	public DocumentFragment output(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException, ParserConfigurationException {
+	public static final String CURRENT_REQUEST = ResourcesXalanElements.class.getName() + ".CURRENT_REQUEST";
+	
+	public String parameter(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
+	    final TransformerImpl transformer = context.getTransformer();
+
+        final String path = elem.getAttribute("path", context.getContextNode(), transformer);
+        final String name = elem.getAttribute("name", context.getContextNode(), transformer);
+        
+        final ResourcesElementsProvider elementsProvider = (ResourcesElementsProvider) transformer.getParameter(SKIN_RESOURCESDAO_PARAMETER_NAME);
+        final HttpServletRequest request = (HttpServletRequest) transformer.getParameter(CURRENT_REQUEST);
+        
+        return elementsProvider.getResourcesParameter(request, path, name);
+	}
+	
+	public NodeList output(XSLProcessorContext context, ElemExtensionCall elem) throws TransformerException {
 		final TransformerImpl transformer = context.getTransformer();
 
 		final String path = elem.getAttribute("path", context.getContextNode(), transformer);
-		final String relativeRoot = FilenameUtils.getPath(path);
-		if(logger.isDebugEnabled()) {
-			logger.debug("relativeRoot from element path: " + relativeRoot);
-		}
 		
-		boolean aggregatedThemeEnabled = Boolean.parseBoolean(System.getProperty(AGGREGATED_THEME_PARAMETER, DEFAULT_AGGREGATION_ENABLED));
+		final ResourcesElementsProvider elementsProvider = (ResourcesElementsProvider) transformer.getParameter(SKIN_RESOURCESDAO_PARAMETER_NAME);
+		final HttpServletRequest request = (HttpServletRequest) transformer.getParameter(CURRENT_REQUEST);
 		
-		final String primaryPath;
-		final String secondaryPath;
-		if(aggregatedThemeEnabled) {
-			primaryPath = path + AGGREGATED_SKIN_FILENAME;
-			secondaryPath = path + DEFAULT_SKIN_FILENAME;
-		} else {
-		    primaryPath = path + DEFAULT_SKIN_FILENAME;
-			secondaryPath = path + AGGREGATED_SKIN_FILENAME;
-		}
-		
-		final ResourcesDao resourcesDao = (ResourcesDao) transformer.getParameter(SKIN_RESOURCESDAO_PARAMETER_NAME);
-        DocumentFragment headFragment = resourcesDao.getResourcesFragment(primaryPath, relativeRoot);
-		if(null == headFragment) {		
-			if(logger.isWarnEnabled()) {
-				logger.warn(primaryPath.toString() + " not found, attempting " + secondaryPath.toString());
-			}
-			headFragment = resourcesDao.getResourcesFragment(secondaryPath, relativeRoot);
-		}
-		// if it's still null, we have to bail out
-		if(null == headFragment) {
-			throw new IllegalStateException("no skin configuration found at " + primaryPath.toString() + " or " + secondaryPath.toString());
-		}
-		
-		return headFragment;
+		return elementsProvider.getResourcesXmlFragment(request, path);
 	}
 }

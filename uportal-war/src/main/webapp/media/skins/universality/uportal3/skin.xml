@@ -20,13 +20,17 @@
 
 -->
 
-<s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
+<resources xmlns="http://www.jasig.org/uportal/web/skin"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/sandbox/resource-aggregator/tags/resource-aggregator-parent-1.0.0/resource-aggregator-api/src/main/resources/skin-configuration.xsd">
+
+  <parameter name="fss-theme">fl-theme-mist</parameter>
   
   <!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
   <css>/ResourceServingWebapp/rs/fluid/1.1.2/css/fss-framework-1.1.2.min.css</css>
   
   <!-- Fluid Skinning System (FSS) theme. -->
-  <css type="fss-theme" name="fl-theme-mist">/ResourceServingWebapp/rs/fluid/1.1.2/fss/css/fss-theme-mist.min.css</css>
+  <css>/ResourceServingWebapp/rs/fluid/1.1.2/fss/css/fss-theme-mist.min.css</css>
   
   <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
   <css>/ResourceServingWebapp/rs/jqueryui/1.7.2/theme/smoothness/jquery-ui-1.7.2-smoothness.min.css</css>
@@ -59,4 +63,4 @@
   <js>../common/javascript/uportal/up-channel-browser.js</js>
   <js>../common/javascript/uportal/up-group-browser.js</js>
   <js>../common/javascript/uportal/flyout-nav.js</js>
-</s:resources>
+</resources>

@@ -27,21 +27,12 @@
         <property name="portletRequestParameterManager"  ref="portletRequestParameterManager" />
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="carResources" ref="carResources" />
-        <property name="resourcesDao" ref="resourcesDao"/>
+        <property name="resourcesElementsProvider" ref="resourcesElementsProvider"/>
     </bean>
     
-    <bean id="resourcesDao" class="org.jasig.portal.web.skin.ResourcesDaoImpl">
-        <property name="resourcesCache">
-            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheFactory" ref="cacheFactory" />
-                <property name="cacheName" value="org.jasig.portal.web.skin.Resources" />
-            </bean>
-        </property>
-        <property name="resourcesFragmentCache">
-            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheFactory" ref="cacheFactory" />
-                <property name="cacheName" value="org.jasig.portal.web.skin.Resources_DocumentFragment" />
-            </bean>
-        </property>
+    <bean id="resourcesElementsProvider" class="org.jasig.resource.aggr.util.ResourcesElementsProviderImpl">
+        <property name="resourcesDao" ref="resourcesDao" />
     </bean>
+    
+    <bean id="resourcesDao" class="org.jasig.resource.aggr.ResourcesDaoImpl" /> 
 </beans>

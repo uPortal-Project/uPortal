@@ -151,57 +151,94 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.jasig.portal</groupId>
-                <artifactId>maven-uportal-plugin</artifactId>
+                <groupId>org.jasig.resource-aggregator</groupId>
+                <artifactId>resource-aggregator-plugin</artifactId>
+                <version>${resource-aggregator.version}</version>
                 <configuration>
                 </configuration>
                 <executions>
                     <execution>
                         <id>aggregate-universality-uportal3-skin</id>
-                        <phase>compile</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>aggregate</goal>
                         </goals>
                         <inherited>false</inherited>
                         <configuration>
+                            <displayJsWarnings>false</displayJsWarnings>
                             <skinConfigurationFile>src/main/webapp/media/skins/universality/uportal3/skin.xml</skinConfigurationFile>
-                            <outputRootDirectory>${project.build.directory}/${project.build.finalName}/media/skins/universality/uportal3/</outputRootDirectory>
+                            <skinOutputDirectory>media/skins/universality/uportal3/</skinOutputDirectory>
+                            <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
                         </configuration>
                     </execution>
                     <execution>
                         <id>aggregate-universality-ivy-skin</id>
-                        <phase>compile</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>aggregate</goal>
                         </goals>
                         <inherited>false</inherited>
                         <configuration>
+                            <displayJsWarnings>false</displayJsWarnings>
                             <skinConfigurationFile>src/main/webapp/media/skins/universality/ivy/skin.xml</skinConfigurationFile>
-                            <outputRootDirectory>${project.build.directory}/${project.build.finalName}/media/skins/universality/ivy/</outputRootDirectory>
+                            <skinOutputDirectory>media/skins/universality/ivy/</skinOutputDirectory>
+                            <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>aggregate-universality-hc-skin</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <displayJsWarnings>false</displayJsWarnings>
+                            <skinConfigurationFile>src/main/webapp/media/skins/universality/hc/skin.xml</skinConfigurationFile>
+                            <skinOutputDirectory>media/skins/universality/hc/</skinOutputDirectory>
+                            <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>aggregate-universality-coal-skin</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <displayJsWarnings>false</displayJsWarnings>
+                            <skinConfigurationFile>src/main/webapp/media/skins/universality/coal/skin.xml</skinConfigurationFile>
+                            <skinOutputDirectory>media/skins/universality/coal/</skinOutputDirectory>
+                            <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
                         </configuration>
                     </execution>
                     <execution>
                         <id>aggregate-iphone-skin</id>
-                        <phase>compile</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>aggregate</goal>
                         </goals>
                         <inherited>false</inherited>
                         <configuration>
+                            <displayJsWarnings>false</displayJsWarnings>
                             <skinConfigurationFile>src/main/webapp/media/skins/muniversality/iphone/skin.xml</skinConfigurationFile>
-                            <outputRootDirectory>${project.build.directory}/${project.build.finalName}/media/skins/muniversality/iphone/</outputRootDirectory>
+                            <skinOutputDirectory>media/skins/muniversality/iphone/</skinOutputDirectory>
+                            <sharedJavaScriptDirectory>media/skins/muniversality/common/javascript</sharedJavaScriptDirectory>
                         </configuration>
                     </execution>
                     <execution>
                         <id>aggregate-android-skin</id>
-                        <phase>compile</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>aggregate</goal>
                         </goals>
                         <inherited>false</inherited>
                         <configuration>
+                            <displayJsWarnings>false</displayJsWarnings>
                             <skinConfigurationFile>src/main/webapp/media/skins/muniversality/android/skin.xml</skinConfigurationFile>
-                            <outputRootDirectory>${project.build.directory}/${project.build.finalName}/media/skins/muniversality/android/</outputRootDirectory>
+                            <skinOutputDirectory>media/skins/muniversality/android/</skinOutputDirectory>
+                            <sharedJavaScriptDirectory>media/skins/muniversality/common/javascript</sharedJavaScriptDirectory>
                         </configuration>
                     </execution>
                 </executions>

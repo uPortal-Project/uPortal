@@ -140,6 +140,7 @@
         <pluto.version>1.1.7</pluto.version>
         <portlet-api.version>1.0</portlet-api.version>
         <quartz.version>1.6.1</quartz.version>
+        <resource-aggregator.version>1.0.3</resource-aggregator.version>
         <resource-server.version>1.0.12</resource-server.version>
         <rome.version>0.9</rome.version>
         <servlet-api.version>2.5</servlet-api.version>
@@ -492,6 +493,11 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-tools</artifactId>
                 <version>${hibernate-tools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jasig.resource-aggregator</groupId>
+                <artifactId>resource-aggregator-util</artifactId>
+                <version>${resource-aggregator.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.cas</groupId>

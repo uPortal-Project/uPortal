@@ -20,8 +20,10 @@
 
 -->
 
-<s:resources xmlns:s="http://www.jasig.org/uportal/web/skin">
-  
+<resources xmlns="http://www.jasig.org/uportal/web/skin"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/sandbox/resource-aggregator/tags/resource-aggregator-parent-1.0.0/resource-aggregator-api/src/main/resources/skin-configuration.xsd">
+
     <!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
   <css>/ResourceServingWebapp/rs/fluid/1.1.2/css/fss-framework-1.1.2.min.css</css>
   
@@ -56,4 +58,4 @@
   <js>../common/javascript/uportal/up-channel-browser.js</js>
   <js>../common/javascript/uportal/up-group-browser.js</js>
   <js>../common/javascript/uportal/flyout-nav.js</js>
-</s:resources>
+</resources>
