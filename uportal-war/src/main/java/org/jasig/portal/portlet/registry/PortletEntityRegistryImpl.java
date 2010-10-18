@@ -35,6 +35,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
@@ -234,7 +235,26 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         
         return this.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
     }
+    
+    @Override
+    public IPortletEntity getOrCreatePortletEntityByFname(IUserInstance userInstance, String fname) {
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        final String subscribeId = userLayoutManager.getSubscribeId(fname);
+        return this.getOrCreatePortletEntity(userInstance, subscribeId);
+    }
+    
+    @Override
+    public IPortletEntity getOrCreatePortletEntityByFname(IUserInstance userInstance, String fname,
+            String preferredChannelSubscribeId) {
 
+        try {
+            return this.getOrCreatePortletEntity(userInstance, preferredChannelSubscribeId);
+        }
+        catch (PortalException pe) {
+            return this.getOrCreatePortletEntityByFname(userInstance, fname);
+        }
+    }
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#storePortletEntity(org.jasig.portal.portlet.om.IPortletEntity)
      */

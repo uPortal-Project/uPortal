@@ -494,22 +494,21 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         
         final String fname;
-        final String subscribeId;
+        final IPortletEntity portletEntity;
         
         final int seperatorIndex = targetedPortletString.indexOf(PORTLET_PATH_ELEMENT_SEPERATOR);
         if (seperatorIndex <= 0 || seperatorIndex + 1 == targetedPortletString.length()) {
             fname = targetedPortletString;
-            
-            final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-            final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-            subscribeId = userLayoutManager.getSubscribeId(fname);
+            portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, fname);
         }
         else {
             fname = targetedPortletString.substring(0, seperatorIndex);
-            subscribeId = targetedPortletString.substring(seperatorIndex + 1);
+            final String subscribeId = targetedPortletString.substring(seperatorIndex + 1);
+            
+            portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, fname, subscribeId);
         }
         
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, subscribeId);
+        
         final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
         
         portletRequestInfoBuilder = new PortletRequestInfoImpl(portletWindow.getPortletWindowId());

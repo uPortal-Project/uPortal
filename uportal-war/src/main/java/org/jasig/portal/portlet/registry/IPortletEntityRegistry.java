@@ -97,6 +97,17 @@ public interface IPortletEntityRegistry {
     public IPortletEntity getOrCreatePortletEntity(IUserInstance userInstance, String channelSubscribeId);
     
     /**
+     * Gets or creates a portlet entity for a specific fname.
+     */
+    public IPortletEntity getOrCreatePortletEntityByFname(IUserInstance userInstance, String fname);
+    /**
+     * Same as {@link #getOrCreatePortletEntityByFname(IUserInstance, String)} but also provides a preferred channel subscribe id.
+     * If the specified subscribe ID can be found in the user's layout it is used, if not the functionality provided by
+     * {@link #getOrCreatePortletEntityByFname(IUserInstance, String)} is used.
+     */
+    public IPortletEntity getOrCreatePortletEntityByFname(IUserInstance userInstance, String fname, String preferredChannelSubscribeId);
+    
+    /**
      * Stores changes made to an existing portlet entity
      * 
      * @param portletEntity The entity to update the persistent store for

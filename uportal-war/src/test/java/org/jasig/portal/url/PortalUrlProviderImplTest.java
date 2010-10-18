@@ -336,10 +336,7 @@ public class PortalUrlProviderImplTest {
         final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
 
         expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
-        expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager);
-        expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager);
-        expect(this.userLayoutManager.getSubscribeId("portletName")).andReturn(subscribeId);
-        expect(this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, subscribeId)).andReturn(this.portletEntity);
+        expect(this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, "portletName")).andReturn(this.portletEntity);
         expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
         expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
         expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
@@ -385,10 +382,10 @@ public class PortalUrlProviderImplTest {
         testFolderPortletFnameUrlHelper("/uPortal/f/folderName/p/portletName/", "n42", expected);
     }
     
-    private void testFolderPortletFnameSubscribeIdUrlHelper(String uri, String subscribeId, IPortalRequestInfo expected) throws Exception {
-        this.testFolderPortletFnameSubscribeIdUrlHelper(uri, null, subscribeId, expected);
+    private void testFolderPortletFnameSubscribeIdUrlHelper(String uri, String fname, String subscribeId, IPortalRequestInfo expected) throws Exception {
+        this.testFolderPortletFnameSubscribeIdUrlHelper(uri, null, fname, subscribeId, expected);
     }
-    private void testFolderPortletFnameSubscribeIdUrlHelper(String uri, Map<String, String[]> params, String subscribeId, IPortalRequestInfo expected) throws Exception {
+    private void testFolderPortletFnameSubscribeIdUrlHelper(String uri, Map<String, String[]> params, String fname, String subscribeId, IPortalRequestInfo expected) throws Exception {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal");
         mockRequest.setRequestURI(uri);
@@ -398,7 +395,8 @@ public class PortalUrlProviderImplTest {
         final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
 
         expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
-        expect(this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, expected.getPortletRequestInfo().getTargetWindowId().getStringId())).andReturn(this.portletEntity);
+        
+        expect(this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, fname, expected.getPortletRequestInfo().getTargetWindowId().getStringId())).andReturn(this.portletEntity);
         expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
         expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
         expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
@@ -456,7 +454,7 @@ public class PortalUrlProviderImplTest {
         expected.targetedLayoutNodeId = "folderName";
         expected.portletRequestInfo = expectedPortletRequestInfo;
         
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42", "portletName", "n42", expected);
     }
     
     @Test
@@ -468,7 +466,7 @@ public class PortalUrlProviderImplTest {
         expected.targetedLayoutNodeId = "folderName";
         expected.portletRequestInfo = expectedPortletRequestInfo;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/", "portletName", "n42", expected);
     }
     
     @Test
@@ -482,7 +480,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max", "portletName", "n42", expected);
     }
     
     @Test
@@ -496,7 +494,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max/", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max/", "portletName", "n42", expected);
     }
     
     @Test
@@ -508,7 +506,7 @@ public class PortalUrlProviderImplTest {
         expected.targetedLayoutNodeId = "folderName";
         expected.portletRequestInfo = expectedPortletRequestInfo;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/invalid/", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/invalid/", "portletName", "n42", expected);
     }
     
     @Test
@@ -523,9 +521,9 @@ public class PortalUrlProviderImplTest {
         expected.urlType = UrlType.RENDER;
         
         final Map<String, String[]> params = new ParameterMap();
-        params.put("pltC_t", new String[] { "fname.s3" });
+        params.put("pltC_t", new String[] { "portletName.s3" });
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/n2/normal/render.uP", params, "s3", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/n2/normal/render.uP", params, "portletName", "s3", expected);
     }
     
     @Test
@@ -562,7 +560,7 @@ public class PortalUrlProviderImplTest {
         expected.urlState = UrlState.MAX;
         expected.urlType = UrlType.ACTION;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/n2/p/fname.s3/max/action.uP", "s3", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/n2/p/portletName.s3/max/action.uP", "portletName", "s3", expected);
     }
     
     @Test
@@ -603,7 +601,7 @@ public class PortalUrlProviderImplTest {
         expected.urlState = UrlState.MAX;
         expected.urlType = UrlType.RENDER;
         
-        this.testTransientPortletUrlHelper("/uPortal/p/foobar/render.uP", new ParameterMap(), subscribeId, expected);
+        this.testTransientPortletUrlHelper("/uPortal/p/foobar/render.uP", new ParameterMap(), "foobar", subscribeId, expected);
     }
     
     @Test
@@ -620,10 +618,10 @@ public class PortalUrlProviderImplTest {
         expected.urlState = UrlState.MAX;
         expected.urlType = UrlType.RENDER;
         
-        this.testTransientPortletUrlHelper("/uPortal/p/foobar", new ParameterMap(), subscribeId, expected);
+        this.testTransientPortletUrlHelper("/uPortal/p/foobar", new ParameterMap(), "foobar", subscribeId, expected);
     }
     
-    private void testTransientPortletUrlHelper(String uri, Map<String, String[]> params, String subscribeId, IPortalRequestInfo expected) throws Exception {
+    private void testTransientPortletUrlHelper(String uri, Map<String, String[]> params, String fname, String subscribeId, IPortalRequestInfo expected) throws Exception {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal");
         mockRequest.setRequestURI(uri);
@@ -633,10 +631,7 @@ public class PortalUrlProviderImplTest {
         final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
 
         expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
-        expect(this.userInstance.getPreferencesManager()).andReturn(this.userPreferencesManager);
-        expect(this.userPreferencesManager.getUserLayoutManager()).andReturn(this.userLayoutManager);
-        expect(this.userLayoutManager.getSubscribeId("foobar")).andReturn(subscribeId);
-        expect(this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, expected.getPortletRequestInfo().getTargetWindowId().getStringId())).andReturn(this.portletEntity);
+        expect(this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, fname)).andReturn(this.portletEntity);
         expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
         expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
         expect(this.portletWindow.getPortletWindowId()).andReturn(portletWindowId);
@@ -679,7 +674,7 @@ public class PortalUrlProviderImplTest {
         params.put("pltC_s", new String[] { "minimized" });
         params.put("pltP_action", new String[] { "dashboard" });
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/n2/normal/render.uP", params, "s3", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/n2/normal/render.uP", params, "fname", "s3", expected);
     }
     
     @Test
@@ -770,7 +765,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max/invalid.uP", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/folderName/p/portletName.n42/max/invalid.uP", "portletName", "n42", expected);
     }
     
     @Test
@@ -782,7 +777,7 @@ public class PortalUrlProviderImplTest {
         expected.targetedLayoutNodeId = "folderName";
         expected.portletRequestInfo = expectedPortletRequestInfo;
         
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42", "portletName", "n42", expected);
     }
     
     @Test
@@ -794,7 +789,7 @@ public class PortalUrlProviderImplTest {
         expected.targetedLayoutNodeId = "folderName";
         expected.portletRequestInfo = expectedPortletRequestInfo;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/", "portletName", "n42", expected);
     }
     
     @Test
@@ -808,7 +803,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max", "portletName", "n42", expected);
     }
     
     @Test
@@ -822,7 +817,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max/", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max/", "portletName", "n42", expected);
     }
     
     @Test
@@ -834,7 +829,7 @@ public class PortalUrlProviderImplTest {
         expected.targetedLayoutNodeId = "folderName";
         expected.portletRequestInfo = expectedPortletRequestInfo;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/invalid/", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/invalid/", "portletName", "n42", expected);
     }
     
     @Test
@@ -849,7 +844,7 @@ public class PortalUrlProviderImplTest {
         expected.urlState = UrlState.MAX;
         expected.urlType = UrlType.ACTION;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max/action.uP", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max/action.uP", "portletName", "n42", expected);
     }
     
     @Test
@@ -863,7 +858,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max/invalid.uP", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/f/baseFolder/folderName/p/portletName.n42/max/invalid.uP", "portletName", "n42", expected);
     }
     
     @Test
@@ -876,7 +871,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
         
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42", "portletName", "n42", expected);
     }
     
     @Test
@@ -889,7 +884,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/", "portletName", "n42", expected);
     }
     
     @Test
@@ -902,7 +897,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max", "portletName", "n42", expected);
     }
     
     @Test
@@ -915,7 +910,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max/", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max/", "portletName", "n42", expected);
     }
     
     @Test
@@ -928,7 +923,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/invalid/", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/invalid/", "portletName", "n42", expected);
     }
     
     @Test
@@ -942,7 +937,7 @@ public class PortalUrlProviderImplTest {
         expected.urlState = UrlState.MAX;
         expected.urlType = UrlType.ACTION;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max/action.uP", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max/action.uP", "portletName", "n42", expected);
     }
     
     @Test
@@ -955,7 +950,7 @@ public class PortalUrlProviderImplTest {
         expected.portletRequestInfo = expectedPortletRequestInfo;
         expected.urlState = UrlState.MAX;
 
-        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max/invalid.uP", "n42", expected);
+        this.testFolderPortletFnameSubscribeIdUrlHelper("/uPortal/p/portletName.n42/max/invalid.uP", "portletName", "n42", expected);
     }
     
     private void assertRequestInfoEquals(final IPortletRequestInfo expectedPortletRequestInfo, final IPortletRequestInfo portletRequestInfo) {
