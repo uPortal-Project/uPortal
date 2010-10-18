@@ -132,7 +132,7 @@
 <xsl:param name="skin">uportal3</xsl:param>
 <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
 <xsl:variable name="SKIN" select="$skin"/>
-<xsl:variable name="MEDIA_PATH">/media/skins/universality</xsl:variable>
+<xsl:variable name="MEDIA_PATH">/media/skins/muniversality</xsl:variable>
 <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
 <xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
 <xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
