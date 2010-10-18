@@ -74,6 +74,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </form>
       </div>
     </div>
+    <div style="clear:both"></div>
   </div>
         
 	<!-- Portlet Content -->
@@ -121,6 +122,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </ul>
           </div>
         </div>
+        <div style="clear:both"></div>
 
         <table id="${n}categoriesTable1" summary="" xmlns:rsf="http://ponder.org.uk" class="portlet-table" style="width:100%;">
           <thead>
@@ -146,7 +148,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
     
   </div> <!-- end: portlet-body -->
-  </form>
 
 </div> <!-- end: portlet -->
     	
