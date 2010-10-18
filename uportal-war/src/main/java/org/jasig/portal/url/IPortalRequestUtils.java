@@ -30,25 +30,6 @@ import org.springframework.web.context.request.WebRequest;
  * @version $Revision$
  */
 public interface IPortalRequestUtils {
-    /**
-     * Useful for container service callbacks that are provided with the portlet's request
-     * but need access to the HttpServletRequest passed into the portlet container. 
-     * 
-     * @param portletRequest The request targeted to the portlet
-     * @return The portlet scoped request passed to the portlet container
-     */
-    public HttpServletRequest getOriginalPortletAdaptorRequest(PortletRequest portletRequest);
-    
-    /**
-     * @see #getOriginalPortletAdaptorRequest(PortletRequest)
-     */
-    public HttpServletRequest getOriginalPortletAdaptorRequest(HttpServletRequest portletRequest);
-    
-    /**
-     * @param portletRequest The request targeted to the portlet
-     * @return The next request up the chain from a portlet adaptor request
-     */
-    public HttpServletRequest getPortletAdaptorParentRequest(HttpServletRequest portletRequest);
     
     /**
      * Useful for container service callbacks and service portlets that are provided with

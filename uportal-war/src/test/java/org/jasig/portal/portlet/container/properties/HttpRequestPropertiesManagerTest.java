@@ -23,13 +23,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.easymock.EasyMock;
-import org.jasig.portal.portlet.PortletHttpServletRequestWrapper;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import junit.framework.TestCase;
 
 /**
  * @author Eric Dalquist
@@ -56,14 +55,13 @@ public class HttpRequestPropertiesManagerTest extends TestCase {
 
     public void testGetRequestProperties() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, request);
         request.setRemoteAddr("1.2.3.4");
         request.setMethod("POST");
         
         final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
         
         final IPortalRequestUtils portalRequestUtils = EasyMock.createMock(IPortalRequestUtils.class);
-        EasyMock.expect(portalRequestUtils.getOriginalPortletAdaptorRequest(request)).andReturn(request);
+        EasyMock.expect(portalRequestUtils.getOriginalPortalRequest(request)).andReturn(request);
         
         EasyMock.replay(portletWindow, portalRequestUtils);
         

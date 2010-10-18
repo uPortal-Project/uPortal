@@ -133,39 +133,4 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IPortalRequestUtils#getOriginalPortletAdaptorRequest(javax.portlet.PortletRequest)
-     */
-    @Override
-    public HttpServletRequest getOriginalPortletAdaptorRequest(PortletRequest portletRequest) {
-        final HttpServletRequest originalPortletRequest = (HttpServletRequest)portletRequest.getAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
-        if (originalPortletRequest != null) {
-            return originalPortletRequest;
-        }
-        
-        throw new IllegalArgumentException("The original portlet adaptor HttpServletRequest is not available from the PorteltRequest using attribute '" + PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IPortalRequestUtils#getOriginalPortletAdaptorRequest(javax.servlet.http.HttpServletRequest)
-     */
-    @Override
-    public HttpServletRequest getOriginalPortletAdaptorRequest(HttpServletRequest portletRequest) {
-        final HttpServletRequest originalPortletRequest = (HttpServletRequest)portletRequest.getAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
-        if (originalPortletRequest != null) {
-            return originalPortletRequest;
-        }
-        
-        throw new IllegalArgumentException("The original portlet adaptor HttpServletRequest is not available from the HttpServletRequest using attribute '" + PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
-    }
-
-    @Override
-    public HttpServletRequest getPortletAdaptorParentRequest(HttpServletRequest portletRequest) {
-        final PortletHttpServletRequestWrapper originalPortletRequest = (PortletHttpServletRequestWrapper)portletRequest.getAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
-        if (originalPortletRequest != null) {
-            return originalPortletRequest.getWrappedRequest();
-        }
-        
-        throw new IllegalArgumentException("The original portlet adaptor HttpServletRequest is not available from the HttpServletRequest using attribute '" + PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
-    }
 }

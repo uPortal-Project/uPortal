@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletResponseContextImpl extends AbstractPortletResponseResposeContextImpl implements PortletResponseContext {
+public class PortletResponseContextImpl extends AbstractPortletContextImpl implements PortletResponseContext {
     private boolean closed = false;
     private boolean released = false;
     
@@ -140,12 +140,21 @@ public class PortletResponseContextImpl extends AbstractPortletResponseResposeCo
         this.servletResponse = null;
     }
 
+    /**
+     * Check if the status of the response, if the context has been closed or released an {@link IllegalStateException}
+     * is thrown. 
+     */
+    protected void checkContextStatus() {
+        if (this.closed || this.released) {
+            throw new IllegalStateException(this.getClass().getSimpleName() + " has been closed");
+        }
+    }
 
-    protected boolean isClosed() {
+    public boolean isClosed() {
         return this.closed;
     }
 
-    protected boolean isReleased() {
+    public boolean isReleased() {
         return this.released;
     }
 }

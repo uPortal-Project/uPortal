@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.rendering;
 
+import java.io.PrintWriter;
 import java.io.Writer;
 
 import javax.portlet.PortletMode;
@@ -40,16 +41,29 @@ public interface IPortletRenderer {
 	public static final WindowState DETACHED = new WindowState("DETACHED");
 	public static final PortletMode ABOUT = new PortletMode("ABOUT");
 	public static final PortletMode CONFIG = new PortletMode("CONFIG");
+	
 	/**
 	 * Name of the {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor
 	 * will store a Map of user info attributes that has support for multi-valued attributes.
 	 */
 	public static final String MULTIVALUED_USERINFO_MAP_ATTRIBUTE = "org.jasig.portlet.USER_INFO_MULTIVALUED";
+	
 	/**
-	 * {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor will store the title the portlet
-	 * dynamically sets under.
+	 * {@link javax.servlet.http.HttpServletRequest} attributes specific to the
+	 * {@link IPortletRenderer} must be prefixed with this value to be sure they
+	 * are protected from manipulation by the portlet.
 	 */
-	public static final String ATTRIBUTE__PORTLET_TITLE = IPortletRenderer.class.getName() + ".PORTLET_TITLE";
+	public static final String RENDERER_ATTRIBUTE_PREFIX = IPortletRenderer.class.getName();
+	
+	/**
+	 * Attribute that the dynamic portlet title is stored using if set.
+	 */
+	public static final String ATTRIBUTE__PORTLET_TITLE = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_TITLE";
+	
+	/**
+	 * Attribute that the renderer stores a {@link PrintWriter} that should be used when the portlet writes out content.
+	 */
+	public static final String ATTRIBUTE__PORTLET_PRINT_WRITER = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_PRINT_WRITER";
 	
     /**
      * Name of the {@link org.jasig.portal.ChannelDefinition} parameter used to determine

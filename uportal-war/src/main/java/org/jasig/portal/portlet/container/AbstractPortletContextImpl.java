@@ -36,7 +36,7 @@ import org.springframework.util.Assert;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class AbstractPortletResponseResposeContextImpl {
+public abstract class AbstractPortletContextImpl {
     protected final PortletContainer portletContainer;
     protected final HttpServletRequest containerRequest;
     protected final HttpServletResponse containerResponse;
@@ -47,7 +47,7 @@ public abstract class AbstractPortletResponseResposeContextImpl {
     HttpServletRequest servletRequest;
     HttpServletResponse servletResponse;
     
-    public AbstractPortletResponseResposeContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
+    public AbstractPortletContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse) {
         Assert.notNull(portletContainer, "portletContainer cannot be null");
         Assert.notNull(containerRequest, "containerRequest cannot be null");

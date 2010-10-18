@@ -77,7 +77,8 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
      */
     @Override
     public PortletMode getPortletMode() {
-        return this.isClosed() ? null : this.portletUrl.getPortletMode();
+        this.checkContextStatus();
+        return this.portletUrl.getPortletMode();
     }
 
     /* (non-Javadoc)
@@ -85,7 +86,8 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
      */
     @Override
     public Map<String, String[]> getPublicRenderParameters() {
-        return this.isClosed() ? null : this.portletUrl.getPublicRenderParameters();
+        this.checkContextStatus();
+        return this.portletUrl.getPublicRenderParameters();
     }
 
     /* (non-Javadoc)
@@ -93,7 +95,8 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
      */
     @Override
     public Map<String, String[]> getRenderParameters() {
-        return this.isClosed() ? null : this.portletUrl.getRenderParameters();
+        this.checkContextStatus();
+        return this.portletUrl.getRenderParameters();
     }
 
     /* (non-Javadoc)
@@ -101,7 +104,8 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
      */
     @Override
     public WindowState getWindowState() {
-        return this.isClosed() ? null : this.portletUrl.getWindowState();
+        this.checkContextStatus();
+        return this.portletUrl.getWindowState();
     }
 
     /* (non-Javadoc)
@@ -109,9 +113,8 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
      */
     @Override
     public void setPortletMode(PortletMode portletMode) {
-        if (!this.isClosed()) {
-            this.portletUrl.setPortletMode(portletMode);
-        }
+        this.checkContextStatus();
+        this.portletUrl.setPortletMode(portletMode);
     }
 
     /* (non-Javadoc)
@@ -119,8 +122,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
      */
     @Override
     public void setWindowState(WindowState windowState) {
-        if (!this.isClosed()) {
-            this.portletUrl.setWindowState(windowState);
-        }
+        this.checkContextStatus();
+        this.portletUrl.setWindowState(windowState);
     }
 }

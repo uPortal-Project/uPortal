@@ -178,19 +178,21 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
 
     @Override
     public void setDelegatePortletActionRedirectUrl(HttpServletRequest request, IPortletPortalUrl portletUrl) {
-        final HttpServletRequest portletAdaptorParentRequest = this.portalRequestUtils.getPortletAdaptorParentRequest(request);
-        portletAdaptorParentRequest.setAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL, portletUrl);
+//        final HttpServletRequest portletAdaptorParentRequest = this.portalRequestUtils.getPortletAdaptorParentRequest(request);
+//        portletAdaptorParentRequest.setAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL, portletUrl);
     }
 
     @Override
     public IPortletPortalUrl getDelegatePortletActionRedirectUrl(HttpServletRequest request) {
-        request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
-        return (IPortletPortalUrl)request.getAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL);
+//        request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
+//        return (IPortletPortalUrl)request.getAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public IPortletPortalUrl getDelegatePortletActionRedirectUrl(PortletRequest portletRequest) {
-        final HttpServletRequest request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-        return (IPortletPortalUrl)request.getAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL);
+//        final HttpServletRequest request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
+//        return (IPortletPortalUrl)request.getAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL);
+        throw new UnsupportedOperationException();
     }
 }

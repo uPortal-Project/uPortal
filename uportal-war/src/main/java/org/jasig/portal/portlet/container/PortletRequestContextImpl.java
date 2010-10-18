@@ -35,13 +35,15 @@ import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.driver.PortletServlet;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.utils.FilteringEnumeration;
 import org.springframework.util.Assert;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletRequestContextImpl extends AbstractPortletResponseResposeContextImpl implements PortletRequestContext {
+public class PortletRequestContextImpl extends AbstractPortletContextImpl implements PortletRequestContext {
     private final IRequestPropertiesManager requestPropertiesManager;
     
     //Objects provided by the PortletServlet via the init method
@@ -93,16 +95,15 @@ public class PortletRequestContextImpl extends AbstractPortletResponseResposeCon
         return this.servletContext;
     }
 
-    
-    
-    
-    
-
     /* (non-Javadoc)
      * @see org.apache.pluto.container.PortletRequestContext#getAttribute(java.lang.String)
      */
     @Override
     public Object getAttribute(String name) {
+        if (name.startsWith(IPortletRenderer.RENDERER_ATTRIBUTE_PREFIX)) {
+            return null;
+        }
+        
         return this.servletRequest.getAttribute(name);
     }
 
@@ -112,7 +113,25 @@ public class PortletRequestContextImpl extends AbstractPortletResponseResposeCon
     @Override
     @SuppressWarnings("unchecked")
     public Enumeration<String> getAttributeNames() {
-        return this.servletRequest.getAttributeNames();
+        final Enumeration<String> attributeNames = this.servletRequest.getAttributeNames();
+        return new FilteringEnumeration<String>(attributeNames) {
+            @Override
+            protected boolean includeElement(String element) {
+                return element == null || !element.startsWith(IPortletRenderer.RENDERER_ATTRIBUTE_PREFIX);
+            }
+        };
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.pluto.container.PortletRequestContext#setAttribute(java.lang.String, java.lang.Object)
+     */
+    @Override
+    public void setAttribute(String name, Object value) {
+        if (name.startsWith(IPortletRenderer.RENDERER_ATTRIBUTE_PREFIX)) {
+            throw new IllegalArgumentException("Portlets cannot set attributes that start with: " + IPortletRenderer.RENDERER_ATTRIBUTE_PREFIX);
+        }
+
+        this.servletRequest.setAttribute(name, value);
     }
 
     /* (non-Javadoc)
@@ -141,10 +160,8 @@ public class PortletRequestContextImpl extends AbstractPortletResponseResposeCon
      * @see org.apache.pluto.container.PortletRequestContext#getPrivateParameterMap()
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Map<String, String[]> getPrivateParameterMap() {
-        // TODO this may need to come out of the portlet window
-        return this.servletRequest.getParameterMap();
+        return this.portletWindow.getRequestParameters();
     }
 
     /* (non-Javadoc)
@@ -162,14 +179,6 @@ public class PortletRequestContextImpl extends AbstractPortletResponseResposeCon
     public Map<String, String[]> getPublicParameterMap() {
         // TODO this may need to come out of the portlet window
         return Collections.emptyMap();
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletRequestContext#setAttribute(java.lang.String, java.lang.Object)
-     */
-    @Override
-    public void setAttribute(String name, Object value) {
-        this.servletRequest.setAttribute(name, value);
     }
 
 }

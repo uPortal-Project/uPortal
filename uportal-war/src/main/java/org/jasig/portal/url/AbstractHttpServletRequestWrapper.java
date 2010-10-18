@@ -31,6 +31,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.Validate;
@@ -44,136 +45,159 @@ import org.apache.commons.lang.Validate;
  */
 public abstract class AbstractHttpServletRequestWrapper implements HttpServletRequest {
     public static final String PORTAL_ATTRIBUTE_PREFIX = "org.jasig.portal.";
-    
+
     private final HttpServletRequest httpServletRequest;
-    
+
     public AbstractHttpServletRequestWrapper(HttpServletRequest httpServletRequest) {
         Validate.notNull(httpServletRequest, "request can not be null");
         this.httpServletRequest = httpServletRequest;
     }
-    
+
     public final HttpServletRequest getWrappedRequest() {
         return this.httpServletRequest;
     }
 
+    @Override
     public Object getAttribute(String name) {
         return this.httpServletRequest.getAttribute(name);
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public Enumeration getAttributeNames() {
         return this.httpServletRequest.getAttributeNames();
     }
 
+    @Override
     public String getAuthType() {
         return this.httpServletRequest.getAuthType();
     }
 
+    @Override
     public String getCharacterEncoding() {
         return this.httpServletRequest.getCharacterEncoding();
     }
 
+    @Override
     public int getContentLength() {
         return this.httpServletRequest.getContentLength();
     }
 
+    @Override
     public String getContentType() {
         return this.httpServletRequest.getContentType();
     }
 
+    @Override
     public String getContextPath() {
         return this.httpServletRequest.getContextPath();
     }
 
+    @Override
     public Cookie[] getCookies() {
         return this.httpServletRequest.getCookies();
     }
 
+    @Override
     public long getDateHeader(String name) {
         return this.httpServletRequest.getDateHeader(name);
     }
 
+    @Override
     public String getHeader(String name) {
         return this.httpServletRequest.getHeader(name);
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public Enumeration getHeaderNames() {
         return this.httpServletRequest.getHeaderNames();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public Enumeration getHeaders(String name) {
         return this.httpServletRequest.getHeaders(name);
     }
 
+    @Override
     public ServletInputStream getInputStream() throws IOException {
         return this.httpServletRequest.getInputStream();
     }
 
+    @Override
     public int getIntHeader(String name) {
         return this.httpServletRequest.getIntHeader(name);
     }
 
+    @Override
     public String getLocalAddr() {
         return this.httpServletRequest.getLocalAddr();
     }
 
+    @Override
     public Locale getLocale() {
         return this.httpServletRequest.getLocale();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public Enumeration getLocales() {
         return this.httpServletRequest.getLocales();
     }
 
+    @Override
     public String getLocalName() {
         return this.httpServletRequest.getLocalName();
     }
 
+    @Override
     public int getLocalPort() {
         return this.httpServletRequest.getLocalPort();
     }
 
+    @Override
     public String getMethod() {
         return this.httpServletRequest.getMethod();
     }
 
+    @Override
     public String getParameter(String name) {
         return this.httpServletRequest.getParameter(name);
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public Map getParameterMap() {
         return this.httpServletRequest.getParameterMap();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public Enumeration getParameterNames() {
         return this.httpServletRequest.getParameterNames();
     }
 
+    @Override
     public String[] getParameterValues(String name) {
         return this.httpServletRequest.getParameterValues(name);
     }
 
+    @Override
     public String getPathInfo() {
         return this.httpServletRequest.getPathInfo();
     }
 
+    @Override
     public String getPathTranslated() {
         return this.httpServletRequest.getPathTranslated();
     }
 
+    @Override
     public String getProtocol() {
         return this.httpServletRequest.getProtocol();
     }
 
+    @Override
     public String getQueryString() {
         return this.httpServletRequest.getQueryString();
     }
 
+    @Override
     public BufferedReader getReader() throws IOException {
         return this.httpServletRequest.getReader();
     }
@@ -182,72 +206,89 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
      * @deprecated
      * @see javax.servlet.ServletRequest#getRealPath(java.lang.String)
      */
+    @Override
     @Deprecated
     @SuppressWarnings("deprecation")
     public String getRealPath(String path) {
         return this.httpServletRequest.getRealPath(path);
     }
 
+    @Override
     public String getRemoteAddr() {
         return this.httpServletRequest.getRemoteAddr();
     }
 
+    @Override
     public String getRemoteHost() {
         return this.httpServletRequest.getRemoteHost();
     }
 
+    @Override
     public int getRemotePort() {
         return this.httpServletRequest.getRemotePort();
     }
 
+    @Override
     public String getRemoteUser() {
         return this.httpServletRequest.getRemoteUser();
     }
 
+    @Override
     public RequestDispatcher getRequestDispatcher(String path) {
         return this.httpServletRequest.getRequestDispatcher(path);
     }
 
+    @Override
     public String getRequestedSessionId() {
         return this.httpServletRequest.getRequestedSessionId();
     }
 
+    @Override
     public String getRequestURI() {
         return this.httpServletRequest.getRequestURI();
     }
 
+    @Override
     public StringBuffer getRequestURL() {
         return this.httpServletRequest.getRequestURL();
     }
 
+    @Override
     public String getScheme() {
         return this.httpServletRequest.getScheme();
     }
 
+    @Override
     public String getServerName() {
         return this.httpServletRequest.getServerName();
     }
 
+    @Override
     public int getServerPort() {
         return this.httpServletRequest.getServerPort();
     }
 
+    @Override
     public String getServletPath() {
         return this.httpServletRequest.getServletPath();
     }
 
+    @Override
     public HttpSession getSession() {
         return this.httpServletRequest.getSession();
     }
 
+    @Override
     public HttpSession getSession(boolean create) {
         return this.httpServletRequest.getSession(create);
     }
 
+    @Override
     public Principal getUserPrincipal() {
         return this.httpServletRequest.getUserPrincipal();
     }
 
+    @Override
     public boolean isRequestedSessionIdFromCookie() {
         return this.httpServletRequest.isRequestedSessionIdFromCookie();
     }
@@ -256,36 +297,44 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
      * @deprecated
      * @see HttpServletRequest#isRequestedSessionIdFromUrl()
      */
+    @Override
     @Deprecated
     @SuppressWarnings("deprecation")
     public boolean isRequestedSessionIdFromUrl() {
         return this.httpServletRequest.isRequestedSessionIdFromUrl();
     }
 
+    @Override
     public boolean isRequestedSessionIdFromURL() {
         return this.httpServletRequest.isRequestedSessionIdFromURL();
     }
 
+    @Override
     public boolean isRequestedSessionIdValid() {
         return this.httpServletRequest.isRequestedSessionIdValid();
     }
 
+    @Override
     public boolean isSecure() {
         return this.httpServletRequest.isSecure();
     }
 
+    @Override
     public boolean isUserInRole(String role) {
         return this.httpServletRequest.isUserInRole(role);
     }
 
+    @Override
     public void removeAttribute(String name) {
         this.httpServletRequest.removeAttribute(name);
     }
 
+    @Override
     public void setAttribute(String name, Object o) {
         this.httpServletRequest.setAttribute(name, o);
     }
 
+    @Override
     public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
         this.httpServletRequest.setCharacterEncoding(env);
     }

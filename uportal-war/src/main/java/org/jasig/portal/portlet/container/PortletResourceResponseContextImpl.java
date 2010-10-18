@@ -49,9 +49,8 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
      */
     @Override
     public void setCharacterEncoding(String charset) {
-        if (!this.isClosed()) {
-            this.servletResponse.setCharacterEncoding(charset);
-        }
+        this.checkContextStatus();
+        this.servletResponse.setCharacterEncoding(charset);
     }
 
     /* (non-Javadoc)
@@ -59,9 +58,8 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
      */
     @Override
     public void setContentLength(int len) {
-        if (!this.isClosed()) {
-            this.servletResponse.setContentLength(len);
-        }
+        this.checkContextStatus();
+        this.servletResponse.setContentLength(len);
     }
 
     /* (non-Javadoc)
@@ -69,8 +67,7 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
      */
     @Override
     public void setLocale(Locale locale) {
-        if (!this.isClosed()) {
-            this.servletResponse.setLocale(locale);
-        }
+        this.checkContextStatus();
+        this.servletResponse.setLocale(locale);
     }
 }

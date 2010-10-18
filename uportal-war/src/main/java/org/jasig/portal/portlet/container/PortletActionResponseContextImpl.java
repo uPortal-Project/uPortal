@@ -27,11 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.container.PortletActionResponseContext;
 import org.apache.pluto.container.PortletContainer;
-import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletPortalUrl;
 
 /**
  * @author Eric Dalquist
@@ -85,10 +83,10 @@ public class PortletActionResponseContextImpl extends PortletStateAwareResponseC
     }
 
     public void setRedirect(String location, String renderURLParamName) {
-        if (!isClosed()) {
-            this.redirectLocation = location;
-            this.renderURLParamName = renderURLParamName;
-            this.redirect = true;
-        }
+        this.checkContextStatus();
+        
+        this.redirectLocation = location;
+        this.renderURLParamName = renderURLParamName;
+        this.redirect = true;
     }
 }

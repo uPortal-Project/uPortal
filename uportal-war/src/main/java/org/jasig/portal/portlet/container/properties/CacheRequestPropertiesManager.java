@@ -31,7 +31,6 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
-import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -48,22 +47,7 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
 
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
-    private IPortalRequestUtils portalRequestUtils;
     
-    
-    /**
-     * @return the portalRequestUtils
-     */
-    public IPortalRequestUtils getPortalRequestUtils() {
-        return portalRequestUtils;
-    }
-    /**
-     * @param portalRequestUtils the portalRequestUtils to set
-     */
-    @Autowired
-    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        this.portalRequestUtils = portalRequestUtils;
-    }
     
     /**
      * @return the portletEntityRegistry
@@ -98,12 +82,10 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
      */
     @Override
     public Map<String, String[]> getRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow) {
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-        
         Integer expirationCache = portletWindow.getExpirationCache();
         
         if (expirationCache == null) {
-            final PortletDefinition portletDeployment = this.getPortletDeployment(httpServletRequest, portletWindow);
+            final PortletDefinition portletDeployment = this.getPortletDeployment(portletRequest, portletWindow);
             final int descriptorExpirationCache = portletDeployment.getExpirationCache();
             
             // only set if greater than 0
@@ -126,10 +108,8 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
      */
     @Override
     public void setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-        
         if (RenderResponse.EXPIRATION_CACHE.equals(property)) {
-            final PortletDefinition portletDeployment = this.getPortletDeployment(httpServletRequest, portletWindow);
+            final PortletDefinition portletDeployment = this.getPortletDeployment(portletRequest, portletWindow);
             final int descriptorExpirationCache = portletDeployment.getExpirationCache();
             
             // only set if greater than 0

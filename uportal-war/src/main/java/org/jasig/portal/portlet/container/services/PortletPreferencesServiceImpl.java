@@ -20,7 +20,6 @@
 package org.jasig.portal.portlet.container.services;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -179,8 +178,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
 		this.storeGuestPreferencesInEntity = storeGuestPreferencesInEntity;
 	}
 	public boolean isStoreInEntity(PortletRequest portletRequest) { 
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-    	if (!isGuestUser(httpServletRequest) || this.storeGuestPreferencesInEntity) {
+    	if (this.storeGuestPreferencesInEntity || !isGuestUser(portletRequest)) {
     		return true;
     	}
 
@@ -188,8 +186,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     }
     
     public boolean isLoadFromEntity(PortletRequest portletRequest) { 
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-    	if (!isGuestUser(httpServletRequest) || this.loadGuestPreferencesFromEntity){
+    	if (this.loadGuestPreferencesFromEntity || !isGuestUser(portletRequest)){
             return true;
         }
 
@@ -197,8 +194,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     }
     
     public boolean isStoreInMemory(PortletRequest portletRequest) { 
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-    	if (isGuestUser(httpServletRequest) && this.storeGuestPreferencesInMemory){
+    	if (this.storeGuestPreferencesInMemory && isGuestUser(portletRequest)){
             return true;
         }
 
@@ -206,8 +202,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     }
 
     public boolean isLoadFromMemory(PortletRequest portletRequest) { 
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-    	if (isGuestUser(httpServletRequest) && this.loadGuestPreferencesFromMemory){
+    	if (this.loadGuestPreferencesFromMemory && isGuestUser(portletRequest)){
             return true;
         }
 
@@ -219,30 +214,10 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * @see org.apache.pluto.container.PortletPreferencesService#getDefaultPreferences(org.apache.pluto.container.PortletWindow, javax.portlet.PortletRequest)
      */
     @Override
-	public Map<String, PortletPreference> getDefaultPreferences(
-			PortletWindow portletWindow, PortletRequest request)
+	public Map<String, PortletPreference> getDefaultPreferences(PortletWindow plutoPortletWindow, PortletRequest portletRequest)
 			throws PortletContainerException {
-    	//TODO unimplemented
-		return Collections.emptyMap();
-	}
-    /*
-     * (non-Javadoc)
-     * @see org.apache.pluto.container.PortletPreferencesService#getPreferencesValidator(org.apache.pluto.container.om.portlet.PortletDefinition)
-     */
-	@Override
-	public PreferencesValidator getPreferencesValidator(
-			PortletDefinition portletDefinition) throws ValidatorException {
-		// TODO unimplemented
-		return null;
-	}
-	
-    /*
-     * (non-Javadoc)
-     * @see org.apache.pluto.container.PortletPreferencesService#getStoredPreferences(org.apache.pluto.container.PortletWindow, javax.portlet.PortletRequest)
-     */
-	@Override
-    public Map<String,PortletPreference> getStoredPreferences(PortletWindow plutoPortletWindow, PortletRequest portletRequest) throws PortletContainerException {
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
+        
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
@@ -262,8 +237,32 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final List<IPortletPreference> definitionPreferencesList = definitionPreferences.getPortletPreferences();
         this.addPreferencesToMap(definitionPreferencesList, preferencesMap);
         
-        //Determine if the user is a guest
-        final boolean isGuest = isGuestUser(httpServletRequest);
+        return preferencesMap;
+	}
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreferencesService#getPreferencesValidator(org.apache.pluto.container.om.portlet.PortletDefinition)
+     */
+	@Override
+	public PreferencesValidator getPreferencesValidator(
+			PortletDefinition portletDefinition) throws ValidatorException {
+		// TODO load validator when the portlet is registered since the classloader context will be correct
+		return null;
+	}
+	
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletPreferencesService#getStoredPreferences(org.apache.pluto.container.PortletWindow, javax.portlet.PortletRequest)
+     */
+	@Override
+    public Map<String,PortletPreference> getStoredPreferences(PortletWindow plutoPortletWindow, PortletRequest portletRequest) throws PortletContainerException {
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        
+        final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
+        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
+        
+        //Linked hash map used to add preferences in order loaded from the descriptor, definition and entity
+        final Map<String, PortletPreference> preferencesMap = new LinkedHashMap<String, PortletPreference>();
         
         if (!IPortletRenderer.CONFIG.equals(portletWindow.getPortletMode())) {
             //If not guest or storing shared guest prefs get the prefs from the portlet entity
@@ -295,10 +294,10 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      */
 	@Override
     public void store(PortletWindow plutoPortletWindow, PortletRequest portletRequest, Map<String,PortletPreference> newPreferences) throws PortletContainerException {
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
         
         //Determine if the user is a guest
-        final boolean isGuest = isGuestUser(httpServletRequest);
+        final boolean isGuest = isGuestUser(portletRequest);
         
         //If this is a guest and no prefs are being stored just return as the rest of the method is not needed for this case
         if (isGuest && !(this.isStoreInEntity(portletRequest) || this.isStoreInMemory(portletRequest))) {
@@ -404,8 +403,9 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * Determine if the user for the specified request is a guest as it pertains to shared portlet preferences.
      */
-    protected boolean isGuestUser(final HttpServletRequest httpServletRequest) {
-        final IPerson person = this.personManager.getPerson(httpServletRequest);
+    protected boolean isGuestUser(PortletRequest portletRequest) {
+        final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final IPerson person = this.personManager.getPerson(portalRequest);
         return person.isGuest();
     }
     

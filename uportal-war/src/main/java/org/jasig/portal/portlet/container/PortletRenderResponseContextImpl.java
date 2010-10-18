@@ -60,9 +60,8 @@ public class PortletRenderResponseContextImpl extends PortletMimeResponseContext
      */
     @Override
     public void setTitle(String title) {
-        if (!this.isClosed()) {
-            this.servletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE, title);
-        }
+        this.checkContextStatus();
+        this.servletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE, title);
     }
 
 }

@@ -60,7 +60,7 @@ public class HttpRequestPropertiesManager extends BaseRequestPropertiesManager {
      */
     @Override
     public Map<String, String[]> getRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow) {
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
         
         final Map<String, String[]> properties = new HashMap<String, String[]>();
 
