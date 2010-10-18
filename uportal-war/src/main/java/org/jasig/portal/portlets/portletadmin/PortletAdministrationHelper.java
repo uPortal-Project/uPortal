@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.driver.PortalDriverContainerServices;
 import org.apache.pluto.container.driver.PortletRegistryService;
-import org.apache.pluto.container.impl.PortletContextImpl;
+import org.apache.pluto.container.om.portlet.DisplayName;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Supports;
@@ -544,23 +544,25 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * 
 	 * @return list of portlet context
 	 */
-	public List<PortletContextImpl> getPortletApplications() {
+	public List<PortletApplicationDefinition> getPortletApplications() {
 		final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
-		List<PortletContextImpl> contexts = new ArrayList<PortletContextImpl>();
-		portletRegistryService.getRegisteredPortletApplicationNames();
-		for (Iterator<String> iter = portletRegistryService.getRegisteredPortletApplicationNames(); iter.hasNext();) {
-			String applicationName = iter.next();
-			//PortletApplicationDefinition applicationDefninition = portletRegistryService.getPortletApplication(applicationName);
+		final List<PortletApplicationDefinition> contexts = new ArrayList<PortletApplicationDefinition>();
+
+		for (final Iterator<String> iter = portletRegistryService.getRegisteredPortletApplicationNames(); iter.hasNext();) {
+			final String applicationName = iter.next();
+			final PortletApplicationDefinition applicationDefninition;
+            try {
+                applicationDefninition = portletRegistryService.getPortletApplication(applicationName);
+            }
+            catch (PortletContainerException e) {
+                throw new RuntimeException("Failed to load PortletApplicationDefinition for '" + applicationName + "'");
+            }
 			
-			//TODO need way to implement getPortletApplications()
-			/*
-			PortletContextImpl context = (PortletContextImpl) iter.next();
-			
-			final List<PortletDD> portlets = context.getPortletApplicationDefinition().getPortlets();
-			Collections.sort(portlets, new ComparableExtractingComparator<PortletDD, String>(String.CASE_INSENSITIVE_ORDER) {
+			final List<? extends PortletDefinition> portlets = applicationDefninition.getPortlets();
+			Collections.sort(portlets, new ComparableExtractingComparator<PortletDefinition, String>(String.CASE_INSENSITIVE_ORDER) {
 	            @Override
-	            protected String getComparable(PortletDD o) {
-                    final List<DisplayNameDD> displayNames = o.getDisplayNames();
+	            protected String getComparable(PortletDefinition o) {
+                    final List<? extends DisplayName> displayNames = o.getDisplayNames();
                     if (displayNames != null && displayNames.size() > 0) {
                         return displayNames.get(0).getDisplayName();
                     }
@@ -569,21 +571,19 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	            }
 	        });
 			
-			contexts.add(context);
-			*/
+			contexts.add(applicationDefninition);
 		}
 		
 		
-		Collections.sort(contexts, new ComparableExtractingComparator<PortletContextImpl, String>(String.CASE_INSENSITIVE_ORDER) {
+		Collections.sort(contexts, new ComparableExtractingComparator<PortletApplicationDefinition, String>(String.CASE_INSENSITIVE_ORDER) {
             @Override
-            protected String getComparable(PortletContextImpl o) {
-                final String portletContextName = o.getPortletContextName();
+            protected String getComparable(PortletApplicationDefinition o) {
+                final String portletContextName = o.getName();
                 if (portletContextName != null) {
                     return portletContextName;
                 }
                 
-                final PortletApplicationDefinition portletApplicationDefinition = o.getPortletApplicationDefinition();
-                final String applicationName = portletApplicationDefinition.getContextPath();
+                final String applicationName = o.getContextPath();
                 if ("/".equals(applicationName)) {
                     return "ROOT";
                 }

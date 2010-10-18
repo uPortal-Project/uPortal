@@ -69,12 +69,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
         <select name="application">
             <c:forEach items="${contexts}" var="context">
-                <option value="${context.applicationId}">${context.portletContextName != null ? context.portletContextName : context.applicationName}</option>
+                <option value="${context.name}">${context.name}</option>
             </c:forEach>
         </select>
         
         <select name="portlet">
-            <c:forEach items="${contexts[0].portletApplicationDefinition.portlets}" var="portlet">
+            <c:forEach items="${contexts[0].portlets}" var="portlet">
                 <option value="${portlet.portletName}">${fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName}</option>
             </c:forEach>
         </select>
@@ -105,7 +105,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	        var $ = up.jQuery;
 	        var portlets = {};
 	        <c:forEach items="${contexts}" var="context">
-	            portlets['${context.applicationId}'] = [<c:forEach items="${context.portletApplicationDefinition.portlets}" var="portlet" varStatus="status">{name: '${portlet.portletName}', title: '${fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName}'}${status.last ? '' : ','}</c:forEach>];
+	            portlets['${context.name}'] = [<c:forEach items="${context.portlets}" var="portlet" varStatus="status">{name: '${portlet.portletName}', title: '${fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName}'}${status.last ? '' : ','}</c:forEach>];
 	        </c:forEach>
 	        $(document).ready(function(){
 	            $("select[name=application]").change(function(){
