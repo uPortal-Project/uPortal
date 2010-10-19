@@ -179,6 +179,8 @@ public class PortalUrlProviderImplTest {
         mockRequest.setContextPath("/uPortal");
         mockRequest.setRequestURI(uri);
         
+        expect(this.portalRequestUtils.getOriginalPortalRequest(mockRequest)).andReturn(mockRequest);
+        
         this.replayAll();
         
         final IPortalRequestInfo requestInfo = this.portalUrlProvider.getPortalRequestInfo(mockRequest);
@@ -335,6 +337,7 @@ public class PortalUrlProviderImplTest {
         final MockPortletEntityId portletEntityId = new MockPortletEntityId(subscribeId);
         final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
 
+        expect(this.portalRequestUtils.getOriginalPortalRequest(mockRequest)).andReturn(mockRequest);
         expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
         expect(this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, "portletName")).andReturn(this.portletEntity);
         expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
@@ -394,8 +397,8 @@ public class PortalUrlProviderImplTest {
         final MockPortletEntityId portletEntityId = new MockPortletEntityId(subscribeId);
         final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
 
+        expect(this.portalRequestUtils.getOriginalPortalRequest(mockRequest)).andReturn(mockRequest);
         expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
-        
         expect(this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, fname, expected.getPortletRequestInfo().getTargetWindowId().getStringId())).andReturn(this.portletEntity);
         expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);
         expect(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(mockRequest, portletEntityId)).andReturn(this.portletWindow);
@@ -630,6 +633,7 @@ public class PortalUrlProviderImplTest {
         final MockPortletEntityId portletEntityId = new MockPortletEntityId(subscribeId);
         final MockPortletWindowId portletWindowId = new MockPortletWindowId(portletEntityId.getStringId());
 
+        expect(this.portalRequestUtils.getOriginalPortalRequest(mockRequest)).andReturn(mockRequest);
         expect(this.userInstanceManager.getUserInstance(mockRequest)).andReturn(this.userInstance);
         expect(this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, fname)).andReturn(this.portletEntity);
         expect(this.portletEntity.getPortletEntityId()).andReturn(portletEntityId);

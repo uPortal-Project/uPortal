@@ -19,13 +19,13 @@
 
 package org.jasig.portal.portlet.container.properties;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.url.ParameterMap;
 
 /**
  * Manager that has a single backing Map of properties.
@@ -34,7 +34,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
  * @version $Revision$
  */
 public class MockRequestPropertiesManager implements IRequestPropertiesManager {
-    private Map<String, String[]> properties = new HashMap<String, String[]>();
+    private Map<String, String[]> properties = new ParameterMap();
     
     /**
      * @return the properties

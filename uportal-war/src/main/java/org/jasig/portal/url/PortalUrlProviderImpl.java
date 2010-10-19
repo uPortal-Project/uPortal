@@ -178,7 +178,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortalRequestInfo(javax.servlet.http.HttpServletRequest)
      */
     @Override
-    public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request) throws InvalidPortalRequestException {        
+    public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request) throws InvalidPortalRequestException {
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
         final IPortalRequestInfo portalRequestInfo = (IPortalRequestInfo)request.getAttribute(PORTAL_REQUEST_INFO_ATTR);
         if (portalRequestInfo != null) {
             if(logger.isDebugEnabled()) {

@@ -20,7 +20,6 @@
 package org.jasig.portal.portlet.om;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -61,15 +60,32 @@ public interface IPortletWindow extends PortletWindow, Serializable {
     public void setPortletMode(PortletMode mode);
     
     /**
-     * @param requestParameters The current request parameters for the portlet
+     * @param requestParameters The most recent set of private request parameters used for rendering the portlet
      * @throws IllegalArgumentException if parameters is null.
      */
-    public void setRequestParameters(Map<String, String[]> requestParameters);
+    public void setPreviousPrivateRenderParameters(Map<String, String[]> requestParameters);
     
     /**
+     * The most recent set of public request parameters used for rendering the portlet
      * @return The current request parameters for the portlet
      */
-    public Map<String, String[]> getRequestParameters();
+    public Map<String, String[]> getPreviousPublicRenderParameters();
+    
+    /**
+     * @param requestParameters The most recent set of public request parameters used for rendering the portlet
+     * @throws IllegalArgumentException if parameters is null.
+     */
+    public void setPreviousPublicRenderParameters(Map<String, String[]> requestParameters);
+    
+    /**
+     * The most recent set of private request parameters used for rendering the portlet
+     * @return The current request parameters for the portlet
+     */
+    public Map<String, String[]> getPreviousPrivateRenderParameters();
+    
+    /*
+     * track private parameters here
+     */
     
     /**
      * Sets the expiration timeout for the portlet rendering cache. If null is set

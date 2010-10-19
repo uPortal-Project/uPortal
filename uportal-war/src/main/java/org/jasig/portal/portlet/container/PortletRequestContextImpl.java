@@ -19,12 +19,13 @@
 
 package org.jasig.portal.portlet.container;
 
-import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.PortletConfig;
+import javax.portlet.PortletRequest;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -36,32 +37,39 @@ import org.apache.pluto.container.driver.PortletServlet;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IPortletRequestInfo;
+import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.utils.FilteringEnumeration;
 import org.springframework.util.Assert;
 
 /**
+ * Backs the {@link PortletRequest} impl provided by Pluto 
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class PortletRequestContextImpl extends AbstractPortletContextImpl implements PortletRequestContext {
-    private final IRequestPropertiesManager requestPropertiesManager;
+    protected final IRequestPropertiesManager requestPropertiesManager;
+    protected final IPortalRequestInfo portalRequestInfo;
     
     //Objects provided by the PortletServlet via the init method
     //The servlet objects are from the scope of the cross-context dispatch
-    private PortletConfig portletConfig;
-    private ServletContext servletContext;
+    protected PortletConfig portletConfig;
+    protected ServletContext servletContext;
     
-    private Cookie[] cookies;
-    
-    public PortletRequestContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
+    public PortletRequestContextImpl(
+            PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager) {
+            IRequestPropertiesManager requestPropertiesManager, IPortalRequestInfo portalRequestInfo) {
         
         super(portletContainer, portletWindow, containerRequest, containerResponse);
         
         Assert.notNull(requestPropertiesManager, "requestPropertiesManager cannot be null");
-        
+        Assert.notNull(portalRequestInfo, "portalRequestInfo cannot be null");
+
         this.requestPropertiesManager = requestPropertiesManager;
+        this.portalRequestInfo = portalRequestInfo;
     }
 
     /**
@@ -71,10 +79,11 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      */
     @Override
     public void init(PortletConfig portletConfig, ServletContext servletContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-        super.init(servletRequest, servletResponse);
         Assert.notNull(portletConfig, "portletConfig cannot be null");
         Assert.notNull(servletContext, "servletContext cannot be null");
 
+        super.init(servletRequest, servletResponse);
+        
         this.portletConfig = portletConfig;
         this.servletContext = servletContext;
     }
@@ -139,13 +148,8 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      */
     @Override
     public Cookie[] getCookies() {
-        if (this.cookies == null) {
-            this.cookies = this.servletRequest.getCookies();
-            if (this.cookies == null) {
-                this.cookies = new Cookie[0];
-            }
-        }
-        return this.cookies.length > 0 ? this.cookies.clone() : null;
+        //TODO cookie support
+        return new Cookie[0];
     }
 
     /* (non-Javadoc)
@@ -161,7 +165,12 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      */
     @Override
     public Map<String, String[]> getPrivateParameterMap() {
-        return this.portletWindow.getRequestParameters();
+        final IPortletRequestInfo portletRequestInfo = this.portalRequestInfo.getPortletRequestInfo();
+        if (portletRequestInfo != null && this.portletWindow.getPortletWindowId().equals(portletRequestInfo.getTargetWindowId())) {
+            final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
+            return ParameterMap.convertListMap(portletParameters);
+        }
+        return this.portletWindow.getPreviousPrivateRenderParameters();
     }
 
     /* (non-Javadoc)
@@ -177,8 +186,12 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      */
     @Override
     public Map<String, String[]> getPublicParameterMap() {
-        // TODO this may need to come out of the portlet window
-        return Collections.emptyMap();
+        final IPortletRequestInfo portletRequestInfo = this.portalRequestInfo.getPortletRequestInfo();
+        if (portletRequestInfo != null) {
+            final Map<String, List<String>> portletParameters = portletRequestInfo.getPublicPortletParameters();
+            return ParameterMap.convertListMap(portletParameters);
+        }
+        return this.portletWindow.getPreviousPublicRenderParameters();
     }
 
 }

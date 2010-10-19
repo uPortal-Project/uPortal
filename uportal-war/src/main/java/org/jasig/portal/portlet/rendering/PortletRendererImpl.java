@@ -245,7 +245,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         portletWindow.setPortletMode(PortletMode.VIEW);
-        portletWindow.setRequestParameters(null);
+        portletWindow.setPreviousPrivateRenderParameters(null);
         portletWindow.setExpirationCache(null);
         
         final StringWriter responseOutput = new StringWriter();

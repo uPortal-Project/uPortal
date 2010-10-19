@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -58,7 +57,8 @@ public class MockPortletWindow implements IPortletWindow {
     private IPortletWindowId delegationParent;
     private PortletDefinition portletDefinition;
     
-    private Map<String, String[]> requestParameters = new HashMap<String, String[]>();
+    private Map<String, String[]> previousPrivateRenderParameters = new ParameterMap();
+    private Map<String, String[]> previousPublicRenderParameters = new ParameterMap();
     private transient PortletMode portletMode = PortletMode.VIEW;
     private transient WindowState windowState = WindowState.NORMAL;
     private Integer expirationCache = null;
@@ -180,21 +180,37 @@ public class MockPortletWindow implements IPortletWindow {
      * @see org.jasig.portal.portlet.om.IPortletWindow#getRequestParameers()
      */
     public Map<String, String[]> getRequestParameers() {
-        return this.requestParameters;
+        return this.previousPrivateRenderParameters;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
      */
-    public void setRequestParameters(Map<String, String[]> requestParameters) {
+    public void setPreviousPrivateRenderParameters(Map<String, String[]> requestParameters) {
         if (requestParameters == null) {
-            this.requestParameters = null;
+            this.previousPrivateRenderParameters = null;
         }
         else {
-            this.requestParameters = new ParameterMap(requestParameters);
+            this.previousPrivateRenderParameters = new ParameterMap(requestParameters);
         }
     }
     
+    
+    @Override
+    public Map<String, String[]> getPreviousPublicRenderParameters() {
+        return this.previousPublicRenderParameters;
+    }
+
+    @Override
+    public void setPreviousPublicRenderParameters(Map<String, String[]> requestParameters) {
+        if (requestParameters == null) {
+            this.previousPublicRenderParameters = null;
+        }
+        else {
+            this.previousPublicRenderParameters = new ParameterMap(requestParameters);
+        }
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#getExpirationCache()
      */
@@ -212,8 +228,8 @@ public class MockPortletWindow implements IPortletWindow {
     /**
      * @return the requestParameters
      */
-    public Map<String, String[]> getRequestParameters() {
-        return requestParameters;
+    public Map<String, String[]> getPreviousPrivateRenderParameters() {
+        return previousPrivateRenderParameters;
     }
 
     /**
@@ -279,7 +295,7 @@ public class MockPortletWindow implements IPortletWindow {
         if (this.portletName == null) {
             throw new InvalidObjectException("portletName can not be null");
         }
-        if (this.requestParameters == null) {
+        if (this.previousPrivateRenderParameters == null) {
             throw new InvalidObjectException("requestParameters can not be null");
         }
         
@@ -316,7 +332,8 @@ public class MockPortletWindow implements IPortletWindow {
             .append(this.windowState, rhs.getWindowState())
             .append(this.portletMode, rhs.getPortletMode())
             .append(this.expirationCache, rhs.getExpirationCache())
-            .append(this.requestParameters, rhs.getRequestParameters())
+            .append(this.previousPrivateRenderParameters, rhs.getPreviousPrivateRenderParameters())
+            .append(this.previousPublicRenderParameters, rhs.getPreviousPublicRenderParameters())
             .append(this.delegationParent, rhs.getDelegationParent())
             .isEquals();
     }
@@ -333,7 +350,8 @@ public class MockPortletWindow implements IPortletWindow {
             .append(this.windowState)
             .append(this.portletMode)
             .append(this.expirationCache)
-            .append(this.requestParameters)
+            .append(this.previousPrivateRenderParameters)
+            .append(this.previousPublicRenderParameters)
             .append(this.delegationParent)
             .toHashCode();
     }
@@ -350,7 +368,8 @@ public class MockPortletWindow implements IPortletWindow {
             .append("windowState", this.windowState)
             .append("portletMode", this.portletMode)
             .append("expirationCache", this.expirationCache)
-            .append("requestParameters", this.requestParameters)
+            .append("previousPrivateRenderParameters", this.previousPrivateRenderParameters)
+            .append("previousPublicRenderParameters", this.previousPublicRenderParameters)
             .append("delegationParent", this.delegationParent)
             .toString();
     }

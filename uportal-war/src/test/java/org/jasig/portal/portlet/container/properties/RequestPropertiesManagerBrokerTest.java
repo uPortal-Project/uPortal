@@ -21,13 +21,13 @@ package org.jasig.portal.portlet.container.properties;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.url.ParameterMap;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
@@ -153,7 +153,7 @@ public class RequestPropertiesManagerBrokerTest extends TestCase {
         
         Map<String, String[]> properties = this.requestPropertiesManagerBroker.getRequestProperties(request, portletWindow);
         
-        final Map<String, String[]> expected1 = new HashMap<String, String[]>();
+        final Map<String, String[]> expected1 = new ParameterMap();
         expected1.put("prop.A", new String[] { "prop.A.1" });
         expected1.put("prop.B", new String[] { "prop.B.1" });
         expected1.put("prop.C", new String[] { "prop.C.1" });
@@ -165,7 +165,7 @@ public class RequestPropertiesManagerBrokerTest extends TestCase {
         
         properties = this.requestPropertiesManagerBroker.getRequestProperties(request, portletWindow);
         
-        final Map<String, String[]> expected2 = new HashMap<String, String[]>();
+        final Map<String, String[]> expected2 = new ParameterMap();
         expected2.put("prop.A", new String[] { "prop.A.2" });
         expected2.put("prop.B", new String[] { "prop.B.1" });
         expected2.put("prop.C", new String[] { "prop.C.1" });

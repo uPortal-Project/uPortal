@@ -19,13 +19,13 @@
 
 package org.jasig.portal.portlet.container.properties;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.url.ParameterMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
@@ -62,7 +62,7 @@ public class HttpRequestPropertiesManager extends BaseRequestPropertiesManager {
     public Map<String, String[]> getRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow) {
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
         
-        final Map<String, String[]> properties = new HashMap<String, String[]>();
+        final Map<String, String[]> properties = new ParameterMap();
 
         properties.put("REMOTE_ADDR", new String[] { httpServletRequest.getRemoteAddr() });
         properties.put("REQUEST_METHOD", new String[] { httpServletRequest.getMethod() });

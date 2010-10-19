@@ -29,6 +29,7 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResourceRequestContext;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;
 
 /**
@@ -37,22 +38,28 @@ import org.jasig.portal.url.IPortletRequestInfo;
  */
 public class PortletResourceRequestContextImpl extends PortletRequestContextImpl implements PortletResourceRequestContext {
 
-	private final IPortletRequestInfo portletRequestInfo;
-	
-    public PortletResourceRequestContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
+    public PortletResourceRequestContextImpl(
+            PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortletRequestInfo portletRequestInfo) {
+            IRequestPropertiesManager requestPropertiesManager, IPortalRequestInfo portalRequestInfo) {
         
-        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager);
-        this.portletRequestInfo = portletRequestInfo;
+        super(portletContainer, portletWindow, 
+                containerRequest, containerResponse, 
+                requestPropertiesManager, portalRequestInfo);
     }
+        
 
     /* (non-Javadoc)
      * @see org.apache.pluto.container.PortletResourceRequestContext#getCacheability()
      */
     @Override
     public String getCacheability() {
-        return this.portletRequestInfo.getCacheability();
+        final IPortletRequestInfo portletRequestInfo = this.portalRequestInfo.getPortletRequestInfo();
+        if (portletRequestInfo != null) {
+            return portletRequestInfo.getCacheability();
+        }
+        
+        return null;
     }
 
     /* (non-Javadoc)
@@ -60,16 +67,25 @@ public class PortletResourceRequestContextImpl extends PortletRequestContextImpl
      */
     @Override
     public Map<String, String[]> getPrivateRenderParameterMap() {
-        // TODO This probably needs to be provided by the window as well
-        return Collections.emptyMap();
+        return this.getPrivateParameterMap();
     }
-
+    
+    @Override
+    public Map<String, String[]> getPrivateParameterMap() {
+        //TODO create another parameter class for portlet resource parameters
+        return super.getPrivateParameterMap();
+    }
+    
     /* (non-Javadoc)
      * @see org.apache.pluto.container.PortletResourceRequestContext#getResourceID()
      */
     @Override
     public String getResourceID() {
-       return this.portletRequestInfo.getResourceId();
+        final IPortletRequestInfo portletRequestInfo = this.portalRequestInfo.getPortletRequestInfo();
+        if (portletRequestInfo != null) {
+            return portletRequestInfo.getResourceId();
+        }
+        
+        return null;
     }
-
 }

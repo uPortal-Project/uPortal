@@ -38,6 +38,7 @@ import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.url.UrlState;
+import org.jasig.portal.url.UrlType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -118,12 +119,14 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
             }
         }
         
+        //If a render URL cache the parameters in the window
+        if (UrlType.RENDER == portalRequestInfo.getUrlType()) {
+            final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
+            portletWindow.setPreviousPrivateRenderParameters(ParameterMap.convertListMap(portletParameters));
         
-        final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
-        portletWindow.setRequestParameters(ParameterMap.convertListMap(portletParameters));
-        
-        //TODO public parameters
-//        final Map<String, List<String>> publicPortletParameters = portletRequestInfo.getPublicPortletParameters();
+            final Map<String, List<String>> publicPortletParameters = portletRequestInfo.getPublicPortletParameters();
+            portletWindow.setPreviousPublicRenderParameters(ParameterMap.convertListMap(publicPortletParameters));
+        }
         
         final IPortletRequestInfo delegatePortletRequestInfo = portletRequestInfo.getDelegatePortletRequestInfo();
         if (delegatePortletRequestInfo != null) {

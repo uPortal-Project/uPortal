@@ -20,7 +20,6 @@
 package org.jasig.portal.portlet.container.properties;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.url.ParameterMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -89,7 +89,7 @@ public class RequestPropertiesManagerBroker implements IRequestPropertiesManager
      * @see org.jasig.portal.portlet.container.services.IRequestPropertiesManager#getRequestProperties(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow)
      */
     public Map<String, String[]> getRequestProperties(HttpServletRequest request, IPortletWindow portletWindow) {
-        final Map<String, String[]> properties = new HashMap<String, String[]>();
+        final Map<String, String[]> properties = new ParameterMap();
         
         for (final IRequestPropertiesManager propertiesManager : this.propertiesManagers) {
             final Map<String, String[]> newProperties = propertiesManager.getRequestProperties(request, portletWindow);

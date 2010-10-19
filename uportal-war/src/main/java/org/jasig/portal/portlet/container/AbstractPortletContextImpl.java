@@ -44,11 +44,13 @@ public abstract class AbstractPortletContextImpl {
 
     //Objects provided by the PortletServlet via the init method
     //The servlet objects are from the scope of the cross-context dispatch
-    HttpServletRequest servletRequest;
-    HttpServletResponse servletResponse;
+    protected HttpServletRequest servletRequest;
+    protected HttpServletResponse servletResponse;
     
-    public AbstractPortletContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
+    public AbstractPortletContextImpl(
+            PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse) {
+        
         Assert.notNull(portletContainer, "portletContainer cannot be null");
         Assert.notNull(containerRequest, "containerRequest cannot be null");
         Assert.notNull(containerResponse, "containerResponse cannot be null");
@@ -60,39 +62,42 @@ public abstract class AbstractPortletContextImpl {
         this.portletWindow = portletWindow;
     }
 
-    /* (non-Javadoc)
+    /**
+     * @see org.apache.pluto.container.PortletRequestContext#getContainer()
      * @see org.apache.pluto.container.PortletResponseContext#getContainer()
      */
     public PortletContainer getContainer() {
         return this.portletContainer;
     }
 
-    /* (non-Javadoc)
+    /**
+     * @see org.apache.pluto.container.PortletRequestContext#getContainerRequest()
      * @see org.apache.pluto.container.PortletResponseContext#getContainerRequest()
      */
     public HttpServletRequest getContainerRequest() {
         return this.containerRequest;
     }
 
-    /* (non-Javadoc)
+    /**
+     * @see org.apache.pluto.container.PortletRequestContext#getContainerResponse()
      * @see org.apache.pluto.container.PortletResponseContext#getContainerResponse()
      */
     public HttpServletResponse getContainerResponse() {
         return this.containerResponse;
     }
 
-    /* (non-Javadoc)
+    /**
+     * @see org.apache.pluto.container.PortletRequestContext#getPortletWindow()
      * @see org.apache.pluto.container.PortletResponseContext#getPortletWindow()
      */
     public PortletWindow getPortletWindow() {
         return this.portletWindow;
     }
     
-    
-    
     /**
      * Called by {@link PortletServlet} after the cross context dispatch but before the portlet invocation
      * 
+     * @see org.apache.pluto.container.PortletRequestContext#init(javax.portlet.PortletConfig, javax.servlet.ServletContext, HttpServletRequest, HttpServletResponse)
      * @see org.apache.pluto.container.PortletResponseContext#init(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public void init(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
@@ -103,15 +108,17 @@ public abstract class AbstractPortletContextImpl {
         this.servletResponse = servletResponse;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.apache.pluto.container.PortletRequestContext#getServletRequest()
+     * @see org.apache.pluto.container.PortletResponseContext#getServletRequest()
      */
     public HttpServletRequest getServletRequest() {
         return this.servletRequest;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.apache.pluto.container.PortletRequestContext#getServletResponse()
+     * @see org.apache.pluto.container.PortletResponseContext#getServletResponse()
      */
     public HttpServletResponse getServletResponse() {
         return this.servletResponse;
