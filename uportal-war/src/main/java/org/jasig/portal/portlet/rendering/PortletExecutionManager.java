@@ -797,8 +797,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     }
     
     private class PortletResourceExecutionWorker extends PortletExecutionWorker<PortletResourceResult> {
-
-    	//private String output = null;
+    	
 		public PortletResourceExecutionWorker(ExecutorService executorService,
 				IPortletWindowId portletWindowId, HttpServletRequest request,
 				HttpServletResponse response) {
@@ -810,20 +809,9 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
 		 */
 		@Override
 		protected PortletResourceResult callInternal() throws Exception {
-			//final StringWriter writer = new StringWriter();
             final PortletResourceResult result = portletRenderer.doServeResource(portletWindowId, request, response);
-            //this.output = writer.toString();
             return result;
 		}
-
-		/**
-		 * @return the output
-		 */
-		/*
-		public String getOutput() {
-			return output;
-		}
-		*/
     	
     }
     
