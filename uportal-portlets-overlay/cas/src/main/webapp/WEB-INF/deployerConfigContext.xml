@@ -116,6 +116,14 @@
                     p:user-password-dao-ref="userPasswordDao" />
 			</list>
 		</property>
+        
+        <!--<property name="authenticationMetaDataPopulators">
+           <list>
+              <bean class="org.jasig.cas3.extensions.clearpass.CacheCredentialsMetaDataPopulator">
+                 <constructor-arg index="0" ref="credentialsCache" />
+              </bean>
+           </list>
+        </property>-->
 	</bean>
     
     <bean id="userPasswordDao" class="org.jasig.portal.cas.authentication.handler.support.PortalPersonDirUserPasswordDao" 

@@ -102,6 +102,7 @@
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.10</BookmarksPortlet.version>
         <cas-server.version>3.3.5</cas-server.version>
+        <cas-clearpass.version>1.0.5.GA</cas-clearpass.version>
         <cas-proxy-test-portlet.version>1.0.0-RC2</cas-proxy-test-portlet.version>
         <FunctionalTestsPortlet.version>1.0.3-SNAPSHOT</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.0-RC2</jasig-widget-portlets.version>
@@ -117,7 +118,7 @@
         <ant.version>1.7.1</ant.version>
         <aspectjrt.version>1.6.9</aspectjrt.version>
         <aspectjweaver.version>1.6.9</aspectjweaver.version>
-        <casclient.version>3.1.10</casclient.version>
+        <casclient.version>3.1.12</casclient.version>
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.1</cernunnos.version>
         <commons-cli.version>1.2</commons-cli.version>
@@ -545,9 +546,14 @@
                 <version>${resource-aggregator.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jasig.cas</groupId>
+                <groupId>org.jasig.cas.client</groupId>
                 <artifactId>cas-client-core</artifactId>
                 <version>${casclient.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jasig.cas3.extensions</groupId>
+                <artifactId>clearpass-integration-uportal</artifactId>
+                <version>${cas-clearpass.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.portal</groupId>
