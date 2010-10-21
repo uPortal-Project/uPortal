@@ -51,116 +51,103 @@ import org.apache.pluto.container.om.portlet.PortletDefinition;
  *
  */
 public class FilterManagerImpl implements FilterManager {
+    private FilterChainImpl filterchain;
+    private PortletApplicationDefinition portletApp;
+    private String portletName;
+    private String lifeCycle;
 
-	public static final String WILDCARD = "*";
-	private final PortletApplicationDefinition portletApplicationDefinition;
-	private final String targetLifeCycle;
-	private final String portletName;
-	private final FilterChainImpl filterChain;
-	
-	/**
-	 * 
-	 * @param portletWindow
-	 * @param targetLifeCycle
-	 */
-	public FilterManagerImpl(PortletWindow portletWindow, String targetLifeCycle) {
-		this.targetLifeCycle = targetLifeCycle;
-		PortletDefinition portletDefinition = portletWindow.getPortletDefinition();
-		this.portletApplicationDefinition = portletDefinition.getApplication();
-		this.portletName = portletWindow.getPortletDefinition().getPortletName();
-		portletApplicationDefinition.getFilters();
-		filterChain = new FilterChainImpl(this.targetLifeCycle);
-		setupFilterChain();
-	}
+    public FilterManagerImpl(PortletWindow portletWindow, String lifeCycle) {
+        final PortletDefinition pd = portletWindow.getPortletDefinition();
+        this.portletApp = pd.getApplication();
+        this.portletName = pd.getPortletName();
+        this.lifeCycle = lifeCycle;
+        filterchain = new FilterChainImpl(lifeCycle);
+        initFilterChain();
+    }
 
-	/**
-	 * 
-	 */
-	protected void setupFilterChain() {
-		List<? extends FilterMapping> filterMappings = this.portletApplicationDefinition.getFilterMappings();
-		if(null != filterMappings) {
-			for(FilterMapping filterMapping : filterMappings) {
-				if(doesFilterMappingApplyToPortletName(filterMapping, portletName)) {
-					// filter applies to portlet, now check for match with lifecycle
-					Filter filter = this.portletApplicationDefinition.getFilter(filterMapping.getFilterName());
-					List<String> filterLifecycles = filter.getLifecycles();
-					if(filterLifecycles.contains(targetLifeCycle)) {
-						// we've found a match!
-						filterChain.addFilter(filter);
-					}
-				}
-			}
-		}
-	}
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.FilterManager#processFilter(javax.portlet.ActionRequest, javax.portlet.ActionResponse, javax.portlet.Portlet, javax.portlet.PortletContext)
-	 */
-	@Override
-	public void processFilter(ActionRequest req, ActionResponse res,
-			Portlet portlet, PortletContext portletContext)
-	throws PortletException, IOException {
-	    filterChain.setPortlet(portlet);
-		filterChain.doFilter(req, res);
-	}
+    private void initFilterChain() {
+        List<? extends FilterMapping> filterMappingList = portletApp.getFilterMappings();
+        if (filterMappingList != null) {
+            for (FilterMapping filterMapping : filterMappingList) {
+                if (isFilter(filterMapping, portletName)) {
+                    //the filter is specified for the portlet, check the filter for the lifecycle
+                    List<? extends Filter> filterList = portletApp.getFilters();
+                    for (Filter filter : filterList) {
+                        //search for the filter in the filter
+                        if (filter.getFilterName().equals(filterMapping.getFilterName())) {
+                            //check the lifecycle
+                            if (isLifeCycle(filter, lifeCycle)) {
+                                //the filter match to the portlet and has the specified lifecycle -> add to chain
+                                filterchain.addFilter(filter);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.FilterManager#processFilter(javax.portlet.RenderRequest, javax.portlet.RenderResponse, javax.portlet.Portlet, javax.portlet.PortletContext)
-	 */
-	@Override
-	public void processFilter(RenderRequest req, RenderResponse res,
-			Portlet portlet, PortletContext portletContext)
-	throws PortletException, IOException {
-        filterChain.setPortlet(portlet);
-		filterChain.doFilter(req, res);
-	}
+    /**
+     * @see org.apache.pluto.container.FilterManager#processFilter(javax.portlet.EventRequest, javax.portlet.EventResponse, javax.portlet.EventPortlet, javax.portlet.PortletContext)
+     */
+    public void processFilter(EventRequest req, EventResponse res, EventPortlet eventPortlet,
+            PortletContext portletContext) throws PortletException, IOException {
+        filterchain.processFilter(req, res, eventPortlet, portletContext);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.FilterManager#processFilter(javax.portlet.ResourceRequest, javax.portlet.ResourceResponse, javax.portlet.ResourceServingPortlet, javax.portlet.PortletContext)
-	 */
-	@Override
-	public void processFilter(ResourceRequest req, ResourceResponse res,
-			ResourceServingPortlet resourceServingPortlet,
-			PortletContext portletContext) throws PortletException, IOException {
-		filterChain.setResourceServingPortlet(resourceServingPortlet);
-		filterChain.doFilter(req, res);
-	}
+    /**
+     * @see org.apache.pluto.container.FilterManager#processFilter(javax.portlet.ResourceRequest, javax.portlet.ResourceResponse, javax.portlet.ResourceServingPortlet, javax.portlet.PortletContext)
+     */
+    public void processFilter(ResourceRequest req, ResourceResponse res, ResourceServingPortlet resourceServingPortlet,
+            PortletContext portletContext) throws PortletException, IOException {
+        filterchain.processFilter(req, res, resourceServingPortlet, portletContext);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.pluto.container.FilterManager#processFilter(javax.portlet.EventRequest, javax.portlet.EventResponse, javax.portlet.EventPortlet, javax.portlet.PortletContext)
-	 */
-	@Override
-	public void processFilter(EventRequest req, EventResponse res,
-			EventPortlet eventPortlet, PortletContext portletContext)
-	throws PortletException, IOException {
-		filterChain.setEventPortlet(eventPortlet);
-		filterChain.doFilter(req, res);
-	}
+    /**
+     * @see org.apache.pluto.container.FilterManager#processFilter(javax.portlet.RenderRequest, javax.portlet.RenderResponse, javax.portlet.Portlet, javax.portlet.PortletContext)
+     */
+    public void processFilter(RenderRequest req, RenderResponse res, Portlet portlet, PortletContext portletContext)
+            throws PortletException, IOException {
+        filterchain.processFilter(req, res, portlet, portletContext);
+    }
 
-	/**
-	 * {@link FilterMapping} supports the use of '*' as a wildcard.
-	 * 
-	 * @param filterMapping
-	 * @param portletName
-	 * @return true if the {@link FilterMapping} is applicable to the specified {@link String} portletName
-	 */
-	protected boolean doesFilterMappingApplyToPortletName(final FilterMapping filterMapping, final String portletName) {
-		List<String> applicablePortletNames = filterMapping.getPortletNames();
-		for(String portletNameFromFilterList : applicablePortletNames) {
-			if(WILDCARD.equals(portletNameFromFilterList)) {
-				return true;
-			}  else if (portletNameFromFilterList.equals(portletName)) {
-				return true;
-			} else if (portletNameFromFilterList.endsWith(WILDCARD)){
-				portletNameFromFilterList = portletNameFromFilterList.substring(0, portletNameFromFilterList.length()-1);
-				if (portletName.length()>= portletNameFromFilterList.length()){
-					if (portletName.substring(0, portletNameFromFilterList.length()).equals(portletNameFromFilterList)){
-						return true;
-					}
-				}
-			}
-		}
-		return false;
+    /**
+     * @see org.apache.pluto.container.FilterManager#processFilter(javax.portlet.ActionRequest, javax.portlet.ActionResponse, javax.portlet.Portlet, javax.portlet.PortletContext)
+     */
+    public void processFilter(ActionRequest req, ActionResponse res, Portlet portlet, PortletContext portletContext)
+            throws PortletException, IOException {
+        filterchain.processFilter(req, res, portlet, portletContext);
+    }
 
-	}
+    private boolean isLifeCycle(Filter filter, String lifeCycle) {
+        List<String> lifeCyclesList = filter.getLifecycles();
+        for (String string : lifeCyclesList) {
+            if (string.equals(lifeCycle))
+                return true;
+        }
+        return false;
+    }
+
+    private boolean isFilter(FilterMapping filterMapping, String portletName) {
+        List<String> portletNamesList = filterMapping.getPortletNames();
+        for (String portletNameFromFilterList : portletNamesList) {
+            if (portletNameFromFilterList.endsWith("*")) {
+                if (portletNameFromFilterList.length() == 1) {
+                    //if name contains only *
+                    return true;
+                }
+                portletNameFromFilterList = portletNameFromFilterList.substring(0,
+                        portletNameFromFilterList.length() - 1);
+                if (portletName.length() >= portletNameFromFilterList.length()) {
+                    if (portletName.substring(0, portletNameFromFilterList.length()).equals(portletNameFromFilterList)) {
+                        return true;
+                    }
+                }
+            }
+            else if (portletNameFromFilterList.equals(portletName))
+                return true;
+        }
+        return false;
+    }
 
 }
