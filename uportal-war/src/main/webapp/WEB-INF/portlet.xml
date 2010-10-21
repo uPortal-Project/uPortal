@@ -151,21 +151,23 @@
         </portlet-info>
     </portlet>
     
-    <portlet> 
-        <portlet-name>ExitFragmentAdministration</portlet-name>  
-        <portlet-class>org.danann.cernunnos.runtime.web.CernunnosPortlet</portlet-class>
+    <portlet>
+        <portlet-name>ExitFragmentAdministration</portlet-name>
+        <display-name xml:lang="en">Exit Fragment Administration</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
-            <value>/WEB-INF/classes/properties/contexts/portlet/ExitFragmentAdministration-portlet.xml</value>
+            <value>classpath:/properties/contexts/portlet/ExitFragmentAdministration-portlet.xml</value>
         </init-param>
         <expiration-cache>-1</expiration-cache>
-        <supports> 
-            <mime-type>text/html</mime-type>  
-            <portlet-mode>view</portlet-mode> 
-        </supports>  
-        <portlet-info> 
-            <title>ExitFragmentAdministration</title> 
-        </portlet-info> 
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>ExitFragmentAdministration</title>
+        </portlet-info>
     </portlet>
 
     <portlet> 
