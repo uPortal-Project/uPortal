@@ -1,4 +1,4 @@
-package org.jasig.portal.portlets.password;
+package org.jasig.portal.portlets.account.selfedit;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.persondir.ILocalAccountDao;

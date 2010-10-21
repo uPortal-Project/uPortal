@@ -37,7 +37,7 @@
             <map>
                 <entry key="view">
                     <bean class="org.jasig.portal.portlets.flow.ParamaterizableFlowHandler">
-                        <property name="flowId" value="update-password" />
+                        <property name="flowId" value="self-edit-account" />
                     </bean>
                 </entry>
             </map>

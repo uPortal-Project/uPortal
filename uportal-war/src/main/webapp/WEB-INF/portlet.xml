@@ -539,12 +539,12 @@
     </portlet>
     
     <portlet>
-        <portlet-name>UpdatePassword</portlet-name>
+        <portlet-name>SelfEditAccount</portlet-name>
         <display-name xml:lang="en">Update Password</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/UpdatePassword-portlet.xml</value>
+            <value>classpath:/properties/contexts/portlet/SelfEditAccount-portlet.xml</value>
         </init-param>
         <expiration-cache>0</expiration-cache>
         <supports>
@@ -553,7 +553,7 @@
         </supports>
         <supported-locale>en</supported-locale>
         <portlet-info>
-            <title>Update Password</title>
+            <title>Edit My Portal Account</title>
         </portlet-info>
     </portlet>
     
