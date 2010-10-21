@@ -174,6 +174,16 @@ public class PortalUrlProviderImplTest {
         }
     }
     
+    /**
+     * Test helper to validate {@link PortalUrlProviderImpl#getPortalRequestInfo(HttpServletRequest)}.
+     * Creates a {@link MockHttpServletRequest} using the uri argument.
+     * 
+     * Compares the result of getPortalRequestInfo with the expected IPortalRequestInfo.
+     * 
+     * @param uri
+     * @param expected
+     * @throws Exception
+     */
     private void testFolderUrlHelper(String uri, IPortalRequestInfo expected) throws Exception {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal");
@@ -329,6 +339,27 @@ public class PortalUrlProviderImplTest {
         this.testFolderUrlHelper("/uPortal/f/folderName/folderName2/", expected);
     }
     
+    /**
+     * Helper method to evaluate {@link PortalUrlProviderImpl#getPortalRequestInfo(HttpServletRequest)}.
+     * 
+     * Differs from {@link #testFolderUrlHelper(String, IPortalRequestInfo)} in that this method
+     * is evaluating a request that targets a Portlet (one of the varieties of {@link PortletRequest}).
+     * 
+     * Validates the returned {@link IPortalRequestInfo} by comparing to the following fields on the expected:
+     * <ul>
+     * <li>{@link IPortalRequestInfo#getTargetedLayoutNodeId()}</li>
+     * <li>{@link IPortalRequestInfo#getLayoutParameters()}</li>
+     * <li>{@link IPortalRequestInfo#getPortalParameters()}</li>
+     * <li>{@link IPortalRequestInfo#getUrlState()}</li>
+     * <li>{@link IPortalRequestInfo#getUrlType()}</li>
+	 * <li>{@link IPortalRequestInfo#getPortletRequestInfo()}</li>
+	 * </ul>
+	 * 
+     * @param uri
+     * @param subscribeId
+     * @param expected
+     * @throws Exception
+     */
     private void testFolderPortletFnameUrlHelper(String uri, String subscribeId, IPortalRequestInfo expected) throws Exception {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal");
@@ -385,9 +416,28 @@ public class PortalUrlProviderImplTest {
         testFolderPortletFnameUrlHelper("/uPortal/f/folderName/p/portletName/", "n42", expected);
     }
     
+    /**
+     * Same as {@link #testFolderPortletFnameSubscribeIdUrlHelper(String, Map, String, String, IPortalRequestInfo)} with 
+     * a null 'params' (type {@link Map}) parameter.
+     * 
+     * @param uri
+     * @param fname
+     * @param subscribeId
+     * @param expected
+     * @throws Exception
+     */
     private void testFolderPortletFnameSubscribeIdUrlHelper(String uri, String fname, String subscribeId, IPortalRequestInfo expected) throws Exception {
         this.testFolderPortletFnameSubscribeIdUrlHelper(uri, null, fname, subscribeId, expected);
     }
+    /**
+     * 
+     * @param uri
+     * @param params
+     * @param fname
+     * @param subscribeId
+     * @param expected
+     * @throws Exception
+     */
     private void testFolderPortletFnameSubscribeIdUrlHelper(String uri, Map<String, String[]> params, String fname, String subscribeId, IPortalRequestInfo expected) throws Exception {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal");
@@ -421,6 +471,14 @@ public class PortalUrlProviderImplTest {
         assertRequestInfoEquals(expectedPortletRequestInfo, portletRequestInfo);
     }
 
+    /**
+     * 
+     * @param mockRequest
+     * @param mockPortletWindow
+     * @param nodeId
+     * @param subscribeId
+     * @return
+     */
     private MockPortletWindowId setPortletUrlGenerationByPortletId(MockHttpServletRequest mockRequest, MockPortletWindow mockPortletWindow, String nodeId, String subscribeId) {
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("pw1");
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("pe1");
@@ -530,7 +588,7 @@ public class PortalUrlProviderImplTest {
     }
     
     @Test
-    public void testSingleFolderPortletFnameSubscribeIdUrlGeneration() throws Exception {
+    public void testSingleFolderPortletFnameSubscribeIdRenderUrlGeneration() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContextPath("/uPortal");
         

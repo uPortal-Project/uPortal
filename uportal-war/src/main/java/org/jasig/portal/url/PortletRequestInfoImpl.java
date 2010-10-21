@@ -36,6 +36,7 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
     private final IPortletWindowId targetWindowId;
     private Map<String, List<String>> portletParameters;
     private Map<String, List<String>> publicPortletParameters;
+    private Map<String, List<String>> resourceParameters;
     private WindowState windowState;
     private PortletMode portletMode;
     private String resourceId;
@@ -62,7 +63,21 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
         this.publicPortletParameters = publicPortletParameters;
     }
 
-    public WindowState getWindowState() {
+    /**
+	 * @return the resourceUrl parameters
+	 */
+	public Map<String, List<String>> getResourceParameters() {
+		return resourceParameters;
+	}
+
+	/**
+	 * @param resourceParameters the resourceUrl parameters to set
+	 */
+	public void setResourceParameters(Map<String, List<String>> resourceParameters) {
+		this.resourceParameters = resourceParameters;
+	}
+
+	public WindowState getWindowState() {
         return this.windowState;
     }
 
@@ -144,6 +159,10 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
 						: publicPortletParameters.hashCode());
 		result = prime * result
 				+ ((resourceId == null) ? 0 : resourceId.hashCode());
+		result = prime
+				* result
+				+ ((resourceParameters == null) ? 0 : resourceParameters
+						.hashCode());
 		result = prime * result
 				+ ((targetWindowId == null) ? 0 : targetWindowId.hashCode());
 		result = prime * result
@@ -210,6 +229,13 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
 		} else if (!resourceId.equals(other.resourceId)) {
 			return false;
 		}
+		if (resourceParameters == null) {
+			if (other.resourceParameters != null) {
+				return false;
+			}
+		} else if (!resourceParameters.equals(other.resourceParameters)) {
+			return false;
+		}
 		if (targetWindowId == null) {
 			if (other.targetWindowId != null) {
 				return false;
@@ -245,6 +271,8 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
 		builder.append(publicPortletParameters);
 		builder.append(", resourceId=");
 		builder.append(resourceId);
+		builder.append(", resourceParameters=");
+		builder.append(resourceParameters);
 		builder.append(", targetWindowId=");
 		builder.append(targetWindowId);
 		builder.append(", windowState=");

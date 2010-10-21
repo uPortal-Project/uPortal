@@ -36,10 +36,11 @@ public class MockPortletRequestInfo implements IPortletRequestInfo {
     public IPortletWindowId targetWindowId;
     public Map<String, List<String>> portletParameters = Collections.emptyMap();
     public Map<String, List<String>> publicPortletParameters = Collections.emptyMap();
+    public Map<String, List<String>> resourceParameters = Collections.emptyMap();
     public WindowState windowState;
     public PortletMode portletMode;
-    private String resourceId;
-    private String cacheability;
+    public String resourceId;
+    public String cacheability;
     public IPortletRequestInfo delegatePortletRequestInfo;
     public IPortletWindowId getTargetWindowId() {
         return this.targetWindowId;
@@ -231,6 +232,16 @@ public class MockPortletRequestInfo implements IPortletRequestInfo {
 		builder.append(windowState);
 		builder.append("]");
 		return builder.toString();
+	}
+	@Override
+	public Map<String, List<String>> getResourceParameters() {
+		return resourceParameters;
+	}
+	/**
+	 * @param resourceParameters the resourceParameters to set
+	 */
+	public void setResourceParameters(Map<String, List<String>> resourceParameters) {
+		this.resourceParameters = resourceParameters;
 	}
     
 }

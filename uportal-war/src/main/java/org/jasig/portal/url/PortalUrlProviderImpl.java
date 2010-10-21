@@ -83,6 +83,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     public static final String PORTLET_CONTROL_PREFIX               = "pltC" + SEPARATOR;
     public static final String PORTLET_PARAM_PREFIX                 = "pltP" + SEPARATOR;
     public static final String PORTLET_PUBLIC_RENDER_PARAM_PREFIX   = "pltG" + SEPARATOR;
+    public static final String PORTLET_RESOURCE_PARAM_PREFIX = "pltR" + SEPARATOR;
 
     public static final String PARAM_WINDOW_STATE   = PORTLET_CONTROL_PREFIX + "s";
     public static final String PARAM_PORTLET_MODE   = PORTLET_CONTROL_PREFIX + "m";
@@ -99,6 +100,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     private static final Pattern URL_PARAM_NAME_PATTERN = Pattern.compile("&([^&?=\n]*)");
     private static final Pattern SLASH_PATTERN = Pattern.compile(SLASH);
     private static final String PORTAL_REQUEST_INFO_ATTR = PortalUrlProviderImpl.class.getName() + ".PORTAL_REQUEST_INFO"; 
+    private static final String PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR = PortalUrlProviderImpl.class.getName() + ".PORTAL_REQUEST_PARSING_IN_PROGRESS"; 
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -187,7 +189,17 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             }
             return portalRequestInfo;
         }
+        // set a flag to say this request is currently being parsed
+        String inProgressAttr = (String) request.getAttribute(PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR);
+        if(Boolean.parseBoolean(inProgressAttr)) {
+        	if(logger.isDebugEnabled()) {
+        		logger.debug("short-circuit: request parsing already in progress");
+        	}
+        	return null;
+        }
+        request.setAttribute(PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR, "true");
         
+        try {
         final PortalRequestInfoImpl requestInfoBuilder = new PortalRequestInfoImpl();
         PortletRequestInfoImpl portletRequestInfoBuilder = null;
         
@@ -302,6 +314,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final Map<String, String[]> portletParameters = new ParameterMap();
         final Map<String, String[]> portletPublicParameters = new ParameterMap();
         final Map<String, String[]> layoutParameters = new ParameterMap();
+        final Map<String, String[]> resourceParameters = new ParameterMap();
         
         for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
             final String name = parameterEntry.getKey();
@@ -316,6 +329,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             }
             else if (name.startsWith(PORTLET_PUBLIC_RENDER_PARAM_PREFIX)) {
                 portletPublicParameters.put(this.getParameterName(PORTLET_PUBLIC_RENDER_PARAM_PREFIX, name), parameterEntry.getValue());
+            } 
+            else if (name.startsWith(PORTLET_RESOURCE_PARAM_PREFIX)) {
+            	resourceParameters.put(this.getParameterName(PORTLET_RESOURCE_PARAM_PREFIX, name), parameterEntry.getValue());
             }
         }
         
@@ -344,6 +360,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             	if(portletCacheability != null) {
             		portletRequestInfoBuilder.setCacheability(portletCacheability);
             	}
+            	
+            	portletRequestInfoBuilder.setResourceParameters(Collections.unmodifiableMap(ParameterMap.convertArrayMap(resourceParameters)));
             }
             //If a portlet is targeted but no layout node is targeted must be maximized
             if (requestInfoBuilder.getTargetedLayoutNodeId() == null && (requestedUrlState == null || requestedUrlState == UrlState.NORMAL)) {
@@ -402,8 +420,17 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
         
         return requestInfoBuilder;
+        }finally {
+        	request.removeAttribute(PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR);
+        }
     }
 
+    /**
+     * 
+     * @param request
+     * @param portalRequestInfo
+     * @return
+     */
     protected String generateUrlString(HttpServletRequest request, IPortalRequestInfo portalRequestInfo) {
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
         final String targetedLayoutNodeId = portalRequestInfo.getTargetedLayoutNodeId();
@@ -444,7 +471,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 final IPortletRequestInfo delegatePortletRequestInfo = portletRequestInfo.getDelegatePortletRequestInfo();
                 if (delegatePortletRequestInfo != null) {
                     //TODO handle delegate URL generation
-                }
+                }   
             }
         }
         catch (PortalException e) {
@@ -774,7 +801,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         url.addPath(urlState.toLowercaseString());
         
         //File part specifying the type of URL
-        switch (portletPortalUrl.getType()) {
+        TYPE urlType = portletPortalUrl.getType();
+        switch (urlType) {
             case ACTION: {
                 url.addPath(UrlType.ACTION.toLowercaseString() + REQUEST_TYPE_SUFFIX);
             }
@@ -795,6 +823,19 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
                 final String resourceId = portletPortalUrl.getResourceID();
                 if(resourceId != null) {
                 	url.addParameter(PARAM_PORTLET_RESOURCE_ID, resourceId);
+                }
+                
+                IPortalRequestInfo portalRequestInfo = getPortalRequestInfo(request);
+                if(null != portalRequestInfo) {
+                	IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
+                	if(null != portletRequestInfo && portletWindowId.equals(portletRequestInfo.getTargetWindowId())) {	
+                		url.addParameters(PORTLET_PARAM_PREFIX, portalRequestInfo.getPortletRequestInfo().getPortletParameters());
+                	}
+                	else {
+                		url.addParameters(PORTLET_PARAM_PREFIX, ParameterMap.convertArrayMap(portletWindow.getPreviousPublicRenderParameters()));
+                		url.addParameter(PARAM_WINDOW_STATE, portletWindow.getWindowState().toString());
+                		url.addParameter(PARAM_PORTLET_MODE, portletWindow.getPortletMode().toString());
+                	}
                 }
             }
             break;
@@ -822,8 +863,13 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         url.addParameters(PORTAL_PARAM_PREFIX, portalParameters);
 
         //Add all portlet parameters
+        
         final Map<String, String[]> portletParameters = portletPortalUrl.getPortletParameters();
-        url.addParametersArray(PORTLET_PARAM_PREFIX, portletParameters);
+        if(TYPE.RESOURCE.equals(urlType)) {
+        	url.addParametersArray(PORTLET_RESOURCE_PARAM_PREFIX, portletParameters);
+        } else {
+        	url.addParametersArray(PORTLET_PARAM_PREFIX, portletParameters);
+        }
         
         if(logger.isDebugEnabled()) {
             logger.debug("Generated '" + url + "' from '" + portletPortalUrl);

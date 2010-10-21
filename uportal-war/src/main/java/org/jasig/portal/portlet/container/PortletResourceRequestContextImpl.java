@@ -25,12 +25,15 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResourceRequestContext;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;
+import org.jasig.portal.url.ParameterMap;
 
 /**
  * @author Eric Dalquist
@@ -38,6 +41,8 @@ import org.jasig.portal.url.IPortletRequestInfo;
  */
 public class PortletResourceRequestContextImpl extends PortletRequestContextImpl implements PortletResourceRequestContext {
 
+	protected final Log logger = LogFactory.getLog(this.getClass());
+	
     public PortletResourceRequestContextImpl(
             PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
@@ -67,13 +72,31 @@ public class PortletResourceRequestContextImpl extends PortletRequestContextImpl
      */
     @Override
     public Map<String, String[]> getPrivateRenderParameterMap() {
-        return this.getPrivateParameterMap();
+        // previous set of render parameters
+    	final IPortletRequestInfo portletRequestInfo = this.portalRequestInfo.getPortletRequestInfo();
+        if (portletRequestInfo != null) {
+        	return ParameterMap.convertListMap(portletRequestInfo.getPortletParameters());
+        } else {
+        	// since this is a resource request, portletRequestInfo should never be null
+        	// warn log about programming error
+        	logger.warn("portletRequestInfo was null inside getPrivateRenderParameterMap for a resource request, programming error");
+        	return Collections.emptyMap();
+        }
     }
     
     @Override
     public Map<String, String[]> getPrivateParameterMap() {
         //TODO create another parameter class for portlet resource parameters
-        return super.getPrivateParameterMap();
+    	final IPortletRequestInfo portletRequestInfo = this.portalRequestInfo.getPortletRequestInfo();
+        if (portletRequestInfo != null) {
+        	return ParameterMap.convertListMap(portletRequestInfo.getResourceParameters());
+        } else {
+        	// since this is a resource request, portletRequestInfo should never be null
+        	// warn log about programming error
+        	logger.warn("portletRequestInfo was null inside getPrivateParameterMap for a resource request, programming error");
+        	return Collections.emptyMap();
+        }
+        
     }
     
     /* (non-Javadoc)
