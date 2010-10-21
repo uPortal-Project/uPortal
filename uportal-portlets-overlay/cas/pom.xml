@@ -42,6 +42,11 @@
             <artifactId>commons-codec</artifactId>
         </dependency>
         
+        <dependency> 
+            <groupId>org.jasypt</groupId> 
+            <artifactId>jasypt</artifactId>  
+        </dependency> 
+        
         <dependency>
            <groupId>org.jasig.cas3.extensions</groupId>
            <artifactId>clearpass-webapp</artifactId>

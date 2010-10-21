@@ -27,6 +27,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasypt.digest.config.SimpleDigesterConfig;
+import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 /**
  * Impl of the uPortal MD5 password checking algorithm
@@ -36,8 +38,38 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  */
 public class PersonDirAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final String MD5_PREFIX = "(MD5)";
+    
+    private static final String SHA256_PREFIX = "(SHA256)";
 
     private UserPasswordDao userPasswordDao;
+    
+    private ConfigurablePasswordEncryptor md5Encryptor;    
+    private ConfigurablePasswordEncryptor sha256Encryptor;
+    
+    public PersonDirAuthenticationHandler() {
+        /*
+         * Create an MD5 password encryptor that uses an 8-byte salt with one
+         * hash iteration.  This encryptor should be  capable of validating 
+         * legacy uPortal passwords. 
+         */
+        md5Encryptor = new ConfigurablePasswordEncryptor();
+        SimpleDigesterConfig md5Config = new SimpleDigesterConfig();
+        md5Config.setIterations(1);
+        md5Config.setAlgorithm("MD5");
+        md5Config.setSaltSizeBytes(8);
+        md5Encryptor.setConfig(md5Config);
+        
+        /*
+         * Create a stronger SHA-256 password encryptor for setting and 
+         * validating new passwords.
+         */
+        sha256Encryptor = new ConfigurablePasswordEncryptor();
+        SimpleDigesterConfig shaConfig = new SimpleDigesterConfig();
+        shaConfig.setIterations(1000);
+        shaConfig.setAlgorithm("SHA-256");
+        shaConfig.setSaltSizeBytes(8);
+        sha256Encryptor.setConfig(shaConfig);
+    }
     
     /**
      * @return the userPasswordDao
@@ -58,45 +90,32 @@ public class PersonDirAuthenticationHandler extends AbstractUsernamePasswordAuth
     @Override
     protected boolean authenticateUsernamePasswordInternal(UsernamePasswordCredentials credentials) throws AuthenticationException {
         final String username = credentials.getUsername();
+        final String cleartextPassword = credentials.getPassword();
+        
         final String expectedFullHash = this.userPasswordDao.getPasswordHash(username);
         
         if (expectedFullHash == null) {
-            return false;
-        }
-
-        if (!expectedFullHash.substring(0, 5).equals(MD5_PREFIX)) {
-            this.log.error("Existing password hash for user '" + username + "' is not a valid hash. It does not start with: '" + MD5_PREFIX + "'");
-            return false;
+        	 return false;
         }
         
-        final String expectedHash = expectedFullHash.substring(5);
-        final byte[] expectedHashBytes = Base64.decodeBase64(expectedHash.getBytes());
-        if (expectedHashBytes.length != 24) {
-            this.log.error("Existing password hash for user '" + username + "' is not a valid hash. It has a length of " + expectedHashBytes.length + " but 24 is expected.");
-            return false;
-        }
-
-        //Split the expected bytes into the salt and actual hashed value.
-        final byte[] salt = new byte[8];
-        System.arraycopy(expectedHashBytes, 0, salt, 0, 8);
+        if (expectedFullHash.startsWith(MD5_PREFIX)) {
+        	
+        	String hashWithoutAlgorithmPrefix = expectedFullHash.substring(5);
+            return md5Encryptor.checkPassword(cleartextPassword, hashWithoutAlgorithmPrefix);
+        	
+        } else if (expectedFullHash.startsWith(SHA256_PREFIX)) {
+        	
+        	String hashWithoutAlgorithmPrefix = expectedFullHash.substring(8);
+            return sha256Encryptor.checkPassword(cleartextPassword, hashWithoutAlgorithmPrefix);
         
-        final byte[] expectedPasswordHashBytes = new byte[16];
-        System.arraycopy(expectedHashBytes, 8, expectedPasswordHashBytes, 0, 16);
-        
-        final MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("MD5");
-        }
-        catch (NoSuchAlgorithmException e) {
-            this.log.error("No 'MD5' MessageDigest algorithm exists.", e);
+        } else {
+            this.log.error("Existing password hash for user '" + username + "' is not a valid hash. It does not start with a supported algorithm prefix");
             return false;
         }
         
-        //Hash the salt + entered password
-        md.update(salt);
-        md.update(credentials.getPassword().getBytes());
-        final byte[] passwordHashBytes = md.digest();
         
-        return Arrays.equals(expectedPasswordHashBytes, passwordHashBytes);
+       
     }
+
+    
 }

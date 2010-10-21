@@ -19,8 +19,12 @@
 
 package org.jasig.portal.cas.authentication.handler.support;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.easymock.EasyMock;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.junit.Test;
 
 import junit.framework.TestCase;
 
@@ -28,8 +32,10 @@ import junit.framework.TestCase;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PersonDirAuthenticationHandlerTest extends TestCase {
-    public void testValidPassword() throws Exception {
+public class PersonDirAuthenticationHandlerTest {
+	
+	@Test
+    public void testValidMd5Password() throws Exception {
         final UserPasswordDao userPasswordDao = EasyMock.createMock(UserPasswordDao.class);
         EasyMock.expect(userPasswordDao.getPasswordHash("admin")).andReturn("(MD5)OP2Z89LDMIY6gHAwfoFPRSQWDl5Z16Vt");
         
@@ -49,7 +55,8 @@ public class PersonDirAuthenticationHandlerTest extends TestCase {
         assertTrue(auth);
     }
     
-    public void testInvalidPassword() throws Exception {
+    @Test
+    public void testInvalidMd5Password() throws Exception {
         final UserPasswordDao userPasswordDao = EasyMock.createMock(UserPasswordDao.class);
         EasyMock.expect(userPasswordDao.getPasswordHash("admin")).andReturn("(MD5)OP2Z89LDMIY5gHAwfoFPRSQWDl5Z16Vt");
         
@@ -69,6 +76,7 @@ public class PersonDirAuthenticationHandlerTest extends TestCase {
         assertFalse(auth);
     }
     
+    @Test
     public void testNullPassword() throws Exception {
         final UserPasswordDao userPasswordDao = EasyMock.createMock(UserPasswordDao.class);
         EasyMock.expect(userPasswordDao.getPasswordHash("admin")).andReturn(null);
@@ -88,4 +96,47 @@ public class PersonDirAuthenticationHandlerTest extends TestCase {
         
         assertFalse(auth);
     }
+    
+	@Test
+    public void testValidSHA256Password() throws Exception {
+        final UserPasswordDao userPasswordDao = EasyMock.createMock(UserPasswordDao.class);
+        EasyMock.expect(userPasswordDao.getPasswordHash("student")).andReturn("(SHA256)KwAQC001SoQq/CjHMLSz2o0aAqx7WrKeRFgWOeM2GEyLXGZd+1/XkA==");
+        
+        final PersonDirAuthenticationHandler authenticationHandler = new PersonDirAuthenticationHandler();
+        authenticationHandler.setUserPasswordDao(userPasswordDao);
+        
+        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+        credentials.setUsername("student");
+        credentials.setPassword("wombat");
+        
+        EasyMock.replay(userPasswordDao);
+        
+        final boolean auth = authenticationHandler.authenticateUsernamePasswordInternal(credentials);
+        
+        EasyMock.verify(userPasswordDao);
+        
+        assertTrue(auth);
+    }
+	
+	@Test
+    public void testInvalidSHA256Password() throws Exception {
+        final UserPasswordDao userPasswordDao = EasyMock.createMock(UserPasswordDao.class);
+        EasyMock.expect(userPasswordDao.getPasswordHash("student")).andReturn("(SHA256)KwAQC001SoPq/CjHMLSz2o0aAqx7WrKeRFgWOeM2GEyLXGZd+1/XkA==");
+        
+        final PersonDirAuthenticationHandler authenticationHandler = new PersonDirAuthenticationHandler();
+        authenticationHandler.setUserPasswordDao(userPasswordDao);
+        
+        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+        credentials.setUsername("student");
+        credentials.setPassword("student");
+        
+        EasyMock.replay(userPasswordDao);
+        
+        final boolean auth = authenticationHandler.authenticateUsernamePasswordInternal(credentials);
+        
+        EasyMock.verify(userPasswordDao);
+        
+        assertFalse(auth);
+    }
+    
 }
