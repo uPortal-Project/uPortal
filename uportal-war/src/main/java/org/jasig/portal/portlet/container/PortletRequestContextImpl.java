@@ -19,7 +19,9 @@
 
 package org.jasig.portal.portlet.container;
 
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -37,6 +39,7 @@ import org.apache.pluto.container.driver.PortletServlet;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.url.AbstractHttpServletRequestWrapper;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.ParameterMap;
@@ -50,6 +53,8 @@ import org.springframework.util.Assert;
  * @version $Revision$
  */
 public class PortletRequestContextImpl extends AbstractPortletContextImpl implements PortletRequestContext {
+    private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
+    
     protected final IRequestPropertiesManager requestPropertiesManager;
     protected final IPortalRequestInfo portalRequestInfo;
     
@@ -113,7 +118,16 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
             return null;
         }
         
-        return this.servletRequest.getAttribute(name);
+        final Object attribute = this.attributes.get(name);
+        if (attribute != null) {
+            return attribute;
+        }
+        
+        if (name.startsWith(AbstractHttpServletRequestWrapper.PORTAL_ATTRIBUTE_PREFIX)) {
+            return this.servletRequest.getAttribute(name);
+        }
+        
+        return null;
     }
 
     /* (non-Javadoc)
@@ -122,13 +136,7 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
     @Override
     @SuppressWarnings("unchecked")
     public Enumeration<String> getAttributeNames() {
-        final Enumeration<String> attributeNames = this.servletRequest.getAttributeNames();
-        return new FilteringEnumeration<String>(attributeNames) {
-            @Override
-            protected boolean includeElement(String element) {
-                return element == null || !element.startsWith(IPortletRenderer.RENDERER_ATTRIBUTE_PREFIX);
-            }
-        };
+        return Collections.enumeration(this.attributes.keySet());
     }
 
     /* (non-Javadoc)
@@ -140,7 +148,7 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
             throw new IllegalArgumentException("Portlets cannot set attributes that start with: " + IPortletRenderer.RENDERER_ATTRIBUTE_PREFIX);
         }
 
-        this.servletRequest.setAttribute(name, value);
+        this.attributes.put(name, value);
     }
 
     /* (non-Javadoc)

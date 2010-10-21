@@ -50,12 +50,8 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
         if (attribute != null) {
             return attribute;
         }
-        
-        if (name.startsWith(PORTAL_ATTRIBUTE_PREFIX)) {
-            return super.getAttribute(name);
-        }
-        
-        return null;
+
+        return super.getAttribute(name);
     }
 
     @Override
