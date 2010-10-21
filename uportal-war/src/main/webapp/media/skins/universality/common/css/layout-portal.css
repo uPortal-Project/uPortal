@@ -164,11 +164,38 @@
 
 
 /* Prevent scrollbars on fluid containers. */
-.fl-fix, .fl-col-justified, .fl-col-flex2, .fl-col-flex3, .fl-col-flex4, .fl-col-flex5,
-.fl-col-mixed, .fl-col-mixed2, .fl-col-mixed3, .fl-listmenu li, .fl-list-menu li,
-.fl-listmenu a, .fl-list-menu a, ul.fl-grid, .fl-grid ul, .fl-grid li,
-.fl-icon, .fl-widget .fl-widget-options ul, .fl-widget .fl-widget-content,
-.fl-offScreen-hidden {overflow: visible;}
+/* start: clearfix */
+.fl-fix:after,.fl-col-justified:after,.fl-col-flex2:after,
+.fl-col-flex3:after,.fl-col-flex4:after,.fl-col-flex5:after,
+.fl-col-mixed:after,.fl-col-mixed2:after,.fl-col-mixed3:after,
+.fl-listmenu li:after,.fl-list-menu li:after,.fl-listmenu a:after,
+.fl-list-menu a:after,ul.fl-grid:after,.fl-grid ul:after,
+.fl-grid li:after,.fl-icon:after,.fl-widget .fl-widget-options ul:after,
+.fl-widget .fl-widget-content:after,.fl-offScreen-hidden:after
+{overflow: visible; content: "."; display: block; height: 0; clear: both; visibility: hidden;}
+
+.fl-fix,.fl-col-justified,.fl-col-flex2,.fl-col-flex3,
+.fl-col-flex4,.fl-col-flex5,.fl-col-mixed,.fl-col-mixed2,
+.fl-col-mixed3,.fl-listmenu li,.fl-list-menu li,.fl-listmenu a,
+.fl-list-menu a,ul.fl-grid,.fl-grid ul,.fl-grid li,.fl-icon,
+.fl-widget .fl-widget-options ul,.fl-widget .fl-widget-content,
+.fl-offScreen-hidden {display: inline-block; overflow: visible;}
+
+/* required comment for clearfix to work in Opera \*/
+
+* html .fl-fix,* html .fl-col-justified,* html .fl-col-flex2,
+* html .fl-col-flex3,* html .fl-col-flex4,* html .fl-col-flex5,
+* html .fl-col-mixed,* html .fl-col-mixed2,* html .fl-col-mixed3,
+* html .fl-listmenu li,* html .fl-list-menu li,* html .fl-listmenu a,
+* html .fl-list-menu a,* html ul.fl-grid,* html .fl-grid ul,
+* html .fl-grid li,* html .fl-icon,* html .fl-widget .fl-widget-options ul,
+* html .fl-widget .fl-widget-content,* html .fl-offScreen-hidden {height:1%;}
+.fl-fix,.fl-col-justified,.fl-col-flex2,.fl-col-flex3,
+.fl-col-flex4,.fl-col-flex5,.fl-col-mixed,.fl-col-mixed2,.fl-col-mixed3,
+.fl-listmenu li,.fl-list-menu li,.fl-listmenu a,.fl-list-menu a,
+ul.fl-grid,.fl-grid ul,.fl-grid li,.fl-icon,.fl-widget .fl-widget-options ul,
+.fl-widget .fl-widget-content,.fl-offScreen-hidden {display:block;}
+/* end: clearfix */
 
 
 /* Reset: tabs. */

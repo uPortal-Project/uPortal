@@ -389,7 +389,7 @@
 .portlet .flc-pager-top {margin-bottom:0.5em;}
 .portlet .flc-pager-bottom {margin-top:0.5em;}
 .portlet .view-pager ul.fl-pager-ui {text-align:right}
-.portlet .view-pager .fl-pager-ui li {list-style-type:none; display:inline; padding-left:5px}
+.portlet .view-pager .fl-pager-ui li {list-style-type:none; display:inline; padding-left:5px; white-space: nowrap;}
 .portlet .view-pager .fl-pager-ui a.fl-pager-disabled,
 .portlet .view-pager .fl-pager-ui .fl-pager-disabled a { color: #777777; border: 0; text-decoration: none; cursor: default; }
 .portlet .view-pager .fl-pager-ui a.fl-pager-currentPage,
@@ -400,7 +400,7 @@
 .portlet .flc-pager-links a {color:#666666; text-decoration:none;}
 .portlet .flc-pager-links a:hover,
 .portlet .flc-pager-links a:focus {color:#333333;}
-
+.portlet .flc-pager-page-size {margin-top: 3px;}
 
 /* Selection Basket */
 /*

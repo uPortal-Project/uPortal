@@ -126,9 +126,9 @@
 .portlet .titlebar .return-link {position:absolute; top:0; right:0;}
 .portlet .titlebar .return-link {top:0.3em;}
 .portlet .titlebar  .breadcrumb~.return-link {top:1.8em;}
-.portlet .titlebar .toolbar {padding:0;}
+.portlet .titlebar .toolbar {padding:3px 0 3px 0;}
 .portlet .titlebar .toolbar ul {margin:0; padding:0; overflow:hidden; zoom:1;}
-.portlet .titlebar .toolbar ul li {list-style-type:none; float:left; display:inline; padding:5px; margin-left:-5px;}
+.portlet .titlebar .toolbar ul li {list-style-type:none; float:left; display:inline; padding:3px; margin-left:-5px;}
 .portlet .titlebar .toolbar .search {text-align:right;}
 .portlet .titlebar .tags {padding-bottom:0.5em;}
 .portlet .titlebar .details {margin:0 0 1em 0; padding:5px 10px;}
@@ -163,7 +163,7 @@
  * "The main content of a document."
  * Refer to: http://www.w3.org/TR/wai-aria/roles#main
  */
-.portlet .portlet-content {zoom:1; margin:5px 0 0 0; overflow: auto;}
+.portlet .portlet-content {zoom:1; margin:5px 0 0 0; overflow: visible;}
 
 
 /* Messages */
