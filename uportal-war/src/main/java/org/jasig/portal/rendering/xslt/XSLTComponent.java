@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.rendering.StAXPipelineComponent;
+import org.jasig.portal.rendering.StAXPipelineComponentWrapper;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.ResourceLoaderURIResolver;
 import org.jasig.portal.xml.StaxEventContentHandler;
@@ -45,12 +46,11 @@ import org.xml.sax.helpers.LocatorImpl;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class XSLTComponent implements StAXPipelineComponent, BeanNameAware, ResourceLoaderAware {
+public class XSLTComponent extends StAXPipelineComponentWrapper implements BeanNameAware, ResourceLoaderAware {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private final ErrorListener errorListener;
     private ResourceLoaderURIResolver uriResolver;
-    private StAXPipelineComponent parentComponent;
     private TransformerSource transformerSource;
     private TransformerConfigurationSource xsltParameterSource;
     
@@ -60,9 +60,6 @@ public class XSLTComponent implements StAXPipelineComponent, BeanNameAware, Reso
         this.errorListener = new SimpleTransformErrorListener(LogFactory.getLog(this.getClass()));
     }
     
-    public void setParentComponent(StAXPipelineComponent targetComponent) {
-        this.parentComponent = targetComponent;
-    }
     public void setXsltParameterSource(TransformerConfigurationSource xsltParameterSource) {
         this.xsltParameterSource = xsltParameterSource;
     }
@@ -85,7 +82,7 @@ public class XSLTComponent implements StAXPipelineComponent, BeanNameAware, Reso
      */
     @Override
     public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
-        final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.parentComponent.getEventReader(request, response);
+        final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
         
         final Transformer transformer = this.transformerSource.getTransformer(request, response);
 
@@ -151,7 +148,7 @@ public class XSLTComponent implements StAXPipelineComponent, BeanNameAware, Reso
 
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final CacheKey parentCacheKey = this.parentComponent.getCacheKey(request, response);
+        final CacheKey parentCacheKey = this.wrappedComponent.getCacheKey(request, response);
         
         final CacheKey transformerKey;
         if (transformerSource != null) {

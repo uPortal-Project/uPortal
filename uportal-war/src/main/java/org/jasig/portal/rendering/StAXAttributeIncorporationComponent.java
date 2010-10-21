@@ -43,20 +43,15 @@ import org.springframework.beans.factory.BeanNameAware;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class StAXAttributeIncorporationComponent implements StAXPipelineComponent, BeanNameAware {
+public class StAXAttributeIncorporationComponent extends StAXPipelineComponentWrapper implements BeanNameAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private final XMLEventFactory eventFactory = XMLEventFactory.newFactory();
     
-    private StAXPipelineComponent parentComponent;
     private AttributeSource attributeSource;
     
     private String beanName;
     
-    public void setParentComponent(StAXPipelineComponent parentComponent) {
-        this.parentComponent = parentComponent;
-    }
-
     public void setAttributeSource(AttributeSource attributeSource) {
         this.attributeSource = attributeSource;
     }
@@ -71,7 +66,7 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final CacheKey parentKey = this.parentComponent.getCacheKey(request, response);
+        final CacheKey parentKey = this.wrappedComponent.getCacheKey(request, response);
         final CacheKey attributeKey = this.attributeSource.getCacheKey(request, response);
         return new CacheKey(this.beanName, parentKey, attributeKey);
     }
@@ -82,7 +77,7 @@ public class StAXAttributeIncorporationComponent implements StAXPipelineComponen
     @Override
     public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
         //Get the reader from the parent and add the attribute incorporating wrapper
-        final PipelineEventReader<XMLEventReader, XMLEvent> cachingEventReader = this.parentComponent.getEventReader(request, response);
+        final PipelineEventReader<XMLEventReader, XMLEvent> cachingEventReader = this.wrappedComponent.getEventReader(request, response);
         final XMLEventReader eventReader = new AttributeIncorporatingXMLEventReader(request, response, cachingEventReader.getEventReader());
         
         return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(eventReader);

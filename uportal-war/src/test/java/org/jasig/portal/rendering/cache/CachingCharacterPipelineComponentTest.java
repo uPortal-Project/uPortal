@@ -61,7 +61,7 @@ public class CachingCharacterPipelineComponentTest {
         
         final CachingCharacterPipelineComponent cachingComponent = new CachingCharacterPipelineComponent();
         cachingComponent.setCache(cache);
-        cachingComponent.setParentComponent(targetComponent);
+        cachingComponent.setWrappedComponent(targetComponent);
         cachingComponent.setResourcesElementsProvider(elementsProvider);
         
         final PipelineEventReader<CharacterEventReader, CharacterEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
@@ -93,7 +93,7 @@ public class CachingCharacterPipelineComponentTest {
         
         final CachingCharacterPipelineComponent cachingComponent = new CachingCharacterPipelineComponent();
         cachingComponent.setCache(cache);
-        cachingComponent.setParentComponent(targetComponent);
+        cachingComponent.setWrappedComponent(targetComponent);
         cachingComponent.setResourcesElementsProvider(elementsProvider);
         
         final PipelineEventReader<CharacterEventReader, CharacterEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);

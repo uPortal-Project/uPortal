@@ -62,7 +62,7 @@ public class CachingStAXPipelineComponentTest {
         
         final CachingStAXPipelineComponent cachingComponent = new CachingStAXPipelineComponent();
         cachingComponent.setCache(cache);
-        cachingComponent.setParentComponent(targetComponent);
+        cachingComponent.setWrappedComponent(targetComponent);
         cachingComponent.setResourcesElementsProvider(elementsProvider);
         
         final PipelineEventReader<XMLEventReader, XMLEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);
@@ -94,7 +94,7 @@ public class CachingStAXPipelineComponentTest {
         
         final CachingStAXPipelineComponent cachingComponent = new CachingStAXPipelineComponent();
         cachingComponent.setCache(cache);
-        cachingComponent.setParentComponent(targetComponent);
+        cachingComponent.setWrappedComponent(targetComponent);
         cachingComponent.setResourcesElementsProvider(elementsProvider);
         
         final PipelineEventReader<XMLEventReader, XMLEvent> actualEventReader = cachingComponent.getEventReader(mockReq, mockRes);

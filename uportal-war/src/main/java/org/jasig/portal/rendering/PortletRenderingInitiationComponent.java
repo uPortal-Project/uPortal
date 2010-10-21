@@ -42,15 +42,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletRenderingInitiationComponent implements StAXPipelineComponent {
+public class PortletRenderingInitiationComponent extends StAXPipelineComponentWrapper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private IPortletExecutionManager portletExecutionManager;
-    private StAXPipelineComponent parentComponent;
-    
-    public void setParentComponent(StAXPipelineComponent parentComponent) {
-        this.parentComponent = parentComponent;
-    }
     
     @Autowired
     public void setPortletExecutionManager(IPortletExecutionManager portletExecutionManager) {
@@ -63,7 +58,7 @@ public class PortletRenderingInitiationComponent implements StAXPipelineComponen
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         //Initiating rendering of portlets will change the stream at all
-        return this.parentComponent.getCacheKey(request, response);
+        return this.wrappedComponent.getCacheKey(request, response);
     }
 
     /* (non-Javadoc)
@@ -71,7 +66,7 @@ public class PortletRenderingInitiationComponent implements StAXPipelineComponen
      */
     @Override
     public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
-        final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.parentComponent.getEventReader(request, response);
+        final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
 
         final XMLEventReader eventReader = pipelineEventReader.getEventReader();
         final PortletRenderingXMLEventReader filteredEventReader = new PortletRenderingXMLEventReader(request, response, eventReader);

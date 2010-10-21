@@ -29,20 +29,16 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class LoggingStAXComponent implements StAXPipelineComponent {
+public class LoggingStAXComponent extends StAXPipelineComponentWrapper {
     private Logger logger = LoggerFactory.getLogger(getClass());
     
     private XmlUtilities xmlUtilities;
-    private StAXPipelineComponent parentComponent;
     private boolean logFullDocument = true;
     private boolean logEvents = true;
     private boolean logFullDocumentAsHtml = false;
 
     public void setLoggerName(String loggerName) {
         logger = LoggerFactory.getLogger(loggerName);
-    }
-    public void setParentComponent(StAXPipelineComponent parentComponent) {
-        this.parentComponent = parentComponent;
     }
     public void setLogFullDocument(boolean logFullDocument) {
         this.logFullDocument = logFullDocument;
@@ -61,13 +57,12 @@ public class LoggingStAXComponent implements StAXPipelineComponent {
     
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        return this.parentComponent.getCacheKey(request, response);
+        return this.wrappedComponent.getCacheKey(request, response);
     }
-    
     
     @Override
     public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
-        final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.parentComponent.getEventReader(request, response);
+        final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
         
         final XMLEventReader eventReader = pipelineEventReader.getEventReader();
         final LoggingXMLEventReader loggingEventReader = new LoggingXMLEventReader(eventReader);

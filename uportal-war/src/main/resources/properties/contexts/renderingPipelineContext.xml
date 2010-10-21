@@ -26,76 +26,97 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-                           
-    <bean id="resourcesElementsProvider" class="org.jasig.resource.aggr.util.ResourcesElementsProviderImpl">
-        <property name="resourcesDao" ref="resourcesDao" />
-    </bean>
-    <bean id="resourcesDao" class="org.jasig.resource.aggr.ResourcesDaoImpl" />
-    
+
     <!-- 
      | Due to the fairly generic nature of each component in the rendering 
      | pipeline it cannot be autowired. However the dependencies of each
      | component often can.
      +-->
-    <bean id="portalRenderingPipeline" class="org.jasig.portal.rendering.DynamicRenderingPipeline">
-        <property name="pipeline" ref="portletRenderingIncorporationComponent" />
-    </bean>
+
+    <!-- Start of the rendering pipeline, provides the user's layout -->
+    <bean id="userLayoutStoreComponent" class="org.jasig.portal.rendering.UserLayoutStoreComponent" />
     
-    <!-- portlet content incorporation -->
-    <bean id="portletRenderingIncorporationComponent" class="org.jasig.portal.rendering.PortletRenderingIncorporationComponent">
-        <property name="parentComponent" ref="themeCachingComponent" />
-    </bean>
-    
-    <bean id="themeCachingComponent" class="org.jasig.portal.rendering.cache.CachingCharacterPipelineComponent">
-        <property name="parentComponent" ref="staxSerializingComponent" />
-        <property name="cache" ref="org.jasig.portal.rendering.THEME_TRANSFORM" />
-    </bean>
-    
-    <!-- StAX to String serialization -->
-    <bean id="staxSerializingComponent" class="org.jasig.portal.rendering.StAXSerializingComponent">
-        <property name="parentComponent" ref="postThemeTransformLogger" />
-        <property name="chunkingElements">
-            <map>
-                <entry>
-                    <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL" /></key>
-                    <bean class="org.jasig.portal.character.stream.PortletContentPlaceholderEventSource" />
-                </entry>
-                <entry>
-                    <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
-                    <bean class="org.jasig.portal.character.stream.PortletHeaderPlaceholderEventSource" />
-                </entry>
-            </map>
-        </property>
-        <property name="chunkingPatterns">
-            <map>
-                <entry key="\{up-portlet-title\(([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletTitlePlaceholderEventSource" />
-                </entry>
-                <entry key="\{up-portlet-help\(([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletHelpPlaceholderEventSource" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    
-    <bean id="postThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
-        <property name="parentComponent" ref="dtdSettingPipelineComponent" />
-        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_THEME" />
+    <bean id="postUserLayoutStoreLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="userLayoutStoreComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_LAYOUT" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
-        <property name="logFullDocumentAsHtml" value="true" />
     </bean>
     
-    <bean id="dtdSettingPipelineComponent" class="org.jasig.portal.rendering.DTDSettingPipelineComponent">
-        <property name="parentComponent" ref="themeTransformComponent" />
-        <property name="DTD">
-            <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</value>
+    <!-- structure attribute incorporation -->
+    <bean id="structureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
+        <property name="attributeSource">
+            <bean class="org.jasig.portal.rendering.StructureAttributeSource" />
         </property>
+    </bean>
+    
+    <bean id="preStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="structureAttributeIncorporationComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_STRUCTURE" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
+    </bean>
+    
+    <!-- structure transformation -->
+    <bean id="structureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
+        <property name="wrappedComponent" ref="preStructureTransformLogger" />
+        <property name="transformerSource">
+            <bean class="org.jasig.portal.rendering.xslt.StructureTransformerSource"/>
+        </property>
+        <property name="xsltParameterSource">
+            <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
+                <property name="sources">
+                    <list>
+                        <bean class="org.jasig.portal.rendering.xslt.StructureTransformerConfigurationSource" />
+                        <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
+                            <property name="parameters">
+                                <map>
+                                    <entry key="version-UP_FRAMEWORK" value="${org.jasig.portal.version}"/>
+                                </map>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="postStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="structureTransformComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_STRUCTURE" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
+    </bean>
+    
+    <bean id="structureCachingComponent" class="org.jasig.portal.rendering.cache.CachingStAXPipelineComponent">
+        <property name="wrappedComponent" ref="postStructureTransformLogger" />
+        <property name="cache" ref="org.jasig.portal.rendering.STRUCTURE_TRANSFORM" />
+    </bean>
+    
+    <!-- portlet rendering initiation -->
+    <bean id="portletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationComponent">
+        <property name="wrappedComponent" ref="structureCachingComponent" />
+    </bean>
+    
+    <!-- theme attribute incorporation -->
+    <bean id="themeAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="portletRenderingInitiationComponent" />
+        <property name="attributeSource">
+            <bean class="org.jasig.portal.rendering.ThemeAttributeSource" />
+        </property>
+    </bean>
+    
+    <bean id="preThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="themeAttributeIncorporationComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_THEME" />
+        <property name="logEvents" value="false" />
+        <property name="logFullDocument" value="true" />
     </bean>
      
     <!-- theme transformation -->
     <bean id="themeTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
-        <property name="parentComponent" ref="preThemeTransformLogger" />
+        <property name="wrappedComponent" ref="preThemeTransformLogger" />
         <property name="transformerSource">
             <bean class="org.jasig.portal.rendering.xslt.ThemeTransformerSource"/>
         </property>
@@ -140,85 +161,68 @@
         </property>
     </bean>
     
-    <bean id="preThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
-        <property name="parentComponent" ref="themeAttributeIncorporationComponent" />
-        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_THEME" />
-        <property name="logEvents" value="false" />
-        <property name="logFullDocument" value="true" />
-    </bean>
-    
-    <!-- theme attribute incorporation -->
-    <bean id="themeAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="parentComponent" ref="portletRenderingInitiationComponent" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.ThemeAttributeSource" />
+    <bean id="dtdSettingPipelineComponent" class="org.jasig.portal.rendering.DTDSettingPipelineComponent">
+        <property name="wrappedComponent" ref="themeTransformComponent" />
+        <property name="DTD">
+            <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</value>
         </property>
     </bean>
     
-    <!-- portlet rendering initiation -->
-    <bean id="portletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationComponent">
-        <property name="parentComponent" ref="structureCachingComponent" />
-    </bean>
-    
-    <bean id="structureCachingComponent" class="org.jasig.portal.rendering.cache.CachingStAXPipelineComponent">
-        <property name="parentComponent" ref="postStructureTransformLogger" />
-        <property name="cache" ref="org.jasig.portal.rendering.STRUCTURE_TRANSFORM" />
-    </bean>
-    
-    <bean id="postStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
-        <property name="parentComponent" ref="structureTransformComponent" />
-        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_STRUCTURE" />
+    <bean id="postThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="dtdSettingPipelineComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_THEME" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
+        <property name="logFullDocumentAsHtml" value="true" />
     </bean>
     
-    <!-- structure transformation -->
-    <bean id="structureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
-        <property name="parentComponent" ref="preStructureTransformLogger" />
-        <property name="transformerSource">
-            <bean class="org.jasig.portal.rendering.xslt.StructureTransformerSource"/>
+    <!-- StAX to String serialization -->
+    <bean id="staxSerializingComponent" class="org.jasig.portal.rendering.StAXSerializingComponent">
+        <property name="wrappedComponent" ref="postThemeTransformLogger" />
+        <property name="chunkingElements">
+            <map>
+                <entry>
+                    <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL" /></key>
+                    <bean class="org.jasig.portal.character.stream.PortletContentPlaceholderEventSource" />
+                </entry>
+                <entry>
+                    <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
+                    <bean class="org.jasig.portal.character.stream.PortletHeaderPlaceholderEventSource" />
+                </entry>
+            </map>
         </property>
-        <property name="xsltParameterSource">
-            <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
-                <property name="sources">
-                    <list>
-                        <bean class="org.jasig.portal.rendering.xslt.StructureTransformerConfigurationSource" />
-                        <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
-                            <property name="parameters">
-                                <map>
-                                    <entry key="version-UP_FRAMEWORK" value="${org.jasig.portal.version}"/>
-                                </map>
-                            </property>
-                        </bean>
-                    </list>
-                </property>
-            </bean>
+        <property name="chunkingPatterns">
+            <map>
+                <entry key="\{up-portlet-title\(([^\)]+)\)\}">
+                    <bean class="org.jasig.portal.character.stream.PortletTitlePlaceholderEventSource" />
+                </entry>
+                <entry key="\{up-portlet-help\(([^\)]+)\)\}">
+                    <bean class="org.jasig.portal.character.stream.PortletHelpPlaceholderEventSource" />
+                </entry>
+            </map>
         </property>
     </bean>
     
-    <bean id="preStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
-        <property name="parentComponent" ref="structureAttributeIncorporationComponent" />
-        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_STRUCTURE" />
-        <property name="logEvents" value="false" />
-        <property name="logFullDocument" value="true" />
+    <bean id="themeCachingComponent" class="org.jasig.portal.rendering.cache.CachingCharacterPipelineComponent">
+        <property name="wrappedComponent" ref="staxSerializingComponent" />
+        <property name="cache" ref="org.jasig.portal.rendering.THEME_TRANSFORM" />
     </bean>
     
-    <!-- structure attribute incorporation -->
-    <bean id="structureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="parentComponent" ref="postUserLayoutStoreLogger" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.StructureAttributeSource" />
-        </property>
+    <!-- portlet content incorporation -->
+    <bean id="portletRenderingIncorporationComponent" class="org.jasig.portal.rendering.PortletRenderingIncorporationComponent">
+        <property name="wrappedComponent" ref="themeCachingComponent" />
+    </bean>
+    <bean id="portalRenderingPipeline" class="org.jasig.portal.rendering.DynamicRenderingPipeline">
+        <property name="pipeline" ref="portletRenderingIncorporationComponent" />
     </bean>
     
-    <bean id="postUserLayoutStoreLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
-        <property name="parentComponent" ref="userLayoutStoreComponent" />
-        <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_LAYOUT" />
-        <property name="logEvents" value="false" />
-        <property name="logFullDocument" value="true" />
+    
+    
+    
+                           
+    <bean id="resourcesElementsProvider" class="org.jasig.resource.aggr.util.ResourcesElementsProviderImpl">
+        <property name="resourcesDao" ref="resourcesDao" />
     </bean>
-
-    <!-- Start of the rendering pipeline, provides the user's layout -->
-    <bean id="userLayoutStoreComponent" class="org.jasig.portal.rendering.UserLayoutStoreComponent" />
+    <bean id="resourcesDao" class="org.jasig.resource.aggr.ResourcesDaoImpl" />
     
 </beans>

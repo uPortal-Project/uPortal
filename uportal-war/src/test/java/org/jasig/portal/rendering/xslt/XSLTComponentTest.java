@@ -82,7 +82,7 @@ public class XSLTComponentTest {
         EasyMock.replay(targetComponent, transformerSource);
         
         final XSLTComponent xsltComponent = new XSLTComponent();
-        xsltComponent.setParentComponent(targetComponent);
+        xsltComponent.setWrappedComponent(targetComponent);
         xsltComponent.setTransformerSource(transformerSource);
         
         final PipelineEventReader<XMLEventReader, XMLEvent> eventReader = xsltComponent.getEventReader(mockReq, mockRes);

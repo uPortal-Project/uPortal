@@ -43,7 +43,7 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
     
     private XmlUtilities xmlUtilities;
     
-    private StAXPipelineComponent parentComponent;
+    private StAXPipelineComponent wrappedComponent;
     private Map<String, CharacterEventSource> chunkingElements;
     private Map<Pattern, CharacterEventSource> chunkingPatterns;
 
@@ -52,8 +52,8 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
         this.xmlUtilities = xmlUtilities;
     }
 
-    public void setParentComponent(StAXPipelineComponent parentComponent) {
-        this.parentComponent = parentComponent;
+    public void setWrappedComponent(StAXPipelineComponent wrappedComponent) {
+        this.wrappedComponent = wrappedComponent;
     }
     
     public void setChunkingElements(Map<String, CharacterEventSource> chunkingElements) {
@@ -75,7 +75,7 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
 
     @Override
     public PipelineEventReader<CharacterEventReader, CharacterEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
-        final PipelineEventReader<XMLEventReader, XMLEvent> eventReader = this.parentComponent.getEventReader(request, response);
+        final PipelineEventReader<XMLEventReader, XMLEvent> eventReader = this.wrappedComponent.getEventReader(request, response);
 
         //Writer shared by the ChunkingEventReader and the StAX Serializer
         final StringWriter writer = new StringWriter();
@@ -113,6 +113,6 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
 
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        return this.parentComponent.getCacheKey(request, response);
+        return this.wrappedComponent.getCacheKey(request, response);
     }
 }

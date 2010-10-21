@@ -38,17 +38,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletRenderingIncorporationComponent implements CharacterPipelineComponent {
+public class PortletRenderingIncorporationComponent extends CharacterPipelineComponentWrapper {
     private IPortletExecutionManager portletExecutionManager;
-    private CharacterPipelineComponent parentComponent;
     
     @Autowired
     public void setPortletExecutionManager(IPortletExecutionManager portletExecutionManager) {
         this.portletExecutionManager = portletExecutionManager;
-    }
-
-    public void setParentComponent(CharacterPipelineComponent parentComponent) {
-        this.parentComponent = parentComponent;
     }
 
     /* (non-Javadoc)
@@ -60,7 +55,7 @@ public class PortletRenderingIncorporationComponent implements CharacterPipeline
          * TODO do all the portlet cache keys need to be included here?
          * Probably for this to be useful
          */
-        return this.parentComponent.getCacheKey(request, response);
+        return this.wrappedComponent.getCacheKey(request, response);
     }
 
     /* (non-Javadoc)
@@ -68,7 +63,7 @@ public class PortletRenderingIncorporationComponent implements CharacterPipeline
      */
     @Override
     public PipelineEventReader<CharacterEventReader, CharacterEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
-        final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader = this.parentComponent.getEventReader(request, response);
+        final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
         
         final CharacterEventReader eventReader = pipelineEventReader.getEventReader();
         final PortletIncorporatingEventReader portletIncorporatingEventReader = new PortletIncorporatingEventReader(eventReader, request, response);

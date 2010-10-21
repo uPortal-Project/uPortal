@@ -31,7 +31,7 @@
     
     <!-- StAX to String serialization -->
     <bean id="staxSerializingComponent" class="org.jasig.portal.rendering.StAXSerializingComponent">
-        <property name="parentComponent" ref="postThemeTransformLogger" />
+        <property name="wrappedComponent" ref="postThemeTransformLogger" />
         <property name="chunkingElements">
             <map>
                 <entry>
@@ -58,16 +58,16 @@
     
     <bean id="postThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_THEME" />
-        <property name="parentComponent" ref="dtdSettingPipelineComponent" />
+        <property name="wrappedComponent" ref="dtdSettingPipelineComponent" />
     </bean>
     
     <bean id="dtdSettingPipelineComponent" class="org.jasig.portal.rendering.DTDSettingPipelineComponent">
-        <property name="parentComponent" ref="themeTransformComponent" />
+        <property name="wrappedComponent" ref="themeTransformComponent" />
     </bean>
     
     <!-- theme transformation -->
     <bean id="themeTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
-        <property name="parentComponent" ref="postStructureTransformLogger" />
+        <property name="wrappedComponent" ref="postStructureTransformLogger" />
         <property name="transformerSource">
             <bean class="org.jasig.portal.rendering.StaticTransformerSource">
                 <property name="stylesheet" value="classpath:/layout/theme/universality/universality.xsl" />
@@ -101,11 +101,11 @@
 
     <bean id="postStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_STRUCT" />
-        <property name="parentComponent" ref="structureTransformComponent" />
+        <property name="wrappedComponent" ref="structureTransformComponent" />
     </bean>
     
     <bean id="structureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
-        <property name="parentComponent" ref="postStructureAttributeIncorporationLogger" />
+        <property name="wrappedComponent" ref="postStructureAttributeIncorporationLogger" />
         <property name="transformerSource">
             <bean class="org.jasig.portal.rendering.StaticTransformerSource">
                 <property name="stylesheet" value="classpath:/layout/structure/columns/columns.xsl" />
@@ -130,12 +130,12 @@
 
     <bean id="postStructureAttributeIncorporationLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_SAI" />
-        <property name="parentComponent" ref="structureAttributeIncorporationComponent" />
+        <property name="wrappedComponent" ref="structureAttributeIncorporationComponent" />
     </bean>
     
     <!-- structure attribute incorporation -->
     <bean id="structureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="parentComponent" ref="postUserLayoutStoreLogger" />
+        <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
         <property name="attributeSource">
             <bean class="org.jasig.portal.rendering.StaticAttributeSource">
                 <property name="attributes">
@@ -153,7 +153,7 @@
     
     <bean id="postUserLayoutStoreLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_LAYOUT" />
-        <property name="parentComponent" ref="userLayoutStoreComponent" />
+        <property name="wrappedComponent" ref="userLayoutStoreComponent" />
     </bean>
 
     <!-- Start of the rendering pipeline, provides the user's layout -->

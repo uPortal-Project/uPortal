@@ -62,7 +62,7 @@ public class StAXSerializingComponentTest {
         final StAXSerializingComponent staxSerializingComponent = new StAXSerializingComponent();
         
         //Setup a simple pass-through parent
-        staxSerializingComponent.setParentComponent(new SimpleStAXSource());
+        staxSerializingComponent.setWrappedComponent(new SimpleStAXSource());
         staxSerializingComponent.setXmlUtilities(xmlUtilities);
         
         final Map<String, CharacterEventSource> chunkingElements = new LinkedHashMap<String, CharacterEventSource>();

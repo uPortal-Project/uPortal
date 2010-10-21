@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
-import org.jasig.portal.rendering.PipelineComponent;
+import org.jasig.portal.rendering.PipelineComponentWrapper;
 import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.utils.cache.CacheKey;
@@ -29,26 +29,21 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * component that can cache character pipeline events
+ * Component that caches events from a wrapped component
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class CachingPipelineComponent<R, E> implements PipelineComponent<R, E>, BeanNameAware {
+public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWrapper<R, E> implements BeanNameAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private ResourcesElementsProvider resourcesElementsProvider;
-    private PipelineComponent<R, E> parentComponent;
     private Ehcache cache;
     private String beanName;
     
     @Autowired
     public void setResourcesElementsProvider(ResourcesElementsProvider resourcesElementsProvider) {
         this.resourcesElementsProvider = resourcesElementsProvider;
-    }
-
-    public final void setParentComponent(PipelineComponent<R, E> parentComponent) {
-        this.parentComponent = parentComponent;
     }
 
     public final void setCache(Ehcache cache) {
@@ -62,7 +57,7 @@ public abstract class CachingPipelineComponent<R, E> implements PipelineComponen
 
     @Override
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        return this.parentComponent.getCacheKey(request, response);
+        return this.wrappedComponent.getCacheKey(request, response);
     }
 
     /* (non-Javadoc)
@@ -73,11 +68,11 @@ public abstract class CachingPipelineComponent<R, E> implements PipelineComponen
     public final PipelineEventReader<R, E> getEventReader(HttpServletRequest request, HttpServletResponse response) {
         if (Included.PLAIN == this.resourcesElementsProvider.getDefaultIncludedType()) {
             this.logger.trace("{} - Resoure Aggregation Disabled, ignoring event cache and returning parent event reader directly", this.beanName);
-            return this.parentComponent.getEventReader(request, response);
+            return this.wrappedComponent.getEventReader(request, response);
         }
         
         //Get the key for this request from the target component and see if there is a cache entry
-        final CacheKey cacheKey = this.parentComponent.getCacheKey(request, response);
+        final CacheKey cacheKey = this.wrappedComponent.getCacheKey(request, response);
         Element element = this.cache.get(cacheKey);
         List<E> eventCache = null;
         if (element != null) {
@@ -87,7 +82,7 @@ public abstract class CachingPipelineComponent<R, E> implements PipelineComponen
         //No cached data for key, call target component to get events and an updated cache key
         if (eventCache == null) {
             logger.debug("{} - No cached events found for key {}, calling parent", this.beanName, cacheKey);
-            final PipelineEventReader<R, E> pipelineEventReader = this.parentComponent.getEventReader(request, response);
+            final PipelineEventReader<R, E> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
     
             //Copy the events from the reader into a buffer to be cached
             eventCache = new LinkedList<E>();

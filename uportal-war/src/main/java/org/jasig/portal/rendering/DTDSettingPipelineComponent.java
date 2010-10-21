@@ -36,10 +36,8 @@ import org.jasig.portal.xml.stream.InjectingXMLEventReader;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class DTDSettingPipelineComponent implements StAXPipelineComponent {
+public class DTDSettingPipelineComponent extends StAXPipelineComponentWrapper {
     private final static XMLEventFactory EVENT_FACTORY = XMLEventFactory.newFactory();
-    
-    private StAXPipelineComponent parentComponent;
     
     private DTD dtdEvent = EVENT_FACTORY.createDTD("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
     
@@ -47,16 +45,12 @@ public class DTDSettingPipelineComponent implements StAXPipelineComponent {
         this.dtdEvent = EVENT_FACTORY.createDTD(dtd);
     }
 
-    public void setParentComponent(StAXPipelineComponent parentComponent) {
-        this.parentComponent = parentComponent;
-    }
-
     /* (non-Javadoc)
      * @see org.jasig.portal.rendering.PipelineComponent#getCacheKey(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        return this.parentComponent.getCacheKey(request, response);
+        return this.wrappedComponent.getCacheKey(request, response);
     }
 
     /* (non-Javadoc)
@@ -64,7 +58,7 @@ public class DTDSettingPipelineComponent implements StAXPipelineComponent {
      */
     @Override
     public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
-        final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.parentComponent.getEventReader(request, response);
+        final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
         final DTDAddingXMLEventReader eventReader = new DTDAddingXMLEventReader(pipelineEventReader.getEventReader());
         return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(eventReader);
     }
