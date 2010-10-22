@@ -30,9 +30,12 @@ var up = up || {};
         var separatorIndex = key.indexOf(":");
         return key.substring(separatorIndex + 1, key.length);
     };
-
+    
     /**
      * Browse to a particular entity.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {Object} key - reference to currrently 'focused' entity. ex: group:local.17
      */
     var browseEntity = function(that, key) {
         var entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
@@ -41,10 +44,10 @@ var up = up || {};
         updateBreadcrumbs(that, entity);
         $(".current").text(entity.name);
         
-        // clear any content from the entity browser members section
+        // Clear any content from the entity browser members section.
         $(that.options.entityTypes).each(function(){ $("." + this + " .member-list").html(""); });
         
-        // for each entity, create a list element in the correct section 
+        // For each entity, create a list element in the correct section.
         $(entity.children).each(function(i){
             var link = $(document.createElement("a")).attr("href", "javascript:;")
                 .html("<span>" + this.name + "</span>").attr("key", this.entityType + ":" + this.id)
@@ -54,18 +57,18 @@ var up = up || {};
             );
         });
         
-        // hide any sections with no members
+        // Hide any sections with no members.
         $(that.options.entityTypes).each(function(){
             $("." + this + " .member-list").prev().css("display", $("." + this + " .member-list li").size() > 0 ? "block" : "none" );
         });
         
-        // if there are no members overall, display the no contents message
+        // If there are no members overall, display the no contents message.
         that.locate("browsingResultNoMembers").css("display", $(".browse-hierarchy .member-list li").size() > 0 ? "none" : "block");
         
-        // set the breadcrumbs state
+        // Set the breadcrumbs state.
         setBreadcrumbSelectionState(that, $.inArray(key, that.options.selected) >= 0);
-    };
-
+    };//end:function.
+    
     /**
      * Search for a specific entity
      */
@@ -90,69 +93,118 @@ var up = up || {};
         }
         return false;
     };
-
-    /**
-     * Add an entity to the selected list
-     */
-    var selectEntity = function(that, key) {
-        if ($.inArray(key, that.options.selected) < 0) {
-            // add the key to our selected list
-            that.options.selected.push(key);
-            var entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
-            
-            // add a element to the user-visible select list
-            var li = $(document.createElement("li"));
-            li.append($(document.createElement("a")).html(entity.name)
-                .attr("href", "javascript:;").attr("key", entity.entityType + ":" + entity.id)
-                .click(function(){ deselectEntity(that, $(this).attr("key")); }));
-            li.append($(document.createElement("input")).attr("type", "hidden")
-                .attr("name", "groups").val(entity.entityType + ":" + entity.id));
-            that.locate("selectionBasket").append(li);
-            
-            // if the selected item is the currently selected entity, update
-            // the breadcrumb selection state
-            if (key == (that.currentEntity.entityType + ":" + that.currentEntity.id)) setBreadcrumbSelectionState(that, true);
-        }
-    };
     
     /**
-     * Remove an entity from the selection list
+     * Add an entity to the selected list.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {Object} key - reference to currrently 'selected' entity. ex: group:local.17
+     */
+    var selectEntity = function(that, key) {
+        var selectionBasket, entity, li;
+        
+        // Cache DOM elements.
+        selectionBasket = that.locate("selectionBasket");
+        entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        
+        // Check component selection mode.
+        if (that.selectionMode === "single") {
+            // Remove all <li> elements that exist within selection basket.
+            if (selectionBasket.children().length > 0) {
+                selectionBasket.children().remove();
+            }//end:if.
+            
+            if (that.options.selected.length > 0) {
+                that.options.selected = [];
+            }//end:if.
+        }//end:if.
+        
+        // If 'key' does not exist within 'selected' arrary.
+        if ($.inArray(key, that.selected) < 0) {
+            // Add the key to our selected list.
+            that.options.selected.push(key);
+            
+            // Add an element to the user-visible select list.
+            li = $('<li><a href="javascript:;" key="' + entity.entityType + ":" + entity.id + '">' + entity.name + '</a></li>' + 
+                 '<input type="hidden" name="groups" value="' + entity.entityType + ":" + entity.id + '"/>');
+            
+            // Append li to selectionBasket.
+            that.locate("selectionBasket").append(li);
+            
+            // Assign click event.
+            li.find("a").click(function () {
+                deselectEntity(that, $(this).attr("key"));
+            });//end:click.
+            
+            // If the selected item is the currently selected entity, update
+            // the breadcrumb selection state.
+            if (key === (that.currentEntity.entityType + ":" + that.currentEntity.id)) {
+                setBreadcrumbSelectionState(that, true);
+            }//end:if.
+        }//end:if.
+    };//end:function.
+    
+    /**
+     * Remove an entity from the selection list.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {Object} key - reference to passed anchor tag attribute. ex: group:local.17
      */
     var deselectEntity = function(that, key) {
+        var selectionBasket, newselections;
         
-        // generate a new list of selected entities, and remove the requested
-        // entity from the selection basket
-        var newselections = new Array();
-        that.locate("selectionBasket").find("a").each(function(){
-            if ($(this).attr("key") != key) newselections.push($(this).attr("key"));
-            else $(this).parent().remove();
-        });
+        // Cache & reset DOM references.
+        selectionBasket = that.locate("selectionBasket");
+        newselections = [];
+        
+        // Generate a new list of selected entities, and remove the requested
+        // entity from the selection basket.
+        selectionBasket.find("a").each(function () {
+            var a = $(this);
+            if (a.attr("key") !== key) {
+                newselections.push(a.attr("key"));
+            } else {
+                a.parent().remove();
+            }//end:if.
+        });//end:loop.
         that.options.selected = newselections;
         
-        // if the selected item is the currently selected entity, update
-        // the breadcrumb selection state
-        if (key == (that.currentEntity.entityType + ":" + that.currentEntity.id)) setBreadcrumbSelectionState(that, false);
-    };
-
+        
+        // If the selected item is the currently selected entity, update
+        // the breadcrumb selection state.
+        if (key === (that.currentEntity.entityType + ":" + that.currentEntity.id)) {
+            setBreadcrumbSelectionState(that, false);
+        }//end:if.
+    };//end:function.
+    
     /**
-     * Update the visual selection state for the currently-browsed entity
+     * Update the visual selection state for the currently-browsed entity.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {Boolean} selected - reference to breadcrumb toggle. 
      */
     var setBreadcrumbSelectionState = function(that, selected) {
-        var link = that.locate("selectEntityLink").unbind("click");
-        // deselect the currently-browsed entity
+        var link, header;
+        
+        // Cache & reset.
+        link = that.locate("selectEntityLink");
+        link.unbind("click");
+        header = that.locate("entityBrowsingHeader");
+        
+        // Select/deselect currently browsed entity.
         if (!selected) {
-            link.click(function(){ selectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id); })
-                .find("span").text(that.options.selectButtonMessage);
-            that.locate("entityBrowsingHeader").removeClass("selected");
-            
-        // select the currently-browsed activity
+            link.click(function () {
+                selectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id);
+            }).find("span").text(that.options.selectButtonMessage);
+            header.removeClass("selected");
         } else {
-            link.click(function(){ deselectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id); })
-                .find("span").text(that.options.deselectButtonMessage);
-            that.locate("entityBrowsingHeader").addClass("selected");
-        }
-    };
-			
+            link.click(function () {
+                deselectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id);
+            }).find("span").text(that.options.deselectButtonMessage);
+            header.addClass("selected");
+        }//end:if.
+    };//end:function.
+    
     /**
      * Update the breadcrumb trail
      */
@@ -187,32 +239,49 @@ var up = up || {};
         currentTitle.text(entity.name).attr("key", entity.entityType + ":" + entity.id);
     };
     
-
     /**
-     * Create a new Entity Selection component
+     * Creator function for the entityselection component.
+     * 
+     * @param {Object} container - reference to DOM container.
+     * @param {Object} options - reference to configuration object.
      */
     up.entityselection = function(container, options) {
-        var that = fluid.initView("up.entityselection", container, options);
+        var that, selectionBasket, searchForm;
         
-        // assign a new entity browser for retrieving groups, categories, and person
-        // information from the portal
+        // Initialize & cache.
+        that = fluid.initView("up.entityselection", container, options);
+        that.selectionMode = that.options.selectionMode;
+        selectionBasket = that.locate("selectionBasket");
+        searchForm = that.locate("searchForm");
+        
+        // Assign a new entity browser for retrieving groups, categories, and person
+        // information from the portal.
         that.entityBrowser = $.groupbrowser({
             findEntityUrl: that.options.findEntityUrl,
             searchEntitiesUrl: that.options.searchEntitiesUrl
         });
         
-        // initialize the search form and selection basket onclick events
+        // Initialize selection basket onclick.
         that.searchInitialized = false;
-        that.locate("selectionBasket").find("a").click(function(){ deselectEntity(that, $(this).attr("key")); });
-        that.locate("searchForm").submit(function(){ return search(that, this.searchterm.value) })
-            .find("input[name=searchterm]").focus(function(){ $(this).val(""); $(this).unbind("focus"); });
+        selectionBasket.find("a").click(function () {
+            deselectEntity(that, $(this).attr("key"));
+        });
         
-        // browse to the designated default start entity
+        // Initialize search form submit.
+        searchForm.submit(function () {
+            return search(that, this.searchterm.value);
+        }).find("input[name=searchterm]").focus(function () {
+            $(this).val("");
+            $(this).unbind("focus");
+        });
+        
+        // Browse to the designated default start entity.
         browseEntity(that, that.options.initialFocusedEntity);
-    };
-
+        
+        return that;
+    };//end:component.
     
-    // defaults
+    // Defaults.
     fluid.defaults("up.entityselection", {
         entityTypes: [],
         selected: [],
@@ -221,6 +290,7 @@ var up = up || {};
         initialFocusedEntity: 'group:local.0',
         selectButtonMessage: '',
         deselectButtonMessage: '',
+        selectionMode: 'single',
         selectors: {
             selectionBasket: "#selectionBasket",
             breadcrumbs: "#entityBrowsingBreadcrumbs",
@@ -234,5 +304,4 @@ var up = up || {};
             searchResultsNoMembers: "#searchResultsNoMembers"
         }
     });
-    
 })(jQuery, fluid);
