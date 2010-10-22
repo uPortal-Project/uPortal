@@ -290,7 +290,7 @@ var up = up || {};
         initialFocusedEntity: 'group:local.0',
         selectButtonMessage: '',
         deselectButtonMessage: '',
-        selectionMode: 'single',
+        selectionMode: 'multiple',
         selectors: {
             selectionBasket: "#selectionBasket",
             breadcrumbs: "#entityBrowsingBreadcrumbs",
