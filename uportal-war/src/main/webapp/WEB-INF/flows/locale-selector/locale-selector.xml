@@ -34,7 +34,9 @@
             <set name="viewScope.locales" value="userLocaleHelper.getLocales(currentLocale)"/>
         </on-entry>
         <transition to="finishLocaleSelection">
-            <evaluate expression="userLocaleHelper.updateUserLocale(externalContext.getNativeRequest(), requestParameters.locale)"></evaluate>
+            <set name="flashScope.servletRequest" 
+                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+            <evaluate expression="userLocaleHelper.updateUserLocale(servletRequest, requestParameters.locale)"></evaluate>
         </transition>
     </view-state>
     
