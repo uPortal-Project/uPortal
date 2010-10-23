@@ -29,7 +29,7 @@
   
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    	<h2 class="title" role="heading">Set Language Preference</h2>
+    	<h2 class="title" role="heading"><spring:message code="set.language.preference"/></h2>
     </div>
     
     <!-- Portlet Content -->
