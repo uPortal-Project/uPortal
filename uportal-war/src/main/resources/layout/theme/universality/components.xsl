@@ -135,17 +135,17 @@
         <xsl:attribute name="title">
           <xsl:choose>
             <!-- Use the Back to Home label for focused view -->
-            <xsl:when test="//focused"><xsl:value-of select="$TOKEN[@name='BACK_HOME_LONG_LABEL']"/></xsl:when>
+            <xsl:when test="//focused"><xsl:value-of select="upMsg:getMessage('back.to.home.long', $USER_LANG)"/></xsl:when>
             <!-- Otherwise, just Home label -->
-            <xsl:otherwise><xsl:value-of select="$TOKEN[@name='HOME_LONG_LABEL']"/></xsl:otherwise>
+            <xsl:otherwise><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></xsl:otherwise>
           </xsl:choose>
         </xsl:attribute>
         <span>
           <xsl:choose>
             <!-- Use the Back to Home label for focused view -->
-            <xsl:when test="//focused"><xsl:value-of select="$TOKEN[@name='BACK_HOME_LABEL']"/></xsl:when>
+            <xsl:when test="//focused"><xsl:value-of select="upMsg:getMessage('back.to.home.long', $USER_LANG)"/></xsl:when>
             <!-- Otherwise, just Home label -->
-            <xsl:otherwise><xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/></xsl:otherwise>
+            <xsl:otherwise><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></xsl:otherwise>
           </xsl:choose>
         </span>
       </a>
@@ -169,8 +169,8 @@
               <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
             </xsl:call-template>
     	  </xsl:variable>
-    	  <a href="{$portletAdminUrl}" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
-          <span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
+    	  <a href="{$portletAdminUrl}" title="{upMsg:getMessage('go.to.portlet.manager', $USER_LANG)}">
+          <span><xsl:value-of select="upMsg:getMessage('portlet.manager', $USER_LANG)"/></span>
         </a>
         <xsl:call-template name="portal.pipe" />
       </span>
@@ -179,30 +179,6 @@
   <!-- ========================================================== -->
   
 
-  <!-- ========== TEMPLATE: PORTAL PAGE BAR LINK CUSTOMIZE ========== -->
-  <!-- ============================================================== -->
-  <!--
-   | This template renders the customize link into the portal page bar.
-  -->
-  <xsl:template name="portal.page.bar.link.customize">
-    <xsl:if test="$AUTHENTICATED='true'">
-    	<span id="portalPageBarCustom">
-    	  <xsl:variable name="portalPrefsUrl">
-            <xsl:call-template name="portletUrl">
-              <xsl:with-param name="fname">portal_userpreferences_dlm</xsl:with-param>
-              <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
-            </xsl:call-template>
-    	  </xsl:variable>
-    	  <a href="{$portalPrefsUrl}" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
-          <span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
-        </a>
-        <xsl:call-template name="portal.pipe" />
-      </span>
-    </xsl:if>
-  </xsl:template>
-  <!-- ============================================================== -->
-  
-  
   <!-- ========== TEMPLATE: PORTAL PAGE BAR LINK SITEMAP ========== -->
   <!-- ============================================================ -->
   <!--
@@ -217,8 +193,8 @@
               <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
             </xsl:call-template>
     	  </xsl:variable>
-    	  <a href="{$layoutSitemapUrl}" title="{$TOKEN[@name='SITEMAP_LONG_LABEL']}">
-          <span><xsl:value-of select="$TOKEN[@name='SITEMAP_LABEL']"/></span>
+    	  <a href="{$layoutSitemapUrl}" title="{upMsg:getMessage('site.map', $USER_LANG)}">
+          <span><xsl:value-of select="upMsg:getMessage('go.to.site.map', $USER_LANG)"/></span>
         </a>
         <xsl:call-template name="portal.pipe" />
       </span>
@@ -234,8 +210,8 @@
   -->
   <xsl:template name="portal.page.bar.link.help">
   	<span id="portalPageBarHelp">
-      <a href="{$HELP_URL}" title="{$TOKEN[@name='HELP_LONG_LABEL']}" target="_blank">
-        <span><xsl:value-of select="$TOKEN[@name='HELP_LABEL']"/></span>
+      <a href="{$HELP_URL}" title="{upMsg:getMessage('view.help.for.portal', $USER_LANG)}" target="_blank">
+        <span><xsl:value-of select="upMsg:getMessage('help', $USER_LANG)"/></span>
       </a>
       <xsl:call-template name="portal.pipe" />
     </span>
@@ -251,8 +227,8 @@
   <xsl:template name="portal.page.bar.link.logout">
     <xsl:if test="$AUTHENTICATED='true'">
     	<span id="portalPageBarLogout">
-        <a href="{$CONTEXT_PATH}/Logout" title="{$TOKEN[@name='LOGOFF_LONG_LABEL']}">
-          <span><xsl:value-of select="$TOKEN[@name='LOGOFF_LABEL']"/></span>
+        <a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}">
+          <span><xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/></span>
         </a>
         <xsl:call-template name="portal.pipe" />
       </span>
@@ -271,7 +247,7 @@
       <xsl:variable name="homeUrl">
         <xsl:call-template name="portalUrl"/>
       </xsl:variable>
-      <a href="{$homeUrl}" title="{$TOKEN[@name='LOGO_TITLE']}">
+      <a href="{$homeUrl}" title="{upMsg:getMessage('go.to.home', $USER_LANG)}">
         <xsl:choose>
           <xsl:when test="//focused">
             <!-- ****** LOGO FOCUSED BLOCK ****** -->
@@ -335,12 +311,12 @@
   -->
   <xsl:template name="external.login">  
     <div id="portalCASLogin" class="fl-widget-content">
-      <a id="portalCASLoginLink" href="{$EXTERNAL_LOGIN_URL}" title="{$TOKEN[@name='CAS_LOGIN_LONG_LABEL']}">
+      <a id="portalCASLoginLink" href="{$EXTERNAL_LOGIN_URL}" title="{upMsg:getMessage('sign.in.via.cas', $USER_LANG)}">
         <span>Sign In <span class="via-cas">with CAS</span></span>
       </a>
       <p>New user? 
-        <a id="portalCASLoginNewLink" href="{$CAS_NEW_USER_URL}" title="{$TOKEN[@name='CAS_NEW_USER_LONG_LABEL']}">
-          <xsl:value-of select="$TOKEN[@name='CAS_NEW_USER_LABEL']"/>
+        <a id="portalCASLoginNewLink" href="{$CAS_NEW_USER_URL}" title="{upMsg:getMessage('create.new.portal.account', $USER_LANG)}">
+          <xsl:value-of select="upMsg:getMessage('new.user', $USER_LANG)"/>
         </a>.
       </p>
     </div>
@@ -356,7 +332,7 @@
   <xsl:template name="welcome">  
     <xsl:if test="$AUTHENTICATED='true'"> <!-- Welcome only displays if the user is logged in. -->
       <div id="portalWelcome">
-          <xsl:value-of select="$TOKEN[@name='WELCOME_PRE']"/><span class="user-name"><xsl:value-of select="$USER_NAME"/></span><xsl:value-of select="$TOKEN[@name='WELCOME_POST']"/>
+          <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/><span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
       </div>
     </xsl:if>
   </xsl:template>
@@ -373,7 +349,7 @@
       <div id="portalAdminLinks" class="fl-widget">
         <div class="fl-widget-inner">
         	<div class="fl-widget-titlebar">
-          	<h2><xsl:value-of select="$TOKEN[@name='ADMIN_LINKS_LABEL']"/></h2>
+          	<h2><xsl:value-of select="upMsg:getMessage('administration', $USER_LANG)"/></h2>
           </div>
           <div class="fl-widget-content">
             <ul class="fl-listmenu">
@@ -385,22 +361,11 @@
                       <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
                     </xsl:call-template>
                   </xsl:variable>
-                  <a href="{$portletAdminUrl}" title="{$TOKEN[@name='CHANNEL_MANAGER_LONG_LABEL']}">
-                    <span><xsl:value-of select="$TOKEN[@name='CHANNEL_MANAGER_LABEL']"/></span>
+                  <a href="{$portletAdminUrl}" title="{portlet.manager}">
+                    <span><xsl:value-of select="upMsg:getMessage('go.to.portlet.manager', $USER_LANG)"/></span>
                   </a>
                 </li>
               </xsl:if>
-              <li id="portalAdminLinksCustomize">
-                <xsl:variable name="portalPrefsUrl">
-                  <xsl:call-template name="portletUrl">
-                    <xsl:with-param name="fname">portal_userpreferences_dlm</xsl:with-param>
-                    <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
-                  </xsl:call-template>
-                </xsl:variable>
-                <a href="{$portalPrefsUrl}" id="portalPageBarCustom" title="{$TOKEN[@name='TURN_ON_PREFERENCES_LONG_LABEL']}">
-                  <span><xsl:value-of select="$TOKEN[@name='TURN_ON_PREFERENCES_LABEL']"/></span>
-                </a>
-              </li>
             </ul>
           </div>
         </div>
@@ -419,7 +384,7 @@
       <div id="portalQuicklinks" class="fl-widget">
       	<div class="fl-widget-inner">
         	<div class="fl-widget-titlebar">
-        		<h2><xsl:value-of select="$TOKEN[@name='QUICKLINKS_LABEL']"/></h2>
+        		<h2><xsl:value-of select="upMsg:getMessage('quicklinks', $USER_LANG)"/></h2>
           </div>
         	<div class="fl-widget-content">
             <ul class="fl-listmenu">  <!-- Navigation list. -->
@@ -477,22 +442,19 @@
     <div id="webSearchContainer" class="fl-widget">
       <div class="fl-widget-inner">
       	<div class="fl-widget-titlebar">
-      		<h2><label for="webSearchInput"><xsl:value-of select="$TOKEN[@name='WEB_SEARCH_TITLE']"/></label></h2>
+      		<h2><label for="webSearchInput"><xsl:value-of select="upMsg:getMessage('web.search', $USER_LANG)"/></label></h2>
         </div>
         <div class="fl-widget-content">
-					<script language="JavaScript" type="text/javascript">
-            var skinPath='<xsl:value-of select="$SKIN_PATH"/>/';
-          </script>
-          <script type="text/javascript">
-            up.research = new up.ResearchObject();
-            up.research.writeSearchInDocument();
-          </script>
-          <noscript>
-            <form target="_parent" method="get" action="http://www.google.com/search" id="webSearchForm">
-              <input id="webSearchInput" value="" name="q" type="text" />
-              <input id="webSearchSubmit" type="submit" name="submit" value="Google Search" />
+            <xsl:variable name="searchUrl">
+                <xsl:call-template name="portletUrl">
+                  <xsl:with-param name="fname">search</xsl:with-param>
+                  <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                </xsl:call-template>
+            </xsl:variable>
+            <form method="post" action="{$searchUrl}" id="webSearchForm">
+              <input id="webSearchInput" value="" name="query" type="text" />
+              <input id="webSearchSubmit" type="submit" name="submit" value="Search" />
             </form>
-          </noscript>
         </div>
       </div>
     </div>
@@ -510,7 +472,7 @@
       <xsl:variable name="basePortalUrl">
         <xsl:call-template name="portalUrl"/>
       </xsl:variable>
-      <a href="{$basePortalUrl}" title="{$TOKEN[@name='HOME_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/></a>
+      <a href="{$basePortalUrl}" title="{upMsg:getMessage('go.to.home', $USER_LANG)}"><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></a>
       <span class="breadcrumb-separator">&gt;</span>
       <xsl:for-each select="/layout/navigation/tab">
         <xsl:if test="@activeTab='true'">
@@ -563,12 +525,12 @@
       <xsl:variable name="homeUrl">
         <xsl:call-template name="portalUrl"/>
       </xsl:variable>
-      <a href="{$homeUrl}" id="portalBackToHome" title="{$TOKEN[@name='BACK_HOME_LONG_LABEL']}">
-        <span><xsl:value-of select="$TOKEN[@name='BACK_HOME_LABEL']"/></span>
+      <a href="{$homeUrl}" id="portalBackToHome" title="{upMsg:getMessage('back.to.home.long', $USER_LANG)}">
+        <span><xsl:value-of select="upMsg:getMessage('back.to.home', $USER_LANG)"/></span>
       </a>
   	  <xsl:if test="//focused[@in-user-layout='no'] and $USE_AJAX='true' and $AUTHENTICATED">
-  	    <a href="javascript:;" id="focusedContentDialogLink" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_FOCUSED_CONTENT_LONG_LABEL']}">
-  	      <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_FOCUSED_CONTENT_LABEL']"/></span>
+  	    <a href="javascript:;" id="focusedContentDialogLink" title="{upMsg:getMessage('back.to.home.long', $USER_LANG)}">
+  	      <span><xsl:value-of select="upMsg:getMessage('back.to.home', $USER_LANG)"/></span>
   	    </a>
  	    </xsl:if>
   	</xsl:if>
@@ -587,32 +549,4 @@
   </xsl:template>
   <!-- ========================================== -->
   
-  <!-- ========== TEMPLATE: CUSTOMIZE LINKS ========== -->
-  <!-- =============================================== -->
-  <!--
-   | This template renders customization links.
-  -->
-  <xsl:template name="customize.links">
-      <xsl:if test="$AUTHENTICATED='true' and $USE_AJAX='true' and $AUTHENTICATED"> <!-- Currently, AJAX must be enabled for these links to function. -->
-        <div id="portalCustomizationLinks" class="fl-widget">
-        	<div class="fl-widget-inner">
-          	<div class="fl-widget-titlebar">
-            	<h2><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINKS_TITLE']"/></h2>
-            </div>
-            <div class="fl-widget-content">
-              <ul class="fl-listmenu">
-                <li id="portalCustomizationLinksAddTab">
-                  <a id="addTabLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LONG_LABEL']}">
-                    <span><xsl:value-of select="$TOKEN[@name='PREFERENCES_LINK_ADD_TAB_LABEL']"/></span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </xsl:if>
-  </xsl:template>
-  <!-- =============================================== -->
-  
-		
 </xsl:stylesheet>

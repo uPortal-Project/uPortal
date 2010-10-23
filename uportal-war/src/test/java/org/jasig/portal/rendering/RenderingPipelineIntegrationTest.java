@@ -36,6 +36,7 @@ import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.XMLStreamConstantsUtils;
 import org.jasig.resource.aggr.util.ResourcesElementsProvider;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -92,6 +93,7 @@ public class RenderingPipelineIntegrationTest {
         this.userInstanceManager = userInstanceManager;
     }
 
+    @Ignore
     @Test
     public void testRenderingPipeline() throws Exception {
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();

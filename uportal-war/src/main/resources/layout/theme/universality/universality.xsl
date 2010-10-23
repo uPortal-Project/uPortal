@@ -169,7 +169,6 @@
    | GREEN
    | Locatlization Settings can be used to change the localization of the theme.
   -->
-	<xsl:param name="MESSAGE_DOC_URL">messages.xml</xsl:param> <!-- Name of the localization file. -->
 	<xsl:param name="USER_LANG">en</xsl:param> <!-- Sets the default user language. -->
   
   
@@ -207,7 +206,6 @@
     </xsl:choose>
   </xsl:param>
   <xsl:param name="COLUMNS" select="count(//content/column)"/>
-  <xsl:variable name="TOKEN" select="document($MESSAGE_DOC_URL)/theme-messages/tokens[lang($USER_LANG) and (@institution=$INSTITUTION or not(@institution))]/token"/> <!-- Tells the theme how to find appropriate localized token. -->  
   <xsl:variable name="IS_FRAGMENT_ADMIN_MODE">
     <xsl:choose>
         <xsl:when test="//channel[@fname = 'fragment-admin-exit']">true</xsl:when>
@@ -382,11 +380,11 @@
     
     <!-- Skip Navigation -->
     <div id="portalSkipNav">
-      <a href="#mainNavigation" title="{$TOKEN[@name='SKIP_TO_NAV_TITLE']}" id="skipToNav" accesskey="N">
-        <xsl:value-of select="$TOKEN[@name='SKIP_TO_NAV']"/>
+      <a href="#mainNavigation" title="{upMsg:getMessage('skip.to.page.navigation', $USER_LANG)}" id="skipToNav" accesskey="N">
+        <xsl:value-of select="upMsg:getMessage('skip.to.page.navigation', $USER_LANG)"/>
       </a>
-      <a href="#pageContent" title="{$TOKEN[@name='SKIP_TO_CONTENT_TITLE']}" id="skipToContent" accesskey="C">
-        <xsl:value-of select="$TOKEN[@name='SKIP_TO_CONTENT']"/>
+      <a href="#pageContent" title="{upMsg:getMessage('skip.to.page.content', $USER_LANG)}" id="skipToContent" accesskey="C">
+        <xsl:value-of select="upMsg:getMessage('skip.to.page.content', $USER_LANG)"/>
       </a>
     </div>
     <!-- Skip Navigation -->
@@ -420,8 +418,6 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="portal.page.bar.title.block">
-  	<!-- <h2><xsl:copy-of select="$TOKEN[@name='PORTAL_PAGE_TITLE']"/></h2> -->
-    
     <!-- Login Channel -->
     <xsl:if test="$AUTHENTICATED='true'">
     	<xsl:call-template name="welcome"/> <!-- This login call is needed to render the welcome/logout statement into the header. -->
@@ -449,12 +445,6 @@
     </xsl:if>
     <!-- Admin Link -->
     
-    <!-- Preferences Link -->
-    <xsl:if test="$INSTITUTION != 'uportal'">
-  		<xsl:call-template name="portal.page.bar.link.customize" />
-    </xsl:if>
-    <!-- Preferences Link -->
-    
     <!-- Sitemap Link -->
   	<xsl:call-template name="portal.page.bar.link.sitemap" />
     <!-- Sitemap Link -->
@@ -479,9 +469,9 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="logo.block">
-  	<img src="{$SKIN_PATH}/images/portal_logo.png" alt="{$TOKEN[@name='LOGO']}"/>
+  	<img src="{$SKIN_PATH}/images/portal_logo.png" alt="{upMsg:getMessage('portal.page.title', $USER_LANG)}"/>
     <!-- Text only: 
-    <span><xsl:value-of select="$TOKEN[@name='LOGO']"/></span> -->
+    <span><xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)"/></span> -->
   </xsl:template>
   <!-- ========================================== -->
   
@@ -500,11 +490,11 @@
     
     <!-- Skip Navigation -->
     <div id="portalSkipNav">
-      <a href="#mainNavigation" title="{$TOKEN[@name='SKIP_TO_NAV_TITLE']}" id="skipToNav">
-        <xsl:value-of select="$TOKEN[@name='SKIP_TO_NAV']"/>
+      <a href="#mainNavigation" title="{upMsg:getMessage('skip.to.page.navigation', $USER_LANG)}" id="skipToNav">
+        <xsl:value-of select="upMsg:getMessage('skip.to.page.navigation', $USER_LANG)"/>
       </a>
-      <a href="#startContent" title="{$TOKEN[@name='SKIP_TO_CONTENT_TITLE']}" id="skipToContent">
-        <xsl:value-of select="$TOKEN[@name='SKIP_TO_CONTENT']"/>
+      <a href="#startContent" title="{upMsg:getMessage('skip.to.page.content', $USER_LANG)}" id="skipToContent">
+        <xsl:value-of select="upMsg:getMessage('skip.to.page.content', $USER_LANG)"/>
       </a>
     </div>
     <!-- Skip Navigation -->
@@ -531,7 +521,7 @@
   -->
   <xsl:template name="portal.page.bar.title.focused.block">
   	<!-- Text:
-    <span><xsl:value-of select="$TOKEN[@name='LOGO']"/></span> -->
+    <span><xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)"/></span> -->
   </xsl:template>
   <!-- =================================================================== -->
   
@@ -551,10 +541,6 @@
     <!-- Admin Link
   	<xsl:call-template name="portal.page.bar.link.admin"/> -->
     <!-- Admin Link -->
-    
-    <!-- Preferences Link
-  	<xsl:call-template name="portal.page.bar.link.customize"/> -->
-    <!-- Preferences Link -->
     
     <!-- Sitemap Link
   	<xsl:call-template name="portal.page.bar.link.sitemap"/> -->
@@ -579,11 +565,11 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="logo.focused.block">
-  	<img src="{$SKIN_PATH}/images/portal_logo.png" alt="{$TOKEN[@name='LOGO']}"/>
+  	<img src="{$SKIN_PATH}/images/portal_logo.png" alt="{upMsg:getMessage('portal.page.title', $USER_LANG)}"/>
   	<!-- Text:
-    <span><xsl:value-of select="$TOKEN[@name='LOGO']"/></span> -->
+    <span><xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)"/></span> -->
     <!-- Slim version of logo:
-    <img src="{$SKIN_PATH}/images/portal_logo_slim.png" alt="{$TOKEN[@name='LOGO']}"/>  -->
+    <img src="{$SKIN_PATH}/images/portal_logo_slim.png" alt="{upMsg:getMessage('portal.page.title', $USER_LANG)}"/>  -->
   </xsl:template>
   <!-- ================================================== -->
   
@@ -705,12 +691,6 @@
     <!-- Web Search
     <xsl:call-template name="web.search"/> -->
     <!-- Web Search -->
-    
-    <!-- CUSTOMIZE LINKS: For these links to function, AJAX must be enabled by setting the USE_AJAX parameter above to 'true'. -->
-    <xsl:if test="$USE_SIDEBAR = 'true' and $USE_AJAX='true'">
-    	<xsl:call-template name="customize.links"/>
-    </xsl:if>
-    <!-- CUSTOMIZE LINKS -->
     
     <!-- Administration Links -->
     <xsl:call-template name="administration.links"/>
@@ -844,28 +824,28 @@
     <xsl:if test="$INSTITUTION='uportal' or $INSTITUTION='coal' or $INSTITUTION='ivy' or $INSTITUTION='hc'">
       <!-- Footer Links -->
       <div id="portalPageFooterLinks">
-        <a href="http://www.jasig.org/" target="_blank" title="{$TOKEN[@name='JASIG_LONG_LABEL']}">
-          <xsl:value-of select="$TOKEN[@name='JASIG_LABEL']"/>
+        <a href="http://www.jasig.org/" target="_blank" title="{upMsg:getMessage('go.to.jasig.site', $USER_LANG)}">
+          <xsl:value-of select="jasig.org"/>
         </a>
         <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/uportal" target="_blank" title="{$TOKEN[@name='UPORTAL_LONG_LABEL']}">
-          <xsl:value-of select="$TOKEN[@name='UPORTAL_LABEL']"/>
+        <a href="http://www.jasig.org/uportal" target="_blank" title="{upMsg:getMessage('go.to.uportal.site', $USER_LANG)}">
+          <xsl:value-of select="uportal.org"/>
         </a>
         <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/uportal/download" target="_blank" title="{$TOKEN[@name='UPORTAL_DOWNLOAD_LONG_LABEL']}">
-          <xsl:value-of select="$TOKEN[@name='UPORTAL_DOWNLOAD_LABEL']"/>
+        <a href="http://www.jasig.org/uportal/download" target="_blank" title="{upMsg:getMessage('go.to.uportal.download.site', $USER_LANG)}">
+          <xsl:value-of select="upMsg:getMessage('download.uportal', $USER_LANG)"/>
         </a>
         <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/uportal/community" target="_blank" title="{$TOKEN[@name='UPORTAL_COMMUNITY_LONG_LABEL']}">
-          <xsl:value-of select="$TOKEN[@name='UPORTAL_COMMUNITY_LABEL']"/>
+        <a href="http://www.jasig.org/uportal/community" target="_blank" title="{upMsg:getMessage('go.to.uportal.community.page', $USER_LANG)}">
+          <xsl:value-of select="upMsg:getMessage('uportal.community', $USER_LANG)"/>
         </a>
         <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/uportal/privacy" target="_blank" title="{$TOKEN[@name='UPORTAL_PRIVACY_LONG_LABEL']}">
-          <xsl:value-of select="$TOKEN[@name='UPORTAL_PRIVACY_LABEL']"/>
+        <a href="http://www.jasig.org/uportal/privacy" target="_blank" title="{upMsg:getMessage('view.uportal.privacy.policy', $USER_LANG)}">
+          <xsl:value-of select="upMsg:getMessage('privacy.policy', $USER_LANG)"/>
         </a>
         <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/uportal/accessibility" target="_blank" title="{$TOKEN[@name='UPORTAL_ACCESSIBILITY_LONG_LABEL']}">
-          <xsl:value-of select="$TOKEN[@name='UPORTAL_ACCESSIBILITY_LABEL']"/>
+        <a href="http://www.jasig.org/uportal/accessibility" target="_blank" title="{upMsg:getMessage('view.uportal.accessibility.information', $USER_LANG)}">
+          <xsl:value-of select="upMsg:getMessage('uportal.accessibility', $USER_LANG)"/>
         </a>
       </div>
       

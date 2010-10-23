@@ -84,10 +84,10 @@
         <title>
           <xsl:choose>
             <xsl:when test="/layout_fragment">
-            	<xsl:value-of select="$TOKEN[@name='PORTAL_PAGE_TITLE']" />: <xsl:value-of select="content/channel/@title"/>
+            	<xsl:value-of select="upMsg:getMessage('portal.name', $USER_LANG)" />: <xsl:value-of select="content/channel/@title"/>
             </xsl:when>
             <xsl:otherwise>
-            	<xsl:value-of select="$TOKEN[@name='PORTAL_PAGE_TITLE']" />
+            	<xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)" />
             </xsl:otherwise>
           </xsl:choose>
         </title>
@@ -96,8 +96,8 @@
         	<meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT" />
         	<meta http-equiv="pragma" content="no-cache" />
         </xsl:if>
-        <meta name="description" content="{$TOKEN[@name='PORTAL_META_DESCRIPTION']}" />
-        <meta name="keywords" content="{$TOKEN[@name='PORTAL_META_KEYWORDS']}" />
+        <meta name="description" content="{upMsg:getMessage('portal.page.meta.description', $USER_LANG)}" />
+        <meta name="keywords" content="{upMsg:getMessage('portal.page.meta.keywords', $USER_LANG)}" />
         <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
         	<link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
         </xsl:if>
@@ -136,8 +136,8 @@
                     <xsl:call-template name="gallery"/>
                 </xsl:if>
                 <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                    <div id="portalEditPagePermissions" class="ui-helper-clearfix"><a id="editPagePermissionsLink" href="javascript:;" title="{$TOKEN[@name='PREFERENCES_FRAGMENT_EDIT_PAGE_PERMISSIONS_LONG_LABEL']}">
-                        <xsl:value-of select="$TOKEN[@name='PREFERENCES_FRAGMENT_EDIT_PAGE_PERMISSIONS_LABEL']"/>
+                    <div id="portalEditPagePermissions" class="ui-helper-clearfix"><a id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+                        <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
                     </a></div>
                 </xsl:if>
                 <xsl:apply-templates select="content"/>

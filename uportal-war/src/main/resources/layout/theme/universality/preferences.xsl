@@ -185,7 +185,16 @@
                         <div class="portlet-wrapper">
                             <a class="portlet-thumb-gripper" href="javascript:;" title="Drag to add content"><span>Drag Handle</span></a>
                             <a href="javascript:;" class="portlet-thumb-link">
-                                <span><xsl:value-of select="upMsg:getMessage('add', $USER_LANG)"/></span>
+                                <span>
+                                    <xsl:choose>
+                                        <xsl:when test="$CONTEXT='addContent'">
+                                            <xsl:value-of select="upMsg:getMessage('add', $USER_LANG)"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="upMsg:getMessage('use', $USER_LANG)"/>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </span>
                             </a>
                             <div class="portlet-thumb-titlebar"></div>
                             <div class="portlet-thumb-content ui-helper-clearfix">
@@ -372,7 +381,7 @@
                         <xsl:call-template name="gallery-layout-pane"/>
                     </div>
                 </div>
-                <div id="galleryLoader" class="gallery-loader"><span><xsl:value-of select="$TOKEN[@name='AJAX_LOADING_GALLERY']"/></span></div>
+                <div id="galleryLoader" class="gallery-loader"><span><xsl:value-of select="upMsg:getMessage('loading', $USER_LANG)"/></span></div>
             </div>
         </div>
         </xsl:if>
@@ -386,12 +395,12 @@
     <div id="ajaxMenus" style="display:none;">
         <!-- Add Channel Menu -->
         <div class="focused-content-dialog"
-            title="{$TOKEN[@name='AJAX_ADD_FOCUSED_PORTLET_DIALOG_TITLE']}">
+            title="upMsg:getMessage('add.content', $USER_LANG)">
             <form>
                 <fieldset>
                     <legend>
                         <xsl:value-of
-                            select="$TOKEN[@name='AJAX_ADD_PORTLET_TO_LAYOUT']" />
+                            select="upMsg:getMessage('add.to.page', $USER_LANG)" />:
                     </legend>
                     <xsl:for-each select="/layout/navigation/tab">
                         <input name="targetTab" id="targetTab{@ID}"
@@ -406,7 +415,7 @@
                     <input name="portletId" type="hidden"
                         value="{//focused/channel/@chanID}" />
                     <input type="submit"
-                        value="{$TOKEN[@name='AJAX_ADD_FOCUSED_PORTLET_SUBMIT_BUTTON']}"
+                        value="{upMsg:getMessage('add', $USER_LANG)}"
                         class="portlet-form-button" />
                     &#160;
                 </p>
@@ -519,7 +528,7 @@
      </xsl:if>
     
      <div id="portalDropWarning" style="display:none;">
-      <p><xsl:value-of select="$TOKEN[@name='AJAX_PORTAL_DROP_WARNING_MESSAGE']"/></p>
+      <p><xsl:value-of select="upMsg:getMessage('portlet.cannot.be.moved.here.locked', $USER_LANG)"/></p>
      </div>
      
     </div>
@@ -536,8 +545,8 @@
               subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
               isFragmentMode: <xsl:choose><xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>,
               messages: { 
-                  confirmRemoveTab: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE']"/>', 
-                  confirmRemovePortlet: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_PORTLET_CONFIRMATION_MESSAGE']"/>' 
+                  confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', USER_LANG)"/>', 
+                  confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', USER_LANG)"/>' 
               }
             }
           );
@@ -554,8 +563,8 @@
               channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList',
               subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
               messages: { 
-                  confirmRemoveTab: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_TAB_CONFIRMATION_MESSAGE']"/>', 
-                  confirmRemovePortlet: '<xsl:value-of select="$TOKEN[@name='AJAX_REMOVE_PORTLET_CONFIRMATION_MESSAGE']"/>' 
+                  confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', USER_LANG)"/>', 
+                  confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', USER_LANG)"/>' 
               }
             }
           );

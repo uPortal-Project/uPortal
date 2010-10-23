@@ -77,7 +77,7 @@
               </div>
             </xsl:if>
             <xsl:if test="$AUTHENTICATED='true' and $USE_ADD_TAB='true' and not(//focused)">
-                <a href="javascript:;" title="{$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']}" class="portal-navigation-add"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']"/></a>
+                <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add"><xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/></a>
             </xsl:if>
           </div>
         </div>
@@ -89,11 +89,11 @@
         	<div id="portalNavigationInner" class="fl-widget-inner {$CONTEXT}">
           	<div class="fl-widget-titlebar">
                 <h2>
-                    <a name="mainNavigation" class="skip-link" title="Reference anchor: main nagivation"><xsl:value-of select="$TOKEN[@name='MAIN_NAVIGATION_LABEL']"/></a>  <!-- Skip navigation target. -->
-                    <xsl:value-of select="$TOKEN[@name='MAIN_NAVIGATION_LABEL']"/>
+                    <a name="mainNavigation" class="skip-link" title="Reference anchor: main nagivation"><xsl:value-of select="upMsg:getMessage('navigation', $USER_LANG)"/></a>  <!-- Skip navigation target. -->
+                    <xsl:value-of select="upMsg:getMessage('navigation', $USER_LANG)"/>
                 </h2>
                 <xsl:if test="$AUTHENTICATED='true' and $USE_ADD_TAB='true' and not(//focused)">
-                    <a href="javascript:;" title="{$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']}" class="portal-navigation-add"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_TAB_SUBMIT_BUTTON']"/></a>
+                    <a href="javascript:;" title="upMsg:getMessage('add.tab', $USER_LANG)" class="portal-navigation-add"><xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/></a>
                 </xsl:if>
           	</div>
             <div class="fl-widget-content">
@@ -223,10 +223,10 @@
       </a>
       <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
           <xsl:if test="not(@dlm:moveAllowed='false')">
-            <a href="javascript:;" class="portal-navigation-gripper" title="{$TOKEN[@name='MOVE_TAB_LONG_LABEL']}"><span><xsl:value-of select="$TOKEN[@name='MOVE_TAB_LABEL']"/></span></a> <!-- Drag & drop gripper handle. -->
+            <a href="javascript:;" class="portal-navigation-gripper" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}"><span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span></a> <!-- Drag & drop gripper handle. -->
           </xsl:if>
           <xsl:if test="not(@dlm:deleteAllowed='false')">
-            <a href="javascript:;" class="portal-navigation-delete" title="{$TOKEN[@name='DELETE_TAB_LONG_LABEL']}"><span><xsl:value-of select="$TOKEN[@name='DELETE_TAB_LABEL']"/></span></a><!-- Remove tab icon. -->
+            <a href="javascript:;" class="portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}"><span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span></a><!-- Remove tab icon. -->
           </xsl:if>
       </xsl:if>
       <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
@@ -256,7 +256,7 @@
     <div id="portletNavigation" class="fl-widget">
     	<div class="fl-widget-inner">
       	<div class="fl-widget-titlebar">
-      		<h2><xsl:value-of select="$TOKEN[@name='PORTLET_NAVIGATION_TITLE']"/></h2>
+      		<h2><xsl:value-of select="upMsg:getMessage('jump.to', $USER_LANG)"/>:</h2>
         </div>
         <div class="fl-widget-content">
         	<ul class="fl-listmenu">
@@ -264,9 +264,9 @@
                 <xsl:variable name="homeUrl">
                   <xsl:call-template name="portalUrl"/>
                 </xsl:variable>
-            	<a href="{$homeUrl}" title="{$TOKEN[@name='HOME_LONG_LABEL']}">
+            	<a href="{$homeUrl}" title="{upMsg:getMessage('go.back.to.home', $USER_LANG)}">
               	<span>
-                	<xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/>
+                	<xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/>
                 </span>
               </a>
             </li>

@@ -178,8 +178,8 @@
             <xsl:with-param name="mode">HELP</xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <a href="{$portletHelpUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_HELP_LONG_LABEL']}" class="up-portlet-control help">
-      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_HELP_LABEL']"/></span>
+        <a href="{$portletHelpUrl}#{@ID}" title="{upMsg:getMessage('view.help.for.portlet', $USER_LANG)}" class="up-portlet-control help">
+      	  <span><xsl:value-of select="upMsg:getMessage('help', $USER_LANG)"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(@hasAbout='false')"> <!-- About. -->
@@ -189,8 +189,8 @@
             <xsl:with-param name="mode">ABOUT</xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-      	<a href="{$portletAboutUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_ABOUT_LONG_LABEL']}" class="up-portlet-control about">
-      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_ABOUT_LABEL']"/></span>
+      	<a href="{$portletAboutUrl}#{@ID}" title="{upMsg:getMessage('view.information.about.portlet', $USER_LANG)}" class="up-portlet-control about">
+      	  <span><xsl:value-of select="upMsg:getMessage('view.information.about.portlet', $USER_LANG)"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(@editable='false')"> <!-- Edit. -->
@@ -200,8 +200,8 @@
             <xsl:with-param name="mode">EDIT</xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <a href="{$portletEditUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_EDIT_LONG_LABEL']}" class="up-portlet-control edit">
-      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_EDIT_LABEL']"/></span>
+        <a href="{$portletEditUrl}#{@ID}" title="{upMsg:getMessage('edit.portlet', $USER_LANG)}" class="up-portlet-control edit">
+      	  <span><xsl:value-of select="upMsg:getMessage('edit', $USER_LANG)"/></span>
         </a>
       </xsl:if>
       <xsl:if test="@printable='true'"> <!-- Print. -->
@@ -211,8 +211,8 @@
             <xsl:with-param name="mode">PRINT</xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <a href="{$portletPrintUrl}#{@ID}" title="{$TOKEN[@name='PORTLET_PRINT_LONG_LABEL']}" class="up-portlet-control print">
-      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_PRINT_LABEL']"/></span>
+        <a href="{$portletPrintUrl}#{@ID}" title="{upMsg:getMessage('print.portlet', $USER_LANG)}" class="up-portlet-control print">
+      	  <span><xsl:value-of select="upMsg:getMessage('print', $USER_LANG)"/></span>
         </a>
       </xsl:if>
       <xsl:if test="not(//focused) and @minimized='false'"> <!-- Focus. -->
@@ -223,8 +223,8 @@
             <xsl:with-param name="state">MINIMIZED</xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <a href="{$portletMinUrl}" title="{$TOKEN[@name='PORTLET_MINIMIZE_LONG_LABEL']}" class="up-portlet-control minimize">
-          <span><xsl:value-of select="$TOKEN[@name='PORTLET_MINIMIZE_LABEL']"/></span>
+        <a href="{$portletMinUrl}" title="{upMsg:getMessage('enter.minimized.mode.for.this.portlet', $USER_LANG)}" class="up-portlet-control minimize">
+          <span><xsl:value-of select="upMsg:getMessage('minimize', $USER_LANG)"/></span>
         </a>
         -->
         <xsl:variable name="portletMaxUrl">
@@ -233,8 +233,8 @@
             <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <a href="{$portletMaxUrl}" title="{$TOKEN[@name='PORTLET_MAXIMIZE_LONG_LABEL']}" class="up-portlet-control focus">
-      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_MAXIMIZE_LABEL']"/></span>
+        <a href="{$portletMaxUrl}" title="{upMsg:getMessage('enter.maximized.mode.for.this.portlet', $USER_LANG)}" class="up-portlet-control focus">
+      	  <span><xsl:value-of select="upMsg:getMessage('maximize', $USER_LANG)"/></span>
         </a>
       </xsl:if>
       <xsl:if test="@minimized='true'"> <!-- Return from Minimized. -->
@@ -245,8 +245,8 @@
             <xsl:with-param name="state">NORMAL</xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <a href="{$portletMinUrl}" title="{$TOKEN[@name='PORTLET_RETURN_LONG_LABEL']}" class="up-portlet-control return">
-          <span><xsl:value-of select="$TOKEN[@name='PORTLET_RETURN_LABEL']"/></span>
+        <a href="{$portletMinUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return">
+          <span><xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/></span>
         </a>
         -->
       </xsl:if>
@@ -260,8 +260,8 @@
             </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <a id="removePortlet_{@ID}" title="{$TOKEN[@name='PORTLET_REMOVE_LONG_LABEL']}" href="{$removePortletUrl}" class="up-portlet-control remove">
-      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_REMOVE_LABEL']"/></span>
+        <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="{$removePortletUrl}" class="up-portlet-control remove">
+      	  <span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span>
         </a>
       </xsl:if>
       <xsl:if test="//focused"> <!-- Return from Focused. -->
@@ -271,18 +271,18 @@
             <xsl:with-param name="state">NORMAL</xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <a href="{$portletReturnUrl}" title="{$TOKEN[@name='PORTLET_RETURN_LONG_LABEL']}" class="up-portlet-control return">
-      	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_RETURN_LABEL']"/></span>
+        <a href="{$portletReturnUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return">
+      	  <span><xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/></span>
         </a>
       </xsl:if>
       <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
-        <a id="focusedContentDialogLink" href="javascript:;" title="{$TOKEN[@name='PORTLET_ADD_LONG_LABEL']}" class="up-portlet-control add">
-          <span><xsl:value-of select="$TOKEN[@name='PORTLET_ADD_LABEL']"/></span>
+        <a id="focusedContentDialogLink" href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
+          <span><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
         </a>
       </xsl:if>
       <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-        <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;" title="{$TOKEN[@name='PORTLET_SET_PERMISSIONS_LONG_LABEL']}">
-            <span><xsl:value-of select="$TOKEN[@name='PORTLET_SET_PERMISSIONS']"/></span>
+        <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;" title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}">
+            <span><xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></span>
         </a>
       </xsl:if>
     </div>
