@@ -165,12 +165,6 @@
         </dependency>
         
         <dependency>
-            <groupId>com.googlecode</groupId>
-            <artifactId>google-api-translate-java</artifactId>
-            <scope>provided</scope>
-        </dependency>
-            
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>ejb3-persistence</artifactId>
         </dependency>

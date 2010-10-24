@@ -60,11 +60,11 @@
     </dlm:audience>
   </dlm:fragment>
 
-  <dlm:fragment name='News' ownerID='news-lo' precedence='60' description="Current world news resources">
+  <dlm:fragment name='News' ownerID='news-lo' precedence='60'>
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluatorFactory"/>
   </dlm:fragment>
   
-  <dlm:fragment name='Entertainment' ownerID='ent-lo' precedence='60' description="Games, humor, and entertainment news">
+  <dlm:fragment name='Entertainment' ownerID='ent-lo' precedence='60'>
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluatorFactory"/>
   </dlm:fragment>
   
