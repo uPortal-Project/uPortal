@@ -22,23 +22,21 @@ package org.jasig.portal.layout;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLEventReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UserPreferences;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
-import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 
 /**
@@ -66,10 +64,11 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     private IUserLayoutManager man=null;
     
     // contains fname --> subscribe id mappings (for transient channels only)
-    private Map mFnameMap = Collections.synchronizedMap(new HashMap());
-    private Map mSubIdMap = Collections.synchronizedMap(new HashMap());
+    private Map<String, String> mFnameMap = Collections.synchronizedMap(new HashMap<String, String>());
+    // contains subscribe id --> fname mappings (for transient channels only)
+    private Map<String, String> mSubIdMap = Collections.synchronizedMap(new HashMap<String, String>());
     // stores channel defs by subscribe id (transient channels only)
-    private Map mChanMap = Collections.synchronizedMap(new HashMap());
+    private Map<String, IChannelDefinition> mChanMap = Collections.synchronizedMap(new HashMap<String, IChannelDefinition>());
 
     // current root/focused subscribe id
     private String mFocusedId = "";
@@ -120,6 +119,17 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
     public void saveUserLayout() throws PortalException {
         man.saveUserLayout();
+    }
+    
+    @Override
+    public Set<String> getAllSubscribedChannels() {
+        final Set<String> allSubscribedChannels = new LinkedHashSet<String>(man.getAllSubscribedChannels());
+        
+        for (final String subscribeId : mSubIdMap.keySet()) {
+            allSubscribedChannels.add(subscribeId);
+        }
+        
+        return allSubscribedChannels;
     }
 
     public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
@@ -292,8 +302,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     protected IChannelDefinition getChannelDefinition( String subId )
         throws PortalException
     {
-        IChannelDefinition chanDef = (IChannelDefinition)
-            mChanMap.get(subId);
+        IChannelDefinition chanDef = mChanMap.get(subId);
 
         if ( null == chanDef ){
             String fname = getFname(subId);
@@ -323,7 +332,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
      **/
     public String getFname( String subId )
     {
-        return (String)mSubIdMap.get(subId);
+        return mSubIdMap.get(subId);
     }
     
     public boolean isTransientChannel(String subId) {
@@ -340,7 +349,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     public String getSubscribeId(String fname) throws PortalException {
 
         // see if a given subscribe id is already in the map
-        String subId=(String)mFnameMap.get(fname);
+        String subId=mFnameMap.get(fname);
         if(subId==null) {
             // see if a given subscribe id is already in the layout
             subId = man.getSubscribeId(fname);
@@ -398,52 +407,54 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         throws PortalException
     {
         // get fname from subscribe id
-        String fname = getFname(nodeId);
-        if ( null == fname || fname.equals("") )
-            throw new PortalException( "Could not find a transient node " +
-                                       "for id: " + nodeId );
+        final String fname = getFname(nodeId);
+        if (null == fname || fname.equals("")) {
+            throw new PortalException("Could not find a transient node for id: " + nodeId);
+        }
 
-        IUserLayoutChannelDescription ulnd = new UserLayoutChannelDescription();
-        try
-        {
+        try {
             // check cache first
-            IChannelDefinition chanDef = (IChannelDefinition)mChanMap.get(nodeId);
+            IChannelDefinition chanDef = mChanMap.get(nodeId);
 
-            if ( null == chanDef ) {
+            if (null == chanDef) {
                 chanDef = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(fname);
-                mChanMap.put(nodeId,chanDef);
+                mChanMap.put(nodeId, chanDef);
             }
 
-            ulnd.setId(nodeId);
-            ulnd.setName(chanDef.getName());
-            ulnd.setUnremovable(true);
-            ulnd.setImmutable(true);
-            ulnd.setHidden(false);
-            ulnd.setTitle(chanDef.getTitle());
-            ulnd.setDescription(chanDef.getDescription());
-            ulnd.setClassName(chanDef.getJavaClass());
-            ulnd.setChannelPublishId("" + chanDef.getId());
-            ulnd.setChannelTypeId("" + chanDef.getTypeId());
-            ulnd.setFunctionalName(chanDef.getFName());
-            ulnd.setTimeout(chanDef.getTimeout());
-            ulnd.setEditable(chanDef.isEditable());
-            ulnd.setHasHelp(chanDef.hasHelp());
-            ulnd.setHasAbout(chanDef.hasAbout());
-
-            Set<IChannelParameter> parms = chanDef.getParameters();
-            for ( IChannelParameter parm : parms )
-            {
-                ulnd.setParameterValue(parm.getName(),parm.getValue());
-                ulnd.setParameterOverride(parm.getName(),parm.getOverride());
-            }
+            return createUserLayoutChannelDescription(nodeId, chanDef);
 
         }
-        catch( Exception e )
+        catch (Exception e) {
+            throw new PortalException("Failed to obtain channel definition using fname: " + fname);
+        }
+    }
+    
+    protected IUserLayoutChannelDescription createUserLayoutChannelDescription(String nodeId, IChannelDefinition chanDef) {
+        IUserLayoutChannelDescription ulnd = new UserLayoutChannelDescription();
+
+        ulnd.setId(nodeId);
+        ulnd.setName(chanDef.getName());
+        ulnd.setUnremovable(true);
+        ulnd.setImmutable(true);
+        ulnd.setHidden(false);
+        ulnd.setTitle(chanDef.getTitle());
+        ulnd.setDescription(chanDef.getDescription());
+        ulnd.setClassName(chanDef.getJavaClass());
+        ulnd.setChannelPublishId("" + chanDef.getId());
+        ulnd.setChannelTypeId("" + chanDef.getTypeId());
+        ulnd.setFunctionalName(chanDef.getFName());
+        ulnd.setTimeout(chanDef.getTimeout());
+        ulnd.setEditable(chanDef.isEditable());
+        ulnd.setHasHelp(chanDef.hasHelp());
+        ulnd.setHasAbout(chanDef.hasAbout());
+
+        Set<IChannelParameter> parms = chanDef.getParameters();
+        for ( IChannelParameter parm : parms )
         {
-            throw new PortalException( "Failed to obtain channel definition " +
-                                       "using fname: " + fname );
+            ulnd.setParameterValue(parm.getName(),parm.getValue());
+            ulnd.setParameterOverride(parm.getName(),parm.getOverride());
         }
-
+        
         return ulnd;
     }
 

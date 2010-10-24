@@ -20,7 +20,9 @@
 package org.jasig.portal.portlet.registry;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -345,6 +347,27 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         return windowInstanceId.startsWith(TRANSIENT_WINDOW_ID_PREFIX);
     }
     
+    @Override
+    public Set<IPortletWindow> getAllPortletWindows(HttpServletRequest request, IPortletEntityId portletEntityId) {
+        final Set<IPortletWindow> portletWindows = new LinkedHashSet<IPortletWindow>();
+        
+        final ConcurrentMap<IPortletWindowId, IPortletWindow> portletWindowMap = this.getPortletWindowSessionMap(request);
+        for (IPortletWindow portletWindow : portletWindowMap.values()) {
+            if (portletEntityId.equals(portletWindow.getPortletEntityId())) {
+                //Do a getPortletWindow call to make sure we get the request scoped wrapper setup correctly
+                portletWindow = this.getPortletWindow(request, portletWindow.getPortletWindowId());
+                portletWindows.add(portletWindow);
+            }
+        }
+        
+        //If there were no windows in the set create the default one for the entity
+        if (portletWindows.size() == 0) {
+            final IPortletWindow portletWindow = this.createDefaultPortletWindow(request, portletEntityId);
+            portletWindows.add(portletWindow);
+        }
+            
+        return portletWindows;
+    }
     
     /**
      * @see #createPortletWindow(IPortletWindowId, IPortletEntityId, IPortletWindowId)

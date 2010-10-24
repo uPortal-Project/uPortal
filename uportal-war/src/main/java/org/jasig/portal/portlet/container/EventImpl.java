@@ -30,27 +30,68 @@ import javax.xml.namespace.QName;
  */
 public class EventImpl implements Event {
 
-    private QName _qname;
-    private Serializable _value;
+    private QName qname;
+    private Serializable value;
     
     public EventImpl(QName qname){
-        _qname = qname;
+        this.qname = qname;
     }
     
     public EventImpl(QName qname, Serializable value){
         this(qname);
-        _value = value;
+        this.value = value;
     }
 
+    @Override
     public QName getQName() {
-        return _qname;
+        return qname;
     }
 
+    @Override
     public Serializable getValue() {
-        return _value;
+        return value;
     }
 
+    @Override
     public String getName() {
-        return _qname.getLocalPart();
+        return qname.getLocalPart();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.qname == null) ? 0 : this.qname.hashCode());
+        result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EventImpl other = (EventImpl) obj;
+        if (this.qname == null) {
+            if (other.qname != null)
+                return false;
+        }
+        else if (!this.qname.equals(other.qname))
+            return false;
+        if (this.value == null) {
+            if (other.value != null)
+                return false;
+        }
+        else if (!this.value.equals(other.value))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "EventImpl [qname=" + this.qname + ", value=" + this.value + "]";
     }
 }

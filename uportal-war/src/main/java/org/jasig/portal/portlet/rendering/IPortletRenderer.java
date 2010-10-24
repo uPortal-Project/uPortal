@@ -22,6 +22,7 @@ package org.jasig.portal.portlet.rendering;
 import java.io.PrintWriter;
 import java.io.Writer;
 
+import javax.portlet.Event;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
@@ -106,6 +107,15 @@ public interface IPortletRenderer {
      * @param httpServletResponse The portal's response (nothing will be written to the response)
      */
     public long doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+    
+    /**
+     * Executes an event in a portlet, handles all the request and response setup and teardown
+     * 
+     * @param portletWindowId Portlet to target with the action
+     * @param httpServletRequest The portal's request
+     * @param httpServletResponse The portal's response (nothing will be written to the response)
+     */
+    public long doEvent(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Event event);
     
     /**
      * Executes a render in a portlet, handles all the request and response setup and teardown

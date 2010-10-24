@@ -20,6 +20,7 @@
 package org.jasig.portal.layout.immutable;
 
 import java.util.Enumeration;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLEventReader;
@@ -82,6 +83,11 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
     public void saveUserLayout() throws PortalException {}
+    
+    @Override
+    public Set<String> getAllSubscribedChannels() {
+        return man.getAllSubscribedChannels();
+    }
 
     public IUserLayoutNodeDescription getNode(String nodeId) throws PortalException {
         return man.getNode(nodeId);

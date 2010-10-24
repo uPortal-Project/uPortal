@@ -20,6 +20,7 @@
 package org.jasig.portal.layout;
 
 import java.util.Enumeration;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -75,6 +76,9 @@ public interface IUserLayoutManager {
      */
     public void setUserLayout(IUserLayout userLayout) throws PortalException;
 
+    /**
+     * @return An XMLEventReader for the user's layout structure
+     */
     public XMLEventReader getUserLayoutReader();
 
     /**
@@ -96,7 +100,11 @@ public interface IUserLayoutManager {
      * @exception PortalException if an error occurs
      */
     public void saveUserLayout() throws PortalException;
-
+    
+    /**
+     * @return The set of all channels the user is subscribed to
+     */
+    public Set<String> getAllSubscribedChannels();
 
     /**
      * Obtain a description of a node (channel or a folder) in a given user layout.

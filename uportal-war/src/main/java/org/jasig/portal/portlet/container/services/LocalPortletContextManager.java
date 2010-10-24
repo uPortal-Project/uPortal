@@ -18,9 +18,7 @@
  */
 package org.jasig.portal.portlet.container.services;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,14 +45,8 @@ import org.apache.pluto.container.driver.PortletRegistryService;
 import org.apache.pluto.container.impl.PortletAppDescriptorServiceImpl;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.apache.pluto.container.util.ClasspathScanner;
-import org.apache.pluto.container.util.StringManager;
-import org.apache.pluto.driver.container.ApplicationIdResolver;
-import org.apache.pluto.driver.container.Configuration;
 import org.apache.pluto.driver.container.DriverPortletConfigImpl;
 import org.apache.pluto.driver.container.DriverPortletContextImpl;
-import org.apache.pluto.driver.container.PortletContextManager;
-import org.apache.pluto.driver.container.PortletDescriptorRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,42 +56,26 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class LocalPortletContextManager implements PortletRegistryService, PortletContextService {
-    
+
     /** Web deployment descriptor location. */
     private static final String WEB_XML = "/WEB-INF/web.xml";
 
     /** Portlet deployment descriptor location. */
     private static final String PORTLET_XML = "/WEB-INF/portlet.xml";
 
-    /** Exception Messages. */
-    private static final StringManager EXCEPTIONS = StringManager.getManager(
-            PortletDescriptorRegistry.class.getPackage().getName());
-
-	/**
-     * Logger Instance
+    protected final Log logger = LogFactory.getLog(this.getClass());
+    
+    /**
+     * The PortletContext cache map: key is servlet context, and value is the
+     * associated portlet context.
      */
-    protected static final Log logger = LogFactory.getLog(PortletContextManager.class);
+    private Map<String, DriverPortletContext> portletContexts = new HashMap<String, DriverPortletContext>();
 
     /**
      * The PortletContext cache map: key is servlet context, and value is the
      * associated portlet context.
      */
-    private Map<String,DriverPortletContext> portletContexts = new HashMap<String,DriverPortletContext>();
-
-    /**
-     * List of application id resolvers. *
-     */
-    private static final List<ApplicationIdResolver> APP_ID_RESOLVERS = new ArrayList<ApplicationIdResolver>();
-
-
-    // Private Member Variables ------------------------------------------------
-
-    /**
-     * The PortletContext cache map: key is servlet context, and value is the
-     * associated portlet context.
-     */
-    private final Map<String,DriverPortletConfig> portletConfigs = new HashMap<String,DriverPortletConfig>();
-
+    private final Map<String, DriverPortletConfig> portletConfigs = new HashMap<String, DriverPortletConfig>();
 
     /**
      * The registered listeners that should be notified upon
@@ -111,8 +87,8 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      * The classloader for the portal, key is portletWindow and value is the classloader.
      * TODO this looks like a horrible memory leak
      */
-    private final Map<String,ClassLoader> classLoaders = new HashMap<String,ClassLoader>();
-    
+    private final Map<String, ClassLoader> classLoaders = new HashMap<String, ClassLoader>();
+
     /**
      * Cache of descriptors.  WeakHashMap is used so that
      * once the context is destroyed (kinda), the cache is eliminated.
@@ -121,30 +97,22 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      * config requirement in the servlet xml? Hmm. . .
      */
     private final Map<ServletContext, PortletApplicationDefinition> portletAppDefinitionCache = new WeakHashMap<ServletContext, PortletApplicationDefinition>();
-    
-    private RequestDispatcherService requestDispatcherService;
-    private PortletAppDescriptorService portletAppDescriptorService = new PortletAppDescriptorServiceImpl();
 
-    /**
-	 * @param requestDispatcherService the requestDispatcherService to set
-	 */
+    private PortletAppDescriptorService portletAppDescriptorService = new PortletAppDescriptorServiceImpl();
+    private RequestDispatcherService requestDispatcherService;
+
+
     @Autowired
-	public void setRequestDispatcherService(
-			RequestDispatcherService requestDispatcherService) {
-		this.requestDispatcherService = requestDispatcherService;
-	}
-    
+    public void setRequestDispatcherService(RequestDispatcherService requestDispatcherService) {
+        this.requestDispatcherService = requestDispatcherService;
+    }
+
+
     public void setPortletAppDescriptorService(PortletAppDescriptorService portletAppDescriptorService) {
         this.portletAppDescriptorService = portletAppDescriptorService;
     }
 
     // Public Methods ----------------------------------------------------------
-
-    
-
-
-
-
 
     /**
      * Retrieves the PortletContext associated with the given ServletContext.
@@ -154,50 +122,48 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      * @return the InternalPortletContext associated with the ServletContext.
      * @throws PortletContainerException
      */
-	public String register(ServletConfig config) throws PortletContainerException {
-	    ServletContext servletContext = config.getServletContext();
-	    String contextPath = getContextPath(servletContext);
-        String applicationName = contextPath.substring(1);
-        if (!portletContexts.containsKey(applicationName)) {
+    @Override
+    public String register(ServletConfig config) throws PortletContainerException {
+        ServletContext servletContext = config.getServletContext();
+        String contextPath = servletContext.getContextPath();
+        if (!portletContexts.containsKey(contextPath)) {
 
-            PortletApplicationDefinition portletApp = this.getPortletAppDD(servletContext, applicationName, contextPath);
+            PortletApplicationDefinition portletApp = this
+                    .getPortletAppDD(servletContext, contextPath, contextPath);
 
-            DriverPortletContext portletContext = new DriverPortletContextImpl(servletContext, portletApp, requestDispatcherService);
+            DriverPortletContext portletContext = new DriverPortletContextImpl(servletContext, portletApp,
+                    requestDispatcherService);
 
-            portletContexts.put(applicationName, portletContext);
+            portletContexts.put(contextPath, portletContext);
 
             fireRegistered(portletContext);
 
             if (logger.isInfoEnabled()) {
-                logger.info("Registered portlet application for context '/" + applicationName + "'");
+                logger.info("Registered portlet application for context '" + contextPath + "'");
 
-                logger.info("Registering "+portletApp.getPortlets().size()+" portlets for context /"+portletContext.getApplicationName());
+                logger.info("Registering " + portletApp.getPortlets().size() + " portlets for context "
+                        + portletContext.getApplicationName());
             }
 
             classLoaders.put(portletApp.getName(), Thread.currentThread().getContextClassLoader());
-            for (PortletDefinition portlet: portletApp.getPortlets()) {
+            for (PortletDefinition portlet : portletApp.getPortlets()) {
                 String appName = portletContext.getApplicationName();
                 if (appName == null) {
                     throw new PortletContainerException("Portlet application name should not be null.");
                 }
-                portletConfigs.put(
-                    portletContext.getApplicationName() + "/" + portlet.getPortletName(),
-                    new DriverPortletConfigImpl(portletContext, portlet)
-                );
-            }
-        } else {
-             if (logger.isInfoEnabled()) {
-                logger.info("Portlet application for context '/" + applicationName + "' already registered.");
+                portletConfigs.put(portletContext.getApplicationName() + "/" + portlet.getPortletName(),
+                        new DriverPortletConfigImpl(portletContext, portlet));
             }
         }
-        return applicationName;
+        else {
+            if (logger.isInfoEnabled()) {
+                logger.info("Portlet application for context '" + contextPath + "' already registered.");
+            }
+        }
+        return contextPath;
     }
 
-    
-
-	/**
-     * @see org.apache.pluto.container.driver.PortletContextService#unregister(org.apache.pluto.container.driver.DriverPortletContext)
-     */
+    @Override
     public void unregister(DriverPortletContext context) {
         portletContexts.remove(context.getApplicationName());
         classLoaders.remove(context.getApplicationName());
@@ -211,100 +177,80 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
         fireRemoved(context);
     }
 
-    /**
-     * @see org.apache.pluto.container.driver.PortletRegistryService#getRegisteredPortletApplicationNames()
-     */
+    @Override
     public Iterator<String> getRegisteredPortletApplicationNames() {
         return new HashSet<String>(portletContexts.keySet()).iterator();
     }
 
-    /**
-     * @see org.apache.pluto.container.driver.PortletContextService#getPortletContexts()
-     */
+    @Override
     public Iterator<DriverPortletContext> getPortletContexts() {
         return new HashSet<DriverPortletContext>(portletContexts.values()).iterator();
     }
 
-    /**
-     * @see org.apache.pluto.container.driver.PortletContextService#getPortletContext(java.lang.String)
-     */
+    @Override
     public DriverPortletContext getPortletContext(String applicationName) {
         return portletContexts.get(applicationName);
     }
 
-    /**
-     * @see org.apache.pluto.container.driver.PortletContextService#getPortletContext(org.apache.pluto.container.PortletWindow)
-     */
+    @Override
     public DriverPortletContext getPortletContext(PortletWindow portletWindow) throws PortletContainerException {
         return portletContexts.get(portletWindow.getPortletDefinition().getApplication().getName());
     }
 
-
-    /**
-     * @see org.apache.pluto.container.driver.PortletContextService#getPortletConfig(java.lang.String, java.lang.String)
-     */
-    public DriverPortletConfig getPortletConfig(String applicationName, String portletName) throws PortletContainerException {
+    @Override
+    public DriverPortletConfig getPortletConfig(String applicationName, String portletName)
+            throws PortletContainerException {
         DriverPortletConfig ipc = portletConfigs.get(applicationName + "/" + portletName);
         if (ipc != null) {
             return ipc;
         }
-        String msg = "Unable to locate portlet config [applicationName="+applicationName+"]/["+portletName+"].";
+        String msg = "Unable to locate portlet config [applicationName=" + applicationName + "]/[" + portletName + "].";
         logger.warn(msg);
         throw new PortletContainerException(msg);
     }
 
-    /**
-     * @see org.apache.pluto.container.driver.PortletRegistryService#getPortlet(java.lang.String, java.lang.String)
-     */
+    @Override
     public PortletDefinition getPortlet(String applicationName, String portletName) throws PortletContainerException {
         DriverPortletConfig ipc = portletConfigs.get(applicationName + "/" + portletName);
         if (ipc != null) {
             return ipc.getPortletDefinition();
         }
-        String msg = "Unable to retrieve portlet: '"+applicationName+"/"+portletName+"'";
+        String msg = "Unable to retrieve portlet: '" + applicationName + "/" + portletName + "'";
         logger.warn(msg);
         throw new PortletContainerException(msg);
     }
 
-    /**
-     * @see org.apache.pluto.container.driver.PortletRegistryService#getPortletApplication(java.lang.String)
-     */
+    @Override
     public PortletApplicationDefinition getPortletApplication(String applicationName) throws PortletContainerException {
         DriverPortletContext ipc = portletContexts.get(applicationName);
         if (ipc != null) {
             return ipc.getPortletApplicationDefinition();
         }
-        String msg = "Unable to retrieve portlet application: '"+applicationName+"'";
+        String msg = "Unable to retrieve portlet application: '" + applicationName + "'";
         logger.warn(msg);
         throw new PortletContainerException(msg);
     }
 
-    /**
-     * @see org.apache.pluto.container.driver.PortletContextService#getClassLoader(java.lang.String)
-     */
-    public ClassLoader getClassLoader(String applicationName){
-    	return classLoaders.get(applicationName);
+    @Override
+    public ClassLoader getClassLoader(String applicationName) {
+        return classLoaders.get(applicationName);
     }
 
-    /**
-     * @see org.apache.pluto.container.driver.PortletRegistryService#addPortletRegistryListener(org.apache.pluto.container.driver.PortletRegistryListener)
-     */
+    @Override
     public void addPortletRegistryListener(PortletRegistryListener listener) {
         registryListeners.add(listener);
     }
 
-    /**
-     * @see org.apache.pluto.container.driver.PortletRegistryService#removePortletRegistryListener(org.apache.pluto.container.driver.PortletRegistryListener)
-     */
+    @Override
     public void removePortletRegistryListener(PortletRegistryListener listener) {
         registryListeners.remove(listener);
     }
-
+    
     private void fireRegistered(DriverPortletContext context) {
         PortletRegistryEvent event = new PortletRegistryEvent();
         event.setPortletApplication(context.getPortletApplicationDefinition());
 
-        for (PortletRegistryListener l: registryListeners) {
+        for (PortletRegistryListener l : registryListeners) {
             l.portletApplicationRegistered(event);
         }
         logger.info("Portlet Context '/" + context.getApplicationName() + "' registered.");
@@ -314,13 +260,13 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
         PortletRegistryEvent event = new PortletRegistryEvent();
         event.setPortletApplication(context.getPortletApplicationDefinition());
 
-        for (PortletRegistryListener l: registryListeners) {
+        for (PortletRegistryListener l : registryListeners) {
             l.portletApplicationRemoved(event);
         }
 
         logger.info("Portlet Context '/" + context.getApplicationName() + "' removed.");
     }
-    
+
     /**
      * Retrieve the Portlet Application Deployment Descriptor for the given
      * servlet context.  Create it if it does not allready exist.
@@ -330,7 +276,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      * @throws PortletContainerException if the descriptor can not be found or parsed
      */
     public PortletApplicationDefinition getPortletAppDD(ServletContext servletContext, String name, String contextPath)
-    throws PortletContainerException {
+            throws PortletContainerException {
         PortletApplicationDefinition portletApp = this.portletAppDefinitionCache.get(servletContext);
         if (portletApp == null) {
             portletApp = createDefinition(servletContext, name, contextPath);
@@ -338,7 +284,6 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
         }
         return portletApp;
     }
-
 
     // Private Methods ---------------------------------------------------------
 
@@ -350,137 +295,25 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      * @throws PortletContainerException
      */
     private PortletApplicationDefinition createDefinition(ServletContext servletContext, String name, String contextPath)
-    throws PortletContainerException {
+            throws PortletContainerException {
         PortletApplicationDefinition portletApp = null;
         try {
             InputStream paIn = servletContext.getResourceAsStream(PORTLET_XML);
             InputStream webIn = servletContext.getResourceAsStream(WEB_XML);
             if (paIn == null) {
-                throw new PortletContainerException("Cannot find '" + PORTLET_XML +
-                    "'. Are you sure it is in the deployed package?");
+                throw new PortletContainerException("Cannot find '" + PORTLET_XML
+                        + "'. Are you sure it is in the deployed package?");
             }
             if (webIn == null) {
-                throw new PortletContainerException("Cannot find '" + WEB_XML +
-                    "'. Are you sure it is in the deployed package?");
+                throw new PortletContainerException("Cannot find '" + WEB_XML
+                        + "'. Are you sure it is in the deployed package?");
             }
             portletApp = this.portletAppDescriptorService.read(name, contextPath, paIn);
             this.portletAppDescriptorService.mergeWebDescriptor(portletApp, webIn);
-        } catch (Exception ex) {
-            throw new PortletContainerException(EXCEPTIONS.getString(
-                    "error.context.descriptor.load",
-                    new String[] { servletContext.getServletContextName() }),
-                    ex);
+        }
+        catch (Exception ex) {
+            throw new PortletContainerException("Exception loading portlet descriptor for: " + servletContext.getServletContextName(), ex);
         }
         return portletApp;
     }
-
-//
-// Utility
-
-    /**
-     * Retrieve the servlet context of the portlet web app.
-     * @param portalContext The servlet context of the portal web app.
-     * @param portletContextPath The context path of the portlet web app.
-     * The given path must be begin with "/" (see {@link ServletContext#getContext(String)}).
-     * @return The servlet context of the portlet web app.
-     * @throws PortletContainerException if the servlet context cannot be
-     * retrieved for the given context path
-     */
-    public static ServletContext getPortletContext(ServletContext portalContext,
-        String portletContextPath) throws PortletContainerException {
-        if (Configuration.preventUnecessaryCrossContext()) {
-            String portalPath = getContextPath(portalContext);
-            if (portalPath.equals(portletContextPath)) {
-                return portalContext;
-            }
-        }
-
-        //Hack to deal with inconsistence in root context handling between
-        //ServletContext.getContextPath and ServletContext.getContext
-        if ("".equals(portletContextPath)) {
-            portletContextPath = "/";
-        }
-        ServletContext portletAppCtx = portalContext.getContext(portletContextPath);
-        if (portletAppCtx == null) {
-            final String msg = "Unable to obtain the servlet context for the " +
-              "portlet app context path [" + portletContextPath + "]. Make " +
-              "sure that the portlet app has been deployed and that cross " +
-              "context support is enabled for the portal app.";
-            throw new PortletContainerException(msg);
-        }
-        return portletAppCtx;
-    }
-
-    /**
-     * Servlet 2.5 ServletContext.getContextPath() method.
-     */
-    private static Method contextPathGetter;
-
-    static {
-        try {
-            contextPathGetter = ServletContext.class.getMethod("getContextPath", (Class[])null);
-        }
-        catch (NoSuchMethodException e) {
-            logger.warn("Servlet 2.4 or below detected.  Unable to find getContextPath on ServletContext.");
-        }
-    }
-
-    protected static String getContextPath(ServletContext context) {
-        String contextPath = null;
-        if (contextPathGetter != null) {
-            try {
-                contextPath = (String) contextPathGetter.invoke(context, (Object[])null);
-            } catch (Exception e) {
-                logger.warn("Unable to directly retrieve context path from ServletContext. Computing. . . ");
-            }
-        }
-
-        if (contextPath == null) {
-            contextPath = computeContextPath(context);
-        }
-
-        return contextPath;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    protected static String computeContextPath(ServletContext context) {
-        if (APP_ID_RESOLVERS.size() < 1) {
-            List<Class> classes = null;
-            try {
-                classes = ClasspathScanner.findConfiguredImplementations(ApplicationIdResolver.class);
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to find any ApplicationIdResolvers");
-            }
-            for (Class c : classes) {
-                try {
-                    APP_ID_RESOLVERS.add((ApplicationIdResolver)c.newInstance());
-                } catch (Exception e) {
-                    logger.warn("Unable to instantiate ApplicationIdResolver for class " + c.getName());
-                }
-            }
-            if (logger.isInfoEnabled()) {
-                logger.info("Found " + APP_ID_RESOLVERS.size() + " application id resolvers.");
-            }
-        }
-
-        String path = null;
-        int authority = Integer.MAX_VALUE;
-
-        for (ApplicationIdResolver resolver : APP_ID_RESOLVERS) {
-            if (resolver.getAuthority() < authority || path == null) {
-                authority = resolver.getAuthority();
-                String temp = resolver.resolveApplicationId(context);
-                if (temp != null) {
-                    path = temp;
-                }
-            }
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Resolved application id '" + path + "' with authority " + authority);
-        }
-        return path;
-    }
-
 }

@@ -35,7 +35,18 @@
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
     </bean>
-
+    
+    <bean id="portletContainer" class="org.apache.pluto.container.impl.PortletContainerImpl" destroy-method="destroy" init-method="init">
+        <constructor-arg value="#{servletContext.contextPath + '-PlutoPortletContainer'}" />
+        <constructor-arg>
+            <!-- TODO this setup will never let the portal webapp restart without leaking memory -->
+            <bean class="org.apache.pluto.container.driver.PlutoServices">
+                <constructor-arg ref="portalDriverServices" />
+            </bean>
+        </constructor-arg>
+         
+    </bean>
+    
     <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
         <property name="windowStates">
             <set value-type="javax.portlet.WindowState">
@@ -81,6 +92,11 @@
             </list>
     	</property>
     </bean>
+    
+    <!-- Portlet Container Services from Pluto -->
+    <bean id="portletInvokerService" class="org.apache.pluto.driver.container.DefaultPortletInvokerService" autowire="constructor" />
+    <bean id="namespaceMapper" class="org.apache.pluto.driver.container.DefaultNamespaceMapper"/>
+    <bean id="requestDispatcherService" class="org.apache.pluto.container.impl.RequestDispatcherServiceImpl" />
     
     <!--  <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager" /> -->
     <!--  

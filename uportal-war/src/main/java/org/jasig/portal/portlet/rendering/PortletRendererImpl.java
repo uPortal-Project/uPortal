@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import javax.portlet.Event;
 import javax.portlet.PortletException;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletSession;
@@ -172,7 +173,36 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         return System.currentTimeMillis() - start;
     }
-
+    
+    @Override
+    public long doEvent(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse, Event event) {
+        
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+        
+        httpServletRequest = this.setupPortletRequest(httpServletRequest);
+        
+        //Execute the action, 
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Executing portlet event for window '" + portletWindow + "'");
+        }
+        
+        final long start = System.currentTimeMillis();
+        try {
+            this.portletContainer.doEvent(portletWindow, httpServletRequest, httpServletResponse, event);
+        }
+        catch (PortletException pe) {
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing event.", portletWindow, pe);
+        }
+        catch (PortletContainerException pce) {
+            throw new PortletDispatchException("The portlet container threw an exception while executing event on portlet window '" + portletWindow + "'.", portletWindow, pce);
+        }
+        catch (IOException ioe) {
+            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing event.", portletWindow, ioe);
+        }
+        
+        return System.currentTimeMillis() - start;
+    }
     @Override
     public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);

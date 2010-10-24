@@ -34,6 +34,7 @@ import org.apache.pluto.container.PortletRequestContextService;
 import org.apache.pluto.container.PortletResourceRequestContext;
 import org.apache.pluto.container.PortletResourceResponseContext;
 import org.apache.pluto.container.PortletWindow;
+import org.apache.pluto.container.driver.PortletContextService;
 import org.jasig.portal.portlet.container.PortletActionResponseContextImpl;
 import org.jasig.portal.portlet.container.PortletEventResponseContextImpl;
 import org.jasig.portal.portlet.container.PortletRenderResponseContextImpl;
@@ -57,6 +58,12 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
     private IPortletWindowRegistry portletWindowRegistry;
     private IRequestPropertiesManager requestPropertiesManager;
     private IPortalUrlProvider portalUrlProvider;
+    private PortletContextService portletContextService;
+
+    @Autowired
+    public void setPortletContextService(PortletContextService portletContextService) {
+        this.portletContextService = portletContextService;
+    }
 
     @Autowired
 	public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
@@ -95,7 +102,7 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
 			HttpServletResponse containerResponse, PortletWindow window) {
 	    
 	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
-        return new PortletActionResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, this.portalUrlProvider);
+        return new PortletActionResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, this.portalUrlProvider, this.portletContextService);
 	}
 
 	/* (non-Javadoc)
@@ -120,7 +127,7 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
 			HttpServletResponse containerResponse, PortletWindow window) {
 		
 	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
-        return new PortletEventResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, this.portalUrlProvider);
+        return new PortletEventResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, this.portalUrlProvider, this.portletContextService);
 	}
 
 	/* (non-Javadoc)

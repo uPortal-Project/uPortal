@@ -21,9 +21,16 @@ package org.jasig.portal.portlet.rendering;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -43,9 +50,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.container.EventCoordinationService;
-import org.apache.pluto.container.PortletContainer;
-import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
@@ -61,6 +65,7 @@ import org.jasig.portal.portlet.registry.NotAPortletException;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.threading.TrackingThreadLocal;
+import org.jasig.portal.utils.web.PortalWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
@@ -87,7 +92,7 @@ import org.springframework.web.util.WebUtils;
  * @version $Revision$
  */
 @Service("portletExecutionManager")
-public class PortletExecutionManager implements EventCoordinationService, ApplicationEventPublisherAware, IPortletExecutionManager {
+public class PortletExecutionManager implements ApplicationEventPublisherAware, IPortletExecutionManager {
     private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
     
     protected static final String SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP = PortletExecutionManager.class.getName() + ".PORTLET_FAILURE_CAUSE_MAP";
@@ -106,7 +111,13 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     private IPortletRenderer portletRenderer;
     private IUserInstanceManager userInstanceManager;
     private EntityManagerFactory entityManagerFactory;
+    private IPortletEventCoordinationService eventCoordinationService;
     
+    @Autowired
+    public void setEventCoordinationService(IPortletEventCoordinationService eventCoordinationService) {
+        this.eventCoordinationService = eventCoordinationService;
+    }
+
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
@@ -175,10 +186,6 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         final PortletActionExecutionWorker portletActionExecutionWorker = new PortletActionExecutionWorker(this.portletThreadPool, portletWindowId, request, response);
         portletActionExecutionWorker.submit();
         
-        /*
-         * TODO an action will include generated event handling, need to make sure we don't timeout portlets whos actions have completed
-         * but are waiting on event handlers to complete
-         */
         try {
 			final Long actualExecutionTime = portletActionExecutionWorker.get(timeout);
 			 //TODO publish portlet action event
@@ -188,6 +195,116 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
 	    	Map<IPortletWindowId, Exception> portletFailureMap = safeRetrieveErrorMapFromSession(session);
 			portletFailureMap.put(portletWindowId, e);
 		}
+		
+		final Queue<Event> queuedEvents = this.eventCoordinationService.getQueuedEvents(request);
+		final List<Event> events = new LinkedList<Event>();
+		this.drainTo(queuedEvents, events);
+        this.doPortletEvents(events, request, response);
+    }
+    
+    public <E> void drainTo(Queue<E> queue, Collection<E> dest) {
+        while (!queue.isEmpty()) {
+            final E e = queue.poll();
+            if (e == null) {
+                break;
+            }
+            dest.add(e);
+        }
+    }
+    
+    public void doPortletEvents(List<Event> events, HttpServletRequest request, HttpServletResponse response) {
+        final PortletEventQueue eventQueue = new PortletEventQueue();
+        
+        final Map<IPortletWindowId, PortletEventExecutionWorker> eventWorkers = new LinkedHashMap<IPortletWindowId, PortletEventExecutionWorker>();
+        this.eventCoordinationService.resolveQueueEvents(eventQueue, events, request);
+
+        /*
+         * TODO limit the number of iterations we'll take to do event processing
+         */
+        while (true) {
+            //Create and submit an event worker for each window with a queued event
+            for (final IPortletWindowId eventWindowId : eventQueue) {
+                if (eventWorkers.containsKey(eventWindowId)) {
+                    /* 
+                     * PLT.15.2.5 says that event processing per window must be serialized, if there
+                     * is already a working in the map for the window ID skip it for now.
+                     */
+                    continue;
+                }
+                
+                final Event event = eventQueue.pollEvent(eventWindowId);
+                
+                if (event != null) {
+                    final PortletEventExecutionWorker portletEventExecutionWorker = new PortletEventExecutionWorker(portletThreadPool, eventWindowId, request, response, event);
+                    eventWorkers.put(eventWindowId, portletEventExecutionWorker);
+                    portletEventExecutionWorker.submit();
+                }
+            }
+            
+            //If no event workers exist we're done with event processing!
+            if (eventWorkers.isEmpty()) {
+                return;
+            }
+            
+            //See if any of the events have completed
+            int completedEventWorkers = 0;
+            final Set<Entry<IPortletWindowId, PortletEventExecutionWorker>> entrySet = eventWorkers.entrySet();
+            for (final Iterator<Entry<IPortletWindowId, PortletEventExecutionWorker>> eventWorkerEntryItr = entrySet.iterator(); eventWorkerEntryItr.hasNext();) {
+                final Entry<IPortletWindowId, PortletEventExecutionWorker> eventWorkerEntry = eventWorkerEntryItr.next();
+                
+                final PortletEventExecutionWorker eventWorker = eventWorkerEntry.getValue();
+                final Future<Long> future = eventWorker.getFuture();
+                if (future.isDone()) {
+                    final IPortletWindowId portletWindowId = eventWorkerEntry.getKey();
+                    //TODO return number of new queued events, use to break the loop earlier
+                    waitForEventWorker(request, eventQueue, eventWorker, portletWindowId);
+                    
+                    eventWorkerEntryItr.remove();
+                    completedEventWorkers++;
+                }
+            }
+            
+            /*
+             * If no event workers have completed without waiting wait for the first one and then loop again
+             * Not waiting for all events since each event may spawn more events and we want to start them
+             * processing as soon as possible
+             */
+            if (completedEventWorkers == 0) {
+                final Iterator<Entry<IPortletWindowId, PortletEventExecutionWorker>> eventWorkerEntryItr = entrySet.iterator();
+                final Entry<IPortletWindowId, PortletEventExecutionWorker> eventWorkerEntry = eventWorkerEntryItr.next();
+                eventWorkerEntryItr.remove();
+                
+                final IPortletWindowId portletWindowId = eventWorkerEntry.getKey();
+                final PortletEventExecutionWorker eventWorker = eventWorkerEntry.getValue();
+                waitForEventWorker(request, eventQueue, eventWorker, portletWindowId);
+            }
+        }
+    }
+
+    protected void waitForEventWorker(
+            HttpServletRequest request, PortletEventQueue eventQueue, 
+            PortletEventExecutionWorker eventWorker, IPortletWindowId portletWindowId) {
+
+        final int timeout = getPortletRenderTimeout(portletWindowId, request);
+        
+        try {
+            //This should never actually wait since the future says it was done
+            final Long actualExecutionTime = eventWorker.get(timeout);
+             //TODO publish portlet event event
+        }
+        catch (Exception e) {
+            // put the exception into the error map for the session
+            //TODO event error handling?
+            HttpSession session = request.getSession();
+            Map<IPortletWindowId, Exception> portletFailureMap = safeRetrieveErrorMapFromSession(session);
+            portletFailureMap.put(portletWindowId, e);
+        }
+        
+        //Get any additional events that the event that just completed may have generated and add them to the queuedEvents structure
+        final Queue<Event> queuedEvents = this.eventCoordinationService.getQueuedEvents(request);
+        final List<Event> events = new LinkedList<Event>();
+        this.drainTo(queuedEvents, events);
+        this.eventCoordinationService.resolveQueueEvents(eventQueue, events, request);
     }
     
     /* (non-Javadoc)
@@ -471,38 +588,6 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         return tracker;
     }
     
-    @Override
-    public void processEvents(PortletContainer container, PortletWindow portletWindow, HttpServletRequest request, HttpServletResponse response, List<Event> events) {
-        throw new UnsupportedOperationException("Events are not supported yet");
-        /*
-         * Note: that processEvents can be re-entrant.
-         * 
-         * If the result of a portlet handling an event generates additional events then processEvents
-         * is called immediately by the container. This could potentially result in a large tree of
-         * threads being used as each thread calling processEvents has to wait for all child events
-         * to complete.
-         * 
-         * when an event handling thread reenters processEvents the event handling should be marked as
-         * 'done'
-         * 
-         * perhaps only the very first processEvents call should wait for child events. It can store a
-         * request attribute (ConcurrentLinkedQueue?) that tracks all of the Future objects for the event calls. Then it can wait
-         * for all of those Futures to complete and handle the timeouts for them. The Callable will need
-         * to be stored as well so start/end execution times can be tracked for timeout handling.
-         */
-        
-        /*
-         *  create portlet event map: Map<Portlet, List<Event>>
-         *  iterate over events
-         *      get list of all portlets registered for event
-         *          build portlet event map data
-         *            
-         *  iterate over portlet event map        
-         *      for each event list create thread that fires doEvent once per event
-         * 
-         */
-    }
-    
     /**
      * create and submit the rendering job to the thread pool
      */
@@ -528,15 +613,22 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         return portletRenderExecutionWorker;
     }
 
+    /**
+     * Returns a request attribute scoped Map of portlets that are rendering for the current request.
+     */
     @SuppressWarnings("unchecked")
     protected Map<IPortletWindowId, PortletRenderExecutionWorker> getPortletRenderingMap(HttpServletRequest request) {
-        Map<IPortletWindowId, PortletRenderExecutionWorker> portletRenderingMap = (Map<IPortletWindowId, PortletRenderExecutionWorker>)request.getAttribute(PORTLET_RENDERING_MAP);
-        if (portletRenderingMap == null) {
-            portletRenderingMap = new ConcurrentHashMap<IPortletWindowId, PortletRenderExecutionWorker>();
-            request.setAttribute(PORTLET_RENDERING_MAP, portletRenderingMap);
+        synchronized (PortalWebUtils.getRequestAttributeMutex(request)) {
+            Map<IPortletWindowId, PortletRenderExecutionWorker> portletRenderingMap = (Map<IPortletWindowId, PortletRenderExecutionWorker>)request.getAttribute(PORTLET_RENDERING_MAP);
+            if (portletRenderingMap == null) {
+                portletRenderingMap = new ConcurrentHashMap<IPortletWindowId, PortletRenderExecutionWorker>();
+                request.setAttribute(PORTLET_RENDERING_MAP, portletRenderingMap);
+            }
+            return portletRenderingMap;
         }
-        return portletRenderingMap;
     }
+    
+    //TODO move workers into their own package
     
     /**
      * Base Callable impl for portlet execution dispatching. Tracks the target, request, response objects as well as
@@ -710,7 +802,7 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
          */
         public final Future<V> getFuture() {
             if (this.future == null) {
-                throw new IllegalStateException("submit() must be called before cancel(boolean) can be called");
+                throw new IllegalStateException("submit() must be called before getFuture() can be called");
             }
             
             return this.future;
@@ -775,6 +867,25 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
         }
     }
     
+    private class PortletEventExecutionWorker extends PortletExecutionWorker<Long> {
+        private final Event event;
+        
+        public PortletEventExecutionWorker(
+                ExecutorService executorService, IPortletWindowId portletWindowId, 
+                HttpServletRequest request, HttpServletResponse response,
+                Event event) {
+            
+            super(executorService, portletWindowId, request, response);
+            
+            this.event = event;
+        }
+
+        @Override
+        protected Long callInternal() throws Exception {
+            return portletRenderer.doEvent(portletWindowId, request, response, event);
+        }
+    }
+    
     private class PortletRenderExecutionWorker extends PortletExecutionWorker<PortletRenderResult> {
         private String output = null;
         
@@ -816,7 +927,6 @@ public class PortletExecutionManager implements EventCoordinationService, Applic
     }
     
     private class PortletFailureExecutionWorker extends PortletRenderExecutionWorker {
-    	
 		private final Exception cause;
 		private String errorOutput;
     	

@@ -524,5 +524,13 @@
     <cache name="org.jasig.portal.layout.StructureStylesheetDescriptor"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- 
+     | Caches resolution of events that are supported by the portlet deployment 
+     | - 1 x portlet deployment x portlet event
+     +-->
+    <cache name="org.jasig.portal.portlet.rendering.SupportedEventCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
 </ehcache>

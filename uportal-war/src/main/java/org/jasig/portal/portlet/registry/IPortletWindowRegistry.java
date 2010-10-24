@@ -19,6 +19,8 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.container.PortletWindow;
@@ -45,7 +47,6 @@ public interface IPortletWindowRegistry {
      * @throws IllegalArgumentException if request or portletWindowId are null.
      */
     public IPortletWindow getPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId);
-    
     
     /**
      * Get an existing portlet window for the channel window instance id and entity id. If no window exists for the
@@ -186,4 +187,13 @@ public interface IPortletWindowRegistry {
      * @return The parent portlet entity for the window, null if no window exists for the id. 
      */
     public IPortletEntity getParentPortletEntity(HttpServletRequest request, IPortletWindowId portletWindowId);
+    
+    /**
+     * Get all portlet window objects for this portlet entity.
+     * 
+     * @param request The request related to the window objects
+     * @param portletEntityId The portlet entity that is a parent of all the windows to be returned
+     * @return The set of windows that have been created from the specified entity
+     */
+    public Set<IPortletWindow> getAllPortletWindows(HttpServletRequest request, IPortletEntityId portletEntityId);
 }

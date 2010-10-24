@@ -35,6 +35,8 @@ import javax.xml.stream.FactoryConfigurationError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.EventProvider;
+import org.apache.pluto.container.PortletContainerException;
+import org.apache.pluto.container.driver.PortletContextService;
 import org.apache.pluto.container.om.portlet.EventDefinition;
 import org.apache.pluto.container.om.portlet.EventDefinitionReference;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
@@ -48,13 +50,24 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 public class EventProviderImpl implements EventProvider {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private IPortletWindow portletWindow;
+    private final IPortletWindow portletWindow;
+    private final ClassLoader portletClassLoader;
 
-    public EventProviderImpl(IPortletWindow portletWindow) {
+    public EventProviderImpl(IPortletWindow portletWindow, PortletContextService portletContextService) {
         this.portletWindow = portletWindow;
+        
+        final PortletDefinition portletDefinition = portletWindow.getPortletDefinition();
+        final PortletApplicationDefinition application = portletDefinition.getApplication();
+        final String portletApplicationName = application.getName();
+        try {
+            this.portletClassLoader = portletContextService.getClassLoader(portletApplicationName);
+        }
+        catch (PortletContainerException e) {
+            throw new IllegalStateException("Failed to find ClassLoader for portlet applicaiton: " + portletApplicationName, e);
+        }
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public Event createEvent(QName qname, Serializable value) throws IllegalArgumentException {
         if (this.isDeclaredAsPublishingEvent(qname)) {
             if (value != null && !this.isValueInstanceOfDefinedClass(qname, value)) {
@@ -73,7 +86,7 @@ public class EventProviderImpl implements EventProvider {
                 final Writer out = new StringWriter();
                 final Class clazz = value.getClass();
                 try {
-                    currentThread.setContextClassLoader(this.getClass().getClassLoader());
+                    currentThread.setContextClassLoader(this.portletClassLoader);
                     final JAXBContext jc = JAXBContext.newInstance(clazz);
                     final Marshaller marshaller = jc.createMarshaller();
                     final JAXBElement<Serializable> element = new JAXBElement<Serializable>(qname, clazz, value);
@@ -86,10 +99,11 @@ public class EventProviderImpl implements EventProvider {
             }
             catch (JAXBException e) {
                 // maybe there is no valid jaxb binding
-                // TODO wsrp:eventHandlingFailed
+                // TODO throw exception?
                 logger.error("Event handling failed", e);
             }
             catch (FactoryConfigurationError e) {
+                // TODO throw exception?
                 logger.warn(e.getMessage(), e);
             }
         }
@@ -100,17 +114,19 @@ public class EventProviderImpl implements EventProvider {
         final PortletDefinition portletDescriptor = this.portletWindow.getPortletDefinition();
         final List<? extends EventDefinitionReference> events = portletDescriptor.getSupportedPublishingEvents();
         
-        if (events != null) {
-            final PortletApplicationDefinition application = portletDescriptor.getApplication();
-            final String defaultNamespace = application.getDefaultNamespace();
-            for (final EventDefinitionReference ref : events) {
-                final QName name = ref.getQualifiedName(defaultNamespace);
-                if (name == null) {
-                    continue;
-                }
-                if (qname.equals(name)) {
-                    return true;
-                }
+        if (events == null) {
+            return false;
+        }
+        
+        final PortletApplicationDefinition application = portletDescriptor.getApplication();
+        final String defaultNamespace = application.getDefaultNamespace();
+        for (final EventDefinitionReference ref : events) {
+            final QName name = ref.getQualifiedName(defaultNamespace);
+            if (name == null) {
+                continue;
+            }
+            if (qname.equals(name)) {
+                return true;
             }
         }
         return false;
@@ -120,25 +136,28 @@ public class EventProviderImpl implements EventProvider {
         final PortletDefinition portletDefinition = this.portletWindow.getPortletDefinition();
         final PortletApplicationDefinition app = portletDefinition.getApplication();
         final List<? extends EventDefinition> events = app.getEventDefinitions();
-        if (events != null) {
-            final String defaultNamespace = app.getDefaultNamespace();
-            
-            for (final EventDefinition eventDefinition : events) {
-                if (eventDefinition.getQName() != null) {
-                    if (eventDefinition.getQName().equals(qname)) {
-                        final Class<? extends Serializable> valueClass = value.getClass();
-                        return valueClass.getName().equals(eventDefinition.getValueType());
-                    }
+        if (events == null) {
+            return true;
+        }
+        
+        final String defaultNamespace = app.getDefaultNamespace();
+        
+        for (final EventDefinition eventDefinition : events) {
+            if (eventDefinition.getQName() != null) {
+                if (eventDefinition.getQName().equals(qname)) {
+                    final Class<? extends Serializable> valueClass = value.getClass();
+                    return valueClass.getName().equals(eventDefinition.getValueType());
                 }
-                else {
-                    final QName tmp = new QName(defaultNamespace, eventDefinition.getName());
-                    if (tmp.equals(qname)) {
-                        final Class<? extends Serializable> valueClass = value.getClass();
-                        return valueClass.getName().equals(eventDefinition.getValueType());
-                    }
+            }
+            else {
+                final QName tmp = new QName(defaultNamespace, eventDefinition.getName());
+                if (tmp.equals(qname)) {
+                    final Class<? extends Serializable> valueClass = value.getClass();
+                    return valueClass.getName().equals(eventDefinition.getValueType());
                 }
             }
         }
+
         // event not declared
         return true;
     }

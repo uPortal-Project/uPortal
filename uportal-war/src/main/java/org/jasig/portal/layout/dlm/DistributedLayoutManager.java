@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -377,6 +378,27 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                     this.owner.getID() + ", profileId=" + 
                     this.profile.getProfileId() ,e);
         }
+    }
+    
+
+    @Override
+    public Set<String> getAllSubscribedChannels() {
+        final Document uld = this.getUserLayoutDOM();
+
+        if (uld == null) {
+            throw new PortalException("UserLayout has not been initialized for " + owner.getAttribute(IPerson.USERNAME));
+        }
+        
+        final NodeList channelElements = uld.getElementsByTagName(CHANNEL);
+        
+        final Set<String> allSubscribedChannels = new LinkedHashSet<String>(channelElements.getLength());
+        for (int nodeIndex = 0; nodeIndex < channelElements.getLength(); nodeIndex++) {
+            final Element channelElement = (Element)channelElements.item(nodeIndex);
+            final String subscribeId = channelElement.getAttribute("ID");
+            allSubscribedChannels.add(subscribeId);
+        }
+        
+        return allSubscribedChannels;
     }
 
     public IUserLayoutNodeDescription getNode( String nodeId )
