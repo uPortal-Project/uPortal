@@ -15,6 +15,16 @@
 
     <name>CAS Server</name>
     <description>Overlay on the CAS Server WAR.</description>
+    
+    <dependencyManagement>
+    	<dependencies>
+    		<dependency>
+    			<groupId>org.slf4j</groupId>
+    			<artifactId>slf4j-api</artifactId>
+    			<version>1.5.8</version>
+    		</dependency>
+    	</dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
