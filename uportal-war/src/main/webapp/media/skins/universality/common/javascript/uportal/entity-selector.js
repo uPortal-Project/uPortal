@@ -108,7 +108,7 @@ var up = up || {};
         entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
         
         // Check component selection mode.
-        if (that.selectionMode === "single") {
+        if (that.selectMultiple === false) {
             // Remove all <li> elements that exist within selection basket.
             if (selectionBasket.children().length > 0) {
                 selectionBasket.children().remove();
@@ -250,7 +250,7 @@ var up = up || {};
         
         // Initialize & cache.
         that = fluid.initView("up.entityselection", container, options);
-        that.selectionMode = that.options.selectionMode;
+        that.selectMultiple = that.options.selectMultiple;
         selectionBasket = that.locate("selectionBasket");
         searchForm = that.locate("searchForm");
         
@@ -290,7 +290,7 @@ var up = up || {};
         initialFocusedEntity: 'group:local.0',
         selectButtonMessage: '',
         deselectButtonMessage: '',
-        selectionMode: 'multiple',
+        selectMultiple: true,
         selectors: {
             selectionBasket: "#selectionBasket",
             breadcrumbs: "#entityBrowsingBreadcrumbs",

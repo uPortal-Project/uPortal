@@ -25,7 +25,7 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
 <c:set var="n"><portlet:namespace/></c:set>
-<c:set var="selectionMode">multiple</c:set>
+<c:set var="selectionMode">${ selectMultiple }</c:set>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
 
 <!--
@@ -70,7 +70,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <div class="titlebar">
                     <h4 class="title selections">
                         <c:choose>
-                            <c:when test="${selectionMode == 'single'}">
+                            <c:when test="${!selectMultiple}">
                                 <spring:message code="your.selection"/>
                             </c:when>
                             <c:otherwise>
@@ -195,7 +195,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 		        initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',
 		        selectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="select"/></spring:escapeBody>',
 		        deselectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="deselect"/></spring:escapeBody>',
-                selectionMode: "${selectionMode}",
+                selectMultiple: ${selectMultiple},
 		        selectors: {
 		            selectionBasket: "#${n}selectionBasket ul",
 		            breadcrumbs: "#${n}entityBrowsingBreadcrumbs",
