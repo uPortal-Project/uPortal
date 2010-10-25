@@ -52,6 +52,8 @@ import org.springframework.web.portlet.mvc.AbstractController;
  * @version $Id$
  */
 public class PortletErrorController extends AbstractController {
+    public static final String REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID = PortletExecutionManager.class.getName() + ".CURRENT_FAILED_PORTLET_WINDOW_ID";
+    public static final String REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE = PortletExecutionManager.class.getName() + ".CURRENT_EXCEPTION_CAUSE";
 
 	protected static final String ERROR_OWNER = "UP_ERROR_CHAN";
 	protected static final String ERROR_ACTIVITY = "VIEW";
@@ -102,7 +104,7 @@ public class PortletErrorController extends AbstractController {
 		HttpServletRequest httpRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
 		IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpRequest);
 		if(canSeeErrorDetails(userInstance)) {
-			IPortletWindowId currentFailedPortletWindowId = (IPortletWindowId) request.getAttribute(PortletExecutionManager.REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID);
+			IPortletWindowId currentFailedPortletWindowId = (IPortletWindowId) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID);
 			model.put("portletWindowId", currentFailedPortletWindowId);
 			
 			final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(httpRequest, currentFailedPortletWindowId);
@@ -110,7 +112,7 @@ public class PortletErrorController extends AbstractController {
             final IChannelDefinition channelDefinition = parentPortletDefinition.getChannelDefinition();
             model.put("channelDefinition", channelDefinition);
             
-			Exception cause = (Exception) request.getAttribute(PortletExecutionManager.REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE);
+			Exception cause = (Exception) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE);
 			model.put("exception", cause);
 			StringWriter stackTraceWriter = new StringWriter();
 			cause.printStackTrace(new PrintWriter(stackTraceWriter));

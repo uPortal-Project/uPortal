@@ -136,7 +136,7 @@ public interface IPortletRenderer {
      * @param writer
      * @return
      */
-    public PortletResourceResult doServeResource(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+    public long doServeResource(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
     /**
      * Resets a portlet's window data to the defaults and clears all portlet scoped session data
      * 

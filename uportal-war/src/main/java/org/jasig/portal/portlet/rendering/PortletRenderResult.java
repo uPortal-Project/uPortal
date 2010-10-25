@@ -41,7 +41,7 @@ public class PortletRenderResult {
     public String getTitle() {
         return title;
     }
-    
+
     /**
      * @return The time it took the portlet to render.
      */

@@ -23,7 +23,7 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.PortletHttpServletRequestWrapper;
+import org.jasig.portal.utils.web.AttributeScopingHttpServletRequestWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
@@ -34,7 +34,7 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
 
 /**
  * Provides access to the original portal and portlet requests using the {@link PortalHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST}
- * and {@link PortletHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST}
+ * and {@link AttributeScopingHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST}
  * 
  * @author Eric Dalquist
  * @version $Revision$

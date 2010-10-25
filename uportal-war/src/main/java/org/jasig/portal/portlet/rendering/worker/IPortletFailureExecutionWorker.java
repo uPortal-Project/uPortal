@@ -16,27 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.rendering;
+
+package org.jasig.portal.portlet.rendering.worker;
+
 
 /**
- * @author Nicholas Blair
- * @version $Id$
+ * @author Eric Dalquist
+ * @version $Revision$
  */
-public class PortletResourceResult {
-
-	private final long renderTime;
-
-	/**
-	 * @param renderTime
-	 * @param contentType
-	 */
-	public PortletResourceResult(long renderTime) {
-		this.renderTime = renderTime;
-	}
-	/**
-	 * @return the renderTime
-	 */
-	public long getRenderTime() {
-		return renderTime;
-	}
+public interface IPortletFailureExecutionWorker extends IPortletRenderExecutionWorker {
+    
 }

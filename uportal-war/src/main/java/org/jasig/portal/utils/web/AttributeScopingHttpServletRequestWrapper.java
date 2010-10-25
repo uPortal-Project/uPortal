@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.portlet;
+package org.jasig.portal.utils.web;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -30,17 +30,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.url.AbstractHttpServletRequestWrapper;
 
 /**
- * Scopes set request attributes to just this request. If the attribute name starts with
- * {@link AbstractHttpServletRequestWrapper#PORTAL_ATTRIBUTE_PREFIX} the {@link #getAttribute(String)}
- * call is passed on to the parent request.
+ * Scopes set request attributes to just this request.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
+public class AttributeScopingHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
     private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
     
-    public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest) {
+    public AttributeScopingHttpServletRequestWrapper(HttpServletRequest httpServletRequest) {
         super(httpServletRequest);
     }
 

@@ -41,7 +41,6 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.PortletDispatchException;
-import org.jasig.portal.portlet.PortletHttpServletRequestWrapper;
 import org.jasig.portal.portlet.PortletHttpServletResponseWrapper;
 import org.jasig.portal.portlet.PortletLoadFailureException;
 import org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController;
@@ -58,6 +57,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortletPortalUrl;
+import org.jasig.portal.utils.web.AttributeScopingHttpServletRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -245,7 +245,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 	 * @see org.jasig.portal.portlet.rendering.IPortletRenderer#doServeResource(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.Writer)
 	 */
 	@Override
-	public PortletResourceResult doServeResource(
+	public long doServeResource(
 			IPortletWindowId portletWindowId,
 			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse) {
@@ -267,7 +267,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         catch (IOException ioe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, ioe);
         }
-		return new PortletResourceResult(System.currentTimeMillis() - start);
+		return System.currentTimeMillis() - start;
 	}
 	
 	@Override
@@ -308,7 +308,7 @@ public class PortletRendererImpl implements IPortletRenderer {
     }
 
     protected HttpServletRequest setupPortletRequest(HttpServletRequest httpServletRequest) {
-        final PortletHttpServletRequestWrapper portletHttpServletRequestWrapper = new PortletHttpServletRequestWrapper(httpServletRequest);
+        final AttributeScopingHttpServletRequestWrapper portletHttpServletRequestWrapper = new AttributeScopingHttpServletRequestWrapper(httpServletRequest);
         portletHttpServletRequestWrapper.setAttribute(PortletDelegationLocator.PORTLET_DELECATION_LOCATOR_ATTR, this.portletDelegationLocator);
         
         return portletHttpServletRequestWrapper;
