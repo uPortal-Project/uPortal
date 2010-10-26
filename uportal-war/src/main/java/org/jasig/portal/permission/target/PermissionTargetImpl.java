@@ -2,6 +2,7 @@ package org.jasig.portal.permission.target;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -95,13 +96,10 @@ public class PermissionTargetImpl implements IPermissionTarget, Comparable<IPerm
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     public int compareTo(IPermissionTarget target) {
-        
-        int result = this.name.compareTo(target.getKey());
-        if (result == 0) {
-            return result;
-        }
-        
-        return this.key.compareTo(target.getKey());
+        return new CompareToBuilder()
+            .append(this.name, target.getName())
+            .append(this.key, target.getKey())
+            .toComparison();
     }
 
 }
