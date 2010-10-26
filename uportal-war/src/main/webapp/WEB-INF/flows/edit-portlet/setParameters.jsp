@@ -115,7 +115,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </c:if>
 
     <!-- Step Loop -->
-    <c:forEach items="${ cpd.params.steps }" var="step">
+    <c:forEach items="${ cpd.params.steps }" var="step"  varStatus="status">
     
       <!-- Portlet Section -->
       <div class="portlet-section" role="region">
@@ -233,7 +233,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <c:forEach items="${ step.arbitraryParameters }" var="arbitraryParam">
             <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
             
-              <div class="parameter-options-section" prefix="${ prefix }">
+              <div class="parameter-options-section" prefix="${ prefix }" dialog="${status.index}-params-${prefix}">
                 <table class="portlet-table">
                   <thead>
                     <tr>
@@ -254,24 +254,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                           <td>
                               <form:checkbox path="${overrideParamPath}" value="true"/>
                           </td>
-                          <td><a class="delete-parameter-link" href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
+                          <td><a class="delete-parameter-link" href="javascript:;"><spring:message code="remove"/></a></td>
                         </tr>
                       </c:if>
                     </c:forEach>
                   </tbody>
                 </table> 
-                <p><a class="add-parameter-link" href="javascript:;"><spring:message code="setParameters.addButton"/></a></p>
-                <div style="display:none">
-                  <div class="parameter-adding-dialog jqueryui" title="<spring:message code="setParameters.addButton"/>">
-                  </div>
-                </div>
+                <p><a class="add-parameter-link" href="javascript:;"><spring:message code="add.parameter"/></a></p>
               </div>
             </c:forEach>
           </c:forEach> <!-- End Other Parameters Loop -->
         
           <!-- Other Preferences -->
           <c:if test="${ step.arbitraryPreferences }">
-            <div class="preference-options-section">
+            <div class="preference-options-section" dialog="${ status.index }-prefs">
               <table class="portlet-table">
                 <thead>
                   <tr>
@@ -291,24 +287,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             <c:forEach items="${ channel.portletPreferences[name].value }" var="val">
                              <div>
                                  <input name="portletPreferences['${name}'].value" value="${ val }" />
-                                 <a class="delete-parameter-value-link" href="javascript:;">Remove</a>
+                                 <a class="delete-parameter-value-link" href="javascript:;"><spring:message code="remove"/></a>
                                 </div>
                             </c:forEach>
-                            <a class="add-parameter-value-link" href="javascript:;" paramName="${name}">Add value</a>
+                            <a class="add-parameter-value-link" href="javascript:;" paramName="${name}"><spring:message code="add.value"/></a>
                         </td>
                         <td>
                             <form:checkbox path="${overrideParamPath}" value="true"/>
                         </td>
-                        <td><a class="delete-parameter-link" href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
+                        <td><a class="delete-parameter-link" href="javascript:;"><spring:message code="remove"/></a></td>
                       </tr>
                   </c:forEach>
                 </tbody>
               </table> 
-              <p><a class="add-parameter-link" href="javascript:;"><spring:message code="setParameters.addButton"/></a></p>
-              <div style="display:none">
-                <div class="parameter-adding-dialog jqueryui" title="<spring:message code="setParameters.addButton"/>">
-                </div>
-              </div>
+              <p><a class="add-parameter-link" href="javascript:;"><spring:message code="add.preference"/></a></p>
             </div>
           </c:if> <!-- End Other Preferences -->
         
@@ -333,37 +325,63 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
     
     </form:form> <!-- End Form -->
+
+    <div style="display:none">
+        <c:forEach items="${ cpd.params.steps }" var="step" varStatus="status">
+            <c:forEach items="${ step.arbitraryParameters }" var="arbitraryParam">
+                <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
+                    <div id="${n}addParameterDialog-${status.index}-params-${prefix}" class="parameter-adding-dialog jqueryui" title="<spring:message code="add.parameter"/>">
+                        <form action="javascript:;">
+                            <p><spring:message code="parameter.name"/>: <input name="name"/></p>
+                            <input type="submit" value="<spring:message code="add"/>"/>
+                        </form>
+                    </div>
+                </c:forEach>
+            </c:forEach>
+            <c:if test="${ step.arbitraryPreferences }">
+                <div id="${n}addParameterDialog-${status.index}-prefs" class="parameter-adding-dialog jqueryui" title="<spring:message code="add.preference"/>">
+                    <form action="javascript:;">
+                        <p><spring:message code="preference.name"/>: <input name="name"/></p>
+                        <input type="submit" value="<spring:message code="add"/>"/>
+                    </form>
+                </div>
+            </c:if>
+        </c:forEach>
+    </div>
     
   </div> <!-- end: portlet-content -->
   
 </div> <!-- end: portlet -->
 
-<script src="media/org/jasig/portal/flows/edit-portlet/edit-parameters.min.js" language="JavaScript" type="text/javascript"></script>
-    
 <script type="text/javascript">
 	up.jQuery(function() {
 			var $ = up.jQuery;
 			  $(document).ready(function(){
 				  $("div.parameter-options-section").each(function(){
-					  var dialog = $(this).find(".parameter-adding-dialog");
-					  uportal.portletParametersEditor(this, {
-					        preferenceNamePrefix: $(this).attr("prefix"),
-					        preferenceBindName: 'parameters',
-					        preferenceOverrideBindName: 'parameterOverrides',
-					        dialog: dialog,
-					        selectors: {
-					        }
+					  up.ParameterEditor(this, {
+					        parameterNamePrefix: $(this).attr("prefix"),
+					        parameterBindName: 'parameters',
+					        auxiliaryBindName: 'parameterOverrides',
+                            useAuxiliaryCheckbox: true,
+					        dialog: $("#${n}addParameterDialog-" + $(this).attr("dialog")),
+                            multivalued: false,
+                            messages: {
+                              remove: '<spring:message code="remove"/>',
+                              addValue: '<spring:message code="add.value"/>'
+                            }
 					      }
 					  );
 			      });
                   $("div.preference-options-section").each(function(){
-                      var dialog = $(this).find(".parameter-adding-dialog");
-                      uportal.portletParametersEditor(this, {
-                            preferenceBindName: 'portletPreferences',
-                            preferenceOverrideBindName: 'portletPreferencesOverrides',
-                            dialog: dialog,
+                      up.ParameterEditor(this, {
+                            parameterBindName: 'portletPreferences',
+                            auxiliaryBindName: 'portletPreferencesOverrides',
+                            useAuxiliaryCheckbox: true,
+                            dialog: $("#${n}addParameterDialog-" + $(this).attr("dialog")),
                             multivalued: true,
-                            selectors: {
+                            messages: {
+                              remove: '<spring:message code="remove"/>',
+                              addValue: '<spring:message code="add.value"/>'
                             }
                           }
                       );
