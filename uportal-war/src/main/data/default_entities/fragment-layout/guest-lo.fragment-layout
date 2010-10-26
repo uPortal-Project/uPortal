@@ -25,6 +25,7 @@
     <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
       <channel unremovable="" immutable="" hidden="" fname="header"/>
       <channel unremovable="" immutable="" hidden="" fname="fragment-admin-exit"/>
+      <channel unremovable="" immutable="" hidden="" fname="user-locales-selector"/>
     </header>
     <tab unremovable="N" immutable="N" hidden="N" name="Welcome">
       <column unremovable="N" immutable="N" hidden="N" name="Column">

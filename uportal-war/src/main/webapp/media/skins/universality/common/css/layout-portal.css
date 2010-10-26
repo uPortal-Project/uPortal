@@ -857,3 +857,7 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Drop Marker */
 .fl-reorderer-sidebar-dropMarker {display: inline-block; border: 1px solid #d26600 !important; background-color: #F68922 !important; margin: 0 2px !important; filter:alpha(opacity=80) !important;
     opacity:.8 !important; padding: .31em 1em !important; *display: inline !important; *height: 10px; *padding: 0em .13em !important; *zoom: 1 !important;}
+    
+#guestLocaleSelection .portlet .portlet-form { background-color: #fff; border: none; width: auto; }
+#guestLocaleSelection .portlet .portlet-form li { margin:0 0 5px 30px; }
+#guestLocaleSelection .portlet .portlet-form form .buttons { margin: 0 0 0 50px; }

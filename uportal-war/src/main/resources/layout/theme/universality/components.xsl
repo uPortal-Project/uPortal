@@ -289,6 +289,9 @@
         </xsl:choose>
       </div>
     </div>
+    <div id="guestLocaleSelection">
+        <xsl:copy-of select="//channel[@fname = 'user-locales-selector']"/>
+    </div>
   </xsl:template>
   <!-- ===================================== -->
   
