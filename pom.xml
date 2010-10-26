@@ -107,7 +107,7 @@
         <FunctionalTestsPortlet.version>1.0.3-SNAPSHOT</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.0-RC2</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
-        <NewsReaderPortlet.version>3.0.0-M1</NewsReaderPortlet.version>
+        <NewsReaderPortlet.version>3.0.0-M1-SNAPSHOT</NewsReaderPortlet.version>
         <SimpleContentPortlet.version>0.1</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.0.6</WeatherPortlet.version>
         <WebProxyPortlet.version>1.1.1</WebProxyPortlet.version>
