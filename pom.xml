@@ -94,11 +94,11 @@
         <project-site-path>/uportal/${project.version}</project-site-path>
         
         <!-- The JDBC Driver used by uPortal -->
-        <jdbc.groupId>hsqldb</jdbc.groupId>
-        <jdbc.artifactId>hsqldb</jdbc.artifactId>
-        <jdbc.version>${hsqldb.version}</jdbc.version>
+        <jdbc.groupId>postgresql</jdbc.groupId>
+        <jdbc.artifactId>postgresql</jdbc.artifactId>
+        <jdbc.version>8.4-701.jdbc4</jdbc.version>
     
-    
+
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.10</BookmarksPortlet.version>
         <cas-server.version>3.4.3</cas-server.version>
@@ -107,7 +107,7 @@
         <FunctionalTestsPortlet.version>1.0.3-SNAPSHOT</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.0-RC2</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
-        <NewsReaderPortlet.version>2.0.0-RC1</NewsReaderPortlet.version>
+        <NewsReaderPortlet.version>3.0.0-M1-SNAPSHOT</NewsReaderPortlet.version>
         <SimpleContentPortlet.version>0.1</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.0.6</WeatherPortlet.version>
         <WebProxyPortlet.version>1.1.1</WebProxyPortlet.version>
@@ -503,6 +503,11 @@
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
                 <version>${easymock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode</groupId>
+                <artifactId>google-api-translate-java</artifactId>
+                <version>0.92</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
