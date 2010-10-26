@@ -50,6 +50,14 @@ public boolean test(IPerson person) {
             {
                 int integerAtt = Integer.parseInt((String)atts[i]);
                 result = test( integerAtt );
+                
+                // Assume that we should perform OR matching on multi-valued 
+                // attributes.  If the current attribute matches, return true
+                // for the person.
+                if (result) {
+                    return true;
+                }
+                
             }
             catch (NumberFormatException nfe) {  } // result stays false
         }

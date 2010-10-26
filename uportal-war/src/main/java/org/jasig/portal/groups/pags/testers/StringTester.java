@@ -23,7 +23,7 @@ import org.jasig.portal.security.IPerson;
 
 /**
  * Abstract class tests a possibly multi-valued attribute against
- * a test value.  
+ * a test value.
  * <p>
  * @author Dan Ellentuck
  * @version $Revision$
@@ -44,6 +44,13 @@ public boolean test(IPerson person) {
         { 
             String att = (String)atts[i];
             result = test(att); 
+            
+            // Assume that we should perform OR matching on multi-valued 
+            // attributes.  If the current attribute matches, return true
+            // for the person.
+            if (result) {
+                return true;
+            }
         }
     }
     return result;
