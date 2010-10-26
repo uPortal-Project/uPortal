@@ -29,7 +29,7 @@
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    	<h2 class="title" role="heading">Reset User Layout</h2>
+    	<h2 class="title" role="heading"><spring:message code="reset.user.layout"/></h2>
     </div>
     
     <!-- Portlet Content -->
@@ -41,7 +41,7 @@
             <h3 class="title">Success</h3>
         </div>
         <div class="content">
-            <p>Layout for <c:out value="${person.attributes['username']}"/> has been reset.</p>
+            <p>Layout for <c:out value="${person.name}"/> has been reset.</p>
         </div>
     </div>
     

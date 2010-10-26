@@ -40,6 +40,10 @@
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="swap"/>
 </portlet:renderURL>
+<portlet:renderURL var="resetLayoutUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="resetLayout"/>
+</portlet:renderURL>
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
@@ -54,6 +58,7 @@
                 <li><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
                 <c:if test="${ canDelete }"><li><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li></c:if>
                 <c:if test="${ canImpersonate }"><li><a class="button" href="${ impersonateUrl }"><spring:message code="impersonate"/></a></li></c:if>
+                <li><a class="button" href="${ resetLayoutUrl }"><spring:message code="reset.user.layout"/></a></li>
             </ul>
         </div>
     </div> <!-- end: portlet-titlebar -->

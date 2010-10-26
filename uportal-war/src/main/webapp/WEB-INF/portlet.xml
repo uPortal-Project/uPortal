@@ -486,25 +486,6 @@
     </portlet>
     
     <portlet>
-        <portlet-name>ResetUserLayout</portlet-name>
-        <display-name xml:lang="en">Reset User Layout</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/ResetUserLayout-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Reset User Layout</title>
-        </portlet-info>
-    </portlet>
-        
-    <portlet>
         <portlet-name>Sitemap</portlet-name>
         <display-name xml:lang="en">Sitemap</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
@@ -544,7 +525,7 @@
     
     <portlet>
         <portlet-name>SelfEditAccount</portlet-name>
-        <display-name xml:lang="en">Update Password</display-name>
+        <display-name xml:lang="en">Edit My Portal Account</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
