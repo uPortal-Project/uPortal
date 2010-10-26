@@ -19,18 +19,22 @@
 
 package org.jasig.portal.groups.local.searchers;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.RDBMServices;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
+import org.jasig.portal.persondir.ILocalAccountDao;
+import org.jasig.portal.spring.locator.LocalAccountDaoLocator;
+import org.jasig.services.persondir.IPersonAttributes;
 
 /**
  * Searches the portal DB for people.  Used by EntitySearcherImpl
@@ -42,89 +46,39 @@ import org.jasig.portal.groups.local.ITypedEntitySearcher;
 
 public class RDBMPersonSearcher  implements ITypedEntitySearcher{
     private static final Log log = LogFactory.getLog(RDBMPersonSearcher.class);
-  private static final String user_is_search="select USER_NAME from UP_USER where UPPER(USER_NAME)=UPPER(?)";
-  private static final String user_partial_search="select USER_NAME from UP_USER where UPPER(USER_NAME) like UPPER(?)";
-  private static final String person_partial_search="select USER_NAME from UP_PERSON_DIR where (UPPER(FIRST_NAME) like UPPER(?) or UPPER(LAST_NAME) like UPPER(?))";
-  private static final String person_is_search = "select USER_NAME from UP_PERSON_DIR where (UPPER(FIRST_NAME) = UPPER(?) or UPPER(LAST_NAME) = UPPER(?))";
   
-  private Class personDef;
+  private Class<? extends IBasicEntity> personDef;
 
   public RDBMPersonSearcher() {
     personDef = org.jasig.portal.security.IPerson.class;
   }
+  
   public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
-    //System.out.println("searching for channel");
-    EntityIdentifier[] r = new EntityIdentifier[0];
-    ArrayList ar = new ArrayList();
-    Connection conn = null;
-    PreparedStatement ps = null;
-    PreparedStatement ups = null;
-    PreparedStatement uis = null;
-    ResultSet rs = null;
-    ResultSet urs = null;
-    ResultSet uprs = null;
+      
+      log.debug("Searching for a local account matching query string " + query);
+      
+      Map<String, List<Object>> queryMap = new HashMap<String, List<Object>>();
+      queryMap.put("username", Collections.<Object>singletonList(query));
+      queryMap.put("given", Collections.<Object>singletonList(query));
+      queryMap.put("sn", Collections.<Object>singletonList(query));
+      
+      // search the local account store for the given query
+      ILocalAccountDao accountDao = LocalAccountDaoLocator.getLocalAccountDao();      
+      List<IPersonAttributes> people = new ArrayList<IPersonAttributes>();
+      people.addAll(accountDao.getPeopleWithMultivaluedAttributes(queryMap));
 
-        try {
-            conn = RDBMServices.getConnection();
-            uis = conn.prepareStatement(RDBMPersonSearcher.user_is_search);
-            switch(method){
-              case IS:
-                ps = conn.prepareStatement(RDBMPersonSearcher.person_is_search);
-                ups = uis;
-                break;
-              case STARTS_WITH:
-                query = query+"%";
-                ps = conn.prepareStatement(RDBMPersonSearcher.person_partial_search);
-                ups = conn.prepareStatement(RDBMPersonSearcher.user_partial_search);
-                break;
-              case ENDS_WITH:
-                query = "%"+query;
-                ps = conn.prepareStatement(RDBMPersonSearcher.person_partial_search);
-                ups = conn.prepareStatement(RDBMPersonSearcher.user_partial_search);
-                break;
-              case CONTAINS:
-                query = "%"+query+"%";
-                ps = conn.prepareStatement(RDBMPersonSearcher.person_partial_search);
-                ups = conn.prepareStatement(RDBMPersonSearcher.user_partial_search);
-                break;
-              default:
-                throw new GroupsException("Unknown search type");
-            }
-            ps.clearParameters();
-            ps.setString(1,query);
-            ps.setString(2,query);
-            rs = ps.executeQuery();
-            //System.out.println(ps.toString());
-            while (rs.next()){
-              //System.out.println("result");
-              uis.clearParameters();
-              uis.setString(1,rs.getString(1));
-              urs = uis.executeQuery();
-              if(urs.next()){
-                ar.add(new EntityIdentifier(urs.getString(1),personDef));
-              }
-            }
+      // create an array of EntityIdentifiers from the search results
+      EntityIdentifier[] results = new EntityIdentifier[people.size()];
+      for (ListIterator<IPersonAttributes> i = people.listIterator(); i.hasNext();) {
+          IPersonAttributes person = i.next();
+          results[i.previousIndex()] = new EntityIdentifier(person.getName(), this.personDef);
+      }
+      
+      return results;
 
-            ups.clearParameters();
-            ups.setString(1,query);
-            uprs = ups.executeQuery();
-            while (uprs.next()){
-                ar.add(new EntityIdentifier(uprs.getString(1),personDef));
-            }
-        } catch (SQLException e) {
-            throw new GroupsException("RDBMChannelDefSearcher.searchForEntities(): " + ps,e);
-        } finally {
-            if (rs!=null) RDBMServices.closeResultSet(rs);
-            if (urs!=null) RDBMServices.closeResultSet(urs);
-            if (uprs!=null) RDBMServices.closeResultSet(uprs);
-            if (ps!=null) RDBMServices.closeStatement(ps);
-            if (uis!=null) RDBMServices.closeStatement(uis);
-            if (ups!=null) RDBMServices.closeStatement(ups);
-            if (conn!=null) RDBMServices.releaseConnection(conn);
-        }
-      return (EntityIdentifier[]) ar.toArray(r);
   }
-  public Class getType() {
+  
+  public Class<? extends IBasicEntity> getType() {
     return personDef;
   }
 }
