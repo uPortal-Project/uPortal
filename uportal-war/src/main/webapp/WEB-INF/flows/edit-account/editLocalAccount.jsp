@@ -79,13 +79,14 @@
                 <div class="titlebar">
                     <h3 class="title" role="heading"><spring:message code="attributes"/></h3>
                 </div>
-                <div class="content">
+                <div id="${n}userAttributes" class="content">
                 
-                    <table>
+                    <table class="portlet-table">
                         <thead>
                             <tr>
                                 <th><spring:message code="attribute.name"/></th>
                                 <th><spring:message code="attribute.value"/></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,8 +101,12 @@
                                                 <c:forEach var="value" items="${ attribute.value.value }">
                                                     <div>
                                                          <input name="attributes['${attribute.key}'].value" value="${ value }" />
+                                                         <a class="delete-attribute-value-link" href="javascript:;"><spring:message code="remove"/></a>
                                                     </div>
                                                 </c:forEach>
+                                                <a class="add-attribute-value-link" href="javascript:;" paramName="${name}">
+                                                    <spring:message code="add.value"/>
+                                                </a>
                                             </c:when>
                                             <c:otherwise>
                                                 <div>
@@ -110,11 +115,13 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
+                                    <td><a class="delete-attribute-link" href="javascript:;"><spring:message code="remove"/></a></td>
                                 </tr>
                             </c:forEach>
                             
                         </tbody>
                     </table>
+                    <p><a class="add-attribute-link" href="javascript:;"><spring:message code="add.attribute"/></a></p>
 
                 </div>
             </div>
@@ -125,7 +132,7 @@
                     <h3 class="title" role="heading"><spring:message code="password"/></h3>
                 </div>
                 <div class="content">
-                    <table>
+                    <table class="portlet-table">
                         <thead>
                             <tr>
                                 <th><spring:message code="attribute.name"/></th>
@@ -161,7 +168,40 @@
             </div>
 
         </form:form>
-            
         
     </div>
+
+    <div id="${n}parameterForm" style="display:none">
+        <form>
+            <spring:message code="attribute.name"/>: <input name="name"/>
+            <input type="submit" value="<spring:message code="add"/>"/>
+        </form>
+    </div>    
+    
 </div>
+
+<script type="text/javascript">
+    up.jQuery(function() {
+        var $ = up.jQuery;
+        $(document).ready(function(){
+            up.ParameterEditor(
+                $("#${n}userAttributes"), 
+                {
+                    parameterBindName: 'attributes',
+                    multivalued: true,
+                    dialog: $("#${n}parameterForm"),
+                    displayClasses: {
+                        deleteItemLink: "delete-attribute-link",
+                        deleteValueLink: "delete-attribute-value-link",
+                        addItemLink: "add-attribute-link",
+                        addValueLink: "add-attribute-value-link"
+                    },
+                    messages: {
+                        remove: '<spring:message code="remove"/>',
+                        addValue: '<spring:message code="add.value"/>'
+                    }
+                }
+            );
+        });
+    });
+</script>
