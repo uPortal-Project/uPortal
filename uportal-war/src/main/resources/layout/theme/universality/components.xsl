@@ -312,9 +312,9 @@
   <xsl:template name="external.login">  
     <div id="portalCASLogin" class="fl-widget-content">
       <a id="portalCASLoginLink" href="{$EXTERNAL_LOGIN_URL}" title="{upMsg:getMessage('sign.in.via.cas', $USER_LANG)}">
-        <span>Sign In <span class="via-cas">with CAS</span></span>
+        <span><xsl:value-of select="upMsg:getMessage('sign.in', $USER_LANG)"/>&#160;<span class="via-cas"><xsl:value-of select="upMsg:getMessage('with.cas', $USER_LANG)"/></span></span>
       </a>
-      <p>New user? 
+      <p><xsl:value-of select="upMsg:getMessage('new.user.question', $USER_LANG)"/>&#160; 
         <a id="portalCASLoginNewLink" href="{$CAS_NEW_USER_URL}" title="{upMsg:getMessage('create.new.portal.account', $USER_LANG)}">
           <xsl:value-of select="upMsg:getMessage('new.user', $USER_LANG)"/>
         </a>.
@@ -332,7 +332,7 @@
   <xsl:template name="welcome">  
     <xsl:if test="$AUTHENTICATED='true'"> <!-- Welcome only displays if the user is logged in. -->
       <div id="portalWelcome">
-          <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/><span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
+          <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/>&#160;<span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
       </div>
     </xsl:if>
   </xsl:template>
@@ -453,7 +453,7 @@
             </xsl:variable>
             <form method="post" action="{$searchUrl}" id="webSearchForm">
               <input id="webSearchInput" value="" name="query" type="text" />
-              <input id="webSearchSubmit" type="submit" name="submit" value="Search" />
+              <input id="webSearchSubmit" type="submit" name="submit" value="{upMsg:getMessage('search', $USER_LANG)}" />
             </form>
         </div>
       </div>
