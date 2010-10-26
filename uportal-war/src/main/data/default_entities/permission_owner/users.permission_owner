@@ -31,5 +31,17 @@
         <desc>Impersonate users for debugging purposes in uPortal</desc>
         <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
     </activity>
+    <activity>
+        <name>Edit users</name>
+        <fname>EDIT_USER</fname>
+        <desc>Edit local uPortal accounts</desc>
+        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Delete users</name>
+        <fname>DELETE_USER</fname>
+        <desc>Delete local uPortal accounts</desc>
+        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
+    </activity>
   </activities>
 </permission-owner>
