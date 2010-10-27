@@ -144,6 +144,7 @@
         <hibernate-tools.version>3.2.0.ga</hibernate-tools.version>
         <hibernate.version>3.2.6.ga</hibernate.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
+        <jackson.version>1.6.1</jackson.version>
         <javassist.version>3.8.0.GA</javassist.version> 
         <jasypt.version>1.6</jasypt.version>
         <jdom.version>1.0</jdom.version>
@@ -487,6 +488,16 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectjweaver.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
