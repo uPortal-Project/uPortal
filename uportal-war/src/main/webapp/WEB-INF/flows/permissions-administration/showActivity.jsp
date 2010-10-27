@@ -22,13 +22,13 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <c:set var="n"><portlet:namespace/></c:set>
-<portlet:actionURL var="permissionsUrl">
+<portlet:actionURL var="ownersUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="owner"/>
+    <portlet:param name="_eventId" value="owners"/>
 </portlet:actionURL>
-<portlet:actionURL var="ownerUrl">
+<portlet:actionURL var="activitiesUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="permissions"/>
+    <portlet:param name="_eventId" value="activities"/>
 </portlet:actionURL>
 
 <portlet:actionURL var="createUrl">
@@ -70,9 +70,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Titlebar -->
 	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
     	<div class="breadcrumb">
-        	<span class="breadcrumb-1"><a href="${ permissionsUrl }"><spring:message code="categories"/></a></span>
+        	<span class="breadcrumb-1"><a href="${ ownersUrl }"><spring:message code="categories"/></a></span>
             <span class="separator">&gt; </span>
-            <span class="breadcrumb-2"><a href="${ ownerUrl }">${ owner.name }</a></span>
+            <span class="breadcrumb-2"><a href="${ activitiesUrl }">${ owner.name }</a></span>
             <span class="separator">&gt; </span>
             
         </div>
@@ -151,7 +151,7 @@ up.jQuery(function() {
     var getPermissions = function() {
         var rslt;
         $.ajax({
-             url: "<c:url value="/mvc/permissionsList"/>",
+             url: "<c:url value="/mvc/permissionsAssignments"/>",
              async: false,
              cache: false,
              data: { owner: '${ owner.fname }', activity: '${ activity.fname }' },
