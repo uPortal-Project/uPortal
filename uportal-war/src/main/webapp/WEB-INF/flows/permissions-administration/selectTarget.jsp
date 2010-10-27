@@ -25,6 +25,18 @@
 <portlet:actionURL var="formUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
+<portlet:actionURL var="ownersUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="owners"/>
+</portlet:actionURL>
+<portlet:actionURL var="activitiesUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="activities"/>
+</portlet:actionURL>
+<portlet:actionURL var="permissionsUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="permissions"/>
+</portlet:actionURL>
 
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
@@ -43,11 +55,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 <!-- Portlet Titlebar -->
 	<div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
     	<div class="breadcrumb">
-        	<span class="breadcrumb-1"><a href="${ permissionsUrl }"><spring:message code="categories"/></a></span>
+        	<span class="breadcrumb-1"><a href="${ ownersUrl }"><spring:message code="categories"/></a></span>
             <span class="separator">&gt; </span>
-            <span class="breadcrumb-2"><a href="${ ownerUrl }">${ owner.name }</a></span>
+            <span class="breadcrumb-2"><a href="${ activitiesUrl }">${ owner.name }</a></span>
             <span class="separator">&gt; </span>
-            <span class="breadcrumb-3"><a href="?">${ activity.name }</a></span>
+            <span class="breadcrumb-3"><a href="${ permissionsUrl }">${ activity.name }</a></span>
             <span class="separator">&gt; </span>
         </div>
         <h2 class="title" role="heading"><spring:message code="add.assignment.to"/> <span class="name">${ activity.name }</span></h2>
@@ -83,14 +95,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 up.jQuery(function() {
     var $ = up.jQuery;
 
-    var targetOptions = {
-        prePopulate: [],
-        tokenLimit: 1,
-        onResult: function(results) {
-            return results.suggestions;
-        }
-    };
-
     var submitForm = function(){
         var form = this;
         var target = $("#${n}target").val().split(",")[0];
@@ -98,7 +102,20 @@ up.jQuery(function() {
     };
 
     $(document).ready(function(){
-        $("#${n}target").tokenInput("<c:url value="/mvc/permissionsTargetSuggest"/>", targetOptions);
+        $("#${n}target").tokenInput(
+            "<c:url value="/mvc/permissions/${activity.id}/targets.json"/>",
+            {
+                prePopulate: [],
+                tokenLimit: 1,
+                onResult: function(results) {
+                    var targets = [];
+                    $(results.targets).each( function (idx, target) {
+                        targets.push({ id: target.key, name: target.name || target.key });
+                    });
+                    return targets;
+                }
+            } 
+        );
         $("#${n}targetForm").submit(submitForm);
     });
     

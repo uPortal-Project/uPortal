@@ -36,7 +36,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <!-- Portlet -->
 <div class="fl-widget portlet prm-mgr view-listperms" role="section">
-  <form id="${n}listPermissionsForm">
     
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
@@ -46,6 +45,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content" role="main">
+  
+    <form id="${n}permissionLookupForm">
+    <p>
+        Does <input id="${n}principalSuggest" class="target-input multiselect" name="principal"/> have <input id="${n}permissionSuggest" class="target-input multiselect" name="permission"/>?
+        <input type="submit" value="<spring:message code="show.me"/>"/>
+    </p>
+    </form>
+  
   	<!-- Panel list -->
     <div class="fl-col-flex2 panel-list icon-large"> 
     
@@ -92,6 +99,54 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div> <!-- end: panel list -->
 
   </div> <!-- end: portlet-content -->
-  </form>
 
 </div> <!-- end: portlet -->
+
+<script type="text/javascript">
+up.jQuery(function() {
+    var $ = up.jQuery;
+
+    var submitForm = function(){
+        alert("Sorry, I'm not implemented yet! :(");
+        return false;
+    };
+
+    $(document).ready(function(){
+        $("#${n}principalSuggest").tokenInput(
+            "<c:url value="/mvc/permissions/principals.json"/>",
+            {
+                prePopulate: [],
+                tokenLimit: 1,
+                onResult: function(results) {
+                    var principals = [];
+                    $(results.groups).each( function (idx, group) {
+                        principals.push({ id: group.principalString, name: group.name || group.keys });
+                    });
+                    $(results.people).each( function (idx, person) {
+                        principals.push({ id: person.principalString, name: person.name || person.id });
+                    });
+                    return principals;
+                }
+            } 
+        );
+        
+        $("#${n}permissionSuggest").tokenInput(
+            "<c:url value="/mvc/permissions/activities.json"/>",
+            {
+                prePopulate: [],
+                tokenLimit: 1,
+                onResult: function(results) {
+                    var activities = [];
+                    $(results.activities).each( function (idx, activity) {
+                        activities.push({ id: activity.id, name: activity.name || activity.fname });
+                    });
+                    return activities;
+                }
+            } 
+        );
+        $("#${n}permissionLookupForm").submit(submitForm);
+    });
+    
+});
+</script>
+

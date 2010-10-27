@@ -44,15 +44,17 @@ import org.jasig.portal.security.IPermissionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/permissionsList")
+@RequestMapping("/permissionsAssignments")
 public class PermissionsListController extends AbstractPermissionsController {
 
+    private static final String PRINCIPAL_SEPARATOR = "\\.";
+
     protected final Log log = LogFactory.getLog(getClass());
-    
-    private IPermissionStore permissionStore;
     
     private IGroupListHelper groupListHelper;
     
@@ -75,41 +77,32 @@ public class PermissionsListController extends AbstractPermissionsController {
         this.targetProviderRegistry = targetProviderRegistry;
     }
     
-    /*
-     * Public API.
-     */
-
-    public static final String OWNER_PARAMETER = "owner";
-    public static final String PRINCIPAL_PARAMETER = "principal";
-    public static final String ACTIVITY_PARAMETER = "activity";
-    public static final String TARGET_PARAMETER = "target";
-    private static final String PRINCIPAL_SEPARATOR = "\\.";
-
+    private IPermissionStore permissionStore;
+    
     @Autowired
     public void setPermissionStore(IPermissionStore permissionStore) {
         this.permissionStore = permissionStore;
     }
 
-    /*
-     * Protected API.
-     */
-
-    @Override
-    protected ModelAndView invokeSensitive(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView getAssignments(
+            @RequestParam(value = "owner", required = false) String ownerParam,
+            @RequestParam(value = "principal", required = false) String principalParam,
+            @RequestParam(value = "activity", required = false) String activityParam,
+            @RequestParam(value = "target", required = false) String targetParam,
+            HttpServletRequest req, HttpServletResponse response)
+            throws Exception {
         
-        // The user is authorized to see this data;  now gather parameters
-        String ownerParam = req.getParameter(OWNER_PARAMETER);
-        String principalParam = req.getParameter(PRINCIPAL_PARAMETER);
-        String activityParam = req.getParameter(ACTIVITY_PARAMETER);
-        String targetParam = req.getParameter(TARGET_PARAMETER);
-
+        // ensure the current user is authorized to see permission owners
+        // TODO: remove dependency on permission portlet subscription permission
+        if (!this.isAuthorized(req)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return null;
+        }
+        
         IPermission[] rslt = permissionStore.select(ownerParam, principalParam, 
                             activityParam, targetParam, null);
         
-        IPermissionOwner owner = permissionOwnerDao.getOrCreatePermissionOwner(ownerParam);
-        IPermissionTargetProvider provider = null;
-        
-
         return new ModelAndView("jsonView", "permissionsList", marshall(rslt));
 
     }

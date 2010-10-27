@@ -20,10 +20,9 @@
 package org.jasig.portal.security.remoting;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.channel.dao.IChannelDefinitionDao;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;
@@ -32,35 +31,22 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
-public abstract class AbstractPermissionsController {
+public abstract class AbstractPermissionsController implements InitializingBean {
     
     /**
      * Specifying the fName of a channel here pretty much violates the DRY 
      * principal;  perhaps we can think of a better way in the future.
      */
     private static final String PERMISSIONS_ADMIN_PORTLET_FNAME = "permissionsmanager";
-    private static final ModelAndView NOT_AUTHORIZED_RESPONSE = new ModelAndView("jsonView", "ERROR", "Not Authorized");
     
-    private IChannelRegistryStore channelRegistryStore;
-    private IChannelDefinition permissionsAdminChannel;
+    private IChannelRegistryStore channelDao;
+    private int channelId = -1;
     private IPersonManager personManager;
     
-    /*
-     * Public API.
-     */
-
-    public static final String OWNER_PARAMETER = "owner";
-    public static final String PRINCIPAL_PARAMETER = "principal";
-    public static final String ACTIVITY_PARAMETER = "activity";
-    public static final String TARGET_PARAMETER = "target";
-
     @Autowired
-    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-        this.channelRegistryStore = channelRegistryStore;
+    public void setChannelDefinitionDao(IChannelRegistryStore channelDao) {
+        this.channelDao = channelDao;
     }
 
     @Autowired
@@ -72,10 +58,7 @@ public abstract class AbstractPermissionsController {
      * Protected API.
      */
 
-    @RequestMapping(method = RequestMethod.GET)
-    protected final ModelAndView invoke(HttpServletRequest req, HttpServletResponse res) throws Exception {
-        
-        ModelAndView rslt = NOT_AUTHORIZED_RESPONSE;  // default...
+    protected final boolean isAuthorized(HttpServletRequest req) throws Exception {
         
         /*
          * This is sensitive data;  we must verify that the user 
@@ -93,32 +76,19 @@ public abstract class AbstractPermissionsController {
                 // STEP (3):  Does this user have SUBSCRIBE permission for permissionsAdminChannel?
                 IAuthorizationService authServ = AuthorizationImpl.singleton();
                 IAuthorizationPrincipal principal = authServ.newPrincipal((String) person.getAttribute(IPerson.USERNAME), IPerson.class);
-                IChannelDefinition chnl = getAdminChannel();
-                if (authServ.canPrincipalSubscribe(principal, chnl.getId())) {
-
-                    // The user is authorized to perform the requested action...
-                    rslt = invokeSensitive(req, res);
-                    
+                if (authServ.canPrincipalSubscribe(principal, this.channelId)) {
+                    return true;
                 }
 
             }
         }
 
-        return rslt;
+        return false;
 
     }
 
-    protected abstract ModelAndView invokeSensitive(HttpServletRequest req, HttpServletResponse res) throws Exception;
-
-    /*
-     * Private Stuff.
-     */
+    public void afterPropertiesSet() throws Exception {
+        this.channelId = channelDao.getChannelDefinition(PERMISSIONS_ADMIN_PORTLET_FNAME).getId();
+    }
     
-    private final IChannelDefinition getAdminChannel() {
-        if (permissionsAdminChannel == null) {
-            permissionsAdminChannel = channelRegistryStore.getChannelDefinition(PERMISSIONS_ADMIN_PORTLET_FNAME);
-        }
-        return permissionsAdminChannel;
-    }
-
 }

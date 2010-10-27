@@ -190,7 +190,7 @@ up.jQuery(function() {
     var getPermissionsForPrincipal = function() {
         var rslt;
         $.ajax({
-             url: "<c:url value="/mvc/permissionsList"/>",
+             url: "<c:url value="/mvc/permissionAssignments"/>",
              async: false,
              cache: false,
              data: { principal: '1.${ group.key }' },

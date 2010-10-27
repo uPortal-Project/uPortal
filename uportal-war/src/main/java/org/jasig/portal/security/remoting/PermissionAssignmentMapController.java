@@ -45,6 +45,7 @@ import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -66,9 +67,17 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         this.groupListHelper = groupListHelper;
     }
 
-    @Override
-    protected ModelAndView invokeSensitive(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView getOwners(
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        
+        // ensure the current user is authorized to see permission owners
+        // TODO: remove dependency on permission portlet subscription permission
+        if (!this.isAuthorized(request)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return null;
+        }
         
         // get the serialized JSON permissions map from the request
         String json = request.getParameter("permissions");

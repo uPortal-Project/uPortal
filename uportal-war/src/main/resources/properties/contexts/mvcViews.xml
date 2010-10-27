@@ -24,6 +24,8 @@
        xmlns="http://www.springframework.org/schema/beans" 
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean name="json" class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
            
     <bean name="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView"/>
     

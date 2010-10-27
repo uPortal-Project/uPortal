@@ -44,29 +44,35 @@
         <transition on="showActivity" to="showActivity">
             <set name="flowScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activityFname)"></set>
         </transition>
-        <transition on="back" to="listOwners"/>
     </view-state>
     
     <!-- Display the details for a chosen permission activity -->
     <view-state id="showActivity">
-        <transition on="owner" to="listOwners"/>
-        <transition on="permissions" to="listActivities"/>
+        <transition on="activities" to="listActivities"/>
         <transition on="createPermission" to="selectTarget"/>
         <transition on="editPermission" to="edit-permission"/>
     </view-state>
     
+    <!-- Select a new target on which to assign a permission -->
     <view-state id="selectTarget">
+        <transition on="activities" to="listActivities"/>
+        <transition on="permissions" to="showActivity"/>
         <transition on="cancel" to="showActivity"/>
         <transition on="editPermission" to="edit-permission"/>
     </view-state>
 
+    <!-- Edit an existing permission -->
     <subflow-state id="edit-permission" subflow="edit-permission">
         <input name="permissionDefinition" value="permissionAdministrationHelper.getForm(owner, activity, requestParameters.target)"/>
         <transition on="cancel" to="showActivity"/>
         <transition on="done" to="finishPermissionEdit"/>
     </subflow-state>
-
+    
     <!-- End state -->
     <end-state id="finishPermissionEdit" />
+
+    <global-transitions>
+        <transition on="owners" to="listOwners"/>
+    </global-transitions>
 
 </flow>

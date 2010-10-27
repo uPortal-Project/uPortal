@@ -34,5 +34,6 @@
     for this context as it's unique to the DispatcherServlet -->
     <context:component-scan base-package="org.jasig.portal.layout.dlm.remoting"/>
     <context:component-scan base-package="org.jasig.portal.security.remoting"/>
+    <context:component-scan base-package="org.jasig.portal.rest"/>
 
 </beans>

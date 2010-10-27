@@ -24,7 +24,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <portlet:actionURL var="backUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="back"/>
+    <portlet:param name="_eventId" value="owners"/>
 </portlet:actionURL>
 
 <!--

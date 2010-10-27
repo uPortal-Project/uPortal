@@ -33,6 +33,7 @@ import javax.persistence.Table;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.jasig.portal.permission.IPermissionActivity;
@@ -129,6 +130,7 @@ public class PermissionActivityImpl implements IPermissionActivity, Serializable
         this.id = id;
     }
 
+    @JsonIgnore
     public IPermissionOwner getOwner() {
         return owner;
     }
