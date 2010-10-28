@@ -373,10 +373,6 @@
     	</div> <!-- End portalPageBodyInner -->
     </div> <!-- End portalPageBody -->
     
-    <div id="portalDropWarning" class="drop-warning">
-    	<p>The box cannot be placed any higher in this column.</p>
-    </div>
-  
   </xsl:template>
   <!-- ========================================= -->
 

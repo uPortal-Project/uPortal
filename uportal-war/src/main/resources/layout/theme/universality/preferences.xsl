@@ -527,7 +527,7 @@
          </div>
      </xsl:if>
     
-     <div id="portalDropWarning" style="display:none;">
+     <div id="portalDropWarning" class="drop-warning" style="display:none;">
       <p><xsl:value-of select="upMsg:getMessage('portlet.cannot.be.moved.here.locked', $USER_LANG)"/></p>
      </div>
      
