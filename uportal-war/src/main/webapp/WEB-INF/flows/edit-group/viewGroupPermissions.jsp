@@ -174,7 +174,6 @@ up.jQuery(function() {
         $.ajax({
              url: "<c:url value="/api/permissionAssignments"/>",
              async: false,
-             cache: false,
              data: { target: '${ group.key }' },
              dataType: "json",
              error: function(XMLHttpRequest, textStatus, errorThrown) {
