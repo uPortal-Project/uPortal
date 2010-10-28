@@ -35,8 +35,17 @@
     
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main">
-        <div class="portlet-form">
-            <form:form action="${ formUrl }" method="POST" modelAttribute="group">
+        <form:form action="${ formUrl }" method="POST" modelAttribute="group">
+        
+            <!-- Portlet Messages -->
+            <spring:hasBindErrors name="group">
+                <div class="portlet-msg-error portlet-msg error" role="alert">
+                    <form:errors path="*" element="div"/>
+                </div> <!-- end: portlet-msg -->
+            </spring:hasBindErrors>
+            
+            <div class="portlet-form">
+            
                 <table class="purpose-layout" summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
                     <thead>
                         <tr>
@@ -66,7 +75,8 @@
                     </c:choose>
                     <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
                 </div>
-            </form:form>
-        </div>
+            </div>
+
+        </form:form>
     </div>
 </div>

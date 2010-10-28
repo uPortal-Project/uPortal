@@ -61,6 +61,8 @@
         <property name="channelRegistryStore" ref="channelRegistryStore"/>
     </bean>
     
+    <bean id="groupValidator" class="org.jasig.portal.portlets.groupadmin.GroupFormValidator"/>
+    
     <bean id="portalConversionService"
         class="org.jasig.portal.utils.web.flow.PortalConversionService"/>
     
