@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.layout.dlm.remoting;
+package org.jasig.portal.rest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -54,8 +55,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @version $Revision$ $Date$
  */
 @Controller
-@RequestMapping("/tabList")
-public class RetrieveSubscribableTabsController {
+public class SubscribableTabsRESTController {
 
 	@Autowired
 	@Qualifier("userInstanceManager")
@@ -76,8 +76,8 @@ public class RetrieveSubscribableTabsController {
     @Qualifier("dlmConfigurationLoader")
     private ConfigurationLoader configurationLoader;
     
-	@RequestMapping("/tabList")
-	public ModelAndView getSubscriptionList(HttpServletRequest request)  {
+    @RequestMapping(value="/subscribableTabs.json", method = RequestMethod.GET)
+    public ModelAndView getSubscriptionList(HttpServletRequest request)  {
 
 	    Map<String, Object> model = new HashMap<String, Object>();
 	    
@@ -145,7 +145,7 @@ public class RetrieveSubscribableTabsController {
 
         model.put("fragments", jsonFragments);
         	
-		return new ModelAndView("jsonView", model);
+		return new ModelAndView("json", model);
 		
 	}
 	

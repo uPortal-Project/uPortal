@@ -514,7 +514,7 @@ var uportal = uportal || {};
         portalContext: "/uPortal",
         layoutPersistenceUrl: '/uPortal/api/layout',
         channelRegistryUrl: '/uPortal/api/channelList',
-        subscribableTabUrl: '/uPortal/api/tabList',
+        subscribableTabUrl: '/uPortal/api/subscribableTabs.json',
         mediaPath: null,
         currentSkin: null,
         isFragmentMode: false,
