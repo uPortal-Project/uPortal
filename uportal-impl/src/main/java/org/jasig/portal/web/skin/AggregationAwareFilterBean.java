@@ -20,7 +20,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.resource.aggr.om.Included;
 import org.jasig.resource.aggr.util.ResourcesElementsProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Pays attention to the state of skin aggregation and only applies the fitler if it is disabled
@@ -41,7 +40,6 @@ public class AggregationAwareFilterBean implements Filter {
         this.filter = filter;
     }
 
-    @Autowired
     public void setElementsProvider(ResourcesElementsProvider elementsProvider) {
         this.elementsProvider = elementsProvider;
     }

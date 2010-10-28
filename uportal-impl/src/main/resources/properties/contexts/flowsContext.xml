@@ -112,6 +112,7 @@
     
     <!-- bean for toggle-resources-aggregation flow -->
     <bean id="resourcesAggregationHelper" class="org.jasig.portal.web.skin.ResourcesAggregationHelper">
+        <property name="resourcesElementsProvider" ref="resourcesElementsProvider" />
         <property name="portalRenderingPipeline" ref="portalRenderingPipeline"/>
     </bean>
     <!-- bean for cache-manager flow -->

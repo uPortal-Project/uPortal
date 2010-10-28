@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
  * @author Nicholas Blair, npblair@wisc.edu
  *
  */
-@Service
 public class ResourcesAggregationHelper {
     /**
      * Name of {@link System} property used to toggle default/aggregated skin output.
@@ -59,7 +58,7 @@ public class ResourcesAggregationHelper {
         this.portalRenderingPipeline = portalRenderingPipeline;
     }
     
-    @Autowired
+    @Required
     public void setResourcesElementsProvider(ResourcesElementsProvider resourcesElementsProvider) {
         this.resourcesElementsProvider = resourcesElementsProvider;
     }
@@ -79,11 +78,11 @@ public class ResourcesAggregationHelper {
     public void setAggregationEnabled(boolean enabled) {
         if (enabled) {
             this.resourcesElementsProvider.setDefaultIncludedType(Included.AGGREGATED);
-            portalRenderingPipeline.clearSystemCharacterCache();
         }
         else {
             this.resourcesElementsProvider.setDefaultIncludedType(Included.PLAIN);
         }
+        portalRenderingPipeline.clearSystemCharacterCache();
     }
     
     /**
