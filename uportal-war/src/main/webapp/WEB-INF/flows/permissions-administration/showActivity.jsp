@@ -151,7 +151,7 @@ up.jQuery(function() {
     var getPermissions = function() {
         var rslt;
         $.ajax({
-             url: "<c:url value="/mvc/permissionAssignments"/>",
+             url: "<c:url value="/api/permissionAssignments"/>",
              async: false,
              cache: false,
              data: { owner: '${ owner.fname }', activity: '${ activity.fname }' },

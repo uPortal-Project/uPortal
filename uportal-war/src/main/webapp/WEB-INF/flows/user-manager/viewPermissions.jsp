@@ -172,7 +172,7 @@ up.jQuery(function() {
     var getPermissionsForTarget = function() {
         var rslt;
         $.ajax({
-             url: "<c:url value="/mvc/permissionAssignments"/>",
+             url: "<c:url value="/api/permissionAssignments"/>",
              async: false,
              cache: false,
              data: { target: '2.${ person.name }' },
@@ -190,7 +190,7 @@ up.jQuery(function() {
     var getPermissionsForPrincipal = function() {
         var rslt;
         $.ajax({
-             url: "<c:url value="/mvc/permissionAssignments"/>",
+             url: "<c:url value="/api/permissionAssignments"/>",
              async: false,
              cache: false,
              data: { principal: '2.${ person.name }' },

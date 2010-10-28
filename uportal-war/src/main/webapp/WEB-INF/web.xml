@@ -261,7 +261,7 @@
 
     <filter-mapping>
         <filter-name>etagFilter</filter-name>
-        <url-pattern>/mvc/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </filter-mapping>
 
     <servlet>
@@ -393,7 +393,7 @@
 
     <servlet-mapping>
         <servlet-name>MVCDispatcherServlet</servlet-name>
-        <url-pattern>/mvc/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
     <mime-mapping>

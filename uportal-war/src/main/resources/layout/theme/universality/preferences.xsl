@@ -428,7 +428,7 @@
                 "body",
                 {
                     portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
-                    layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
+                    layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
                 }
             );
         });
@@ -540,9 +540,9 @@
               mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
               currentSkin: '<xsl:value-of select="$SKIN"/>',
               subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
-              preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
-              channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList',
-              subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
+              preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+              channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/channelList',
+              subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/tabList',
               isFragmentMode: <xsl:choose><xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>,
               messages: { 
                   confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', USER_LANG)"/>', 
@@ -559,9 +559,9 @@
               mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
               currentSkin: '<xsl:value-of select="$SKIN"/>',
               subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
-              layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/layout',
-              channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/channelList',
-              subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/mvc/tabList',
+              layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+              channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/channelList',
+              subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/tabList',
               messages: { 
                   confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', USER_LANG)"/>', 
                   confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', USER_LANG)"/>' 

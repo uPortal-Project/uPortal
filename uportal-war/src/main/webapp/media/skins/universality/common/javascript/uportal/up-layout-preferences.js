@@ -512,9 +512,9 @@ var uportal = uportal || {};
         tabContext: "header",
         numberOfPortlets: 0,
         portalContext: "/uPortal",
-        layoutPersistenceUrl: '/uPortal/mvc/layout',
-        channelRegistryUrl: '/uPortal/mvc/channelList',
-        subscribableTabUrl: '/uPortal/mvc/tabList',
+        layoutPersistenceUrl: '/uPortal/api/layout',
+        channelRegistryUrl: '/uPortal/api/channelList',
+        subscribableTabUrl: '/uPortal/api/tabList',
         mediaPath: null,
         currentSkin: null,
         isFragmentMode: false,
@@ -587,7 +587,7 @@ var uportal = uportal || {};
     // defaults
     fluid.defaults("up.FocusedLayoutPreferences", {
         portalContext: "/uPortal",
-        layoutPersistenceUrl: '/uPortal/mvc/layout',
+        layoutPersistenceUrl: '/uPortal/api/layout',
         messages: {}
     });
     

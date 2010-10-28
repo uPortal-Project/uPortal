@@ -101,7 +101,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </div>
           <div class="fl-col flc-pager-top view-pager">
             <ul id="pager-top" class="fl-pager-ui">
-              <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="listChannels.pagerPrevious"/></a></li>
+              <li class="flc-pager-previous"><a href="javascript:;">&lt; <spring:message code="listChannels.pagerPrevious"/></a></li>
               <li>
                 <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
                   <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
@@ -109,7 +109,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
                 </ul>
               </li>
-              <li class="flc-pager-next"><a href="#"><spring:message code="listChannels.pagerNext"/> &gt;</a></li>
+              <li class="flc-pager-next"><a href="javascript:;"><spring:message code="listChannels.pagerNext"/> &gt;</a></li>
               <li>
                 <span class="flc-pager-summary"><spring:message code="listChannels.pagerPerPagePrefix"/></span>
                 <span> <select class="pager-page-size flc-pager-page-size">
@@ -323,7 +323,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 { 
                     portletRegistry: { 
                         type: "up.PortletRegistry",
-                        options: { portletListUrl: "<c:url value="/mvc/channelList"/>" } 
+                        options: { portletListUrl: "<c:url value="/api/channelList"/>" } 
                     },
                     categoryListView: {
                         type: "up.PortletAdministrationCategoryListView"

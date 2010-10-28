@@ -113,7 +113,7 @@ up.jQuery(function() {
 
     $(document).ready(function(){
         $("#${n}principalSuggest").tokenInput(
-            "<c:url value="/mvc/permissions/principals.json"/>",
+            "<c:url value="/api/permissions/principals.json"/>",
             {
                 prePopulate: [],
                 tokenLimit: 1,
@@ -131,7 +131,7 @@ up.jQuery(function() {
         );
         
         $("#${n}permissionSuggest").tokenInput(
-            "<c:url value="/mvc/permissions/activities.json"/>",
+            "<c:url value="/api/permissions/activities.json"/>",
             {
                 prePopulate: [],
                 tokenLimit: 1,

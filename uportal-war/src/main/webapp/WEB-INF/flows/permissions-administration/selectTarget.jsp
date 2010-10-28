@@ -103,7 +103,7 @@ up.jQuery(function() {
 
     $(document).ready(function(){
         $("#${n}target").tokenInput(
-            "<c:url value="/mvc/permissions/${activity.id}/targets.json"/>",
+            "<c:url value="/api/permissions/${activity.id}/targets.json"/>",
             {
                 prePopulate: [],
                 tokenLimit: 1,

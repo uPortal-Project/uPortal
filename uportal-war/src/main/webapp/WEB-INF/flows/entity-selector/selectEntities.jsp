@@ -188,8 +188,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 		$(document).ready(function(){
 			up.entityselection("#${n}chooseGroupsBody", {
-                findEntityUrl: "<c:url value="/mvc/findEntity"/>",
-                searchEntitiesUrl: "<c:url value="/mvc/searchEntities"/>",
+                findEntityUrl: "<c:url value="/api/findEntity"/>",
+                searchEntitiesUrl: "<c:url value="/api/searchEntities"/>",
 		        entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
 		        selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
 		        initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',
