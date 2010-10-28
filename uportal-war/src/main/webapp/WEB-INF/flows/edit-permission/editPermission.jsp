@@ -48,12 +48,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     	<div class="breadcrumb">
-        	<span class="breadcrumb-1"><a href="${ permissionsUrl }"><spring:message code="categories"/></a></span>
-            <span class="separator">&gt; </span>
-            <span class="breadcrumb-2"><a href="${ ownerUrl }">${ permissionDefinition.owner.name }</a></span>
-            <span class="separator">&gt; </span>
-            <span class="breadcrumb-3"><a href="?">${ permissionDefinition.activity.name }</a></span>
-            <span class="separator">&gt; </span>
+            <c:forEach items="${ breadcrumbs }" var="breadcrumb" varStatus="status">
+                <portlet:actionURL var="breadcrumbUrl">
+                  <portlet:param name="execution" value="${flowExecutionKey}" />
+                  <portlet:param name="_eventId" value="breadcrumb"/>
+                  <portlet:param name="breadcrumb" value="${ breadcrumb.key }"/>
+                </portlet:actionURL>
+                <span class="breadcrumb-${ status.index + 1 }">
+                    <a href="${ breadcrumbUrl }">${ breadcrumb.value }</a>
+                </span>
+                <span class="separator">&gt; </span>
+            </c:forEach>
         </div>
         <h2 class="title" role="heading">Edit assignment for <span class="name">${ permissionDefinition.activity.name }</span></h2>
         <h3 class="subtitle">With target <span class="name">${ permissionDefinition.target.name }</span></h3>

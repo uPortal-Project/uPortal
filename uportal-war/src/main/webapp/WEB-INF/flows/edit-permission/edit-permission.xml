@@ -31,6 +31,7 @@
      | instance of org.jasig.portal.portlets.permissionsadmin.PermissionDefinitionForm.
      +-->
     <input name="permissionDefinition"/>
+    <input name="breadcrumbs" required="false"/>
     
     <on-start>
         <set name="flowScope.principals" value="permissionAdministrationHelper.getPrincipals(permissionDefinition)"/>
@@ -40,6 +41,9 @@
         <transition on="choosePrinicipals" to="choosePrinicipals"/>
         <transition on="groupTarget" to="groupTarget"/>
         <transition on="portletTarget" to="portletTarget"/>
+        <transition on="breadcrumb" to="followBreadcrumb" bind="false" validate="false">
+            <set name="flowScope.selectedBreadcrumb" value="requestParameters.breadcrumb"/>
+        </transition>
         <transition on="cancel" to="cancel" bind="false" validate="false"/>
         <transition on="submit" to="save" bind="false">
             <set name="permissionDefinition.permissions" 
@@ -83,7 +87,14 @@
         <transition to="done"/>
     </action-state>
 
-    <end-state id="cancel" />
-    <end-state id="done" />
+    <end-state id="cancel">
+        <output name="breadcrumb" value=""/>
+    </end-state>
+    <end-state id="followBreadcrumb">
+        <output name="breadcrumb" value="flowScope.selectedBreadcrumb"/>
+    </end-state>
+    <end-state id="done">
+        <output name="breadcrumb" value=""/>
+    </end-state>    
     
 </flow>

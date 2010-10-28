@@ -63,10 +63,27 @@
 
     <!-- Edit an existing permission -->
     <subflow-state id="edit-permission" subflow="edit-permission">
+        <on-entry>
+            <set name="flashScope.breadcrumbs" value="new java.util.LinkedHashMap()"/>
+            <evaluate expression="breadcrumbs.put('listOwners', 'Categories')"/>
+            <evaluate expression="breadcrumbs.put('listActivities', owner.name)"/>
+            <evaluate expression="breadcrumbs.put('showActivity', activity.name)"/>
+        </on-entry>
         <input name="permissionDefinition" value="permissionAdministrationHelper.getForm(owner, activity, requestParameters.target)"/>
+        
+        <input name="breadcrumbs" value="breadcrumbs"/>
+        <output name="breadcrumb" value="flowScope.breadcrumb"/>
+        
         <transition on="cancel" to="showActivity"/>
+        <transition on="followBreadcrumb" to="followBreadcrumb"/>
         <transition on="done" to="finishPermissionEdit"/>
     </subflow-state>
+
+    <decision-state id="followBreadcrumb">
+        <if then="listOwners" test="flowScope.breadcrumb == 'listOwners'"/>
+        <if then="listActivities" test="flowScope.breadcrumb == 'listActivities'"/>
+        <if then="showActivity" test="flowScope.breadcrumb == 'showActivity'"/>
+    </decision-state>
     
     <!-- End state -->
     <end-state id="finishPermissionEdit" />
