@@ -172,7 +172,7 @@ up.jQuery(function() {
     var getPermissionsForTarget = function() {
         var rslt;
         $.ajax({
-             url: "<c:url value="/mvc/permissionsList"/>",
+             url: "<c:url value="/mvc/permissionAssignments"/>",
              async: false,
              cache: false,
              data: { target: '${ group.key }' },
