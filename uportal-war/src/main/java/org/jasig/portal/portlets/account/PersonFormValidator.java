@@ -5,9 +5,7 @@ import org.jasig.portal.persondir.ILocalAccountDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.stereotype.Component;
 
-@Component("personValidator")
 public class PersonFormValidator {
 
     private ILocalAccountDao accountDao;
