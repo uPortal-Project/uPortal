@@ -50,14 +50,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading">
-      <c:choose>
-        <c:when test="${ completed }">
-          <spring:message code="edit-portlet.editPortletHeading"/>
-        </c:when>
-        <c:otherwise>
-          <spring:message code="edit-portlet.newPortletHeading"/>
-        </c:otherwise>
-      </c:choose>
+        <spring:message code="${ completed ? 'edit.portlet' : 'register.new.portlet' }"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
@@ -76,7 +69,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Add a note to the page if the portle supports config mode  -->
     <c:if test="${supportsConfig}">
       <div class="portlet-msg-info portlet-msg info" role="alert">
-        <spring:message code="setParameters.portletSupportsConfig"/>
+        <spring:message code="this.portlet.supports.rich.config.message"/>
       </div>
     </c:if>
     
@@ -84,16 +77,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <c:if test="${ channel.portlet }">
       <div class="portlet-section" role="region">
         <div class="titlebar">
-          <h3 class="title" role="heading"><spring:message code="setParameters.xmlPreferencesHeader"/></h3>
+          <h3 class="title" role="heading"><spring:message code="portlet.xml.preferences"/></h3>
         </div>
         <div class="content">
-          <p class="note" role="note"><spring:message code="setParameters.xmlPreferencesSummary"/></p>
+          <p class="note" role="note"><spring:message code="default.preferences.provided.by.portlet.descriptor"/></p>
           <table>
             <thead>
               <tr>
-                <th><spring:message code="setParameters.preferencesHeading"/></th>
-                <th><spring:message code="setParameters.valuesHeading"/></th>
-                <th><spring:message code="setParameters.userEditableHeading"/></th>
+                <th><spring:message code="preference"/></th>
+                <th><spring:message code="values"/></th>
+                <th><spring:message code="user.editable"/></th>
               </tr>
             </thead>
             <tbody>
@@ -127,12 +120,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           
           <!-- Channel Parameters -->
           <c:if test="${ fn:length(step.parameters) > 0 }">
-            <table class="portlet-table" summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
+            <table class="portlet-table" summary="<spring:message code="this.table.lists.portlet.parameters"/>">
               <thead>
                 <tr>
-                  <th><spring:message code="setParameters.parametersHeading"/></th>
-                  <th><spring:message code="setParameters.valueHeading"/></th>
-                  <th><spring:message code="setParameters.userEditableHeading"/></th>
+                  <th><spring:message code="parameter"/></th>
+                  <th><spring:message code="value"/></th>
+                  <th><spring:message code="user.editable"/></th>
                 </tr>
               </thead>
               <tbody>
@@ -186,12 +179,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <c:if test="${ channel.portlet }">
             <c:if test="${ fn:length(step.preferences) > 0 }">
               <div class="preference-options-section">
-                <table class="portlet-table" summary="<spring:message code="setParameters.portletParametersTableSummary"/>">
+                <table class="portlet-table" summary="<spring:message code="this.table.lists.portlet.parameters"/>">
                   <thead>
                     <tr>
-                      <th><spring:message code="setParameters.parametersHeading"/></th>
-                      <th><spring:message code="setParameters.valuesHeading"/></th>
-                      <th><spring:message code="setParameters.userEditableHeading"/></th>
+                      <th><spring:message code="parameter"/></th>
+                      <th><spring:message code="value"/></th>
+                      <th><spring:message code="user.editable"/></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -237,9 +230,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <table class="portlet-table">
                   <thead>
                     <tr>
-                      <th><spring:message code="setParameters.preferencesHeading"/></th>
-                      <th><spring:message code="setParameters.valuesHeading"/></th>
-                      <th><spring:message code="setParameters.userEditableHeading"/></th>
+                      <th><spring:message code="preference"/></th>
+                      <th><spring:message code="value"/></th>
+                      <th><spring:message code="user.editable"/></th>
                       <th></th>
                     </tr>
                   </thead>
@@ -271,9 +264,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <table class="portlet-table">
                 <thead>
                   <tr>
-                    <th><spring:message code="setParameters.preferencesHeading"/></th>
-                    <th><spring:message code="setParameters.valueHeading"/></th>
-                    <th><spring:message code="setParameters.userEditableHeading"/></th>
+                    <th><spring:message code="preference"/></th>
+                    <th><spring:message code="values"/></th>
+                    <th><spring:message code="user.editable"/></th>
                     <th></th>
                   </tr>
                 </thead>
@@ -314,14 +307,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
+          <input class="button primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="button" type="submit" value="<spring:message code="edit-portlet.backButton"/>" class="secondary" name="_eventId_back"/>
-          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
+          <input class="button" type="submit" value="<spring:message code="back"/>" class="secondary" name="_eventId_back"/>
+          <input class="button primary" type="submit" value="<spring:message code="next"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="button" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
+      <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div>
     
     </form:form> <!-- End Form -->

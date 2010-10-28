@@ -44,7 +44,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
-      <spring:message code="edit-portlet.configMode"/>
+      <spring:message code="edit.portlet.configuration"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   

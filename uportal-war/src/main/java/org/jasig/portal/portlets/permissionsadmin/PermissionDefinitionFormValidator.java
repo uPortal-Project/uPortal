@@ -37,7 +37,7 @@ public class PermissionDefinitionFormValidator {
         // ensure at least one principal has been assigned
         if (form.getPermissions().isEmpty()) {
             messageContext.addMessage(new MessageBuilder().error().source("principal")
-                .defaultText("Specify one or more principals").build());
+                .code("please.choose.at.least.one.principal").build());
         }
 
     }

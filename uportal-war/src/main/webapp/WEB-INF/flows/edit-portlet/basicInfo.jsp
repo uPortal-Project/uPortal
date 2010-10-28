@@ -44,14 +44,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading">
-      <c:choose>
-        <c:when test="${ completed }">
-          <spring:message code="edit-portlet.editPortletHeading"/>
-        </c:when>
-        <c:otherwise>
-          <spring:message code="edit-portlet.newPortletHeading"/>
-        </c:otherwise>
-      </c:choose>
+        <spring:message code="${ completed ? 'edit.portlet' : 'register.new.portlet' }"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
@@ -70,45 +63,45 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="titlbar">
-        <h3 class="title" role="heading"><spring:message code="basicInfo.summaryHeading"/></h3>
+        <h3 class="title" role="heading"><spring:message code="summary.information"/></h3>
       </div>
       <div class="content">
 
-        <table class="portlet-table" summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
+        <table class="portlet-table" summary="<spring:message code="this.table.lists.portlets.general.settings"/>">
           <thead>
             <tr>
-            	<th><spring:message code="basicInfo.optionHeading"/></th>
-              <th><spring:message code="basicInfo.settingHeading"/></th>
+            	<th><spring:message code="option"/></th>
+              <th><spring:message code="setting"/></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelTitle"/></td>
+            	<td class="fl-text-align-right"><spring:message code="portlet.title"/>:</td>
             	<td><form:input path="title"/></td>
             </tr>  
             <tr>
-            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelName"/></td>
+            	<td class="fl-text-align-right"><spring:message code="portlet.name"/>:</td>
             	<td><form:input path="name"/></td>
            </tr>      
             <tr>
-            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelFName"/></td>
+            	<td class="fl-text-align-right"><spring:message code="portlet.functional.name"/>:</td>
             	<td><form:input path="fname"/></td>
             </tr>     
             <tr>
-            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelDescription"/></td>
+            	<td class="fl-text-align-right"><spring:message code="portlet.description"/>:</td>
             	<td><form:input path="description"/></td>
             </tr> 
             <tr>
-            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelTimeout"/></td>
+            	<td class="fl-text-align-right"><spring:message code="portlet.timeout"/>:</td>
             	<td><form:input path="timeout"/>ms</td>
             </tr>  
             <tr>
-            	<td class="fl-text-align-right"><spring:message code="basicInfo.channelSecure"/></td>
+            	<td class="fl-text-align-right"><spring:message code="portlet.secure"/>:</td>
             	<td><form:checkbox path="secure"/></td>
             </tr> 
             <c:if test="${ channel.typeId < 0 }">
               <tr>
-              	<td class="fl-text-align-right"><spring:message code="basicInfo.channelClass"/></td>
+              	<td class="fl-text-align-right"><spring:message code="portlet.class"/>:</td>
               	<td><form:input path="javaClass"/></td>
               </tr>
           	</c:if>
@@ -121,12 +114,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="basicInfo.controlsHeading"/></h3>
+        <h3 class="title" role="heading"><spring:message code="controls"/></h3>
       </div>
       <div class="content">
       
       	<fieldset>
-          <legend><spring:message code="basicInfo.controlsLegend"/></legend>
+          <legend><spring:message code="portlet.controls"/></legend>
           <c:forEach items="${ cpd.controls.controls }" var="control">
 	          <c:choose>
                 <c:when test="${ control.type == 'help' }">
@@ -140,7 +133,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </c:when>
               </c:choose>
               <form:checkbox path="${controlPath}" disabled="${ control.override != 'yes'}"/>
-              <label for="${ control.type }">${ control.type }</label><br/>
+              <label for="${ control.type }"><spring:message code="${ control.type }"/></label><br/>
           </c:forEach>
         </fieldset>
         
@@ -151,14 +144,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
+          <input class="button primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="button" type="submit" value="<spring:message code="edit-portlet.backButton"/>" name="_eventId_back"/>
-          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
+          <input class="button" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
+          <input class="button primary" type="submit" value="<spring:message code="next"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="button" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
+      <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div>
     
     </form:form> <!-- End Form -->

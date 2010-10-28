@@ -51,8 +51,7 @@ public class ChannelDefinitionFormValidator {
 	public void validateChooseType(ChannelDefinitionForm def, MessageContext context) {
 		if(def.getTypeId() == 0) {
 			context.addMessage(new MessageBuilder().error().source("typeId")
-					.code("errors.channelDefinition.type.empty")
-					.defaultText("Please choose a channel type").build());
+					.code("please.choose.channel.type").build());
 		}
 	}
 	
@@ -60,38 +59,32 @@ public class ChannelDefinitionFormValidator {
 		Matcher matcher = FunctionalNameType.VALID_FNAME_PATTERN.matcher(def.getFname());
 		if (StringUtils.isEmpty(def.getFname())) {
 			context.addMessage(new MessageBuilder().error().source("fName")
-					.code("errors.channelDefinition.fName.empty")
-					.defaultText("Please enter an fname").build());
+					.code("please.enter.fname").build());
 		} else if (!matcher.matches()) {
 			context.addMessage(new MessageBuilder().error().source("fName")
-					.code("errors.channelDefinition.fName.invalid")
-					.defaultText("Fnames may only contain letters, numbers, dashes, and underscores").build());		
+					.code("fname.invalid").build());		
 		} 
 		
 		// if this is a new channel and the fname is already taken
 		else if (def.getId() == -1 && channelStore.getChannelDefinition(def.getFname()) != null) {
 			context.addMessage(new MessageBuilder().error().source("fName")
-					.code("errors.channelDefinition.fName.duplicate")
-					.defaultText("This fname is already in use").build());
+					.code("fname.in.use").build());
 		}
 		
 		if (StringUtils.isEmpty(def.getTitle())) {
 			context.addMessage(new MessageBuilder().error().source("title")
-					.code("errors.channelDefinition.title.empty")
-					.defaultText("Please enter a title").build());
+					.code("please.enter.title").build());
 		}
 		
 		if (StringUtils.isEmpty(def.getName())) {
 			context.addMessage(new MessageBuilder().error().source("name")
-					.code("errors.channelDefinition.name.empty")
-					.defaultText("Please enter a name").build());
+					.code("please.enter.name").build());
 		}
 
 		// if this is a new channel and the name is already taken
 		if (def.getId() == -1 && channelStore.getChannelDefinitionByName(def.getName()) != null) {
 			context.addMessage(new MessageBuilder().error().source("name")
-					.code("errors.channelDefinition.name.duplicate")
-					.defaultText("This name is already in use").build());
+					.code("name.in.use").build());
 		}
 		
 
@@ -119,16 +112,14 @@ public class ChannelDefinitionFormValidator {
 								Integer.parseInt(paramValue);
 							} catch (NumberFormatException e) {
 								context.addMessage(new MessageBuilder().error().source(paramPath)
-										.code("errors.channelDefinition.param.int")
-										.defaultText("Value must be an integer").build());
+										.code("value.must.be.int").build());
 							}
 						} else if ("float".equals(base)) {
 							try {
 								Float.parseFloat(paramValue);
 							} catch (NumberFormatException e) {
 								context.addMessage(new MessageBuilder().error().source(paramPath)
-										.code("errors.channelDefinition.param.float")
-										.defaultText("Value must be a number").build());
+										.code("value.must.be.num").build());
 							}
 						}
 						
@@ -147,8 +138,7 @@ public class ChannelDefinitionFormValidator {
 								// make sure the entered value is in the enumerated list
 								if (!restriction.getValues().contains(paramValue)) {
 									context.addMessage(new MessageBuilder().error().source(paramPath)
-											.code("errors.channelDefinition.param.enum")
-											.defaultText("Invalid selection").build());
+											.code("invalid.selection").build());
 								}
 							}
 						}
@@ -164,8 +154,7 @@ public class ChannelDefinitionFormValidator {
 		// make sure the user has picked at least one category
 		if (def.getCategories().size() == 0) {
 			context.addMessage(new MessageBuilder().error().source("categories")
-					.code("errors.channelDefinition.param.categories.empty")
-					.defaultText("Please choose at least one category").build());
+					.code("please.choose.at.least.one.category").build());
 		}
 	}
 	
@@ -173,8 +162,7 @@ public class ChannelDefinitionFormValidator {
 		// make sure the user has picked at least one group
 		if (def.getGroups().size() == 0) {
 			context.addMessage(new MessageBuilder().error().source("groups")
-					.code("errors.channelDefinition.groups.empty")
-					.defaultText("Please choose at least one group").build());
+					.code("please.choose.at.least.one.group").build());
 		}
 	}
 	
@@ -183,29 +171,25 @@ public class ChannelDefinitionFormValidator {
 		
 		if (def.getLifecycleState() == null) {
 			messageContext.addMessage(new MessageBuilder().error().source("lifecycle")
-					.code("lifecycle.error.selectLifecycle")
-					.defaultText("Please select a lifecycle stage").build());
+					.code("please.select.lifecycle.stage").build());
 		}
 		Date now = new Date();
 		if (def.getPublishDate() != null) {
 			if (def.getPublishDateTime().before(now)) {
 				messageContext.addMessage(new MessageBuilder().error().source("publishDate")
-						.code("lifecycle.error.invalidPublishDate")
-						.defaultText("The auto-publishing date must be in the future").build());
+						.code("auto.publish.date.must.be.future").build());
 			}
 		}
 		if (def.getExpirationDate() != null) {
 			if (def.getExpirationDateTime().before(now)) {
 				messageContext.addMessage(new MessageBuilder().error().source("expirationDate")
-						.code("lifecycle.error.invalidExpirationDate")
-						.defaultText("The auto-expiration date must be in the future").build());
+						.code("auto.expire.date.must.be.future").build());
 			}
 		}
 		if (def.getPublishDate() != null && def.getExpirationDate() != null) {
 			if (def.getExpirationDateTime().before(def.getPublishDateTime())) {
 				messageContext.addMessage(new MessageBuilder().error().source("expirationDate")
-						.code("lifecycle.error.invalidPublishAndExpirationDate")
-						.defaultText("The auto-expiration date must be after the auto-publish date").build());
+						.code("auto.expire.date.must.be.after.publish").build());
 			}
 		}
 	}

@@ -45,14 +45,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading">
-		  <c:choose>
-        <c:when test="${ completed }">
-          <spring:message code="edit-portlet.editPortletHeading"/>
-        </c:when>
-        <c:otherwise>
-          <spring:message code="edit-portlet.newPortletHeading"/>
-        </c:otherwise>
-      </c:choose>
+        <spring:message code="${ completed ? 'edit.portlet' : 'register.new.portlet' }"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
@@ -72,16 +65,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="lifecycle.heading"/></h3>
+        <h3 class="title" role="heading"><spring:message code="lifecycle.management"/></h3>
       </div>
       <div class="content">
       
-        <table class="portlet-table" summary="<spring:message code="chooseType.portletTypesTableSummary"/>">
+        <table class="portlet-table" summary="">
           <thead>
             <tr>
-              <th><spring:message code="lifecycle.optionHeading"/></th>
-              <th><spring:message code="lifecycle.stateHeading"/></th>
-              <th><spring:message code="lifecycle.descriptionHeading"/></th>
+              <th><spring:message code="option"/></th>
+              <th><spring:message code="state"/></th>
+              <th><spring:message code="description"/></th>
             </tr>
           </thead>
           <tfoot></tfoot>
@@ -107,20 +100,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <c:if test="<%= states.contains(ChannelLifecycleState.PUBLISHED) %>">
     <div class="portlet-section" id="${n}publishingDateSection" style="${ channel.lifecycleState == 'PUBLISHED' || channel.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
       <div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="lifecycle.publishDateHeading"/></h3>
+        <h3 class="title" role="heading"><spring:message code="auto.publish.optional"/></h3>
       </div>
       <div class="content"> 
  
-        <table class="portlet-table" summary="<spring:message code="lifecycle.datesSummary"/>">
+        <table class="portlet-table" summary="<spring:message code="publish.and.expiration.dates"/>">
           <thead>
             <tr>
-              <th><spring:message code="lifecycle.optionHeading"/></th>
-              <th><spring:message code="lifecycle.settingHeading"/></th>
+              <th><spring:message code="option"/></th>
+              <th><spring:message code="setting"/></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-                <td class="fl-text-align-right"><spring:message code="lifecycle.publishDate"/></td>
+                <td class="fl-text-align-right"><spring:message code="auto.publish.date.time"/></td>
                 <td>
                    <form:input path="publishDate" size="10" cssClass="cal-datepicker"/>
                    <span style="${ channel.publishDate == null ? 'display:none' : '' }">
@@ -138,7 +131,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             <form:option value="0" label="AM"/>
                             <form:option value="1" label="PM"/>
                          </form:select>
-                         (<a class="clear-date" href="javascript:;"><spring:message code="lifecycle.autoDateReset"/></a>)
+                         (<a class="clear-date" href="javascript:;"><spring:message code="reset"/></a>)
                      </span>
                 </td>
             </tr>  
@@ -153,20 +146,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <c:if test="<%= states.contains(ChannelLifecycleState.EXPIRED) %>">
     <div class="portlet-section" id="${n}expirationDateSection" style="${ channel.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
       <div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="lifecycle.expirationDateHeading"/></h3>
+        <h3 class="title" role="heading"><spring:message code="auto.expire.optional"/></h3>
       </div>
       <div class="content"> 
  
-        <table class="portlet-table" summary="<spring:message code="lifecycle.datesSummary"/>">
+        <table class="portlet-table" summary="<spring:message code="publish.and.expiration.dates"/>">
           <thead>
             <tr>
-              <th><spring:message code="lifecycle.optionHeading"/></th>
-              <th><spring:message code="lifecycle.settingHeading"/></th>
+              <th><spring:message code="option"/></th>
+              <th><spring:message code="setting"/></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-                <td class="fl-text-align-right"><spring:message code="lifecycle.expirationDate"/></td>
+                <td class="fl-text-align-right"><spring:message code="auto.expire.date.time"/></td>
                 <td>
                    <form:input path="expirationDate" size="10" cssClass="cal-datepicker"/>
                      <span style="${ channel.expirationDate == null ? 'display:none' : '' }">
@@ -182,9 +175,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                      </form:select>
                      <form:select path="expirationAmPm">
                         <form:option value="0" label="AM"/>
-                            <form:option value="1" label="PM"/>
+                        <form:option value="1" label="PM"/>
                      </form:select>
-                         (<a class="clear-date" href="javascript:;"><spring:message code="lifecycle.autoDateReset"/></a>)
+                         (<a class="clear-date" href="javascript:;"><spring:message code="reset"/></a>)
                  </span>
                 </td>
            </tr>      
@@ -199,14 +192,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
+          <input class="button primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="button" type="submit" value="<spring:message code="edit-portlet.backButton"/>" name="_eventId_back"/>
-          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
+          <input class="button" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
+          <input class="button primary" type="submit" value="<spring:message code="next"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="button" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
+      <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div> <!-- end: Portlet Buttons --> 
     
     </form:form>  <!-- End Form -->

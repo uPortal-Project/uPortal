@@ -43,8 +43,7 @@ public class GroupFormValidator {
 		// ensure the group name is set
 		if(StringUtils.isBlank(group.getName())) {
 			context.addMessage(new MessageBuilder().error().source("name")
-					.code("errors.group.name.empty")
-					.defaultText("Please choose a group name").build());
+					.code("please.enter.name").build());
 		}
 		
 	}

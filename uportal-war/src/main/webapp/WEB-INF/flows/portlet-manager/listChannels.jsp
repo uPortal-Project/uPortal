@@ -60,17 +60,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-  	<h2 class="title" role="heading"><spring:message code="listChannels.title"/></h2>
+  	<h2 class="title" role="heading"><spring:message code="portlet.registry"/></h2>
     <div class="fl-col-flex2 toolbar" role="toolbar">
       <div class="fl-col">
         <ul>
-          <li><a class="button" href="${ newPortletUrl }" title="<spring:message code="listChannels.newPortletButton"/>"><span><spring:message code="listChannels.newPortletButton"/></span></a></li>
+          <li><a class="button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span></a></li>
         </ul>
       </div>
       <div class="fl-col fl-text-align-right portlet-search-view">
         <form class="portlet-search-form" style="display:inline">
             <input class="portlet-search-input"/>
-            <input type="submit" value="<spring:message code="listChannels.searchSubmitButton"/>"/>
+            <input type="submit" value="<spring:message code="search"/>"/>
         </form>
       </div>
     </div>
@@ -83,10 +83,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   	<!-- Portlet Message -->
   	<div class="portlet-msg-info portlet-msg info" role="status" id="${n}loadingMessage">
     	<div class="titlebar">
-        <h3 class="title">Loading Information</h3>
+        <h3 class="title"><spring:message code="loading"/> . . .</h3>
       </div>
       <div class="content">
-    	  <p>Please wait while the system finishes loading the portlet registry.</p>
+    	  <p><spring:message code="please.wait.while.the.system.finishes.loading.portlet.registry"/></p>
       </div>
     </div>
     
@@ -94,14 +94,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div id="${n}channelAddingTabs" class="fl-pager">   
         <div class="fl-col-flex2">
           <div class="fl-col view-filter">
-            <label for="${n}categorySelectMenu"><spring:message code="listChannels.categoryFilterLabel"/></label>
+            <label for="${n}categorySelectMenu"><spring:message code="show"/></label>
             <select id="${n}categorySelectMenu">
-              <option value=""><spring:message code="listChannels.categoryFilterAllCategories"/></option>
+              <option value=""><spring:message code="all"/></option>
             </select>
           </div>
           <div class="fl-col flc-pager-top view-pager">
             <ul id="pager-top" class="fl-pager-ui">
-              <li class="flc-pager-previous"><a href="javascript:;">&lt; <spring:message code="listChannels.pagerPrevious"/></a></li>
+              <li class="flc-pager-previous"><a href="javascript:;">&lt; <spring:message code="previous"/></a></li>
               <li>
                 <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
                   <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
@@ -109,29 +109,29 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
                 </ul>
               </li>
-              <li class="flc-pager-next"><a href="javascript:;"><spring:message code="listChannels.pagerNext"/> &gt;</a></li>
+              <li class="flc-pager-next"><a href="javascript:;"><spring:message code="next"/> &gt;</a></li>
               <li>
-                <span class="flc-pager-summary"><spring:message code="listChannels.pagerPerPagePrefix"/></span>
+                <span class="flc-pager-summary"><spring:message code="show"/></span>
                 <span> <select class="pager-page-size flc-pager-page-size">
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
-                </select></span> <spring:message code="listChannels.pagerPerPageSuffix"/>
+                </select></span> <spring:message code="per.page"/>
               </li>
             </ul>
           </div>
         </div>
         <div style="clear:both"></div>
 
-        <table id="${n}categoriesTable1" summary="" xmlns:rsf="http://ponder.org.uk" class="portlet-table" style="width:100%;">
+        <table id="${n}categoriesTable1" summary="<spring:message code="registered.portlet.list"/>" xmlns:rsf="http://ponder.org.uk" class="portlet-table" style="width:100%;">
           <thead>
             <tr rsf:id="header:">
-              <th id="${n}portletName" class="flc-pager-sort-header"><a rsf:id="name" title="Click to sort" href="javascript:;"><spring:message code="listChannels.portletTableNameHeading"/></a></th>
-              <th id="${n}portletType" class="flc-pager-sort-header"><a rsf:id="type" title="Click to sort" href="javascript:;"><spring:message code="listChannels.portletTableTypeHeading"/></a></th>
-              <th id="${n}portletState" class="flc-pager-sort-header"><a rsf:id="state" title="Click to sort" href="javascript:;"><spring:message code="listChannels.portletTableStateHeading"/></a></th>
-              <th id="${n}portletEditLink" rsf:id="editLink"><spring:message code="listChannels.portletTableEditHeading"/></th>
-              <th id="${n}portletDeleteLink" rsf:id="deleteLink"><spring:message code="listChannels.portletTableDeleteHeading"/></th>
+              <th id="${n}portletName" class="flc-pager-sort-header"><a rsf:id="name" title="Click to sort" href="javascript:;"><spring:message code="name"/></a></th>
+              <th id="${n}portletType" class="flc-pager-sort-header"><a rsf:id="type" title="Click to sort" href="javascript:;"><spring:message code="type"/></a></th>
+              <th id="${n}portletState" class="flc-pager-sort-header"><a rsf:id="state" title="Click to sort" href="javascript:;"><spring:message code="state"/></a></th>
+              <th id="${n}portletEditLink" rsf:id="editLink"><spring:message code="edit"/></th>
+              <th id="${n}portletDeleteLink" rsf:id="deleteLink"><spring:message code="delete"/></th>
             </tr>
           </thead>
           <tbody id="${n}categoriesBody">
@@ -174,8 +174,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             var categories = [];
             categories.push({
                 id: "",
-                name: "All",
-                description: "All Categories",
+                name: "<spring:message code="all"/>",
+                description: "<spring:message code="all.categories"/>",
                 categories: [],
                 deepCategories: [],
                 portlets: [],
@@ -186,7 +186,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     categories.push(category);
                 }
             });
-            categories.sort(up.getStringPropertySortFunction("name", "<spring:message code="listChannels.categoryFilterAllCategories"/>"));
+            categories.sort(up.getStringPropertySortFunction("name", "<spring:message code="all"/>"));
 
             var tree = { children: [] };
             
@@ -203,8 +203,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             if ($(this).val() == "") {
                                 category = {
                                     id: "",
-                                    name: "<spring:message code="listChannels.categoryFilterAllCategories"/>",
-                                    description: "All Categories",
+                                    name: "<spring:message code="all"/>",
+                                    description: "<spring:message code="all.categories"/>",
                                     categories: [],
                                     deepCategories: [],
                                     portlets: [],
@@ -273,13 +273,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     { key: "editLink", valuebinding: "*.id",
                         components: {
                             target: editUrl.replace("PORTLETID", '${"${*.id}"}'),
-                            linktext: "Edit"
+                            linktext: "<spring:message code="edit"/>"
                             }
                         },
                     { key: "deleteLink", valuebinding: "*.id",
                         components: {
                             target: removeUrl.replace("PORTLETID", '${"${*.id}"}'),
-                            linktext: "Delete"
+                            linktext: "<spring:message code="delete"/>"
                             }
                         }
                 ],

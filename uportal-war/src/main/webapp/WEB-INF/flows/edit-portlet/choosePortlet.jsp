@@ -44,7 +44,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
-       <spring:message code="edit-portlet.newPortletHeading"/>
+       <spring:message code="register.new.portlet"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
@@ -63,7 +63,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
     	<div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="basicInfo.summaryHeading"/></h3>
+        <h3 class="title" role="heading"><spring:message code="summary.information"/></h3>
       </div>
       <div class="content">
 
@@ -86,14 +86,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
+          <input class="button primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="button" type="submit" value="<spring:message code="edit-portlet.backButton"/>" name="_eventId_back"/>
-          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
+          <input class="button" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
+          <input class="button primary" type="submit" value="<spring:message code="next"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="button" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
+      <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div>
     
     </form> <!-- End Form -->

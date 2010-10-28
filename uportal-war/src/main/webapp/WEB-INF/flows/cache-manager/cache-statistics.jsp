@@ -33,7 +33,7 @@
 <div class="fl-widget portlet cache-mgr view-statistics" role="section">
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    <h2 class="title" role="heading"><spring:message code="cache-statistics.title"/></h2>
+    <h2 class="title" role="heading"><spring:message code="cache.statistics"/></h2>
     <h3 class="subtitle"><c:out value="${cacheName}"/></h3>
   </div> <!-- end: portlet-titlebar -->
 
@@ -42,35 +42,35 @@
       
         <table class="portlet-table">
             <thead>
-                <tr><th><spring:message code="cache-statistics.propertyColumn"/></th><th><spring:message code="cache-statistics.valueColumn"/></th></tr>
+                <tr><th><spring:message code="cache.property"/></th><th><spring:message code="value"/></th></tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><spring:message code="cache-statistics.objectCount"/></td><td>${statistics.objectCount}</td>
+                    <td><spring:message code="object.count"/></td><td>${statistics.objectCount}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="cache-statistics.cacheHits"/></td><td>${statistics.cacheHits}</td>
+                    <td><spring:message code="cache.hits"/></td><td>${statistics.cacheHits}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="cache-statistics.cacheMisses"/></td><td>${statistics.cacheMisses}</td>
+                    <td><spring:message code="cache.misses"/></td><td>${statistics.cacheMisses}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="cache-statistics.memoryStoreObjectCount"/></td><td>${statistics.memoryStoreObjectCount}</td>
+                    <td><spring:message code="memory.store.object.count"/></td><td>${statistics.memoryStoreObjectCount}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="cache-statistics.inMemoryHits"/></td><td>${statistics.inMemoryHits}</td>
+                    <td><spring:message code="in.memory.hits"/></td><td>${statistics.inMemoryHits}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="cache-statistics.diskStoreObjectCount"/></td><td>${statistics.diskStoreObjectCount}</td>
+                    <td><spring:message code="disk.store.object.count"/></td><td>${statistics.diskStoreObjectCount}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="cache-statistics.onDiskHits"/></td><td>${statistics.onDiskHits}</td>
+                    <td><spring:message code="on.disk.hits"/></td><td>${statistics.onDiskHits}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="cache-statistics.evictionCount"/></td><td>${statistics.evictionCount}</td>
+                    <td><spring:message code="eviction.count"/></td><td>${statistics.evictionCount}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="cache-statistics.statisticsAccuracy"/></td><td>${statistics.statisticsAccuracyDescription}</td>
+                    <td><spring:message code="statistics.accuracy"/></td><td>${statistics.statisticsAccuracyDescription}</td>
                 </tr>
             </tbody>
         </table>
@@ -80,8 +80,8 @@
 
     <!-- Portlet Buttons -->
     <div class="buttons">
-        <a class="button primary" href="${ flushUrl }"><spring:message code="cache-statistics.emptyCacheButton"/></a>
-        <a class="button" href="${ homeUrl }"><spring:message code="cache-statistics.cancelButton"/></a>
+        <a class="button primary" href="${ flushUrl }"><spring:message code="empty.cache"/></a>
+        <a class="button" href="${ homeUrl }"><spring:message code="cancel"/></a>
     </div>
     
   </div>

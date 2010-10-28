@@ -44,14 +44,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading">
-		  <c:choose>
-        <c:when test="${ completed }">
-          <spring:message code="edit-portlet.editPortletHeading"/>
-        </c:when>
-        <c:otherwise>
-          <spring:message code="edit-portlet.newPortletHeading"/>
-        </c:otherwise>
-      </c:choose>
+        <spring:message code="${ completed ? 'edit.portlet' : 'register.new.portlet' }"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
@@ -70,16 +63,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="chooseType.selectTypeHeading"/></h3>
+        <h3 class="title" role="heading"><spring:message code="select.type"/></h3>
       </div>
       <div class="content">
       
-        <table class="portlet-table" summary="<spring:message code="chooseType.portletTypesTableSummary"/>">
+        <table class="portlet-table" summary="<spring:message code="available.portlet.types"/>">
           <thead>
             <tr>
-              <th><spring:message code="chooseType.optionHeading"/></th>
-              <th><spring:message code="chooseType.typeHeading"/></th>
-              <th><spring:message code="chooseType.descriptionHeading"/></th>
+              <th><spring:message code="option"/></th>
+              <th><spring:message code="type"/></th>
+              <th><spring:message code="description"/></th>
             </tr>
           </thead>
           <tfoot></tfoot>
@@ -101,51 +94,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
     </div> <!-- end: portlet-section -->
 
-    <!-- Portlet Section -->
-    <div class="portlet-section" role="region">
-      <div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="chooseType.selectDeprecatedTypeHeading"/></h3>
-      </div>
-      <div class="content">
-      
-        <table class="portlet-table" summary="<spring:message code="chooseType.deprecatedTypesTableSummary"/>">
-          <thead>
-            <tr>
-              <th><spring:message code="chooseType.optionHeading"/></th>
-              <th><spring:message code="chooseType.typeHeading"/></th>
-              <th><spring:message code="chooseType.descriptionHeading"/></th>
-            </tr>
-          </thead>
-          <tfoot></tfoot>
-          <tbody>
-            <c:forEach items="${ channelTypes }" var="chanTypeEntry">
-              <c:if test="${chanTypeEntry.value.deprecated}">
-                <tr>
-                  <td align="center">
-                    <form:radiobutton path="typeId" value="${ chanTypeEntry.key.id  }" cssClass="portlet-form-input-field"/>
-                  </td>
-                  <td><c:out value="${ chanTypeEntry.key.name }"/></td>
-                  <td><c:out value="${ chanTypeEntry.key.description }"/></td>
-                </tr>
-              </c:if>
-            </c:forEach>
-          </tbody>
-        </table>
-        
-      </div>
-    </div> <!-- end: portlet-section -->
-
-		<!-- Buttons -->    
+	<!-- Buttons -->    
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.reviewButton"/>" name="_eventId_review"/>
+          <input class="button primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="button primary" type="submit" value="<spring:message code="edit-portlet.nextButton"/>" name="_eventId_next"/>
+          <input class="button primary" type="submit" value="<spring:message code="next"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="button" type="submit" value="<spring:message code="edit-portlet.cancelButton"/>" name="_eventId_cancel"/>
+      <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div> <!-- end: Portlet Buttons --> 
     
     </form:form>  <!-- End Form -->

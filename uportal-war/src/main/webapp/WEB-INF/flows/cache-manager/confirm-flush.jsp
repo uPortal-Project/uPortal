@@ -28,27 +28,27 @@
 <div class="fl-widget portlet cache-mgr view-flush" role="section">
 	<!-- Portlet Titlebar -->
 	<div class="fl-widget-titlebar titlebar portlet-titlebar">
-    	<h2 class="title">Flush Cache</h2>
+    	<h2 class="title"><spring:message code="flush.cache"/></h2>
     </div>
     <!-- Portlet Content -->
     <div class="fl-widget-content content portlet-content" role="main">   
     	
         <!-- Messages -->
         <div class="portlet-msg-alert portlet-msg alert" role="alert">
-        	<h3><spring:message code="confirm-flush.warning"/></h3>
-        	<p><spring:message code="confirm-flush.warningDescription"/></p>
+        	<h3><spring:message code="warning"/></h3>
+        	<p><spring:message code="emptying.caches.will.degrade.performance.use.caution"/></p>
         </div>
         
         <!-- Note -->
         <div class="note" role="note">
-        <p><spring:message code="confirm-flush.confirm" arguments="${cacheName}"/></p>
+        <p><spring:message code="are.you.sure.remove.cache.name" arguments="${cacheName}"/></p>
         </div>
         
         <!-- Buttons -->
         <form action="${formUrl}" method="POST">
             <div class="buttons">
-            	<input class="button primary" type="submit" value="<spring:message code="confirm-flush.emptyCacheButton"/>" name="_eventId_confirm"/>
-            	<input class="button" type="submit" value="<spring:message code="confirm-flush.cancel"/>" name="_eventId_cancel"/>
+            	<input class="button primary" type="submit" value="<spring:message code="empty.cache"/>" name="_eventId_confirm"/>
+            	<input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
             </div>
         </form>
     

@@ -44,7 +44,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<!-- Portlet Title -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading">
-      <spring:message code="confirmRemove.title"/>
+      <spring:message code="remove.portlet"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
@@ -63,17 +63,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="confirmRemove.heading" arguments="${ channel.name }"/></h3>
+        <h3 class="title" role="heading"><spring:message code="remove.portlet.name" arguments="${ channel.name }"/></h3>
       </div>
       <div class="content">
-        <spring:message code="confirmRemove.text" arguments="${ channel.name }"/>
+        <spring:message code="remove.portlet.confirmation" arguments="${ channel.name }"/>
 	  </div>
 	</div> <!-- end: portlet-section -->
     
     <!-- Portlet Buttons -->
     <div class="buttons">
-      <input class="button primary" type="submit" value="<spring:message code="confirmRemove.removeButton"/>" name="_eventId_remove"/>
-      <input class="button" type="submit" value="<spring:message code="confirmRemove.cancelButton"/>" name="_eventId_cancel"/>
+      <input class="button primary" type="submit" value="<spring:message code="remove.portlet"/>" name="_eventId_remove"/>
+      <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div>
     
     </form:form> <!-- End Form -->
