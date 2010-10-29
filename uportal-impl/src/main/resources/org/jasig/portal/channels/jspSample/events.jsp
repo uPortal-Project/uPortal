@@ -29,7 +29,7 @@
 <c:choose>
   <c:when test="${! empty requestScope.events}">
     <c:forEach items="${requestScope.events}" var="event">
-      <tr><td valign="top"><span class="uportal-channel-text" id="event_txt"><c:out value="${event}"/></span></td></tr>
+      <tr><td valign="top"><span class="uportal-channel-text" id="event_txt">${fn:escapeXml(event)}</span></td></tr>
       <tr><td><img src="/media/org/jasig/portal/channels/jsp/tree/trnsPoint.gif" height="5" width="1"/></td></tr>
     </c:forEach>
   </c:when>

@@ -40,7 +40,7 @@
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
           <div class="portlet-section-body">
-            <p>Are you sure you want to reset the layout for <c:out value="${person}"/>?</p>
+            <p>Are you sure you want to reset the layout for ${fn:escapeXml(person)}?</p>
           </div>
         </div> <!-- end: portlet-section -->
         

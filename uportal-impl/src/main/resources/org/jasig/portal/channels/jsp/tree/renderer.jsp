@@ -19,7 +19,8 @@
 
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %><%-- 
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %><%-- 
 
 This JSP renders rows that blend together to portray a heirarchical view. Such a 
 view can be rendered as a containment hierarchy much like mathemantical or boolean
@@ -83,16 +84,16 @@ for related objects available in this JSP via the model's accessors.
    --%><c:forEach items="${model.indentImages}" var="image"><%--
     --%><c:choose><%--
     --%><c:when test="${image == 'skippedChild'}"><%--
-     --%><td valign="top" style="background-image: url(<c:out value='${model.config.images.skippedChildRpt}'/>); background-repeat: repeat-y; background-position: top left;"><%--
-     --%><img src="<c:out value='${model.config.images.noBranch}'/>"/></td><%--
+     --%><td valign="top" style="background-image: url(${model.config.images.skippedChildRpt}); background-repeat: repeat-y; background-position: top left;"><%--
+     --%><img src="${model.config.images.noBranch}"/></td><%--
    --%></c:when><%--
     --%><c:when test="${image == 'middleChild' 
     || image == 'middleBranchExpanded'
     || image == 'middleBranchCollapsed'}"><%--
-     --%><td valign="top" style="background-image: url(<c:out value='${model.config.images.skippedChildRpt}'/>); background-repeat: repeat-y; background-position: top left;"><img src="<c:out value='${model.config.images[image]}'/>"/></td><%--
+     --%><td valign="top" style="background-image: url(${model.config.images.skippedChildRpt}); background-repeat: repeat-y; background-position: top left;"><img src="${model.config.images[image]}"/></td><%--
    --%></c:when><%--
     --%><c:otherwise><%--
-     --%><td valign="top" ><img src="<c:out value='${model.config.images[image]}'/>"/></td><%--
+     --%><td valign="top" ><img src="${model.config.images[image]}"/></td><%--
    --%></c:otherwise><%--
     --%></c:choose><%--
     --%></c:forEach><%-- 
@@ -109,21 +110,21 @@ for related objects available in this JSP via the model's accessors.
     --%><c:when test="${node.hasNextSibling}"><%--
      --%><c:choose><%--
       --%><c:when test="${! node.hasChildren}"><%--
---%><td valign="top" style="background-image: url(<c:out value='${model.config.images.skippedChildRpt}'/>); background-repeat: repeat-y; background-position: top left;"><%--
---%><img src="<c:out value='${model.config.images.middleChild}'/>"/><%--
+--%><td valign="top" style="background-image: url(${model.config.images.skippedChildRpt}); background-repeat: repeat-y; background-position: top left;"><%--
+--%><img src="${model.config.images.middleChild}"/><%--
 --%></td><%--
       --%></c:when><%--
       --%><c:when test="${node.isExpanded}"><%--
---%><td valign="top" style="background-image: url(<c:out value='${model.config.images.skippedChildRpt}'/>); background-repeat: repeat-y; background-position: top left;"><%--
---%><a href="<c:out value='${model.treeUrls.collapse[node.id]}'/>"><%--
---%><img border="0" src="<c:out value='${model.config.images.middleBranchExpanded}'/>"/><%--
+--%><td valign="top" style="background-image: url(${model.config.images.skippedChildRpt}); background-repeat: repeat-y; background-position: top left;"><%--
+--%><a href="${model.treeUrls.collapse[node.id]}"><%--
+--%><img border="0" src="${model.config.images.middleBranchExpanded}"/><%--
 --%></a><%--
 --%></td><%--
       --%></c:when><%--
       --%><c:otherwise><%--
---%><td valign="top" style="background-image: url(<c:out value='${model.config.images.skippedChildRpt}'/>); background-repeat: repeat-y; background-position: top left;"><%--
---%><a href="<c:out value='${model.treeUrls.expand[node.id]}'/>"><%--
---%><img border="0" src="<c:out value='${model.config.images.middleBranchCollapsed}'/>"/><%--
+--%><td valign="top" style="background-image: url(${model.config.images.skippedChildRpt}); background-repeat: repeat-y; background-position: top left;"><%--
+--%><a href="${model.treeUrls.expand[node.id]}"><%--
+--%><img border="0" src="${model.config.images.middleBranchCollapsed}"/><%--
 --%></a><%--
 --%></td><%--
       --%></c:otherwise><%--
@@ -133,20 +134,20 @@ for related objects available in this JSP via the model's accessors.
      --%><c:choose><%--
       --%><c:when test="${! node.hasChildren}"><%--
 --%><td valign="top" ><%--
---%><img src="<c:out value='${model.config.images.lastChild}'/>"/><%--
+--%><img src="${model.config.images.lastChild}"/><%--
 --%></td><%--
       --%></c:when><%--
       --%><c:when test="${node.isExpanded}"><%--
 --%><td valign="top" ><%--
---%><a href="<c:out value='${model.treeUrls.collapse[node.id]}'/>"><%--
---%><img border="0" src="<c:out value='${model.config.images.lastBranchExpanded}'/>"/><%--
+--%><a href="${model.treeUrls.collapse[node.id]}"><%--
+--%><img border="0" src="${model.config.images.lastBranchExpanded}"/><%--
 --%></a><%--
 --%></td><%--
       --%></c:when><%--
       --%><c:otherwise><%--
 --%><td valign="top" ><%--
---%><a href="<c:out value='${model.treeUrls.expand[node.id]}'/>"><%--
---%><img border="0" src="<c:out value='${model.config.images.lastBranchCollapsed}'/>"/><%--
+--%><a href="${model.treeUrls.expand[node.id]}"><%--
+--%><img border="0" src="${model.config.images.lastBranchCollapsed}"/><%--
 --%></a><%--
 --%></td><%--
       --%></c:otherwise><%--
@@ -155,7 +156,7 @@ for related objects available in this JSP via the model's accessors.
    --%></c:choose><%--
   --%></c:when><%--
   --%><c:otherwise><%--
---%><img src="<c:out value='${model.config.images.noBranch}'/>"/><%--
+--%><img src="${model.config.images.noBranch}"/><%--
  --%></c:otherwise><%--
  --%></c:choose><%--
  --%></c:if><%-- 
@@ -163,7 +164,7 @@ for related objects available in this JSP via the model's accessors.
 ==== if viewing containment, inject container-start image for containers
 
 --%><c:if test="${node.canContainChildren and model.config.viewContainment}"><%--
- --%><td valign="top"><img src="<c:out value='${model.config.images.startOfContainer}'/>"/></td><%--
+ --%><td valign="top"><img src="${model.config.images.startOfContainer}"/></td><%--
 --%></c:if><%-- 
 
 ==== add in the node's labeling by delegating to the plugged-in renderer
@@ -184,15 +185,15 @@ for related objects available in this JSP via the model's accessors.
  --%><c:choose><%--
   --%><c:when test="${node.isShowingAspects}"><%--
 --%><td valign="top"><%--
---%><a href="<c:out value='${model.treeUrls.hideAspects[node.id]}'/>"><%--
---%><img border="0" align="bottom" src="<c:out value='${model.config.images.hideAspects}'/>" /><%--
+--%><a href="${model.treeUrls.hideAspects[node.id]}"><%--
+--%><img border="0" align="bottom" src="${model.config.images.hideAspects}" /><%--
 --%></a><%--
 --%></td><%--
   --%></c:when><%--
   --%><c:otherwise><%--
 --%><td valign="top"><%--
---%><a href="<c:out value='${model.treeUrls.showAspects[node.id]}'/>"><%--
---%><img border="0" align="bottom" src="<c:out value='${model.config.images.showAspects}'/>" /><%--
+--%><a href="${model.treeUrls.showAspects[node.id]}"><%--
+--%><img border="0" align="bottom" src="${model.config.images.showAspects}" /><%--
 --%></a><%--
 --%></td><%--
   --%></c:otherwise><%--
@@ -300,7 +301,7 @@ for related objects available in this JSP via the model's accessors.
 
 --%><td width="100%"><%--
  --%><c:forEach items="${model.indentImages}" var="image"><%--
-  --%><img src="<c:out value='${model.config.images[image]}'/>"/><%--
+  --%><img src="${model.config.images[image]}"/><%--
  --%></c:forEach><%-- 
 
 ==== handle the node's immediately preceding branch or indentation image 
@@ -314,21 +315,21 @@ for related objects available in this JSP via the model's accessors.
   --%><c:when test="${model.config.showBranches}"><%--
    --%><c:choose><%--
     --%><c:when test="${node.hasNextSibling}"><%--
-     --%><img align="bottom" src="<c:out value='${model.config.images.skippedChild}'/>" /><%--
+     --%><img align="bottom" src="${model.config.images.skippedChild}" /><%--
     --%></c:when><%--
     --%><c:otherwise><%--
-     --%><img align="bottom" src="<c:out value='${model.config.images.noBranch}'/>" /><%--
+     --%><img align="bottom" src="${model.config.images.noBranch}" /><%--
     --%></c:otherwise><%--
    --%></c:choose><%--
   --%></c:when><%--
   --%><c:otherwise><%--
-   --%><img align="bottom" src="<c:out value='${model.config.images.noBranch}'/>" /><%--
+   --%><img align="bottom" src="${model.config.images.noBranch}" /><%--
  --%></c:otherwise><%--
  --%></c:choose><%--
 --%></c:if><%-- 
 
 ==== and finally append container-closing image
- --%><img align="bottom" src="<c:out value='${model.config.images.endOfContainer}'/>"/><%--
+ --%><img align="bottom" src="${model.config.images.endOfContainer}"/><%--
 
 ==== 	END OF closing container row
 --%></c:if><%--

@@ -67,13 +67,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
         <select name="application">
             <c:forEach items="${contexts}" var="context">
-                <option value="${context.applicationId}">${context.portletContextName != null ? context.portletContextName : context.applicationName}</option>
+                <option value="${fn:escapeXml(context.applicationId)}">${fn:escapeXml(context.portletContextName != null ? context.portletContextName : context.applicationName)}</option>
             </c:forEach>
         </select>
         
         <select name="portlet">
             <c:forEach items="${contexts[0].portletApplicationDefinition.portlets}" var="portlet">
-                <option value="${portlet.portletName}">${fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName}</option>
+                <option value="${fn:escapeXml(portlet.portletName)}">${fn:escapeXml(fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName)}</option>
             </c:forEach>
         </select>
         
@@ -97,13 +97,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </form> <!-- End Form -->
             
     </div> <!-- end: portlet-body -->
-    
     <script type="text/javascript">
 	    up.jQuery(function() {
 	        var $ = up.jQuery;
 	        var portlets = {};
 	        <c:forEach items="${contexts}" var="context">
-	            portlets['${context.applicationId}'] = [<c:forEach items="${context.portletApplicationDefinition.portlets}" var="portlet" varStatus="status">{name: '${portlet.portletName}', title: '${fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName}'}${status.last ? '' : ','}</c:forEach>];
+	            portlets['<spring:escapeBody javaScriptEscape="true">${context.applicationId}</spring:escapeBody>'] = [<c:forEach items="${context.portletApplicationDefinition.portlets}" var="portlet" varStatus="status">{name: '<spring:escapeBody javaScriptEscape="true">${portlet.portletName}</spring:escapeBody>', title: '<spring:escapeBody javaScriptEscape="true">${fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName}</spring:escapeBody>'}${status.last ? '' : ','}</c:forEach>];
 	        </c:forEach>
 	        $(document).ready(function(){
 	            $("select[name=application]").change(function(){

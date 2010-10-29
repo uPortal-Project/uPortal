@@ -35,7 +35,7 @@
         <!-- Portlet Section -->
         <div class="portlet-section" role="region"> 
           <div class="portlet-section-body">
-            <p>Layout for <c:out value="${person.attributes['username']}"/> has been reset.</p>
+            <p>Layout for ${fn:escapeXml(person.attributes['username'])} has been reset.</p>
           </div>
         </div> <!-- end: portlet-section -->
         

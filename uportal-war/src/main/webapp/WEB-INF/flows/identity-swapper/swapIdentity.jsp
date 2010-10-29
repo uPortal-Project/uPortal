@@ -21,7 +21,7 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-idswapper: Swap Identity to ${uid}
+idswapper: Swap Identity to ${fn:escapeXml(uid)}
 
 <br />
 

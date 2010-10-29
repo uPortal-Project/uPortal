@@ -36,23 +36,23 @@
                 <tr><th>Name</th><th>Value</th></tr>
             </thead>
             <tbody>
-	            <tr><td>Request Protocol</td><td>${ request.protocol }</td></tr>
-	            <tr><td>Request Method</td><td>${ request.method }</td></tr>
-	            <tr><td>Server Name</td><td>${ request.serverName }</td></tr>
-	            <tr><td>Server Port</td><td>${ request.serverPort }</td></tr>
-	            <tr><td>Request URI</td><td>${ request.requestURI }</td></tr>
-	            <tr><td>Context Path</td><td>${ request.contextPath }</td></tr>
-	            <tr><td>Servlet Path</td><td>${ request.servletPath }</td></tr>
-	            <tr><td>Query String</td><td>${ request.queryString }</td></tr>
-	            <tr><td>Path Info</td><td>${ request.pathInfo }</td></tr>
-	            <tr><td>Path Translated</td><td>${ request.pathTranslated }</td></tr>
-	            <tr><td>Content Length</td><td>${ request.contentLength }</td></tr>
-	            <tr><td>Content Type</td><td>${ request.contentType }</td></tr>
-	            <tr><td>Remote User</td><td>${ request.remoteUser }</td></tr>
-	            <tr><td>Remote Address</td><td>${ request.remoteAddr }</td></tr>
-	            <tr><td>Remote Host</td><td>${ request.remoteHost }</td></tr>
-	            <tr><td>Authorization Scheme</td><td>${ request.authType }</td></tr>
-	            <tr><td>Locale</td><td>${ request.locale }</td></tr>
+	            <tr><td>Request Protocol</td><td>${ fn:escapeXml(request.protocol) }</td></tr>
+	            <tr><td>Request Method</td><td>${ fn:escapeXml(request.method) }</td></tr>
+	            <tr><td>Server Name</td><td>${ fn:escapeXml(request.serverName) }</td></tr>
+	            <tr><td>Server Port</td><td>${ fn:escapeXml(request.serverPort) }</td></tr>
+	            <tr><td>Request URI</td><td>${ fn:escapeXml(request.requestURI) }</td></tr>
+	            <tr><td>Context Path</td><td>${ fn:escapeXml(request.contextPath) }</td></tr>
+	            <tr><td>Servlet Path</td><td>${ fn:escapeXml(request.servletPath) }</td></tr>
+	            <tr><td>Query String</td><td>${ fn:escapeXml(request.queryString) }</td></tr>
+	            <tr><td>Path Info</td><td>${ fn:escapeXml(request.pathInfo) }</td></tr>
+	            <tr><td>Path Translated</td><td>${ fn:escapeXml(request.pathTranslated) }</td></tr>
+	            <tr><td>Content Length</td><td>${ fn:escapeXml(request.contentLength) }</td></tr>
+	            <tr><td>Content Type</td><td>${ fn:escapeXml(request.contentType) }</td></tr>
+	            <tr><td>Remote User</td><td>${ fn:escapeXml(request.remoteUser) }</td></tr>
+	            <tr><td>Remote Address</td><td>${ fn:escapeXml(request.remoteAddr) }</td></tr>
+	            <tr><td>Remote Host</td><td>${ fn:escapeXml(request.remoteHost) }</td></tr>
+	            <tr><td>Authorization Scheme</td><td>${ fn:escapeXml(request.authType) }</td></tr>
+	            <tr><td>Locale</td><td>${ fn:escapeXml(request.locale) }</td></tr>
             </tbody>
         </table>
       </div>
@@ -68,7 +68,7 @@
             </thead>
             <tbody>
 	            <c:forEach items="${ header }" var="h">
-	                <tr><td>${ h.key }</td><td>${ h.value }</td></tr>
+	                <tr><td>${ fn:escapeXml(h.key) }</td><td>${ fn:escapeXml(h.value) }</td></tr>
 	            </c:forEach>
 	        </tbody>
         </table>
@@ -92,11 +92,11 @@
             <tbody>
 	            <c:forEach items="${ locales }" var="locale">
 	                <tr>
-		                <td>${ locale.displayName }</td>
-		                <td>${ locale.locale }</td>
-		                <td>${ locale.displayLanguage } (${ locale.locale.language }, ${ locale.locale.ISO3Language })</td>
-	                    <td>${ locale.displayCountry } (${ locale.locale.country }, ${ locale.locale.ISO3Country })</td>
-	                    <td>${ not empty local.locale.variant ? locale.displayVariant + ' (' + locale.locale.variant + ')' : '' }</td>
+		                <td>${ fn:escapeXml(locale.displayName) }</td>
+		                <td>${ fn:escapeXml(locale.locale) }</td>
+		                <td>${ fn:escapeXml(locale.displayLanguage) } (${ fn:escapeXml(locale.locale.language) }, ${ fn:escapeXml(locale.locale.ISO3Language) })</td>
+	                    <td>${ fn:escapeXml(locale.displayCountry) } (${ fn:escapeXml(locale.locale.country) }, ${ fn:escapeXml(locale.locale.ISO3Country) })</td>
+	                    <td>${ not empty local.locale.variant ? fn:escapeXml(locale.displayVariant) + ' (' + fn:escapeXml(locale.locale.variant) + ')' : '' }</td>
 	                </tr>
 	            </c:forEach>
             </tbody>

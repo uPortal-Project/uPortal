@@ -37,9 +37,9 @@
     <ul>
         <c:forEach var="dataEntry" items="${registrationRequest.dataToSubmit}">
             <li style="list-style-type: none;">
-                <spring:message var="dataDisplayName" text="${dataEntry.key}" code="data.${dataEntry.key}" />
-                <form:checkbox path="dataToSubmit['${dataEntry.key}']" value="true"/> 
-                <form:label path="dataToSubmit['${dataEntry.key}']" cssClass="fl-label"> ${dataDisplayName}</form:label>
+                <spring:message var="dataDisplayName" text="${fn:escapeXml(dataEntry.key)}" code="data.${dataEntry.key}" />
+                <form:checkbox path="dataToSubmit['${fn:escapeXml(dataEntry.key)}']" value="true"/> 
+                <form:label path="dataToSubmit['${fn:escapeXml(dataEntry.key)}']" cssClass="fl-label"> ${fn:escapeXml(dataDisplayName)}</form:label>
             </li>
         </c:forEach>
     </ul>

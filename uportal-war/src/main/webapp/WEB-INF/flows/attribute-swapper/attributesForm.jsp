@@ -90,10 +90,10 @@
 				        
 				    <div class="portlet-button-group">
 					    <spring:message var="updateAttributesText" code="attributesForm.updateAttributesButton" />
-					    <input type="submit" class="portlet-button portlet-button-primary" name="_eventId_updateAttributes" value="${updateAttributesText}" />
+					    <input type="submit" class="portlet-button portlet-button-primary" name="_eventId_updateAttributes" value="${fn:escapeXml(updateAttributesText)}" />
 					    
 					    <spring:message var="resetAttributesText" code="personLookup.resetAttributesButton" />
-					    <input type="submit" class="portlet-button" name="_eventId_resetAttributes" value="${resetAttributesText}" />
+					    <input type="submit" class="portlet-button" name="_eventId_resetAttributes" value="${fn:escapeXml(resetAttributesText)}" />
 				    </div>
 				</form:form>
 			</div>
