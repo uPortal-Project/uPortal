@@ -24,20 +24,12 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-    <subflow-state id="personLookup" subflow="person-lookup">
-        <input name="showCancelButton" value="'false'" />
-        <input name="personSearchResults_selectAndGoButtonTextKey" value="'personSearchResults.swapButton'" />
-        <input name="personDetails_selectAndGoButtonTextKey" value="'personDetails.swapButton'" />
-        
-        <output name="person" />
+    <input name="person"/>
 
-        <transition to="personLookup" on="cancelPersonLookup" />
-        <transition to="swapIdentity" on="returnSelectedPerson" />
-    </subflow-state>
-    
-    <end-state id="swapIdentity" view="contextRelative:/Login">
+    <view-state id="swapIdentity" view="contextRelative:/Login">
         <on-entry>
             <evaluate expression="identitySwapperHelper.swapAttributes(externalContext, person)" />
         </on-entry>
-    </end-state>
+    </view-state>
+    
 </flow>
