@@ -60,8 +60,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <span class="separator">&gt; </span>
             </c:forEach>
         </div>
-        <h2 class="title" role="heading">Edit assignment for <span class="name">${ permissionDefinition.activity.name }</span></h2>
-        <h3 class="subtitle">With target <span class="name">${ permissionDefinition.target.name }</span></h3>
+        <h2 class="title" role="heading">
+            <c:set var="message"><span class="name"><spring:escapeBody htmlEscape="true">${ permissionDefinition.activity.name }</spring:escapeBody></span></c:set>
+            <spring:message code="edit.assignment.for.name" arguments="${ message }" htmlEscape="false"/>
+        </h2>
+        <h3 class="subtitle">
+            <c:set var="message"><span class="name"><spring:escapeBody htmlEscape="true">${ permissionDefinition.target.name }</spring:escapeBody></span></c:set>
+            <spring:message code="with.target.name" arguments="${ message }" htmlEscape="false"/>
+        </h3>
         <div class="toolbar">
         	<ul>
                 <li><a href="${ choosePrinicipalsUrl }" class="button"><spring:message code="choose.principals"/></a></li>

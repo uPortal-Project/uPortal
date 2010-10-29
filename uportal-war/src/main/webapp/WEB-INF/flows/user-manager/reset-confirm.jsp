@@ -38,19 +38,19 @@
         <!-- Messages -->
         <div class="portlet-msg-alert portlet-msg alert" role="alert">
             <div class="titlebar">
-            	<h3 class="title">Caution!</h3>
+            	<h3 class="title"><spring:message code="warning"/></h3>
             </div>
             <div class="content">
-            	<p>Resetting a customer's layout is irreversible.</p>
+            	<p><spring:message code="resetting.user.layout.irreversible"/></p>
             </div>
         </div>
 
-		<p>Are you sure you want to reset the layout for <c:out value="${person.name}"/>?</p>
+		<p><spring:message code="are.you.sure.reset.layout" arguments="${person.name}"/></p>
         <!-- Buttons -->
         <form action="${formUrl}" method="POST">
         <div class="buttons">
-            <input class="button primary" type="submit" value="Reset Layout" name="_eventId_confirm"/>
-            <input class="button " type="submit" value="Cancel" name="_eventId_cancel"/>
+            <input class="button primary" type="submit" value="<spring:message code="reset.layout"/>" name="_eventId_confirm"/>
+            <input class="button " type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
         </div>
         </form>
     

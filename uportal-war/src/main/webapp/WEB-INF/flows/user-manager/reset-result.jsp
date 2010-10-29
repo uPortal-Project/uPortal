@@ -38,17 +38,17 @@
     <!-- Messages --> 
     <div class="portlet-msg-success portlet-msg success" role="status">
     	<div class="titlebar">
-            <h3 class="title">Success</h3>
+            <h3 class="title"><spring:message code="success"/></h3>
         </div>
         <div class="content">
-            <p>Layout for <c:out value="${person.name}"/> has been reset.</p>
+            <p><spring:message code="layout.for.name.has.been.reset" arguments="${person.name}"/></p>
         </div>
     </div>
     
     <!-- Buttons -->
     <form action="${formUrl}" method="POST">
         <div class="buttons">
-        	<input class="button primary" type="submit" value="Continue" name="_eventId_continue"/>
+        	<input class="button primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_continue"/>
         </div>
     </form>
     

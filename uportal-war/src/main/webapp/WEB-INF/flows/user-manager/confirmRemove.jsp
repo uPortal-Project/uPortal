@@ -44,7 +44,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<!-- Portlet Title -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading">
-      <spring:message code="confirmRemove.title"/>
+      <spring:message code="remove.user"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
@@ -63,10 +63,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="confirmRemove.heading" arguments="${ person.name }"/></h3>
+        <h3 class="title" role="heading"><spring:message code="remove.user.name" arguments="${ person.name }"/></h3>
       </div>
       <div class="content">
-        <spring:message code="confirmRemove.text" arguments="${ person.name }"/>
+        <spring:message code="remove.user.confirmation" arguments="${ person.name }"/>
 	  </div>
 	</div> <!-- end: portlet-section -->
     
