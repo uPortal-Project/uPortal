@@ -36,10 +36,10 @@
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="editUser"/>
 </portlet:renderURL>
-<portlet:renderURL var="impersonateUrl">
+<portlet:actionURL var="impersonateUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="swap"/>
-</portlet:renderURL>
+</portlet:actionURL>
 <portlet:renderURL var="resetLayoutUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="resetLayout"/>

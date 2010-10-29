@@ -109,7 +109,7 @@
      | Account deletion
      +-->
     <view-state id="confirmRemove">
-        <transition on="remove" to="personLookup">
+        <transition on="remove" to="finish">
             <!-- Remove the portlet -->
             <set name="flashScope.servletRequest" 
                 value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
@@ -117,10 +117,10 @@
                 value="personManager.getPerson(servletRequest)"/>
             <evaluate expression="userAccountHelper.deleteAccount(flashScope.user, person.name)"/>
         </transition>
-        <transition on="cancel" to="finish"/>
+        <transition on="cancel" to="viewUserDetails"/>
     </view-state>
 
-    <end-state id="swapIdentity" view="contextRelative:/Login">
+    <end-state id="swapIdentity">
         <on-entry>
             <evaluate expression="identitySwapperHelper.swapAttributes(externalContext, person)" />
         </on-entry>
