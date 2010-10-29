@@ -15,3 +15,80 @@ KIND, either express or implied. See the License for the
 specific language governing permissions and limitations
 under the License.
 
+This project includes:
+ Fluid Infusion and Skinning System under the New BSD license
+
+ jQuery, jQueryUI, and the jQuery Form Plugin under the MIT license
+
+ The famfamfam Silk Icons under the 
+ Creative Commons Attribution 3.0 License
+ http://www.famfamfam.com/lab/icons/silk/
+
+ Ant under the Apache License, Version 2
+ ANTLR under the BSD License
+ Apache Commons Beanutils under the Apache License, Version 2
+ Apache Commons Codec under the Apache License, Version 2
+ Apache Commons Collections under the Apache License, Version 2
+ Apache Commons DBCP under the Apache License, Version 2
+ Apache Commons Fileupload under the Apache License, Version 2
+ Apache Commons HttpClient under the Apache License, Version 2
+ Apache Commons IO under the Apache License, Version 2
+ Apache Commons JEXL under the Apache License, Version 2
+ Apache Commons Lang under the Apache License, Version 2
+ Apache Commons Logging under the Apache License, Version 2
+ Apache Commons Pooling under the Apache License, Version 2
+ ASM under the Apache License, Version 2
+ AspectJ under the Eclipse Public License, v1.0
+ Cernunnos under the Apache License, Version 2
+ CGlib under the Apache License, Version 2
+ DOM4J under the BSD License
+ Ehcache under the Apache License, Version 2
+ EJB3 under the LGPL v2.1
+ EZMorph under the Apache License, Version 2
+ Groovy under the Apache License, Version 2
+ Grouper under the Apache License, Version 2
+ Hibernate under the LGPL, v2.1
+ Jackson under the Apache License, Version 2
+ Jasig Bookmarks Portlet under the Apache License, Version 2
+ Jasig CAS client, server, and clearpass integration under the BSD License
+ Jasig CAS Proxy Test portlet under the Apache License, Version 2
+ Jasig Functional Tests Portlet under the Apache License, Version 2
+ Jasig Person Directory under the Apache License, Version 2
+ Jasig Resource Server under the Apache License, Version 2
+ Jasig Simple Content Portlet under the Apache License, Verson 2
+ Jasig Weather Portlet under the Apache License, Version 2
+ Jasig Web Proxy Portlet under the Apache License, Version 2
+ Jasig Widget Portlets under the Apache License, Version 2
+ Jasypt under the Apache License, Version 2
+ Java Assist under the Mozilla Public License, Version 1.1
+ Java Mail under the Commons Development and Distribution License, Version 1.0
+ Java Persistence (EJB) under the Commons Development and Distribution License, Version 1.0
+ Java Scripting Library under the Commons Development and Distribution License, Version 1.0
+ Java Standard under the Commons Development and Distribution License, Version 1.0
+ Java Transactions under the Common Development and Distribution License Version 1.0 
+ JavaBeans Activation under the Commons Development and Distribution License, Version 1.0
+ Jaxen under an Apache style license
+ JDom under an Apache style license
+ JLine under the BSD License
+ JSR-250 API under the Common Development and Distribution License Version 1.0 
+ JSTL API under the Common Development and Distribution License Version 1.0 
+ JSON-lib under the Apache License, Version 2
+ Log4j under the Apache License, Version 2
+ NekoHTML under the Apache License, Version 2
+ Pluto under the Apache License, Version 2
+ Quartz under the Apache License, Version 2
+ Rhino under the Mozilla Public License, Version 1.1
+ SLF4J under the MIT License
+ Spring Framework under the Apache License, Version 2
+ Stax2 under the BSD License
+ Tango icon librar under a general public domain license
+ Woodstox under the Apache License, Version 2
+ XStream under the BSD License
+ XPP under a BSD-like license
+ 
+ AOP Alliance under the Public Domain License
+ 
+This project also includes code under copywrite of the following institutions:
+ University of Chicago
+ University of Wisconsin
+ Yale University 
