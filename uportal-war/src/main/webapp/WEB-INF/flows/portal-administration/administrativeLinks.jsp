@@ -40,16 +40,10 @@
         <div class="content">
             <ul>
                 <li>
-                    <a href="<c:url value="/p/IdentitySwapper"/>">Swap identity</a>
+                    <a href="<c:url value="/p/user-administration"/>">Manage Users</a>
                 </li>
                 <li>
                     <a href="<c:url value="/p/AttributeSwapper"/>">Swap attributes</a>
-                </li>
-                <li>
-                    <a href="<c:url value="/p/passwordmgr"/>">Manage passwords</a>
-                </li>
-                <li>
-                    <a href="<c:url value="/p/reset-user-layout"/>">Reset a user's layout</a>
                 </li>
             </ul>
         </div>
