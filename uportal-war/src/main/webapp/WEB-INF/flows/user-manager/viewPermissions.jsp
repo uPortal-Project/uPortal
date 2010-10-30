@@ -66,7 +66,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
-        <a href="${ groupUrl }">${ person.name }</a> > 
+        <a href="${ groupUrl }">${ fn:escapeXml(person.name )}</a> > 
         <spring:message code="permissions"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
@@ -91,7 +91,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
                     <c:forTokens items="principal,target" delims="," var="token">
                         
-                        <div id="${n}${token}Tab" class="pager-container-${token} ui-tabs-panel ui-widget-content ui-corner-bottom${ token == 'target' ? ' ui-tabs-hide' : '' }">
+                        <div id="${n}${fn:escapeXml(token)}Tab" class="pager-container-${fn:escapeXml(token)} ui-tabs-panel ui-widget-content ui-corner-bottom${ token == 'target' ? ' ui-tabs-hide' : '' }">
                             <div class="fl-col-mixed-200 options">
                                 <div class="fl-col-fixed fl-force-left view-filter">
                                 <!-- This space left blank for future filtering options... -->

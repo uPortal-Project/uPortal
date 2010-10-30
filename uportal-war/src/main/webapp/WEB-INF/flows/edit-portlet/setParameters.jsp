@@ -92,13 +92,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <tbody>
               <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
                 <tr>
-                  <td class="preference-name">${ pref.name }</td>
+                  <td class="preference-name">${ fn:escapeXml(pref.name )}</td>
                   <td>
-                    <c:forEach var="value" items="${ pref.values }">
-                        <div>${ value }</div>
+                    <c:forEach var="value" items="${ fn:escapeXml(pref.values )}">
+                        <div>${ fn:escapeXml(value )}</div>
                     </c:forEach>
                   </td>
-                  <td>${ !pref.readOnly }</td>
+                  <td>${ fn:escapeXml(!pref.readOnly )}</td>
                 </tr>
               </c:forEach>
             </tbody>
@@ -113,10 +113,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <!-- Portlet Section -->
       <div class="portlet-section" role="region">
         <div class="titlebar">
-          <h3 class="title" role="heading">${ step.name }</h3>
+          <h3 class="title" role="heading">${ fn:escapeXml(step.name )}</h3>
         </div>
         <div class="content">
-          <p class="note" role="note">${ step.description }</p>
+          <p class="note" role="note">${ fn:escapeXml(step.description )}</p>
           
           <!-- Channel Parameters -->
           <c:if test="${ fn:length(step.parameters) > 0 }">
@@ -148,7 +148,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                       </c:when>
                       <c:otherwise>
                         <tr>
-                          <td><span class="uportal-label">${ parameter.label }:</span></td>
+                          <td><span class="uportal-label">${ fn:escapeXml(parameter.label )}:</span></td>
                           <td>
                             <c:choose>
                               <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
@@ -195,11 +195,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <c:choose>
                           <c:when test="${ parameter.type.display == 'hidden' }">
                             <c:set var="values" value="${ channel.portletPreferences[parameter.name].value }"/>
-                            <input type="hidden" name="${ paramPath }" value="${ fn:length(values) > 0 ? values[0] : '' }"/>
+                            <input type="hidden" name="${ fn:escapeXml(paramPath )}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}"/>
                           </c:when>
                           <c:otherwise>
                             <tr>
-                              <td class="preference-name"><span class="uportal-label">${ parameter.label }:</span></td>
+                              <td class="preference-name"><span class="uportal-label">${ fn:escapeXml(parameter.label )}:</span></td>
                               <td>
                                     <editPortlet:parameterInput parameterType="${ parameter.type }" 
                                       parameterPath="${ paramPath }" parameterName="${ parameter.name }" 
@@ -226,7 +226,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <c:forEach items="${ step.arbitraryParameters }" var="arbitraryParam">
             <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
             
-              <div class="parameter-options-section" prefix="${ prefix }" dialog="${status.index}-params-${prefix}">
+              <div class="parameter-options-section" prefix="${ fn:escapeXml(prefix )}" dialog="${status.index}-params-${fn:escapeXml(prefix)}">
                 <table class="portlet-table">
                   <thead>
                     <tr>
@@ -242,7 +242,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                       <c:set var="paramPath" value="parameters['${ channelParam.key }'].value"/>
                       <c:set var="overrideParamPath" value="parameterOverrides['${ channelParam.key }'].value"/>
                         <tr>
-                          <td>${ fn:substringAfter(channelParam.key, prefix) }</td>
+                          <td>${ fn:escapeXml(fn:substringAfter(channelParam.key, prefix) )}</td>
                           <td><form:input path="${ paramPath }"/></td>
                           <td>
                               <form:checkbox path="${overrideParamPath}" value="true"/>
@@ -260,7 +260,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         
           <!-- Other Preferences -->
           <c:if test="${ step.arbitraryPreferences }">
-            <div class="preference-options-section" dialog="${ status.index }-prefs">
+            <div class="preference-options-section" dialog="${ fn:escapeXml(status.index )}-prefs">
               <table class="portlet-table">
                 <thead>
                   <tr>
@@ -275,15 +275,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <c:set var="paramPath" value="portletPreferences['${ name }'].value"/>
                     <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ name }'].value"/>
                       <tr>
-                        <td class="preference-name">${ name }</td>
+                        <td class="preference-name">${ fn:escapeXml(name )}</td>
                         <td>
                             <c:forEach items="${ channel.portletPreferences[name].value }" var="val">
                              <div>
-                                 <input name="portletPreferences['${name}'].value" value="${ val }" />
+                                 <input name="portletPreferences['${fn:escapeXml(name)}'].value" value="${ fn:escapeXml(val )}" />
                                  <a class="delete-parameter-value-link" href="javascript:;"><spring:message code="remove"/></a>
                                 </div>
                             </c:forEach>
-                            <a class="add-parameter-value-link" href="javascript:;" paramName="${name}"><spring:message code="add.value"/></a>
+                            <a class="add-parameter-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}"><spring:message code="add.value"/></a>
                         </td>
                         <td>
                             <form:checkbox path="${overrideParamPath}" value="true"/>
@@ -323,7 +323,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <c:forEach items="${ cpd.params.steps }" var="step" varStatus="status">
             <c:forEach items="${ step.arbitraryParameters }" var="arbitraryParam">
                 <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
-                    <div id="${n}addParameterDialog-${status.index}-params-${prefix}" class="parameter-adding-dialog jqueryui" title="<spring:message code="add.parameter"/>">
+                    <div id="${n}addParameterDialog-${status.index}-params-${fn:escapeXml(prefix)}" class="parameter-adding-dialog jqueryui" title="<spring:message code="add.parameter"/>">
                         <form action="javascript:;">
                             <p><spring:message code="parameter.name"/>: <input name="name"/></p>
                             <input type="submit" value="<spring:message code="add"/>"/>

@@ -67,10 +67,10 @@
                     <c:forEach var="moreInfoAttr" items="${moreInfoAttributes}">
                         <c:if test="${not empty personDisplayEntry.key.attributes[moreInfoAttr]}">
                             <li class="attributeItem">
-                                <span><spring:message text="${moreInfoAttr}"/>: </span>
+                                <span>${fn:escapeXml(moreInfoAttr}: </span>
                                 <span>
                                     <c:forEach var="attrValue" items="${personDisplayEntry.key.attributes[moreInfoAttr]}" varStatus="attrValueStatus">
-                                        <spring:message text="${attrValue}"/>
+                                        ${fn:escapeXml(attrValue)}
                                         <c:if test="${not attrValueStatus.last}">, </c:if>
                                     </c:forEach>
                                 </span>
@@ -87,6 +87,6 @@
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="newSearch" />
 </portlet:renderURL>
-<a href="${newSearchUrl}">${backToResultsLinkText}</a>
+<a href="${newSearchUrl}">${fn:escapeXml(backToResultsLinkText)}</a>
 
 </div>

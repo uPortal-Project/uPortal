@@ -30,7 +30,7 @@
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading"><spring:message code="edit.user"/>: <c:out value="${ person.username }"/></h2>
+        <h2 class="title" role="heading"><spring:message code="edit.user"/>: <c:out value="${ fn:escapeXml(person.username )}"/></h2>
     </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Body -->
@@ -94,23 +94,23 @@
                             <!-- Print out each attribute -->
                             <c:forEach items="${ person.attributes }" var="attribute">
                                 <tr>
-                                    <td class="attribute-name">${ attribute.key }</td>
+                                    <td class="attribute-name">${ fn:escapeXml(attribute.key )}</td>
                                     <td>
                                         <c:choose>
                                             <c:when test="${ fn:length(attribute.value.value) > 0 }">
                                                 <c:forEach var="value" items="${ attribute.value.value }">
                                                     <div>
-                                                         <input name="attributes['${attribute.key}'].value" value="${ value }" />
+                                                         <input name="attributes['${fn:escapeXml(attribute.key)}'].value" value="${ fn:escapeXml(value )}" />
                                                          <a class="delete-attribute-value-link" href="javascript:;"><spring:message code="remove"/></a>
                                                     </div>
                                                 </c:forEach>
-                                                <a class="add-attribute-value-link" href="javascript:;" paramName="${name}">
+                                                <a class="add-attribute-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">
                                                     <spring:message code="add.value"/>
                                                 </a>
                                             </c:when>
                                             <c:otherwise>
                                                 <div>
-                                                    <input name="attributes['${attribute.key}'].value" value=""/>
+                                                    <input name="attributes['${fn:escapeXml(attribute.key)}'].value" value=""/>
                                                 </div>
                                             </c:otherwise>
                                         </c:choose>

@@ -19,10 +19,7 @@
 
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="portlet" uri="http://java.sun.com/portlet"%>
-
-<portlet:defineObjects/>
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
 <div class="fl-widget portlet imp-exp view-delete" role="section">
@@ -67,7 +64,7 @@
                             <select id="entityType" name="entityType">
                                 <option>[Select Type]</option>
                                 <c:forEach items="${supportedTypes}" var="type">
-                                    <option value="${type}"><c:out value="${type}"/></option>
+                                    <option value="${fn:escapeXml(type)}">${fn:escapeXml(type)}</option>
                                 </c:forEach>
                             </select>
                         </td>

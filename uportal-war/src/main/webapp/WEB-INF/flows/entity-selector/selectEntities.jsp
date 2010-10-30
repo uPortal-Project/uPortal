@@ -85,8 +85,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <ul>
                           <c:forEach items="${groups}" var="group">
                             <li>
-                              <a key="${group}" href="javascript:;"><c:out value="${group.name}"/></a>
-                              <input type="hidden" name="groups" value="${group.entityType}:${group.id}"/>
+                              <a key="${fn:escapeXml(group)}" href="javascript:;">${fn:escapeXml(group.name)}</a>
+                              <input type="hidden" name="groups" value="${fn:escapeXml(group.entityType)}:${fn:escapeXml(group.id)}"/>
                             </li>
                           </c:forEach>
                         </ul>

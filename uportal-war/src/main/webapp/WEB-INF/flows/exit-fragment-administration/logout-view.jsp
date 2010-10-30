@@ -19,10 +19,7 @@
 
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="portlet" uri="http://java.sun.com/portlet"%>
-
-<portlet:defineObjects/>
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <portlet:actionURL var="actionUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
@@ -32,7 +29,7 @@
     <h2 class="block-title">Fragment Administration</h2>
     <div class="block-content">
       <form name="fragmentAdminExitForm" action="${actionUrl}" method="POST">
-      	<label for="exitFragment">You are currently logged in as <strong><c:out value="${remoteUser}"/></strong> for DLM fragment administration</label>
+      	<label for="exitFragment">You are currently logged in as <strong>${fn:escapeXml(remoteUser)}</strong> for DLM fragment administration</label>
       	<input id="exitFragment" type="Submit" value="Exit" name="_eventId_logout"/>
       </form>
     </div>

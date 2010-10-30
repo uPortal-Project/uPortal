@@ -30,7 +30,7 @@
         new Date(<fmt:formatDate value="${ value }" pattern="yyyy"/>, Number(<fmt:formatDate value="${ value }" pattern="M"/>)-1, <fmt:formatDate value="${ value }" pattern="d"/>)
     </c:when>
     <c:when test="<%= value instanceof Number || value instanceof Boolean %>">
-        ${ value }
+        ${ fn:escapeXml(value )}
     </c:when>
     <c:otherwise>
         '<spring:escapeBody javaScriptEscape="true">${ value }</spring:escapeBody>'

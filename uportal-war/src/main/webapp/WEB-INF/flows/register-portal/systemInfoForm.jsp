@@ -61,7 +61,7 @@
                                 <div>
                                     <spring:message var="dataDisplayName" text="${dataEntry.key}" code="data.${dataEntry.key}" />
                                     <form:checkbox path="dataToSubmit['${dataEntry.key}']" value="true"/> 
-                                    <form:label path="dataToSubmit['${dataEntry.key}']" cssClass="fl-label"> ${dataDisplayName}</form:label>
+                                    <form:label path="dataToSubmit['${dataEntry.key}']" cssClass="fl-label"> ${fn:escapeXml(dataDisplayName)}</form:label>
                                 </div>
                             </c:forEach>
                         </fieldset>

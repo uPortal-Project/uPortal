@@ -31,13 +31,13 @@
   <c:when test="${ parameterType.input == 'multi-text' }">
     <c:forEach items="${ parameterValues }" var="val">
       <div>
-         <input name="${ parameterPath }" value="${ val }" 
+         <input name="${ fn:escapeXml(parameterPath )}" value="${ fn:escapeXml(val )}" 
             size="${ parameterType.length != '' ? parameterType.length : defaultLength }"
             maxlength="${ parameterType.maxlength != '' ? parameterType.maxlength : defaultMaxLength }"/>
          <a class="delete-parameter-value-link" href="javascript:;">Remove</a>
       </div>
     </c:forEach>
-    <a class="add-parameter-value-link" href="javascript:;" paramName="${parameterName}">Add value</a>
+    <a class="add-parameter-value-link" href="javascript:;" paramName="${fn:escapeXml(parameterName)}">Add value</a>
   </c:when>
 
   <c:when test="${ parameterType.input == 'text' }">
@@ -47,7 +47,7 @@
       <!-- Textarea -->
         <c:choose>
             <c:when test="${ parameterValues != null }">
-                <textarea>${ fn:length(parameterValues) > 0 ? parameterValues[0] : '' }</textarea>
+                <textarea>${ fn:escapeXml(fn:length(parameterValues) > 0 ? parameterValues[0] : '' )}</textarea>
             </c:when>
             <c:otherwise>
                 <form:textarea path="${parameterPath}"/>
@@ -58,7 +58,7 @@
       <!-- Text input -->
         <c:choose>
             <c:when test="${ parameterValues != null }">
-                <input name="${parameterPath}" value="${ fn:length(parameterValues) > 0 ? parameterValues[0] : '' }" 
+                <input name="${fn:escapeXml(parameterPath)}" value="${ fn:escapeXml(fn:length(parameterValues) > 0 ? parameterValues[0] : '' )}" 
                     size="${ parameterType.length != '' ? parameterType.length : defaultLength }" 
                     maxlength="${ parameterType.maxlength != '' ? parameterType.maxlength : defaultMaxLength }"/>
             </c:when>

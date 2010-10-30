@@ -133,7 +133,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </c:when>
               </c:choose>
               <form:checkbox path="${controlPath}" disabled="${ control.override != 'yes'}"/>
-              <label for="${ control.type }"><spring:message code="${ control.type }"/></label><br/>
+              <label for="${ fn:escapeXml(control.type )}"><spring:message code="${ control.type }"/></label><br/>
           </c:forEach>
         </fieldset>
         

@@ -62,7 +62,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <c:set var="split" value="${ numOwners / 2 }" />
             <c:forEach items="${ owners }" var="owner" varStatus="ownerStatus">
             	<!-- Panel -->
-                <div class="permission-owner ${ owner.fname } panel">
+                <div class="permission-owner ${ fn:escapeXml(owner.fname )} panel">
                 	<div class="titlebar">
                         <h2 class="title">
                             <portlet:actionURL var="ownerUrl">
@@ -70,9 +70,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                 <portlet:param name="_eventId" value="listActivities"/>
                                 <portlet:param name="ownerFname" value="${ owner.fname }"/>
                             </portlet:actionURL>
-                            <a href="${ ownerUrl }">${ owner.name }</a>
+                            <a href="${ ownerUrl }">${ fn:escapeXml(owner.name )}</a>
                         </h2>    
-                        <h3 class="subtitle">${ owner.description }</h3>
+                        <h3 class="subtitle">${ fn:escapeXml(owner.description )}</h3>
                     </div>
                     <div class="content">
                         <span class="link-list">
@@ -83,7 +83,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <portlet:param name="ownerFname" value="${ owner.fname }"/>
                                     <portlet:param name="activityFname" value="${ activity.fname }"/>
                                 </portlet:actionURL>
-                                <a href="${ activityUrl }">${ activity.name }</a>${ status.last ? "" : ", " }
+                                <a href="${ activityUrl }">${ fn:escapeXml(activity.name )}</a>${ status.last ? "" : ", " }
                             </c:forEach>
                         </span>
                     </div>

@@ -72,12 +72,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     	<div class="breadcrumb">
         	<span class="breadcrumb-1"><a href="${ ownersUrl }"><spring:message code="categories"/></a></span>
             <span class="separator">&gt; </span>
-            <span class="breadcrumb-2"><a href="${ activitiesUrl }">${ owner.name }</a></span>
+            <span class="breadcrumb-2"><a href="${ activitiesUrl }">${ fn:escapeXml(owner.name )}</a></span>
             <span class="separator">&gt; </span>
             
         </div>
-        <h2 class="title" role="heading"><spring:message code="assignments.for"/> <span class="name">${ activity.name }</span></h2>
-        <h3 class="subtitle">${ activity.description }</h3>
+        <h2 class="title" role="heading"><spring:message code="assignments.for"/> <span class="name">${ fn:escapeXml(activity.name )}</span></h2>
+        <h3 class="subtitle">${ fn:escapeXml(activity.description )}</h3>
         <div role="toolbar" class="toolbar">
             <ul>
                 <li><a href="${ createUrl }" class="button"><spring:message code="add.assignment"/></a></li>

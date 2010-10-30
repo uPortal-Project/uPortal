@@ -59,7 +59,7 @@
                 <div class="content">
                 	<span class="link-list">
                     	<c:forEach items="${ groups.categories }">
-                        	<a href="${ groupUrl }">${ group.name }</a>${ status.last ? "" : ", " }
+                        	<a href="${ groupUrl }">${ fn:escapeXml(group.name )}</a>${ fn:escapeXml(status.last ? "" : ", " )}
                         </c:forEach>
                     </span>
                 </div>
@@ -74,7 +74,7 @@
                 <div class="content">
                 	<span class="link-list">
                     	<c:forEach items="${ groups.people }">
-                        	<a href="${ groupUrl }">${ group.name }</a>${ status.last ? "" : ", " }
+                        	<a href="${ groupUrl }">${ fn:escapeXml(group.name )}</a>${ fn:escapeXml(status.last ? "" : ", " )}
                         </c:forEach>
                     </span>
                 </div>

@@ -51,9 +51,9 @@
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading"><c:out value="${ group.name }"/></h2>
-        <h3 class="subtitle">${ group.description }</h3>
-        <div class="details">Created by ${ group.creatorId }</div>
+        <h2 class="title" role="heading"><c:out value="${ fn:escapeXml(group.name )}"/></h2>
+        <h3 class="subtitle">${ fn:escapeXml(group.description )}</h3>
+        <div class="details">Created by ${ fn:escapeXml(group.creatorId )}</div>
         <div class="toolbar">
         	<ul>
             	<li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
@@ -78,7 +78,7 @@
             <div class="content">
                 <ul class="group-member">
                     <c:forEach items="${ group.members }" var="child">
-                        <li><a href="${ editMembersUrl }">${ child.name }</a></li>
+                        <li><a href="${ editMembersUrl }">${ fn:escapeXml(child.name )}</a></li>
                     </c:forEach>
                 </ul>
             </div>

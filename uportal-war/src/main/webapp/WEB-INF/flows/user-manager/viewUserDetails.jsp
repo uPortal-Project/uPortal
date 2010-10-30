@@ -51,7 +51,7 @@
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading"><c:out value="${ person.name }"/></h2>
+        <h2 class="title" role="heading"><c:out value="${ fn:escapeXml(person.name )}"/></h2>
         <div class="toolbar">
             <ul>
                 <c:if test="${ canEdit }"><li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li></c:if>

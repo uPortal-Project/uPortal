@@ -69,13 +69,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
         <select name="application">
             <c:forEach items="${contexts}" var="context">
-                <option value="${context.name}">${context.name}</option>
+                <option value="${fn:escapeXml(context.name)}">${fn:escapeXml(context.name)}</option>
             </c:forEach>
         </select>
         
         <select name="portlet">
             <c:forEach items="${contexts[0].portlets}" var="portlet">
-                <option value="${portlet.portletName}">${fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName}</option>
+                <option value="${fn:escapeXml(portlet.portletName)}">${fn:escapeXml(fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName)}</option>
             </c:forEach>
         </select>
         

@@ -45,14 +45,14 @@ border: 1px solid gray;
 
 <div class="fl-widget-content fl-fix up-portlet-content-wrapper">
 <ul>
-<li>Portlet Window ID: ${portletWindowId}</li>
-<li>Channel Definition Name: ${channelDefinition.name}</li>
-<li><spring:message code="errorportlet.exception"/>: ${exception}</li>
+<li>Portlet Window ID: ${fn:escapeXml(portletWindowId)}</li>
+<li>Channel Definition Name: ${fn:escapeXml(channelDefinition.name)}</li>
+<li><spring:message code="errorportlet.exception"/>: ${fn:escapeXml(exception)}</li>
 </ul>
 <div id="${n}stacktracecontainer">
 <p><button class="stacktracetoggle"><spring:message code="errorportlet.toggleshow"/></button></p>
 <div class="stacktrace" >
-<pre>${stackTrace}</pre>
+<pre>${fn:escapeXml(stackTrace)}</pre>
 </div>
 </div>
 </div> <!-- end content -->

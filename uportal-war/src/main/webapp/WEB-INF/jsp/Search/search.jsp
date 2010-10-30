@@ -41,7 +41,7 @@
       <div class="portlet-section-body">
 
         <form action="${ formUrl }" method="POST">
-            <input name="query" value="${ query }"/> <input type="submit" value="Search"/>
+            <input name="query" value="${ fn:escapeXml(query )}"/> <input type="submit" value="Search"/>
         </form>
 
         <c:if test="${not empty query}">
@@ -68,13 +68,13 @@
                             </c:if>
                             <c:forEach items="${ people }" var="person">
                                 <div class="person-search-result">
-                                    <h3><a class="person-link" href="javascript:;">${person.attributes.displayName[0]}</a></h3>
+                                    <h3><a class="person-link" href="javascript:;">${fn:escapeXml(person.attributes.displayName[0])}</a></h3>
                                     <table>
                                         <c:forEach items="${ attributeNames }" var="attributeName">
                                             <c:if test="${ fn:length(person.attributes[attributeName]) > 0 }">
                                                 <tr>
-                                                    <td>${attributeName}</td>
-                                                    <td>${person.attributes[attributeName][0]}</td>
+                                                    <td>${fn:escapeXml(attributeName)}</td>
+                                                    <td>${fn:escapeXml(person.attributes[attributeName][0])}</td>
                                             </tr>
                                             </c:if>
                                         </c:forEach>
@@ -86,9 +86,9 @@
                         <div id="${n}_campus">
                             <c:forEach items="${ gsaResults.searchResults }" var="result">
                                 <div>
-                                    <a href="${ result.link }">${ result.title }</a>
+                                    <a href="${ result.link }">${ fn:escapeXml(result.title )}</a>
                                 </div>
-                                <p>${ result.snippet }</p>
+                                <p>${ fn:escapeXml(result.snippet )}</p>
                             </c:forEach>
                         </div>
                         

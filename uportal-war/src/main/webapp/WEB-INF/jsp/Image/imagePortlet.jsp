@@ -21,14 +21,14 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
-<p align="center">${ caption }</p>
+<p align="center">${ fn:escapeXml(caption )}</p>
 <p align="center">
   <c:if test="${not empty link}">
     <a href="${ link }">
   </c:if>
-    <img src="${ uri }" alt="${ alt }" width="${ width }" height="${ height }" border="${ border }"/>
+    <img src="${ uri }" alt="${ fn:escapeXml(alt )}" width="${ width }" height="${ height }" border="${ border }"/>
   <c:if test="${not empty link}">
     </a>
   </c:if>
 </p>
-<p align="center"><font size="2">${ subcaption }</font></p>
+<p align="center"><font size="2">${ fn:escapeXml(subcaption )}</font></p>

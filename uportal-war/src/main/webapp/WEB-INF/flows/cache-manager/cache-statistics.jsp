@@ -34,7 +34,7 @@
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading"><spring:message code="cache.statistics"/></h2>
-    <h3 class="subtitle"><c:out value="${cacheName}"/></h3>
+    <h3 class="subtitle">${fn:escapeXml(cacheName)}</h3>
   </div> <!-- end: portlet-titlebar -->
 
   <!-- Portlet Content -->
@@ -46,31 +46,31 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><spring:message code="object.count"/></td><td>${statistics.objectCount}</td>
+                    <td><spring:message code="object.count"/></td><td>${fn:escapeXml(statistics.objectCount)}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="cache.hits"/></td><td>${statistics.cacheHits}</td>
+                    <td><spring:message code="cache.hits"/></td><td>${fn:escapeXml(statistics.cacheHits)}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="cache.misses"/></td><td>${statistics.cacheMisses}</td>
+                    <td><spring:message code="cache.misses"/></td><td>${fn:escapeXml(statistics.cacheMisses)}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="memory.store.object.count"/></td><td>${statistics.memoryStoreObjectCount}</td>
+                    <td><spring:message code="memory.store.object.count"/></td><td>${fn:escapeXml(statistics.memoryStoreObjectCount)}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="in.memory.hits"/></td><td>${statistics.inMemoryHits}</td>
+                    <td><spring:message code="in.memory.hits"/></td><td>${fn:escapeXml(statistics.inMemoryHits)}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="disk.store.object.count"/></td><td>${statistics.diskStoreObjectCount}</td>
+                    <td><spring:message code="disk.store.object.count"/></td><td>${fn:escapeXml(statistics.diskStoreObjectCount)}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="on.disk.hits"/></td><td>${statistics.onDiskHits}</td>
+                    <td><spring:message code="on.disk.hits"/></td><td>${fn:escapeXml(statistics.onDiskHits)}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="eviction.count"/></td><td>${statistics.evictionCount}</td>
+                    <td><spring:message code="eviction.count"/></td><td>${fn:escapeXml(statistics.evictionCount)}</td>
                 </tr>
                 <tr>
-                    <td><spring:message code="statistics.accuracy"/></td><td>${statistics.statisticsAccuracyDescription}</td>
+                    <td><spring:message code="statistics.accuracy"/></td><td>${fn:escapeXml(statistics.statisticsAccuracyDescription)}</td>
                 </tr>
             </tbody>
         </table>

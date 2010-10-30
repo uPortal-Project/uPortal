@@ -55,17 +55,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   <portlet:param name="breadcrumb" value="${ breadcrumb.key }"/>
                 </portlet:actionURL>
                 <span class="breadcrumb-${ status.index + 1 }">
-                    <a href="${ breadcrumbUrl }">${ breadcrumb.value }</a>
+                    <a href="${ breadcrumbUrl }">${ fn:escapeXml(breadcrumb.value )}</a>
                 </span>
                 <span class="separator">&gt; </span>
             </c:forEach>
         </div>
         <h2 class="title" role="heading">
-            <c:set var="message"><span class="name"><spring:escapeBody htmlEscape="true">${ permissionDefinition.activity.name }</spring:escapeBody></span></c:set>
+            <c:set var="message"><span class="name"><spring:escapeBody htmlEscape="true">${ fn:escapeXml(permissionDefinition.activity.name )}</spring:escapeBody></span></c:set>
             <spring:message code="edit.assignment.for.name" arguments="${ message }" htmlEscape="false"/>
         </h2>
         <h3 class="subtitle">
-            <c:set var="message"><span class="name"><spring:escapeBody htmlEscape="true">${ permissionDefinition.target.name }</spring:escapeBody></span></c:set>
+            <c:set var="message"><span class="name"><spring:escapeBody htmlEscape="true">${ fn:escapeXml(permissionDefinition.target.name )}</spring:escapeBody></span></c:set>
             <spring:message code="with.target.name" arguments="${ message }" htmlEscape="false"/>
         </h3>
         <div class="toolbar">

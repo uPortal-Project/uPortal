@@ -48,8 +48,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	    	<span class="breadcrumb-1"><a href="${ backUrl }"><spring:message code="categories"/></a></span>
 	        <span class="separator">&gt; </span>
 	    </div>
-	    <h2 class="title" role="heading"><spring:message code="permissions.in"/> <span class="name">${ owner.name }</span></h2>
-	    <h3 class="subtitle">${ owner.description }</h3>
+	    <h2 class="title" role="heading"><spring:message code="permissions.in"/> <span class="name">${ fn:escapeXml(owner.name )}</span></h2>
+	    <h3 class="subtitle">${ fn:escapeXml(owner.description )}</h3>
 	</div>
   
   
@@ -58,7 +58,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
     <!-- Portlet Section -->    
 		
-        <table class="portlet-table" style="width:100%" title="${ owner.description }">    
+        <table class="portlet-table" style="width:100%" title="${ fn:escapeXml(owner.description )}">    
             <tr>
                 <th><spring:message code="name"/></th>
                 <th><spring:message code="systemId"/></th>
@@ -72,10 +72,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             <portlet:param name="_eventId" value="showActivity"/>
                             <portlet:param name="activityFname" value="${ activity.fname }"/>
                         </portlet:actionURL>
-                        <a href="${ activityUrl }">${ activity.name }</a>
+                        <a href="${ activityUrl }">${ fn:escapeXml(activity.name )}</a>
                     </td>
-                    <td>${ activity.fname }</td>
-                    <td>${ activity.description }</td>
+                    <td>${ fn:escapeXml(activity.fname )}</td>
+                    <td>${ fn:escapeXml(activity.description )}</td>
                 </tr>
             </c:forEach>
         </table>    

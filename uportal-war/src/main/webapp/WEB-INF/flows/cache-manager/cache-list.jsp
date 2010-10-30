@@ -69,15 +69,15 @@
                             <portlet:param name="execution" value="${flowExecutionKey}" />
                             <portlet:param name="_eventId" value="view-statistics"/>
                         </portlet:actionURL>
-                        <a href="${viewStatsUrl}">${statisticsEntry.key}</a>
+                        <a href="${viewStatsUrl}">${fn:escapeXml(statisticsEntry.key)}</a>
                     </td>
                     <td class="cache-used">
                         <span><fmt:formatNumber value="${statisticsEntry.value.usage}" pattern="00%" /> </span> 
-                        <small>(${statisticsEntry.value.size} / ${statisticsEntry.value.maxSize})</small>
+                        <small>(${fn:escapeXml(statisticsEntry.value.size)} / ${fn:escapeXml(statisticsEntry.value.maxSize)})</small>
                     </td>
                     <td class="cache-effectiveness">
                         <span><fmt:formatNumber value="${statisticsEntry.value.effectiveness}" pattern="00%" /> </span>
-                        <small>(<c:out value="${statisticsEntry.value.hits}"/> <spring:message code="hits"/>, <c:out value="${statisticsEntry.value.misses}"/> <spring:message code="misses"/>)</small>
+                        <small>(${fn:escapeXml(statisticsEntry.value.hits)} <spring:message code="hits"/>, ${fn:escapeXml(statisticsEntry.value.misses)} <spring:message code="misses"/>)</small>
                     </td>
                     <td class="cache-flush">
                         <portlet:actionURL var="flushUrl">

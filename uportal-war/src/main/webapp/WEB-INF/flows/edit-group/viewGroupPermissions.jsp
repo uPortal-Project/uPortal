@@ -66,7 +66,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
-        <a href="${ groupUrl }">${ group.name }</a> > 
+        <a href="${ groupUrl }">${ fn:escapeXml(group.name )}</a> > 
         <spring:message code="permissions"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->

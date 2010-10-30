@@ -19,10 +19,7 @@
 
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="portlet" uri="http://java.sun.com/portlet"%>
-
-<portlet:defineObjects/>
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
 <div id="portalFragAdminList" class="fl-widget portlet snooper view-main" role="section">
@@ -44,7 +41,7 @@
             <select id="fragmentOwner" name="impersonateUser" title="Choose a fragment to edit">
             	<option value="NONE"> -- fragments -- </option>
                 <c:forEach items="${fragments}" var="item">
-                	<option value="${item.key}">${item.value}</option>
+                	<option value="${fn:escapeXml(item.key)}">${fn:escapeXml(item.value)}</option>
                 </c:forEach>
             </select>
             <%-- onclick="if (document.fragmentAdminForm.fragmentOwner.options[document.fragmentAdminForm.fragmentOwner.selectedIndex].value != 'NONE') document.fragmentAdminForm.submit()" --%>

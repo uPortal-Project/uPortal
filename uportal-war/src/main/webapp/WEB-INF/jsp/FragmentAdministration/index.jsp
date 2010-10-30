@@ -19,10 +19,7 @@
 
 --%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="portlet" uri="http://java.sun.com/portlet"%>
-
-<portlet:defineObjects/>
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
 <div id="portalFragAdminList" class="fl-widget portlet snooper view-main" role="section">
@@ -42,7 +39,7 @@
         </form>
         <ul class="fl-listmenu">
             <c:forEach items="${FRAGMENTS}" var="item">
-            	<li><a id="${item.key}" href="#" title="Administer fragment ${item.value}"><span>${item.value}</span></a></li>
+            	<li><a id="${fn:escapeXml(item.key)}" href="#" title="Administer fragment ${fn:escapeXml(item.value)}"><span>${fn:escapeXml(item.value)}</span></a></li>
             </c:forEach>
         </ul>
         -->
@@ -52,7 +49,7 @@
             <select id="fragmentOwner" name="impersonateUser" title="Choose a fragment to edit">
             	<option value="NONE"> -- fragments -- </option>
                 <c:forEach items="${FRAGMENTS}" var="item">
-                	<option value="${item.key}">${item.value}</option>
+                	<option value="${fn:escapeXml(item.key)}">${fn:escapeXml(item.value)}</option>
                 </c:forEach>
             </select>
             <input class="button" type="Button" value="Go" onclick="if (document.fragmentAdminForm.fragmentOwner.options[document.fragmentAdminForm.fragmentOwner.selectedIndex].value != 'NONE') document.fragmentAdminForm.submit()"/>

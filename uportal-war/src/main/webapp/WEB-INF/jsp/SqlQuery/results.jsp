@@ -62,7 +62,7 @@
 		        <tr style="text-transform:capitalize">
 			        <c:forEach items="${ results[0] }" var="cell" varStatus="status">
 			            <th id="${n}column${ status.index }" class="flc-pager-sort-header">
-			                <a rsf:id="column${ status.index }" href="javascript:;">${ cell.key }</a></th>
+			                <a rsf:id="column${ status.index }" href="javascript:;">${ fn:escapeXml(cell.key) }</a></th>
 			        </c:forEach>
 		        </tr>
 		    </thead>
