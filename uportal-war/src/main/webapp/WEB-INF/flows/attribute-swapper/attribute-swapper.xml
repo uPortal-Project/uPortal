@@ -55,8 +55,8 @@
     
     <subflow-state id="personLookup" subflow="person-lookup">
         <input name="showCancelButton" value="'true'" />
-        <input name="personSearchResults_selectAndGoButtonTextKey" value="'personSearchResults.selectAttributesButton'" />
-        <input name="personDetails_selectAndGoButtonTextKey" value="'personDetails.selectAttributesButton'" />
+        <input name="personSearchResults_selectAndGoButtonTextKey" value="'select.users.attributes'" />
+        <input name="personDetails_selectAndGoButtonTextKey" value="'select.users.attributes'" />
         
         <output name="person" />
 

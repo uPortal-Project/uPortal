@@ -73,7 +73,7 @@ public class AttributeSwapRequestValidator {
                 final MessageBuilder messageBuilder = new MessageBuilder();
                 messageBuilder.error();
                 messageBuilder.source(basePath + "[" + attribute + "].value");
-                messageBuilder.code("attributesForm.invalidSwapAttribute"); 
+                messageBuilder.code("x.is.not.a.valid.attribute"); 
                 messageBuilder.arg(attribute);
 
                 final MessageResolver errorMessage = messageBuilder.build();

@@ -34,11 +34,11 @@
 
 	<!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar">
-    	<h2 class="title">Attributes</h2>
+    	<h2 class="title"><spring:message code="attributes"/></h2>
         <div class="toolbar" role="toolbar">
             <ul>
                 <li>
-                    <a class="button" href="${newSearchUrl}"><spring:message code="attributesForm.lookupPersonLink" /></a>
+                    <a class="button" href="${newSearchUrl}"><spring:message code="lookup.person" /></a>
                 </li>
             </ul>
         </div>
@@ -51,12 +51,12 @@
             <table class="portlet-table">
                 <thead>
                     <tr>
-                        <th><spring:message code="attributesForm.attributeHeader" /></th>
-                        <th><spring:message code="attributesForm.originalValueHeader" /></th>
-                        <th><spring:message code="attributesForm.currentValueHeader" /></th>
+                        <th><spring:message code="attribute" /></th>
+                        <th><spring:message code="original.value" /></th>
+                        <th><spring:message code="current.value" /></th>
                         <c:if test="${targetUserDetails != null}">
-                            <th><spring:message code="attributesForm.copyAttributeHeader" /></th>
-                            <th><spring:message code="attributesForm.valueForHeader" arguments="${targetUserDetails.name}" /></th>
+                            <th>&lt;--</th>
+                            <th><spring:message code="value.for.name" arguments="${targetUserDetails.name}" /></th>
                         </c:if>
                     </tr>
                 </thead>
@@ -90,10 +90,10 @@
             </table>
                 
             <div class="buttons">
-                <spring:message var="updateAttributesText" code="attributesForm.updateAttributesButton" />
+                <spring:message var="updateAttributesText" code="update.attributes" />
                 <input type="submit" class="button primary" name="_eventId_updateAttributes" value="${updateAttributesText}" />
                 
-                <spring:message var="resetAttributesText" code="personLookup.resetAttributesButton" />
+                <spring:message var="resetAttributesText" code="reset.attributes" />
                 <input type="submit" class="button" name="_eventId_resetAttributes" value="${resetAttributesText}" />
             </div>
         </form:form>

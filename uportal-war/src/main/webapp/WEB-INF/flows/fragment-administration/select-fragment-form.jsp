@@ -27,7 +27,7 @@
 	
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    	<h2 class="title" role="heading">Fragment Administration</h2>
+    	<h2 class="title" role="heading"><spring:message code="fragment.administration"/></h2>
     </div>
     
     <!-- Portlet Content -->
@@ -38,14 +38,14 @@
             <portlet:param name="_eventId" value="selectFragment"/>
         </portlet:actionURL>
         <form method="post" name="fragmentAdminForm" action="${formUrl}">
-            <select id="fragmentOwner" name="impersonateUser" title="Choose a fragment to edit">
-            	<option value="NONE"> -- fragments -- </option>
+            <select id="fragmentOwner" name="impersonateUser" title="<spring:message code="choose.fragment.to.edit"/>">
+            	<option value="NONE"> -- <spring:message code="fragments"/> -- </option>
                 <c:forEach items="${fragments}" var="item">
                 	<option value="${fn:escapeXml(item.key)}">${fn:escapeXml(item.value)}</option>
                 </c:forEach>
             </select>
             <%-- onclick="if (document.fragmentAdminForm.fragmentOwner.options[document.fragmentAdminForm.fragmentOwner.selectedIndex].value != 'NONE') document.fragmentAdminForm.submit()" --%>
-            <input class="button" type="submit" value="Go" />
+            <input class="button" type="submit" value="<spring:message code="go"/>" />
         </form>
 
 	</div> <!-- end: portlet-content -->

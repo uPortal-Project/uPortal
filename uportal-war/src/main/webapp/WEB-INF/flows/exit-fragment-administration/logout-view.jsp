@@ -26,11 +26,12 @@
 </portlet:actionURL>
 <div id="portalFragAdminExit" class="block">
   <div class="block-inner">
-    <h2 class="block-title">Fragment Administration</h2>
+    <h2 class="block-title"><spring:message code="fragment.administration"/></h2>
     <div class="block-content">
       <form name="fragmentAdminExitForm" action="${actionUrl}" method="POST">
-      	<label for="exitFragment">You are currently logged in as <strong>${fn:escapeXml(remoteUser)}</strong> for DLM fragment administration</label>
-      	<input id="exitFragment" type="Submit" value="Exit" name="_eventId_logout"/>
+        <c:set var="userHtml"><strong>${fn:escapeXml(remoteUser)}</strong></c:set>
+      	<label for="exitFragment"><spring:message code="you.are.currently.logged.in.as.for.dlm.fragment.administration" arguments="${userHtml}" htmlEscape="false"/></label>
+      	<input id="exitFragment" type="Submit" value="<spring:message code="exit"/>" name="_eventId_logout"/>
       </form>
     </div>
   </div>

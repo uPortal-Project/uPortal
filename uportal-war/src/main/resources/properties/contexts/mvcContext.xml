@@ -29,6 +29,13 @@
 
     <bean id="urlCanonicalizingFilter" class="org.jasig.portal.url.UrlCanonicalizingFilter" />
 
+    <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="100000"/>
+    </bean>
+
     <!--
      | Message source for this context, loaded from localized "messages_xx" files
      +-->
@@ -40,8 +47,6 @@
             <list>
                 <value>classpath:/properties/i18n/Messages</value>
                 <value>/WEB-INF/flows/person-lookup/person-lookup</value>
-                <value>/WEB-INF/flows/identity-swapper/identity-swapper</value>
-                <value>/WEB-INF/flows/attribute-swapper/attribute-swapper</value>
                 <value>/WEB-INF/flows/register-portal/register-portal</value>
             </list>
         </property>                                     
