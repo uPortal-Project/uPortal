@@ -40,15 +40,15 @@
                 </tr>
             </thead>
             <tbody>
-                <c:forEach var="attrName" items="${fn:escapeXml(displayAttributes)}">
+                <c:forEach var="attrName" items="${displayAttributes}">
                     <tr>
                         <td><spring:message code="${attrName}" text="${attrName}" arguments="${attrName}"/></td>
-                        <c:set var="attrValues" value="${fn:escapeXml(person.attributes[attrName])}" />
+                        <c:set var="attrValues" value="${person.attributes[attrName]}" />
                         <c:choose>
-                            <c:when test="${fn:escapeXml(fn:length(attrValues) >= 1)}">
-                                <c:forEach var="attrValue" items="${fn:escapeXml(attrValues)}" varStatus="attrValueStatus">
-                                    <td>${fn:escapeXml(fn:escapeXml(attrValue))}</td>
-                                    <c:if test="${fn:escapeXml(not attrValueStatus.last)}">
+                            <c:when test="${fn:length(attrValues) >= 1}">
+                                <c:forEach var="attrValue" items="${attrValues}" varStatus="attrValueStatus">
+                                    <td>${fn:escapeXml(attrValue)}</td>
+                                    <c:if test="${not attrValueStatus.last}">
                                         </tr>
                                         <tr>
                                             <td/>
@@ -67,24 +67,24 @@
         <!-- Buttons -->
         <div class="buttons">
             <portlet:actionURL var="selectUserUrl">
-                <portlet:param name="execution" value="${fn:escapeXml(flowExecutionKey)}" />
+                <portlet:param name="execution" value="${flowExecutionKey}" />
                 <portlet:param name="_eventId" value="selectAndGo" />
             </portlet:actionURL>
             
-            <a class="button primary" href="${fn:escapeXml(selectUserUrl)}"><spring:message code="${personDetails_selectAndGoButtonTextKey}" /></a> -
-            <c:if test="${fn:escapeXml(fn:length(personQueryResults) > 1)}">
+            <a class="button primary" href="${selectUserUrl}"><spring:message code="${personDetails_selectAndGoButtonTextKey}" /></a> -
+            <c:if test="${fn:length(personQueryResults) > 1}">
                 <portlet:renderURL var="backToResultsUrl">
-                    <portlet:param name="execution" value="${fn:escapeXml(flowExecutionKey)}" />
+                    <portlet:param name="execution" value="${flowExecutionKey}" />
                     <portlet:param name="_eventId" value="searchResults" />
                 </portlet:renderURL>
-                <a class="button" href="${fn:escapeXml(backToResultsUrl)}"><spring:message code="personDetails.backToResultsLink" /></a> -
+                <a class="button" href="${backToResultsUrl}"><spring:message code="personDetails.backToResultsLink" /></a> -
             </c:if>
             
             <portlet:renderURL var="newSearchUrl">
-                <portlet:param name="execution" value="${fn:escapeXml(flowExecutionKey)}" />
+                <portlet:param name="execution" value="${flowExecutionKey}" />
                 <portlet:param name="_eventId" value="newSearch" />
             </portlet:renderURL>
-            <a class="button" href="${fn:escapeXml(newSearchUrl)}"><spring:message code="personDetails.newSearchLink" /></a>
+            <a class="button" href="${newSearchUrl}"><spring:message code="personDetails.newSearchLink" /></a>
         </div>
 
     </div>
