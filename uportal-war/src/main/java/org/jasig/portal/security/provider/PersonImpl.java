@@ -241,7 +241,7 @@ public class PersonImpl implements IPerson {
     public boolean isGuest() {
         boolean isGuest = false;
         String userName = (String) getAttribute(IPerson.USERNAME);
-        if (userName.equals(PersonFactory.GUEST_USERNAME) && !m_securityContext.isAuthenticated()) {
+        if (PersonFactory.GUEST_USERNAME.equals(userName) && m_securityContext != null && !m_securityContext.isAuthenticated()) {
             isGuest = true;
         }
         return isGuest;
