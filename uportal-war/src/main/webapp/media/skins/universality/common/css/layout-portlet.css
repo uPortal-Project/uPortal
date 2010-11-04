@@ -216,8 +216,7 @@
  */
 .portlet .title.selections,
 .portlet .title.search,
-.portlet .title.browse {padding-bottom:0.3em; padding-left:20px;}
-.portlet .title.browse {margin-top:2em;}
+.portlet .title.browse {padding-bottom: 0; padding-left:20px;}
 
 
 /* Tables */
@@ -286,33 +285,36 @@
 
 /* Selection Basket */
 /*
+ * Multiple Selection Basket
  * A box showing the items a user has selected.
- */
-.portlet .portlet-selection {padding-right:2em;}
-.portlet .selection-basket {margin-left:20px; min-height:15em;}
-.portlet .selection-basket ul {margin:1em}
-.portlet .selection-basket li {list-style:none;}
-.portlet .selection-basket a {display:block; padding:0.3em 20px;}
-.portlet .portlet-selection .buttons {margin-left:20px;}
-
+ 
+.portlet .view-multi-select .portlet-selection {padding-right:2em;}
+.portlet .view-multi-select .selection-basket {margin-left:20px; min-height:15em;}
+.portlet .view-multi-select .selection-basket ul {margin:1em}
+.portlet .view-multi-select .selection-basket li {list-style:none;}
+.portlet .view-multi-select .selection-basket a {display:block; padding:0.3em 20px;}
+.portlet .view-multi-select .portlet-selection .buttons {margin-left:20px;}
+*/
 
 /* Hierarchy Browser */
 /*
+ * Multiple Selection Browser
  * A "folder-view" browser of hierarchy.
- */
-.portlet .browse-hierarchy > .titlebar .title .fl-text-align-right {padding-top:0.7em;}
-.portlet .browse-hierarchy > .content {margin-left:20px; padding:0;}
-.portlet .browse-hierarchy .entity > .titlebar {padding:0.1em 1em;}
-.portlet .browse-hierarchy .entity > .titlebar .actions {top:auto; bottom:0.5em; right:1em;}
-.portlet .browse-hierarchy .entity > .titlebar .title {padding-top:0.1em; padding-left:30px;}
-.portlet .browse-hierarchy .entity .breadcrumb span {padding:0.5em 0;}
-.portlet .browse-hierarchy .entity > .content {padding:0.5em 1em 1em 1em;}
-.portlet .browse-hierarchy .entity > .content > .titlebar > .title {margin:1em 0 0.3em 0;}
-.portlet .browse-hierarchy .entity ul.member-list {margin:0 0 1em 0;}
-.portlet .browse-hierarchy .entity .member-list li {list-style:none;}
-.portlet .browse-hierarchy .entity .member-list li a {display:block; padding:0.2em 0 0.2em 20px;}
+ 
+.portlet .view-multi-select .browse-hierarchy > .titlebar .title .fl-text-align-right {padding-top:0.7em;}
+.portlet .view-multi-select .browse-hierarchy > .content {margin-left:20px; padding:0;}
+.portlet .view-multi-select .browse-hierarchy .entity > .titlebar {padding:0.1em 1em;}
+.portlet .view-multi-select .browse-hierarchy .entity > .titlebar .actions {top:auto; bottom:0.5em; right:1em;}
+.portlet .view-multi-select .browse-hierarchy .entity > .titlebar .title {padding-top:0.1em; padding-left:30px;}
+.portlet .view-multi-select .browse-hierarchy .entity .breadcrumb span {padding:0.5em 0;}
+.portlet .view-multi-select .browse-hierarchy .entity > .content {padding:0.5em 1em 1em 1em;}
+.portlet .view-multi-select .browse-hierarchy .entity > .content > .titlebar > .title {margin:1em 0 0.3em 0;}
+.portlet .view-multi-select .browse-hierarchy .entity ul.member-list {margin:0 0 1em 0;}
+.portlet .view-multi-select .browse-hierarchy .entity .member-list li {list-style:none;}
+.portlet .view-multi-select .browse-hierarchy .entity .member-list li a {display:block; padding:0.2em 0 0.2em 20px;}
+*/
 
-/* Styling for multiselect plugin. One example is its use in the Permissions Portlet for choosing a "target" */
+/* Styling for multiselect plugin. One example is its use in the Permissions Portlet for choosing a "target" 
 .up .token-input-list input[type="text"] {border:none; background-image:none; font-size:medium;}
 .up .token-input-list input[type="text"]:focus {-moz-box-shadow:none;}
 .up .token-input-dropdown .token-input-dropdown-item2 {float:none; display:block; font-size:small;}
@@ -321,7 +323,7 @@
 .multiselect li.token-input-token {display:block; margin-left:5px;}
 .multiselect li.token-input-token p {font-size:medium;}
 .titlebar form {margin-bottom:200px;}
-
+*/
 
 
 /*====================================*/
