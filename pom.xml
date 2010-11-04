@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>21</version>
+        <version>23</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -139,7 +139,7 @@
         <person-directory.version>1.5.0-RC6</person-directory.version>
         <pluto.version>1.1.7</pluto.version>
         <portlet-api.version>1.0</portlet-api.version>
-        <quartz.version>1.6.1</quartz.version>
+        <quartz.version>1.8.4</quartz.version>
         <resource-aggregator.version>1.0.4</resource-aggregator.version>
         <resource-server.version>1.0.12</resource-server.version>
         <rome.version>0.9</rome.version>
@@ -384,8 +384,8 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.opensymphony.quartz</groupId>
-                <artifactId>quartz-all</artifactId>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
                 <version>${quartz.version}</version>
             </dependency>
             <dependency>
@@ -842,10 +842,10 @@
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <configuration>
-                    <basedir>${basedir}</basedir>  
-                    <header>${jasig-short-license-url}</header>
                     <aggregate>true</aggregate>
                     <excludes>
+                        <exclude>NOTICE</exclude>
+                        <exclude>README</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>license.txt</exclude>
                         <exclude>docs/licenses/**</exclude>
@@ -865,6 +865,12 @@
                         <exclude>**/*.theme</exclude>
                         <exclude>**/*.user</exclude>
                         <exclude>**/*.template-user</exclude>
+                        <exclude>**/*.example</exclude>
+                        <exclude>**/*.res</exclude>
+                        <exclude>**/*.ent</exclude>
+                        <exclude>**/*.psd</exclude>
+                        <exclude>build.properties</exclude>
+                        <exclude>**/src/main/webapp/media/skins/universality/hc/jquery-ui-1.7.2.custom/**</exclude>
                     </excludes>
                     <mapping>
                         <crn>XML_STYLE</crn>
@@ -874,21 +880,13 @@
                         <tld>XML_STYLE</tld>
                         <tag>DYNASCRIPT_STYLE</tag>
                         <inc>DYNASCRIPT_STYLE</inc>
+                        <mappings>SCRIPT_STYLE</mappings>
                     </mapping>
-                    <properties>
-                        <jasig-license-url>${jasig-license-url}</jasig-license-url>
-                        <jasig-license-year>${jasig-license-year}</jasig-license-year>
-                    </properties>
                 </configuration>
             </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>com.mycila.maven-license-plugin</groupId>
-                    <artifactId>maven-license-plugin</artifactId>
-                    <version>1.7.0</version>
-                </plugin>
                 <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.3</version>
