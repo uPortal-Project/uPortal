@@ -18,6 +18,7 @@
     under the License.
 
 --%>
+
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <div class="fl-widget portlet error view-detailed" role="section">
 

@@ -18,6 +18,7 @@
     under the License.
 
 --%>
+
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 <style type="text/css">

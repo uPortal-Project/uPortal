@@ -33,6 +33,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -99,7 +100,8 @@ public class CachingResourceLoaderImplTest {
         verify(cache, elementsProvider);
         
         assertNotNull(cachedResource1);
-        assertEquals("My Test Resource", cachedResource1.getCachedResource());
+        final String expected = IOUtils.toString(new FileReader(doc1));
+        assertEquals(expected, cachedResource1.getCachedResource());
     }
     
     @Test
@@ -128,7 +130,8 @@ public class CachingResourceLoaderImplTest {
         verify(cache, elementsProvider);
         
         assertNotNull(cachedResource1);
-        assertEquals("My Test Resource", cachedResource1.getCachedResource());
+        final String expected = IOUtils.toString(new FileReader(doc1));
+        assertEquals(expected, cachedResource1.getCachedResource());
     }
     
     @Test
@@ -165,7 +168,8 @@ public class CachingResourceLoaderImplTest {
         verify(cache, cachedResource, elementsProvider);
         
         assertNotNull(cachedResource1);
-        assertEquals("My Test Resource", cachedResource1.getCachedResource());
+        final String expected = IOUtils.toString(new FileReader(doc1));
+        assertEquals(expected, cachedResource1.getCachedResource());
     }
     
     @Test
