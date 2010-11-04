@@ -142,8 +142,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.opensymphony.quartz</groupId>
-            <artifactId>quartz-all</artifactId>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
             <scope>compile</scope>
         </dependency> 
 
