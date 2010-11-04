@@ -17,227 +17,341 @@
  * under the License.
  */
 
+"use strict";
 var up = up || {};
 
-(function($, fluid){
+(function ($, fluid) {
     
-    var getTypeFromKey = function(key) {
+    /**
+     * Private. Returns type from key.
+     * 
+     * @param {String} key - reference to entity key.
+     */
+    var getTypeFromKey = function (key) {
         var separatorIndex = key.indexOf(":");
         return key.substring(0, separatorIndex);
-    };
+    };//end:function.
     
-    var getKey = function(key) {
+    /**
+     * Private. Returns key.
+     * 
+     * @param {String} key
+     */
+    var getKey = function (key) {
         var separatorIndex = key.indexOf(":");
-        return key.substring(separatorIndex + 1, key.length);
-    };
-    
-    /**
-     * Browse to a particular entity.
-     * 
-     * @param {Object} that - reference to an instance of the up.entityselection component.
-     * @param {Object} key - reference to currrently 'focused' entity. ex: group:local.17
-     */
-    var browseEntity = function(that, key) {
-        var entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
-        that.currentEntity = entity;
-        
-        updateBreadcrumbs(that, entity);
-        $(".current").text(entity.name);
-        
-        // Clear any content from the entity browser members section.
-        $(that.options.entityTypes).each(function(){ $("." + this + " .member-list").html(""); });
-        
-        // For each entity, create a list element in the correct section.
-        $(entity.children).each(function(i){
-            var link = $(document.createElement("a")).attr("href", "javascript:;")
-                .html("<span>" + this.name + "</span>").attr("key", this.entityType + ":" + this.id)
-                .click(function(){ browseEntity(that, $(this).attr("key")); });
-            $("." + this.entityType + " .member-list").append(
-                $(document.createElement("li")).addClass(this.entityType).append(link)
-            );
-        });
-        
-        // Hide any sections with no members.
-        $(that.options.entityTypes).each(function(){
-            $("." + this + " .member-list").prev().css("display", $("." + this + " .member-list li").size() > 0 ? "block" : "none" );
-        });
-        
-        // If there are no members overall, display the no contents message.
-        that.locate("browsingResultNoMembers").css("display", $(".browse-hierarchy .member-list li").size() > 0 ? "none" : "block");
-        
-        // Set the breadcrumbs state.
-        setBreadcrumbSelectionState(that, $.inArray(key, that.options.selected) >= 0);
+        return key.substring(separatorIndex + 1, key.length); 
     };//end:function.
     
     /**
-     * Search for a specific entity
-     */
-    var search = function(that, searchTerm) {
-        var entities = that.entityBrowser.searchEntities(that.options.entityTypes, searchTerm);
-        var list = $(that.options.selectors.searchResults).html("");
-        $(entities).each(function(){
-            var link = $(document.createElement("a")).attr("href", "javascript:;")
-                .html("<span>" + this.name + "</span>").attr("key", this.entityType + ":" + this.id)
-                .click(function(){ selectEntity(that, $(this).attr("key")); $(this).addClass("selected"); });
-            list.append($(document.createElement("li")).addClass(this.entityType).append(link));
-        });
-        
-        // if there are no members overall, display the no contents message
-        $(that.options.selectors.searchResultsNoMembers).css("display", list.find("li").size() > 0 ? "none" : "block");
-
-        if (that.searchInitialized) {
-            $(that.options.selectors.searchDialog).dialog('open');
-        } else { 
-            that.locate("searchDialog").dialog({ width:550, modal:true });
-            that.searchInitialized = true;
-        }
-        return false;
-    };
-    
-    /**
-     * Add an entity to the selected list.
+     * Outputs selection markup snippet.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
-     * @param {Object} key - reference to currrently 'selected' entity. ex: group:local.17
+     * @param {Object} entity - reference to currently selected entity object.
      */
-    var selectEntity = function(that, key) {
-        var selectionBasket, entity, li;
+    var buildSingleSelectionSnippet = function (that, entity, selected) {
+        var markup;
         
-        // Cache DOM elements.
-        selectionBasket = that.locate("selectionBasket");
-        entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        switch (selected) {
+        case false:
+            markup = '<span class="selection" title="' + that.options.messages.nothingSelected + '">' + that.options.messages.nothingSelected + '</span>';
+            break;
+        case true:
+            markup = '<a href="javascript:;" title="' + that.options.messages.removeSelection + '" key="' + entity.entityType + ':' + entity.id + '" class="' + that.options.styles.selection + '">' + entity.name + '</a>' + 
+                     '<input type="hidden" name="groups" value="' + entity.entityType + ':' + entity.id + '"/>';
+            break;
+        }//end:switch.
         
-        // Check component selection mode.
-        if (that.selectMultiple === false) {
-            // Remove all <li> elements that exist within selection basket.
-            if (selectionBasket.children().length > 0) {
-                selectionBasket.children().remove();
-            }//end:if.
-            
-            if (that.options.selected.length > 0) {
-                that.options.selected = [];
-            }//end:if.
-        }//end:if.
-        
-        // If 'key' does not exist within 'selected' arrary.
-        if ($.inArray(key, that.selected) < 0) {
-            // Add the key to our selected list.
-            that.options.selected.push(key);
-            
-            // Add an element to the user-visible select list.
-            li = $('<li><a href="javascript:;" key="' + entity.entityType + ":" + entity.id + '">' + entity.name + '</a></li>' + 
-                 '<input type="hidden" name="groups" value="' + entity.entityType + ":" + entity.id + '"/>');
-            
-            // Append li to selectionBasket.
-            that.locate("selectionBasket").append(li);
-            
-            // Assign click event.
-            li.find("a").click(function () {
-                deselectEntity(that, $(this).attr("key"));
-            });//end:click.
-            
-            // If the selected item is the currently selected entity, update
-            // the breadcrumb selection state.
-            if (key === (that.currentEntity.entityType + ":" + that.currentEntity.id)) {
-                setBreadcrumbSelectionState(that, true);
-            }//end:if.
-        }//end:if.
-    };//end:function.
-    
-    /**
-     * Remove an entity from the selection list.
-     * 
-     * @param {Object} that - reference to an instance of the up.entityselection component.
-     * @param {Object} key - reference to passed anchor tag attribute. ex: group:local.17
-     */
-    var deselectEntity = function(that, key) {
-        var selectionBasket, newselections;
-        
-        // Cache & reset DOM references.
-        selectionBasket = that.locate("selectionBasket");
-        newselections = [];
-        
-        // Generate a new list of selected entities, and remove the requested
-        // entity from the selection basket.
-        selectionBasket.find("a").each(function () {
-            var a = $(this);
-            if (a.attr("key") !== key) {
-                newselections.push(a.attr("key"));
-            } else {
-                a.parent().remove();
-            }//end:if.
-        });//end:loop.
-        that.options.selected = newselections;
-        
-        
-        // If the selected item is the currently selected entity, update
-        // the breadcrumb selection state.
-        if (key === (that.currentEntity.entityType + ":" + that.currentEntity.id)) {
-            setBreadcrumbSelectionState(that, false);
-        }//end:if.
+        return markup;
     };//end:function.
     
     /**
      * Update the visual selection state for the currently-browsed entity.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
-     * @param {Boolean} selected - reference to breadcrumb toggle. 
+     * @param {Boolean} selected - reference to selection toggle. 
      */
-    var setBreadcrumbSelectionState = function(that, selected) {
-        var link, header;
+    var setSelectionState = function (that, key, selected) {
+        var selectionBasket, titlebar, link, entity;
         
-        // Cache & reset.
+        // Cache.
+        selectionBasket = that.locate("selectionBasket");
+        titlebar = that.locate("entityBrowserTitlebar");
         link = that.locate("selectEntityLink");
         link.unbind("click");
-        header = that.locate("entityBrowsingHeader");
+        entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
         
         // Select/deselect currently browsed entity.
         if (!selected) {
-            link.click(function () {
+            // Selection State: false. When clicked, select.
+            link.bind("click", function () {
+                link.attr("title", that.options.messages.removeSelection).find("span").text(that.options.messages.removeSelection);
                 selectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id);
-            }).find("span").text(that.options.selectButtonMessage);
-            header.removeClass("selected");
+            });
+            titlebar.removeClass("selected");
         } else {
-            link.click(function () {
+            // Selection State: true. When clicked, deselect.
+            link.bind("click", function () {
+                link.attr("title", that.options.messages.addSelection).find("span").text(that.options.messages.addSelection);
                 deselectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id);
-            }).find("span").text(that.options.deselectButtonMessage);
-            header.addClass("selected");
+            });
+            titlebar.addClass("selected");
+        }//end:if
+    };//end:function.
+    
+    /**
+     * Remove an entity from the selection list.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {String} key - reference to passed anchor tag attribute. ex: group:local.17
+     */
+    var deselectEntity = function (that, key) {
+        var selectionBasket, entity, buttonPrimary, newselections;
+        
+        // Cache & reset DOM references.
+        selectionBasket = that.locate("selectionBasket");
+        buttonPrimary = that.locate("buttonPrimary");
+        entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        newselections = [];
+        
+        // Check component selection mode.
+        switch (that.selectMultiple) {
+        case false: // Single.
+            that.options.selected = [];
+            selectionBasket.html(buildSingleSelectionSnippet(that, entity, false));
+            break;
+        case true: // Multiple.
+            // Generate a new list of selected entities. Remove the requested
+            // entity from the selection basket.
+            selectionBasket.find("a").each(function () {
+                var a = $(this);
+                if (a.attr("key") !== key) {
+                    newselections.push(a.attr("key"));
+                } else {
+                    a.parent().remove();
+                }//end:if.
+            });//end:loop.
+            that.options.selected = newselections;
+            break;
+        }//end:switch.
+        
+        // If the selected item is the currently selected entity, update
+        // the selection state.
+        if (key === (that.currentEntity.entityType + ":" + that.currentEntity.id)) {
+            setSelectionState(that, key, false);
+        }//end:if.
+        
+        // Enable submit.
+        if (that.options.selected.length < 1) {
+            buttonPrimary.attr("disabled", "disabled");
         }//end:if.
     };//end:function.
     
     /**
-     * Update the breadcrumb trail
+     * Add an entity to the selected list.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {String} key - reference to currrently 'selected' entity. ex: group:local.17
      */
-    var updateBreadcrumbs = function(that, entity) {
-        // update the current title
-        var currentTitle = that.locate("currentEntityName");
+    var selectEntity = function (that, key) {
+        var selectionBasket, buttonPrimary, li, entity;
         
-        var breadcrumbs = that.locate("breadcrumbs");
-        if (breadcrumbs.find("span a[key=" + entity.entityType + ":" + entity.id + "]").size() > 0) {
-            // if this entity already exists in the breadcrumb trail
-            var removeBreadcrumb = false;
-            $(breadcrumbs.find("span")).each(function(){
-                if (removeBreadcrumb) { 
-                    $(this).remove(); 
-                } else if ($(this).find("a[key=" + entity.entityType + ":" + entity.id + "]").size() > 0) { 
-                    removeBreadcrumb = true;
-                    $(this).remove();
-                }
-            });
+        // Cache DOM elements.
+        selectionBasket = that.locate("selectionBasket");
+        buttonPrimary = that.locate("buttonPrimary");
+        entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        
+        // Check component selection mode.
+        switch (that.selectMultiple) {
+        case false: // Single.
+            that.options.selected = [];
+            that.options.selected.push(key);
+            selectionBasket.html(buildSingleSelectionSnippet(that, entity, true));
+            break;
+        case true: // Multiple.
+            // If 'key' does not exist within 'selected' arrary.
+            if ($.inArray(key, that.options.selected) < 0) {
+                
+                // Add the key to our selected list.
+                that.options.selected.push(key);
+                
+                // Add an element to the user-visible select list.
+                li = $('<li><a href="javascript:;" key="' + entity.entityType + ":" + entity.id + '">' + entity.name + '</a><input type="hidden" name="groups" value="' + entity.entityType + ":" + entity.id + '"/></li>');
+                
+                // Append li to selectionBasket.
+                selectionBasket.find("ul").append(li);
+                
+                // Assign click event.
+                li.find("a").click(function () {
+                    deselectEntity(that, $(this).attr("key"));
+                });//end:click.
+            }//end:if.
+            break;
+        }//end:switch.
+        
+        // If the selected item is the currently selected entity, update
+        // the selection state.
+        if (key === (that.currentEntity.entityType + ":" + that.currentEntity.id)) {
+            setSelectionState(that, key, true);
+        }//end:if.
+        
+        // Enable submit.
+        buttonPrimary.removeAttr("disabled");
+    };//end:function.
+    
+    /**
+     * Remove breadcrumb from breadcrumb list.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {Object} anchor - reference to <a> element.
+     */
+    var removeBreadCrumb = function (that, anchor) {
+        var crumb, next;
+        
+        // Cache.
+        crumb = anchor.parent();
+        next = crumb.nextAll();
+        
+        // Remove all crumbs to the right of the 'clicked' crumb.
+        next.remove();
+        
+        // Render view associated with the 'clicked' crumb.
+        browseEntity(that, anchor.attr("key"));
+    };//end:function.
+    
+    /**
+     * Builds mark-up string for breadCrumb.
+     * 
+     * @param {Object} key - reference to entity key.
+     * @param {Object} entityName - reference to entity name.
+     */
+    var buildBreadCrumb = function (that, key, entityName, breadcrumbs) {
+        var breadcrumb;
+        breadcrumb = '<span><a href="javascript:;" title="' + entityName + '" key="' + key + '">' + entityName + '</a> &gt; </span>';
+        breadcrumbs.append(breadcrumb);
+        
+        // Breadcrumb click event.
+        breadcrumbs.find("a").unbind("click").click(function () {
+            removeBreadCrumb(that, $(this));
+        });//end:click.
+    };//end:function.
+    
+    /**
+     * Update the breadcrumb trail.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {Object} entity - reference to the entity object.
+     */
+    var updateBreadcrumbs = function (that, entity) {
+        var breadcrumbs, key, isKey;
+        
+        // Cache.
+        breadcrumbs = that.locate("breadcrumbs");
+        console.log(entity);
+        key = entity.entityType + ':' + entity.id;
+        
+        // Add breadcrumb.
+        if (breadcrumbs.find('span').length > 0) {
+            // Breadcrumbs do exist.
+            isKey = (breadcrumbs.find('span a[key="' + key + '"]').length > 0) ? true : false;
+            if (!isKey) {
+                buildBreadCrumb(that, key, entity.name, breadcrumbs);
+            }//end:if.
+            
         } else {
-            // otherwise, append this entity to the end of the breadcrumbs
-            if (currentTitle.text() != '') {
-                var breadcrumb = $(document.createElement("span"));
-                breadcrumb.append(
-                    $(document.createElement("a")).html(currentTitle.text())
-                        .attr("href", "javascript:;").attr("key", currentTitle.attr("key"))
-                        .click(function(){browseEntity(that, $(this).attr("key"));})
-                ).append(document.createTextNode(" > "));
-                that.locate("breadcrumbs").append(breadcrumb);
-            }
-        }
-        currentTitle.text(entity.name).attr("key", entity.entityType + ":" + entity.id);
-    };
+            // No breadcrumbs exist.
+            buildBreadCrumb(that, key, entity.name, breadcrumbs);
+        }//end:if.
+        
+        // Add the '.last' class name to the last availble breadcrumb.
+        breadcrumbs.find("." + that.options.styles.last).removeClass(that.options.styles.last).show();
+        breadcrumbs.find("span:last").addClass(that.options.styles.last).hide();
+    };//end:function.
+    
+    /**
+     * Browse to a particular entity.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {String} key - reference to currrently 'focused' entity. ex: group:local.17
+     */
+    var browseEntity = function (that, key) {
+        var entity, currentEntityName, browsingInclude, entityBrowserContent, memberList, browsingResultNoMembers;
+        
+        // Cache.
+        entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        that.currentEntity = entity;
+        currentEntityName = that.locate("currentEntityName");
+        browsingInclude = that.locate("browsingInclude");
+        entityBrowserContent = that.locate("entityBrowserContent");
+        memberList = entityBrowserContent.find("." + that.options.styles.memberList);
+        browsingResultNoMembers = that.locate("browsingResultNoMembers");
+        
+        // Set entity starting point / defaults.
+        updateBreadcrumbs(that, entity);
+        currentEntityName.text(entity.name);
+        browsingInclude.text(entity.name);
+        memberList.html("").hide();
+        
+        // For each entity, create a member list.
+        $.each(entity.children, function (idx, obj) {
+            var li, list;
+            li = '<li class="' + obj.entityType + '"><a href="javascript:;"><span class="' + that.options.styles.memberLink + '" key="' + obj.entityType + ':' +  obj.id + '">' + obj.name + '</span></a></li>';
+            list = entityBrowserContent.find("." + obj.entityType).find("." + that.options.styles.memberList);
+            list.append(li);
+            list.show();
+        });//end:loop.
+        
+        // Register click event on member list links.
+        entityBrowserContent.find("." + that.options.styles.memberLink).click(function () {
+            browseEntity(that, $(this).attr("key"));
+        });//end:click.
+        
+        // If there are no members overall, display the no contents message.
+        browsingResultNoMembers.css("display", entityBrowserContent.find("." + that.options.styles.memberList).find("li").size() > 0 ? "none" : "block");
+        
+        // Set selection state.
+        setSelectionState(that, key, $.inArray(key, that.options.selected) >= 0);
+    };//end:function.
+    
+    /**
+     * Search for a specific entity.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {String} searchTerm - reference to search term.
+     */
+    var search = function (that, searchTerm, form) {
+        var entities, list;
+        
+        // Filter searchTerm.
+        if (searchTerm === that.options.messages.searchValue) {
+            form.find("input[type=text]").val("");
+            searchTerm = "";
+        }//end:if.
+        
+        // Cache.
+        entities = that.entityBrowser.searchEntities(that.options.entityTypes, searchTerm);
+        list = that.searchPanel.find(that.options.selectors.searchResults);
+        list.html("");
+        
+        // Loop through each entity. Build list items.
+        $.each(entities, function (idx, obj) {
+            var item;
+            
+            item = '<li class="' + obj.entityType + '"><a href="javascript:;" title="' + obj.name + '"><span key="' + obj.entityType + ':' + obj.id + '">' + obj.name + '</span></a></li>';
+            list.append(item);
+        });//end:loop.
+        
+        // Assign click event.
+        list.find("span").bind("click", function () {
+            selectEntity(that, $(this).attr("key"));
+            $(this).parent().addClass(that.options.styles.selected);
+        });//end:click.
+        
+        // Dialog.
+        that.searchPanel.dialog('open');
+        that.searchInitialized = true;
+        
+        return false;
+    };//end:function.
     
     /**
      * Creator function for the entityselection component.
@@ -245,14 +359,15 @@ var up = up || {};
      * @param {Object} container - reference to DOM container.
      * @param {Object} options - reference to configuration object.
      */
-    up.entityselection = function(container, options) {
-        var that, selectionBasket, searchForm;
+    up.entityselection = function (container, options) {
+        var that, searchForm, buttonPrimary;
         
         // Initialize & cache.
         that = fluid.initView("up.entityselection", container, options);
         that.selectMultiple = that.options.selectMultiple;
-        selectionBasket = that.locate("selectionBasket");
+        that.searchPanel = that.locate("searchDialog");
         searchForm = that.locate("searchForm");
+        buttonPrimary = that.locate("buttonPrimary");
         
         // Assign a new entity browser for retrieving groups, categories, and person
         // information from the portal.
@@ -261,19 +376,29 @@ var up = up || {};
             searchEntitiesUrl: that.options.searchEntitiesUrl
         });
         
-        // Initialize selection basket onclick.
+        // Initialize search dialog.
         that.searchInitialized = false;
-        selectionBasket.find("a").click(function () {
-            deselectEntity(that, $(this).attr("key"));
+        that.searchPanel.dialog({
+            autoOpen: false,
+            width: 550,
+            modal: true,
+            dialogClass: that.options.styles.dialogClass
         });
         
-        // Initialize search form submit.
+        // Initialize search form.
+        searchForm.find("input[type=text]").val(that.options.messages.searchValue);
         searchForm.submit(function () {
-            return search(that, this.searchterm.value);
-        }).find("input[name=searchterm]").focus(function () {
+            return search(that, this.searchterm.value, searchForm);
+        });
+        
+        // Search form focus event.
+        searchForm.find("input[name=searchterm]").focus(function () {
             $(this).val("");
             $(this).unbind("focus");
         });
+        
+        // Disable primary button.
+        buttonPrimary.attr("disabled", "disabled");
         
         // Browse to the designated default start entity.
         browseEntity(that, that.options.initialFocusedEntity);
@@ -288,20 +413,40 @@ var up = up || {};
         findEntityUrl: "mvc/findEntity",
         searchEntitiesUrl: "mvc/searchEntities",
         initialFocusedEntity: 'group:local.0',
-        selectButtonMessage: '',
-        deselectButtonMessage: '',
         selectMultiple: true,
         selectors: {
             selectionBasket: "#selectionBasket",
             breadcrumbs: "#entityBrowsingBreadcrumbs",
             currentEntityName: "#currentEntityName",
             selectEntityLink: "#selectEntityLink",
-            entityBrowsingHeader: "#entityBrowsingHeader",
+            entityBrowserContent: "#entityBrowserContent",
+            entityBrowserTitlebar: "#entityBrowserTitlebar",
+            browsingInclude: "#browsingInclude",
             browsingResultNoMembers: "#browsingResultNoMembers",
             searchForm: "#searchForm",
             searchDialog: "#searchDialog",
             searchResults: "#searchResults",
-            searchResultsNoMembers: "#searchResultsNoMembers"
+            searchResultsNoMembers: "#searchResultsNoMembers",
+            buttonPanel: "#buttonPanel",
+            buttonPrimary: "#buttonPrimary"
+        },
+        styles: {
+            memberList: "member-list",
+            memberLink: "member-link",
+            dialogClass: "portlet",
+            selection: "selection",
+            selected: "selected",
+            last: "last"
+        },
+        messages: {
+            selectButtonMessage: '',
+            deselectButtonMessage: '',
+            removeCrumb: '',
+            removeSelection: '',
+            addSelection: '',
+            selected: '',
+            nothingSelected: '',
+            searchValue: ''
         }
     });
 })(jQuery, fluid);
