@@ -20,23 +20,70 @@
 package org.jasig.portal.persondir;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.IPersonAttributes;
-
-public interface ILocalAccountDao extends IPersonAttributeDao {
+/**
+ * ILocalAccountDao provides an interface for interacting with the uPortal
+ * internal account store.  This interface works with accounts in a local format
+ * rather than using the person directory API.
+ * 
+ * @author Jen Bourey, jbourey@unicon.net
+ * @version $Revision$
+ */
+public interface ILocalAccountDao {
     
+    /**
+     * Update or create a local uPortal account.
+     * 
+     * @param account
+     * @return
+     */
     public ILocalAccountPerson updateAccount(ILocalAccountPerson account);
 
+    /**
+     * Return an individual uPortal account matching the specified unique ID.
+     * 
+     * @param id
+     * @return
+     */
     public ILocalAccountPerson getPerson(long id);
 
+    /**
+     * Return an individual uPortal account matching the specified unique
+     * username.
+     * 
+     * @param username
+     * @return
+     */
     public ILocalAccountPerson getPerson(String username);
     
+    /**
+     * Return a list of all local portal accounts.
+     * 
+     * @return
+     */
     public List<ILocalAccountPerson> getAllAccounts();
     
+    /**
+     * 
+     * @param account
+     */
     public void deleteAccount(ILocalAccountPerson account);
 
-    public Set<IPersonAttributes> getPeople(Map<String,Object> query);
+    /**
+     * Return a list of all local portal accounts matching the specified query.
+     * 
+     * @param query
+     * @return
+     */
+    public List<ILocalAccountPerson> getPeople(LocalAccountQuery query);
+    
+    /**
+     * Return a set of the attribute names currently in-use in the local 
+     * account store.
+     * 
+     * @return
+     */
+    public Set<String> getCurrentAttributeNames();
+    
 }

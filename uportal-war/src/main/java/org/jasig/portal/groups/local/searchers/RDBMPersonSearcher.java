@@ -19,7 +19,6 @@
 
 package org.jasig.portal.groups.local.searchers;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +32,9 @@ import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
 import org.jasig.portal.persondir.ILocalAccountDao;
+import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.jasig.portal.persondir.LocalAccountQuery;
 import org.jasig.portal.spring.locator.LocalAccountDaoLocator;
-import org.jasig.services.persondir.IPersonAttributes;
 
 /**
  * Searches the portal DB for people.  Used by EntitySearcherImpl
@@ -57,20 +57,19 @@ public class RDBMPersonSearcher  implements ITypedEntitySearcher{
       
       log.debug("Searching for a local account matching query string " + query);
       
-      Map<String, List<Object>> queryMap = new HashMap<String, List<Object>>();
-      queryMap.put("username", Collections.<Object>singletonList(query));
-      queryMap.put("given", Collections.<Object>singletonList(query));
-      queryMap.put("sn", Collections.<Object>singletonList(query));
+      LocalAccountQuery queryMap = new LocalAccountQuery();
+      queryMap.setUserName(query);
+      queryMap.setAttribute("given", Collections.<String>singletonList(query));
+      queryMap.setAttribute("sn", Collections.<String>singletonList(query));
       
       // search the local account store for the given query
       ILocalAccountDao accountDao = LocalAccountDaoLocator.getLocalAccountDao();      
-      List<IPersonAttributes> people = new ArrayList<IPersonAttributes>();
-      people.addAll(accountDao.getPeopleWithMultivaluedAttributes(queryMap));
+      List<ILocalAccountPerson> people = accountDao.getPeople(queryMap);
 
       // create an array of EntityIdentifiers from the search results
       EntityIdentifier[] results = new EntityIdentifier[people.size()];
-      for (ListIterator<IPersonAttributes> i = people.listIterator(); i.hasNext();) {
-          IPersonAttributes person = i.next();
+      for (ListIterator<ILocalAccountPerson> i = people.listIterator(); i.hasNext();) {
+          ILocalAccountPerson person = i.next();
           results[i.previousIndex()] = new EntityIdentifier(person.getName(), this.personDef);
       }
       

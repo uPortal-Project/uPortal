@@ -23,14 +23,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.services.persondir.IPersonAttributes;
-
 /**
  * A person account stored in the local uPortal database
  * 
  * @version $Revision$
  */
-public interface ILocalAccountPerson extends IPersonAttributes {
+public interface ILocalAccountPerson {
 
     public long getId();
     

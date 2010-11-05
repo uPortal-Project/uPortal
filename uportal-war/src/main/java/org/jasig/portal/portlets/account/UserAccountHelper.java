@@ -65,7 +65,7 @@ public class UserAccountHelper {
         
         PersonForm form = new PersonForm();
         
-        Set<String> attributeNames = accountDao.getPossibleUserAttributeNames();
+        Set<String> attributeNames = accountDao.getCurrentAttributeNames();
         for (String name : attributeNames) {
             form.getAttributes().put(name, new StringListAttribute(Collections.<String>emptyList()));
         }
@@ -81,7 +81,7 @@ public class UserAccountHelper {
         form.setUsername(person.getName());
         form.setId(person.getId());
         
-        Set<String> attributeNames = accountDao.getPossibleUserAttributeNames();
+        Set<String> attributeNames = accountDao.getCurrentAttributeNames();
         for (String name : attributeNames) {
             List<String> values = new ArrayList<String>();
             List<Object> attrValues = person.getAttributeValues(name);

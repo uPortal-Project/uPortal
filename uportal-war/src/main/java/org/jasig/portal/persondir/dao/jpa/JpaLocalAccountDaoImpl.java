@@ -31,10 +31,9 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
-import org.jasig.services.persondir.IPersonAttributes;
+import org.jasig.portal.persondir.LocalAccountQuery;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,70 +109,31 @@ public class JpaLocalAccountDaoImpl implements ILocalAccountDao {
         this.entityManager.remove(persistentAccount);
     }
 
-    public Set<IPersonAttributes> getPeople(Map<String, Object> query) {
-        String queryString = "select account from LocalAccountPersonImpl account join account.attributes attr join attr.values value where ";
-        String separator = "";
-        int count = 0;
-        TreeMap<String, String> params = new TreeMap<String, String>();
-        for (Map.Entry<String, Object> entry : query.entrySet()) {
-            Object v = entry.getValue(); 
-            if (v instanceof String && !StringUtils.isBlank((String) v)) {
-                String name = entry.getKey();
-                String value = (String) v;
-                if ("username".equals(name)) {
-                    queryString = queryString.concat(separator + "account.name = :name" + count);
-                    params.put("name" + count, value);
-                } else {
-                    queryString = queryString.concat(separator + "(attr.name = :name" + count + " and lower(value) like :value" + count + ")"); 
-                    params.put("name" + count, name);
-                    params.put("value" + count, "%".concat(value.toLowerCase()).concat("%"));
-                }
-                if (count == 0) {
-                    separator = " or ";
-                }
-                count++;
-            }
-            
-        }
-        final Query jpaQuery = this.entityManager.createQuery(queryString);
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            jpaQuery.setParameter(entry.getKey(), entry.getValue());
-        }
+    public List<ILocalAccountPerson> getPeople(LocalAccountQuery query) {
         
-        @SuppressWarnings("unchecked")
-        final List<ILocalAccountPerson> accounts = jpaQuery.getResultList();
-        final Set<IPersonAttributes> people = new HashSet<IPersonAttributes>();
-        people.addAll(accounts);
-        return people;
-    }
-
-    public Set<String> getAvailableQueryAttributes() {
-        final Set<String> attributes = getPossibleUserAttributeNames();
-        attributes.add("username");
-        return attributes;
-    }
-
-    public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(
-            Map<String, List<Object>> query) {
         // TODO: This implementation doesn't actually look at all the attribute
         // values
-        String queryString = "select account from LocalAccountPersonImpl account join account.attributes attr join attr.values value where ";
+        String queryString = "select distinct account from LocalAccountPersonImpl account join account.attributes attr join attr.values value where ";
         String separator = "";
         int count = 0;
         TreeMap<String, String> params = new TreeMap<String, String>();
-        for (Map.Entry<String, List<Object>> entry : query.entrySet()) {
-            Object v = entry.getValue().get(0); 
+        
+        // if a username has been specified, append it to the query
+        if (query.getName() != null) {
+            queryString = queryString.concat(separator + "account.name = :name" + count);
+            params.put("name" + count, query.getName());
+            separator = " or ";
+        }
+        
+        // for each specified attribute, append a clause to the query
+        for (Map.Entry<String, List<String>> entry : query.getAttributes().entrySet()) {
+            String v = entry.getValue().get(0);
             if (v instanceof String && !StringUtils.isBlank((String) v)) {
                 String name = entry.getKey();
                 String value = (String) v;
-                if ("username".equals(name)) {
-                    queryString = queryString.concat(separator + "account.name = :name" + count);
-                    params.put("name" + count, value);
-                } else {
-                    queryString = queryString.concat(separator + "(attr.name = :name" + count + " and lower(value) like :value" + count + ")"); 
-                    params.put("name" + count, name);
-                    params.put("value" + count, "%".concat(value.toLowerCase()).concat("%"));
-                }
+                queryString = queryString.concat(separator + "(attr.name = :name" + count + " and lower(value) like :value" + count + ")"); 
+                params.put("name" + count, name);
+                params.put("value" + count, "%".concat(value.toLowerCase()).concat("%"));
                 if (count == 0) {
                     separator = " or ";
                 }
@@ -188,12 +148,10 @@ public class JpaLocalAccountDaoImpl implements ILocalAccountDao {
         
         @SuppressWarnings("unchecked")
         final List<ILocalAccountPerson> accounts = jpaQuery.getResultList();
-        final Set<IPersonAttributes> people = new HashSet<IPersonAttributes>();
-        people.addAll(accounts);
-        return people;
+        return accounts;
     }
 
-    public Set<String> getPossibleUserAttributeNames() {
+    public Set<String> getCurrentAttributeNames() {
         final Query query = this.entityManager.createQuery("select distinct attribute.name from LocalAccountPersonAttributeImpl attribute");
 
         @SuppressWarnings("unchecked")
@@ -202,27 +160,5 @@ public class JpaLocalAccountDaoImpl implements ILocalAccountDao {
         nameSet.addAll(nameList);
         return nameSet;
     }
-
-    public Map<String, Object> getUserAttributes(Map<String, Object> seed) {
-        // TODO
-        return null;
-    }
-
-    public Map<String, Object> getUserAttributes(String uid) {
-        // TODO
-        return null;
-    }
-
-    public Map<String, List<Object>> getMultivaluedUserAttributes(
-            Map<String, List<Object>> arg0) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Map<String, List<Object>> getMultivaluedUserAttributes(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 
 }
