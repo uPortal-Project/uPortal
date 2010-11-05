@@ -52,12 +52,17 @@ public final class LdapRecord {
 		
 	}
 	
+	/**
+	 * <strong>NOTE</strong> two instances of {@link LdapRecord} are equal if 
+	 * the groups they contain share the same key.
+	 */
 	@Override
 	public boolean equals(Object o) {
 	    if (o == null || !(o instanceof LdapRecord)) {
 	        return false;
 	    }
 	    LdapRecord lr = (LdapRecord) o;
+	    // NB:  There is code that relies on this definition of equals()
 	    return lr.getGroup().getKey().equals(getGroup().getKey());
 	}
 	
