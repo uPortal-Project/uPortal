@@ -560,6 +560,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         req.setAttribute("smartLdapGroupStore", this);
         SubQueryCounter queryCounter = new SubQueryCounter();
         req.setAttribute("queryCounter", queryCounter);
+        req.setAttribute("baseFilter", spring_context.getBean("filter"));
         for (String name : spring_context.getBeanDefinitionNames()) {
             req.setAttribute(name, spring_context.getBean(name));
         }
