@@ -246,7 +246,6 @@ var up = up || {};
         
         // Cache.
         breadcrumbs = that.locate("breadcrumbs");
-        console.log(entity);
         key = entity.entityType + ':' + entity.id;
         
         // Add breadcrumb.
