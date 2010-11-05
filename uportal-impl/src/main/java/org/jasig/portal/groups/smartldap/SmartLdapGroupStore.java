@@ -20,6 +20,7 @@
 package org.jasig.portal.groups.smartldap;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,6 +40,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.ComponentGroupServiceDescriptor;
+import org.jasig.portal.groups.EntityGroupImpl;
 import org.jasig.portal.groups.EntityTestingGroupImpl;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
@@ -215,7 +217,6 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
      * @param group org.jasig.portal.groups.IEntityGroup
      */
     public Iterator findEntitiesForGroup(IEntityGroup group) throws GroupsException {
-        
 
     	if (isTreeRefreshRequired()) {
     		refreshTree();
@@ -383,6 +384,64 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         log.warn("Unsupported method accessed:  SmartLdapGroupStore.updateMembers");
         throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
     }
+    
+    public LdapRecord detectAndEliminateGroupReferences(LdapRecord record, List<String> groupChain) {
+        
+        LdapRecord rslt = record;  // default
+        
+        List<String> keysOfChildren = record.getKeysOfChildren();
+        List<String> filteredChildren = new ArrayList<String>();
+        for (String key : keysOfChildren) {
+            if (!groupChain.contains(key)) {
+                filteredChildren.add(key);
+            } else {
+                // Circular reference detected!
+                StringBuilder msg = new StringBuilder();
+                msg.append("Circular reference detected and removed for the following groups:  '")
+                                                .append(key).append("' and '")
+                                                .append(record.getGroup().getLocalKey()).append("'");
+                log.warn(msg.toString());
+            }
+        }
+        if (filteredChildren.size() < keysOfChildren.size()) {
+            rslt = new LdapRecord(record.getGroup(), filteredChildren);
+        }
+        
+        return rslt;
+
+    }
+    
+    public boolean hasUndiscoveredChildrenWithinDn(LdapRecord record, String baseDn, Set<LdapRecord> groupsSet) {
+        
+        boolean rslt = false;  // default
+
+        for (String childKey : record.getKeysOfChildren()) {
+            if (childKey.endsWith(baseDn)) {
+                // Make sure the one we found isn't already in the groupsSet;  
+                // NOTE!... this test takes advantage of the implementation of 
+                // equals() on LdapRecord, which states that 2 records with the 
+                // same group key are equal.
+                IEntityGroup group = new EntityGroupImpl(childKey, IPerson.class);
+                List<String> list = Collections.emptyList();
+                LdapRecord proxy = new LdapRecord(group, list);
+                if (!groupsSet.contains(proxy)) {
+                    rslt = true;
+                    break;
+                } else {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Child group is already in collection:  " + childKey);
+                    }
+                }
+            }
+        }
+        
+        if (log.isTraceEnabled()) {
+            log.trace("Query for children of parent group '" + record.getGroup().getLocalKey() + "':  " + rslt);
+        }
+
+        return rslt;
+        
+    }
 
     /*
      * Implementation.
@@ -449,6 +508,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             return;
         }
         
+        log.info("Refreshing groups tree for SmartLdap");
+        
         // We must join the builder thread if
         // we don't have an existing groupsTree.
         final boolean doJoin = groupsTree == null;
@@ -458,7 +519,11 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         Thread refresh = new Thread("SmartLdap Refresh Worker") {
             public void run() {
                 // Replace the old with the new...
-                groupsTree = buildGroupsTree();
+                try {
+                    groupsTree = buildGroupsTree();
+                } catch (Throwable t) {
+                    log.error("SmartLdapGroupStore failed to build the groups tree", t);
+                }
             }
         };
         refresh.setDaemon(true);
@@ -480,6 +545,8 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
     private GroupsTree buildGroupsTree() {
         
+        long timestamp = System.currentTimeMillis();
+        
         // Prepare the new local indeces...
         Map<String,IEntityGroup> new_groups = Collections.synchronizedMap(new HashMap<String,IEntityGroup>());
         Map<String,List<String>> new_parents = Collections.synchronizedMap(new HashMap<String,List<String>>());
@@ -490,6 +557,9 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         RuntimeRequestResponse req = new RuntimeRequestResponse();
         Set<LdapRecord> set = new HashSet<LdapRecord>();
         req.setAttribute("GROUPS", set);
+        req.setAttribute("smartLdapGroupStore", this);
+        SubQueryCounter queryCounter = new SubQueryCounter();
+        req.setAttribute("queryCounter", queryCounter);
         for (String name : spring_context.getBeanDefinitionNames()) {
             req.setAttribute(name, spring_context.getBean(name));
         }
@@ -588,6 +658,9 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         groupsWithMyName.add(ROOT_GROUP.getLocalKey());
 
         if (log.isInfoEnabled()) {
+            long benchmark = System.currentTimeMillis() - timestamp;
+            log.info("Refresh of groups tree completed in " + benchmark + " milliseconds");
+            log.info("Total number of LDAP queries:  " + (queryCounter.getCount() + 1));
             String msg = "init() :: final size of each collection is as follows..."
                             + "\n\tgroups=" + new_groups.size()
                             + "\n\tparents=" + new_parents.size()
@@ -726,6 +799,20 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
             return keysByUpperCaseName;
         }
 
+    }
+    
+    private static final class SubQueryCounter {
+        
+        private int count = 0;
+        
+        public void increment() {
+            ++count;
+        }
+        
+        public int getCount() {
+            return count;
+        }
+        
     }
 
 }
