@@ -24,20 +24,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.portlets.search.gsa.GsaResults;
 import org.jasig.portal.portlets.search.gsa.GsaSearchService;
-import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -58,13 +55,6 @@ import org.springframework.web.portlet.ModelAndView;
 @RequestMapping("VIEW")
 public class SearchPortletController {
 
-    private IPersonAttributeDao personAttributeDao;
-    
-    @Autowired(required = true)
-    public void setPersonAttributeDao(IPersonAttributeDao personAttributeDao) {
-        this.personAttributeDao = personAttributeDao;
-    }
-    
     private GsaSearchService gsaSearchService;
 
     @Autowired
@@ -84,6 +74,13 @@ public class SearchPortletController {
     @Autowired(required = true)
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
+    }
+
+    private PersonLookupHelperImpl lookupHelper;
+    
+    @Autowired(required = true)
+    public void setPersonLookupHelper(PersonLookupHelperImpl lookupHelper) {
+        this.lookupHelper = lookupHelper;
     }
 
     private List<String> attributes;
@@ -130,42 +127,17 @@ public class SearchPortletController {
             queryAttributes.put("sn", query);
             queryAttributes.put("uid", query);
 
-            // get the set of people matching the search query
-            final Set<IPersonAttributes> people = this.personAttributeDao.getPeople(queryAttributes);
+            final List<IPersonAttributes> people;
 
             // get an authorization principal for the current requesting user
             HttpServletRequest servletRequest = portalRequestUtils.getOriginalPortalRequest(request);
             IPerson currentUser = personManager.getPerson(servletRequest);
-            EntityIdentifier ei = currentUser.getEntityIdentifier();
-            IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-    
-            // for each returned match, check to see if the current user has 
-            // permissions to view this user
-            List<IPersonAttributes> list = new ArrayList<IPersonAttributes>();        
-            for (IPersonAttributes person : people) {
-                if (ap.hasPermission("UP_USERS", "VIEW_USER_DETAILS", person.getName())) {
-                    list.add(person);
-                }
-            }
+
+            // get the set of people matching the search query
+            people = this.lookupHelper.searchForPeople(currentUser, queryAttributes);
             
-            List<String> permittedAttributes = new ArrayList<String>();
-            for (String attributeName : attributes) {
-                if (ap.hasPermission("UP_USERS", "VIEW_USER_ATTRIBUTE", attributeName)) {
-                    permittedAttributes.add(attributeName);
-                }
-            }
-            
-            // sort the list by display name
-            Collections.sort(list, new DisplayNameComparator());
-            
-            // limit the list to a maximum of 10 returned results
-            // TODO: make this limit configurable
-            if (people.size() > 10) {
-                list = list.subList(0, 9);
-            }
-            
-            model.put("people", list);
-            model.put("attributeNames", permittedAttributes);
+            model.put("people", people);
+            model.put("attributeNames", this.attributes);
             model.put("directoryEnabled", true);
         }
         

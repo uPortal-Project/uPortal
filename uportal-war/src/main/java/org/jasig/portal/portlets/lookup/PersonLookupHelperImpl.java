@@ -19,17 +19,15 @@
 
 package org.jasig.portal.portlets.lookup;
 
-import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.portlet.PortletPreferences;
@@ -37,9 +35,14 @@ import javax.portlet.PortletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.portlets.Attribute;
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.portlets.search.DisplayNameComparator;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
+import org.jasig.services.persondir.support.NamedPersonImpl;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
@@ -50,12 +53,13 @@ import org.springframework.webflow.context.ExternalContext;
  */
 public class PersonLookupHelperImpl implements IPersonLookupHelper {
     protected final Log logger = LogFactory.getLog(this.getClass());
-    
+
     private IPersonAttributeDao personAttributeDao;
     
     public IPersonAttributeDao getPersonAttributeDao() {
         return personAttributeDao;
     }
+    
     /**
      * The {@link IPersonAttributeDao} used to perform lookups.
      */
@@ -94,106 +98,11 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         
         return queryAttributes;
     }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlets.lookup.IPersonLookupHelper#doPersonQuery(org.springframework.webflow.context.ExternalContext, org.jasig.portal.portlets.lookup.PersonQuery)
-     */
-    public Map<String, IPersonAttributes> doPersonQuery(ExternalContext externalContext, PersonQuery query) {
-        final Map<String, Attribute> attributes = query.getAttributes();
-        
-        final Map<String, Object> queryAttributes = new HashMap<String, Object>();
-        
-        for (final Map.Entry<String, Attribute> attrEntry : attributes.entrySet()) {
-            queryAttributes.put(attrEntry.getKey(), attrEntry.getValue().getValue());
-        }
-        
-        final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
-        final PortletPreferences preferences = portletRequest.getPreferences();
-        final String[] configuredAttributes = preferences.getValues(PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES, null);
-        final String[] excludedAttributes = preferences.getValues(PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES_EXCLUDES, null);
-
-        //Calculate the Set of attributes that are OK to be searched with
-        final Set<String> allowedAttributes = new LinkedHashSet<String>();
-        if (configuredAttributes != null) {
-            allowedAttributes.addAll(Arrays.asList(configuredAttributes));
-        }
-        else {
-            allowedAttributes.addAll(attributes.keySet());
-        }
-        if (excludedAttributes != null) {
-            allowedAttributes.removeAll(Arrays.asList(excludedAttributes));
-        }
-        
-        //Filter the attributes map
-        for (final Iterator<String> attributeItr = queryAttributes.keySet().iterator(); attributeItr.hasNext(); ) {
-            final String attribute = attributeItr.next();
-            if (!allowedAttributes.contains(attribute)) {
-                attributeItr.remove();
-                
-                this.logger.warn("User '" + externalContext.getCurrentUser() + "' attempted searching on attribute '" + attribute + "' which is not allowed in the current configuration. The attribute will be ignored.");
-            }
-        }
-        
-        
-        final Set<IPersonAttributes> people = this.personAttributeDao.getPeople(queryAttributes);
-        if (people == null) {
-            return null;
-        }
-        
-        final Map<String, IPersonAttributes> sortedPeople = new TreeMap<String, IPersonAttributes>();
-        for (final IPersonAttributes personAttributes : people) {
-            sortedPeople.put(personAttributes.getName(), personAttributes);
-        }
-        return sortedPeople;
-    }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlets.lookup.IPersonLookupHelper#getQueryDisplayResults(org.springframework.webflow.context.ExternalContext, java.util.Collection)
-     */
-    public Map<IPersonAttributes, String> getQueryDisplayResults(ExternalContext externalContext, Collection<IPersonAttributes> queryResults) {
-        final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
-        final PortletPreferences preferences = portletRequest.getPreferences();
-        
-        final String[] resultsAttributes = preferences.getValues(PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_ATTRIBUTES, null);
-        final String resultsMessage = preferences.getValue(PERSON_LOOKUP_PERSON_SEARCH_RESULTS_RESULTS_MESSAGE, null);
-        
-        final Map<IPersonAttributes, String> displayResults = new LinkedHashMap<IPersonAttributes, String>();
-
-        //No result string attributes or message string, just use the person's name
-        if (resultsAttributes == null || resultsMessage == null) {
-            for (final IPersonAttributes personAttributes : queryResults) {
-                final String name = personAttributes.getName();
-                displayResults.put(personAttributes, name);
-            }
-        }
-        //There is configured message info, generate formated strings for each person 
-        else {
-            for (final IPersonAttributes personAttributes : queryResults) {
-                final Object[] resultValues = new Object[resultsAttributes.length];
-                for (int index = 0; index < resultsAttributes.length; index++) {
-                    final Object attributeValue = personAttributes.getAttributeValue(resultsAttributes[index]);
-                    if (attributeValue != null) {
-                        resultValues[index] = attributeValue;
-                    }
-                    else {
-                        resultValues[index] = "";
-                    }
-                }
-                
-                final String displayResult = MessageFormat.format(resultsMessage, resultValues);
-                
-                displayResults.put(personAttributes, displayResult);
-            }
-        }
-        
-        return displayResults;
-    }
-
-
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.swapper.IPersonLookupHelper#getDisplayAttributes(org.springframework.webflow.context.ExternalContext)
      */
-    public Set<String> getDisplayAttributes(ExternalContext externalContext, IPersonAttributes person) {
+    public Set<String> getDisplayAttributes(ExternalContext externalContext) {
         final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
         final PortletPreferences preferences = portletRequest.getPreferences();
         
@@ -201,21 +110,14 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         final String[] configuredAttributes = preferences.getValues(PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES, null);
         final String[] excludedAttributes = preferences.getValues(PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES_EXCLUDES, null);
         
-        final Map<String, List<Object>> attributes = person.getAttributes();
-        
         //If attributes are configured in portlet prefs use those the user has 
         if (configuredAttributes != null) {
             displayAttributes = new LinkedHashSet<String>();
-
-            for (final String configuredAttribute : configuredAttributes) {
-                if (attributes.containsKey(configuredAttribute)) {
-                    displayAttributes.add(configuredAttribute);
-                }
-            }
+            displayAttributes.addAll(Arrays.asList(configuredAttributes));
         }
         //Otherwise provide all available attributes from the IPersonAttributes
         else {
-            displayAttributes = new TreeSet<String>(attributes.keySet());
+            displayAttributes = new TreeSet<String>(personAttributeDao.getPossibleUserAttributeNames());
         }
         
         //Remove any excluded attributes
@@ -227,4 +129,167 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         
         return displayAttributes;
     }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.lookup.IPersonLookupHelper#searchForPeople(org.jasig.portal.security.IPerson, java.util.Map)
+     */
+    public List<IPersonAttributes> searchForPeople(final IPerson searcher, final Map<String, Object> query) {
+
+        // get the IAuthorizationPrincipal for the searching user
+        final IAuthorizationPrincipal principal = getPrincipalForUser(searcher);
+
+        // build a set of all possible user attributes the current user has 
+        // permission to view
+        final Set<String> permittedAttributes = getAvailableAttributes(principal);
+        
+        // remove any query attributes that the user does not have permission
+        // to view
+        final Map<String, Object> inUseQuery = new HashMap<String, Object>();
+        for (String attr : query.keySet()) {
+            if (permittedAttributes.contains(attr)) {
+                inUseQuery.put(attr, query.get(attr));
+            } else {
+                this.logger.warn("User '" + searcher.getName() + "' attempted searching on attribute '" + attr + "' which is not allowed in the current configuration. The attribute will be ignored.");
+            }
+        }
+        
+        // ensure the query has at least one search attribute defined
+        if (inUseQuery.keySet().size() == 0) {
+            throw new IllegalArgumentException("Search query is empty");
+        }
+        
+        // get the set of people matching the search query
+        final Set<IPersonAttributes> people = this.personAttributeDao.getPeople(inUseQuery);
+
+        // for each returned match, check to see if the current user has 
+        // permissions to view this user
+        List<IPersonAttributes> list = new ArrayList<IPersonAttributes>();
+        for (IPersonAttributes person : people) {
+            // if the current user has permission to view this person, construct
+            // a new representation of the person limited to attributes the
+            // searcher has permissions to view
+            final IPersonAttributes visiblePerson = getVisiblePerson(principal, person, permittedAttributes);
+            if (visiblePerson != null) {
+                list.add(visiblePerson);
+            }
+        }
+        
+        // sort the list by display name
+        Collections.sort(list, new DisplayNameComparator());
+        
+        // limit the list to a maximum of 10 returned results
+        // TODO: make this limit configurable
+        if (people.size() > 10) {
+            list = list.subList(0, 9);
+        }
+        
+        return list;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.lookup.IPersonLookupHelper#findPerson(org.jasig.portal.security.IPerson, java.lang.String)
+     */
+    public IPersonAttributes findPerson(final IPerson searcher, final String username) {
+
+        // get the IAuthorizationPrincipal for the searching user
+        final IAuthorizationPrincipal principal = getPrincipalForUser(searcher);
+
+        // build a set of all possible user attributes the current user has 
+        // permission to view
+        final Set<String> permittedAttributes = getAvailableAttributes(principal);
+        
+        // get the set of people matching the search query
+        final IPersonAttributes person = this.personAttributeDao.getPerson(username);
+        
+        if (person == null) {
+            logger.info("No user found with username matching " + username);
+            return null;
+        }
+        
+        // if the current user has permission to view this person, construct
+        // a new representation of the person limited to attributes the
+        // searcher has permissions to view
+        return getVisiblePerson(principal, person, permittedAttributes);
+        
+    }
+
+    /**
+     * Get the authoriztaion principal matching the supplied IPerson.
+     * 
+     * @param person
+     * @return
+     */
+    protected IAuthorizationPrincipal getPrincipalForUser(final IPerson person) {
+        final EntityIdentifier ei = person.getEntityIdentifier();
+        return AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+    }
+
+    /**
+     * Get the set of all user attribute names defined in the portal for which
+     * the specified principal has the attribute viewing permission.
+     * 
+     * @param principal
+     * @return
+     */
+    protected Set<String> getAvailableAttributes(final IAuthorizationPrincipal principal) {
+        final Set<String> attributeNames = this.personAttributeDao.getPossibleUserAttributeNames();
+        return getAvailableAttributes(principal, attributeNames);
+    }
+
+    /**
+     * Filter the provided set of user attribute names to contain only those
+     * the specified principal has permissions to view.
+     * 
+     * @param principal
+     * @param attributeNames
+     * @return
+     */
+    protected Set<String> getAvailableAttributes(final IAuthorizationPrincipal principal, final Set<String> attributeNames) {
+        final Set<String> permittedAttributes = new HashSet<String>();
+        for (String attr : attributeNames) {
+            if (principal.hasPermission(USERS_OWNER, VIEW_ATTRIBUTE_PERMISSION, attr)) {
+                permittedAttributes.add(attr);
+            }
+        }
+        return permittedAttributes;
+    }
+
+    /**
+     * Filter an IPersonAttributes for a specified viewing principal.  The returned 
+     * person will contain only the attributes provided in the permitted attributes
+     * list.  <code>null</code> if the principal does not have permission to
+     * view the user.
+     * 
+     * @param principal
+     * @param person
+     * @param permittedAttributes
+     * @return
+     */
+    protected IPersonAttributes getVisiblePerson(final IAuthorizationPrincipal principal,
+            final IPersonAttributes person, final Set<String> permittedAttributes) {
+
+        // first check to see if the principal has permission to view this user
+        if (principal.hasPermission(USERS_OWNER, VIEW_USER_PERMISSION, person.getName())) {
+            
+            // if the user has permission, filter the person attributes according
+            // to the specified permitted attributes
+            final Map<String,List<Object>> visibleAttributes = new HashMap<String,List<Object>>();
+            for (String attr : person.getAttributes().keySet()) {
+                if (permittedAttributes.contains(attr)) {
+                    visibleAttributes.put(attr, person.getAttributeValues(attr));
+                }
+            }
+            
+            // use the filtered attribute list to create and return a new
+            // person object
+            final IPersonAttributes visiblePerson = new NamedPersonImpl(person.getName(), visibleAttributes);
+            return visiblePerson;
+            
+        } else {
+            logger.debug("Principal " + principal.getKey() + " does not have permissions to view user " + person.getName());
+            return null;
+        }
+
+    }
+    
 }

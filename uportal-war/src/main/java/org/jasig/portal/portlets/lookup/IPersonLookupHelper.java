@@ -19,10 +19,11 @@
 
 package org.jasig.portal.portlets.lookup;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jasig.portal.security.IPerson;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.webflow.context.ExternalContext;
 
@@ -55,7 +56,14 @@ public interface IPersonLookupHelper {
      * Portlet preference name to use to specify a attributes to exclude in the user details view
      */
     public static final String PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES_EXCLUDES = "person-lookup.personDetails.detailsAttributes.exclude";
+
+    public static final String USERS_OWNER = "UP_USERS";
     
+    public static final String VIEW_USER_PERMISSION = "VIEW_USER";
+
+    public static final String VIEW_ATTRIBUTE_PERMISSION = "VIEW_USER_ATTRIBUTE";
+    
+
     /**
      * Gets the Set of attributes to allow the user to query with.
      * 
@@ -63,23 +71,6 @@ public interface IPersonLookupHelper {
      * @return Set of attributes that can be used in a query.
      */
     public Set<String> getQueryAttributes(ExternalContext externalContext);
-
-    /**
-     * Execute a query for users using the attributes in the passed {@link PersonQuery} object.
-     * 
-     * @param query Query to run for users.
-     * @return Map of users with their name attribute as the key.
-     */
-    public Map<String, IPersonAttributes> doPersonQuery(ExternalContext externalContext, PersonQuery query);
-
-    /**
-     * Performs formatting of strings to display on the query results view.
-     * 
-     * @param externalContext The {@link ExternalContext} to get the flows's configuration from
-     * @param queryResults Results of the query
-     * @return Formatted strings as values and user names as keys.
-     */
-    public Map<IPersonAttributes, String> getQueryDisplayResults(ExternalContext externalContext, Collection<IPersonAttributes> queryResults);
     
     /**
      * Gets the Set of attributes to display in the user details view
@@ -88,6 +79,28 @@ public interface IPersonLookupHelper {
      * @param person The person who's attributes will be displayed
      * @return Set of attributes to display
      */
-    public Set<String> getDisplayAttributes(ExternalContext externalContext, IPersonAttributes person);
+    public Set<String> getDisplayAttributes(ExternalContext externalContext);
+
+    /**
+     * Search for people matching the specified query, limited to the permissions
+     * of the searching user.  Both the returned person list and the attributes
+     * of the returned people will be filtered according to the searching user's
+     * permissions.
+     * 
+     * @param searcher
+     * @param query
+     * @return
+     */
+    public List<IPersonAttributes> searchForPeople(final IPerson searcher, final Map<String, Object> query);
+
+    /**
+     * Find an individual person matching the provided username.  The returned
+     * result (if any), will be limited by the permissions of the searching user.
+     * 
+     * @param searcher
+     * @param username
+     * @return
+     */
+    public IPersonAttributes findPerson(final IPerson searcher, final String username);
 
 }

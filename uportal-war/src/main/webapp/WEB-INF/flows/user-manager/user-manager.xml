@@ -34,8 +34,6 @@
      +-->
     <subflow-state id="personLookup" subflow="person-lookup">
         <input name="showCancelButton" value="'false'" />
-        <input name="personSearchResults_selectAndGoButtonTextKey" value="'search.users'" />
-        <input name="personDetails_selectAndGoButtonTextKey" value="'select.user'" />
         
         <output name="person" />
 

@@ -472,6 +472,13 @@
         <portlet-info>
             <title>User Manager</title>
         </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>person-lookup.personDetails.detailsAttributes</name>
+                <value>username</value>
+                <value>mail</value>
+            </preference>
+        </portlet-preferences>
     </portlet>
     
     <portlet>

@@ -88,13 +88,13 @@
     </action-state>
 
     <end-state id="cancel">
-        <output name="breadcrumb" value=""/>
+        <output name="breadcrumb" value="''"/>
     </end-state>
     <end-state id="followBreadcrumb">
         <output name="breadcrumb" value="flowScope.selectedBreadcrumb"/>
     </end-state>
     <end-state id="done">
-        <output name="breadcrumb" value=""/>
-    </end-state>    
+        <output name="breadcrumb" value="''"/>
+    </end-state>
     
 </flow>

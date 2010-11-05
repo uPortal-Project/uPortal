@@ -24,75 +24,23 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
             
-    <var name="flowScope.personQuery" class="org.jasig.portal.portlets.lookup.PersonQuery" />
-    
     <input name="showCancelButton" type="boolean" required="false" />
-    <input name="personSearchResults_selectAndGoButtonTextKey" type="string" required="false" />
-    <input name="personDetails_selectAndGoButtonTextKey" type="string" required="false" />
     
-    <!-- Used to set default values for inputs -->
-    <action-state id="initVariables">
-        <set name="flowScope.personSearchResults_selectAndGoButtonTextKey" value="personSearchResults_selectAndGoButtonTextKey == null ? 'personSearchResults.selectAndGoButton' : personSearchResults_selectAndGoButtonTextKey" />
-        <set name="flowScope.personDetails_selectAndGoButtonTextKey" value="personDetails_selectAndGoButtonTextKey != null ? 'personDetails.selectAndGoButton' : personDetails_personDetails_selectAndGoButtonTextKey" />
-
-        <transition to="personLookup" />
-    </action-state>
-
-    <view-state id="personLookup" model="personQuery">
+    <view-state id="personLookup">
         <on-entry>
-            <set name="flowScope.personQuery" value="new org.jasig.portal.portlets.lookup.PersonQuery()" />
             <evaluate expression="personLookupHelper.getQueryAttributes(externalContext)" result="viewScope.queryAttributes" />
+            <evaluate expression="personLookupHelper.getDisplayAttributes(externalContext)" result="viewScope.displayAttributes" />
         </on-entry>
-        <transition on="cancel" to="cancelPersonLookup" bind="false" />
-        <transition on="newSearch" to="personLookup" bind="false" />
-        <transition on="search" to="doPersonLookup" />
+        <transition on="cancel" to="cancelPersonLookup"/>
+        <transition on="select" to="selectPerson"/>
     </view-state>
     
-    <!-- Execute the lookup query and transition to the appropriate state based on the number of results -->
-    <action-state id="doPersonLookup">
-        <evaluate expression="personLookupHelper.doPersonQuery(externalContext, personQuery)" result="flowScope.personQueryResults" />
-        
-        <transition to="personLookup" on="#{flowScope.personQueryResults == null or flowScope.personQueryResults.size() == 0}">
-            <set name="requestScope.emptyQueryResults" value="'true'" />
-        </transition>
-        <transition to="personDetails" on="#{flowScope.personQueryResults.size() == 1}">
-            <set name="flowScope.person" value="flowScope.personQueryResults[flowScope.personQueryResults.keySet().iterator().next()]" />
-        </transition>
-        <transition to="personSearchResults" /> 
+    <action-state id="selectPerson">
+        <evaluate expression="personLookupHelper.findPerson(portalWebFlowUtils.getCurrentPerson(externalContext), requestParameters.username)" result="flowScope.person"/>
+        <transition on="#{flowScope.person == null}" to="personSearchResults"/>
+        <transition to="returnSelectedPerson"/>
     </action-state>
-
-    <view-state id="personSearchResults">
-        <on-entry>
-            <evaluate expression="personLookupHelper.getQueryDisplayResults(externalContext, personQueryResults.values())" result="viewScope.queryDisplayResults" />
-        </on-entry>
-        
-        <transition on="newSearch" to="personLookup" />
-        <transition on="select" to="selectPerson">
-            <set name="flowScope.person" value="flowScope.personQueryResults[requestParameters.uid]"/>
-        </transition>
-        <transition on="selectAndGo" to="selectPersonAndGo">
-            <set name="flowScope.person" value="flowScope.personQueryResults[requestParameters.uid]"/>
-        </transition>
-    </view-state>
     
-    <!-- Use a decision state to ensure a person was actually selected -->
-    <decision-state id="selectPerson">
-        <if test="flowScope.person == null" then="personSearchResults" else="personDetails" />    
-    </decision-state>
-    <view-state id="personDetails">
-        <on-entry>
-            <evaluate expression="personLookupHelper.getDisplayAttributes(externalContext, person)" result="viewScope.displayAttributes" />
-        </on-entry>
-    
-        <transition on="searchResults" to="personSearchResults" />
-        <transition on="newSearch" to="personLookup" />
-        <transition on="selectAndGo" to="returnSelectedPerson" />
-    </view-state>
-
-    <!-- Use a decision state to ensure a person was actually selected -->
-    <decision-state id="selectPersonAndGo">
-        <if test="flowScope.person == null" then="personSearchResults" else="returnSelectedPerson" />    
-    </decision-state>
     <end-state id="returnSelectedPerson">
         <output name="person" />
     </end-state>

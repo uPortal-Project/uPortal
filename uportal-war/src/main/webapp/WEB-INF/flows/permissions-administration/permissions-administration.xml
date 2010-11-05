@@ -75,15 +75,11 @@
         <output name="breadcrumb" value="flowScope.breadcrumb"/>
         
         <transition on="cancel" to="showActivity"/>
-        <transition on="followBreadcrumb" to="followBreadcrumb"/>
-        <transition on="done" to="finishPermissionEdit"/>
+        <transition on="done" to="showActivity"/>
+        <transition on="#{breadcrumb == 'listOwners'}" to="listOwners"/>
+        <transition on="#{breadcrumb == 'listActivities'}" to="listActivities"/>
+        <transition on="#{breadcrumb == 'showActivity'}" to="showActivity"/>
     </subflow-state>
-
-    <decision-state id="followBreadcrumb">
-        <if then="listOwners" test="flowScope.breadcrumb == 'listOwners'"/>
-        <if then="listActivities" test="flowScope.breadcrumb == 'listActivities'"/>
-        <if then="showActivity" test="flowScope.breadcrumb == 'showActivity'"/>
-    </decision-state>
     
     <!-- End state -->
     <end-state id="finishPermissionEdit" />

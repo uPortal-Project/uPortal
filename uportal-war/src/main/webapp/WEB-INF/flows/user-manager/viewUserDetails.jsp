@@ -80,7 +80,7 @@
                         <tr>
                             <td>
                                 <c:set var="attrName" value="${ attribute.key }"/>
-                                <spring:message code="${attrName}" text="${attrName}" arguments="${attrName}"/>
+                                <spring:message code="attribute.displayName.${attrName}" text="${attrName}"/> (<spring:message code="${attrName}"/>)
                             </td>
                             <td>
                                 <c:forEach items="${ attribute.value }" var="value">
