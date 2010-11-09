@@ -134,13 +134,26 @@
 					<ref bean="cachinguPortalJdbcAttributeSource"/> <ref
 					bean="cachinguPortalJdbcUserSource"/>
 				-->
-                <ref bean="localAccountDao" />
+                <ref bean="uPortalAccountUserSource" />
 				<ref bean="uPortalJdbcUserSource" />
 			</list>
 		</property>
 	</bean>
 
-
+    <bean id="uPortalAccountUserSource" class="org.jasig.portal.persondir.LocalAccountPersonAttributeDao">
+        <property name="localAccountDao" ref="localAccountDao"/>
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="resultAttributeMapping">
+            <map>
+                <entry key="username">
+                    <set>
+                        <value>uid</value>
+                        <value>user.login.id</value>
+                    </set>
+                </entry>
+            </map>
+        </property>
+    </bean>
 
 	<!--
 	 | Looks in the base UP_USER table, doesn't find attributes but will ensure a result if it the user exists in the 
@@ -167,7 +180,7 @@
 				<entry key="USER_NAME">
 					<set>
 						<value>uid</value>
-						<value>username</value>
+                        <value>username</value>
 						<value>user.login.id</value>
 					</set>
 				</entry>
