@@ -37,6 +37,12 @@
       <description/>  
       <ovrd>N</ovrd>
     </parameter>
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/text-html.png</value>
+      <description/>
+      <ovrd>N</ovrd>
+    </parameter>
   </parameters>
   <portletPreferences>
     <portletPreference>

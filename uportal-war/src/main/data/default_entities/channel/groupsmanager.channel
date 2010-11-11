@@ -56,8 +56,7 @@
     </parameter>
     <parameter>
       <name>iconUrl</name>
-      <value>${request.contextPath}/media/skins/universality/uportal3/images/arrow_down.png</value>
-      <!--value>/ResourceServingWebapp/rs/tango/0.8.90/22x22/apps/system-users.png</value-->
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/system-users.png</value>
       <description/>
       <ovrd>N</ovrd>
     </parameter>
