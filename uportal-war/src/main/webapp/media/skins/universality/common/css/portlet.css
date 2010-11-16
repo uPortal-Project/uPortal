@@ -446,15 +446,32 @@
 .portlet .entity-browser .member-list a:focus {background-color:#FFC; color:#336699;}
 
 
-/* Search Dialog */
-.portlet .search-list,
-.portlet .search-list li {padding: 0; margin: 0; list-style: none;}
-.portlet .search-list li {padding: 2px 3px;}
-.portlet .search-list li:hover,
-.portlet .search-list li:focus {background-color:#FFC;}
-.portlet .search-list a {padding: 0 20px 0 0; background-position:100% 0%; background-repeat: no-repeat;}
-.portlet .search-list a:hover,
-.portlet .search-list a:focus {color:#336699;}
+/* Search */
+.portlet .search-dropdown {
+    display: none; position: absolute; top: 0; left: 0; background-color: #FFF; border: 1px solid #AAA; margin-left: 20px; padding: 0px;
+    -moz-box-shadow: 0px 0px 5px 0px #999; -webkit-box-shadow: 0 0 5px 0 #999; box-shadow: 0px 0px 5px 0px #999; min-width: 200px; min-height: 100px;}
+/* close */
+.portlet .search-dropdown .search-close {background-color: #F8F8F8; padding: 5px 7px; text-align: right; margin-bottom: 5px; border-bottom: 1px solid #CCC;}
+.portlet .search-dropdown .search-close a {font-size: 77%;}
+/* list */
+.portlet .search-dropdown .search-list,
+.portlet .search-dropdown .search-list li {padding: 0; margin: 0; list-style: none;}
+.portlet .search-dropdown .search-list li {display: block; float:none; padding: 2px 5px;}
+.portlet .search-dropdown .search-list li:hover,
+.portlet .search-dropdown .search-list li:focus {background-color:#FFC;}
+/* anchors */
+.portlet .search-dropdown .search-list a {padding: 0 0 0 20px; background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/add.png") 0% 50% no-repeat; text-decoration: none;}
+.portlet .search-dropdown .search-list a:hover,
+.portlet .search-dropdown .search-list a:focus {color:#000;}
+/* selected */
+.portlet .search-dropdown .search-list .selected {background-color:#D1F0E0;}
+.portlet .search-dropdown .search-list .selected:hover,
+.portlet .search-dropdown .search-list .selected:focus {background-color:#C8F0DD;}
+.portlet .search-dropdown .search-list .selected a {color: #248222; background-image: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png"); font-weight: bold;}
+/* loader */
+.portlet .search-dropdown .search-loader {position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #EFEFEF url("../images/loading.gif") 50% 50% no-repeat;}
+.portlet .search-dropdown .search-loader span {visibility: hidden;}
+
 
 /*
  * Single Selection View.
@@ -493,6 +510,7 @@
 /* breadcrumb */
 .portlet .view-multi-select .breadcrumb {padding: 0 0;}
 /* browse */
+.portlet .view-multi-select .entity-browser {position: relative;}
 .portlet .view-multi-select .entity-browser .titlebar {border: 1px solid #CCC; padding: 8px 8px 6px 8px; margin-bottom: 0; position: relative;}
 .portlet .view-multi-select .entity-browser .content {padding: 8px 8px 12px 8px; border: 1px solid #CCC;}
 /* selection */
@@ -507,7 +525,7 @@
 /* buttons */
 .portlet .view-multi-select .buttons {margin-top: 0; padding-right: 8px; border-top: none; text-align: right;}
 /* search */
-.portlet .view-multi-select .portlet-search {position: absolute; top: 4px; right: 8px;}
+.portlet .view-multi-select .portlet-search {position: absolute; top: 20px; right: 8px;}
 
 
 /*====================================*/
