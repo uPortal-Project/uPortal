@@ -30,6 +30,7 @@
     <portlet:param name="execution" value="${flowExecutionKey}" /></portlet:actionURL>
     <c:set var="n"><portlet:namespace/></c:set>
     <c:set var="selectionMode">${selectMultiple}</c:set>
+    
     <!--
     | PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     | For the standards and guidelines that govern the user interface of this portlet
@@ -68,18 +69,6 @@
                                     <div id="${n}entityBrowserTitlebar" class="titlebar ui-helper-clearfix">
                                         <h4 class="title" id="${n}currentEntityName"></h4>
                                         <a class="select" id="${n}selectEntityLink" href="javascript:;" title="<spring:message code="select"/>"><span><spring:message code="select"/></span></a>
-                                        
-                                        <!--search-->
-                                        <div class="portlet-search">
-                                            <form id="${n}searchForm">
-                                                <input type="text" name="searchterm" value="<spring:message code="enter.name"/>"/>
-                                                <input type="submit" class="button" value="<spring:message code="go"/>" />
-                                            </form>
-                                        </div>
-                                        <div id="${n}searchDialog" title="<spring:message code="search"/>">
-                                            <p id="${n}searchResultsNoMembers" style="display:none"><spring:message code="no.results"/></p>
-                                            <ul id="${n}searchResults" class="search-list"></ul>
-                                        </div>
                                     </div>
                                     <!--content-->
                                     <div id="${n}entityBrowserContent" class="content">
@@ -110,6 +99,23 @@
                                         </c:choose>
                                     </c:forEach>
                                     </div><!--end: content-->
+                                    
+                                    <!--search-->
+                                    <div id="${n}portletSearch" class="portlet-search">
+                                        <form id="${n}searchForm">
+                                            <input type="text" name="searchterm" value="<spring:message code="enter.name"/>"/>
+                                            <input type="submit" class="button" value="<spring:message code="go"/>" />
+                                        </form>
+                                        <div id="${n}searchDropDown" class="search-dropdown">
+                                            <div id="${n}closeDropDown" class="search-close"><a href="javascript:;">Close</a></div>
+                                            <ul id="${n}searchResults" class="search-list">
+                                                <li class="group">
+                                                    <a href="javascript:;" title="&nbsp;"><span>&nbsp;</span></a>
+                                                </li>
+                                            </ul>
+                                            <div id="${n}searchLoader" class="search-loader"><span>&nbsp;</span></div>
+                                        </div>
+                                    </div>
                                 </div><!--end: entity-->
                             </div>
                             <div class="fl-col-flex40 column-right">
@@ -232,15 +238,20 @@
                         </form>
                         
                         <!--search-->
-                        <div class="portlet-search">
+                        <div id="${n}portletSearch" class="portlet-search">
                             <form id="${n}searchForm">
                                 <input type="text" name="searchterm" value="<spring:message code="enter.name"/>"/>
                                 <input type="submit" class="button" value="<spring:message code="go"/>" />
                             </form>
-                        </div>
-                        <div id="${n}searchDialog" title="<spring:message code="search"/>">
-                            <p id="${n}searchResultsNoMembers" style="display:none"><spring:message code="no.results"/></p>
-                            <ul id="${n}searchResults" class="search-list"></ul>
+                            <div id="${n}searchDropDown" class="search-dropdown">
+                                <div id="${n}closeDropDown" class="search-close"><a href="javascript:;">Close</a></div>
+                                <ul id="${n}searchResults" class="search-list">
+                                    <li class="group">
+                                        <a href="javascript:;" title="&nbsp;"><span>&nbsp;</span></a>
+                                    </li>
+                                </ul>
+                                <div id="${n}searchLoader" class="search-loader"><span>&nbsp;</span></div>
+                            </div>
                         </div>
                     </div><!--end:view-single-select-->
                 </c:otherwise>
@@ -268,10 +279,13 @@
                         entityBrowserTitlebar: "#${n}entityBrowserTitlebar",
                         browsingInclude: "#${n}browsingInclude",
                         browsingResultNoMembers: "#${n}browsingResultNoMembers",
+                        closeSearch: "#${n}closeDropDown",
                         searchForm: "#${n}searchForm",
                         searchDialog: "#${n}searchDialog",
+                        searchDropDown: "#${n}searchDropDown",
                         searchResults: "#${n}searchResults",
                         searchResultsNoMembers: "#${n}searchResultsNoMembers",
+                        searchLoader: "#${n}searchLoader",
                         buttonPanel: "#${n}buttonPanel",
                         buttonPrimary: "#${n}buttonPrimary"
                     },
