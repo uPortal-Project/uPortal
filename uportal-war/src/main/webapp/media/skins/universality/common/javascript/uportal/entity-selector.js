@@ -43,7 +43,7 @@ var up = up || {};
     };//end:function.
     
     /**
-     * Outputs selection markup snippet.
+     * Private. Outputs selection markup snippet.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {Object} entity - reference to currently selected entity object.
@@ -65,7 +65,7 @@ var up = up || {};
     };//end:function.
     
     /**
-     * Update the visual selection state for the currently-browsed entity.
+     * Private. Update the visual selection state for the currently-browsed entity.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {Boolean} selected - reference to selection toggle. 
@@ -84,22 +84,22 @@ var up = up || {};
         if (!selected) {
             // Selection State: false. When clicked, select.
             link.bind("click", function () {
-                link.attr("title", that.options.messages.removeSelection).find("span").text(that.options.messages.removeSelection);
                 selectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id);
             });
-            titlebar.removeClass("selected");
+            link.attr("title", that.currentEntity.name);
+            titlebar.removeClass(that.options.styles.selected);
         } else {
             // Selection State: true. When clicked, deselect.
             link.bind("click", function () {
-                link.attr("title", that.options.messages.addSelection).find("span").text(that.options.messages.addSelection);
                 deselectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id);
             });
-            titlebar.addClass("selected");
+            link.attr("title", that.currentEntity.name);
+            titlebar.addClass(that.options.styles.selected);
         }//end:if
     };//end:function.
     
     /**
-     * Remove an entity from the selection list.
+     * Private. Remove an entity from the selection list.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to passed anchor tag attribute. ex: group:local.17
@@ -137,8 +137,12 @@ var up = up || {};
         // If the selected item is the currently selected entity, update
         // the selection state.
         if (key === (that.currentEntity.entityType + ":" + that.currentEntity.id)) {
+            console.log("Run: 3");
             setSelectionState(that, key, false);
-        }//end:if.
+        } else {
+            console.log("Run: 4");
+            setSelectionState(that, key, true);
+        } //end:if.
         
         // Enable submit.
         if (that.options.selected.length < 1) {
@@ -147,7 +151,7 @@ var up = up || {};
     };//end:function.
     
     /**
-     * Add an entity to the selected list.
+     * Private. Add an entity to the selected list.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to currrently 'selected' entity. ex: group:local.17
@@ -191,15 +195,19 @@ var up = up || {};
         // If the selected item is the currently selected entity, update
         // the selection state.
         if (key === (that.currentEntity.entityType + ":" + that.currentEntity.id)) {
+            console.log("Run: 1");
             setSelectionState(that, key, true);
-        }//end:if.
+        } else {
+            console.log("Run: 2");
+            setSelectionState(that, key, false);
+        } //end:if.
         
         // Enable submit.
         buttonPrimary.removeAttr("disabled");
     };//end:function.
     
     /**
-     * Remove breadcrumb from breadcrumb list.
+     * Private. Remove breadcrumb from breadcrumb list.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {Object} anchor - reference to <a> element.
@@ -219,7 +227,7 @@ var up = up || {};
     };//end:function.
     
     /**
-     * Builds mark-up string for breadCrumb.
+     * Private. Builds mark-up string for breadCrumb.
      * 
      * @param {Object} key - reference to entity key.
      * @param {Object} entityName - reference to entity name.
@@ -236,7 +244,7 @@ var up = up || {};
     };//end:function.
     
     /**
-     * Update the breadcrumb trail.
+     * Private. Update the breadcrumb trail.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {Object} entity - reference to the entity object.
@@ -262,12 +270,12 @@ var up = up || {};
         }//end:if.
         
         // Add the '.last' class name to the last availble breadcrumb.
-        breadcrumbs.find("." + that.options.styles.last).removeClass(that.options.styles.last).show();
-        breadcrumbs.find("span:last").addClass(that.options.styles.last).hide();
+        breadcrumbs.find("." + that.options.styles.last).removeClass(that.options.styles.last).css("visibility", "visible");
+        breadcrumbs.find("span:last").addClass(that.options.styles.last).css("visibility", "hidden");
     };//end:function.
     
     /**
-     * Browse to a particular entity.
+     * Private. Browse to a particular entity.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to currrently 'focused' entity. ex: group:local.17
@@ -312,44 +320,147 @@ var up = up || {};
     };//end:function.
     
     /**
-     * Search for a specific entity.
+     * Private. Renders 'selected' search items to the end user.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     */
+    var updateSearchView = function (that) {
+        var list;
+        
+        // Cache.
+        list = that.searchDropDown.find(that.options.selectors.searchResults);
+        list.find("." + that.options.styles.selected).removeClass(that.options.styles.selected);
+        
+        // Loop through selected array.
+        $.each(that.options.selected, function (idx, obj) {
+            var span = list.find('span[key=' + obj + ']');
+            span.parent().parent().addClass(that.options.styles.selected);
+        });//end:loop.
+    };//end:function.
+    
+    /**
+     * Private. Determines which action, selection or deselection, executes.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     * @param {String} key - reference to key attribute passed over when search link is clicked.
+     */
+    var itemSelectionHandler = function (that, key) {
+        // Cache.
+        var entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        
+        // Selection.
+        if ($.inArray(key, that.options.selected) !== -1) {
+            // Key exists.
+            deselectEntity(that, entity.entityType + ":" + entity.id);
+        } else {
+            // Key does not exist.
+            selectEntity(that, entity.entityType + ":" + entity.id);
+        }//end:if.
+        
+        // Update UI.
+        updateSearchView(that);
+    };//end:function.
+    
+    /**
+     * Private. Search for a specific entity.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} searchTerm - reference to search term.
      */
     var search = function (that, searchTerm, form) {
-        var entities, list;
+        var entities, list, listItem;
         
         // Filter searchTerm.
         if (searchTerm === that.options.messages.searchValue) {
-            form.find("input[type=text]").val("");
             searchTerm = "";
         }//end:if.
         
         // Cache.
         entities = that.entityBrowser.searchEntities(that.options.entityTypes, searchTerm);
-        list = that.searchPanel.find(that.options.selectors.searchResults);
+        list = that.searchDropDown.find(that.options.selectors.searchResults);
         list.html("");
+        listItem = "";
         
         // Loop through each entity. Build list items.
         $.each(entities, function (idx, obj) {
-            var item;
-            
-            item = '<li class="' + obj.entityType + '"><a href="javascript:;" title="' + obj.name + '"><span key="' + obj.entityType + ':' + obj.id + '">' + obj.name + '</span></a></li>';
-            list.append(item);
+            listItem += '<li class="' + obj.entityType + '"><a href="javascript:;" title="' + obj.name + '"><span key="' + obj.entityType + ':' + obj.id + '">' + obj.name + '</span></a></li>';
         });//end:loop.
+        list.html(listItem);
         
-        // Assign click event.
-        list.find("span").bind("click", function () {
-            selectEntity(that, $(this).attr("key"));
-            $(this).parent().addClass(that.options.styles.selected);
-        });//end:click.
+        // Assign default 'click' event.
+        list.find("a").bind("click", function () {
+            var span = $(this).find("span");
+            itemSelectionHandler(that, span.attr("key"));
+        });//end:listener.
         
-        // Dialog.
-        that.searchPanel.dialog('open');
-        that.searchInitialized = true;
+        // Update UI.
+        updateSearchView(that);
         
         return false;
+    };//end:function.
+    
+    /**
+     * Private. Initializes search feature.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     */
+    var searchEntity = function (that) {
+        var portletSearch, closeSearch, searchForm, searchField, searchDropDown, loader;
+        
+        // Cache.
+        closeSearch = that.locate("closeSearch");
+        searchForm = that.locate("searchForm");
+        portletSearch = searchForm.parent();
+        searchField = searchForm.find("input[type=text]");
+        loader = that.locate("searchLoader");
+        searchDropDown = that.locate("searchDropDown");
+        
+        // Apply.
+        searchField.val(that.options.messages.searchValue);
+        searchDropDown.css({'top': searchField.outerHeight()});
+        
+        // Binds 'click' & 'focus' events to input field.
+        searchField.bind("click focus", function () {
+            $(this).val("");
+        });//end:listener.
+        
+        // Binds 'submit' event.
+        searchForm.submit(function () {
+            up.showLoader(loader);
+            search(that, searchField.val(), searchForm);
+            searchDropDown.show();
+            up.hideLoader(loader);
+            return false;
+        });//end:listener.
+        
+        // Binds 'click' event to close button.
+        closeSearch.bind("click", function () {
+            searchDropDown.hide();
+        });//end:listener.
+        
+        // Binds 'click' event listener to the document. Detects a 'click'
+        // that occurs outside of the component.
+        $(document).bind("click", function (e) {
+            if (that.isEmptyArray($(e.target).parents("." + that.options.styles.search))) {
+                searchDropDown.hide();
+            }//end:if.
+        });//end:function.
+    };//end:function.
+    
+    /**
+     * Private. Runs initialization functions.
+     * 
+     * @param {Object} that - reference to an instance of the up.entityselection component.
+     */
+    var initialize = function (that) {
+        // Initialize search drop-down.
+        searchEntity(that);
+        
+        // Disable primary button.
+        that.locate("buttonPrimary").attr("disabled", "disabled");
+        
+        // Browse to the designated default start entity.
+        browseEntity(that, that.options.initialFocusedEntity);
     };//end:function.
     
     /**
@@ -359,49 +470,32 @@ var up = up || {};
      * @param {Object} options - reference to configuration object.
      */
     up.entityselection = function (container, options) {
-        var that, searchForm, buttonPrimary;
+        var that;
         
-        // Initialize & cache.
+        // Initialize component & cache globals.
         that = fluid.initView("up.entityselection", container, options);
         that.selectMultiple = that.options.selectMultiple;
-        that.searchPanel = that.locate("searchDialog");
-        searchForm = that.locate("searchForm");
-        buttonPrimary = that.locate("buttonPrimary");
+        that.searchDropDown = that.locate("searchDropDown");
         
-        // Assign a new entity browser for retrieving groups, categories, and person
-        // information from the portal.
+        // Assign a new entity browser for retrieving groups, 
+        // categories and person information from the portal.
         that.entityBrowser = $.groupbrowser({
             findEntityUrl: that.options.findEntityUrl,
             searchEntitiesUrl: that.options.searchEntitiesUrl
         });
         
-        // Initialize search dialog.
-        that.searchInitialized = false;
-        that.searchPanel.dialog({
-            autoOpen: false,
-            width: 550,
-            modal: true,
-            dialogClass: that.options.styles.dialogClass
-        });
+        /**
+         * Public. Checks passed array's length property.
+         * If the length of the array is 0 the array is
+         * empty. Returns true if the array is empty.
+         * 
+         * @param {Object} arr - reference to passed array object.
+         */
+        that.isEmptyArray = function (arr) {
+            return ((arr.length > 0) ? false : true);
+        };//end:function.
         
-        // Initialize search form.
-        searchForm.find("input[type=text]").val(that.options.messages.searchValue);
-        searchForm.submit(function () {
-            return search(that, this.searchterm.value, searchForm);
-        });
-        
-        // Search form focus event.
-        searchForm.find("input[name=searchterm]").focus(function () {
-            $(this).val("");
-            $(this).unbind("focus");
-        });
-        
-        // Disable primary button.
-        buttonPrimary.attr("disabled", "disabled");
-        
-        // Browse to the designated default start entity.
-        browseEntity(that, that.options.initialFocusedEntity);
-        
+        initialize(that);
         return that;
     };//end:component.
     
@@ -422,10 +516,13 @@ var up = up || {};
             entityBrowserTitlebar: "#entityBrowserTitlebar",
             browsingInclude: "#browsingInclude",
             browsingResultNoMembers: "#browsingResultNoMembers",
+            closeSearch: "closeDropDown",
             searchForm: "#searchForm",
             searchDialog: "#searchDialog",
+            searchDropDown: "#searchDropDown",
             searchResults: "#searchResults",
             searchResultsNoMembers: "#searchResultsNoMembers",
+            searchLoader: "searchLoader",
             buttonPanel: "#buttonPanel",
             buttonPrimary: "#buttonPrimary"
         },
@@ -435,7 +532,9 @@ var up = up || {};
             dialogClass: "portlet",
             selection: "selection",
             selected: "selected",
-            last: "last"
+            last: "last",
+            title: "title",
+            search: "portlet-search"
         },
         messages: {
             selectButtonMessage: '',

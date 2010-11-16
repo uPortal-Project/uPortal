@@ -128,7 +128,13 @@ var up = up || {};
      * 
      * @param {Object} selector - reference to jQuery selector.
      */
-    up.hideLoader = function (selector) {
-        selector.fadeOut("slow");
+    up.hideLoader = function (selector, time) {
+        var t, duration;
+        
+        duration = (time === undefined) ? 1000 : time;
+        t = setTimeout(function () {
+            selector.fadeOut("slow");
+            clearTimeout(t);
+        }, duration);
     };//end:function.
 })(jQuery, fluid);
