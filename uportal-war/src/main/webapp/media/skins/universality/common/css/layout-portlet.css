@@ -309,8 +309,9 @@
 .portlet .search-dropdown {
     display: none; position: absolute; top: 0; left: 0; border: 1px solid #AAA; margin-left: 20px; padding: 0px; min-width: 200px; min-height: 100px;}
 /* close */
-.portlet .search-dropdown .search-close {padding: 5px 7px; text-align: right; margin-bottom: 5px; border-bottom: 1px solid #CCC;}
+.portlet .search-dropdown .search-close {padding: 5px 7px; text-align: right; border-bottom: 1px solid #CCC;}
 /* list */
+.portlet .search-dropdown .search-list {max-height: 250px; overflow: auto;}
 .portlet .search-dropdown .search-list,
 .portlet .search-dropdown .search-list li {padding: 0; margin: 0; list-style: none;}
 .portlet .search-dropdown .search-list li {display: block; float:none; padding: 2px 5px;}
