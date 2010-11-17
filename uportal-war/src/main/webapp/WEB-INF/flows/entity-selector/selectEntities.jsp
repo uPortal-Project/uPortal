@@ -30,7 +30,6 @@
     <portlet:param name="execution" value="${flowExecutionKey}" /></portlet:actionURL>
     <c:set var="n"><portlet:namespace/></c:set>
     <c:set var="selectionMode">${selectMultiple}</c:set>
-    
     <!--
     | PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     | For the standards and guidelines that govern the user interface of this portlet
