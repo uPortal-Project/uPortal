@@ -108,6 +108,7 @@
                                         </form>
                                         <div id="${n}searchDropDown" class="search-dropdown">
                                             <div id="${n}closeDropDown" class="search-close"><a href="javascript:;">Close</a></div>
+                                            <div id="${n}searchResultsNoMembers" class="portlet-msg info" role="alert"><p><spring:message code="no.members"/></p></div>
                                             <ul id="${n}searchResults" class="search-list">
                                                 <li class="group">
                                                     <a href="javascript:;" title="&nbsp;"><span>&nbsp;</span></a>
@@ -245,6 +246,7 @@
                             </form>
                             <div id="${n}searchDropDown" class="search-dropdown">
                                 <div id="${n}closeDropDown" class="search-close"><a href="javascript:;">Close</a></div>
+                                <div id="${n}searchResultsNoMembers" class="portlet-msg info" role="alert"><p><spring:message code="no.members"/></p></div>
                                 <ul id="${n}searchResults" class="search-list">
                                     <li class="group">
                                         <a href="javascript:;" title="&nbsp;"><span>&nbsp;</span></a>
@@ -281,7 +283,6 @@
                         browsingResultNoMembers: "#${n}browsingResultNoMembers",
                         closeSearch: "#${n}closeDropDown",
                         searchForm: "#${n}searchForm",
-                        searchDialog: "#${n}searchDialog",
                         searchDropDown: "#${n}searchDropDown",
                         searchResults: "#${n}searchResults",
                         searchResultsNoMembers: "#${n}searchResultsNoMembers",
