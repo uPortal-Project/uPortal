@@ -71,30 +71,36 @@ var up = up || {};
      * @param {Boolean} selected - reference to selection toggle. 
      */
     var setSelectionState = function (that, key, selected) {
-        var selectionBasket, titlebar, link, entity;
+        var currentEntityName, currentEntityKey, titlebar, link, entity;
         
         // Cache.
-        selectionBasket = that.locate("selectionBasket");
+        currentEntityName = that.locate("currentEntityName");
+        currentEntityKey = currentEntityName.attr("key");
         titlebar = that.locate("entityBrowserTitlebar");
         link = that.locate("selectEntityLink");
         link.unbind("click");
         entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
         
+        // Highlight titlebar.
+        if ($.inArray(currentEntityKey, that.options.selected) < 0) {
+            titlebar.removeClass(that.options.styles.selected);
+        } else {
+            titlebar.addClass(that.options.styles.selected);
+        }//end:if.
+        
         // Select/deselect currently browsed entity.
         if (!selected) {
             // Selection State: false. When clicked, select.
-            link.bind("click", function () {
+            link.bind('click', function (e) {
                 selectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id);
             });
             link.attr("title", that.currentEntity.name);
-            titlebar.removeClass(that.options.styles.selected);
         } else {
             // Selection State: true. When clicked, deselect.
-            link.bind("click", function () {
+            link.bind('click', function (e) {
                 deselectEntity(that, that.currentEntity.entityType + ":" + that.currentEntity.id);
             });
             link.attr("title", that.currentEntity.name);
-            titlebar.addClass(that.options.styles.selected);
         }//end:if
     };//end:function.
     
@@ -137,10 +143,8 @@ var up = up || {};
         // If the selected item is the currently selected entity, update
         // the selection state.
         if (key === (that.currentEntity.entityType + ":" + that.currentEntity.id)) {
-            console.log("Run: 3");
             setSelectionState(that, key, false);
         } else {
-            console.log("Run: 4");
             setSelectionState(that, key, true);
         } //end:if.
         
@@ -195,10 +199,8 @@ var up = up || {};
         // If the selected item is the currently selected entity, update
         // the selection state.
         if (key === (that.currentEntity.entityType + ":" + that.currentEntity.id)) {
-            console.log("Run: 1");
             setSelectionState(that, key, true);
         } else {
-            console.log("Run: 2");
             setSelectionState(that, key, false);
         } //end:if.
         
@@ -295,6 +297,7 @@ var up = up || {};
         // Set entity starting point / defaults.
         updateBreadcrumbs(that, entity);
         currentEntityName.text(entity.name);
+        currentEntityName.attr("key", entity.entityType + ":" + entity.id);
         browsingInclude.text(entity.name);
         memberList.html("").hide();
         
@@ -308,8 +311,9 @@ var up = up || {};
         });//end:loop.
         
         // Register click event on member list links.
-        entityBrowserContent.find("." + that.options.styles.memberLink).click(function () {
-            browseEntity(that, $(this).attr("key"));
+        //entityBrowserContent.find("." + that.options.styles.memberLink).click(function () {
+        entityBrowserContent.find("a").click(function () {
+            browseEntity(that, $(this).find("span").attr("key"));
         });//end:click.
         
         // If there are no members overall, display the no contents message.
@@ -368,7 +372,7 @@ var up = up || {};
      * @param {String} searchTerm - reference to search term.
      */
     var search = function (that, searchTerm, form) {
-        var entities, list, listItem;
+        var entities, list, listItem, searchResultsNoMembers, members;
         
         // Filter searchTerm.
         if (searchTerm === that.options.messages.searchValue) {
@@ -378,6 +382,7 @@ var up = up || {};
         // Cache.
         entities = that.entityBrowser.searchEntities(that.options.entityTypes, searchTerm);
         list = that.searchDropDown.find(that.options.selectors.searchResults);
+        searchResultsNoMembers = that.locate("searchResultsNoMembers");
         list.html("");
         listItem = "";
         
@@ -392,6 +397,13 @@ var up = up || {};
             var span = $(this).find("span");
             itemSelectionHandler(that, span.attr("key"));
         });//end:listener.
+        
+        // Render 'No Members' when list is empty.
+        members = list.find("li");
+        if (members.length < 1) {
+            searchResultsNoMembers.show();
+            list.hide();
+        }//end:if.
         
         // Update UI.
         updateSearchView(that);
@@ -518,7 +530,6 @@ var up = up || {};
             browsingResultNoMembers: "#browsingResultNoMembers",
             closeSearch: "closeDropDown",
             searchForm: "#searchForm",
-            searchDialog: "#searchDialog",
             searchDropDown: "#searchDropDown",
             searchResults: "#searchResults",
             searchResultsNoMembers: "#searchResultsNoMembers",
@@ -529,7 +540,6 @@ var up = up || {};
         styles: {
             memberList: "member-list",
             memberLink: "member-link",
-            dialogClass: "portlet",
             selection: "selection",
             selected: "selected",
             last: "last",
