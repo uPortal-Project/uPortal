@@ -284,46 +284,86 @@
 
 
 /* Selection Basket */
-/*
- * Multiple Selection Basket
- * A box showing the items a user has selected.
- 
-.portlet .view-multi-select .portlet-selection {padding-right:2em;}
-.portlet .view-multi-select .selection-basket {margin-left:20px; min-height:15em;}
-.portlet .view-multi-select .selection-basket ul {margin:1em}
-.portlet .view-multi-select .selection-basket li {list-style:none;}
-.portlet .view-multi-select .selection-basket a {display:block; padding:0.3em 20px;}
-.portlet .view-multi-select .portlet-selection .buttons {margin-left:20px;}
-*/
+.portlet .selection-basket a {padding: 0 0 0 20px;}
 
-/* Hierarchy Browser */
-/*
- * Multiple Selection Browser
- * A "folder-view" browser of hierarchy.
- 
-.portlet .view-multi-select .browse-hierarchy > .titlebar .title .fl-text-align-right {padding-top:0.7em;}
-.portlet .view-multi-select .browse-hierarchy > .content {margin-left:20px; padding:0;}
-.portlet .view-multi-select .browse-hierarchy .entity > .titlebar {padding:0.1em 1em;}
-.portlet .view-multi-select .browse-hierarchy .entity > .titlebar .actions {top:auto; bottom:0.5em; right:1em;}
-.portlet .view-multi-select .browse-hierarchy .entity > .titlebar .title {padding-top:0.1em; padding-left:30px;}
-.portlet .view-multi-select .browse-hierarchy .entity .breadcrumb span {padding:0.5em 0;}
-.portlet .view-multi-select .browse-hierarchy .entity > .content {padding:0.5em 1em 1em 1em;}
-.portlet .view-multi-select .browse-hierarchy .entity > .content > .titlebar > .title {margin:1em 0 0.3em 0;}
-.portlet .view-multi-select .browse-hierarchy .entity ul.member-list {margin:0 0 1em 0;}
-.portlet .view-multi-select .browse-hierarchy .entity .member-list li {list-style:none;}
-.portlet .view-multi-select .browse-hierarchy .entity .member-list li a {display:block; padding:0.2em 0 0.2em 20px;}
-*/
 
-/* Styling for multiselect plugin. One example is its use in the Permissions Portlet for choosing a "target" 
-.up .token-input-list input[type="text"] {border:none; background-image:none; font-size:medium;}
-.up .token-input-list input[type="text"]:focus {-moz-box-shadow:none;}
-.up .token-input-dropdown .token-input-dropdown-item2 {float:none; display:block; font-size:small;}
-.up .token-input-dropdown .token-input-dropdown-item {float:none; display:block;font-size:small;}
-.up div.token-input-dropdown, .up div.token-input-dropdown ul {height:200px; opacity:0.95;}
-.multiselect li.token-input-token {display:block; margin-left:5px;}
-.multiselect li.token-input-token p {font-size:medium;}
-.titlebar form {margin-bottom:200px;}
-*/
+/* Breadcrumb */
+.portlet .breadcrumb .title,
+.portlet .breadcrumb .breadcrumbs {display: inline;}
+
+
+/* Entity Browser */
+.portlet .entity-browser .titlebar .title {float: left; margin-right: 5px;}
+.portlet .entity-browser .titlebar .select,
+.portlet .entity-browser .titlebar .select span {display: block; width: 16px; height: 16px; overflow: hidden;}
+.portlet .entity-browser .titlebar .select {float: left;}
+.portlet .entity-browser .titlebar .select span {visibility: hidden;}
+/* member list */
+.portlet .entity-browser .member-list,
+.portlet .entity-browser .member-list li {padding: 0; margin: 0; list-style: none;}
+.portlet .entity-browser .member-list {margin-left: .5em;}
+.portlet .entity-browser .member-list a {display: block; padding: 1px 0 1px 20px;}
+
+
+/* Search */
+.portlet .search-dropdown {
+    display: none; position: absolute; top: 0; left: 0; border: 1px solid #AAA; margin-left: 20px; padding: 0px; min-width: 200px; min-height: 100px;}
+/* close */
+.portlet .search-dropdown .search-close {padding: 5px 7px; text-align: right; margin-bottom: 5px; border-bottom: 1px solid #CCC;}
+/* list */
+.portlet .search-dropdown .search-list,
+.portlet .search-dropdown .search-list li {padding: 0; margin: 0; list-style: none;}
+.portlet .search-dropdown .search-list li {display: block; float:none; padding: 2px 5px;}
+/* anchors */
+.portlet .search-dropdown .search-list a {display: block; padding: 0 0 0 20px;}
+/* loader */
+.portlet .search-dropdown .search-loader {position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
+.portlet .search-dropdown .search-loader span {visibility: hidden;}
+/* no members message */
+.portlet .search-dropdown .portlet-msg.info {display: none; margin: 5px 7px;}
+
+/*
+ * Single Selection View.
+ */
+.portlet .view-single-select {border: 1px solid #CCC; position: relative;}
+.portlet .view-single-select .titlebar {padding: 8px 8px 6px 8px; border-bottom: 2px solid #CCC; margin-bottom: .5em;}
+.portlet .view-single-select .content {padding: 8px 8px;}
+/* selection */
+.portlet .view-single-select .portlet-selection .title,
+.portlet .view-single-select .portlet-selection .selection-basket {display: inline;}
+.portlet .view-single-select .portlet-selection .title.selections {padding-left: 0;}
+.portlet .view-single-select .selection-basket {padding-left: 5px;}
+.portlet .view-single-select .selection-basket a {padding: 0;}
+/* breadcrumb */
+.portlet .view-single-select .breadcrumb {padding: 0 0;}
+/* search */
+.portlet .view-single-select .portlet-search {position: absolute; top: 4px; right: 8px;}
+
+
+/*
+ * Multiple Selection View.
+ */
+/* columns */
+.portlet .view-multi-select .columns .column-left {padding-right: 5%;}
+/* breadcrumb */
+.portlet .view-multi-select .breadcrumb {padding: 0 0;}
+/* browse */
+.portlet .view-multi-select .entity-browser {position: relative;}
+.portlet .view-multi-select .entity-browser .titlebar {border: 1px solid #CCC; padding: 8px 8px 6px 8px; margin-bottom: 0; position: relative;}
+.portlet .view-multi-select .entity-browser .content {padding: 8px 8px 12px 8px; border: 1px solid #CCC;}
+/* selection */
+.portlet .view-multi-select .portlet-selection {border: 1px solid #CCC;}
+.portlet .view-multi-select .portlet-selection .titlebar {padding: 8px 8px 6px 8px; border-bottom: 2px solid #CCC; margin-bottom: 0; position: relative;}
+.portlet .view-multi-select .portlet-selection .content {padding: 0px 0px 0px 0px;}
+.portlet .view-multi-select .portlet-selection .title.selections {background: transparent; padding-left: 0;}
+.portlet .view-multi-select .portlet-selection .selection-basket {border-bottom:1px solid #AAA; padding: 8px;}
+.portlet .view-multi-select .portlet-selection .selection-basket ul {padding: 0; margin: 0; list-style: none; height: 200px; overflow: auto;}
+.portlet .view-multi-select .portlet-selection .selection-basket li {padding: 0; margin: 0; list-style: none;}
+.portlet .view-multi-select .portlet-selection .selection-basket a {display: block; padding: 1px 0 1px 20px;}
+/* buttons */
+.portlet .view-multi-select .buttons {margin-top: 0; padding-right: 8px; border-top: none; text-align: right;}
+/* search */
+.portlet .view-multi-select .portlet-search {position: absolute; top: 20px; right: 8px;}
 
 
 /*====================================*/
