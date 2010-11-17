@@ -243,7 +243,7 @@
 .portlet form textarea {margin-top:2px; font-size:11px;}
 .portlet form input[type="text"],
 .portlet form textarea {padding:3px;}
-.portlet .portlet-form {width:400px; padding:1em; font-size:11px;}
+.portlet .portlet-form {width:auto; padding:1em; font-size:11px;}
 .portlet .portlet-form form {margin:0;}
 .portlet .portlet-form form fieldset {padding:0.5em 1em;}
 .portlet .portlet-form form legend {margin-bottom:1em;}
