@@ -185,11 +185,11 @@
     </div>
     <xsl:variable name="ALL_GROUPS" select="//group" />
     <xsl:for-each select="$ALL_GROUPS">
-        <xsl:if test="count(channel) > 0">
+        <xsl:if test="count(channel-nav) > 0">
             <div id="tab-section_{navblock/@ID}" class="fl-container fl-container-autoHeading">
                 <h3><xsl:value-of select="navblock/@name"/></h3>
                 <ul class="fl-list-menu fl-list-brief">
-                    <xsl:for-each select="channel">
+                    <xsl:for-each select="channel-nav">
                         <li>
                         	<xsl:variable name="portletUrl">
                                 <xsl:call-template name="portletUrl">
