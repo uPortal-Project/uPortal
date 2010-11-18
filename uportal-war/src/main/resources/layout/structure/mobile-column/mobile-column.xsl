@@ -109,7 +109,7 @@
                 <!--header-->
                 <header>
                     <xsl:for-each select="child::folder[@type='header']">
-                    	<xsl:copy-of select=".//channel"/>
+                        <xsl:copy-of select=".//channel"/>
                     </xsl:for-each>
                 </header>
                 
@@ -119,7 +119,7 @@
                         <xsl:value-of select="$activeTabID" />
                     </xsl:attribute>
                     
-                    <xsl:apply-templates select="folder" />
+                    <xsl:apply-templates select="folder" mode="navigation" />
                     
                 </mobilenavigation>
 
@@ -164,7 +164,7 @@
     6] For each child node referenced in $column-folder, check if the child node contains channels. If channels are found apply the appropriate templates.
     7] Close the </group> node.
 -->
-    <xsl:template match="folder">
+    <xsl:template match="folder" mode="navigation">
         <!--1]-->
         <xsl:if test="./@type='regular' and @hidden='false'">
             <!--2]-->
@@ -177,42 +177,7 @@
                 <!--4]-->
                 <xsl:for-each select="$tab-folder">
                         <navblock>
-                            <xsl:attribute name="tabName">
-                                <xsl:value-of select="@name"/>
-                            </xsl:attribute>
-                            
-                            <xsl:attribute name="ID">
-                                <xsl:value-of select="@ID"/>
-                            </xsl:attribute>
-                            
-                            <xsl:attribute name="immutable">
-                                <xsl:value-of select="@immutable"/>
-                            </xsl:attribute>
-                            
-                            <xsl:attribute name="unremovable">
-                                <xsl:value-of select="@unremovable"/>
-                            </xsl:attribute>
-                            
-                            <xsl:if test="@dlm:moveAllowed = 'false'">
-                                <xsl:attribute name="dlm:moveAllowed">false</xsl:attribute>
-                            </xsl:if>
-                            
-                            <xsl:if test="@dlm:deleteAllowed = 'false'">
-                                <xsl:attribute name="dlm:deleteAllowed">false</xsl:attribute>
-                            </xsl:if>
-                            
-                            <xsl:if test="@dlm:editAllowed = 'false'">
-                                <xsl:attribute name="dlm:editAllowed">false</xsl:attribute>
-                            </xsl:if>
-                            
-                            <xsl:if test="@dlm:addChildAllowed = 'false'">
-                                <xsl:attribute name="dlm:addChildAllowed">false</xsl:attribute>
-                            </xsl:if>
-                            
-                            <xsl:if test="@dlm:precedence > 0">
-                                <xsl:attribute name="dlm:precedence"><xsl:value-of select="@dlm:precedence"/></xsl:attribute>
-                            </xsl:if>
-                            
+                            <xsl:copy-of select="@*"/>
                             <xsl:choose>
                                 <xsl:when test="$activeTabID = @ID">
                                     <xsl:attribute name="activeTab">true</xsl:attribute>
@@ -223,14 +188,6 @@
                                     <xsl:attribute name="activeTab">false</xsl:attribute>
                                 </xsl:otherwise>
                             </xsl:choose>
-                            
-                            <xsl:attribute name="priority">
-                                <xsl:value-of select="@priority"/>
-                            </xsl:attribute>
-                            
-                            <xsl:attribute name="name">
-                                <xsl:value-of select="@name"/>
-                            </xsl:attribute>
                         </navblock>
                         <!--5]-->
                         <xsl:if test="child::folder">
@@ -238,7 +195,7 @@
                             <!--6]-->
                             <xsl:for-each select="$column-folder">
                                 <xsl:if test="child::channel">
-                                    <xsl:apply-templates />
+                                    <xsl:apply-templates mode="navigation" />
                                 </xsl:if>
                             </xsl:for-each>
                         </xsl:if>
@@ -250,12 +207,23 @@
 <!--=====END: FOLDER TEMPLATE RULE (MOBILE)=====-->
 
 
-<!--=====START: CHANNEL TEMPLATE RULE=====-->
-    <xsl:template match="channel">
+<!--=====START: CHANNEL-NAVIGATION TEMPLATE RULE=====-->
+    <xsl:template match="channel" mode="navigation">
         <xsl:if test="not(parameter[@name='hideFromMobile']/@value = 'true')">
-            <xsl:copy-of select="."/>
+            <channel-nav>
+                <xsl:copy-of select="@*"/>
+                <xsl:copy-of select="child::*"/>
+            </channel-nav>
         </xsl:if>
     </xsl:template>
+<!--=====END: CHANNEL-NAVIGATION TEMPLATE RULE=====-->
+
+<!--=====START: CHANNEL TEMPLATE RULE=====-->
+<xsl:template match="channel">
+    <xsl:if test="not(parameter[@name='hideFromMobile']/@value = 'true')">
+        <xsl:copy-of select="."/>
+    </xsl:if>
+</xsl:template>
 <!--=====END: CHANNEL TEMPLATE RULE=====-->
 
 
