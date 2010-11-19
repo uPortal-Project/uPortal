@@ -34,19 +34,27 @@
   <dlm:property name='org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh' value="5"/>
 
   <!--
-   | Uncomment this property to turn on the 'RDBMConfigurationLoader' implementation, 
-   | which stores FragmentDefinition instances in the database via JPA and Hibernate.  
-   | The advantage of this approach is that fragment definitions can be 
-   | added/removed/modified without a portal restart.  Without this property, DLM 
-   | will behave exactly as it always has.
+   | Enable this property to allow DLM fragments to add non-regular (header and footer)
+   | content to the layouts of users who receive those fragments.  This is a 
+   | very useful feature because, without this behavior, it's terribly difficult 
+   | to add new header and footer content after launch.  Without this feature, 
+   | users only receive header and footer portlets from their template user, at 
+   | creation time.  To add new header and footer portlets, you would likely 
+   | have to export all user layouts, make adjustments to the exported XML 
+   | files, then re-import the layouts.
    |
-   | If you decide to enable this functionality, you should also:
-   |   - Uncomment the "fragmentDefinitionDao" bean in persistenceContext.xml
-   |   - Uncomment the "org.jasig.portal.layout.dlm.Evaluator" cache in ehcache.xml
+   | WARNING:  Before this feature was added, fragment layouts (from uPortal 
+   | distributions) commonly contained extra garbage in the header and footer 
+   | areas.  If you want to enable this feature for a portal based on earlier 
+   | data, you will likely need to remove unnecessary portlets from the header 
+   | and footer of all fragment layouts AND from the 'fragmentTemplate' layout.  
+   | You can accomplish that by exporting them, adjusting them, and re-importing 
+   | them.  If you enable this feature without making these changes you will 
+   | probably see unwanted behavior.
    +-->
-  <!--
-  <dlm:property name="ConfigurationLoader.impl" value="org.jasig.portal.layout.dlm.RDBMConfigurationLoader"/>
-  -->
+   <!-- 
+  <dlm:property name="allowExpandedContent" value="true"/>
+   -->
   
   <dlm:fragment name='Guests' ownerID='guest-lo' precedence='80'>
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/>
