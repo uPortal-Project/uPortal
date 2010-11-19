@@ -52,9 +52,7 @@
    | them.  If you enable this feature without making these changes you will 
    | probably see unwanted behavior.
    +-->
-   <!-- 
   <dlm:property name="allowExpandedContent" value="true"/>
-   -->
   
   <dlm:fragment name='Guests' ownerID='guest-lo' precedence='80'>
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/>
