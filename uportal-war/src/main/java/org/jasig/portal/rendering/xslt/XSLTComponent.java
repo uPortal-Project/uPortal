@@ -39,11 +39,9 @@ import javax.xml.transform.stax.StAXSource;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;
-import org.jasig.portal.rendering.StAXPipelineComponent;
 import org.jasig.portal.rendering.StAXPipelineComponentWrapper;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.ResourceLoaderURIResolver;
-import org.jasig.portal.xml.StaxEventContentHandler;
 import org.jasig.portal.xml.stream.XMLEventBufferReader;
 import org.jasig.portal.xml.stream.XMLEventBufferWriter;
 import org.slf4j.Logger;
@@ -140,9 +138,7 @@ public class XSLTComponent extends StAXPipelineComponentWrapper implements BeanN
 
         //Transform to a SAX ContentHandler to avoid JDK bug: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6775588
         final XMLEventBufferWriter eventWriterBuffer = new XMLEventBufferWriter();
-        //Using a local patched version of StaxEventContentHandler due to SPR-7620 and SPR-7621
-//        final ContentHandler contentHandler = StaxUtils.createContentHandler(eventWriterBuffer);
-        final ContentHandler contentHandler = new StaxEventContentHandler(eventWriterBuffer);
+        final ContentHandler contentHandler = StaxUtils.createContentHandler(eventWriterBuffer);
         contentHandler.setDocumentLocator(new LocatorImpl());
         
         final SAXResult outputTarget = new SAXResult(contentHandler);

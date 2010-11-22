@@ -44,8 +44,6 @@ import org.easymock.EasyMock;
 import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.rendering.StAXPipelineComponent;
-import org.jasig.portal.xml.stream.LocationOverridingEventAllocator;
-import org.jasig.portal.xml.stream.UnknownLocation;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +128,6 @@ public class XSLTComponentTest {
         final Document document = documentBuilder.parse(xmlStream);
         
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        inputFactory.setEventAllocator(new LocationOverridingEventAllocator(new UnknownLocation()));
         
         final XMLEventReader xmlEventReader;
         try {

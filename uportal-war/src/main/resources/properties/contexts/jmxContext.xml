@@ -90,6 +90,7 @@
                 <value>true</value>
                 <value>true</value>
                 <value>true</value>
+                <value>true</value>
             </list>
         </property>
     </bean>

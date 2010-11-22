@@ -40,6 +40,7 @@ import java.util.Collections;
 
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 
 import org.apache.commons.io.IOUtils;
 import org.jasig.portal.utils.cache.resource.CachedResource;
@@ -84,7 +85,8 @@ public class CachingResourceLoaderImplTest {
         final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
         expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
-        expect(cache.getInternalContext()).andReturn(null);
+        expect(cache.getInternalContext()).andReturn(null).anyTimes();
+        expect(cache.getCacheConfiguration()).andReturn(new CacheConfiguration());
         expect(cache.get(doc1Resouce)).andReturn(null);
         expect(cache.getQuiet(doc1Resouce)).andReturn(null);
         cache.put(anyObject(Element.class));
@@ -114,7 +116,8 @@ public class CachingResourceLoaderImplTest {
         final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
         expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
-        expect(cache.getInternalContext()).andReturn(null);
+        expect(cache.getInternalContext()).andReturn(null).anyTimes();
+        expect(cache.getCacheConfiguration()).andReturn(new CacheConfiguration());
         expect(cache.get(doc1Resouce)).andReturn(null);
         expect(cache.getQuiet(doc1Resouce)).andReturn(null);
         cache.put(anyObject(Element.class));
@@ -145,7 +148,8 @@ public class CachingResourceLoaderImplTest {
         final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
         expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
-        expect(cache.getInternalContext()).andReturn(null);
+        expect(cache.getInternalContext()).andReturn(null).anyTimes();
+        expect(cache.getCacheConfiguration()).andReturn(new CacheConfiguration());
         expect(cache.get(doc1Resouce))
             .andReturn(new Element(doc1Resouce, cachedResource));
         
@@ -183,7 +187,8 @@ public class CachingResourceLoaderImplTest {
         final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
         expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
-        expect(cache.getInternalContext()).andReturn(null);
+        expect(cache.getInternalContext()).andReturn(null).anyTimes();
+        expect(cache.getCacheConfiguration()).andReturn(new CacheConfiguration());
         final Element element = new Element("class path resource [CachingResourceLoaderImplTest_doc1.txt]", cachedResource);
         expect(cache.get(doc1Resouce)).andReturn(element);
         
@@ -221,7 +226,8 @@ public class CachingResourceLoaderImplTest {
         final ResourcesElementsProvider elementsProvider = createMock(ResourcesElementsProvider.class);
         
         expect(elementsProvider.getDefaultIncludedType()).andReturn(Included.AGGREGATED);
-        expect(cache.getInternalContext()).andReturn(null);
+        expect(cache.getInternalContext()).andReturn(null).anyTimes();
+        expect(cache.getCacheConfiguration()).andReturn(new CacheConfiguration());
         expect(cache.get(doc1Resouce))
             .andReturn(new Element(doc1Resouce, cachedResource));
         

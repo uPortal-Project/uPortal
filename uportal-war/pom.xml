@@ -290,7 +290,7 @@
         
         <dependency>
             <groupId>org.springframework.ldap</groupId>
-            <artifactId>spring-ldap</artifactId>
+            <artifactId>spring-ldap-core-tiger</artifactId>
         </dependency>
         
         <dependency>

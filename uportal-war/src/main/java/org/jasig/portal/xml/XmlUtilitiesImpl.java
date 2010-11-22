@@ -42,8 +42,6 @@ import org.jasig.portal.utils.cache.resource.CachedResource;
 import org.jasig.portal.utils.cache.resource.CachingResourceLoader;
 import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
 import org.jasig.portal.xml.stream.IndentingXMLEventWriter;
-import org.jasig.portal.xml.stream.LocationOverridingEventAllocator;
-import org.jasig.portal.xml.stream.UnknownLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -73,7 +71,6 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         this.xmlOutputFactory = XMLOutputFactory.newFactory();
         
         this.xmlInputFactory = XMLInputFactory.newInstance();
-        this.xmlInputFactory.setEventAllocator(new LocationOverridingEventAllocator(new UnknownLocation()));
         
         this.htmlOutputFactory = XMLOutputFactory.newFactory(HtmlWstxOutputFactory.class.getName(), HtmlWstxOutputFactory.class.getClassLoader());
     }
