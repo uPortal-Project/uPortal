@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>28</version>
+        <version>30</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -922,6 +922,11 @@
                 <configuration>
                     <noticeTemplate>NOTICE.template</noticeTemplate>
                     <generateChildNotices>false</generateChildNotices>
+                    <excludedModules>
+                        <excludedModule>uportal-portlets-overlay-parent</excludedModule>
+                        <excludedModule>bootstrap</excludedModule>
+                        <excludedModule>uportal-ear</excludedModule>
+                    </excludedModules>
                 </configuration>
             </plugin>
         </plugins>

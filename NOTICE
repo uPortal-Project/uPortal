@@ -28,34 +28,24 @@ This project includes:
   AntLR under BSD License
   AOP alliance under Public Domain
   Apache Log4j under The Apache Software License, Version 2.0
-  Apache Pluto Ant Tasks under The Apache Software License, Version 2.0
   Apache Pluto Container API under The Apache Software License, Version 2.0
   Apache Pluto Container Driver API under The Apache Software License, Version 2.0
   Apache Pluto Portal Driver under The Apache Software License, Version 2.0
   Apache Pluto Portlet Container under The Apache Software License, Version 2.0
   Apache Pluto Portlet Tag Library under The Apache Software License, Version 2.0
-  Apache Pluto Testsuite Portlet under The Apache Software License, Version 2.0
   Apache Pluto Utilities under The Apache Software License, Version 2.0
   asm under Apache License, Version 2.0
   asm-attrs under Apache License, Version 2.0
   AspectJ runtime under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
-  Bean Validation API under Apache License, Version 2.0
-  Bookmarks Portlet under The BSD License
-  Bootstrap - Ant Tasks Dependencies under Apache License Version 2.0
-  Bootstrap - HSQLDB Dependencies under Apache License Version 2.0
-  Bootstrap - Pluto Assembler Dependencies under Apache License Version 2.0
-  CAS Proxy Test Portlet under Apache License Version 2.0
-  CAS Server under Apache License Version 2.0
   CC/PP API under Sun Microsystems, Inc. Binary Code License Agreement
-  Cernunnos - Core under Apache License, Version 2.0
+  Cernunnos - Core under Apache 2
   cglib under Apache License, Version 2.0
   ClearPass uPortal Integration under Apache License Version 2.0
-  ClearPass Web Application under Apache License Version 2.0
   Code Generation Library under ASF 2.0
-  Commons CLI under Apache License, Version 2.0
-  Commons Codec under Apache License, Version 2.0
-  Commons Collections under Apache License, Version 2.0
+  Commons CLI under The Apache Software License, Version 2.0
+  Commons Codec under The Apache Software License, Version 2.0
+  Commons Collections under The Apache Software License, Version 2.0
   Commons DBCP under The Apache Software License, Version 2.0
   Commons FileUpload under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
@@ -72,7 +62,6 @@ This project includes:
   Ehcache Web Filters under The Apache Software License, Version 2.0
   Enterprise JavaBeans (EJB) 3.0 under Common Development and Distribution License (CDDL) v1.0
   ezmorph under The Apache Software License, Version 2.0
-  Functional Tests Portlet under Apache License Version 2.0
   Groovy under Apache License, Version 2.0
   groovy-engine under BSD License
   Grouper Client under Apache 2
@@ -83,13 +72,8 @@ This project includes:
   Hibernate Entitity Manager under GNU LESSER GENERAL PUBLIC LICENSE
   HSQLDB under HSQLDB License
   HttpClient under Apache License
-  Inspektr - Auditing API under Apache 2.0 License
-  Inspektr - Common API under Apache 2.0 License
   JA-SIG CAS Client for Java - Core under JA-SIG License for Use
-  JA-SIG CAS Core under JA-SIG License for Use
-  JA-SIG CAS Web Application under JA-SIG License for Use
   Jackson under The Apache Software License, Version 2.0
-  Jasig Widget Portlets under JA-SIG Collaborative Licence
   JASYPT: Java Simplified Encryption under The Apache Software License, Version 2.0
   Java Persistence API under LGPL, v2.1
   Java Portlet Specification V2.0 under Commons Development and Distribution License, Version 1.0
@@ -98,7 +82,6 @@ This project includes:
   JavaMail API under Common Development and Distribution License (CDDL) v1.0
   Javassist under Mozilla Public License, Version 1.1
   jaxen under Apache style license
-  JCL 1.1.1 implemented over SLF4J under MIT License
   jdom under Apache style license
   JLine under BSD
   js-engine under BSD License
@@ -106,36 +89,29 @@ This project includes:
   Json-lib4Spring under The Apache Software License, Version 2.0
   jsp-api under Commons Development and Distribution License, Version 1.0
   jstl under Commons Development and Distribution License, Version 1.0
-  jta under Commons Development and Distribution License, Version 1.0
   JUnit under Common Public License Version 1.0
   Logging under The Apache Software License, Version 2.0
   Mockito under The MIT License
   MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
-  Neko HTML under Apache License, Version 2.0
-  News Portlet under Apache License Version 2.0
-  News Reader Portlet under Apache License Version 2.0
+  Neko HTML under The Apache Software License, Version 2.0
   Objenesis under Apache 2
   org.apache.tools.ant under Apache License, Version 2.0
-  Perf4J under Apache 2
   Person Directory API under The BSD License
   Person Directory Implementations under The BSD License
-  Pluto Test Suite Portlet under Apache License Version 2.0
   Quartz Enterprise Job Scheduler under Apache 2.0
   Resource Aggregator API under Apache License Version 2.0
   Resource Aggregator Utilities under Apache License Version 2.0
   Resource Server Utilities under Apache License Version 2.0
-  Resource Server Webapp under Apache License Version 2.0
-  Rhino under Mozilla Public License, Version 1.1
+  Rhino under Mozilla Public License version 1.1
   script-api under Commons Development and Distribution License, Version 1.0
   servlet-api under Commons Development and Distribution License, Version 1.0
-  Simple Content Management Portlet under Apache License Version 2.0
-  Simple Content Portlet under Apache License Version 2.0
   SLF4J API Module under MIT License
   SLF4J JCL Binding under MIT License
-  SLF4J LOG4J-12 Binding under MIT License
   Spring Binding under Apache License, Version 2.0
   Spring JavaScript under Apache License, Version 2.0
-  Spring LDAP Core under The Apache Software License, Version 2.0
+  Spring JavaScript Resources under Apache License, Version 2.0
+  Spring LDAP Core under Apache License, Version 2.0
+  Spring LDAP Java 5 support under Apache License, Version 2.0
   Spring Web Flow under Apache License, Version 2.0
   spring-aop under Apache License, Version 2.0
   spring-asm under Apache License, Version 2.0
@@ -154,19 +130,9 @@ This project includes:
   spring-webmvc-portlet under Apache License, Version 2.0
   standard under Apache License, Version 2.0
   Stax2 API under The BSD License
-  Test Portlets under Apache License Version 2.0
-  uPortal Ant Tasks under The BSD License
-  uPortal Bootstrap Utilities under Apache License Version 2.0
-  uPortal EAR under Apache License Version 2.0
-  uPortal EAR Deployer under The BSD License
   uPortal Parent under Apache License Version 2.0
-  uPortal Portlets under Apache License Version 2.0
   uPortal WAR under Apache License Version 2.0
-  Weather Portlet under The BSD License
-  Web Proxy Portlet under Apache License Version 2.0
   Woodstox under The Apache Software License, Version 2.0
-  Xerces2 Java Parser under Apache License, Version 2.0
-  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XMLUnit for Java under BSD License
   XStream Core under BSD style
 
