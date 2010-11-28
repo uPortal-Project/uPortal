@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>21</version>
+        <version>30</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -58,14 +58,6 @@
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
-        <repository>            
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-
         <repository>            
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
@@ -782,11 +774,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>com.mycila.maven-license-plugin</groupId>
-                    <artifactId>maven-license-plugin</artifactId>
-                    <version>1.7.0</version>
-                </plugin>
-                <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.3</version>
                 </plugin>
@@ -862,6 +849,29 @@
                     <artifactId>maven-uportal-plugin</artifactId>
                     <version>1.0.0-M3</version>
                 </plugin>
+				<plugin>
+					<groupId>org.jasig.maven</groupId>
+					<artifactId>maven-notice-plugin</artifactId>
+					<configuration>
+						<noticeTemplate>NOTICE.template</noticeTemplate>
+						<generateChildNotices>false</generateChildNotices>
+						<excludedModules>
+							<excludedModule>uportal-portlets-overlay-parent</excludedModule>
+							<excludedModule>bootstrap</excludedModule>
+							<excludedModule>uportal-ear</excludedModule>
+						</excludedModules>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.mycila.maven-license-plugin</groupId>
+					<artifactId>maven-license-plugin</artifactId>
+					<configuration>
+						<aggregate>true</aggregate>
+						<excludes>
+							<exclude>**</exclude>
+						</excludes>
+					</configuration>
+				</plugin>
             </plugins>
         </pluginManagement>
     </build>
