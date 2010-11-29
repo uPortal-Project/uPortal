@@ -15,3 +15,135 @@ KIND, either express or implied. See the License for the
 specific language governing permissions and limitations
 under the License.
 
+This project includes:
+ Fluid Infusion and Skinning System under the New BSD license
+
+ jQuery, jQueryUI, and the jQuery Form Plugin under the MIT license
+
+ The famfamfam Silk Icons under the 
+ Creative Commons Attribution 3.0 License
+ http://www.famfamfam.com/lab/icons/silk/
+
+  ant-launcher under Apache License, Version 2.0
+  AntLR under BSD License
+  AOP alliance under Public Domain
+  Apache Log4j under The Apache Software License, Version 2.0
+  asm under Apache License, Version 2.0
+  asm-attrs under Apache License, Version 2.0
+  AspectJ runtime under Eclipse Public License - v 1.0
+  AspectJ weaver under Eclipse Public License - v 1.0
+  Castor under Apache License, Version 2.0
+  Cernunnos - Core under Apache 2
+  cglib under Apache License, Version 2.0
+  Code Generation Library under ASF 2.0
+  Commons CLI under The Apache Software License, Version 2.0
+  Commons Codec under The Apache Software License, Version 2.0
+  Commons Collections under The Apache Software License, Version 2.0
+  Commons DBCP under The Apache Software License, Version 2.0
+  Commons FileUpload under The Apache Software License, Version 2.0
+  Commons IO under The Apache Software License, Version 2.0
+  Commons JEXL under The Apache Software License, Version 2.0
+  Commons Lang under The Apache Software License, Version 2.0
+  Commons Logging under The Apache Software License, Version 2.0
+  Commons Pool under The Apache Software License, Version 2.0
+  commons-beanutils under Apache License, Version 2.0
+  cvsclient under Sun Public License
+  dom4j under BSD License
+  Dough Lea's util.concurrent package under Public domain, Sun Microsoystems
+  EasyMock under Apache 2
+  Ehcache Core under The Apache Software License, Version 2.0
+  Ehcache Web Filters under The Apache Software License, Version 2.0
+  Enterprise JavaBeans (EJB) 3.0 under Common Development and Distribution License (CDDL) v1.0
+  ezmorph under The Apache Software License, Version 2.0
+  Groovy under Apache License, Version 2.0
+  groovy-engine under BSD License
+  Hibernate under GNU LESSER GENERAL PUBLIC LICENSE
+  Hibernate Annotations under GNU LESSER GENERAL PUBLIC LICENSE
+  Hibernate Commons - Annotations under GNU LESSER GENERAL PUBLIC LICENSE
+  Hibernate Entitity Manager under GNU LESSER GENERAL PUBLIC LICENSE
+  HSQLDB under HSQLDB License
+  HttpClient under Apache License
+  ICU4J under ICU License
+  JA-SIG CAS Client for Java - Core under JA-SIG License for Use
+  JASYPT: Java Simplified Encryption under The Apache Software License, Version 2.0
+  Java Persistence API under LGPL, v2.1
+  Java Transaction API under Commons Development and Distribution License, Version 1.0
+  JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
+  JavaMail API under Common Development and Distribution License (CDDL) v1.0
+  Javassist under Mozilla Public License, Version 1.1
+  JAXB API bundle for GlassFish V3 under CDDL 1.0 or GPL2 w/ CPE
+  jaxb-impl under Commons Development and Distribution License, Version 1.0
+  jaxen under Apache style license
+  jdom under Apache style license
+  JLine under BSD
+  js-engine under BSD License
+  json-lib under The Apache Software License, Version 2.0
+  Json-lib4Spring under The Apache Software License, Version 2.0
+  jsp-api under Commons Development and Distribution License, Version 1.0
+  jstl under Commons Development and Distribution License, Version 1.0
+  JTidy under Java HTML Tidy License
+  JUnit under Common Public License Version 1.0
+  Logging under The Apache Software License, Version 2.0
+  MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
+  Neko HTML under The Apache Software License, Version 2.0
+  Objenesis under Apache 2
+  OGNL - Object Graph Navigation Library under The OpenSymphony Software License, Version 1.1
+  org.apache.tools.ant under Apache License, Version 2.0
+  oro under Apache License, Version 2.0
+  Person Directory API under The BSD License
+  Person Directory Implementations under The BSD License
+  Pluto Descriptor Service API under The Apache Software License, Version 2.0
+  Pluto Descriptor Service Implementation under The Apache Software License, Version 2.0
+  Pluto Portlet Container under The Apache Software License, Version 2.0
+  Pluto Portlet Tag Library under The Apache Software License, Version 2.0
+  Portlet API under Commons Development and Distribution License, Version 1.0
+  Quartz Enterprise Job Scheduler under Apache 2.0
+  Resource Aggregator API under Apache License Version 2.0
+  Resource Aggregator Utilities under Apache License Version 2.0
+  Resource Server Utilities under Apache License Version 2.0
+  Rhino under Mozilla Public License version 1.1
+  ROME, RSS and atOM utilitiEs for Java under The Apache Software License, Version 2.0
+  script-api under Commons Development and Distribution License, Version 1.0
+  servlet-api under Commons Development and Distribution License, Version 1.0
+  SLF4J API Module under MIT License
+  SLF4J JCL Binding under MIT License
+  Spring Binding under Apache License, Version 2.0
+  Spring Framework: AOP under The Apache Software License, Version 2.0
+  Spring Framework: Aspects under The Apache Software License, Version 2.0
+  Spring Framework: Beans under The Apache Software License, Version 2.0
+  Spring Framework: Context under The Apache Software License, Version 2.0
+  Spring Framework: Context Support under The Apache Software License, Version 2.0
+  Spring Framework: Core under The Apache Software License, Version 2.0
+  Spring Framework: JDBC under The Apache Software License, Version 2.0
+  Spring Framework: ORM under The Apache Software License, Version 2.0
+  Spring Framework: Test under The Apache Software License, Version 2.0
+  Spring Framework: Transaction under The Apache Software License, Version 2.0
+  Spring Framework: Web under The Apache Software License, Version 2.0
+  Spring Framework: Web MVC under The Apache Software License, Version 2.0
+  Spring Framework: Web MVC Portlet under The Apache Software License, Version 2.0
+  Spring JavaScript under Apache License, Version 2.0
+  Spring LDAP Core under The Apache Software License, Version 2.0
+  Spring Web Flow under Apache License, Version 2.0
+  spring-modules-cache under Apache License, Version 2.0
+  standard under Apache License, Version 2.0
+  Streaming API for XML under GNU General Public Library or COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+  TagSoup under Apache License 2.0
+  tyrex under BSD Style License
+  uPortal under Apache License Version 2.0
+  uPortal Source under Apache License Version 2.0
+  uPortal WAR under Apache License Version 2.0
+  Xalan Java under The Apache Software License, Version 2.0
+  Xalan Java Serializer under The Apache Software License, Version 2.0
+  Xerces2 Java Parser under The Apache Software License, Version 2.0
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
+  xml-resolver under Apache License, Version 2.0
+  xmlParserAPIs under Apache License, Version 2.0
+  XMLUnit for Java under BSD License
+  xom under GNU Lesser General Public License
+  XStream Core under BSD style
+
+ 
+This project also includes code under copywrite of the following institutions:
+ University of Chicago
+ University of Wisconsin
+ Yale University 
