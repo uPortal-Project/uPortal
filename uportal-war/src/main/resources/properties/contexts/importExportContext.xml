@@ -364,26 +364,32 @@
         <entry key="group_membership">
             <ref bean="export-group_membership"/>
         </entry>
+        <entry key="fragment-definition">
+            <ref bean="export-fragment-definition"/>
+        </entry>
     </util:map>
 
-  <bean id="export-group_membership" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/export-group_membership.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-        <entry key="exportPropertiesLocation">
-          <value>classpath://properties/export.properties</value>
-        </entry>
-      </util:map>
-    </property>
-  </bean>
+    <bean id="export-group_membership" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/export-group_membership.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb" />
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager" />
+                </entry>
+                <entry key="isUserIncluded">
+                    <ref bean="is-user-included"/>
+                </entry>
+                <entry key="exportPropertiesLocation">
+                    <value>classpath://properties/export.properties</value>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
 
     <bean id="export-group" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
@@ -483,6 +489,9 @@
                 <entry key="portletDefinitionRegistry">
                     <ref bean="portletDefinitionRegistry"/>
                 </entry>
+                <entry key="isUserIncluded">
+                    <ref bean="is-user-included"/>
+                </entry>
             </util:map>
         </property>
     </bean>
@@ -503,9 +512,54 @@
         </property>
     </bean>
 
+    <bean id="export-fragment-definition" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/export-fragment-definition.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+                <entry key="fragmentDefinitionDao">
+                    <ref bean="fragmentDefinitionDao"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
     <!-- 
-     | Nested Dependencies
+     | Nested Tasks
      +-->
+    
+    <bean id="generate-entity-file-name" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/generate-entity-file-name.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="userLayoutStore">
+                    <ref bean="userLayoutStore"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="is-user-included" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/is-user-included.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="userLayoutStore">
+                    <ref bean="userLayoutStore"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
 
     <bean id="lookup-dlm-noderef" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
@@ -554,5 +608,9 @@
             </util:map>
         </property>
     </bean>
+
+    <!-- 
+     | Non-Task Dependencies 
+     +-->
 
 </beans>

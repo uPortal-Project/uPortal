@@ -48,6 +48,9 @@
                 
                 if (layoutElement != null) {
                     ScriptAttributes.RESPONSE.setAttribute('Attributes.NODE', layoutElement);
+                } else {
+                    // We must bind the dlm namespace
+                    Attributes.NODE.addNamespace('dlm', 'http://www.uportal.org/layout/dlm');
                 }
             </script>
             <subtasks>
