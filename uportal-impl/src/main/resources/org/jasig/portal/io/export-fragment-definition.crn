@@ -34,7 +34,6 @@
  +-->
 <with>
     <attribute key="Attributes.NODE">${newDoc(fragment-definition)}</attribute>
-    <attribute key="fragmentDefinitionDao">${groovy(PORTAL_CONTEXT.getBean('fragmentDefinitionDao'))}</attribute>
     <subtasks>
         <echo-ln>Export Fragment Definition:  NAME=${NAME}</echo-ln>        
         <with-attribute key="fragment" value="${groovy(fragmentDefinitionDao.getFragmentDefinition(NAME))}">

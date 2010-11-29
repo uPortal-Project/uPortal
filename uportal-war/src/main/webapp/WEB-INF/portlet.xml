@@ -239,8 +239,9 @@
                  |   - all-structures
                  |   - all-entity-types
                  |   - group_membership
+                 |   - profile
                  +-->
-                <value>layout,profile,channel,channel-type,group,user,theme,structure,entity-type,fragment-definition</value>
+                <value>layout,channel,channel-type,group,user,theme,structure,entity-type,fragment-definition</value>
             </preference> 
             <preference> 
                 <name>allowableDeleteTypes</name>  

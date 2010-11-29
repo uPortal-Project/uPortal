@@ -59,7 +59,7 @@
                 <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.security.IPerson'))}">
                     <with-attribute key="USER_NAME" value="${MEMBER_KEY}">
                         <choose>
-                            <when test="${crn(is-user-included.crn)}">
+                            <when test="${crn(${isUserIncluded})}">
                                 <append-node parent="${singleNode(children)}">
                                     <literal>${USER_NAME}</literal>
                                 </append-node>

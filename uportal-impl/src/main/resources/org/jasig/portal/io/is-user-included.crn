@@ -61,7 +61,7 @@
             <when test="${groovy(VALID_USERS.size() == 0 || USER_NAME == 'system')}">
                 <return value="${groovy(true)}"/>
             </when>
-            <when test="${crn(is-fragment-owner.crn)}">
+            <when test="${groovy(layoutStoreProvider.getLayoutStore().isFragmentOwner(USER_NAME))}">
                 <return value="${groovy(true)}"/>
             </when>
             <otherwise>

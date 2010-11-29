@@ -38,7 +38,9 @@ import org.danann.cernunnos.TaskResponse;
 /**
  * @author Eric Dalquist
  * @version $Revision$
+ * @deprecated Use the {@link GenerateEntityFileNameTask} instead
  */
+@Deprecated
 public class SafeFileNamePhrase implements Phrase {
 
     // Reserved names on Windows (see http://en.wikipedia.org/wiki/Filename)

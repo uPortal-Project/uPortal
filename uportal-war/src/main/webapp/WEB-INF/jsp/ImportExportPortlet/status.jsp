@@ -26,7 +26,7 @@
 <p>Status of your ${fn:escapeXml(operation)} operation:  ${fn:escapeXml(result)}</p>
 
 <c:if test="${message != null}">
-    <p>${fn:escapeXml(message)}"/></p>
+    <p>${fn:escapeXml(message)}</p>
 </c:if>
 
 <c:if test="${downloadUrl != null}">

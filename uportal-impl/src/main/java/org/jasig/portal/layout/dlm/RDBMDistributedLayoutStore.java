@@ -1274,6 +1274,24 @@ public class RDBMDistributedLayoutStore
         return getOwnedFragment(person) != null;
     }
     
+    public boolean isFragmentOwner(String username) {
+
+        boolean rslt = false;  // default
+        
+        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
+        if (definitions != null) {
+            for (final FragmentDefinition fragmentDefinition : definitions) {
+                if (fragmentDefinition.getOwnerId().equals(username)) {
+                    rslt = true;
+                    break;
+                }
+            }
+        }
+
+        return rslt;
+
+    }
+    
     /**
        Returns the fragment owned by this user if any. If this user is not a
        fragment owner then null is returned.

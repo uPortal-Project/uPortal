@@ -34,7 +34,7 @@
                     <with-attribute key="exportedLayoutDoc" value="${crn(${groovy(PORTAL_CONTEXT.getBean('export-layout'))})}">
                         <if test="${jexl(exportedLayoutDoc ne null)}">
                             <choose>
-                                <when test="${crn(is-fragment-owner.crn)}">
+                                <when test="${groovy(PORTAL_CONTEXT.getBean('layoutStoreProvider').getLayoutStore().isFragmentOwner(USER_NAME))}">
                                     <!-- This is a DLM fragment owner layout... -->
                                     <write-document node="${exportedLayoutDoc}" file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
                                 </when>
@@ -62,7 +62,7 @@
                 </sql>
                 <subtasks>
                     <choose>
-                        <when test="${crn(is-user-included.crn)}">
+                        <when test="${crn(${groovy(PORTAL_CONTEXT.getBean('is-user-included'))})}">
                             <concurrent>
                                 <handle-error>
                                     <try>
@@ -126,7 +126,7 @@
                 </sql>
                 <subtasks>
                     <choose>
-                        <when test="${crn(is-user-included.crn)}">
+                        <when test="${crn(${groovy(PORTAL_CONTEXT.getBean('is-user-included'))})}">
                             <concurrent>
                                 <handle-error>
                                     <try>
@@ -382,7 +382,7 @@
                 <sql>SELECT user_id, user_name, user_dflt_usr_id FROM up_user</sql>
                 <subtasks>
                     <choose>
-                        <when test="${crn(is-user-included.crn)}">
+                        <when test="${crn(${groovy(PORTAL_CONTEXT.getBean('is-user-included'))})}">
                             <concurrent>
                                 <handle-error>
                                     <try>
@@ -488,7 +488,7 @@
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('entity-type'))}">
         <with-attribute key="NAME" value="${SYSID}">
             <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
-                <write-document node="${crn(export-entity-type.crn)}" file="${EXPORT_DIR}/entity-type/${SAFE_NAME}.entity-type"/>
+                <write-document node="${crn(${groovy(PORTAL_CONTEXT.getBean('export-entity-type'))})}" file="${EXPORT_DIR}/entity-type/${SAFE_NAME}.entity-type"/>
             </with-attribute>
         </with-attribute>
     </when>
@@ -525,7 +525,7 @@
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('fragment-definition'))}">
         <with-attribute key="NAME" value="${SYSID}">
             <with-attribute key="SAFE_NAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${NAME})}">
-                <write-document node="${crn(export-fragment-definition.crn)}" file="${EXPORT_DIR}/fragment-definition/${SAFE_NAME}.fragment-definition"/>
+                <write-document node="${crn(${groovy(PORTAL_CONTEXT.getBean('export-fragment-definition'))})}" file="${EXPORT_DIR}/fragment-definition/${SAFE_NAME}.fragment-definition"/>
             </with-attribute>
         </with-attribute>
     </when>
