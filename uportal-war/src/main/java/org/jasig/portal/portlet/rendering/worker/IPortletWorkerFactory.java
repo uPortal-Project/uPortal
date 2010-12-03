@@ -44,6 +44,10 @@ public interface IPortletWorkerFactory {
     /**
      * Create a worker that will execute a render request on the specified portlet window
      */
+    public IPortletRenderExecutionWorker createRenderHeaderWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId);
+    /**
+     * Create a worker that will execute a render request on the specified portlet window
+     */
     public IPortletRenderExecutionWorker createRenderWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId);
     /**
      * Create a worker that will execute a resource request on the specified portlet window

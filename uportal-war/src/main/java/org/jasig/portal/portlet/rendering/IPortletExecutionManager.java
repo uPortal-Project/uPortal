@@ -42,6 +42,16 @@ public interface IPortletExecutionManager {
     /**
      * @see #startPortletRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)
      */
+    public void startPortletHeadRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * Starts the specified portlet rendering, returns immediately.
+     */
+    public void startPortletHeadRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+    
+    /**
+     * @see #startPortletRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)
+     */
     public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
 
     /**

@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.rendering.worker;
 
 import java.io.StringWriter;
@@ -31,34 +30,43 @@ import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.rendering.PortletRenderResult;
 
 /**
- * {@link PortletExecutionWorker} capable of rendering the body markup
+ * {@link PortletExecutionWorker} capable of rendering the head content
  * for a portlet.
  * 
- * @see IPortletRenderer#doRenderMarkup(IPortletWindowId, HttpServletRequest, HttpServletResponse, java.io.Writer)
- * @author Eric Dalquist
- * @version $Revision$
+ * @author Nicholas Blair
+ * @version $Id$
  */
-class PortletRenderExecutionWorker extends PortletExecutionWorker<PortletRenderResult> implements IPortletRenderExecutionWorker {
-    private String output = null;
+public class PortletRenderHeaderExecutionWorker extends
+		PortletExecutionWorker<PortletRenderResult> implements
+		IPortletRenderExecutionWorker {
+
+	private String output = null;
     
-    public PortletRenderExecutionWorker(
+    public PortletRenderHeaderExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
             HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
         
         super(executorService, interceptors, portletRenderer, request, response, portletWindowId);
     }
 
-    @Override
-    protected PortletRenderResult callInternal() throws Exception {
-        final StringWriter writer = new StringWriter();
-        final PortletRenderResult result = portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.rendering.worker.IPortletRenderExecutionWorker#getOutput(long)
+	 */
+	@Override
+	public String getOutput(long timeout) throws Exception {
+		this.get(timeout);
+        return this.output;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.rendering.worker.PortletExecutionWorker#callInternal()
+	 */
+	@Override
+	protected PortletRenderResult callInternal() throws Exception {
+		final StringWriter writer = new StringWriter();
+        final PortletRenderResult result = portletRenderer.doRenderHeader(portletWindowId, request, response, writer);
         this.output = writer.toString();
         return result;
-    }
+	}
 
-    @Override
-    public String getOutput(long timeout) throws Exception {
-        this.get(timeout);
-        return this.output;
-    }
 }

@@ -65,6 +65,11 @@
                 <value>ABOUT</value>
             </set>
         </property>
+        <property name="portalProperties">
+        	<props>
+        		<prop key="javax.portlet.markup.head.element.support">true</prop>
+        	</props>
+        </property>
     </bean>
     
     <bean id="personDirectoryUserInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">

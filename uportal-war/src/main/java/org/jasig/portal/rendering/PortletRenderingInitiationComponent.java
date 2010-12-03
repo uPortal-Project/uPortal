@@ -101,13 +101,24 @@ public class PortletRenderingInitiationComponent extends StAXPipelineComponentWr
 
                     if (!portletExecutionManager.isPortletRenderRequested(id, this.request, this.response)) {
                         portletExecutionManager.startPortletRender(id, this.request, this.response);
-                        logger.debug("Initiated portlet rendering for subscribeId: {}", id);
+                        logger.debug("Initiated portlet markup rendering for subscribeId: {}", id);
                     }
                     else {
                         logger.debug("Portlet already rendered for subscribeId: {}", id);
                     }
+                } else if(IUserLayoutManager.CHANNEL_HEADER.equals(name.getLocalPart())) {
+                	 final Attribute idAttribute = startElement.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
+                     final String id = idAttribute.getValue();
+
+                     if (!portletExecutionManager.isPortletRenderRequested(id, this.request, this.response)) {
+                         portletExecutionManager.startPortletHeadRender(id, this.request, this.response);
+                         logger.debug("Initiated portlet head rendering for subscribeId: {}", id);
+                     }
+                     else {
+                         logger.debug("Portlet already rendered for subscribeId: {}", id);
+                     }
                 }
-            }
+            } 
             
             return event;
         }

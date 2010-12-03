@@ -46,7 +46,7 @@ public interface IUserLayoutManager {
      */
     public static final String CHANNEL = "channel";
     /**
-     * Represents <channel> layout element
+     * Represents <channel-header> layout element
      */
     public static final String CHANNEL_HEADER = "channel-header";
     /**

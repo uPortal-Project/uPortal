@@ -118,15 +118,24 @@ public interface IPortletRenderer {
     public long doEvent(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Event event);
     
     /**
-     * Executes a render in a portlet, handles all the request and response setup and teardown
+     * Executes a render for the body of a portlet, handles all the request and response setup and teardown
      * 
      * @param portletWindowId Portlet to target with the render
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
      * @param writer The writer to write the portlet's output to
      */
-    public PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer);
+    public PortletRenderResult doRenderMarkup(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer);
     
+    /**
+     * Executes a render for the head of a portlet, handles all the request and response setup and teardown
+     * 
+     * @param portletWindowId Portlet to target with the render
+     * @param httpServletRequest The portal's request
+     * @param httpServletResponse The portal's response (nothing will be written to the response)
+     * @param writer The writer to write the portlet's output to
+     */
+    public PortletRenderResult doRenderHeader(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer);
     /**
      * Executes a portlet resource request.
      * 

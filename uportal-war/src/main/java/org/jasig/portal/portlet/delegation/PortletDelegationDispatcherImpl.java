@@ -173,7 +173,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         try {
             
             //TODO canRender permission checks!
-            this.portletRenderer.doRender(this.portletWindow.getPortletWindowId(), request, response, writer);
+            this.portletRenderer.doRenderMarkup(this.portletWindow.getPortletWindowId(), request, response, writer);
         }
         catch (RuntimeException e) {
             this.logger.error("Failed to render delegate", e);

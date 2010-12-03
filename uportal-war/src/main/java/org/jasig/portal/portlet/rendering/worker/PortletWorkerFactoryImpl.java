@@ -108,7 +108,18 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
     }
 
 
-    @Override
+    
+    /* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.rendering.worker.IPortletWorkerFactory#createRenderHeaderWorker(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.jasig.portal.portlet.om.IPortletWindowId)
+	 */
+	@Override
+	public IPortletRenderExecutionWorker createRenderHeaderWorker(
+			HttpServletRequest request, HttpServletResponse response,
+			IPortletWindowId portletWindowId) {
+		return new PortletRenderHeaderExecutionWorker(portletThreadPool,executionInterceptors, portletRenderer, request, response, portletWindowId);
+	}
+
+	@Override
     public IPortletRenderExecutionWorker createRenderWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
         return new PortletRenderExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId);
     }

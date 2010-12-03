@@ -143,7 +143,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
         //Aggressive exception handling to make sure at least something is written out when an error happens.
         try {
             final StringWriter writer = new StringWriter();
-            this.portletRenderResult = this.portletRenderer.doRender(errorPortletWindowId, wrappedRequest, response, writer);
+            this.portletRenderResult = this.portletRenderer.doRenderMarkup(errorPortletWindowId, wrappedRequest, response, writer);
             doPostExecution(null);
             this.output = writer.toString();
         }

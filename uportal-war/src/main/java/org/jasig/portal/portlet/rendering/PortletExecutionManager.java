@@ -26,9 +26,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -39,6 +39,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
+import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -256,7 +258,59 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         this.eventCoordinationService.resolveQueueEvents(eventQueue, events, request);
     }
     
+    
+    
     /* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletHeadRender(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	public void startPortletHeadRender(String subscribeId,
+			HttpServletRequest request, HttpServletResponse response) {
+		Assert.notNull(subscribeId, "subscribeId cannot be null");
+        
+        final IPortletWindow portletWindow;
+        try {
+            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
+        }
+        catch (NotAPortletException nape) {
+            this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
+            return;
+        }
+        catch (DataRetrievalFailureException e) {
+            this.logger.warn("Failed to start portlet head rendering: " + subscribeId, e);
+            return;
+        }
+        
+        this.startPortletHeadRender(portletWindow.getPortletWindowId(), request, response);
+	}
+    /**
+     * Only actually starts rendering the head if the portlet has the 'javax.portlet.renderHeaders' container-runtime-option
+     * present and set to "true."
+     * 
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletHeadRender(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	public void startPortletHeadRender(IPortletWindowId portletWindowId,
+			HttpServletRequest request, HttpServletResponse response) {
+		IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+		PortletDefinition portletDefinition = portletWindow.getPortletDefinition();
+		ContainerRuntimeOption renderHeaderOption = portletDefinition.getContainerRuntimeOption("javax.portlet.renderHeaders");
+		if(renderHeaderOption != null && renderHeaderOption.getValues().contains(Boolean.TRUE.toString())) {
+			final IPortletRenderExecutionWorker portletRenderExecutionWorker = this.portletWorkerFactory.createRenderHeaderWorker(request, response, portletWindowId);
+	    	
+	    	portletRenderExecutionWorker.submit();
+	    	//TODO do the header workers go in the renderingMap?
+	    	final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
+	        portletRenderingMap.put(portletWindowId, portletRenderExecutionWorker);
+	        
+		} else {
+			this.logger.debug("ignoring startPortletHeadRender request since containerRuntimeOption is not present for portletWindowId " + portletWindowId);
+		}
+	}
+
+	
+
+	/* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletRender(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override

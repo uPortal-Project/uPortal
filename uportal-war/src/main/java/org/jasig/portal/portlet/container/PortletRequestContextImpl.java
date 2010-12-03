@@ -127,6 +127,10 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
             return this.servletRequest.getAttribute(name);
         }
         
+        if(name.equals(PortletRequest.RENDER_PART)) {
+        	return this.servletRequest.getAttribute(name);
+        }
+        
         return null;
     }
 
