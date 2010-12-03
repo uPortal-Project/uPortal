@@ -30,6 +30,18 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 /**
  * Defines methods for initiating and managing portlet rendering
  * 
+ * Note from  Portlet 2.0 specification: 
+ * <ul>
+ * <li>PLT 10.4.2 Runtime Option javax.portlet.renderHeaders</li>
+ * <li>PLT 11.1.4.3 The Render Part Request Attribute for Setting Headers in the Render Phase</li>
+ * </ul>
+ * These sections only require that the portlet container issue the render method of 
+ * the portlet twice; once with the RENDER_PART request attribute set to RENDER_HEADERS, 
+ * once with the RENDER_PART request attribute set to RENDER_MARKUP.
+ * 
+ * There is no mention of the order of these 2 render calls; we assume it is acceptable
+ * to invoke them in either order.
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -40,12 +52,12 @@ public interface IPortletExecutionManager {
     public void doPortletAction(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
     /**
-     * @see #startPortletRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)
+     * @see #startPortletHeadRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)
      */
     public void startPortletHeadRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
 
     /**
-     * Starts the specified portlet rendering, returns immediately.
+     * Starts the specified portlet head rendering, returns immediately.
      */
     public void startPortletHeadRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
@@ -55,7 +67,7 @@ public interface IPortletExecutionManager {
     public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
 
     /**
-     * Starts the specified portlet rendering, returns immediately.
+     * Starts the specified portlet markup rendering, returns immediately.
      */
     public void startPortletRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
