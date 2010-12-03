@@ -19,9 +19,13 @@
 
 package org.jasig.portal.url;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist
@@ -35,7 +39,7 @@ public class MockPortalRequestInfo implements IPortalRequestInfo {
     public Map<String, List<String>> layoutParameters = Collections.emptyMap();
     public IPortletRequestInfo portletRequestInfo;
     public String urlString;
-
+    public Map<IPortletWindowId, IPortletRequestInfo> additionalPortletRequestInfos = new HashMap<IPortletWindowId, IPortletRequestInfo>();
     @Override
     public String getCanonicalUrl() {
         return this.urlString;
@@ -86,83 +90,144 @@ public class MockPortalRequestInfo implements IPortalRequestInfo {
         this.portletRequestInfo = portletRequestInfo;
     }
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.layoutParameters == null) ? 0 : this.layoutParameters.hashCode());
-        result = prime * result + ((this.portalParameters == null) ? 0 : this.portalParameters.hashCode());
-        result = prime * result + ((this.portletRequestInfo == null) ? 0 : this.portletRequestInfo.hashCode());
-        result = prime * result + ((this.targetedLayoutNodeId == null) ? 0 : this.targetedLayoutNodeId.hashCode());
-        result = prime * result + ((this.urlState == null) ? 0 : this.urlState.hashCode());
-        result = prime * result + ((this.urlType == null) ? 0 : this.urlType.hashCode());
-        return result;
-    }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        MockPortalRequestInfo other = (MockPortalRequestInfo) obj;
-        if (this.layoutParameters == null) {
-            if (other.layoutParameters != null) {
-                return false;
-            }
-        }
-        else if (!this.layoutParameters.equals(other.layoutParameters)) {
-            return false;
-        }
-        if (this.portalParameters == null) {
-            if (other.portalParameters != null) {
-                return false;
-            }
-        }
-        else if (!this.portalParameters.equals(other.portalParameters)) {
-            return false;
-        }
-        if (this.portletRequestInfo == null) {
-            if (other.portletRequestInfo != null) {
-                return false;
-            }
-        }
-        else if (!this.portletRequestInfo.equals(other.portletRequestInfo)) {
-            return false;
-        }
-        if (this.targetedLayoutNodeId == null) {
-            if (other.targetedLayoutNodeId != null) {
-                return false;
-            }
-        }
-        else if (!this.targetedLayoutNodeId.equals(other.targetedLayoutNodeId)) {
-            return false;
-        }
-        if (this.urlState == null) {
-            if (other.urlState != null) {
-                return false;
-            }
-        }
-        else if (!this.urlState.equals(other.urlState)) {
-            return false;
-        }
-        if (this.urlType == null) {
-            if (other.urlType != null) {
-                return false;
-            }
-        }
-        else if (!this.urlType.equals(other.urlType)) {
-            return false;
-        }
-        return true;
-    }
-    @Override
-    public String toString() {
-        return "MockPortalRequestInfo [layoutParameters=" + this.layoutParameters + ", portalParameters="
-                + this.portalParameters + ", portletRequestInfo=" + this.portletRequestInfo + ", targetedLayoutNodeId="
-                + this.targetedLayoutNodeId + ", urlState=" + this.urlState + ", urlType=" + this.urlType + "]";
-    }
+	public IPortletRequestInfo getAdditionalPortletRequestInfo(
+			IPortletWindowId portletWindowId) {
+		return this.additionalPortletRequestInfos.get(portletWindowId);
+	}
+	@Override
+	public Collection<IPortletRequestInfo> getAdditionalPortletRequestInfos() {
+		return this.additionalPortletRequestInfos.values();
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((additionalPortletRequestInfos == null) ? 0
+						: additionalPortletRequestInfos.hashCode());
+		result = prime
+				* result
+				+ ((layoutParameters == null) ? 0 : layoutParameters.hashCode());
+		result = prime
+				* result
+				+ ((portalParameters == null) ? 0 : portalParameters.hashCode());
+		result = prime
+				* result
+				+ ((portletRequestInfo == null) ? 0 : portletRequestInfo
+						.hashCode());
+		result = prime
+				* result
+				+ ((targetedLayoutNodeId == null) ? 0 : targetedLayoutNodeId
+						.hashCode());
+		result = prime * result
+				+ ((urlState == null) ? 0 : urlState.hashCode());
+		result = prime * result
+				+ ((urlString == null) ? 0 : urlString.hashCode());
+		result = prime * result + ((urlType == null) ? 0 : urlType.hashCode());
+		return result;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof MockPortalRequestInfo)) {
+			return false;
+		}
+		MockPortalRequestInfo other = (MockPortalRequestInfo) obj;
+		if (additionalPortletRequestInfos == null) {
+			if (other.additionalPortletRequestInfos != null) {
+				return false;
+			}
+		} else if (!additionalPortletRequestInfos
+				.equals(other.additionalPortletRequestInfos)) {
+			return false;
+		}
+		if (layoutParameters == null) {
+			if (other.layoutParameters != null) {
+				return false;
+			}
+		} else if (!layoutParameters.equals(other.layoutParameters)) {
+			return false;
+		}
+		if (portalParameters == null) {
+			if (other.portalParameters != null) {
+				return false;
+			}
+		} else if (!portalParameters.equals(other.portalParameters)) {
+			return false;
+		}
+		if (portletRequestInfo == null) {
+			if (other.portletRequestInfo != null) {
+				return false;
+			}
+		} else if (!portletRequestInfo.equals(other.portletRequestInfo)) {
+			return false;
+		}
+		if (targetedLayoutNodeId == null) {
+			if (other.targetedLayoutNodeId != null) {
+				return false;
+			}
+		} else if (!targetedLayoutNodeId.equals(other.targetedLayoutNodeId)) {
+			return false;
+		}
+		if (urlState == null) {
+			if (other.urlState != null) {
+				return false;
+			}
+		} else if (!urlState.equals(other.urlState)) {
+			return false;
+		}
+		if (urlString == null) {
+			if (other.urlString != null) {
+				return false;
+			}
+		} else if (!urlString.equals(other.urlString)) {
+			return false;
+		}
+		if (urlType == null) {
+			if (other.urlType != null) {
+				return false;
+			}
+		} else if (!urlType.equals(other.urlType)) {
+			return false;
+		}
+		return true;
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("MockPortalRequestInfo [additionalPortletRequestInfos=");
+		builder.append(additionalPortletRequestInfos);
+		builder.append(", layoutParameters=");
+		builder.append(layoutParameters);
+		builder.append(", portalParameters=");
+		builder.append(portalParameters);
+		builder.append(", portletRequestInfo=");
+		builder.append(portletRequestInfo);
+		builder.append(", targetedLayoutNodeId=");
+		builder.append(targetedLayoutNodeId);
+		builder.append(", urlState=");
+		builder.append(urlState);
+		builder.append(", urlString=");
+		builder.append(urlString);
+		builder.append(", urlType=");
+		builder.append(urlType);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 }

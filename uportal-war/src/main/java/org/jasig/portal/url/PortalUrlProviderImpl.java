@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     public static final String LAYOUT_PARAM_PREFIX                  = "uPl" + SEPARATOR;
     public static final String PORTLET_CONTROL_PREFIX               = "pltC" + SEPARATOR;
     public static final String PORTLET_PARAM_PREFIX                 = "pltP" + SEPARATOR;
+    public static final String PORTLET_ADDITIONAL_PARAM_PREFIX		= "pltAP" + SEPARATOR;
     public static final String PORTLET_PUBLIC_RENDER_PARAM_PREFIX   = "pltG" + SEPARATOR;
     public static final String PORTLET_RESOURCE_PARAM_PREFIX = "pltR" + SEPARATOR;
 
@@ -314,7 +316,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         final Map<String, String[]> portletParameters = new ParameterMap();
         final Map<String, String[]> portletPublicParameters = new ParameterMap();
         final Map<String, String[]> layoutParameters = new ParameterMap();
-        final Map<String, String[]> resourceParameters = new ParameterMap();
+        final Map<String, String[]> resourceParameters = new ParameterMap(); 
+        final Map<IPortletWindowId, ParameterMap> additionalPortletParameters = new HashMap<IPortletWindowId, ParameterMap>();
         
         for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
             final String name = parameterEntry.getKey();
@@ -332,6 +335,24 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             } 
             else if (name.startsWith(PORTLET_RESOURCE_PARAM_PREFIX)) {
             	resourceParameters.put(this.getParameterName(PORTLET_RESOURCE_PARAM_PREFIX, name), parameterEntry.getValue());
+            } 
+            else if (name.startsWith(PORTLET_ADDITIONAL_PARAM_PREFIX)) {
+            	String parameterName = this.getParameterName(PORTLET_ADDITIONAL_PARAM_PREFIX, name);
+            	if(parameterName.contains(SEPARATOR)) {
+            		String [] parameterSplit = parameterName.split(SEPARATOR);
+            		
+            		IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(parameterSplit[0]);
+            		if(portletWindowId != null) {
+            			ParameterMap pMap = additionalPortletParameters.get(portletWindowId);
+            			if(pMap == null) {
+            				pMap = new ParameterMap();
+            				additionalPortletParameters.put(portletWindowId, pMap);
+            			}
+            		
+            			String actualParameterName = parameterSplit[1];
+            			pMap.put(actualParameterName, parameterEntry.getValue());	
+            		}
+            	}
             }
         }
         
@@ -408,6 +429,14 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         
         requestInfoBuilder.setLayoutParameters(Collections.unmodifiableMap(ParameterMap.convertArrayMap(layoutParameters)));
         requestInfoBuilder.setPortalParameters(Collections.unmodifiableMap(ParameterMap.convertArrayMap(portalParameters)));
+        
+        for(Map.Entry<IPortletWindowId, ParameterMap> mapEntry : additionalPortletParameters.entrySet()) {
+        	IPortletWindowId childPortletWindowId = mapEntry.getKey();
+        	Map<String, List<String>> childPortletParameters = ParameterMap.convertArrayMap(mapEntry.getValue());
+        	IPortletRequestInfo childClone = portletRequestInfoBuilder.constructChildClone(childPortletWindowId, childPortletParameters);
+        	
+        	requestInfoBuilder.addChildAdditionalPortletRequestInfo(childPortletWindowId, childClone);
+        }
         
         //Generate the canonical URL string
         final String urlString = generateUrlString(request, requestInfoBuilder);
@@ -508,6 +537,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
             basePortalUrl.setPortalParameters(portalParameters);
         }
         
+        //TODO - are portalRequestInfo#getAdditionalPortletRequestInfo parameters portal parameters?
         return basePortalUrl.getUrlString();
     }
     

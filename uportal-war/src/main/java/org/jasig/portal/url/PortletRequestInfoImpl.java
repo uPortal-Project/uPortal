@@ -134,6 +134,28 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
         return this.targetWindowId;
     }
 
+	/**
+	 * This method constructs a clone of this instance, only replacing the targetWindowId and portletParameters
+	 * with the arguments.
+	 * 
+	 * @param targetWindowId
+	 * @param portletParameters
+	 * @return
+	 */
+	public IPortletRequestInfo constructChildClone(IPortletWindowId targetWindowId, Map<String, List<String>> portletParameters) {
+		PortletRequestInfoImpl clone = new PortletRequestInfoImpl(targetWindowId);
+		clone.setCacheability(this.cacheability);
+		clone.setDelegatePortletRequestInfo(this.delegatePortletRequestInfo);
+		clone.setPortletMode(this.portletMode);
+		clone.setPortletParameters(portletParameters);
+		clone.setPublicPortletParameters(this.publicPortletParameters);
+		clone.setResourceId(this.resourceId);
+		clone.setResourceParameters(this.resourceParameters);
+		clone.setWindowState(this.windowState);
+		
+		return clone;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -280,5 +302,6 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
 		builder.append("]");
 		return builder.toString();
 	}
+	
     
 }

@@ -19,8 +19,11 @@
 
 package org.jasig.portal.url;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 
 /**
@@ -67,4 +70,16 @@ public interface IPortalRequestInfo {
      * and will be absolute (starting with a / or a protocol)
      */
     public String getCanonicalUrl();
+    
+    /**
+     * 
+     * @return a never null, but possibly empty, {@link List} of additional {@link IPortletRequestInfo}s embedded in this portalrequestinfo
+     */
+    public Collection<IPortletRequestInfo> getAdditionalPortletRequestInfos();
+    /**
+     * 
+     * @param portletWindowId
+     * @return additional {@link IPortletRequestInfo} embbeded in this portalrequestinfo with the specified window id
+     */
+    public IPortletRequestInfo getAdditionalPortletRequestInfo(IPortletWindowId portletWindowId);
 }
