@@ -132,10 +132,10 @@
             <artifactId>ehcache-core</artifactId>
         </dependency>
 
-	    <dependency>
-		    <groupId>net.sf.json-lib</groupId>
-		    <artifactId>json-lib-ext-spring</artifactId>
-	    </dependency>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib-ext-spring</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -345,7 +345,7 @@
             <artifactId>servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-		<dependency>
+        <dependency>
             <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-container-api</artifactId>
             <scope>provided</scope>
@@ -423,10 +423,32 @@
 
     <build>
         <finalName>${uportal.docbase}</finalName>
+        <filters>
+            <filter>${basedir}/../${filters.file}</filter>
+        </filters>
         <resources>
             <resource>
+                <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <directory>${basedir}/src/main/resources</directory>
+                <!-- 
+                 | Enumerate filtered files explicitly to avoid issues with other 
+                 | config tech, e.g. Spring property placeholder 
+                 +-->
+                <includes>
+                    <include>properties/portal.properties</include>
+                    <include>properties/rdbm.properties</include>
+                </includes>
+            </resource>
+            <!-- 
+             | Declare a mutually exclusive resource set for non-filtered files.
+             +-->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>properties/portal.properties</exclude>
+                    <exclude>properties/rdbm.properties</exclude>
+                </excludes>
             </resource>
         </resources>
         <plugins>
