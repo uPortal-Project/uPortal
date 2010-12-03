@@ -163,7 +163,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <filters>
-                        <filter>${basedir}/../../uportal-impl/src/main/resources/properties/rdbm.properties</filter>
+                        <filter>${basedir}/../../uportal-impl/target/classes/properties/rdbm.properties</filter>
                     </filters>
                     <webResources>
                         <resource>
