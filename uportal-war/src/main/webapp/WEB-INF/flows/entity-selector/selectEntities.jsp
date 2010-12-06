@@ -153,7 +153,7 @@
                                                 <ul>
                                                     <c:forEach items="${groups}" var="group">
                                                         <li>
-                                                            <a key="${group}" href="javascript:;"><c:out value="${group.name}"/></a>
+                                                            <a key="${group.entityType}:${group.id}" href="javascript:;"><c:out value="${group.name}"/></a>
                                                             <input type="hidden" name="groups" value="${group.entityType}:${group.id}"/>
                                                         </li>
                                                     </c:forEach>
@@ -194,7 +194,7 @@
                                             </c:when>
                                             <c:otherwise>
                                                 <c:forEach items="${groups}" var="group">
-                                                    <a key="${group}" href="javascript:;" class="selection"><c:out value="${group.name}"/></a>
+                                                    <a key="${group.entityType}:${group.id}" href="javascript:;" class="selection"><c:out value="${group.name}"/></a>
                                                     <input type="hidden" name="groups" value="${group.entityType}:${group.id}"/>
                                                 </c:forEach>
                                             </c:otherwise>
