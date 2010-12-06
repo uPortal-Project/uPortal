@@ -25,18 +25,29 @@
     http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
     
     <!-- 
-        | Group input 
-        |
-        | The group object should be an instance of GroupForm that
-        | represents either a new or existing group.  This object
-        | may not be null.
-        +-->
+     | Group input 
+     |
+     | The group object should be an instance of GroupForm that
+     | represents either a new or existing group.  This object
+     | may not be null.
+     +-->
     <input name="group" required="true" type="org.jasig.portal.portlets.groupadmin.GroupForm"/>
     
+    <!-- 
+     | Parent input input 
+     |
+     | The parent object should be an instance of JsonEntityBean that represents
+     | the parent object to be used for a new group.  This object is only 
+     | required when creating new groups.
+     +-->
     <input name="parent" required="false" type="org.jasig.portal.layout.dlm.remoting.JsonEntityBean"/>
     
     <on-start>
         <set name="flowScope.completed" value="group.key != null"/>
+        <set name="flashScope.servletRequest" 
+            value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+        <set name="flowScope.person" 
+            value="personManager.getPerson(servletRequest)"/>
     </on-start>
     
     <!-- If we're creating a new portlet, display the first step in the workflow.
@@ -48,7 +59,9 @@
     <!-- EDIT GROUP DETAILS view -->
     <view-state id="editDetails" model="group">
         <transition on="next" to="editMembers"/>
-        <transition on="save" to="reviewGroup"/>
+        <transition on="save" to="reviewGroup">
+            <evaluate expression="groupAdministrationHelper.updateGroupDetails(group, person)"/>
+        </transition>
         <transition on="cancel" to="cancelEditScreen" bind="false"/>
     </view-state>
     
@@ -64,8 +77,8 @@
         <input name="rootEntityId" value="rootEntity"/>
         
         <input name="showCancelButton" value="true"/>
-        <input name="showBackButton" value="false"/>
-        <input name="saveButtonCode" value="'save'" />
+        <input name="showBackButton" value="!completed"/>
+        <input name="saveButtonCode" value="completed ? 'save' : 'next'" />
         <input name="backButtonCode" value="'back'" />
         <input name="cancelButtonCode" value="'cancel'" />
         <input name="pageTitleCode" value="'select.people.and.groups'"/>
@@ -76,26 +89,35 @@
         <input name="selectedGroups" value="group.members"/>
         <output name="selectedGroups" value="flashScope.selectedGroups"/>
         
-        <transition on="finish" to="reviewGroup">
-            <evaluate expression="group.setMembers(selectedGroups)"></evaluate>
+        <transition on="back" to="editDetails"/>
+        <transition on="#{currentEvent.id == 'finish' and !completed}" to="reviewGroup">
+            <evaluate expression="group.setMembers(selectedGroups)"/>
+        </transition>
+        
+        <transition on="#{currentEvent.id == 'finish' and completed}" to="reviewGroup">
+            <evaluate expression="group.setMembers(selectedGroups)"/>
+            <evaluate expression="groupAdministrationHelper.updateGroupMembers(group, person)"/>
         </transition>
         
         <transition on="cancel" to="cancelEditScreen"/>
         
     </subflow-state>
 
-    <!-- CHOOSE MEMBER GROUPS view -->
+    <!-- CREATE CHILD GROUP subflow -->
     <subflow-state id="createChildGroup" subflow="edit-group">
         
         <on-entry>
             <set name="flashScope.child" value="new org.jasig.portal.portlets.groupadmin.GroupForm()"/>
             <set name="child.type" value="group.type"/>
+            <set name="child.creatorId" value="person.userName"/>
         </on-entry>
         
         <input name="parent" value="groupListHelper.getEntity(group.type, group.key, false)"/>
         <input name="group" value="child"/>
         
         <transition on="finishGroupEdit" to="reviewGroup">
+            <set name="flowScope.group"
+                value="groupAdministrationHelper.getGroupForm(group.key)"/>
         </transition>
         
         <transition on="cancelGroupEdit" to="reviewGroup"/>
@@ -111,19 +133,22 @@
         <transition on="createChildGroup" to="createChildGroup"/>
         <transition on="viewGroupPermissions" to="viewGroupPermissions"/>
         <transition on="confirmRemove" to="confirmRemove"/>
-        
+
+        <transition on="back" to="editMembers"/>        
         <!-- save the portlet -->
-        <transition on="save" to="saveGroup"/>
+        <transition on="save" to="createGroup"/>
         
         <!-- cancel our portlet edit and exit the sub-flow -->
         <transition on="cancel" to="cancelGroupEdit" bind="false"/>
     </view-state>
-    
+
+    <!-- VIEW PERMISSIONS view state -->    
     <view-state id="viewGroupPermissions">
         <transition on="group" to="reviewGroup"/>
         <transition on="editPermission" to="edit-permission"/>
     </view-state>
 
+    <!-- EDIT PERMISSION subflow -->
     <subflow-state id="edit-permission" subflow="edit-permission">
         <on-entry>
             <set name="flashScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.owner)"/>
@@ -133,31 +158,18 @@
         <transition on="cancel" to="viewGroupPermissions"/>
         <transition on="done" to="viewGroupPermissions"/>
     </subflow-state>
-    
+
+    <!-- CONFIRM REMOVAL view -->    
     <view-state id="confirmRemove">
         <transition on="cancel" to="reviewGroup"/>
         <transition on="removeGroup" to="finishGroupEdit">
-            <evaluate expression="groupAdministrationHelper.deleteGroup(group.key)"/>
+            <evaluate expression="groupAdministrationHelper.deleteGroup(group.key, person)"/>
         </transition>
     </view-state>
-    
-    <decision-state id="saveGroup">
-        <if test="group.key == null" then="createGroup" else="updateGroup"/>
-    </decision-state>
-    
+
+    <!-- CREATE GROUP action state -->
     <action-state id="createGroup">
-        <on-entry>
-            <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
-            <set name="flashScope.person" 
-                value="personManager.getPerson(servletRequest)"/>
-        </on-entry>
         <evaluate expression="groupAdministrationHelper.createGroup(group, parent, person)"/>
-        <transition to="finishGroupEdit"/>
-    </action-state>
-    
-    <action-state id="updateGroup">
-        <evaluate expression="groupAdministrationHelper.updateGroup(group)"/>
         <transition to="finishGroupEdit"/>
     </action-state>
     

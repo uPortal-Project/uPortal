@@ -67,10 +67,10 @@
                 <div class="buttons">
                     <c:choose>
                         <c:when test="${ completed }">
-                          <input class="button primary" type="submit" value="<spring:message code="save"/>" name="_eventId_review"/>
+                          <input class="button primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
                         </c:when>
                         <c:otherwise>
-                          <input class="button primary" type="submit" value="<spring:message code="save"/>" name="_eventId_next"/>
+                          <input class="button primary" type="submit" value="<spring:message code="next"/>" name="_eventId_next"/>
                         </c:otherwise>
                     </c:choose>
                     <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>

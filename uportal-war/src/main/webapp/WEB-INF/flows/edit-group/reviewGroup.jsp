@@ -20,9 +20,17 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<portlet:renderURL var="backUrl">
+<portlet:renderURL var="cancelUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="cancel"/>
+</portlet:renderURL>
+<portlet:renderURL var="backUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="back"/>
+</portlet:renderURL>
+<portlet:renderURL var="saveUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="save"/>
 </portlet:renderURL>
 <portlet:renderURL var="deleteUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
@@ -45,6 +53,7 @@
     <portlet:param name="_eventId" value="createChildGroup"/>
 </portlet:renderURL>
 <c:set var="n"><portlet:namespace/></c:set>
+<c:set var="isNew" value="${ empty group.key }"/>
 
 <!-- Portlet -->
 <div class="fl-widget portlet grp-mgr view-reviewgroup" role="section">
@@ -57,9 +66,11 @@
         <div class="toolbar">
         	<ul>
             	<li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
-                <li><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
-                <li><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
-                <li><a class="button" href="${ createMemberUrl }"><spring:message code="create.member.group"/></a></li>
+                <c:if test="${ !isNew }">
+                    <li><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
+                    <li><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
+                    <li><a class="button" href="${ createMemberUrl }"><spring:message code="create.member.group"/></a></li>
+                </c:if>
             </ul>
         </div>
     </div> <!-- end: portlet-titlebar -->
@@ -85,7 +96,15 @@
         </div>
         
         <div class="buttons">
-            <a class="button" href="${ backUrl }"><spring:message code="back"/></a>
+            <c:choose>
+                <c:when test="${ isNew }">
+                    <a class="button" href="${ saveUrl }"><spring:message code="save"/></a>
+                    <a class="button" href="${ backUrl }"><spring:message code="back"/></a>
+                </c:when>
+                <c:otherwise>
+                    <a class="button" href="${ cancelUrl }"><spring:message code="done"/></a>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
 </div>

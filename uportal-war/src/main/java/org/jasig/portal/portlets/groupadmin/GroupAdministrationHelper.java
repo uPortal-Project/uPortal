@@ -92,14 +92,24 @@ public class GroupAdministrationHelper {
 	/**
 	 * Delete a group from the group store
 	 * 
-	 * @param key
+	 * @param key key of the group to be deleted
 	 */
-	public void deleteGroup(String key) {
+	public void deleteGroup(String key, IPerson deleter) {
 
+		// TODO: check permissions
+		
 		log.debug("Deleting group with key " + key);
 
 		// find the current version of this group entity
 		IEntityGroup group = GroupService.findGroup(key);
+		
+		// remove this group from the membership list of any current parent
+		// groups
+		for (Iterator iter = group.getContainingGroups(); iter.hasNext();) {
+			IEntityGroup parent = (IEntityGroup) iter.next();
+			parent.removeMember(group);
+			parent.updateMembers();
+		}
 		
 		// delete the group
 		group.delete();
@@ -107,21 +117,46 @@ public class GroupAdministrationHelper {
 	}
 	
 	/**
-	 * Update an existing group in the group store, or if the key is
-	 * null, create a new group.
+	 * Update the title and description of an existing group in the group store.
 	 * 
-	 * @param groupForm
+	 * @param groupForm Form representing the new group configuration
+	 * @param updater Updating user
 	 */
-	public void updateGroup(GroupForm groupForm) {
+	public void updateGroupDetails(GroupForm groupForm, IPerson updater) {
+
+		// TODO: Check permissions of the updater
 
 		if (log.isDebugEnabled()) {
 			log.debug("Updating group for group form [" + groupForm.toString() + "]");
 		}
-
+		
 		// find the current version of this group entity
 		IEntityGroup group = GroupService.findGroup(groupForm.getKey());
 		group.setName(groupForm.getName());
 		group.setDescription(groupForm.getDescription());
+		
+		// save the group, updating both its basic information and group
+		// membership
+		group.update();
+
+	}
+
+	/**
+	 * Update the members of an existing group in the group store.
+	 * 
+	 * @param groupForm Form representing the new group configuration
+	 * @param updater   Updating user
+	 */
+	public void updateGroupMembers(GroupForm groupForm, IPerson updater) {
+
+		// TODO: Check permissions of the updater
+
+		if (log.isDebugEnabled()) {
+			log.debug("Updating group members for group form [" + groupForm.toString() + "]");
+		}
+
+		// find the current version of this group entity
+		IEntityGroup group = GroupService.findGroup(groupForm.getKey());
 		
 		// clear the current group membership list
 		@SuppressWarnings("unchecked")
@@ -146,7 +181,7 @@ public class GroupAdministrationHelper {
 		
 		// save the group, updating both its basic information and group
 		// membership
-		group.update();
+		group.updateMembers();
 
 	}
 	
@@ -160,6 +195,8 @@ public class GroupAdministrationHelper {
 	 */
 	public void createGroup(GroupForm groupForm, JsonEntityBean parent, IPerson creator) {
 		
+		// TODO: Check permissions of the creator
+
 		if (log.isDebugEnabled()) {
 			log.debug("Creating new group for group form ["
 					+ groupForm.toString() + "] and parent ["
