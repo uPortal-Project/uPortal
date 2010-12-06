@@ -403,7 +403,11 @@ var up = up || {};
         if (members.length < 1) {
             searchResultsNoMembers.show();
             list.hide();
-        }//end:if.
+        } else {
+        	list.show();
+        	searchResultsNoMembers.hide();
+        }
+        //end:if.
         
         // Update UI.
         updateSearchView(that);
@@ -467,12 +471,19 @@ var up = up || {};
     var initialize = function (that) {
         // Initialize search drop-down.
         searchEntity(that);
-        
-        // Disable primary button.
-        that.locate("buttonPrimary").attr("disabled", "disabled");
-        
+
+        that.locate("selectionBasket").find("a").click(function () {
+            deselectEntity(that, $(this).attr("key"));
+        });//end:click.
+
         // Browse to the designated default start entity.
         browseEntity(that, that.options.initialFocusedEntity);
+        
+        // Disable primary button.
+        if (that.options.selected.length < 1) {
+            that.locate("buttonPrimary").attr("disabled", "disabled");
+        }//end:if.
+
     };//end:function.
     
     /**
