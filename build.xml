@@ -1017,12 +1017,12 @@
         <condition property="env.arg" value="-Denvironment.name=${env}.">
             <isset property="env" />
         </condition>
-        <property name="env.arg" value="" />
+        <property name="env.arg" value="-Djasig.ignore" />
 
         <condition property="filters.arg" value="-Dfilters.file=${filters.file}">
             <isset property="filters.file" />
         </condition>
-        <property name="filters.arg" value="" />
+        <property name="filters.arg" value="-Djasig.ignore" />
 
     	<artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
             <arg value="-s${maven.settings}" />
