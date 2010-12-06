@@ -98,7 +98,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 			rootKey = "local.0";
 		} else if (EntityEnum.CATEGORY.toString().equals(groupType)) {
 	        IEntityGroup categoryGroup = GroupService.getDistinguishedGroup(IGroupConstants.CHANNEL_CATEGORIES);
-	        return new JsonEntityBean(categoryGroup, EntityEnum.CHANNEL.toString());
+	        return new JsonEntityBean(categoryGroup, EntityEnum.CATEGORY.toString());
 		} else {
 			throw new IllegalArgumentException("Unable to determine a root entity for group type '" + groupType + "'");
 		}
