@@ -69,8 +69,8 @@
         +-->
     <subflow-state id="edit-group" subflow="edit-group">
         <input name="group" value="groupForm"/>
-        <transition on="finishGroupEdit" to="selectGroup"/>
-        <transition on="cancelGroupEdit" to="selectGroup"/>
+        <transition on="finishGroupEdit" to="selectGroupType"/>
+        <transition on="cancelGroupEdit" to="selectGroupType"/>
     </subflow-state>
     
     <!-- End state -->
