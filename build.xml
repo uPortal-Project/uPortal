@@ -26,20 +26,10 @@
  | Comments in this file should be targeted to the maintenance of the build script.
  +-->
 <project name="uPortal" default="help" basedir="." xmlns:up="urn:up-util-ant" xmlns:artifact="urn:maven-artifact-ant">
-
-    <!--
-     | Determine if a named environment has been specified in the command.  
-     | Examples:  dev, test, prod, local, etc.
-     +-->
-    <condition property="environment.token" value="${env}.">
-        <isset property="env" />
-    </condition>
-    <property name="environment.token" value="" />
-    
-    <fail message="build.${environment.token}properties does not exist, please copy build.properties.sample and fill in your settings.">
+    <fail message="build.properties does not exist, please copy build.properties.sample and fill in your settings.">
         <condition>
             <not>
-                <available file="${basedir}/build.${environment.token}properties" />
+                <available file="${basedir}/build.properties" />
             </not>
         </condition>
     </fail>
@@ -49,7 +39,7 @@
      | by the file.
      +-->
     <property environment="env" />
-    <property file="${basedir}/build.${environment.token}properties" />
+    <property file="${basedir}/build.properties" />
     
     <!--
      | Setup temp directories
@@ -860,7 +850,7 @@
             </if>
 
             <!--
-             | Call 'mvn install' if files in the project are not up-to-date
+             | Call 'mvn package' if files in the project are not up-to-date
              +-->
             <if>
                 <not>
@@ -1065,22 +1055,10 @@
         </condition>
         <property name="offline" value="-Djasig.ignore" />
         
-        <condition property="env.arg" value="-Denvironment.name=${env}.">
-            <isset property="env" />
-        </condition>
-        <property name="env.arg" value="" />
-
-        <condition property="filters.arg" value="-Dfilters.file=${filters.file}">
-            <isset property="filters.file" />
-        </condition>
-        <property name="filters.arg" value="" />
-
-       <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
+        <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
             <arg value="-s${maven.settings}" />
             <arg value="${test.skip}" />
             <arg value="${offline}" />
-            <arg value="${env.arg}" />
-            <arg value="${filters.arg}" />
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />

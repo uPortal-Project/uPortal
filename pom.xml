@@ -78,19 +78,6 @@
         <jdbc.artifactId>hsqldb</jdbc.artifactId>
         <jdbc.version>${hsqldb.version}</jdbc.version>
     
-        <!--
-         | Environment name and filters file for environment-specific build
-         | settings.  By default <environment.name> is blank, and the filters 
-         | file is build.properties.
-         |
-         | You can override the default by passing a -Denvironment.name 
-         | parameter, which Ant will do for you if you invoke Ant with 
-         | -Denv={something}.  NOTE that Ant also adds a suffixed period (.) 
-         | character.  If you want to override the default environment.name by 
-         | invoking Maven directly, you will have to append a period yourself.
-         +-->
-        <environment.name></environment.name>
-        <filters.file>build.${environment.name}properties</filters.file>
     
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.10</BookmarksPortlet.version>

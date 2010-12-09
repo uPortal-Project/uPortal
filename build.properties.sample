@@ -30,6 +30,7 @@ server.webapps=${server.base}/webapps
 # and/or db-import targets;  required data is imported before entities specified here
 #entities.location=uportal-impl/src/main/resources/properties/db/entities/
 
+
 ######## Deployment Configuration ##########
 # The following apply to deployPortletApp, deploy-war, and deploy-ear targets
 
@@ -47,28 +48,3 @@ cleanShared=false
 
 # Prompt the user before running ant tasks that could modify the database
 prodPrompt=false
-
-#==================== Maven Filtering ========================
-# You can use this file to manage environment-specific settings and supply them 
-# to the appropriate locations at build time.  This process uses a Maven feature 
-# called "Filtering" (http://maven.apache.org/shared/maven-filtering/).
-#
-# Place filter tokens for environment-specific settings in configuration files, 
-# then provide values for those tokens below.  NOTE:  Files with filter tokens 
-# MUST be listed in the <includes> section for filtering in the appropriate 
-# pom.xml file.
-
-# Use 'filters.file' to override the location of the properties file for 
-# Maven filtering.  The specified location should be a RELATIVE PATH.  If not 
-#specified, this file (build.properties or build.{env}.properties) will be used.
-#filters.file=filters/prod.properties
-
-## EXAMPLES ##
-
-## Database Connection Settings (Uncomment the Maven Filters section in rdbm.properties)
-#environment.build.hibernate.connection.driver_class=org.hsqldb.jdbcDriver
-#environment.build.hibernate.connection.url=jdbc:hsqldb:hsql://localhost:8887
-#environment.build.hibernate.connection.username=sa
-#environment.build.hibernate.connection.password=
-#environment.build.hibernate.dialect=org.hibernate.dialect.HSQLDialect
- 
