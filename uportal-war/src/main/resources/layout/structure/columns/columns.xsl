@@ -60,6 +60,16 @@
     </xsl:if>
 
     <header>
+      <xsl:for-each select="child::folder[@type='header']/descendant::channel">
+        <channel-header ID="{@ID}"/>
+      </xsl:for-each>
+      <xsl:for-each select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
+        <channel-header ID="{@ID}"/>
+      </xsl:for-each>
+      <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
+        <channel-header ID="{@ID}"/>
+      </xsl:for-each>
+      
       <xsl:for-each select="child::folder[@type='header']">
           <xsl:copy-of select=".//channel"/>
       </xsl:for-each>

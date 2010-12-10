@@ -57,7 +57,12 @@ public interface IPortletExecutionManager {
     public void startPortletHeadRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
 
     /**
-     * Starts the specified portlet head rendering, returns immediately.
+     * Initiates the rendering worker for the portlet's HEAD output.
+     * Returns immediately.
+     * 
+     * @param portletWindowId
+     * @param request
+     * @param response
      */
     public void startPortletHeadRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
@@ -67,7 +72,12 @@ public interface IPortletExecutionManager {
     public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
 
     /**
-     * Starts the specified portlet markup rendering, returns immediately.
+     * Initiates the rendering worker for the portlet's BODY output.
+     * Returns immediately.
+     * 
+     * @param portletWindowId
+     * @param request
+     * @param response
      */
     public void startPortletRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
@@ -80,15 +90,42 @@ public interface IPortletExecutionManager {
     public void doPortletServeResource(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
     /**
+     * @see #isPortletRenderHeaderRequested(IPortletWindowId, HttpServletRequest, HttpServletResponse)
+     */
+    public boolean isPortletRenderHeaderRequested(String subscribeId, HttpServletRequest request, HttpServletResponse response);
+    
+    /**
+     * @return true if the specified portlet been requested to render it's output for the HEAD during this request.
+     */
+    public boolean isPortletRenderHeaderRequested(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+    
+    /**
      * @see #isPortletRenderRequested(IPortletWindowId, HttpServletRequest, HttpServletResponse)
      */
     public boolean isPortletRenderRequested(String subscribeId, HttpServletRequest request, HttpServletResponse response);
     
     /**
-     * @return true if the specified portlet been requested to render during this request.
+     * @return true if the specified portlet been requested to render it's output for the BODY during this request.
      */
     public boolean isPortletRenderRequested(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
+    /**
+     * @see #getPortletHeadOutput(IPortletWindowId, HttpServletRequest, HttpServletResponse)
+     * @param subscribeId
+     * @param request
+     * @param response
+     * @return the HEAD output for the specified portlet
+     */
+    public String getPortletHeadOutput(String subscribeId, HttpServletRequest request, HttpServletResponse response);
+    
+    /**
+     * 
+     * @param portletWindowId
+     * @param request
+     * @param response
+     * @return the HEAD output for the specified portlet
+     */
+    public String getPortletHeadOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
     /**
      * @see #outputPortlet(IPortletWindowId, HttpServletRequest, HttpServletResponse, Writer)

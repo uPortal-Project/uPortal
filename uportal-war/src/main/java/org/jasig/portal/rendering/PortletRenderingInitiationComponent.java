@@ -110,12 +110,12 @@ public class PortletRenderingInitiationComponent extends StAXPipelineComponentWr
                 	 final Attribute idAttribute = startElement.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
                      final String id = idAttribute.getValue();
 
-                     if (!portletExecutionManager.isPortletRenderRequested(id, this.request, this.response)) {
+                     if (!portletExecutionManager.isPortletRenderHeaderRequested(id, this.request, this.response)) {
                          portletExecutionManager.startPortletHeadRender(id, this.request, this.response);
                          logger.debug("Initiated portlet head rendering for subscribeId: {}", id);
                      }
                      else {
-                         logger.debug("Portlet already rendered for subscribeId: {}", id);
+                         logger.debug("Portlet header already rendered for subscribeId: {}", id);
                      }
                 }
             } 

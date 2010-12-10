@@ -27,6 +27,8 @@ import org.jasig.portal.character.stream.FilteringCharacterEventReader;
 import org.jasig.portal.character.stream.events.CharacterDataEventImpl;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.character.stream.events.PortletContentPlaceholderEvent;
+import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEvent;
+import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEventImpl;
 import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
 import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.utils.cache.CacheKey;
@@ -84,6 +86,14 @@ public class PortletRenderingIncorporationComponent extends CharacterPipelineCom
         @Override
         protected CharacterEvent filterEvent(CharacterEvent event, boolean peek) {
             switch (event.getEventType()) {
+            	case PORTLET_HEADER: {
+            		final PortletHeaderPlaceholderEvent headerPlaceholderEvent = (PortletHeaderPlaceholderEvent) event;
+            		final String subscribeId = headerPlaceholderEvent.getPortletSubscribeId();
+            		
+            		final String output = portletExecutionManager.getPortletHeadOutput(subscribeId, this.request, this.response);
+            		
+            		return new CharacterDataEventImpl(output);
+            	}
                 case PORTLET_CONTENT: {
                     final PortletContentPlaceholderEvent contentPlaceholderEvent = (PortletContentPlaceholderEvent)event;
                     final String subscribeId = contentPlaceholderEvent.getPortletSubscribeId();

@@ -77,9 +77,15 @@ import org.springframework.web.util.WebUtils;
  */
 @Service("portletExecutionManager")
 public class PortletExecutionManager implements ApplicationEventPublisherAware, IPortletExecutionManager {
-    private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
+    private static final String PORTLET_HEADER_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_HEADER_RENDERING_MAP";
+	private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
     
     protected static final String SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP = PortletExecutionManager.class.getName() + ".PORTLET_FAILURE_CAUSE_MAP";
+    
+    /**
+     * 'javax.portlet.renderHeaders' is the name of a container runtime option a JSR-286 portlet can enable to trigger header output
+     */
+    protected static final String PORTLET_RENDER_HEADERS_OPTION = "javax.portlet.renderHeaders";
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -292,23 +298,29 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 	@Override
 	public void startPortletHeadRender(IPortletWindowId portletWindowId,
 			HttpServletRequest request, HttpServletResponse response) {
-		IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-		PortletDefinition portletDefinition = portletWindow.getPortletDefinition();
-		ContainerRuntimeOption renderHeaderOption = portletDefinition.getContainerRuntimeOption("javax.portlet.renderHeaders");
-		if(renderHeaderOption != null && renderHeaderOption.getValues().contains(Boolean.TRUE.toString())) {
-			final IPortletRenderExecutionWorker portletRenderExecutionWorker = this.portletWorkerFactory.createRenderHeaderWorker(request, response, portletWindowId);
-	    	
-	    	portletRenderExecutionWorker.submit();
-	    	//TODO do the header workers go in the renderingMap?
-	    	final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
-	        portletRenderingMap.put(portletWindowId, portletRenderExecutionWorker);
-	        
+		if(doesPortletNeedHeaderWorker(portletWindowId, request)) {
+			this.startPortletHeaderRenderInternal(portletWindowId, request, response);
 		} else {
 			this.logger.debug("ignoring startPortletHeadRender request since containerRuntimeOption is not present for portletWindowId " + portletWindowId);
 		}
 	}
 
-	
+	/**
+	 * 
+	 * @param portletWindowId
+	 * @param request
+	 * @return
+	 */
+	protected boolean doesPortletNeedHeaderWorker(IPortletWindowId portletWindowId, HttpServletRequest request) {
+		IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+		PortletDefinition portletDefinition = portletWindow.getPortletDefinition();
+		ContainerRuntimeOption renderHeaderOption = portletDefinition.getContainerRuntimeOption(PORTLET_RENDER_HEADERS_OPTION);
+		boolean result = false;
+		if(renderHeaderOption != null) {
+			result = renderHeaderOption.getValues().contains(Boolean.TRUE.toString());
+		}
+		return result;
+	}
 
 	/* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletRender(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -375,6 +387,41 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 	
 
 	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletHeaderRenderRequested(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	public boolean isPortletRenderHeaderRequested(
+			IPortletWindowId portletWindowId, HttpServletRequest request,
+			HttpServletResponse response) {
+		final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletRenderingMap = this.getPortletHeaderRenderingMap(request);
+        final IPortletRenderExecutionWorker tracker = portletRenderingMap.get(portletWindowId);
+        
+        return tracker != null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletHeaderRenderRequested(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	public boolean isPortletRenderHeaderRequested(String subscribeId,
+			HttpServletRequest request, HttpServletResponse response) {
+		final IPortletWindow portletWindow;
+		try {
+			portletWindow = this.getDefaultPortletWindow(subscribeId, request);
+		}
+		catch (NotAPortletException nape) {
+			this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
+			return false;
+		}
+		catch (DataRetrievalFailureException e) {
+			this.logger.warn("Failed to test if portlet should render header: " + subscribeId, e);
+			return false;
+		}
+
+		return this.isPortletRenderHeaderRequested(portletWindow.getPortletWindowId(), request, response);
+	}
+
+	/* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletRenderRequested(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
@@ -388,7 +435,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
             return false;
         }
         catch (DataRetrievalFailureException e) {
-            this.logger.warn("Failed to start portlet rendering: " + subscribeId, e);
+            this.logger.warn("Failed to test if portlet should render body: " + subscribeId, e);
             return false;
         }
         
@@ -407,6 +454,53 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     }
     
     /* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletHeadOutput(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+    @Override
+    public String getPortletHeadOutput(IPortletWindowId portletWindowId,
+    		HttpServletRequest request, HttpServletResponse response) {
+    	if(doesPortletNeedHeaderWorker(portletWindowId, request)) {
+    		final IPortletRenderExecutionWorker tracker = getRenderedPortletHeader(portletWindowId, request, response);
+    		// TODO need a means for a separate render timeout for rendering portlet header content
+    		final int timeout = getPortletRenderTimeout(portletWindowId, request);
+    		try {
+    			final String output = tracker.getOutput(timeout);
+    			return output == null ? "" : output;
+    		} catch (Exception e) {
+    			logger.error("failed to render header output for " + portletWindowId, e);
+    			return "";
+    		}
+    	} else {
+    		logger.debug(portletWindowId + " does not produce output for header");
+    		return "";
+    	}
+    }
+
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletHeadOutput(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	public String getPortletHeadOutput(String subscribeId,
+			HttpServletRequest request, HttpServletResponse response) {
+		final IPortletWindow portletWindow;
+		try {
+			portletWindow = this.getDefaultPortletWindow(subscribeId, request);
+		}
+		catch (NotAPortletException nape) {
+			this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
+			return "";
+		}
+		catch (DataRetrievalFailureException e) {
+			this.logger.warn("Failed to output portlet: " + subscribeId, e);
+			return "";
+		}
+
+		final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+
+		return this.getPortletHeadOutput(portletWindowId, request, response);
+	}
+
+	/* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletOutput(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
@@ -435,7 +529,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
      */
     @Override
     public String getPortletOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-    	final IPortletRenderExecutionWorker tracker = getRenderedPortlet(portletWindowId, request, response);
+    	final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
         final int timeout = getPortletRenderTimeout(portletWindowId, request);
 
 		try {
@@ -456,13 +550,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
             }
 		}
     }
-    /**
-     * 
-     * @param failedPortletWindowId
-     * @param request
-     * @param response
-     * @return
-     */
+
     
     
     /* (non-Javadoc)
@@ -499,7 +587,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         final IChannelParameter disableDynamicTitle = channelDefinition.getParameter("disableDynamicTitle");
         
         if (disableDynamicTitle == null || !Boolean.parseBoolean(disableDynamicTitle.getValue())) {
-            final IPortletRenderExecutionWorker tracker = getRenderedPortlet(portletWindowId, request, response);
+            final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
             final int timeout = getPortletRenderTimeout(portletWindowId, request);
             
     		try {
@@ -543,17 +631,44 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         return (int)TimeUnit.MINUTES.toMillis(5);
     }
 
-    protected IPortletRenderExecutionWorker getRenderedPortlet(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+    protected IPortletRenderExecutionWorker getRenderedPortletHeader(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+    	final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletHeaderRenderingMap = this.getPortletHeaderRenderingMap(request);
+    	IPortletRenderExecutionWorker portletHeaderRenderWorker = portletHeaderRenderingMap.get(portletWindowId);
+    	if (portletHeaderRenderWorker == null) {
+            portletHeaderRenderWorker = this.startPortletHeaderRenderInternal(portletWindowId, request, response);
+        }
+        return portletHeaderRenderWorker;
+    }
+    protected IPortletRenderExecutionWorker getRenderedPortletBody(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
         final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
         IPortletRenderExecutionWorker tracker = portletRenderingMap.get(portletWindowId);
         if (tracker == null) {
             tracker = this.startPortletRenderInternal(portletWindowId, request, response);
+            
         }
         return tracker;
     }
     
     /**
-     * create and submit the rendering job to the thread pool
+     * create and submit the portlet header rendering job to the thread pool
+     * 
+     * @param portletWindowId
+     * @param request
+     * @param response
+     * @return
+     */
+    protected IPortletRenderExecutionWorker startPortletHeaderRenderInternal(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+    	IPortletRenderExecutionWorker portletHeaderRenderWorker = this.portletWorkerFactory.createRenderHeaderWorker(request, response, portletWindowId);
+    	portletHeaderRenderWorker.submit();
+    	
+    	final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletHeaderRenderingMap = this.getPortletHeaderRenderingMap(request);
+    	portletHeaderRenderingMap.put(portletWindowId, portletHeaderRenderWorker);
+           
+        return portletHeaderRenderWorker;
+    }
+    
+    /**
+     * create and submit the portlet content rendering job to the thread pool
      */
     protected IPortletRenderExecutionWorker startPortletRenderInternal(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
     	// first check to see if there is a Throwable in the session for this IPortletWindowId
@@ -576,6 +691,20 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         return portletRenderExecutionWorker;
     }
 
+    /**
+     * Returns a request attribute scoped Map of portlets that are rendering for the current request.
+     */
+    @SuppressWarnings("unchecked")
+    protected Map<IPortletWindowId, IPortletRenderExecutionWorker> getPortletHeaderRenderingMap(HttpServletRequest request) {
+        synchronized (PortalWebUtils.getRequestAttributeMutex(request)) {
+            Map<IPortletWindowId, IPortletRenderExecutionWorker> portletRenderingMap = (Map<IPortletWindowId, IPortletRenderExecutionWorker>)request.getAttribute(PORTLET_HEADER_RENDERING_MAP);
+            if (portletRenderingMap == null) {
+                portletRenderingMap = new ConcurrentHashMap<IPortletWindowId, IPortletRenderExecutionWorker>();
+                request.setAttribute(PORTLET_HEADER_RENDERING_MAP, portletRenderingMap);
+            }
+            return portletRenderingMap;
+        }
+    }
     /**
      * Returns a request attribute scoped Map of portlets that are rendering for the current request.
      */

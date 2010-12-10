@@ -216,7 +216,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 
         //Execute the action, 
         if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Rendering portlet for window '" + portletWindow + "'");
+            this.logger.debug("Rendering portlet body for window '" + portletWindow + "'");
         }
 
         final long start = System.currentTimeMillis();
@@ -262,7 +262,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 
         //Execute the action, 
         if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Rendering portlet for window '" + portletWindow + "'");
+            this.logger.debug("Rendering portlet header for window '" + portletWindow + "'");
         }
 
         final long start = System.currentTimeMillis();

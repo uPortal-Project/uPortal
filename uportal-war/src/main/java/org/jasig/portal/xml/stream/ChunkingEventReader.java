@@ -147,8 +147,8 @@ public class ChunkingEventReader extends BaseXMLEventReader {
 
     private XMLEvent tryChunking(StartElement startElement) throws XMLStreamException {
         final QName elementName = startElement.getName();
-        final CharacterEventSource characterEventSource = this.chunkingElements.get(elementName.getLocalPart());
-        if (characterEventSource != null) {
+        CharacterEventSource characterEventSource = this.chunkingElements.get(elementName.getLocalPart());
+        while (characterEventSource != null) {
             final XMLEvent previousEvent = this.getPreviousEvent();
             if (previousEvent != null && previousEvent.isStartElement()) {
                 this.captureEvent = startElement;
@@ -167,7 +167,14 @@ public class ChunkingEventReader extends BaseXMLEventReader {
             this.characterEvents.addAll(generatedCharacterEvents);
             
             //Read the next event off the reader
-            return parent.nextEvent();
+            final XMLEvent nextEvent = parent.nextEvent();
+            if (nextEvent.isStartElement()) {
+                startElement = nextEvent.asStartElement();
+                characterEventSource = this.chunkingElements.get(elementName.getLocalPart());
+            }
+            else {
+                return nextEvent;
+            }
         }
         
         return startElement;
