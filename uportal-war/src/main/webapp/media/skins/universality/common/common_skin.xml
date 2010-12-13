@@ -58,13 +58,13 @@
   <js>javascript/uportal/up-util.js</js>
   <js>javascript/uportal/ajax-preferences-jquery.js</js>
   <js>javascript/uportal/up-portlet-registry.js</js>
+  <js>javascript/uportal/up-entity-registry.js</js>
   <js>javascript/uportal/up-portlet-browser.js</js>
   <js>javascript/uportal/up-layout-draggable-manager.js</js>
   <js>javascript/uportal/up-layout-gallery.js</js>
   <js>javascript/uportal/up-fragment-permissions-manager.js</js>
   <js>javascript/uportal/up-subscription-browser.js</js>
   <js>javascript/uportal/up-layout-selector.js</js>
-  <js>javascript/uportal/up-group-browser.js</js>
   <js>javascript/uportal/up-skin-selector.js</js>
   <js>javascript/uportal/up-tab-manager.js</js>
   <js>javascript/uportal/up-layout-persistence.js</js>
