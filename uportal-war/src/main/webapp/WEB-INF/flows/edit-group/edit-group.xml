@@ -126,6 +126,11 @@
     
     <!-- REVIEW GROUP view -->
     <view-state id="reviewGroup">
+        <on-entry>
+            <set name="flowScope.canEdit" value="!completed or groupAdministrationHelper.canEditGroup(person, group.key)"/>
+            <set name="flowScope.canDelete" value="completed and groupAdministrationHelper.canDeleteGroup(person, group.key)"/>
+            <set name="flowScope.canCreateMember" value="completed and groupAdministrationHelper.canCreateMemberGroup(person, group.key)"/>
+        </on-entry>
         
         <!-- edit transitions -->
         <transition on="editDetails" to="editDetails"/>

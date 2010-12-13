@@ -23,12 +23,15 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class GroupAdministrationHelper {
+	
+	public static final String GROUPS_OWNER = "UP_GROUPS";
+	public static final String CREATE_PERMISSION = "CREATE_GROUP";
+	public static final String DELETE_PERMISSION = "DELETE_GROUP";
+	public static final String EDIT_PERMISSION = "EDIT_GROUP";
+	public static final String VIEW_PERMISSION = "VIEW_GROUP";
 	
 	protected final Log log = LogFactory.getLog(getClass()); 
 
@@ -93,19 +102,27 @@ public class GroupAdministrationHelper {
 	 * Delete a group from the group store
 	 * 
 	 * @param key key of the group to be deleted
+	 * @param user performing the delete operation
 	 */
 	public void deleteGroup(String key, IPerson deleter) {
 
-		// TODO: check permissions
+        if (!canDeleteGroup(deleter, key)) {
+        	// TODO: how should this permission error be handled?
+			throw new RuntimeException("User [" + deleter
+					+ "] does not have permission to remove group with key "
+					+ key);
+        }
 		
-		log.debug("Deleting group with key " + key);
+		log.info("Deleting group with key " + key);
 
 		// find the current version of this group entity
 		IEntityGroup group = GroupService.findGroup(key);
 		
 		// remove this group from the membership list of any current parent
 		// groups
-		for (Iterator iter = group.getContainingGroups(); iter.hasNext();) {
+		@SuppressWarnings("unchecked")
+		Iterator<IEntityGroup> iter = (Iterator<IEntityGroup>) group.getContainingGroups();
+		while (iter.hasNext()) {
 			IEntityGroup parent = (IEntityGroup) iter.next();
 			parent.removeMember(group);
 			parent.updateMembers();
@@ -124,7 +141,12 @@ public class GroupAdministrationHelper {
 	 */
 	public void updateGroupDetails(GroupForm groupForm, IPerson updater) {
 
-		// TODO: Check permissions of the updater
+        if (!canEditGroup(updater, groupForm.getKey())) {
+        	// TODO: how should this permission error be handled?
+			throw new RuntimeException("User [" + updater
+					+ "] does not have permission to update group with key "
+					+ groupForm.getKey());
+        }
 
 		if (log.isDebugEnabled()) {
 			log.debug("Updating group for group form [" + groupForm.toString() + "]");
@@ -149,7 +171,12 @@ public class GroupAdministrationHelper {
 	 */
 	public void updateGroupMembers(GroupForm groupForm, IPerson updater) {
 
-		// TODO: Check permissions of the updater
+        if (!canEditGroup(updater, groupForm.getKey())) {
+        	// TODO: how should this permission error be handled?
+			throw new RuntimeException("User [" + updater
+					+ "] does not have permission to update group with key "
+					+ groupForm.getKey());
+        }
 
 		if (log.isDebugEnabled()) {
 			log.debug("Updating group members for group form [" + groupForm.toString() + "]");
@@ -195,7 +222,12 @@ public class GroupAdministrationHelper {
 	 */
 	public void createGroup(GroupForm groupForm, JsonEntityBean parent, IPerson creator) {
 		
-		// TODO: Check permissions of the creator
+        if (!canCreateMemberGroup(creator, parent.getId())) {
+        	// TODO: how should this permission error be handled?
+			throw new RuntimeException("User [" + creator
+					+ "] does not have permission to create groups under group with key "
+					+ parent.getId());
+        }
 
 		if (log.isDebugEnabled()) {
 			log.debug("Creating new group for group form ["
@@ -238,5 +270,45 @@ public class GroupAdministrationHelper {
 		parentGroup.updateMembers();
 
 	}
-	
+
+    public boolean canEditGroup(IPerson currentUser, String target) {
+        
+        EntityIdentifier ei = currentUser.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        // TODO create new user editing permission
+        return (ap.hasPermission(GROUPS_OWNER, EDIT_PERMISSION, target));
+    }
+    
+    public boolean canDeleteGroup(IPerson currentUser, String target) {
+        
+        EntityIdentifier ei = currentUser.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        return (ap.hasPermission(GROUPS_OWNER, DELETE_PERMISSION, target));
+    }
+    
+    public boolean canCreateMemberGroup(IPerson currentUser, String target) {
+        
+        EntityIdentifier ei = currentUser.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        return (ap.hasPermission(GROUPS_OWNER, CREATE_PERMISSION, target));
+    }
+    
+    public boolean canViewGroup(IPerson currentUser, String target) {
+        
+        EntityIdentifier ei = currentUser.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        return (ap.hasPermission(GROUPS_OWNER, VIEW_PERMISSION, target));
+    }
+    
+    /**
+     * Get the authoriztaion principal matching the supplied IPerson.
+     * 
+     * @param person
+     * @return
+     */
+    protected IAuthorizationPrincipal getPrincipalForUser(final IPerson person) {
+        final EntityIdentifier ei = person.getEntityIdentifier();
+        return AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+    }
+
 }

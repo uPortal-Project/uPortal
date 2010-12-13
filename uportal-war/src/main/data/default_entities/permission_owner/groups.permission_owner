@@ -26,16 +26,22 @@
   <desc>Permissions controlling uPortal group and category viewing and management</desc>
   <activities>
     <activity>
-        <name>Add and remove groups</name>
-        <fname>ADD/REMOVE</fname>
-        <desc>Create and delete uPortal groups</desc>
+        <name>Create group</name>
+        <fname>CREATE_GROUP</fname>
+        <desc>Create a uPortal groups</desc>
 	  	<targetProvider>allGroupsTargetProvider</targetProvider>
     </activity>
     <activity>
-        <name>Select a group</name>
-        <fname>SELECT</fname>
-        <desc></desc>
-	  	<targetProvider>allGroupsTargetProvider</targetProvider>
+        <name>Remove groups</name>
+        <fname>DELETE_GROUP</fname>
+        <desc>Delete a uPortal group</desc>
+        <targetProvider>allGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Edit group</name>
+        <fname>EDIT_GROUP</fname>
+        <desc>Edit a uPortal group's details and membership list</desc>
+        <targetProvider>allGroupsTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>View a group</name>

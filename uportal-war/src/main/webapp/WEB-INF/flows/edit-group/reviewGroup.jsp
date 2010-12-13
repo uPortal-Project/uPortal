@@ -65,10 +65,16 @@
         <div class="details">Created by ${ fn:escapeXml(group.creatorId )}</div>
         <div class="toolbar">
         	<ul>
-            	<li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
+                <c:if test="${ canEdit }">
+                    <li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
+                </c:if>
                 <c:if test="${ !isNew }">
                     <li><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
+                </c:if>
+                <c:if test="${ canDelete }">
                     <li><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
+                </c:if>
+                <c:if test="${ canCreateMember }">
                     <li><a class="button" href="${ createMemberUrl }"><spring:message code="create.member.group"/></a></li>
                 </c:if>
             </ul>
