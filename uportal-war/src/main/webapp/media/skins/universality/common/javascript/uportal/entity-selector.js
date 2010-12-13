@@ -79,7 +79,7 @@ var up = up || {};
         titlebar = that.locate("entityBrowserTitlebar");
         link = that.locate("selectEntityLink");
         link.unbind("click");
-        entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        entity = that.registry.getEntity(getTypeFromKey(key), getKey(key));
         
         // Highlight titlebar.
         if ($.inArray(currentEntityKey, that.options.selected) < 0) {
@@ -116,7 +116,7 @@ var up = up || {};
         // Cache & reset DOM references.
         selectionBasket = that.locate("selectionBasket");
         buttonPrimary = that.locate("buttonPrimary");
-        entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        entity = that.registry.getEntity(getTypeFromKey(key), getKey(key));
         newselections = [];
         
         // Check component selection mode.
@@ -166,7 +166,7 @@ var up = up || {};
         // Cache DOM elements.
         selectionBasket = that.locate("selectionBasket");
         buttonPrimary = that.locate("buttonPrimary");
-        entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        entity = that.registry.getEntity(getTypeFromKey(key), getKey(key));
         
         // Check component selection mode.
         switch (that.selectMultiple) {
@@ -286,7 +286,7 @@ var up = up || {};
         var entity, currentEntityName, browsingInclude, entityBrowserContent, memberList, browsingResultNoMembers;
         
         // Cache.
-        entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        entity = that.registry.getEntity(getTypeFromKey(key), getKey(key));
         that.currentEntity = entity;
         currentEntityName = that.locate("currentEntityName");
         browsingInclude = that.locate("browsingInclude");
@@ -350,7 +350,7 @@ var up = up || {};
      */
     var itemSelectionHandler = function (that, key) {
         // Cache.
-        var entity = that.entityBrowser.getEntity(getTypeFromKey(key), getKey(key));
+        var entity = that.registry.getEntity(getTypeFromKey(key), getKey(key));
         
         // Selection.
         if ($.inArray(key, that.options.selected) !== -1) {
@@ -380,7 +380,7 @@ var up = up || {};
         }//end:if.
         
         // Cache.
-        entities = that.entityBrowser.searchEntities(that.options.entityTypes, searchTerm);
+        entities = that.registry.searchEntities(that.options.entityTypes, searchTerm);
         list = that.searchDropDown.find(that.options.selectors.searchResults);
         searchResultsNoMembers = that.locate("searchResultsNoMembers");
         list.html("");
@@ -499,13 +499,8 @@ var up = up || {};
         that = fluid.initView("up.entityselection", container, options);
         that.selectMultiple = that.options.selectMultiple;
         that.searchDropDown = that.locate("searchDropDown");
-        
-        // Assign a new entity browser for retrieving groups, 
-        // categories and person information from the portal.
-        that.entityBrowser = $.groupbrowser({
-            findEntityUrl: that.options.findEntityUrl,
-            searchEntitiesUrl: that.options.searchEntitiesUrl
-        });
+
+        that.registry = fluid.initSubcomponent(that, "entityRegistry", [container, fluid.COMPONENT_OPTIONS]);
         
         /**
          * Public. Checks passed array's length property.
@@ -524,10 +519,11 @@ var up = up || {};
     
     // Defaults.
     fluid.defaults("up.entityselection", {
+        entityRegistry: {
+            type: "up.EntityRegistry"
+        },
         entityTypes: [],
         selected: [],
-        findEntityUrl: "mvc/findEntity",
-        searchEntitiesUrl: "mvc/searchEntities",
         initialFocusedEntity: 'group:local.0',
         selectMultiple: true,
         selectors: {

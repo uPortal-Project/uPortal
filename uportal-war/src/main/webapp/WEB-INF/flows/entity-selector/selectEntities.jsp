@@ -286,8 +286,9 @@
             
             $(document).ready(function(){
                 up.entityselection("#${n}chooseGroupsBody", {
-                    findEntityUrl: "<c:url value="/api/findEntity"/>",
-                    searchEntitiesUrl: "<c:url value="/api/searchEntities"/>",
+                    entityRegistry: {
+                        options: { entitiesUrl: "<c:url value="/api/entities"/>" }
+                    },
                     entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
                     selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
                     initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',
