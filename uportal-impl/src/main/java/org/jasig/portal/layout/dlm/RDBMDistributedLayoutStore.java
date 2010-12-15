@@ -617,7 +617,9 @@ public class RDBMDistributedLayoutStore
                         "hidden", 
                         "immutable",
                         "ID",
-                        "dlm:plfID"
+                        "dlm:plfID",
+                        "dlm:moveAllowed",
+                        "dlm:deleteAllowed"
                     });
         Iterator<org.dom4j.Element> channels = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel").iterator();
         while (channels.hasNext()) {
@@ -627,7 +629,7 @@ public class RDBMDistributedLayoutStore
             for (String aName : channelAttributeWhitelist) {
                 org.dom4j.Attribute a = (org.dom4j.Attribute) oldCh.selectSingleNode("@" + aName);
                 if (a != null) {
-                    newCh.addAttribute(a.getName(), a.getValue());
+                    newCh.addAttribute(a.getQName(), a.getValue());
                 }
             }
             parent.elements().add(parent.elements().indexOf(oldCh), newCh);
