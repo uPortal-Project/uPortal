@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="cas-proxy-test-portlet">
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
-        <property name="context-root" value="cas-proxy-test-portlet"/>
-        <property name="java-output-path" value="/org.jasig.portal.portlets-overlay.cas-proxy-test-portlet-3.3.0-SNAPSHOT/target/classes"/>
-    </wb-module>
-</project-modules>
