@@ -68,7 +68,7 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 	 * @param portletEntityDao the portletEntityDao to set
 	 */
 	@Autowired
-	public void setPortletEntityDao(IPortletEntityDao portletEntityDao) {
+	public void setPortletEntityDao(@Qualifier("persistence") IPortletEntityDao portletEntityDao) {
 		this.portletEntityDao = portletEntityDao;
 	}
 
