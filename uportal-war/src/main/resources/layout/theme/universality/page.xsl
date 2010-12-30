@@ -112,6 +112,10 @@
             fluid = null;
             fluid_1_2 = null;
         </script>
+        <xsl:for-each select="/layout/header/channel-header">
+        	 <xsl:copy-of select="."/>
+        </xsl:for-each>
+       
       </head>
       
       <body id="portal" class="up {$FLUID_THEME_CLASS}">
