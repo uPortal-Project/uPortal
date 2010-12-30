@@ -1,0 +1,42 @@
+
+<portlet-definition script="classpath://org/jasig/portal/io/import-portlet_v3-3.crn">
+  <title>The Chronicle: Wired Campus</title>
+  <name>The Chronicle: Wired Campus</name>
+  <fname>chronicle-wired</fname>
+  <desc>Top stories from The Chronicle of Higher Education: Wired Campus Edition</desc>
+  <type>RSS</type>
+  <applicationId>/NewsReaderPortlet</applicationId>
+  <portletName>single-feed-news</portletName>
+  <isFramework>false</isFramework>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <categories>
+    <category>Entertainment</category>
+    <category>News</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/internet-news-reader.png</value>
+    </parameter>
+  </parameters>
+  <portletPreferences>
+    <portletPreference> 
+      <name>name</name>
+      <values><value>The Chronicle: Wired Campus</value></values>
+    </portletPreference>
+    <portletPreference> 
+      <name>url</name>
+      <values><value>http://chronicle.com/blog/Wired-Campus/5/rss</value></values>
+    </portletPreference>
+    <portletPreference> 
+      <name>summaryView</name>
+      <values><value>flyout</value></values>
+    </portletPreference>
+  </portletPreferences>
+</portlet-definition>

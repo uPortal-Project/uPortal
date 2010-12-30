@@ -1,0 +1,31 @@
+
+<portlet-definition script="classpath://org/jasig/portal/io/import-portlet_v3-3.crn">
+  <title>Site map</title>
+  <name>Site map</name>
+  <fname>layout-sitemap</fname>
+  <desc>A quick view of all your tabs and channels</desc>
+  <type>Portlet</type>
+  <portletName>Sitemap</portletName>
+  <isFramework>true</isFramework>
+  <timeout>30000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <categories>
+    <category>uPortal</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
+    </parameter>
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-system-windows.png</value>
+    </parameter>
+  </parameters>
+  <portletPreferences/>
+</portlet-definition>

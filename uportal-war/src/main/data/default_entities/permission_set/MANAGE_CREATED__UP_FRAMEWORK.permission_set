@@ -31,6 +31,6 @@
     <group>All Categories</group> 
   </target>
   <target permission-type="GRANT"> 
-    <literal>ALL_CHANNELS</literal> 
+    <literal>ALL_PORTLETS</literal> 
   </target>
 </permission-set>

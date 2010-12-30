@@ -1,0 +1,46 @@
+
+<portlet-definition script="classpath://org/jasig/portal/io/import-portlet_v3-3.crn">
+  <title>Who's Online</title>
+  <name>Who's Online</name>
+  <fname>whos-online</fname>
+  <desc>Mockup of a Who's Online portlet.</desc>
+  <type>CMS</type>
+  <applicationId>/SimpleContentPortlet</applicationId>
+  <portletName>cms</portletName>
+  <isFramework>false</isFramework>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <categories>
+    <category>Information</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
+    </parameter>
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/text-html.png</value>
+    </parameter>
+  </parameters>
+  <portletPreferences>
+    <portletPreference>
+        <name>content</name>
+        <values><value>
+            <![CDATA[
+                <img src="/uPortal/media/org/jasig/portal/channels/webproxy/whosonline.png" 
+                alt="uP3 Mock My Courses" border="0" />
+                
+                <p>Mock of Who's Online.  This is a sample screen for 
+                demonstration purposes only.</p>
+                
+            ]]>
+        </value></values>
+    </portletPreference>
+  </portletPreferences>
+</portlet-definition>

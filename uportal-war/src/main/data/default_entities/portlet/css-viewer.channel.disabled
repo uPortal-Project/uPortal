@@ -1,0 +1,33 @@
+
+<portlet-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
+  <title>CSS Viewer</title>
+  <name>CSS Viewer</name>
+  <fname>css-viewer</fname>
+  <desc>CSS Viewer channel</desc>
+  <type>XML SSL</type>
+  <timeout>5000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>Y</hashelp>
+  <hasabout>N</hasabout>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Portal Developers</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>sslUri</name>  
+      <value>CGenericXSLT/CSSViewer/CSSViewer.ssl</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>xmlUri</name>  
+      <value>CGenericXSLT/CSSViewer/cssViewer.xml</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+  <portletPreferences/>
+</portlet-definition>

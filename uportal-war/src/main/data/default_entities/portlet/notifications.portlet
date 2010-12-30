@@ -1,0 +1,45 @@
+
+<portlet-definition script="classpath://org/jasig/portal/io/import-portlet_v3-3.crn">
+  <title>My Notifications</title>
+  <name>My Notifications</name>
+  <fname>notifications</fname>
+  <desc>Mockup notifications portlet.</desc>
+  <type>CMS</type>
+  <applicationId>/SimpleContentPortlet</applicationId>
+  <portletName>cms</portletName>
+  <isFramework>false</isFramework>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <categories>
+    <category>Information</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
+    </parameter>
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-desktop-multimedia.png</value>
+    </parameter>
+  </parameters>
+  <portletPreferences>
+    <portletPreference>
+        <name>content</name>
+        <values><value>
+            <![CDATA[
+                <img src="/uPortal/media/org/jasig/portal/channels/webproxy/notifications.png" 
+                alt="uP3 Mock Notifications" border="0" />
+                <p>Mock of the <a href="http://www.unicon.net/node/675">Toro 
+                Notifications Portlet</a> by <a href="http://www.unicon.net/">
+                Unicon</a>.  This is a sample screen for demonstration purposes only.</p>
+            ]]>
+        </value></values>
+    </portletPreference>
+  </portletPreferences>
+</portlet-definition>

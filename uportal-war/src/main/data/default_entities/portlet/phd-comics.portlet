@@ -1,0 +1,45 @@
+
+<portlet-definition script="classpath://org/jasig/portal/io/import-portlet_v3-3.crn">
+  <title>PHD Comics</title>
+  <name>PHD Comics</name>
+  <fname>phd-comics</fname>
+  <desc>Latest PHD Comics strip</desc>
+  <type>RSS</type>
+  <applicationId>/NewsReaderPortlet</applicationId>
+  <portletName>single-feed-news</portletName>
+  <isFramework>false</isFramework>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <categories>
+    <category>Entertainment</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/emotes/face-smile.png</value>
+    </parameter>
+  </parameters>
+  <portletPreferences>
+    <portletPreference> 
+      <name>name</name>
+      <values><value>PhD Comics</value></values>
+    </portletPreference>
+    <portletPreference> 
+      <name>url</name>
+      <values><value>http://www.phdcomics.com/gradfeed.php</value></values>
+    </portletPreference>
+    <portletPreference> 
+      <name>summaryView</name>
+      <values><value>full</value></values>
+    </portletPreference>
+    <portletPreference> 
+      <name>maxStories</name>
+      <values><value>1</value></values>
+    </portletPreference>
+  </portletPreferences>
+</portlet-definition>

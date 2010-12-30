@@ -1,0 +1,46 @@
+
+<portlet-definition script="classpath://org/jasig/portal/io/import-portlet_v3-3.crn">
+  <title>My Courses</title>
+  <name>My Courses</name>
+  <fname>courses</fname>
+  <desc>Mock course info portlet.</desc>
+  <type>CMS</type>
+  <applicationId>/SimpleContentPortlet</applicationId>
+  <portletName>cms</portletName>
+  <isFramework>false</isFramework>
+  <timeout>10000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <categories>
+    <category>Academics</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
+    </parameter>
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/x-office-document.png</value>
+    </parameter>
+  </parameters>
+  <portletPreferences>
+    <portletPreference>
+        <name>content</name>
+        <values><value>
+            <![CDATA[
+                <img src="/uPortal/media/org/jasig/portal/channels/webproxy/mycourses.png" 
+                alt="uP3 Mock Notifications" border="0" />
+                
+                <p>Mock of the <a href="http://code.google.com/p/my-courses-portlet/">
+                My Courses Portlet</a> by <a href="http://www.unicon.net/">Unicon</a>.  
+                This is a sample screen for demonstration purposes only.</p>
+            ]]>
+        </value></values>
+    </portletPreference>
+  </portletPreferences>
+</portlet-definition>

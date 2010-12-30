@@ -28,6 +28,6 @@
   </principal>
   <activity>SUBSCRIBE_APPROVED</activity>
   <target permission-type="GRANT"> 
-    <literal>ALL_CHANNELS</literal> 
+    <literal>ALL_PORTLETS</literal> 
   </target>
 </permission-set>

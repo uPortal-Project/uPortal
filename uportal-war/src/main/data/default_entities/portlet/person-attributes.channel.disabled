@@ -1,0 +1,20 @@
+
+<portlet-definition script="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
+  <title>Person Attributes</title>
+  <name>Person Attributes</name>
+  <fname>person-attributes</fname>
+  <desc>A display of person attributes available to channels</desc>
+  <type>Custom</type>
+  <timeout>20000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <groups>
+    <group>Portal Developers</group>
+  </groups>
+  <parameters/>
+  <portletPreferences/>
+</portlet-definition>

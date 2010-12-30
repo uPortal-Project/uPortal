@@ -22,7 +22,7 @@
 
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
   <name>Finances</name>
-  <entity-type>org.jasig.portal.ChannelDefinition</entity-type>
+  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
   <creator>system</creator>
   <description>Financial Portlets</description>
 </group>
