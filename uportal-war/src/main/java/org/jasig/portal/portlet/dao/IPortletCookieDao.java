@@ -23,9 +23,12 @@ import java.util.Date;
 import javax.servlet.http.Cookie;
 
 import org.jasig.portal.portlet.om.IPortalCookie;
+import org.jasig.portal.portlet.om.IPortletCookie;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 
 /**
+ * Interface for creating/updating/deleting {@link IPortalCookie} and related {@link IPortletCookie}s.
+ * 
  * @author Nicholas Blair
  * @version $Id$
  */
@@ -64,20 +67,20 @@ public interface IPortletCookieDao {
 	 * 
 	 * @param portalCookie
 	 * @param portletEntityId
-	 * @param portletCookie
+	 * @param cookie
 	 * @return
 	 */
-	public IPortalCookie storePortletCookie(IPortalCookie portalCookie, IPortletEntityId portletEntityId, Cookie portletCookie);
+	public IPortalCookie storePortletCookie(IPortalCookie portalCookie, IPortletEntityId portletEntityId, Cookie cookie);
 	/**
 	 * Update the {@link IPortletCookie} to the specified {@link IPortalCookie} for
 	 * the {@link IPortletEntityId}.
 	 * 
 	 * @param portalCookie
 	 * @param portletEntityId
-	 * @param portletCookie
+	 * @param cookie
 	 * @return the updated {@link IPortalCookie}
 	 */
-	public IPortalCookie updatePortletCookie(IPortalCookie portalCookie, IPortletEntityId portletEntityId, Cookie portletCookie);
+	public IPortalCookie updatePortletCookie(IPortalCookie portalCookie, IPortletEntityId portletEntityId, Cookie cookie);
 	
 	/**
 	 * Remove the {@link IPortletCookie} from the specified {@link IPortalCookie} for
@@ -85,9 +88,9 @@ public interface IPortletCookieDao {
 	 * 
 	 * @param portalCookie
 	 * @param portletEntityId
-	 * @param portletCookie
+	 * @param cookie
 	 * @return the updated {@link IPortalCookie}
 	 */
-	public IPortalCookie deletePortletCookie(IPortalCookie portalCookie, IPortletEntityId portletEntityId, Cookie portletCookie);
+	public IPortalCookie deletePortletCookie(IPortalCookie portalCookie, IPortletEntityId portletEntityId, Cookie cookie);
 	
 }

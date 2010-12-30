@@ -30,8 +30,12 @@ import javax.servlet.http.Cookie;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.time.DateUtils;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
+import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
+import org.jasig.portal.portlet.om.IPortletCookie;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
@@ -51,6 +55,7 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 
 	private int portalCookieLifetimeMinutes = 60;
 	private EntityManager entityManager;
+	private IPortletEntityDao portletEntityDao;
 
 	/**
 	 * @param entityManager the entityManager to set
@@ -58,6 +63,13 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 	@PersistenceContext(unitName="uPortalPersistence")
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
+	}
+	/**
+	 * @param portletEntityDao the portletEntityDao to set
+	 */
+	@Autowired
+	public void setPortletEntityDao(IPortletEntityDao portletEntityDao) {
+		this.portletEntityDao = portletEntityDao;
 	}
 
 	/**
@@ -138,30 +150,63 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 	 * from persistence that have expired.
 	 */
 	public void purgeExpiredCookies() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#deletePortletCookie(org.jasig.portal.portlet.om.IPortalCookie, org.jasig.portal.portlet.om.IPortletEntityId, javax.servlet.http.Cookie)
 	 */
 	@Override
 	public IPortalCookie deletePortletCookie(IPortalCookie portalCookie,
-			IPortletEntityId portletEntityId, Cookie portletCookie) {
-		// TODO Auto-generated method stub
-		return null;
+			IPortletEntityId portletEntityId, Cookie cookie) {
+		IPortletEntity portletEntity = this.portletEntityDao.getPortletEntity(portletEntityId);
+		
+		IPortalCookie persisted;
+		if(this.entityManager.contains(portalCookie)) {
+			persisted = portalCookie;
+		} else {
+			persisted = this.entityManager.merge(portalCookie);
+		}
+
+		IPortletCookie persistedPortletCookie = null;
+		for(IPortletCookie p: persisted.getPortletCookies()) {
+			if(p.getPortletEntity().equals(portletEntity) && p.getName().equals(cookie.getName())) {
+				persistedPortletCookie = p;
+				break;
+			}
+		}
+		if(persistedPortletCookie != null) {
+			persisted.getPortletCookies().remove(persistedPortletCookie);
+			persisted = this.entityManager.merge(persisted);
+		}
+		return persisted;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#storePortletCookie(org.jasig.portal.portlet.om.IPortalCookie, org.jasig.portal.portlet.om.IPortletEntityId, javax.servlet.http.Cookie)
 	 */
 	@Override
 	public IPortalCookie storePortletCookie(IPortalCookie portalCookie,
-			IPortletEntityId portletEntityId, Cookie portletCookie) {
-		// TODO Auto-generated method stub
-		return null;
+			IPortletEntityId portletEntityId, Cookie cookie) {
+		IPortletEntity portletEntity = this.portletEntityDao.getPortletEntity(portletEntityId);
+		IPortletCookie portletCookie = cloneCookieAsPortletCookie(cookie, portletEntity);
+		
+		IPortalCookie persisted;
+		if(this.entityManager.contains(portalCookie)) {
+			persisted = portalCookie;
+		} else {
+			persisted = this.entityManager.merge(portalCookie);
+		}
+		
+		persisted.getPortletCookies().add(portletCookie);
+		this.entityManager.persist(persisted);
+		return persisted;
 	}
 
+	
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#updatePortalCookieExpiration(org.jasig.portal.portlet.om.IPortalCookie, java.util.Date)
 	 */
@@ -169,20 +214,71 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 	@Transactional
 	public IPortalCookie updatePortalCookieExpiration(
 			IPortalCookie portalCookie, Date expiration) {
-		portalCookie.setExpires(expiration);
-		this.entityManager.persist(portalCookie);
-		return portalCookie;
+		IPortalCookie persisted;
+		if(this.entityManager.contains(portalCookie)) {
+			persisted = portalCookie;
+		} else {
+			persisted = this.entityManager.merge(portalCookie);
+		}
+		
+		persisted.setExpires(expiration);
+		this.entityManager.persist(persisted);
+		return persisted;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#updatePortletCookie(org.jasig.portal.portlet.om.IPortalCookie, org.jasig.portal.portlet.om.IPortletEntityId, javax.servlet.http.Cookie)
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#updatePortletCookie(org.jasig.portal.portlet.om.IPortalCookie, org.jasig.portal.portlet.om.IPortletEntity, javax.servlet.http.Cookie)
 	 */
 	@Override
 	public IPortalCookie updatePortletCookie(IPortalCookie portalCookie,
-			IPortletEntityId portletEntityId, Cookie portletCookie) {
-		// TODO Auto-generated method stub
-		return null;
+			IPortletEntityId portletEntityId, Cookie cookie) {
+		IPortletEntity portletEntity = this.portletEntityDao.getPortletEntity(portletEntityId);
+		
+		IPortalCookie persisted;
+		if(this.entityManager.contains(portalCookie)) {
+			persisted = portalCookie;
+		} else {
+			persisted = this.entityManager.merge(portalCookie);
+		}
+		
+		
+		IPortletCookie persistedPortletCookie = null;
+		for(IPortletCookie p: persisted.getPortletCookies()) {
+			if(p.getPortletEntity().equals(portletEntity) && p.getName().equals(cookie.getName())) {
+				persistedPortletCookie = p;
+				break;
+			}
+		}
+		
+		if(persistedPortletCookie != null) {
+			persisted.getPortletCookies().remove(persistedPortletCookie);
+			
+			IPortletCookie newPortletCookie = cloneCookieAsPortletCookie(cookie, portletEntity);
+			persisted.getPortletCookies().add(newPortletCookie);
+			
+			this.entityManager.persist(portalCookie);
+		}
+		
+		return persisted;
 	}
 
-
+	/**
+	 * Helper method to convert a {@link Cookie} and it's associated
+	 * {@link IPortletEntity} into a {@link IPortletCookie}.
+	 * 
+	 * @param cookie
+	 * @param portletEntity
+	 * @return
+	 */
+	protected IPortletCookie cloneCookieAsPortletCookie(Cookie cookie, IPortletEntity portletEntity) {
+		IPortletCookie portletCookie = new PortletCookieImpl(cookie.getName(), portletEntity);
+		portletCookie.setComment(cookie.getComment());
+		portletCookie.setDomain(cookie.getDomain());
+		portletCookie.setMaxAge(cookie.getMaxAge());
+		portletCookie.setPath(cookie.getPath());
+		portletCookie.setSecure(cookie.getSecure());
+		portletCookie.setValue(cookie.getValue());
+		return portletCookie;
+	}
 }

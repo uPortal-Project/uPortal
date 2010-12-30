@@ -23,7 +23,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -38,7 +38,9 @@ import org.jasig.portal.portlet.om.IPortletEntity;
  * @version $Id$
  */
 @Entity
-@Table(name = "UP_PORTLET_COOKIES")
+@Table(
+		name = "UP_PORTLET_COOKIES"
+	)
 @GenericGenerator(
         name = "UP_PORTLET_COOKIE_GEN", 
         strategy = "native", 
@@ -58,32 +60,43 @@ class PortletCookieImpl implements IPortletCookie {
 	@Column(name = "NAME", nullable = false, updatable = false)
 	private final String name;
 	
-	@Column(name = "COMMENT", nullable = false, updatable = true)
+	@Column(name = "COMMENT", nullable = true, updatable = true)
 	private String comment;
-	@Column(name = "DOMAIN", nullable = false, updatable = true)
+	@Column(name = "DOMAIN", nullable = true, updatable = true)
 	private String domain;
 	@Column(name = "MAX_AGE", nullable = false, updatable = true)
-	private int maxAge;
+	private int maxAge = -1;
 	
-	@Column(name = "PATH", nullable = false, updatable = true)
+	@Column(name = "PATH", nullable = true, updatable = true)
 	private String path;
 	@Column(name = "VALUE", nullable = false, updatable = true)
-	private String value;
+	private String value = "";
 	@Column(name = "VERSION", nullable = false, updatable = true)
-	private int version;
+	private int version = 0;
 	@Column(name = "SECURE", nullable = false, updatable = true)
-	private boolean secure;
+	private boolean secure = false;
 	
-	@OneToOne(targetEntity = PortletEntityImpl.class, cascade = { CascadeType.ALL })
+	@ManyToOne(targetEntity = PortletEntityImpl.class, cascade = { CascadeType.ALL })
 	private final IPortletEntity portletEntity;
 	
-	
-	public PortletCookieImpl() {
+	/**
+	 * For ORM internal use only
+	 */
+	@SuppressWarnings("unused")
+	private PortletCookieImpl() {
 		this.internalPortletCookieId = -1;
 		this.name = null;
 		this.portletEntity = null;
-		
-		
+	}
+	/**
+	 * 
+	 * @param name
+	 * @param portletEntity
+	 */
+	PortletCookieImpl(String name, IPortletEntity portletEntity) {
+		this.internalPortletCookieId = -1;
+		this.name = name;
+		this.portletEntity = portletEntity;
 	}
 	
 	
