@@ -20,6 +20,7 @@ package org.jasig.portal.portlet.dao.jpa;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -155,11 +156,17 @@ public class JpaPortletCookieDaoImplTest extends AbstractJpaTests {
 		Assert.assertNotNull(portalCookie);
 		
 		this.checkPoint();
+		Assert.assertFalse(this.portletCookieDao.entityHasStoredPortletCookies(portletEntityId));
+		List<IPortletCookie> persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
+		Assert.assertEquals(0, persistedPortletCookies.size());
 		
 		Cookie cookie = new Cookie("cookieName1", "cookieValue1");
 		portalCookie = this.portletCookieDao.storePortletCookie(portalCookie, portletEntityId, cookie);
 		
 		this.checkPoint();
+		
+		persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
+		Assert.assertEquals(1, persistedPortletCookies.size());
 		
 		portalCookie = this.portletCookieDao.getPortalCookie(portalCookieValue);
 		Assert.assertEquals(1, portalCookie.getPortletCookies().size());
@@ -173,6 +180,9 @@ public class JpaPortletCookieDaoImplTest extends AbstractJpaTests {
 		
 		this.checkPoint();
 		
+		persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
+		Assert.assertEquals(1, persistedPortletCookies.size());
+		
 		portalCookie = this.portletCookieDao.getPortalCookie(portalCookieValue);
 		Assert.assertEquals(1, portalCookie.getPortletCookies().size());
 		portletCookie1 = new ArrayList<IPortletCookie>(portalCookie.getPortletCookies()).get(0);
@@ -185,16 +195,36 @@ public class JpaPortletCookieDaoImplTest extends AbstractJpaTests {
 		
 		this.checkPoint();
 		
+		persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
+		Assert.assertEquals(2, persistedPortletCookies.size());
+		
 		portalCookie = this.portletCookieDao.getPortalCookie(portalCookieValue);
 		Assert.assertEquals(2, portalCookie.getPortletCookies().size());
-		
+		Assert.assertTrue(this.portletCookieDao.entityHasStoredPortletCookies(portletEntityId));
 		this.portletCookieDao.deletePortletCookie(portalCookie, portletEntityId, cookie);
 		
 		this.checkPoint();
 		
+		persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
+		Assert.assertEquals(1, persistedPortletCookies.size());
+		
 		portalCookie = this.portletCookieDao.getPortalCookie(portalCookieValue);
 		Assert.assertEquals(1, portalCookie.getPortletCookies().size());
+		portletCookie1 = new ArrayList<IPortletCookie>(portalCookie.getPortletCookies()).get(0);
+		Assert.assertEquals("cookieName2", portletCookie1.getName());
+		Assert.assertEquals("cookieValue2", portletCookie1.getValue());
 		
+		Assert.assertTrue(this.portletCookieDao.entityHasStoredPortletCookies(portletEntityId));
+		this.portletCookieDao.deletePortletCookie(portalCookie, portletEntityId, cookie2);
+		
+		this.checkPoint();
+		
+		portalCookie = this.portletCookieDao.getPortalCookie(portalCookieValue);
+		Assert.assertEquals(0, portalCookie.getPortletCookies().size());
+		persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
+		Assert.assertEquals(0, persistedPortletCookies.size());
+		
+		Assert.assertFalse(this.portletCookieDao.entityHasStoredPortletCookies(portletEntityId));
 	}
 	
 	

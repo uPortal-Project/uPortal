@@ -18,7 +18,6 @@
  */
 package org.jasig.portal.portlet.dao.jpa;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -76,7 +75,7 @@ class PortletCookieImpl implements IPortletCookie {
 	@Column(name = "SECURE", nullable = false, updatable = true)
 	private boolean secure = false;
 	
-	@ManyToOne(targetEntity = PortletEntityImpl.class, cascade = { CascadeType.ALL })
+	@ManyToOne(targetEntity = PortletEntityImpl.class)
 	private final IPortletEntity portletEntity;
 	
 	/**

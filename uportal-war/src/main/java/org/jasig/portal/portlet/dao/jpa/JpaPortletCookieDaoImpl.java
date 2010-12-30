@@ -151,9 +151,31 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 	 */
 	public void purgeExpiredCookies() {
 		
-
 	}
 
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#entityHasStoredPortletCookies(org.jasig.portal.portlet.om.IPortletEntityId)
+	 */
+	@Override
+	public boolean entityHasStoredPortletCookies(
+			IPortletEntityId portletEntityId) {
+		List<IPortletCookie> portletCookies = getPortletCookiesForEntity(portletEntityId);
+		return portletCookies.size() > 0;
+	}
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#getPortletCookiesForEntity(org.jasig.portal.portlet.om.IPortletEntityId)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<IPortletCookie> getPortletCookiesForEntity(
+			IPortletEntityId portletEntityId) {
+		IPortletEntity portletEntity = this.portletEntityDao.getPortletEntity(portletEntityId);
+		final Query query = this.entityManager.createQuery("from PortletCookieImpl portletCookie where portletCookie.portletEntity = :portletEntity");
+		query.setParameter("portletEntity", portletEntity);
+		
+		List<IPortletCookie> results = query.getResultList();
+		return results;
+	}
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#deletePortletCookie(org.jasig.portal.portlet.om.IPortalCookie, org.jasig.portal.portlet.om.IPortletEntityId, javax.servlet.http.Cookie)
@@ -179,7 +201,10 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 		}
 		if(persistedPortletCookie != null) {
 			persisted.getPortletCookies().remove(persistedPortletCookie);
-			persisted = this.entityManager.merge(persisted);
+			
+			this.entityManager.persist(persisted);
+			
+			this.entityManager.remove(persistedPortletCookie);
 		}
 		return persisted;
 	}
@@ -258,6 +283,7 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 			persisted.getPortletCookies().add(newPortletCookie);
 			
 			this.entityManager.persist(portalCookie);
+			this.entityManager.remove(persistedPortletCookie);
 		}
 		
 		return persisted;

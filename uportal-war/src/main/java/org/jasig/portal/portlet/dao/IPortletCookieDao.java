@@ -19,6 +19,8 @@
 package org.jasig.portal.portlet.dao;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
@@ -93,4 +95,17 @@ public interface IPortletCookieDao {
 	 */
 	public IPortalCookie deletePortletCookie(IPortalCookie portalCookie, IPortletEntityId portletEntityId, Cookie cookie);
 	
+	/**
+	 * 
+	 * @param portletEntityId
+	 * @return a never null, but possibly empty, {@link Set} of {@link IPortletCookie}s stored for the {@link IPortletEntityId}
+	 */
+	public List<IPortletCookie> getPortletCookiesForEntity(IPortletEntityId portletEntityId);
+	
+	/**
+	 * 
+	 * @param portletEntityId
+	 * @return true if {@link IPortletCookie}s are stored for the specified {@link IPortletEntityId}.
+	 */
+	public boolean entityHasStoredPortletCookies(IPortletEntityId portletEntityId);
 }
