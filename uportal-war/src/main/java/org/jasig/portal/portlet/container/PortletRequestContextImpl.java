@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletRequest;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -207,5 +208,11 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
         }
         return this.portletWindow.getPreviousPublicRenderParameters();
     }
+
+	@Override
+	public Object getAttribute(String arg0, ServletRequest arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
