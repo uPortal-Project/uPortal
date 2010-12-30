@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>uPortal_trunk</name>
+	<name>org.jasig.portal.uportal-ear-3.3.0-SNAPSHOT</name>
 	<comment></comment>
 	<projects>
-		<project>uportal-war</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -17,14 +16,20 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
+			<name>org.eclipse.wst.validation.validationbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
 			<name>org.maven.ide.eclipse.maven2Builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.maven.ide.eclipse.maven2Nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.maven.ide.eclipse.maven2Nature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
+		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
 	</natures>
 </projectDescription>

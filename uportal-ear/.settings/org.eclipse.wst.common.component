@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="org.jasig.portal.uportal-ear-3.3.0-SNAPSHOT">
+        <wb-resource deploy-path="/" source-path="/src/main/application"/>
+        <dependent-module archiveName="uPortal.war" deploy-path="/" handle="module:/resource/org.jasig.portal.uportal-war-3.3.0-SNAPSHOT/org.jasig.portal.uportal-war-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="BookmarksPortlet.war" deploy-path="/" handle="module:/resource/org.jasig.portal.portlets-overlay.BookmarksPortlet-3.3.0-SNAPSHOT/org.jasig.portal.portlets-overlay.BookmarksPortlet-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="cas.war" deploy-path="/" handle="module:/resource/org.jasig.portal.portlets-overlay.cas-3.3.0-SNAPSHOT/org.jasig.portal.portlets-overlay.cas-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="cas-proxy-test-portlet.war" deploy-path="/" handle="module:/resource/org.jasig.portal.portlets-overlay.cas-proxy-test-portlet-3.3.0-SNAPSHOT/org.jasig.portal.portlets-overlay.cas-proxy-test-portlet-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="FunctionalTestsPortlet.war" deploy-path="/" handle="module:/resource/org.jasig.portal.portlets-overlay.FunctionalTestsPortlet-3.3.0-SNAPSHOT/org.jasig.portal.portlets-overlay.FunctionalTestsPortlet-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jasig-widget-portlets.war" deploy-path="/" handle="module:/resource/org.jasig.portal.portlets-overlay.jasig-widget-portlets-3.3.0-SNAPSHOT/org.jasig.portal.portlets-overlay.jasig-widget-portlets-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pluto-testsuite.war" deploy-path="/" handle="module:/resource/org.jasig.portal.portlets-overlay.pluto-testsuite-3.3.0-SNAPSHOT/org.jasig.portal.portlets-overlay.pluto-testsuite-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ResourceServingWebapp.war" deploy-path="/" handle="module:/classpath/var/M2_REPO/org/jasig/resourceserver/resource-server-webapp/1.0.13/resource-server-webapp-1.0.13.war">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="NewsReaderPortlet.war" deploy-path="/" handle="module:/resource/org.jasig.portal.portlets-overlay.NewsReaderPortlet-3.3.0-SNAPSHOT/org.jasig.portal.portlets-overlay.NewsReaderPortlet-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="SimpleContentPortlet.war" deploy-path="/" handle="module:/resource/org.jasig.portal.portlets-overlay.SimpleContentPortlet-3.3.0-SNAPSHOT/org.jasig.portal.portlets-overlay.SimpleContentPortlet-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="WeatherPortlet.war" deploy-path="/" handle="module:/resource/org.jasig.portal.portlets-overlay.WeatherPortlet-3.3.0-SNAPSHOT/org.jasig.portal.portlets-overlay.WeatherPortlet-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="WebProxyPortlet.war" deploy-path="/" handle="module:/resource/org.jasig.portal.portlets-overlay.WebProxyPortlet-3.3.0-SNAPSHOT/org.jasig.portal.portlets-overlay.WebProxyPortlet-3.3.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ccpp-1.0.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/javax/ccpp/ccpp/1.0/ccpp-1.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="portlet-api-2.0.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/javax/portlet/portlet-api/2.0/portlet-api-2.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pluto-container-api-2.1.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/pluto-container-api-2.1.0-SNAPSHOT/pluto-container-api-2.1.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pluto-container-driver-api-2.1.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/pluto-container-driver-api-2.1.0-SNAPSHOT/pluto-container-driver-api-2.1.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pluto-taglib-2.1.0-SNAPSHOT.jar" deploy-path="/" handle="module:/resource/pluto-taglib-2.1.0-SNAPSHOT/pluto-taglib-2.1.0-SNAPSHOT">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="person-directory-api-1.5.0-RC6.jar" deploy-path="/" handle="module:/classpath/var/M2_REPO/org/jasig/service/person-directory-api/1.5.0-RC6/person-directory-api-1.5.0-RC6.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+    </wb-module>
+</project-modules>
