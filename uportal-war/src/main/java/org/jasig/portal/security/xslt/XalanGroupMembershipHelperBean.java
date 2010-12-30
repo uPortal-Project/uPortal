@@ -22,11 +22,11 @@ package org.jasig.portal.security.xslt;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +40,14 @@ import org.springframework.stereotype.Service;
 public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelper {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private IChannelRegistryStore channelRegistryStore;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
     
     /**
-     * @param channelRegistryStore the channelRegistryStore to set
+     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
     @Autowired
-    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-        this.channelRegistryStore = channelRegistryStore;
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
 
@@ -65,28 +65,28 @@ public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelp
             return false;
         }
         
-        final IChannelDefinition channelDefinition;
+        final IPortletDefinition portletDefinition;
         try {
-            channelDefinition = this.channelRegistryStore.getChannelDefinition(fname);
+            portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
         }
         catch (Exception e) {
-            this.logger.warn("Caught exception while retrieving channel definition for fname '" + fname + "'", e);
+            this.logger.warn("Caught exception while retrieving portlet definition for fname '" + fname + "'", e);
             return false;
         }
         
-        if (channelDefinition == null) {
+        if (portletDefinition == null) {
             if (this.logger.isDebugEnabled()) {
-                this.logger.debug("No channel found for key '" + fname + "'");
+                this.logger.debug("No portlet found for key '" + fname + "'");
             }
             
             return false;
         }
         
-        final Integer channelId = channelDefinition.getId();
-        final IEntity entity = GroupService.getEntity(channelId.toString(), IChannelDefinition.class);
+        final String portletId = portletDefinition.getPortletDefinitionId().getStringId();
+        final IEntity entity = GroupService.getEntity(portletId, IPortletDefinition.class);
         if (entity == null) {
             if (this.logger.isDebugEnabled()) {
-                this.logger.debug("No channel found for id '" + channelId + "'");
+                this.logger.debug("No portlet found for id '" + portletId + "'");
             }
             
             return false;

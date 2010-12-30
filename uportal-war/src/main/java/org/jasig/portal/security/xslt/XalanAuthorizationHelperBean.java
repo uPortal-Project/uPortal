@@ -19,12 +19,11 @@
 
 package org.jasig.portal.security.xslt;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntity;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
@@ -43,23 +42,22 @@ import org.springframework.stereotype.Service;
 public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
-    private IChannelRegistryStore channelRegistryStore;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
     
     /**
-     * @param channelRegistryStore the channelRegistryStore to set
+     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
     @Autowired
-    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-        Validate.notNull(channelRegistryStore, "channelRegistryStore can not be null");
-        this.channelRegistryStore = channelRegistryStore;
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.security.xslt.IAuthorizationHelper#canRender(java.lang.String, java.lang.String)
      */
     @Override
-    public boolean canRender(final String userName, final String channelFName) {
-        if (userName == null || channelFName == null) {
+    public boolean canRender(final String userName, final String fname) {
+        if (userName == null || fname == null) {
             return false;
         }
         
@@ -68,25 +66,25 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
             return false;
         }
         
-        final int channelId;
+        final String portletId;
         try {
-            final IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(channelFName);
-            if (channelDefinition == null) {
+            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+            if (portletDefinition == null) {
                 if (this.logger.isInfoEnabled()) {
-                    this.logger.info("No ChannelDefinition for fname='" + channelFName + "', returning false.");
+                    this.logger.info("No PortletDefinition for fname='" + fname + "', returning false.");
                 }
 
                 return false;
             }
             
-            channelId = channelDefinition.getId();
+            portletId = portletDefinition.getPortletDefinitionId().getStringId();
         }
         catch (Exception e) {
-            this.logger.warn("Could not find ChannelDefinition for fname='" + channelFName + "' while checking if user '" + userName + "' can render it. Returning FALSE.", e);
+            this.logger.warn("Could not find PortletDefinition for fname='" + fname + "' while checking if user '" + userName + "' can render it. Returning FALSE.", e);
             return false;
         }
         
-        return userPrincipal.canRender(channelId);
+        return userPrincipal.canRender(portletId);
     }
     
     protected IAuthorizationPrincipal getUserPrincipal(final String userName) {
