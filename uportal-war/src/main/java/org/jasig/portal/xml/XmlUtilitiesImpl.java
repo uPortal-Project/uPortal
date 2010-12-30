@@ -48,7 +48,8 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import com.ctc.wstx.sw.HtmlWstxOutputFactory;
+import com.ctc.wstx.api.EmptyElementHandler;
+import com.ctc.wstx.api.WstxOutputProperties;
 
 /**
  * Implementation of core XML related utilities
@@ -72,7 +73,8 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         
         this.xmlInputFactory = XMLInputFactory.newInstance();
         
-        this.htmlOutputFactory = XMLOutputFactory.newFactory(HtmlWstxOutputFactory.class.getName(), HtmlWstxOutputFactory.class.getClassLoader());
+        this.htmlOutputFactory = XMLOutputFactory.newFactory();
+        this.htmlOutputFactory.setProperty(WstxOutputProperties.P_OUTPUT_EMPTY_ELEMENT_HANDLER, EmptyElementHandler.HtmlEmptyElementHandler.getInstance());
     }
 
     @Autowired
