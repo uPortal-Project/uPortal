@@ -48,6 +48,8 @@
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" />
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />
+        <mapping class="org.jasig.portal.portlet.dao.jpa.PortletCookieImpl"/>
+        <mapping class="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl"/>
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" />
@@ -60,6 +62,8 @@
         <class-cache class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" usage="nonstrict-read-write"/>
+        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl" usage="nonstrict-read-write"/>
+        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletCookieImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" usage="nonstrict-read-write"/>
