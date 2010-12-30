@@ -23,11 +23,12 @@ import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
 
@@ -51,12 +52,15 @@ public class ConditionalStatsRecorderTest extends TestCase {
 	private IUserLayoutFolderDescription dummyFolderDescription = new UserLayoutFolderDescription();
 	
 	// a channel definition with a bogus ID.
-	private IChannelDefinition dummyChannelDefinition;
+	private IPortletDefinition dummyChannelDefinition;
+	private IPortletDefinitionId dummyPortletDefinitionId;
 	
 	
 	protected void setUp() {
-	    dummyChannelDefinition = EasyMock.createMock(IChannelDefinition.class);
-        EasyMock.expect(dummyChannelDefinition.getId()).andReturn(1).anyTimes();
+	    dummyChannelDefinition = EasyMock.createMock(IPortletDefinition.class);
+	    dummyPortletDefinitionId = EasyMock.createMock(IPortletDefinitionId.class);
+        EasyMock.expect(dummyChannelDefinition.getPortletDefinitionId()).andReturn(dummyPortletDefinitionId).anyTimes();
+        EasyMock.expect(dummyPortletDefinitionId.getStringId()).andReturn("1").anyTimes();
         EasyMock.expect(dummyChannelDefinition.getName()).andReturn("TestChannelDef").anyTimes();
         EasyMock.replay(dummyChannelDefinition);
 	    

@@ -19,7 +19,7 @@
 
 package org.jasig.portal.portlets.groupselector;
 
-import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;
 
 /**
@@ -32,8 +32,8 @@ import org.jasig.portal.security.IPerson;
  */
 public enum EntityEnum {
 	
-	CHANNEL(IChannelDefinition.class, "channel", false), 	// uPortal channel
-	CATEGORY(IChannelDefinition.class, "category", true), 	// uPortal channel category
+	PORTLET(IPortletDefinition.class, "portlet", false), 	// uPortal portlet
+	CATEGORY(IPortletDefinition.class, "category", true), 	// uPortal portlet category
 	PERSON(IPerson.class, "person", false), 				// uPortal person
 	GROUP(IPerson.class, "group", true);					// uPortal person group
 	
@@ -54,8 +54,8 @@ public enum EntityEnum {
 	 * @return
 	 */
 	public static EntityEnum getEntityEnum(String type) {
-		if (CHANNEL.toString().equals(type)) {
-			return CHANNEL;
+		if (PORTLET.toString().equals(type)) {
+			return PORTLET;
 		} else if (CATEGORY.toString().equals(type)) {
 			return CATEGORY;
 		} else if (PERSON.toString().equals(type)) {

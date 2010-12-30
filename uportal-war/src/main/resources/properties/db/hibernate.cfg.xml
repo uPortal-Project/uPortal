@@ -45,11 +45,10 @@
         <mapping class="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluator" />
         <mapping class="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory" />
         <mapping class="org.jasig.portal.layout.dlm.providers.Paren" />
-        <mapping class="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl" />
-        <mapping class="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl" />
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" />
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />
+        <mapping class="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" />
@@ -58,11 +57,10 @@
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
         
         <class-cache class="org.jasig.portal.layout.dlm.Evaluator" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" usage="nonstrict-read-write"/>
+        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" usage="nonstrict-read-write"/>

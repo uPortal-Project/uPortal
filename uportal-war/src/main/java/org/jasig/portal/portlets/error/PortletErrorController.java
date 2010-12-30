@@ -29,7 +29,6 @@ import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -110,8 +109,7 @@ public class PortletErrorController extends AbstractController {
 			
 			final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(httpRequest, currentFailedPortletWindowId);
             final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
-            final IChannelDefinition channelDefinition = parentPortletDefinition.getChannelDefinition();
-            model.put("channelDefinition", channelDefinition);
+            model.put("channelDefinition", parentPortletDefinition);
             
 			Exception cause = (Exception) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE);
 			model.put("exception", cause);

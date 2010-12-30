@@ -55,12 +55,6 @@
     <!-- Beans for the identity-swapper flow -->
     <bean id="identitySwapperHelper" class="org.jasig.portal.portlets.swapper.IdentitySwapperHelperImpl" />
      
-    <bean id="channelValidator"
-        class="org.jasig.portal.portlets.portletadmin.ChannelDefinitionFormValidator">
-        <property name="channelPublishingDefinitionDao" ref="channelPublishingDefinitionDao"/>
-        <property name="channelRegistryStore" ref="channelRegistryStore"/>
-    </bean>
-    
     <bean id="personValidator" class="org.jasig.portal.portlets.account.PersonFormValidator"/>
     
     <bean id="groupValidator" class="org.jasig.portal.portlets.groupadmin.GroupFormValidator"/>

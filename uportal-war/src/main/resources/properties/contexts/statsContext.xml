@@ -100,7 +100,7 @@
                 <value>org.jasig.portal.events.support.TimedChannelLayoutPortalEvent</value>
                 
                 <!-- All channel definition events -->
-                <value>org.jasig.portal.events.support.ChannelPortalEvent</value>
+                <value>org.jasig.portal.events.support.PortletPortalEvent</value>
                 
                 <!-- All layout node related events -->
                 <value>org.jasig.portal.events.support.LayoutPortalEvent</value>

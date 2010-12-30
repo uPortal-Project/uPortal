@@ -209,7 +209,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         
         //Find the channel and portlet definitions
         final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
-        final int channelPublishId = Integer.valueOf(channelNode.getChannelPublishId());
+        final String channelPublishId = channelNode.getChannelPublishId();
         
         final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
         

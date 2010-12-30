@@ -127,7 +127,7 @@
             var registry = up.PortletRegistry(
                 "#${n}_portal", 
                 { 
-                    portletListUrl: "<c:url value="/api/channelList"/>",
+                    portletListUrl: "<c:url value="/api/portletList"/>",
                     listeners: {
                         onLoad: function () {
                             var cutpoints, portlets, members, portletRegex;

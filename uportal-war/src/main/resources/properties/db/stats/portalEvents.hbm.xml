@@ -96,18 +96,18 @@
         <subclass name="org.jasig.portal.events.support.UserSessionCreatedPortalEvent" discriminator-value="SESSION_CREATED" />
         <subclass name="org.jasig.portal.events.support.UserSessionDestroyedPortalEvent" discriminator-value="SESSION_DESTROYED" />
         
-        <subclass name="org.jasig.portal.events.support.ChannelPortalEvent" abstract="true">
+        <subclass name="org.jasig.portal.events.support.PortletPortalEvent" abstract="true">
             <join table="STATS_CHANNEL">
                 <key column="EVENT_ID" update="false" />
                 
-                <property name="channelDefinitionId" type="string">
+                <property name="portletDefinitionId" type="string">
                     <column name="DEFINITION_ID" length="64" not-null="true" />
                 </property>
             </join>
             
-            <subclass name="org.jasig.portal.events.support.PublishedChannelDefinitionPortalEvent" discriminator-value="CHANNEL_DEFINITION_PUBLISHED" />
-            <subclass name="org.jasig.portal.events.support.ModifiedChannelDefinitionPortalEvent" discriminator-value="CHANNEL_DEFINITION_MODIFIED" />
-            <subclass name="org.jasig.portal.events.support.RemovedChannelDefinitionPortalEvent" discriminator-value="CHANNEL_DEFINITION_REMOVED" />
+            <subclass name="org.jasig.portal.events.support.PublishedPortletDefinitionPortalEvent" discriminator-value="CHANNEL_DEFINITION_PUBLISHED" />
+            <subclass name="org.jasig.portal.events.support.ModifiedPortletDefinitionPortalEvent" discriminator-value="CHANNEL_DEFINITION_MODIFIED" />
+            <subclass name="org.jasig.portal.events.support.RemovedPortletDefinitionPortalEvent" discriminator-value="CHANNEL_DEFINITION_REMOVED" />
         </subclass>
         
         <subclass name="org.jasig.portal.events.support.ChannelLayoutPortalEvent" abstract="true">

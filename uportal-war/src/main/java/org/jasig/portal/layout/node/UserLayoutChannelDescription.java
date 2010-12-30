@@ -25,14 +25,13 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -49,7 +48,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
 	private static final Log log = LogFactory.getLog(UserLayoutChannelDescription.class);
 	
     Hashtable parameters;
-    Hashtable override;
 
     String title=null;
     String description=null;
@@ -66,7 +64,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     public UserLayoutChannelDescription() {
         super();
         parameters=new Hashtable();
-        override=new Hashtable();
     }
 
     public UserLayoutChannelDescription(IUserLayoutChannelDescription d) {
@@ -85,7 +82,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         for(Enumeration enum1 = d.getParameterNames(); enum1.hasMoreElements();) {
             String pName=(String)enum1.nextElement();
             this.setParameterValue(pName,d.getParameterValue(pName));
-            this.setParameterOverride(pName,d.getParameterOverrideValue(pName));
         }
     }
 
@@ -94,13 +90,12 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * 
      * @param definition
      */
-    public UserLayoutChannelDescription(IChannelDefinition definition) {
+    public UserLayoutChannelDescription(IPortletDefinition definition) {
         this();
         this.title = definition.getTitle();
         this.name = definition.getName();
         this.description = definition.getDescription();
-        this.setClassName(definition.getJavaClass());
-        this.channelPublishId = String.valueOf(definition.getId());
+        this.channelPublishId = String.valueOf(definition.getPortletDefinitionId().getStringId());
         this.channelTypeId = String.valueOf(definition.getType().getId());
         this.functionalName = definition.getFName();
         this.timeout = definition.getTimeout();
@@ -108,9 +103,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         this.hasHelp = definition.hasHelp();
         this.hasAbout = definition.hasAbout();
         
-        for (IChannelParameter param : definition.getParameters()) {
+        for (IPortletDefinitionParameter param : definition.getParameters()) {
             this.setParameterValue(param.getName(), param.getValue());
-            this.setParameterOverride(param.getName(), param.getOverride());
         }
     }
 
@@ -123,7 +117,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     public UserLayoutChannelDescription(Element xmlNode) throws PortalException {
         super( xmlNode );
         parameters=new Hashtable();
-        override=new Hashtable();
         
         if(!xmlNode.getNodeName().equals("channel")) {
             throw new PortalException("Given XML Element is not a channel!");
@@ -159,7 +152,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
 
                     if(pName!=null && pValue!=null) {
                         this.setParameterValue(pName,pValue);
-                        this.setParameterOverride(pName,canOverride.booleanValue());
                     }
                 }
             }
@@ -405,20 +397,15 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
          */
         try
         {
-            IChannelRegistryStore crs = ChannelRegistryStoreFactory
-                .getChannelRegistryStoreImpl();
+        	IPortletDefinitionRegistry registry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
             int pubId = Integer.parseInt(getChannelPublishId());
-            IChannelDefinition def = crs
-                    .getChannelDefinition(pubId);
-            IChannelParameter parm = def.getParameter(parameterName);
+            IPortletDefinition def = registry.getPortletDefinition(getChannelPublishId());
+            IPortletDefinitionParameter parm = def.getParameter(parameterName);
 
             if (parm == null) // ad-hoc parm so delete
             {
                 parameters.remove(parameterName);
-                override.remove(parameterName);
             }
-            else if (parm.getOverride())
-                parameters.put(parameterName, parm.getValue());
         }
         catch(Exception e)
         {
@@ -436,19 +423,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      */
     public String getParameterValue(String parameterName) {
         return (String) parameters.get(parameterName);
-    }
-
-     /**
-     * Obtain a channel parameter override value.
-     *
-     * @param parameterName a <code>String</code> value
-     * @return a <code>boolean</code> value
-     */
-    public boolean getParameterOverrideValue(String parameterName) {
-        Boolean boolValue = (Boolean)override.get(parameterName);
-        if ( boolValue != null )
-         return boolValue.booleanValue();
-         return true;
     }
 
     /**
@@ -477,29 +451,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      */
     public void clearParameters() {
         parameters.clear();
-        override.clear();
-    }
-
-    /**
-     * Determine if a given parameter can be overriden by the user.
-     * (defaults to true)
-     * @param parameterName a <code>String</code> value
-     * @return a <code>boolean</code> value
-     */
-    public boolean canOverrideParameter(String parameterName) {
-        return getParameterOverrideValue(parameterName);
-    }
-
-    /**
-     * Set parameter override flag.
-     *
-     * @param parameterName a <code>String</code> value
-     * @param canOverride a <code>boolean</code> flag.
-     */
-    public void setParameterOverride(String parameterName, boolean canOverride) {
-        if(parameters.get(parameterName)!=null) {
-            this.override.put(parameterName,new Boolean(canOverride));
-        }
     }
 
 
@@ -510,7 +461,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * @return an old parameter value.
      */
     public String remove(String parameterName) {
-        override.remove(parameterName);
         return (String) parameters.remove(parameterName);
     }
 
@@ -570,7 +520,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
             String pName=(String)enum1.nextElement();
             pElement.setAttribute("name",pName);
             pElement.setAttribute("value",getParameterValue(pName));
-            pElement.setAttribute("override",getParameterOverrideValue(pName) ? "yes" : "no");
             node.appendChild(pElement);
         }
     }

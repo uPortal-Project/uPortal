@@ -21,9 +21,9 @@ package  org.jasig.portal.services.entityproperties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 
 
 /**
@@ -39,7 +39,7 @@ public class ChannelRegistryPropertyFinder
     private static final Log log = LogFactory.getLog(ChannelRegistryPropertyFinder.class);
     
    protected static String[] names;
-   protected static final Class chan = IChannelDefinition.class;
+   protected static final Class chan = IPortletDefinition.class;
    protected static boolean INITIALIZED = false;
 
  /**
@@ -75,7 +75,7 @@ public class ChannelRegistryPropertyFinder
             try {
                 //Element c = ChannelRegistryManager.getChannel("chan"+entityID.getKey());
                 //r = c.getAttribute(name);
-                IChannelDefinition cd = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(Integer.parseInt(entityID.getKey()));
+            	IPortletDefinition cd = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry().getPortletDefinition(entityID.getKey());
                 if (name.equals("Name")){
                   r = cd.getName(); 
                 }
@@ -91,9 +91,6 @@ public class ChannelRegistryPropertyFinder
                 if (name.equals("Timeout")){
                   r = String.valueOf(cd.getTimeout()); 
                 }
-                if (name.equals("Secure")){
-                  r = String.valueOf(cd.isSecure());
-                }                
             } catch (Exception e) {
                 log.error( "ChannelRegistryPropertyFinder.getProperty("+entityID.getKey()+"-"+entityID.getType().getName()+","+name+") :", e);
             }

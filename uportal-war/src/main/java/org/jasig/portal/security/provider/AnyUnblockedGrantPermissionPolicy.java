@@ -27,10 +27,10 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
@@ -116,7 +116,7 @@ public class AnyUnblockedGrantPermissionPolicy
 
         // if the target is formatted as a channel, check if the user has
         // the ALL_CHANNELS permission
-        if (target.startsWith(IPermission.CHANNEL_PREFIX)
+        if (target.startsWith(IPermission.PORTLET_PREFIX)
                     && doesPrincipalHavePermission(service, principal, owner,
                             activity, IPermission.ALL_PORTLETS_TARGET)) {
             return true;
@@ -126,7 +126,7 @@ public class AnyUnblockedGrantPermissionPolicy
         // has the ALL_CATEGORIES or ALL_GROUPS permissions
         IEntityGroup targetGroup = GroupService.findGroup(target);
         if (targetGroup != null) {
-            if ((targetGroup.getEntityType().equals(IChannelDefinition.class)
+            if ((targetGroup.getEntityType().equals(IPortletDefinition.class)
                     && doesPrincipalHavePermission(service, principal, owner,
                             activity, IPermission.ALL_CATEGORIES_TARGET) || doesPrincipalHavePermission(
                     service, principal, owner, activity,

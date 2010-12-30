@@ -50,7 +50,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
-    <up:render-delegate fname="${CHANNEL_FNAME}" portletMode="CONFIG">
+    <up:render-delegate fname="${PORTLET_FNAME}" portletMode="CONFIG">
         <up:parent-url>
             <up:param name="execution" value="${flowExecutionKey}"/>
             <up:param name="_eventId" value="configModeAction"/>

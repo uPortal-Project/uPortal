@@ -94,9 +94,7 @@ public class ChannelDescription extends UserLayoutChannelDescription
     public boolean getParameterOverrideValue(String parameterName)
     {
         if (parameterName.startsWith(Constants.NS)
-                || !super.getParameterOverrideValue(parameterName)
-                || (fragmentChannelInfo != null && !fragmentChannelInfo
-                        .canOverrideParameter(parameterName)))
+                || (fragmentChannelInfo != null))
             return false;
         return true;
     }

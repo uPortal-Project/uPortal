@@ -20,7 +20,7 @@
 package org.jasig.portal.security.provider;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.channel.ChannelLifecycleState;
+import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
@@ -56,10 +56,10 @@ public AuthorizationPrincipalImpl(String newKey, Class newType, IAuthorizationSe
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to manage this channel.
  * @return boolean
- * @param  channelPublishId int - the Channel publish ID
+ * @param  channelPublishId String - the Channel publish ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-public boolean canManage(int channelPublishId) throws org.jasig.portal.AuthorizationException {
+public boolean canManage(String channelPublishId) throws org.jasig.portal.AuthorizationException {
     return getAuthorizationService().canPrincipalManage(this, channelPublishId);
 }
 /**
@@ -67,11 +67,11 @@ public boolean canManage(int channelPublishId) throws org.jasig.portal.Authoriza
  * @return boolean
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-public boolean canManage(ChannelLifecycleState state, String categoryId) throws AuthorizationException {
+public boolean canManage(PortletLifecycleState state, String categoryId) throws AuthorizationException {
 	return getAuthorizationService().canPrincipalManage(this, state, categoryId);
 }
 @Override
-public boolean canConfigure(int channelPublishId) throws AuthorizationException {
+public boolean canConfigure(String channelPublishId) throws AuthorizationException {
     return getAuthorizationService().canPrincipalConfigure(this, channelPublishId);
 }
 /**
@@ -80,7 +80,7 @@ public boolean canConfigure(int channelPublishId) throws AuthorizationException 
  * @param channelPublishId int - the Channel publish ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-public boolean canRender(int channelPublishId) throws org.jasig.portal.AuthorizationException {
+public boolean canRender(String channelPublishId) throws org.jasig.portal.AuthorizationException {
     return getAuthorizationService().canPrincipalRender(this, channelPublishId);
 }
 /**
@@ -89,7 +89,7 @@ public boolean canRender(int channelPublishId) throws org.jasig.portal.Authoriza
  * @param  channelPublishId int - the Channel publish ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-public boolean canSubscribe(int channelPublishId) throws org.jasig.portal.AuthorizationException {
+public boolean canSubscribe(String channelPublishId) throws org.jasig.portal.AuthorizationException {
     return getAuthorizationService().canPrincipalSubscribe(this, channelPublishId);
 }
 /**

@@ -27,7 +27,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class ChannelBean implements Comparable<ChannelBean>, Serializable {
 
-    private int id;
+    private String id;
     private String description;
     private String fname;
     private String name;
@@ -39,11 +39,11 @@ public class ChannelBean implements Comparable<ChannelBean>, Serializable {
     public ChannelBean() {
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

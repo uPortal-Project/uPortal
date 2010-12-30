@@ -21,6 +21,7 @@ package org.jasig.portal.portlets.portletadmin;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -49,16 +50,11 @@ import org.apache.pluto.container.om.portlet.DisplayName;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Supports;
-import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.api.portlet.DelegationActionResponse;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
-import org.jasig.portal.channel.ChannelLifecycleState;
-import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.IChannelPublishingService;
-import org.jasig.portal.channel.IChannelType;
+import org.jasig.portal.channel.IPortletPublishingService;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -69,7 +65,13 @@ import org.jasig.portal.portlet.delegation.jsp.RenderPortletTag;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.om.PortletCategory;
+import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
@@ -102,11 +104,13 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	protected final Log logger = LogFactory.getLog(PortletAdministrationHelper.class);
 	
 	private IGroupListHelper groupListHelper;
-    private IChannelRegistryStore channelRegistryStore;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IPortletCategoryRegistry portletCategoryRegistry;
+    private IPortletTypeRegistry portletTypeRegistry;
     private PortalDriverContainerServices portalDriverContainerServices;
-    private IChannelPublishingService channelPublishingService; 
+    private IPortletPublishingService portletPublishingService; 
     private PortletDelegationLocator portletDelegationLocator;
-    private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
+    private IChannelPublishingDefinitionDao portletPublishingDefinitionDao;
     private ServletContext servletContext;
     
 	@Override
@@ -123,67 +127,78 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	/**
-	 * Set the channel registry store
+	 * Set the portlet registry store
 	 * 
-	 * @param channelRegistryStore
+	 * @param portletRegistryStore
 	 */
 	@Autowired
-	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-		this.channelRegistryStore = channelRegistryStore;
+	public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+		this.portletDefinitionRegistry = portletDefinitionRegistry;
 	}
+	
+	@Autowired
+	public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
+		this.portletCategoryRegistry = portletCategoryRegistry;
+	}
+	
+	@Autowired
+	public void setPortletTypeRegistry(IPortletTypeRegistry portletTypeRegistry) {
+		this.portletTypeRegistry = portletTypeRegistry;
+	}
+	
 	@Autowired
 	public void setPortalDriverContainerServices(
 			PortalDriverContainerServices portalDriverContainerServices) {
 		this.portalDriverContainerServices = portalDriverContainerServices;
 	}
 	@Autowired
-	public void setChannelPublishingService(
-			IChannelPublishingService channelPublishingService) {
-		this.channelPublishingService = channelPublishingService;
+	public void setPortletPublishingService(
+			IPortletPublishingService portletPublishingService) {
+		this.portletPublishingService = portletPublishingService;
 	}
 	@Autowired
-	public void setChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao channelPublishingDefinitionDao) {
-        this.channelPublishingDefinitionDao = channelPublishingDefinitionDao;
+	public void setPortletChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao portletPublishingDefinitionDao) {
+        this.portletPublishingDefinitionDao = portletPublishingDefinitionDao;
     }
 
     /**
-	 * Construct a new ChannelDefinitionForm for the given IChannelDefinition id.
-	 * If a ChannelDefinition matching this ID already exists, the form will
-	 * be pre-populated with the ChannelDefinition's current configuration.  If
-	 * the ChannelDefinition does not yet exist, a new default form will be
+	 * Construct a new PortletDefinitionForm for the given IPortletDefinition id.
+	 * If a PortletDefinition matching this ID already exists, the form will
+	 * be pre-populated with the PortletDefinition's current configuration.  If
+	 * the PortletDefinition does not yet exist, a new default form will be
 	 * created.
 	 * 
 	 * @param chanId
 	 * @return
 	 */
-	public ChannelDefinitionForm getChannelDefinitionForm(int chanId) {
+	public PortletDefinitionForm getPortletDefinitionForm(String portletId) {
 		
-		IChannelDefinition def = channelRegistryStore.getChannelDefinition(chanId);
+		IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
 		
 		// create the new form
-		final ChannelDefinitionForm form;
+		final PortletDefinitionForm form;
 		if (def != null) {
-		    form = new ChannelDefinitionForm(def);
-		    form.setId(def.getId());
+		    form = new PortletDefinitionForm(def);
+		    form.setId(def.getPortletDefinitionId().getStringId());
 		}
 		else {
-		    form = new ChannelDefinitionForm();
+		    form = new PortletDefinitionForm();
 		}
 		
-		// if this is a pre-existing channel, set the category and permissions
+		// if this is a pre-existing portlet, set the category and permissions
         if (def != null) {
         	
         	// create a JsonEntityBean for each current category and add it 
         	// to our form bean's category list
-        	ChannelCategory[] categories = channelRegistryStore.getParentCategories(def);
-        	for (ChannelCategory cat : categories) {
+        	Set<PortletCategory> categories = portletCategoryRegistry.getParentCategories(def);
+        	for (PortletCategory cat : categories) {
         		form.addCategory(new JsonEntityBean(cat));
         	}
 
 			try {
-                IPermissionManager pm = AuthorizationService.instance().newPermissionManager(IChannelPublishingService.FRAMEWORK_OWNER);
-                IAuthorizationPrincipal[] prins = pm.getAuthorizedPrincipals(IChannelPublishingService.SUBSCRIBER_ACTIVITY,
-                        "CHAN_ID." + String.valueOf(form.getId()));
+                IPermissionManager pm = AuthorizationService.instance().newPermissionManager(IPortletPublishingService.FRAMEWORK_OWNER);
+                IAuthorizationPrincipal[] prins = pm.getAuthorizedPrincipals(IPortletPublishingService.SUBSCRIBER_ACTIVITY,
+                        IPermission.PORTLET_PREFIX + String.valueOf(form.getId()));
                 for (int mp = 0; mp < prins.length; mp++) {
                 	JsonEntityBean bean;
                 	
@@ -209,13 +224,13 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			}
 		} 
         
-        // otherwise, if this is a new channel, pre-populate the categories
+        // otherwise, if this is a new portlet, pre-populate the categories
         // and groups with some reasonable defaults
         else {
         	
 			// pre-populate with top-level category
-			IEntityGroup channelCategoriesGroup = GroupService.getDistinguishedGroup(GroupService.CHANNEL_CATEGORIES);
-			form.addCategory(new JsonEntityBean(channelCategoriesGroup, groupListHelper.getEntityType(channelCategoriesGroup)));
+			IEntityGroup portletCategoriesGroup = GroupService.getDistinguishedGroup(GroupService.PORTLET_CATEGORIES);
+			form.addCategory(new JsonEntityBean(portletCategoriesGroup, groupListHelper.getEntityType(portletCategoriesGroup)));
 
 			// pre-populate with top-level group
 			IEntityGroup everyoneGroup = GroupService.getDistinguishedGroup(GroupService.EVERYONE);
@@ -226,12 +241,12 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	/**
-	 * Persist a new or edited ChannelDefinition.
+	 * Persist a new or edited PortletDefinition.
 	 * 
 	 * @param form
 	 * @param publisher
 	 */
-	public ChannelDefinitionForm savePortletRegistration(ChannelDefinitionForm form,
+	public PortletDefinitionForm savePortletRegistration(PortletDefinitionForm form,
 			IPerson publisher) throws Exception {
 		
 		// create the group array from the form's group list
@@ -248,139 +263,140 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		}
 		
         // create the category array from the form's category list
-		ChannelCategory[] categories = new ChannelCategory[form.getCategories().size()];
+		PortletCategory[] categories = new PortletCategory[form.getCategories().size()];
 		for (ListIterator<JsonEntityBean> iter = form.getCategories().listIterator(); iter.hasNext();) {
 			String id = iter.next().getId();
 			String iCatID = id.startsWith("cat") ? id.substring(3) : id;
-			categories[iter.previousIndex()] = channelRegistryStore
-					.getChannelCategory(iCatID);
+			categories[iter.previousIndex()] = portletCategoryRegistry.getPortletCategory(iCatID);
 		}
 
-	    IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(form.getId());
-	    if (channelDef == null) {
+		IPortletDefinition portletDef = null;
+		if (form.getId() == null) {
 	        final String fname = form.getFname();
-	        final String clazz = form.getJavaClass();
 	        final String name = form.getName();
 	        final String title = form.getTitle();
-	        final int typeId = form.getTypeId();
+	        final String applicationId = form.getApplicationId();
+	        final String portletName = form.getPortletName();
+	        final boolean isFramework = form.isFramework(); 
 	        
-	    	channelDef = channelRegistryStore.newChannelDefinition(typeId, fname, clazz, name, title);
+	        final IPortletType type = portletTypeRegistry.getPortletType(form.getTypeId()); 
+	    	portletDef = portletDefinitionRegistry.createPortletDefinition(type, fname, name, title, applicationId, portletName, isFramework);
+		} else {
+			portletDef = portletDefinitionRegistry.getPortletDefinition(form.getId());
 	    }
-	    channelDef.setDescription(form.getDescription());
-	    channelDef.setEditable(form.isEditable());
-	    channelDef.setFName(form.getFname());
-	    channelDef.setHasAbout(form.isHasAbout());
-	    channelDef.setHasHelp(form.isHasHelp());
-	    channelDef.setIsSecure(form.isSecure());
-	    channelDef.setJavaClass(form.getJavaClass());
-	    channelDef.setName(form.getName());
-	    channelDef.setTimeout(form.getTimeout());
-	    channelDef.setTitle(form.getTitle());
+	    portletDef.setDescription(form.getDescription());
+	    portletDef.setEditable(form.isEditable());
+	    portletDef.setFName(form.getFname());
+	    portletDef.setHasAbout(form.isHasAbout());
+	    portletDef.setHasHelp(form.isHasHelp());
+	    portletDef.setName(form.getName());
+	    portletDef.setTimeout(form.getTimeout());
+	    portletDef.setTitle(form.getTitle());
+	    portletDef.setApplicationId(form.getApplicationId());
+	    portletDef.setPortletName(form.getPortletName());
+	    portletDef.setFramework(form.isFramework());
 	    
 	    Date now = new Date();
 
 		int order = form.getLifecycleState().getOrder();
 		
-		if (form.getId() < 0) {
+		if (form.getId() == null) {
 			
-			if (order >= ChannelLifecycleState.APPROVED.getOrder()) {
-				channelDef.setApproverId(publisher.getID());
-				channelDef.setApprovalDate(now);
+			if (order >= PortletLifecycleState.APPROVED.getOrder()) {
+				portletDef.setApproverId(publisher.getID());
+				portletDef.setApprovalDate(now);
 			}
 			
-			if (order >= ChannelLifecycleState.PUBLISHED.getOrder()) {
-			    channelDef.setPublisherId(publisher.getID());
-			    if (channelDef.getPublishDate() == null) {
-				    channelDef.setPublishDate(now);
+			if (order >= PortletLifecycleState.PUBLISHED.getOrder()) {
+			    portletDef.setPublisherId(publisher.getID());
+			    if (portletDef.getPublishDate() == null) {
+				    portletDef.setPublishDate(now);
 			    }
 			} else if (form.getPublishDate() != null) {
-				channelDef.setPublishDate(form.getPublishDateTime());
-				channelDef.setPublisherId(publisher.getID());
+				portletDef.setPublishDate(form.getPublishDateTime());
+				portletDef.setPublisherId(publisher.getID());
 			}
 
-			if (order >= ChannelLifecycleState.EXPIRED.getOrder()) {
-			    channelDef.setExpirerId(publisher.getID());
-			    if (channelDef.getExpirationDate() == null) {
-			    	channelDef.setExpirationDate(now);
+			if (order >= PortletLifecycleState.EXPIRED.getOrder()) {
+			    portletDef.setExpirerId(publisher.getID());
+			    if (portletDef.getExpirationDate() == null) {
+			    	portletDef.setExpirationDate(now);
 			    }
 			} else if (form.getExpirationDate() != null) {
-				channelDef.setExpirationDate(form.getExpirationDateTime());
-				channelDef.setExpirerId(publisher.getID());
+				portletDef.setExpirationDate(form.getExpirationDateTime());
+				portletDef.setExpirerId(publisher.getID());
 			}
 			
 		} 
 		
-		// if we're updating a channel
+		// if we're updating a portlet
 		else {
 
-			if (order >= ChannelLifecycleState.APPROVED.getOrder()) {
-				if (channelDef.getApproverId() < 0) {
-					channelDef.setApproverId(publisher.getID());
+			if (order >= PortletLifecycleState.APPROVED.getOrder()) {
+				if (portletDef.getApproverId() < 0) {
+					portletDef.setApproverId(publisher.getID());
 				}
-				if (channelDef.getApprovalDate() == null) {
-					channelDef.setApprovalDate(now);
+				if (portletDef.getApprovalDate() == null) {
+					portletDef.setApprovalDate(now);
 				}
 			} else {
-				channelDef.setApprovalDate(null);
-				channelDef.setApproverId(-1);
+				portletDef.setApprovalDate(null);
+				portletDef.setApproverId(-1);
 			}
 			
-			if (order >= ChannelLifecycleState.PUBLISHED.getOrder()) {
-				if (channelDef.getPublisherId() < 0) {
-					channelDef.setPublisherId(publisher.getID());
+			if (order >= PortletLifecycleState.PUBLISHED.getOrder()) {
+				if (portletDef.getPublisherId() < 0) {
+					portletDef.setPublisherId(publisher.getID());
 				}
-				if (channelDef.getPublishDate() == null) {
-					channelDef.setPublishDate(now);
+				if (portletDef.getPublishDate() == null) {
+					portletDef.setPublishDate(now);
 				}
 			} else if (form.getPublishDate() != null) {
-				channelDef.setPublishDate(form.getPublishDate());
-				if (channelDef.getPublisherId() < 0) {
-					channelDef.setPublisherId(publisher.getID());
+				portletDef.setPublishDate(form.getPublishDate());
+				if (portletDef.getPublisherId() < 0) {
+					portletDef.setPublisherId(publisher.getID());
 				}
 			} else {
-				channelDef.setPublishDate(null);
-				channelDef.setPublisherId(-1);
+				portletDef.setPublishDate(null);
+				portletDef.setPublisherId(-1);
 			}
 			
-			if (order >= ChannelLifecycleState.EXPIRED.getOrder()) {
-				if (channelDef.getExpirerId() < 0) {
-					channelDef.setExpirerId(publisher.getID());
+			if (order >= PortletLifecycleState.EXPIRED.getOrder()) {
+				if (portletDef.getExpirerId() < 0) {
+					portletDef.setExpirerId(publisher.getID());
 				}
-				if (channelDef.getExpirationDate() == null) {
-					channelDef.setExpirationDate(now);
+				if (portletDef.getExpirationDate() == null) {
+					portletDef.setExpirationDate(now);
 				}
 			} else if (form.getExpirationDate() != null) {
-				channelDef.setExpirationDate(form.getExpirationDate());
-				if (channelDef.getExpirerId() < 0) {
-					channelDef.setExpirerId(publisher.getID());
+				portletDef.setExpirationDate(form.getExpirationDate());
+				if (portletDef.getExpirerId() < 0) {
+					portletDef.setExpirerId(publisher.getID());
 				}
 			} else {
-				channelDef.setExpirationDate(null);
-				channelDef.setExpirerId(-1);
+				portletDef.setExpirationDate(null);
+				portletDef.setExpirerId(-1);
 			}
 			
 		}
 
 	    
-	    final IChannelType channelType = channelRegistryStore.getChannelType(form.getTypeId());
-	    if (channelType == null) {
-	        throw new IllegalArgumentException("No IChannelType exists for ID " + form.getTypeId());
+	    final IPortletType portletType = portletTypeRegistry.getPortletType(form.getTypeId());
+	    if (portletType == null) {
+	        throw new IllegalArgumentException("No IPortletType exists for ID " + form.getTypeId());
 	    }
-	    channelDef.setType(channelType);
+	    portletDef.setType(portletType);
 	    
-	    // add channel parameters
+	    // add portlet parameters
 		List<IPortletPreference> preferenceList = new ArrayList<IPortletPreference>();
 		for (String key : form.getParameters().keySet()) {
 			String value = form.getParameters().get(key).getValue();
 			if (!StringUtils.isBlank(value)) {
 				boolean override = false;
-				if (form.getParameterOverrides().containsKey(key)) {
-					override = form.getParameterOverrides().get(key).getValue();
-				}
 				if (key.startsWith("PORTLET.")) {
 					preferenceList.add(new PortletPreferenceImpl(key, !override, new String[]{value}));
 				} else {
-					channelDef.addParameter(key, value, override);
+					portletDef.addParameter(key, value);
 				}
 			}
 		}
@@ -389,31 +405,27 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			List<String> prefValues = form.getPortletPreferences().get(key).getValue();
 			if (prefValues != null && prefValues.size() > 0) {
 				String[] values = prefValues.toArray(new String[prefValues.size()]);
-				boolean readOnly = true;
-				if (form.getPortletPreferencesOverrides().containsKey(key)) {
-					readOnly = !form.getPortletPreferencesOverrides().get(key).getValue();
-				}
-				preferenceList.add(new PortletPreferenceImpl(key, readOnly, values));
+				// fix read-only
+				preferenceList.add(new PortletPreferenceImpl(key, false, values));
 			}
 		}
-		final IPortletDefinition portletDefinition = channelDef.getPortletDefinition();
-		final IPortletPreferences portletPreferences = portletDefinition.getPortletPreferences();
+		final IPortletPreferences portletPreferences = portletDef.getPortletPreferences();
 		portletPreferences.setPortletPreferences(preferenceList);
 	    
-	    channelPublishingService.saveChannelDefinition(channelDef, publisher, categories, groupMembers);
+	    portletPublishingService.savePortletDefinition(portletDef, publisher, Arrays.asList(categories), Arrays.asList(groupMembers));
 
-	    return this.getChannelDefinitionForm(channelDef.getId());
+	    return this.getPortletDefinitionForm(portletDef.getPortletDefinitionId().getStringId());
 	}
 	
 	/**
-	 * Delete the portlet with the given channel ID.
+	 * Delete the portlet with the given portlet ID.
 	 * 
-	 * @param channelID the channel ID
-	 * @param person the person removing the channel
+	 * @param portletID the portlet ID
+	 * @param person the person removing the portlet
 	 */
-	public void removePortletRegistration(int channelId, IPerson person) {
-		IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(channelId);
-		channelPublishingService.removeChannelDefinition(channelDef, person);
+	public void removePortletRegistration(String portletId, IPerson person) {
+		IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
+		portletDefinitionRegistry.deletePortletDefinition(def);
 	}
 	
 	/**
@@ -424,9 +436,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * @param cpd
 	 * @return
 	 */
-	public Set<String> getArbitraryPortletPreferenceNames(ChannelDefinitionForm form) {
-		// set default values for all channel parameters
-		ChannelPublishingDefinition cpd = this.channelPublishingDefinitionDao.getChannelPublishingDefinition(form.getTypeId());
+	public Set<String> getArbitraryPortletPreferenceNames(PortletDefinitionForm form) {
+		// set default values for all portlet parameters
+		ChannelPublishingDefinition cpd = this.portletPublishingDefinitionDao.getChannelPublishingDefinition(form.getTypeId());
 		Set<String> currentPrefs = new HashSet<String>();
 		currentPrefs.addAll(form.getPortletPreferences().keySet());
 		for (CPDStep step : cpd.getParams().getSteps()) {
@@ -447,13 +459,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	/**
-	 * If the channel is a portlet and if one of the supported portlet modes is {@link IPortletRenderer#CONFIG}
+	 * If the portlet is a portlet and if one of the supported portlet modes is {@link IPortletRenderer#CONFIG}
 	 */
-	public boolean supportsConfigMode(ChannelDefinitionForm form) {
-	    if (!form.isPortlet()) {
-	        return false;
-	    }
-	    
+	public boolean supportsConfigMode(PortletDefinitionForm form) {
 	    final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(form);
 	    if (portletDescriptorKeys == null) {
 	        return false;
@@ -489,7 +497,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
         return false;
 	}
 	
-	public void cleanOptions(ChannelDefinitionForm form, PortletRequest request) {
+	public void cleanOptions(PortletDefinitionForm form, PortletRequest request) {
 		Set<String> preferenceNames = new HashSet<String>();
 		Set<String> parameterNames = new HashSet<String>();
 		for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
@@ -506,10 +514,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		for (String key : keys) {
 			if (!preferenceNames.contains(key)) {
 				form.getPortletPreferences().remove(key);
-				form.getPortletPreferencesOverrides().remove(key);
 			} else if (form.getPortletPreferences().get(key) == null) {
 				form.getPortletPreferences().remove(key);
-				form.getPortletPreferencesOverrides().remove(key);
 			} else {
 				List<String> values = form.getPortletPreferences().get(key).getValue();
 				for (ListIterator<String> iter = values.listIterator(); iter.hasNext();) {
@@ -520,7 +526,6 @@ public class PortletAdministrationHelper implements ServletContextAware {
 				}
 				if (values.size() == 0) {
 					form.getPortletPreferences().remove(key);
-					form.getPortletPreferencesOverrides().remove(key);
 				}
 			}
 		}
@@ -530,10 +535,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		for (String key : keys) {
 			if (!parameterNames.contains(key)) {
 				form.getParameters().remove(key);
-				form.getParameterOverrides().remove(key);
 			} else if (form.getParameters().get(key) == null || StringUtils.isBlank(form.getParameters().get(key).getValue())) {
 				form.getParameters().remove(key);
-				form.getParameterOverrides().remove(key);
 			}
 		}
 	}
@@ -599,7 +602,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	/**
-	 * Get a portlet descriptor matching the current channel definition form.
+	 * Get a portlet descriptor matching the current portlet definition form.
 	 * If the current form does not represent a portlet, the application or 
 	 * portlet name fields are blank, or the portlet description cannot be 
 	 * retrieved, the method will return <code>null</code>.
@@ -607,7 +610,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * @param form
 	 * @return
 	 */
-	public PortletDefinition getPortletDescriptor(ChannelDefinitionForm form) {
+	public PortletDefinition getPortletDescriptor(PortletDefinitionForm form) {
 		final Tuple<String, String> portletDescriptorKeys = this.getPortletDescriptorKeys(form);
 		if (portletDescriptorKeys == null) {
 		    return null;
@@ -627,14 +630,14 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	/**
-	 * Pre-populate a ChannelDefinitionForm with portlet-specific information
+	 * Pre-populate a PortletDefinitionForm with portlet-specific information
 	 * using the supplied portlet descriptor.
 	 * 
 	 * @param application
 	 * @param portlet
 	 * @param form
 	 */
-	public void prepopulatePortlet(String application, String portlet, ChannelDefinitionForm form) {
+	public void prepopulatePortlet(String application, String portlet, PortletDefinitionForm form) {
 		final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
 		final PortletDefinition portletDD;
 		try {
@@ -647,8 +650,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		    
 	    form.setTitle(portletDD.getPortletName());
 		form.setName(portletDD.getPortletName());
-		form.getParameters().put(IPortletRenderer.CHANNEL_PARAM__PORTLET_APPLICATION_ID, new Attribute(application));
-		form.getParameters().put(IPortletRenderer.CHANNEL_PARAM__PORTLET_NAME, new Attribute(portletDD.getPortletName()));
+		form.setApplicationId(application);
+		form.setPortletName(portletDD.getPortletName());
 		for (Supports supports : portletDD.getSupports()) {
 			for (String mode : supports.getPortletModes()) {
 				if ("edit".equals(mode)) {
@@ -660,58 +663,58 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		}
 	}
 	
-	public ChannelLifecycleState[] getLifecycleStates() {
-		return ChannelLifecycleState.values();
+	public PortletLifecycleState[] getLifecycleStates() {
+		return PortletLifecycleState.values();
 	}
 
-	public Set<ChannelLifecycleState> getAllowedLifecycleStates(IPerson person, List<JsonEntityBean> categories) {
-		Set<ChannelLifecycleState> states = new TreeSet<ChannelLifecycleState>();
-		if (hasLifecyclePermission(person, ChannelLifecycleState.EXPIRED, categories)) {
-			states.add(ChannelLifecycleState.CREATED);
-			states.add(ChannelLifecycleState.APPROVED);
-			states.add(ChannelLifecycleState.EXPIRED);
-			states.add(ChannelLifecycleState.PUBLISHED);
-		} else if (hasLifecyclePermission(person, ChannelLifecycleState.PUBLISHED, categories)) {
-			states.add(ChannelLifecycleState.CREATED);
-			states.add(ChannelLifecycleState.APPROVED);
-			states.add(ChannelLifecycleState.PUBLISHED);
-		} else if (hasLifecyclePermission(person, ChannelLifecycleState.APPROVED, categories)) {
-			states.add(ChannelLifecycleState.CREATED);
-			states.add(ChannelLifecycleState.APPROVED);
-		} else if (hasLifecyclePermission(person, ChannelLifecycleState.CREATED, categories)) {
-			states.add(ChannelLifecycleState.CREATED);
+	public Set<PortletLifecycleState> getAllowedLifecycleStates(IPerson person, List<JsonEntityBean> categories) {
+		Set<PortletLifecycleState> states = new TreeSet<PortletLifecycleState>();
+		if (hasLifecyclePermission(person, PortletLifecycleState.EXPIRED, categories)) {
+			states.add(PortletLifecycleState.CREATED);
+			states.add(PortletLifecycleState.APPROVED);
+			states.add(PortletLifecycleState.EXPIRED);
+			states.add(PortletLifecycleState.PUBLISHED);
+		} else if (hasLifecyclePermission(person, PortletLifecycleState.PUBLISHED, categories)) {
+			states.add(PortletLifecycleState.CREATED);
+			states.add(PortletLifecycleState.APPROVED);
+			states.add(PortletLifecycleState.PUBLISHED);
+		} else if (hasLifecyclePermission(person, PortletLifecycleState.APPROVED, categories)) {
+			states.add(PortletLifecycleState.CREATED);
+			states.add(PortletLifecycleState.APPROVED);
+		} else if (hasLifecyclePermission(person, PortletLifecycleState.CREATED, categories)) {
+			states.add(PortletLifecycleState.CREATED);
 		}
 		return states;
 	}
 	
-	public boolean hasLifecyclePermission(IPerson person, ChannelLifecycleState state, List<JsonEntityBean> categories) {
+	public boolean hasLifecyclePermission(IPerson person, PortletLifecycleState state, List<JsonEntityBean> categories) {
 		EntityIdentifier ei = person.getEntityIdentifier();
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 	    
         final String activity;
         switch (state) {
             case APPROVED: {
-                activity = IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY;
+                activity = IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY;
                 break;
             }
             case CREATED: {
-                activity = IPermission.CHANNEL_MANAGER_CREATED_ACTIVITY;
+                activity = IPermission.PORTLET_MANAGER_CREATED_ACTIVITY;
                 break;
             }
             case PUBLISHED: {
-                activity = IPermission.CHANNEL_MANAGER_ACTIVITY;
+                activity = IPermission.PORTLET_MANAGER_ACTIVITY;
                 break;
             }
             case EXPIRED: {
-                activity = IPermission.CHANNEL_MANAGER_EXPIRED_ACTIVITY;
+                activity = IPermission.PORTLET_MANAGER_EXPIRED_ACTIVITY;
                 break;
             }
             default: {
                 throw new IllegalArgumentException("");
             }
         }
-        if (ap.hasPermission("UP_FRAMEWORK", activity, "ALL_CHANNELS")) {
-            logger.debug("Found permission for category ALL_CHANNELS and lifecycle state " + state.toString());
+        if (ap.hasPermission("UP_FRAMEWORK", activity, IPermission.ALL_PORTLETS_TARGET)) {
+            logger.debug("Found permission for category ALL_PORTLETS and lifecycle state " + state.toString());
             return true;
         }
 	    
@@ -752,7 +755,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    return false;
 	}
 	
-	public boolean offerPortletSelection(ChannelDefinitionForm form) {
+	public boolean offerPortletSelection(PortletDefinitionForm form) {
 		Map<String, Attribute> parameters = form.getParameters();
 		if (parameters.get("portletName") != null
 				&& !StringUtils.isBlank(parameters.get("portletName").getValue())){
@@ -762,25 +765,20 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		return true;
 	}
 	
-	protected Tuple<String, String> getPortletDescriptorKeys(ChannelDefinitionForm form) {
-	    final Map<String, Attribute> parameters = form.getParameters();
-	    
-	    final Attribute frameworkPortletAttribute = parameters.get(IPortletRenderer.CHANNEL_PARAM__IS_FRAMEWORK_PORTLET);
-        final Attribute portletAppIdAttribute = parameters.get(IPortletRenderer.CHANNEL_PARAM__PORTLET_APPLICATION_ID);
-        final Attribute portletNameAttribute = parameters.get(IPortletRenderer.CHANNEL_PARAM__PORTLET_NAME);
-        if ((portletAppIdAttribute == null && frameworkPortletAttribute == null) || portletNameAttribute == null) {
+	protected Tuple<String, String> getPortletDescriptorKeys(PortletDefinitionForm form) {
+        if (form.getPortletName() == null || form.getApplicationId() == null) {
             return null;
         }
         
         final String portletAppId;
-        if (frameworkPortletAttribute != null && Boolean.valueOf(frameworkPortletAttribute.getValue())) {
+        if (form.isFramework()) {
             portletAppId = this.servletContext.getContextPath();
         }
         else {
-            portletAppId = portletAppIdAttribute.getValue();
+            portletAppId = form.getApplicationId();
         }
         
-        final String portletName = portletNameAttribute.getValue();
+        final String portletName = form.getPortletName();
         
         return new Tuple<String, String>(portletAppId, portletName);
 	}

@@ -19,8 +19,11 @@
 
 package org.jasig.portal.portlet.dao;
 
+import java.util.List;
+
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.portlet.om.IPortletType;
 
 /**
  * Provides APIs for creating, storing and retrieving {@link IPortletDefinition} objects.
@@ -35,8 +38,10 @@ public interface IPortletDefinitionDao {
      * @param portletDefinition The portlet definition to store the changes for
      * @throws IllegalArgumentException if portletDefinition is null.
      */
-    public void updatePortletDefinition(IPortletDefinition portletDefinition);
-    
+    public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition);
+
+	public void deletePortletDefinition(IPortletDefinition definition);
+
     /**
      * Get a {@link IPortletDefinition} for the specified {@link IPortletDefinitionId}.
      * 
@@ -45,4 +50,15 @@ public interface IPortletDefinitionDao {
      * @throws IllegalArgumentException if portletDefinitionId is null.
      */
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId);
+    
+    public IPortletDefinition getPortletDefinition(String portletDefinitionIdString);
+    
+    public IPortletDefinition getPortletDefinitionByFname(String fname);
+
+    public IPortletDefinition getPortletDefinitionByName(String fname);
+
+    public List<IPortletDefinition> getPortletDefinitions();
+
+    public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial);
+
 }

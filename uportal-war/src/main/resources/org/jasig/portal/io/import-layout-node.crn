@@ -106,17 +106,17 @@
                 <when test="${jexl(NODE_TYPE == 'channel')}">
                     <with-attribute key="FNAME" value="${valueOf(@fname)}">
                         <with-attribute key="FNAME" value="${crn(fix-fname.crn)}">
-                            <cache key="CHAN_ID" cache-key="CHAN_ID.${FNAME}">
+                            <cache key="PORTLET_DEF_ID" cache-key="PORTLET_ID.${FNAME}">
                                 <factory>
                                     <sql-query>
                                         <sql>
-                                            SELECT chan_id 
-                                            FROM up_channel 
-                                            WHERE chan_fname = ?
+                                            SELECT portlet_def_id 
+                                            FROM up_portlet_def 
+                                            WHERE portlet_fname = ?
                                         </sql>
                                         <parameter value="${FNAME}" />
                                         <subtasks>
-                                            <return value="${CHAN_ID}" />
+                                            <return value="${PORTLET_DEF_ID}" />
                                         </subtasks>
                                     </sql-query>
                                 </factory>
@@ -132,7 +132,7 @@
                                                 <parameter value="${LAYOUT_ID}"/>
                                                 <parameter value="${STRUCT_ID}"/>
                                                 <parameter value="${groovy(RETURNED_IDS[0])}"/>
-                                                <parameter value="${CHAN_ID}"/>
+                                                <parameter value="${PORTLET_DEF_ID}"/>
                                                 <parameter value="${groovy(HIDDEN != null ? HIDDEN : 'N')}"/>
                                                 <parameter value="${groovy(IMMUTABLE != null ? IMMUTABLE : 'N')}"/>
                                                 <parameter value="${groovy(UNREMOVABLE != null ? UNREMOVABLE : 'N')}"/>

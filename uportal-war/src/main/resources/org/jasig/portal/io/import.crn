@@ -282,9 +282,10 @@
                                 </if>
                             </file-iterator>
                         </thread-pool>
-                        <!-- channel-types -->
+                        
+                        <!-- portlet-types -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
-                            <file-iterator dir="${$1}" includes="**/*.channel-type">
+                            <file-iterator dir="${$1}" includes="**/*.portlet-type">
                                 <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
                                     <concurrent>
                                         <handle-error>
@@ -295,7 +296,7 @@
                                                 </with-attribute>
                                             </try>
                                             <catch>
-                                                <echo-ln>ERROR Failed to import Channel Type from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <echo-ln>ERROR Failed to import Portlet Type from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
                                                 <throw/>
                                             </catch>
                                         </handle-error>
@@ -304,9 +305,9 @@
                             </file-iterator>
                         </thread-pool>
                                                         
-                        <!-- channels -->
+                        <!-- portlets -->
                         <thread-pool threads="1"> <!-- single threaded for now due to lack of thread-saftey in channel publishing code -->
-                            <file-iterator dir="${$1}" includes="**/*.channel">
+                            <file-iterator dir="${$1}" includes="**/*.portlet">
                                 <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
                                     <concurrent>
                                         <handle-error>

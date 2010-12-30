@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Initiates portlet rendering based each encountered {@link XMLPipelineConstants#CHANNEL} element in the
+ * Initiates portlet rendering based each encountered {@link XMLPipelineConstants#PORTLET} element in the
  * event stream
  * 
  * @author Eric Dalquist

@@ -80,7 +80,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 	<!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-  	<h2 class="title" role="heading"><c:out value="${ fn:escapeXml(channel.title )}"/></h2>
+  	<h2 class="title" role="heading"><c:out value="${ fn:escapeXml(portlet.title )}"/></h2>
   </div> <!-- end: portlet-titlebar -->
   
 	<!-- Portlet Content -->
@@ -107,52 +107,45 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <tbody>
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.title"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(channel.title )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(channel.title )}"/></a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(portlet.title )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(portlet.title )}"/></a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.name"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(channel.name )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(channel.name )}"/></a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(portlet.name )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(portlet.name )}"/></a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.functional.name"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(channel.fname )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(channel.fname )}"/></a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(portlet.fname )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(portlet.fname )}"/></a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.description"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(channel.description )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(channel.description )}"/></a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(portlet.description )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(portlet.description )}"/></a></td>
             </tr> 
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.timeout"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(channel.timeout )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(channel.timeout )}"/></a></td>
+              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(portlet.timeout )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(portlet.timeout )}"/></a></td>
             </tr>
-            <tr>
-              <td class="fl-text-align-right"><spring:message code="portlet.secure"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(channel.secure )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(channel.secure )}"/></a></td>
-            </tr> 
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.type"/>:</td>
               <td>
-                <c:forEach items="${ channelTypes }" var="type">
-                  <c:if test="${ type.key.id == channel.typeId }">
-                    <a href="${ chooseTypeUrl }" title="${ fn:escapeXml(channel.typeId )}" class="pa-edit"><c:out value="${ fn:escapeXml(type.key.name )}"/></a>
-                    <c:if test="${ type.key.id == -1 }">
-                      <a href="${ chooseTypeUrl }" title="${ fn:escapeXml(channel.typeId )}" class="pa-edit">(<c:out value="${ fn:escapeXml(channel.javaClass )}"/>)</a>
-                    </c:if>
+                <c:forEach items="${ portletTypes }" var="type">
+                  <c:if test="${ type.key.id == portlet.typeId }">
+                    <a href="${ chooseTypeUrl }" title="${ fn:escapeXml(portlet.typeId )}" class="pa-edit"><c:out value="${ fn:escapeXml(type.key.name )}"/></a>
                   </c:if>
                 </c:forEach>
               </td>
             </tr>
             <tr>
               <td class="fl-text-align-right"><spring:message code="edit"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(channel.editable )}" class="pa-edit">${ fn:escapeXml(channel.editable )}</a></td>
+              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.editable )}" class="pa-edit">${ fn:escapeXml(portlet.editable )}</a></td>
             </tr> 
             <tr>
               <td class="fl-text-align-right"><spring:message code="help"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(channel.hasHelp )}" class="pa-edit">${ fn:escapeXml(channel.hasHelp )}</a></td>
+              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.hasHelp )}" class="pa-edit">${ fn:escapeXml(portlet.hasHelp )}</a></td>
             </tr>  
             <tr>
               <td class="fl-text-align-right"><spring:message code="about"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(channel.hasAbout )}" class="pa-edit">${ fn:escapeXml(channel.hasAbout )}</a></td>
+              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.hasAbout )}" class="pa-edit">${ fn:escapeXml(portlet.hasAbout )}</a></td>
             </tr>
           </tbody>
         </table>
@@ -162,7 +155,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- END: General Configuration Section -->
     
     
-    <!-- Channel Parameters Section -->
+    <!-- Portlet Parameters Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">
         <h3 class="title" role="heading"><spring:message code="parameters"/></h3>
@@ -184,43 +177,40 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <tbody>
             <c:forEach items="${ cpd.params.steps }" var="step">
               <c:forEach items="${ step.parameters }" var="parameter">
-                <c:if test="${ (parameter.modify != 'subscribeOnly' && parameter.type.display != 'hidden') && ((channel.parameters[parameter.name].value != null && channel.parameters[parameter.name].value != '') || (fn:startsWith(parameter.name, 'PORTLET.') && channel.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value != null && channel.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value != '')) }">
+                <c:if test="${ (parameter.modify != 'subscribeOnly' && parameter.type.display != 'hidden') && ((portlet.parameters[parameter.name].value != null && portlet.parameters[parameter.name].value != '') || (fn:startsWith(parameter.name, 'PORTLET.') && portlet.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value != null && portlet.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value != '')) }">
                   <tr>
                     <td class="fl-text-align-right"><c:out value="${ fn:escapeXml(parameter.label )}"/>:</td>
                     <td>
                         <a href="${ setParametersUrl }" class="pa-edit">
                             <c:choose>
 	                            <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
-	                               <c:set var="values" value="${channel.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value}"/>
+	                               <c:set var="values" value="${portlet.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value}"/>
 	                               <c:out value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}"/>
 	                            </c:when>
 	                            <c:otherwise>
-    	                            <c:out value="${ fn:escapeXml(channel.parameters[parameter.name].value )}"/>
+    	                            <c:out value="${ fn:escapeXml(portlet.parameters[parameter.name].value )}"/>
 	                            </c:otherwise>
                             </c:choose>
                         </a>
                     </td>
                     <td>
-                        <c:choose>
+                        <!--<c:choose>
                             <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
-                                ${ fn:escapeXml(channel.portletPreferencesOverrides[fn:replace(parameter.name, 'PORTLET.', '')].value ? 'X' : '' )}
+                                ${ fn:escapeXml(portlet.portletPreferencesOverrides[fn:replace(parameter.name, 'PORTLET.', '')].value ? 'X' : '' )}
                             </c:when>
-                            <c:otherwise>
-                                ${ fn:escapeXml(channel.parameterOverrides[parameter.name].value ? 'X' : '' )}
-                            </c:otherwise>
-                        </c:choose>
+                        </c:choose>-->
                     </td>
                   </tr>
                 </c:if>
               </c:forEach>
               <c:forEach items="${ step.arbitraryParameters }" var="arbitraryParam">
                 <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
-                  <c:forEach items="${ channel.parameters }" var="channelParam">
-                    <c:if test="${ fn:startsWith(channelParam.key, prefix) }">
+                  <c:forEach items="${ portlet.parameters }" var="portletParam">
+                    <c:if test="${ fn:startsWith(portletParam.key, prefix) }">
                       <tr>
-                        <td class="fl-text-align-right"><c:out value="${ fn:escapeXml(channelParam.key )}"/>:</td>
-                        <td><a href="${ setParametersUrl }" class="pa-edit"><c:out value="${ fn:escapeXml(channelParam.value )}"/></a></td>
-                        <td>${ fn:escapeXml(channel.parameterOverrides[parameter.name].value ? 'X' : '' )}</td>
+                        <td class="fl-text-align-right"><c:out value="${ fn:escapeXml(portletParam.key )}"/>:</td>
+                        <td><a href="${ setParametersUrl }" class="pa-edit"><c:out value="${ fn:escapeXml(portletParam.value )}"/></a></td>
+                        <td>${ fn:escapeXml(portlet.parameterOverrides[parameter.name].value ? 'X' : '' )}</td>
                       </tr>
                     </c:if>
                   </c:forEach>
@@ -232,9 +222,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         
       </div>
     </div>
-    <!-- END: Channel Parameters Section -->
+    <!-- END: Portlet Parameters Section -->
     
-    <c:if test="${ channel.portlet }">
       <!-- Portlet.xml Preferences Section -->
       <div class="portlet-section" role="region">
         <div class="titlebar">
@@ -251,7 +240,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </thead>
             <tbody>
               <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
-                <tr class="${ up:containsKey(channel.portletPreferences, pref.name) ? 'override-preference' : '' }">
+                <tr class="${ up:containsKey(portlet.portletPreferences, pref.name) ? 'override-preference' : '' }">
                   <td class="preference-name">${ fn:escapeXml(pref.name )}</td>
                   <td>
                     <c:forEach var="value" items="${ pref.values }">
@@ -273,7 +262,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <h3 class="title" role="heading"><spring:message code="preferences"/></h3>
           <div class="options">
             <c:choose>
-              <c:when test="${supportsConfig and channel.id >= 0}">
+              <c:when test="${supportsConfig and portlet.id >= 0}">
                 <a href="${ configModeUrl }"><span><spring:message code="edit.rich.configuration"/></span></a>
               </c:when>
               <c:otherwise>
@@ -300,11 +289,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   <tr>
                     <td class="preference-name">${ fn:escapeXml(name )}</td>
                     <td>
-                        <c:forEach items="${ channel.portletPreferences[name].value }" var="val">
+                        <c:forEach items="${ portlet.portletPreferences[name].value }" var="val">
                          <div>${ fn:escapeXml(val )}</div>
                         </c:forEach>
                     </td>
-                    <td>${ fn:escapeXml(channel.portletPreferencesOverrides[name].value )}</td>
+                    <td>${ fn:escapeXml(portlet.portletPreferencesOverrides[name].value )}</td>
                   </tr>
               </c:forEach>
             </tbody>
@@ -313,7 +302,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div>
       </div>
       <!-- END: Portlet Preferences Section -->
-    </c:if>
   	
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
@@ -326,7 +314,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <div class="content">
 
         <ul class="category-member">
-          <c:forEach items="${ channel.categories }" var="category">
+          <c:forEach items="${ portlet.categories }" var="category">
             <li><a href="${ chooseCategoryUrl }"><c:out value="${ fn:escapeXml(category.name )}"/></a></li>
           </c:forEach>
         </ul>
@@ -345,7 +333,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <div class="content">
       
         <ul class="group-member">
-        <c:forEach items="${ channel.groups }" var="group">
+        <c:forEach items="${ portlet.groups }" var="group">
           <li><a href="${ chooseGroupUrl }"><c:out value="${ fn:escapeXml(group.name )}"/></a></li>
         </c:forEach>
         </ul>
@@ -377,19 +365,19 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               
               <%-- The following is temporary and will be replaced when backend
                    work for portlet lifecycle management is done. --%>
-              <td><a href="${ lifecycleUrl }" title="<spring:message code="lifecycle.name.${ channel.lifecycleState }"/>" class="pa-edit"><spring:message code="lifecycle.name.${ channel.lifecycleState }"/></a></td>
+              <td><a href="${ lifecycleUrl }" title="<spring:message code="lifecycle.name.${ portlet.lifecycleState }"/>" class="pa-edit"><spring:message code="lifecycle.name.${ portlet.lifecycleState }"/></a></td>
             </tr>
-            <c:if test="${ (channel.lifecycleState != 'PUBLISHED' && channel.lifecycleState != 'EXPIRED') && channel.publishDate != null }">
+            <c:if test="${ (portlet.lifecycleState != 'PUBLISHED' && portlet.lifecycleState != 'EXPIRED') && portlet.publishDate != null }">
 	            <tr>
 	              <td class="fl-text-align-right"><spring:message code="auto.publish.date.time"/></td>
-	              <fmt:formatDate type="both" value="${channel.publishDate}" var="publishDate"/>
+	              <fmt:formatDate type="both" value="${portlet.publishDate}" var="publishDate"/>
 	              <td><a href="${ lifecycleUrl }" title="${ fn:escapeXml(publishDate )}" class="pa-edit">${ fn:escapeXml(publishDate )}</a></td>
 	            </tr>
             </c:if>
-            <c:if test="${ channel.lifecycleState != 'EXPIRED' && channel.expirationDate != null }">
+            <c:if test="${ portlet.lifecycleState != 'EXPIRED' && portlet.expirationDate != null }">
 	            <tr>
 	              <td class="fl-text-align-right"><spring:message code="auto.expire.date.time"/></td>
-	              <fmt:formatDate type="both" value="${channel.expirationDate}" var="expirationDate"/>
+	              <fmt:formatDate type="both" value="${portlet.expirationDate}" var="expirationDate"/>
 	              <td><a href="${ lifecycleUrl }" title="${ fn:escapeXml(expirationDate )}" class="pa-edit">${ fn:escapeXml(expirationDate )}</a></td>
 	            </tr>
             </c:if>
@@ -402,7 +390,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 		<!-- Buttons -->
     <div class="buttons">
     	<a class="button primary" href="${ saveUrl }"><spring:message code="save"/></a>
-    	<c:if test="${supportsConfig and channel.id < 0}">
+    	<c:if test="${supportsConfig and portlet.id < 0}">
     	   <a class="button primary" href="${ saveAndConfigUrl }"><spring:message code="save.and.configure"/></a>
     	</c:if>
     	<a class="button" href="${ cancelUrl }"><spring:message code="cancel"/></a>

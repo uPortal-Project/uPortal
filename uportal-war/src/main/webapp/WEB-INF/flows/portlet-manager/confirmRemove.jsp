@@ -51,10 +51,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
 
-    <form:form modelAttribute="channel" action="${submitUrl}" method="POST">
+    <form:form modelAttribute="portlet" action="${submitUrl}" method="POST">
 
     <!-- Portlet Messages -->
-    <spring:hasBindErrors name="channel">
+    <spring:hasBindErrors name="portlet">
         <div class="portlet-msg-error portlet-msg error" role="alert">
             <form:errors path="*" element="div"/>
         </div> <!-- end: portlet-msg -->
@@ -63,10 +63,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="remove.portlet.name" arguments="${ channel.name }"/></h3>
+        <h3 class="title" role="heading"><spring:message code="remove.portlet.name" arguments="${ portlet.name }"/></h3>
       </div>
       <div class="content">
-        <spring:message code="remove.portlet.confirmation" arguments="${ channel.name }"/>
+        <spring:message code="remove.portlet.confirmation" arguments="${ portlet.name }"/>
 	  </div>
 	</div> <!-- end: portlet-section -->
     

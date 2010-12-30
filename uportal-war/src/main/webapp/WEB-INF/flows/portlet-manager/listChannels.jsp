@@ -35,12 +35,12 @@
 <portlet:actionURL var="editPortletUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPortlet"/>
-  <portlet:param name="chanId" value="PORTLETID"/>
+  <portlet:param name="portletId" value="PORTLETID"/>
 </portlet:actionURL>
 <portlet:actionURL var="removePortletUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="removePortlet"/>
-  <portlet:param name="chanId" value="PORTLETID"/>
+  <portlet:param name="portletId" value="PORTLETID"/>
 </portlet:actionURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
 
@@ -158,8 +158,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         var editUrl = "${ editPortletUrl }";
         var removeUrl = "${ removePortletUrl }";
 
-        var channelTypes = { };
-        <c:forEach items="${channelTypes}" var="type">channelTypes[${type.id}] = '${type.name}';</c:forEach>
+        var portletTypes = { };
+        <c:forEach items="${portletTypes}" var="type">portletTypes[${type.id}] = '${type.name}';</c:forEach>
         
         up.PortletAdministrationCategoryListView = function(container, overallThat, options) {
 
@@ -262,7 +262,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     { key: "name", valuebinding: "*.name", sortable: true },
                     { key: "type", valuebinding: "*.type", sortable: true,
                         components: function(row) {
-                                return { value: channelTypes[row.type] };
+                                return { value: portletTypes[row.type] };
                             }
                         },
                     { key: "state", valuebinding: "*.state", sortable: true,
@@ -323,7 +323,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 { 
                     portletRegistry: { 
                         type: "up.PortletRegistry",
-                        options: { portletListUrl: "<c:url value="/api/channelList"/>" } 
+                        options: { portletListUrl: "<c:url value="/api/portletList"/>" } 
                     },
                     categoryListView: {
                         type: "up.PortletAdministrationCategoryListView"

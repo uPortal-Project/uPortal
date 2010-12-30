@@ -30,9 +30,9 @@ import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 import org.dom4j.Element;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 
@@ -73,7 +73,7 @@ public class GetMemberServicePhrase implements Phrase {
 
         try {
 
-            Class[] leafTypes = new Class[] {IPerson.class, IChannelDefinition.class};
+            Class[] leafTypes = new Class[] {IPerson.class, IPortletDefinition.class};
             for (int i=0; i < leafTypes.length && rslt == null; i++) {
                 EntityIdentifier[] eis = GroupService.searchForGroups(e.getText(), IGroupConstants.IS, leafTypes[i]);
                 if (eis.length == 1) {

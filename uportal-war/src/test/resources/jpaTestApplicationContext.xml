@@ -59,10 +59,7 @@
     <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao">
     </bean>
     
-    <bean id="channelTypeDao" class="org.jasig.portal.channel.dao.jpa.JpaChannelTypeDao">
-    </bean>
-
-    <bean id="channelDefinitionDao" class="org.jasig.portal.channel.dao.jpa.JpaChannelDefinitionDao">
+    <bean id="portletTypeDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletTypeDao">
     </bean>
 
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
@@ -72,9 +69,6 @@
         <property name="portletDefinitionDao" ref="portletDefinitionDao" />
     </bean>
     
-    <util:constant id="CHANNEL_PARAM__PORTLET_APPLICATION_ID" static-field="org.jasig.portal.portlet.rendering.IPortletRenderer.CHANNEL_PARAM__PORTLET_APPLICATION_ID"/>
-    <util:constant id="CHANNEL_PARAM__PORTLET_NAME" static-field="org.jasig.portal.portlet.rendering.IPortletRenderer.CHANNEL_PARAM__PORTLET_NAME"/>
-
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>

@@ -31,11 +31,6 @@
      | They exist to support legacy code that is not managed by spring
      +-->
     
-    <bean id="org.jasig.portal.spring.locator.ChannelRegistryStoreLocator"
-            class="org.jasig.portal.spring.locator.ChannelRegistryStoreLocator">
-        <constructor-arg index="0" ref="channelRegistryStore" />
-    </bean>
-    
     <bean id="org.jasig.portal.spring.locator.UserLayoutStoreLocator"
             class="org.jasig.portal.spring.locator.UserLayoutStoreLocator">
         <constructor-arg index="0" ref="userLayoutStore" />
@@ -80,11 +75,6 @@
         <constructor-arg index="0" ref="cacheFactory" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.ChannelPublishingServiceLocator" 
-        class="org.jasig.portal.spring.locator.ChannelPublishingServiceLocator">
-        <constructor-arg index="0" ref="channelPublishingService" />
-    </bean>    
-
     <bean id="org.jasig.portal.spring.locator.PasswordEncryptionServiceLocator" 
         class="org.jasig.portal.spring.locator.PasswordEncryptionServiceLocator">
         <constructor-arg index="0" ref="stringEncryptionService" />

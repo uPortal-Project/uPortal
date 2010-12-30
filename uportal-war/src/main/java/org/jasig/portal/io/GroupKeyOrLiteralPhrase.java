@@ -30,8 +30,8 @@ import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 import org.dom4j.Element;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 
@@ -68,7 +68,7 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
             // This is a group name, we need to look up the key...
             try {
 
-                Class[] types = new Class[] {IPerson.class, IChannelDefinition.class};
+                Class[] types = new Class[] {IPerson.class, IPortletDefinition.class};
 
                 for (Class c : types) {
                     EntityIdentifier[] eis = GroupService.searchForGroups(e.getText(), IGroupConstants.IS, c);

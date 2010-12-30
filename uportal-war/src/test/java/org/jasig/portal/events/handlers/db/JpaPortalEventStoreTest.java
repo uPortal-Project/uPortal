@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.easymock.EasyMock;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelInstanciatedInLayoutPortalEvent;
@@ -35,11 +34,11 @@ import org.jasig.portal.events.support.ChannelRemovedFromLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelRenderedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelTargetedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelUpdatedInLayoutPortalEvent;
-import org.jasig.portal.events.support.ModifiedChannelDefinitionPortalEvent;
+import org.jasig.portal.events.support.ModifiedPortletDefinitionPortalEvent;
 import org.jasig.portal.events.support.PageRenderTimePortalEvent;
 import org.jasig.portal.events.support.PortletActionInLayoutPortalEvent;
-import org.jasig.portal.events.support.PublishedChannelDefinitionPortalEvent;
-import org.jasig.portal.events.support.RemovedChannelDefinitionPortalEvent;
+import org.jasig.portal.events.support.PublishedPortletDefinitionPortalEvent;
+import org.jasig.portal.events.support.RemovedPortletDefinitionPortalEvent;
 import org.jasig.portal.events.support.UserAddedFolderToLayoutPortalEvent;
 import org.jasig.portal.events.support.UserLoggedInPortalEvent;
 import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
@@ -51,6 +50,8 @@ import org.jasig.portal.events.support.UserUpdatedFolderInLayoutPortalEvent;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.springframework.test.jpa.AbstractJpaTests;
@@ -135,14 +136,17 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         
-        final IChannelDefinition channelDefinition = EasyMock.createMock(IChannelDefinition.class);
-        EasyMock.expect(channelDefinition.getId()).andReturn(1).anyTimes();
+        final IPortletDefinition channelDefinition = EasyMock.createMock(IPortletDefinition.class);
+	    final IPortletDefinitionId dummyPortletDefinitionId = EasyMock.createMock(IPortletDefinitionId.class);
+        EasyMock.expect(dummyPortletDefinitionId.getStringId()).andReturn("1").anyTimes();
+        EasyMock.expect(channelDefinition.getPortletDefinitionId()).andReturn(dummyPortletDefinitionId).anyTimes();
         EasyMock.expect(channelDefinition.getName()).andReturn("TestChannelDef").anyTimes();
         EasyMock.replay(channelDefinition);
+        EasyMock.replay(dummyPortletDefinitionId);
         
         
         
-        portalEvent = new PublishedChannelDefinitionPortalEvent(this, person, channelDefinition);
+        portalEvent = new PublishedPortletDefinitionPortalEvent(this, person, channelDefinition);
         this.jpaPortalEventStore.storePortalEvents(portalEvent);
         this.checkPoint();
         
@@ -155,7 +159,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         assertEquals(0, this.countRowsInTable("STATS_RENDER_TIME"));
         
         
-        portalEvent = new ModifiedChannelDefinitionPortalEvent(this, person, channelDefinition);
+        portalEvent = new ModifiedPortletDefinitionPortalEvent(this, person, channelDefinition);
         this.jpaPortalEventStore.storePortalEvents(portalEvent);
         this.checkPoint();
         
@@ -168,7 +172,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         assertEquals(0, this.countRowsInTable("STATS_RENDER_TIME"));
         
         
-        portalEvent = new RemovedChannelDefinitionPortalEvent(this, person, channelDefinition);
+        portalEvent = new RemovedPortletDefinitionPortalEvent(this, person, channelDefinition);
         this.jpaPortalEventStore.storePortalEvents(portalEvent);
         this.checkPoint();
         

@@ -187,7 +187,7 @@ public class ILFBuilder
             return true;
         
         String channelPublishId = child.getAttribute("chanID");
-        return ap.canRender(Integer.parseInt(channelPublishId));
+        return ap.canRender(channelPublishId);
     }
 
     private static void printNodeToDebug(Node n, String name) throws TransformerFactoryConfigurationError {

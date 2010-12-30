@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
@@ -42,7 +41,6 @@ import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -206,8 +204,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
         if (databaseChannelSubscribeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
             final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
             final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
-            final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
-            final String fname = channelDefinition.getFName();
+            final String fname = portletDefinition.getFName();
             
             final IUserLayoutManager userLayoutManager = this.getUserLayoutManager();
             if (userLayoutManager == null) {
@@ -246,9 +243,9 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
         final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
         
         //Lookup the IportletDefinition for the node
-        final String channelPublishId = channelNode.getChannelPublishId();
-        final int channelDefinitionId = Integer.valueOf(channelPublishId.startsWith("chan") ? channelPublishId.substring(4) : channelPublishId);
-        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelDefinitionId);
+        final String portletPublishId = channelNode.getChannelPublishId();
+        final String portletDefinitionId = portletPublishId.startsWith("chan") ? portletPublishId.substring(4) : portletPublishId;
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
 
         //Generate the subscribe ID used for the database
         return this.getDatabaseChannelSubscribeId(portletDefinition.getPortletDefinitionId());

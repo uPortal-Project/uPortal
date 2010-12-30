@@ -19,11 +19,9 @@
 
 package org.jasig.portal.portlets.portletadmin.xmlsupport;
 
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.channel.IChannelType;
+import org.jasig.portal.portlet.om.IPortletType;
 
 
 /**
@@ -33,5 +31,5 @@ import org.jasig.portal.channel.IChannelType;
 public interface IChannelPublishingDefinitionDao {
     public ChannelPublishingDefinition getChannelPublishingDefinition(int channelTypeId);
 
-    public Map<IChannelType, ChannelPublishingDefinition> getChannelPublishingDefinitions();
+    public Map<IPortletType, ChannelPublishingDefinition> getChannelPublishingDefinitions();
 }

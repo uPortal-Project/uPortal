@@ -97,7 +97,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		if (EntityEnum.GROUP.toString().equals(groupType)) {
 			rootKey = "local.0";
 		} else if (EntityEnum.CATEGORY.toString().equals(groupType)) {
-	        IEntityGroup categoryGroup = GroupService.getDistinguishedGroup(IGroupConstants.CHANNEL_CATEGORIES);
+	        IEntityGroup categoryGroup = GroupService.getDistinguishedGroup(IGroupConstants.PORTLET_CATEGORIES);
 	        return new JsonEntityBean(categoryGroup, EntityEnum.CATEGORY.toString());
 		} else {
 			throw new IllegalArgumentException("Unable to determine a root entity for group type '" + groupType + "'");
@@ -130,7 +130,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		if (EntityEnum.GROUP.toString().equals(groupType)) {
 			set.add(EntityEnum.PERSON.toString());
 		} else if (EntityEnum.CATEGORY.toString().equals(groupType)) {
-			set.add(EntityEnum.CHANNEL.toString());
+			set.add(EntityEnum.PORTLET.toString());
 		} else {
 			throw new IllegalArgumentException("Unable to determine a root entity for group type '" + groupType + "'");
 		}

@@ -21,8 +21,7 @@ package org.jasig.portal.security.remoting;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.channel.dao.IChannelDefinitionDao;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;
@@ -40,13 +39,13 @@ public abstract class AbstractPermissionsController implements InitializingBean 
      */
     private static final String PERMISSIONS_ADMIN_PORTLET_FNAME = "permissionsmanager";
     
-    private IChannelRegistryStore channelDao;
-    private int channelId = -1;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private String portletId = null;
     private IPersonManager personManager;
     
     @Autowired
-    public void setChannelDefinitionDao(IChannelRegistryStore channelDao) {
-        this.channelDao = channelDao;
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
     @Autowired
@@ -76,7 +75,7 @@ public abstract class AbstractPermissionsController implements InitializingBean 
                 // STEP (3):  Does this user have SUBSCRIBE permission for permissionsAdminChannel?
                 IAuthorizationService authServ = AuthorizationImpl.singleton();
                 IAuthorizationPrincipal principal = authServ.newPrincipal((String) person.getAttribute(IPerson.USERNAME), IPerson.class);
-                if (authServ.canPrincipalSubscribe(principal, this.channelId)) {
+                if (authServ.canPrincipalSubscribe(principal, this.portletId)) {
                     return true;
                 }
 
@@ -88,7 +87,7 @@ public abstract class AbstractPermissionsController implements InitializingBean 
     }
 
     public void afterPropertiesSet() throws Exception {
-        this.channelId = channelDao.getChannelDefinition(PERMISSIONS_ADMIN_PORTLET_FNAME).getId();
+        this.portletId = portletDefinitionRegistry.getPortletDefinitionByFname(PERMISSIONS_ADMIN_PORTLET_FNAME).getPortletDefinitionId().getStringId();
     }
     
 }

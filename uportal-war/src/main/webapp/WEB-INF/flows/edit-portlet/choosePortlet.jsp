@@ -52,7 +52,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <div class="fl-widget-content content portlet-content" role="main">
     
     <!-- Portlet Messages -->
-    <spring:hasBindErrors name="channel">
+    <spring:hasBindErrors name="portlet">
         <div class="portlet-msg-error portlet-msg error" role="alert">
             <form:errors path="*" element="div" />
         </div> <!-- end: portlet-msg -->

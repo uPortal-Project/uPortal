@@ -25,19 +25,19 @@
     http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
     
     <!-- 
-     | Channel input 
+     | Portlet input 
      |
-     | The channel object should be an instance of ChannelDefinitionForm that
-     | represents either a new or existing channel definition.  This object
+     | The portlet object should be an instance of PortletDefinitionForm that
+     | represents either a new or existing portlet definition.  This object
      | may not be null.
      +-->
-    <input name="channel"/>
+    <input name="portlet"/>
     
-    <!-- Initialize a list of available channel types -->
+    <!-- Initialize a list of available portlet types -->
     <on-start>
-        <set name="flowScope.channelTypes" 
+        <set name="flowScope.portletTypes" 
             value="channelPublishingDefinitionDao.getChannelPublishingDefinitions()"/>
-        <set name="flowScope.completed" value="channel.id > 0"/>
+        <set name="flowScope.completed" value="portlet.id != null and portlet.id != '-1'"/>
     </on-start>
     
     <!-- If we're creating a new portlet, display the first step in the workflow.
@@ -46,18 +46,18 @@
         <if test="completed" then="reviewPortlet" else="chooseType"/>
     </decision-state>
         
-    <!-- CHANNEL TYPE view -->
-    <view-state id="chooseType" model="channel">
+    <!-- PORTLET TYPE view -->
+    <view-state id="chooseType" model="portlet">
         <transition on="next" to="afterChooseType">
-            <!-- Set default parameters based on channel type -->
+            <!-- Set default parameters based on portlet type -->
             <set name="flowScope.cpd" 
-                value="channelPublishingDefinitionDao.getChannelPublishingDefinition(channel.typeId)"/>
-            <evaluate expression="channel.setChannelPublishingDefinition(cpd)"/>
+                value="channelPublishingDefinitionDao.getChannelPublishingDefinition(portlet.typeId)"/>
+            <evaluate expression="portlet.setChannelPublishingDefinition(cpd)"/>
         </transition>
     </view-state>
     
     <decision-state id="afterChooseType">
-        <if test="portletAdministrationHelper.offerPortletSelection(channel)" 
+        <if test="portletAdministrationHelper.offerPortletSelection(portlet)" 
             then="choosePortlet" else="basicInfo"/>
     </decision-state>
     
@@ -66,34 +66,34 @@
             <set name="flashScope.contexts" value="portletAdministrationHelper.getPortletApplications()"/>
         </on-render>
         <transition on="next" to="basicInfo" validate="false" bind="false">
-            <evaluate expression="portletAdministrationHelper.prepopulatePortlet(requestParameters.application, requestParameters.portlet, channel)"/>
+            <evaluate expression="portletAdministrationHelper.prepopulatePortlet(requestParameters.application, requestParameters.portlet, portlet)"/>
         </transition>
         <transition on="back" to="chooseType" validate="false"/>
     </view-state>
     
     <!-- BASIC INFO view (title, fname, etc.) -->
-    <view-state id="basicInfo" model="channel">
+    <view-state id="basicInfo" model="portlet">
         <transition on="back" to="chooseType" validate="false"/>
         <transition on="next" to="setParameters"/>
     </view-state>
     
-    <!-- CHANNEL PARAMETERS view -->
-    <view-state id="setParameters" model="channel">
+    <!-- PORTLET PARAMETERS view -->
+    <view-state id="setParameters" model="portlet">
         <on-entry>
-            <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(channel)"/>
+            <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(portlet)"/>
         </on-entry>
         <on-render>
-            <set name="flashScope.portlet" value="portletAdministrationHelper.getPortletDescriptor(channel)"/>
-            <set name="flashScope.arbitraryPreferenceNames" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(channel)"/>
+            <set name="flashScope.portletDef" value="portletAdministrationHelper.getPortletDescriptor(portlet)"/>
+            <set name="flashScope.arbitraryPreferenceNames" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(portlet)"/>
         </on-render>
         <transition on="back" to="basicInfo" validate="false">
-            <evaluate expression="portletAdministrationHelper.cleanOptions(channel, externalContext.getNativeRequest())"/>
+            <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
         </transition>
         <transition on="next" to="chooseCategory">
-            <evaluate expression="portletAdministrationHelper.cleanOptions(channel, externalContext.getNativeRequest())"/>
+            <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
         </transition>
         <transition on="review" to="reviewPortlet">
-            <evaluate expression="portletAdministrationHelper.cleanOptions(channel, externalContext.getNativeRequest())"/>
+            <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
         </transition>
     </view-state>
     
@@ -116,11 +116,11 @@
         <input name="cancelButtonCode" value="'cancel'" />
         <input name="pageTitleCode" value="'select.categories'"/>
         <input name="pageSubtitleCode" value="'categories.membership.which'" />
-        <input name="pageSubtitleArgument" value="channel.name != '' ? channel.name : 'this portlet'" />
+        <input name="pageSubtitleArgument" value="portlet.name != '' ? portlet.name : 'this portlet'" />
         
         <!-- Group input/output mapping -->
-        <input name="selectedGroups" value="channel.categories"/>
-        <output name="selectedGroups" value="channel.categories"/>
+        <input name="selectedGroups" value="portlet.categories"/>
+        <output name="selectedGroups" value="portlet.categories"/>
         
         <transition on="back" to="setParameters"/>
         <transition on="finish" to="chooseCategoryNextScreen"/>
@@ -150,11 +150,11 @@
         <input name="cancelButtonCode" value="'cancel'" />
         <input name="pageTitleCode" value="'select.people.and.groups'"/>
         <input name="pageSubtitleCode" value="'people.membership.which'" />
-        <input name="pageSubtitleArgument" value="channel.name != '' ? channel.name : 'this portlet'" />
+        <input name="pageSubtitleArgument" value="portlet.name != '' ? portlet.name : 'this portlet'" />
 
         <!-- Group input/output mapping -->
-        <input name="selectedGroups" value="channel.groups"/>
-        <output name="selectedGroups" value="channel.groups"/>
+        <input name="selectedGroups" value="portlet.groups"/>
+        <output name="selectedGroups" value="portlet.groups"/>
         
         <transition on="back" to="chooseCategory"/>
         <transition on="finish" to="chooseGroupNextScreen"/>
@@ -165,7 +165,7 @@
     </decision-state>
         
     <!-- Lifecycle Management -->
-    <view-state id="lifecycle" model="channel">
+    <view-state id="lifecycle" model="portlet">
         <binder>
             <binding property="lifecycleState"/>
             <binding property="publishHour"/>
@@ -182,7 +182,7 @@
                 value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person" 
                 value="personManager.getPerson(servletRequest)"/>
-            <set name="viewScope.lifecycleStates" value="portletAdministrationHelper.getAllowedLifecycleStates(person, channel.categories)"/>
+            <set name="viewScope.lifecycleStates" value="portletAdministrationHelper.getAllowedLifecycleStates(person, portlet.categories)"/>
         </on-entry>
         <transition on="back" to="chooseGroup" validate="false"/>
         <transition on="next" to="reviewPortlet">
@@ -194,13 +194,13 @@
     <view-state id="reviewPortlet">
         <on-entry>
             <set name="flowScope.cpd" 
-                value="channelPublishingDefinitionDao.getChannelPublishingDefinition(channel.typeId)"/>
-            <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(channel)"/>
+                value="channelPublishingDefinitionDao.getChannelPublishingDefinition(portlet.typeId)"/>
+            <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(portlet)"/>
         </on-entry>
         <!-- done in flash scope since portlet preference objects are not serializable -->
         <on-render>
-            <set name="flashScope.portlet" value="portletAdministrationHelper.getPortletDescriptor(channel)"/>
-            <set name="flashScope.arbitraryPreferenceNames" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(channel)"/>
+            <set name="flashScope.portletDescriptor" value="portletAdministrationHelper.getPortletDescriptor(portlet)"/>
+            <set name="flashScope.arbitraryPreferenceNames" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(portlet)"/>
         </on-render>
         
         
@@ -219,7 +219,7 @@
                 value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person" 
                 value="personManager.getPerson(servletRequest)"/>
-            <evaluate expression="portletAdministrationHelper.savePortletRegistration(channel, person)"></evaluate>
+            <evaluate expression="portletAdministrationHelper.savePortletRegistration(portlet, person)"></evaluate>
         </transition>
 
         <!-- save the portlet -->
@@ -228,7 +228,7 @@
                 value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person" 
                 value="personManager.getPerson(servletRequest)"/>
-            <set name="flowScope.channel" value="portletAdministrationHelper.savePortletRegistration(channel, person)" />
+            <set name="flowScope.portlet" value="portletAdministrationHelper.savePortletRegistration(portlet, person)" />
         </transition>
         
         <!-- cancel our portlet edit and exit the sub-flow -->
@@ -236,16 +236,16 @@
     </view-state>
     
     <action-state id="configModeAction">
-        <set name="flashScope.configComplete" value="portletAdministrationHelper.configModeAction(externalContext, channel.getFname())" />
+        <set name="flashScope.configComplete" value="portletAdministrationHelper.configModeAction(externalContext, portlet.getFname())" />
         <transition to="configMode" on="#{!flashScope.configComplete}" />
         <transition to="reviewPortlet" on="#{flashScope.configComplete}">
-            <set name="flowScope.channel" value="portletAdministrationHelper.getChannelDefinitionForm(channel.id)"/>
+            <set name="flowScope.portlet" value="portletAdministrationHelper.getPortletDefinitionForm(portlet.id)"/>
         </transition>
     </action-state>
     
     <view-state id="configMode">
         <on-entry>
-            <set name="flashScope.CHANNEL_FNAME" value="channel.getFname()"/>
+            <set name="flashScope.PORTLET_FNAME" value="portlet.getFname()"/>
         </on-entry>
         <transition on="configModeAction" to="configModeAction" />
     </view-state>

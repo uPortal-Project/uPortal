@@ -24,10 +24,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 
 /**
  * Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>.
@@ -40,7 +40,7 @@ public class ReferenceChannelNameFinder
     private static final Log log = LogFactory.getLog(ReferenceChannelNameFinder.class);
     
     private static IEntityNameFinder _instance = null;
-    private final Class<? extends IBasicEntity> type = IChannelDefinition.class;
+    private final Class<? extends IBasicEntity> type = IPortletDefinition.class;
 
     protected ReferenceChannelNameFinder () {
     }
@@ -57,14 +57,15 @@ public class ReferenceChannelNameFinder
      * @param key java.lang.String
      */
     public String getName (String key) throws Exception {
-        IChannelRegistryStore crs = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl();
-        IChannelDefinition cd;
+    	IPortletDefinitionRegistry registry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
+    	
+        IPortletDefinition portletDefinition;
         try {
-            cd = crs.getChannelDefinition(Integer.parseInt(key));
+        	portletDefinition = registry.getPortletDefinition(key);
         } catch (NumberFormatException e) {
-            cd = crs.getChannelDefinition(Integer.parseInt(key.split("\\.")[1]));
+        	portletDefinition = registry.getPortletDefinition(key.split("\\.")[1]);
         }
-        return  cd.getName();
+        return  portletDefinition.getName();
     }
 
     /**

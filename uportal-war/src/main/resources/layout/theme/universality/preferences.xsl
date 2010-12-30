@@ -534,22 +534,14 @@
     </div>
     <script type="text/javascript">
        up.jQuery(document).ready(function(){
-          up.jQuery.uportal.UportalLayoutManager(
-            {
-              portalUrl: '<xsl:call-template name="portalUrl"/>',
-              mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
-              currentSkin: '<xsl:value-of select="$SKIN"/>',
-              subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
-              preferencesUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-              channelListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/channelList',
-              subscriptionListUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
-              isFragmentMode: <xsl:choose><xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">true</xsl:when><xsl:otherwise>false</xsl:otherwise></xsl:choose>,
-              messages: { 
-                  confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', USER_LANG)"/>', 
-                  confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', USER_LANG)"/>' 
-              }
-            }
-          );
+          <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+              up.FragmentPermissionsManager(
+                "body",
+                {
+                  savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout'
+                }
+              );
+          </xsl:if>
           up.LayoutPreferences(
             "body",
             {
@@ -560,7 +552,7 @@
               currentSkin: '<xsl:value-of select="$SKIN"/>',
               subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
               layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-              channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/channelList',
+              channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/portletList',
               subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
               messages: { 
                   confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', USER_LANG)"/>', 

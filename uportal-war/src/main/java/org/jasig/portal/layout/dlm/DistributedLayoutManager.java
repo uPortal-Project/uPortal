@@ -46,14 +46,10 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelRegistryStoreFactory;
-import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -66,12 +62,16 @@ import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.layout.simple.SimpleLayout;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.AdminEvaluator;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.AuthorizationImpl;
+import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.xml.XmlUtilities;
 import org.springframework.beans.factory.InitializingBean;
@@ -245,7 +245,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
               		  for (int j=0; j < channels.getLength(); j++) {
               			  Element ch = (Element) channels.item(j);
               			  try {
-              				  int chanId = Integer.parseInt(ch.getAttribute("chanID"));
+              				  String chanId = ch.getAttribute("chanID");
               				  if (!principal.canRender(chanId)) {
               					  fd.removeChild(ch);
               					  if (LOG.isDebugEnabled()) {
@@ -877,15 +877,6 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                         (nodeId, name, newVal, owner, ilfNode));
             } else if (!oldVal.equals(newVal)) 
             {
-                /*
-                 * changing value, is it allowed by the channel and by the
-                 * fragment if this came from a fragment?
-                 */
-                if (!oldChanDesc.canOverrideParameter(name))
-                    throw new PortalException("This instance of "
-                            + oldChanDesc.getTitle() 
-                            + " does not allow overriding parameter " 
-                            + name);
                 if (isIncorporated )
                 {
                     /*
@@ -906,8 +897,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                          * so fragment doesn't override. See if the value
                          * specified matches that of the channel definition
                          */
-                        IChannelParameter cp = 
-                            (IChannelParameter) pubParms.get(name);
+                        IPortletDefinitionParameter cp = 
+                            (IPortletDefinitionParameter) pubParms.get(name);
                         
                         if (cp != null && cp.getValue().equals(newVal))
                             /*
@@ -949,8 +940,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                      * see if the value specified matches that of the channel
                      * definition.
                      */
-                    IChannelParameter cp = 
-                        (IChannelParameter) pubParms.get(name);
+                    IPortletDefinitionParameter cp = 
+                        (IPortletDefinitionParameter) pubParms.get(name);
                     
                     if (cp != null && cp.getValue().equals(newVal))
                         pendingActions.add(new LPARemoveParameter
@@ -999,10 +990,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     {
         try
         {
-            IChannelRegistryStore crs = ChannelRegistryStoreFactory
-                .getChannelRegistryStoreImpl();
-            int pubId = Integer.parseInt(channelPublishId);
-            IChannelDefinition def = crs.getChannelDefinition(pubId);
+        	IPortletDefinitionRegistry registry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
+            IPortletDefinition def = registry.getPortletDefinition(channelPublishId);
             return def.getParametersAsUnmodifiableMap();
         } catch (Exception e)
         {

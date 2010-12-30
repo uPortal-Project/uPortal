@@ -25,15 +25,15 @@ import org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelInstanciatedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelMovedInLayoutPortalEvent;
-import org.jasig.portal.events.support.ChannelPortalEvent;
+import org.jasig.portal.events.support.PortletPortalEvent;
 import org.jasig.portal.events.support.ChannelRemovedFromLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelRenderedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelTargetedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelUpdatedInLayoutPortalEvent;
 import org.jasig.portal.events.support.LayoutPortalEvent;
-import org.jasig.portal.events.support.ModifiedChannelDefinitionPortalEvent;
-import org.jasig.portal.events.support.PublishedChannelDefinitionPortalEvent;
-import org.jasig.portal.events.support.RemovedChannelDefinitionPortalEvent;
+import org.jasig.portal.events.support.ModifiedPortletDefinitionPortalEvent;
+import org.jasig.portal.events.support.PublishedPortletDefinitionPortalEvent;
+import org.jasig.portal.events.support.RemovedPortletDefinitionPortalEvent;
 import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
 import org.jasig.portal.events.support.UserAddedFolderToLayoutPortalEvent;
 import org.jasig.portal.events.support.UserLoggedInPortalEvent;
@@ -100,19 +100,19 @@ public final class StatsRecorderEventHandlerAdapter implements EventHandler,
 					portalEvent.getProfile(), portalEvent
 							.getChannelDescription());
 		} else if (eventClass
-				.equals(ModifiedChannelDefinitionPortalEvent.class)) {
-			final ChannelPortalEvent portalEvent = (ChannelPortalEvent) event;
+				.equals(ModifiedPortletDefinitionPortalEvent.class)) {
+			final PortletPortalEvent portalEvent = (PortletPortalEvent) event;
 			this.recorder.recordChannelDefinitionModified(portalEvent
-					.getPerson(), portalEvent.getChannelDefinition());
+					.getPerson(), portalEvent.getPortletDefinition());
 		} else if (eventClass
-				.equals(PublishedChannelDefinitionPortalEvent.class)) {
-			final ChannelPortalEvent portalEvent = (ChannelPortalEvent) event;
+				.equals(PublishedPortletDefinitionPortalEvent.class)) {
+			final PortletPortalEvent portalEvent = (PortletPortalEvent) event;
 			this.recorder.recordChannelDefinitionPublished(portalEvent
-					.getPerson(), portalEvent.getChannelDefinition());
-		} else if (eventClass.equals(RemovedChannelDefinitionPortalEvent.class)) {
-			final ChannelPortalEvent portalEvent = (ChannelPortalEvent) event;
+					.getPerson(), portalEvent.getPortletDefinition());
+		} else if (eventClass.equals(RemovedPortletDefinitionPortalEvent.class)) {
+			final PortletPortalEvent portalEvent = (PortletPortalEvent) event;
 			this.recorder.recordChannelDefinitionRemoved(portalEvent
-					.getPerson(), portalEvent.getChannelDefinition());
+					.getPerson(), portalEvent.getPortletDefinition());
 		} else if (eventClass.equals(UserLoggedOutPortalEvent.class)) {
 			this.recorder.recordLogout(event.getPerson());
 		} else if (eventClass.equals(UserAddedFolderToLayoutPortalEvent.class)) {

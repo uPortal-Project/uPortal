@@ -51,10 +51,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
      
-    <form:form modelAttribute="channel" action="${queryUrl}" method="POST">
+    <form:form modelAttribute="portlet" action="${queryUrl}" method="POST">
 	
     <!-- Portlet Messages -->
-    <spring:hasBindErrors name="channel">
+    <spring:hasBindErrors name="portlet">
         <div class="portlet-msg-error" role="alert">
             <form:errors path="*" element="div"/>
         </div> <!-- end: portlet-msg -->
@@ -77,7 +77,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </thead>
           <tfoot></tfoot>
           <tbody>
-            <c:forEach items="${ channelTypes }" var="chanTypeEntry">
+            <c:forEach items="${ portletTypes }" var="chanTypeEntry">
               <c:if test="${!chanTypeEntry.value.deprecated}">
                 <tr>
                   <td align="center">

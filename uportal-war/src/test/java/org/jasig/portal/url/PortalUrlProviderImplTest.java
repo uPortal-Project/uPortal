@@ -27,7 +27,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -38,13 +37,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.portlet.PortletRequest;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathExpression;
 
 import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
@@ -86,7 +85,6 @@ public class PortalUrlProviderImplTest {
     private IUserLayoutNodeDescription userLayoutNodeDescription;
     private IPerson person;
     private IPortalRequestUtils portalRequestUtils;
-    private IChannelDefinition channelDefinition;
     private IPortletDefinition portletDefinition;
     private IPortletEntity portletEntity;
     private IPortletWindow portletWindow;
@@ -123,7 +121,6 @@ public class PortalUrlProviderImplTest {
         this.userLayout = createMock(IUserLayout.class);
         this.userLayoutNodeDescription = createMock(IUserLayoutNodeDescription.class);
         this.person = createMock(IPerson.class);
-        this.channelDefinition = createMock(IChannelDefinition.class);
         this.portletDefinition = createMock(IPortletDefinition.class);
         this.portletEntity = createMock(IPortletEntity.class);
         this.portletWindow = createMock(IPortletWindow.class);
@@ -131,7 +128,7 @@ public class PortalUrlProviderImplTest {
         this.mockObjects = new Object[] {
                 this.userInstanceManager, this.portletEntityRegistry, this.portletWindowRegistry, this.userInstance, 
                 this.userPreferencesManager, this.userLayoutManager, this.person, this.portletEntity, this.portletWindow,
-                this.userLayout, this.portalRequestUtils, this.portletDefinitionRegistry, this.channelDefinition,
+                this.userLayout, this.portalRequestUtils, this.portletDefinitionRegistry, 
                 this.portletDefinition, this.userLayoutNodeDescription
         };
     }
@@ -150,7 +147,6 @@ public class PortalUrlProviderImplTest {
         this.userLayoutNodeDescription = null;
         this.person = null;
         this.portalRequestUtils = null;
-        this.channelDefinition = null;
         this.portletDefinition = null;
         this.portletEntity = null;
         this.portletWindow = null;
@@ -500,8 +496,7 @@ public class PortalUrlProviderImplTest {
         expect(this.userLayoutNodeDescription.getId()).andReturn(nodeId);
         expect(this.portletEntity.getPortletDefinitionId()).andReturn(portletDefinitionId);
         expect(this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId)).andReturn(this.portletDefinition);
-        expect(this.portletDefinition.getChannelDefinition()).andReturn(this.channelDefinition);
-        expect(this.channelDefinition.getFName()).andReturn("fname");
+        expect(this.portletDefinition.getFName()).andReturn("fname");
         
         return portletWindowId;
     }

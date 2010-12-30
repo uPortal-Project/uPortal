@@ -21,18 +21,18 @@ package org.jasig.portal.spring.locator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.channel.IChannelPublishingService;
+import org.jasig.portal.channel.IPortletPublishingService;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.springframework.context.ApplicationContext;
 
-public class ChannelPublishingServiceLocator extends AbstractBeanLocator<IChannelPublishingService> {
-    public static final String BEAN_NAME = "channelPublishingService";
+public class ChannelPublishingServiceLocator extends AbstractBeanLocator<IPortletPublishingService> {
+    public static final String BEAN_NAME = "portletPublishingService";
     
     private static final Log LOG = LogFactory.getLog(ChannelPublishingServiceLocator.class);
-    private static AbstractBeanLocator<IChannelPublishingService> locatorInstance;
+    private static AbstractBeanLocator<IPortletPublishingService> locatorInstance;
 
-    public static IChannelPublishingService getIChannelPublishingService() {
-        AbstractBeanLocator<IChannelPublishingService> locator = locatorInstance;
+    public static IPortletPublishingService getIChannelPublishingService() {
+        AbstractBeanLocator<IPortletPublishingService> locator = locatorInstance;
         if (locator == null) {
             LOG.info("Looking up bean '" + BEAN_NAME + "' in ApplicationContext due to context not yet being initialized");
             final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
@@ -41,22 +41,22 @@ public class ChannelPublishingServiceLocator extends AbstractBeanLocator<IChanne
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (IChannelPublishingService)applicationContext.getBean(BEAN_NAME, IChannelPublishingService.class);
+                return (IPortletPublishingService)applicationContext.getBean(BEAN_NAME, IPortletPublishingService.class);
             }
         }
         
         return locator.getInstance();
     }
 
-    public ChannelPublishingServiceLocator(IChannelPublishingService instance) {
-        super(instance, IChannelPublishingService.class);
+    public ChannelPublishingServiceLocator(IPortletPublishingService instance) {
+        super(instance, IPortletPublishingService.class);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.spring.locator.AbstractBeanLocator#getLocator()
      */
     @Override
-    protected AbstractBeanLocator<IChannelPublishingService> getLocator() {
+    protected AbstractBeanLocator<IPortletPublishingService> getLocator() {
         return locatorInstance;
     }
 
@@ -64,7 +64,7 @@ public class ChannelPublishingServiceLocator extends AbstractBeanLocator<IChanne
      * @see org.jasig.portal.spring.locator.AbstractBeanLocator#setLocator(org.jasig.portal.spring.locator.AbstractBeanLocator)
      */
     @Override
-    protected void setLocator(AbstractBeanLocator<IChannelPublishingService> locator) {
+    protected void setLocator(AbstractBeanLocator<IPortletPublishingService> locator) {
         locatorInstance = locator;
     }
 }

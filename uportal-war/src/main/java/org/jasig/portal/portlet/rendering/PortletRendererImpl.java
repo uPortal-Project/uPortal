@@ -40,7 +40,6 @@ import org.apache.pluto.container.PortletContainerException;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.PortletDispatchException;
 import org.jasig.portal.portlet.PortletHttpServletResponseWrapper;
 import org.jasig.portal.portlet.PortletLoadFailureException;
@@ -372,10 +371,9 @@ public class PortletRendererImpl implements IPortletRenderer {
                 final IAuthorizationPrincipal ap = authorizationService.newPrincipal(ei.getKey(), ei.getType());
                 
                 final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletWindow.getPortletEntityId());
-                final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
                 
-                if (!ap.canConfigure(channelDefinition.getId())) {
-                    throw new AuthorizationException(person.getUserName() + " does not have permission to render '" + channelDefinition.getFName() + "' in " + portletMode + " PortletMode");
+                if (!ap.canConfigure(portletDefinition.getPortletDefinitionId().getStringId())) {
+                    throw new AuthorizationException(person.getUserName() + " does not have permission to render '" + portletDefinition.getFName() + "' in " + portletMode + " PortletMode");
                 }
             }
             

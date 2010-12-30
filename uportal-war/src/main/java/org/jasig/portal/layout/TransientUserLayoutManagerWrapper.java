@@ -30,13 +30,13 @@ import javax.xml.stream.XMLEventReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.w3c.dom.Document;
 
 /**
@@ -68,7 +68,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     // contains subscribe id --> fname mappings (for transient channels only)
     private Map<String, String> mSubIdMap = Collections.synchronizedMap(new HashMap<String, String>());
     // stores channel defs by subscribe id (transient channels only)
-    private Map<String, IChannelDefinition> mChanMap = Collections.synchronizedMap(new HashMap<String, IChannelDefinition>());
+    private Map<String, IPortletDefinition> mChanMap = Collections.synchronizedMap(new HashMap<String, IPortletDefinition>());
 
     // current root/focused subscribe id
     private String mFocusedId = "";
@@ -299,10 +299,10 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
      * @param subId  the subscribe id for the ChannelDefinition.
      * @return a <code>ChannelDefinition</code>
      **/
-    protected IChannelDefinition getChannelDefinition( String subId )
+    protected IPortletDefinition getChannelDefinition( String subId )
         throws PortalException
     {
-        IChannelDefinition chanDef = mChanMap.get(subId);
+        IPortletDefinition chanDef = mChanMap.get(subId);
 
         if ( null == chanDef ){
             String fname = getFname(subId);
@@ -310,8 +310,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
                 log.debug("TransientUserLayoutManagerWrapper>>getChannelDefinition, " +
                            "attempting to get a channel definition using functional name: " + fname );
             try{
-                chanDef = ChannelRegistryStoreFactory.
-                    getChannelRegistryStoreImpl().getChannelDefinition(fname);
+            	chanDef = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry().getPortletDefinitionByFname(fname);
             }
             catch( Exception e ){
                 throw new PortalException( "Failed to get channel information " +
@@ -359,7 +358,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         // assign a new transient channel id
         if ( subId == null ) {
             try {
-                IChannelDefinition chanDef = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(fname);
+            	IPortletDefinition chanDef = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry().getPortletDefinitionByFname(fname);
                 if(chanDef!=null) {
                     // assign a new id
                     subId = getNextSubscribeId();
@@ -414,10 +413,10 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
 
         try {
             // check cache first
-            IChannelDefinition chanDef = mChanMap.get(nodeId);
+            IPortletDefinition chanDef = mChanMap.get(nodeId);
 
             if (null == chanDef) {
-                chanDef = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(fname);
+            	chanDef = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry().getPortletDefinitionByFname(fname);
                 mChanMap.put(nodeId, chanDef);
             }
 
@@ -429,7 +428,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
     }
     
-    protected IUserLayoutChannelDescription createUserLayoutChannelDescription(String nodeId, IChannelDefinition chanDef) {
+    protected IUserLayoutChannelDescription createUserLayoutChannelDescription(String nodeId, IPortletDefinition chanDef) {
         IUserLayoutChannelDescription ulnd = new UserLayoutChannelDescription();
 
         ulnd.setId(nodeId);
@@ -439,20 +438,18 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         ulnd.setHidden(false);
         ulnd.setTitle(chanDef.getTitle());
         ulnd.setDescription(chanDef.getDescription());
-        ulnd.setClassName(chanDef.getJavaClass());
-        ulnd.setChannelPublishId("" + chanDef.getId());
-        ulnd.setChannelTypeId("" + chanDef.getTypeId());
+        ulnd.setChannelPublishId("" + chanDef.getPortletDefinitionId().getStringId());
+        ulnd.setChannelTypeId("" + chanDef.getType().getId());
         ulnd.setFunctionalName(chanDef.getFName());
         ulnd.setTimeout(chanDef.getTimeout());
         ulnd.setEditable(chanDef.isEditable());
         ulnd.setHasHelp(chanDef.hasHelp());
         ulnd.setHasAbout(chanDef.hasAbout());
 
-        Set<IChannelParameter> parms = chanDef.getParameters();
-        for ( IChannelParameter parm : parms )
+        Set<IPortletDefinitionParameter> parms = chanDef.getParameters();
+        for ( IPortletDefinitionParameter parm : parms )
         {
             ulnd.setParameterValue(parm.getName(),parm.getValue());
-            ulnd.setParameterOverride(parm.getName(),parm.getOverride());
         }
         
         return ulnd;

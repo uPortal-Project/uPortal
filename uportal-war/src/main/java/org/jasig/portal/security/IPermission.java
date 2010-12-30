@@ -28,34 +28,34 @@ import java.util.Date;
  */
 public interface IPermission {
   /*
-    Activity names for Permissions whose targets are Channels.
+    Activity names for Permissions whose targets are portlets.
   */
-  public String CHANNEL_MANAGER_ACTIVITY = "MANAGE";
-  public String CHANNEL_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
+  public String PORTLET_MANAGER_ACTIVITY = "MANAGE";
+  public String PORTLET_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
   
   /*
-   * Channel subscribe permissions by lifecycle state 
+   * Portlet subscribe permissions by lifecycle state 
    */
-  public static final String CHANNEL_SUBSCRIBER_CREATED_ACTIVITY = "SUBSCRIBE_CREATED";
-  public static final String CHANNEL_SUBSCRIBER_APPROVED_ACTIVITY = "SUBSCRIBE_APPROVED";
-  public static final String CHANNEL_SUBSCRIBER_EXPIRED_ACTIVITY = "SUBSCRIBE_EXPIRED";
+  public static final String PORTLET_SUBSCRIBER_CREATED_ACTIVITY = "SUBSCRIBE_CREATED";
+  public static final String PORTLET_SUBSCRIBER_APPROVED_ACTIVITY = "SUBSCRIBE_APPROVED";
+  public static final String PORTLET_SUBSCRIBER_EXPIRED_ACTIVITY = "SUBSCRIBE_EXPIRED";
   
   /*
-   * Channel render permissions by lifecycle state.  These permissions are not
+   * Portlet render permissions by lifecycle state.  These permissions are not
    * actually used in the codebase yet and are included here for future planning 
    * purposes only.
    */
-  public static final String CHANNEL_RENDERER_CREATED_ACTIVITY = "RENDER_CREATED";
-  public static final String CHANNEL_RENDERER_APPROVED_ACTIVITY = "RENDER_APPROVED";
-  public static final String CHANNEL_RENDERER_PUBLISHED_ACTIVITY = "RENDER_PUBLISHED";
-  public static final String CHANNEL_RENDERER_EXPIRED_ACTIVITY = "RENDER_EXPIRED";
+  public static final String PORTLET_RENDERER_CREATED_ACTIVITY = "RENDER_CREATED";
+  public static final String PORTLET_RENDERER_APPROVED_ACTIVITY = "RENDER_APPROVED";
+  public static final String PORTLET_RENDERER_PUBLISHED_ACTIVITY = "RENDER_PUBLISHED";
+  public static final String PORTLET_RENDERER_EXPIRED_ACTIVITY = "RENDER_EXPIRED";
     
   /*
-   * Channel management permissions by lifecycle state.
+   * Portlet management permissions by lifecycle state.
    */
-  public static final String CHANNEL_MANAGER_CREATED_ACTIVITY = "MANAGE_CREATED";
-  public static final String CHANNEL_MANAGER_APPROVED_ACTIVITY = "MANAGE_APPROVED";
-  public static final String CHANNEL_MANAGER_EXPIRED_ACTIVITY = "MANAGE_EXPIRED";
+  public static final String PORTLET_MANAGER_CREATED_ACTIVITY = "MANAGE_CREATED";
+  public static final String PORTLET_MANAGER_APPROVED_ACTIVITY = "MANAGE_APPROVED";
+  public static final String PORTLET_MANAGER_EXPIRED_ACTIVITY = "MANAGE_EXPIRED";
   
   /*
    * PortletMode permissions
@@ -65,35 +65,35 @@ public interface IPermission {
   /*
     Permission types.  At present only 2, but that could change.
   */
-  public String PERMISSION_TYPE_GRANT = "GRANT";
-  public String PERMISSION_TYPE_DENY = "DENY";
+  public static final String PERMISSION_TYPE_GRANT = "GRANT";
+  public static final String PERMISSION_TYPE_DENY = "DENY";
 
   /*
     A String representing the uPortal framework, used, for example, for
     Permission.owner when the framework grants a Permission.
   */
-  public String PORTAL_PUBLISH = "UP_PORTLET_PUBLISH";
+  public static final String PORTAL_PUBLISH = "UP_PORTLET_PUBLISH";
   
-  public String PORTAL_SUBSCRIBE = "UP_PORTLET_SUBSCRIBE";
+  public static final String PORTAL_SUBSCRIBE = "UP_PORTLET_SUBSCRIBE";
   
-  public String PORTAL_SYSTEM = "UP_SYSTEM";
+  public static final String PORTAL_SYSTEM = "UP_SYSTEM";
 
   /*
-    A String which, when concatentated with a channel id, represents a portal
-    channel.  Used, for example, for Permission.target when the portal framework
-    grants a Permission to perform some activity on a channel.
+    A String which, when concatentated with a portlet id, represents a portal
+    portlet.  Used, for example, for Permission.target when the portal framework
+    grants a Permission to perform some activity on a portlet.
   */
-  public String CHANNEL_PREFIX = "CHAN_ID.";    
+  public static final String PORTLET_PREFIX = "PORTLET_ID.";    
   
-  public String ALL_PORTLETS_TARGET = "ALL_CHANNELS";
+  public static final String ALL_PORTLETS_TARGET = "ALL_PORTLETS";
   
-  public String ALL_GROUPS_TARGET = "ALL_GROUPS";
+  public static final String ALL_GROUPS_TARGET = "ALL_GROUPS";
   
-  public String ALL_CATEGORIES_TARGET = "ALL_CATEGORIES";
+  public static final String ALL_CATEGORIES_TARGET = "ALL_CATEGORIES";
   
-  public String ALL_PERMISSIONS_ACTIVITY = "ALL_PERMISSIONS";
+  public static final String ALL_PERMISSIONS_ACTIVITY = "ALL_PERMISSIONS";
   
-  public String ALL_TARGET = "ALL";
+  public static final String ALL_TARGET = "ALL";
   
   /**
    * Gets the activity associated with this <code>IPermission</code>.

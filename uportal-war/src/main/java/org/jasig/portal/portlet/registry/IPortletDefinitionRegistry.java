@@ -19,11 +19,13 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.util.List;
+
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.dao.DataRetrievalFailureException;
 
@@ -42,54 +44,29 @@ public interface IPortletDefinitionRegistry {
      * @throws IllegalArgumentException If portletDefinitionId is null.
      */
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId);
-    
-    /**
-     * Get an existing portlet definition for the channel publish id. If no definition exists for the id null will be
-     * returned.
-     * 
-     * @param channelPublishId The id of the {@link org.jasig.portal.ChannelDefinition} this portlet definition represents.
-     * @return The portlet definition for the channelPublishId, null if no definition exists for the id.
-     * @throws IllegalArgumentException If channelPublishId is null.
-     * @deprecated Use {@link org.jasig.portal.IChannelRegistryStore#getChannelDefinition(int)} instead
-     */
-    @Deprecated
-    public IPortletDefinition getPortletDefinition(int channelPublishId);
-    
-    /**
-     * Creates a new, persisted, portlet definition for the published channel. If the
-     * {@link org.jasig.portal.ChannelDefinition} for the channelPublishId can't be found or an definition already
-     * exists for the channel definition id an exception will be thrown.
-     * 
-     * @param channelPublishId The id of the {@link org.jasig.portal.ChannelDefinition} this portlet definition represents.
-     * @return A new definition for the parameters
-     * @throws org.springframework.dao.DataIntegrityViolationException If a definition already exists for the specified
-     *         channelPublishId
-     * @throws org.springframework.dao.DataRetrievalFailureException If no {@link org.jasig.portal.ChannelDefinition} can
-     *         be found for the publish ID or the channel definition does not have the required channel parameters
-     *         {@link org.jasig.portal.channels.portlet.IPortletAdaptor#CHANNEL_PARAM__PORTLET_APPLICATION_ID} and
-     *         {@link org.jasig.portal.channels.portlet.IPortletAdaptor#CHANNEL_PARAM__PORTLET_NAME}.
-     * @deprecated Use {@link IChannelDefinition#getPortletDefinition()} instead
-     */
-    @Deprecated
-    public IPortletDefinition createPortletDefinition(int channelPublishId);
-    
-    /**
-     * Convience for {@link #getPortletDefinition(int)} and {@link #createPortletDefinition(int)}. If
-     * the get returns null the definition will be created and returned.
-     * 
-     * @see #getPortletDefinition(int)
-     * @see #createPortletDefinition(int)
-     */
-    public IPortletDefinition getOrCreatePortletDefinition(int channelPublishId);
 
+    public IPortletDefinition getPortletDefinition(String portletDefinitionIdString);
+
+    public IPortletDefinition getPortletDefinitionByFname(String fname);
+
+    public IPortletDefinition getPortletDefinitionByName(String name);
+
+    public List<IPortletDefinition> getAllPortletDefinitions();
+    
     /**
      * Persists changes to a IPortletDefinition.
      * 
      * @param portletDefinition The IPortletDefinition to store changes to.
      * @throws IllegalArgumentException If portletDefinition is null
      */
-    public void updatePortletDefinition(IPortletDefinition portletDefinition);
+    public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition);
+
+    public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title, String applicationId, String portletName, boolean isFramework);
     
+    public void deletePortletDefinition(IPortletDefinition portletDefinition);
+
+    public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial);
+
     /**
      * Gets the parent portlet descriptor for the entity specified by the definition id.
      * 

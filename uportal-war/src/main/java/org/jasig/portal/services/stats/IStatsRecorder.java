@@ -20,9 +20,9 @@
 package org.jasig.portal.services.stats;
 
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;
 
 /**
@@ -71,21 +71,21 @@ public interface IStatsRecorder {
    * @param person the person pubishing the channel
    * @param channelDef the channel being published
    */
-  public void recordChannelDefinitionPublished(IPerson person, IChannelDefinition channelDef);
+  public void recordChannelDefinitionPublished(IPerson person, IPortletDefinition portletDef);
  
   /**
    * Called when a user modifies an existing channel
    * @param person the person modifying the channel
    * @param channelDef the channel being modified
    */
-  public void recordChannelDefinitionModified(IPerson person, IChannelDefinition channelDef);
+  public void recordChannelDefinitionModified(IPerson person, IPortletDefinition portletDef);
 
   /**
    * Called when a user removes an existing channel
    * @param person the person removing the channel
    * @param channelDef the channel being removed
    */
-  public void recordChannelDefinitionRemoved(IPerson person, IChannelDefinition channelDef);
+  public void recordChannelDefinitionRemoved(IPerson person, IPortletDefinition portletDef);
 
   /**
    * Called when a channel is being added to a user layout

@@ -57,10 +57,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
 
-    <form:form modelAttribute="channel" action="${queryUrl}" method="POST">
+    <form:form modelAttribute="portlet" action="${queryUrl}" method="POST">
 
     <!-- Portlet Messages -->
-    <spring:hasBindErrors name="channel">
+    <spring:hasBindErrors name="portlet">
       <div class="portlet-msg-error portlet-msg error" role="alert">
         <form:errors path="*" element="div"/>
       </div> <!-- end: portlet-msg -->
@@ -74,7 +74,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </c:if>
     
     <!-- Portlet Section -->
-    <c:if test="${ channel.portlet }">
+    <c:if test="${ portlet.portlet }">
       <div class="portlet-section" role="region">
         <div class="titlebar">
           <h3 class="title" role="heading"><spring:message code="portlet.xml.preferences"/></h3>
@@ -118,7 +118,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <div class="content">
           <p class="note" role="note">${ fn:escapeXml(step.description )}</p>
           
-          <!-- Channel Parameters -->
+          <!-- Portlet Parameters -->
           <c:if test="${ fn:length(step.parameters) > 0 }">
             <table class="portlet-table" summary="<spring:message code="this.table.lists.portlet.parameters"/>">
               <thead>
@@ -154,7 +154,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                               <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
                                 <editPortlet:parameterInput parameterType="${ parameter.type }" 
                                   parameterPath="${ paramPath }" parameterName="${ paramName }" 
-                                  parameterValues="${ channel.portletPreferences[paramName].value }"/>
+                                  parameterValues="${ portlet.portletPreferences[paramName].value }"/>
                               </c:when>
                               <c:otherwise>
                               <editPortlet:parameterInput parameterType="${ parameter.type }" 
@@ -174,9 +174,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </c:forEach>
               </tbody>
             </table>        
-          </c:if> <!-- End Channel Parameters -->
+          </c:if> <!-- End Portlet Parameters -->
   
-          <c:if test="${ channel.portlet }">
+          <c:if test="${ portlet.portlet }">
             <c:if test="${ fn:length(step.preferences) > 0 }">
               <div class="preference-options-section">
                 <table class="portlet-table" summary="<spring:message code="this.table.lists.portlet.parameters"/>">
@@ -194,7 +194,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ parameter.name }'].value"/>
                         <c:choose>
                           <c:when test="${ parameter.type.display == 'hidden' }">
-                            <c:set var="values" value="${ channel.portletPreferences[parameter.name].value }"/>
+                            <c:set var="values" value="${ portlet.portletPreferences[parameter.name].value }"/>
                             <input type="hidden" name="${ fn:escapeXml(paramPath )}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}"/>
                           </c:when>
                           <c:otherwise>
@@ -203,7 +203,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                               <td>
                                     <editPortlet:parameterInput parameterType="${ parameter.type }" 
                                       parameterPath="${ paramPath }" parameterName="${ parameter.name }" 
-                                      parameterValues="${ channel.portletPreferences[parameter.name].value }"/>
+                                      parameterValues="${ portlet.portletPreferences[parameter.name].value }"/>
                               </td>
                               <td>
                               <c:if test="${ parameter.modify != 'publish-only' }">
@@ -237,12 +237,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     </tr>
                   </thead>
                   <tbody>
-                    <c:forEach items="${ channel.parameters }" var="channelParam">
-                      <c:if test="${ fn:startsWith(channelParam.key, prefix) }">
-                      <c:set var="paramPath" value="parameters['${ channelParam.key }'].value"/>
-                      <c:set var="overrideParamPath" value="parameterOverrides['${ channelParam.key }'].value"/>
+                    <c:forEach items="${ portlet.parameters }" var="portletParam">
+                      <c:if test="${ fn:startsWith(portletParam.key, prefix) }">
+                      <c:set var="paramPath" value="parameters['${ portletParam.key }'].value"/>
+                      <c:set var="overrideParamPath" value="parameterOverrides['${ portletParam.key }'].value"/>
                         <tr>
-                          <td>${ fn:escapeXml(fn:substringAfter(channelParam.key, prefix) )}</td>
+                          <td>${ fn:escapeXml(fn:substringAfter(portletParam.key, prefix) )}</td>
                           <td><form:input path="${ paramPath }"/></td>
                           <td>
                               <form:checkbox path="${overrideParamPath}" value="true"/>
@@ -277,7 +277,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                       <tr>
                         <td class="preference-name">${ fn:escapeXml(name )}</td>
                         <td>
-                            <c:forEach items="${ channel.portletPreferences[name].value }" var="val">
+                            <c:forEach items="${ portlet.portletPreferences[name].value }" var="val">
                              <div>
                                  <input name="portletPreferences['${fn:escapeXml(name)}'].value" value="${ fn:escapeXml(val )}" />
                                  <a class="delete-parameter-value-link" href="javascript:;"><spring:message code="remove"/></a>

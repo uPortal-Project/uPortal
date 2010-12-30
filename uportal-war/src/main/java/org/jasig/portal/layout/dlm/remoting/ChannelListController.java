@@ -21,20 +21,21 @@ package org.jasig.portal.layout.dlm.remoting;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
-import org.jasig.portal.layout.dlm.remoting.registry.ChannelParameterBean;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.om.PortletCategory;
+import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -66,10 +67,11 @@ import org.springframework.web.servlet.ModelAndView;
  * @version $Revsion$
  */
 @Controller
-@RequestMapping("/channelList")
+@RequestMapping("/portletList")
 public class ChannelListController {
 
-	private IChannelRegistryStore channelRegistryStore;
+	private IPortletDefinitionRegistry portletDefinitionRegistry;
+	private IPortletCategoryRegistry portletCategoryRegistry;
 	private IPersonManager personManager;
 	private IPortalSpELService spELService;
 	private static final String TYPE_SUBSCRIBE = "subscribe";
@@ -97,7 +99,7 @@ public class ChannelListController {
 	private Map<String,SortedSet<?>> getRegistry(WebRequest request, IPerson user, String type) {
 		
 		// get a list of all channels 
-		List<IChannelDefinition> allChannels = channelRegistryStore.getChannelDefinitions();
+		List<IPortletDefinition> allChannels = portletDefinitionRegistry.getAllPortletDefinitions();
 
 		// construct a new channel registry
 		Map<String,SortedSet<?>> registry = new TreeMap<String,SortedSet<?>>();
@@ -106,7 +108,7 @@ public class ChannelListController {
 
 		
 		// add the root category and all its children to the registry
-		ChannelCategory rootCategory = channelRegistryStore.getTopLevelChannelCategory();
+		PortletCategory rootCategory = portletCategoryRegistry.getTopLevelPortletCategory();
 		categories.add(addChildren(request, rootCategory, allChannels, user, type));
 
 	    /*
@@ -123,8 +125,8 @@ public class ChannelListController {
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
 	    if (type.equals(TYPE_MANAGE)) {
-	        for (IChannelDefinition channel : allChannels) {
-	            if (ap.canManage(channel.getId())) {
+	        for (IPortletDefinition channel : allChannels) {
+	            if (ap.canManage(channel.getPortletDefinitionId().getStringId())) {
 	                channels.add(getChannel(channel, request));
 	            }
 	        }
@@ -136,31 +138,36 @@ public class ChannelListController {
 		return registry;
 	}
 	
-	private ChannelCategoryBean addChildren(WebRequest request, ChannelCategory category, List<IChannelDefinition> allChannels, IPerson user, String type) {
+	private ChannelCategoryBean addChildren(WebRequest request, PortletCategory category, List<IPortletDefinition> allChannels, IPerson user, String type) {
 		
 		// construct a new channel category bean for this category
 		ChannelCategoryBean categoryBean = new ChannelCategoryBean(category);
 		
 		// add the direct child channels for this category
-		IChannelDefinition[] channels;		
-		if(type.equals(TYPE_MANAGE)) {
-			channels = channelRegistryStore.getManageableChildChannels(category, user);
-		} else {
-			channels = channelRegistryStore.getChildChannels(category, user);
-		}
+		Set<IPortletDefinition> portlets = portletCategoryRegistry.getChildPortlets(category);		
+		EntityIdentifier ei = user.getEntityIdentifier();
+	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+		boolean isManage = type.equals(TYPE_MANAGE);
 		
-		for(IChannelDefinition channelDef : channels) {
+		for(IPortletDefinition channelDef : portlets) {
 			
-			// construct a new channel bean from this channel
-			ChannelBean channel = getChannel(channelDef, request);
-			categoryBean.addChannel(channel);
+			if ((isManage && ap.canManage(channelDef.getPortletDefinitionId()
+					.getStringId()))
+					|| (!isManage && ap.canSubscribe(channelDef
+							.getPortletDefinitionId().getStringId()))) {
+				// construct a new channel bean from this channel
+				ChannelBean channel = getChannel(channelDef, request);
+				categoryBean.addChannel(channel);
+			}
 			
 			// remove the channel of the list of all channels
-			allChannels.remove(channel);
+			allChannels.remove(channelDef);
 		}
 
 		/* Now add child categories. */
-		for(ChannelCategory childCategory : channelRegistryStore.getChildCategories(category)) {
+		for(PortletCategory childCategory : this.portletCategoryRegistry.getChildCategories(category)) {
+			
+			// TODO subscribe check?
 			ChannelCategoryBean childCategoryBean = addChildren(request, childCategory, allChannels, user, type);
 			
 			categoryBean.addCategory(childCategoryBean);
@@ -170,9 +177,9 @@ public class ChannelListController {
 		
 	}
 	
-	private ChannelBean getChannel(IChannelDefinition definition, WebRequest request) {
+	private ChannelBean getChannel(IPortletDefinition definition, WebRequest request) {
 	    ChannelBean channel = new ChannelBean();
-	    channel.setId(definition.getId());
+	    channel.setId(definition.getPortletDefinitionId().getStringId());
         channel.setDescription(definition.getDescription());
         channel.setFname(definition.getFName());
         channel.setName(definition.getName());
@@ -180,7 +187,7 @@ public class ChannelListController {
         channel.setTitle(definition.getTitle());
         channel.setTypeId(definition.getType().getId());
 	        
-        IChannelParameter iconParameter = definition.getParameter("iconUrl");
+        IPortletDefinitionParameter iconParameter = definition.getParameter("iconUrl");
         if (iconParameter != null) {
             String iconUrl = spELService.parseString(iconParameter.getValue(), request);
             channel.setIconUrl(iconUrl);
@@ -193,8 +200,13 @@ public class ChannelListController {
 	 * @param channelRegistryStore
 	 */
 	@Autowired
-	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-		this.channelRegistryStore = channelRegistryStore;
+	public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+		this.portletDefinitionRegistry = portletDefinitionRegistry;
+	}
+	
+	@Autowired
+	public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
+		this.portletCategoryRegistry = portletCategoryRegistry;
 	}
 
 	/**

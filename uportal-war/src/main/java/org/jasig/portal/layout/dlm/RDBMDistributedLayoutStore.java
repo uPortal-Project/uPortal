@@ -68,16 +68,16 @@ import org.jasig.portal.ThemeStylesheetDescription;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.channel.ChannelLifecycleState;
-import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.IChannelParameter;
-import org.jasig.portal.channel.IChannelType;
-import org.jasig.portal.channel.XmlGeneratingBaseChannelDefinition;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletPreference;
+import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.om.IPortletType;
+import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
@@ -770,11 +770,11 @@ public class RDBMDistributedLayoutStore
         for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//channel").iterator(); it.hasNext();) {
             org.dom4j.Element c = it.next();
             final String fname = c.valueOf("@fname");
-            IChannelDefinition cd = this.channelRegistryStore.getChannelDefinition(fname);
+            IPortletDefinition cd = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
             if (cd == null) {
                 throw new IllegalArgumentException("No published channel for fname=" + fname + " referenced by layout for " + ownerUsername);
             }
-            c.addAttribute("chanID", String.valueOf(cd.getId()));
+            c.addAttribute("chanID", String.valueOf(cd.getPortletDefinitionId().getStringId()));
         }
         
         // (2) Restore locale info...
@@ -882,6 +882,7 @@ public class RDBMDistributedLayoutStore
         
         // Finally store the layout...
         try {
+        	System.out.println("STORING LAYOUT " + layoutDom);
             this.setUserLayout(person, profile, layoutDom, true, false);
         } catch (Throwable t) {
             String msg = "Unable to persist layout for user:  " + ownerUsername;
@@ -2263,19 +2264,17 @@ public class RDBMDistributedLayoutStore
             type = Constants.NS + type.substring(Constants.LEGACY_NS.length());
 
   if (ls.isChannel()) {
-    IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(ls.getChanId());
+	  IPortletDefinition channelDef = portletDefinitionRegistry.getPortletDefinition(String.valueOf(ls.getChanId()));
     if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
-        if (localeAware) {
-            channelDef.setLocale(ls.getLocale()); // for i18n by Shoji
-            }
-      structure = channelDef.getDocument(doc, channelPrefix + ls.getStructId());
+      structure = getElementForChannel(doc, channelPrefix + ls.getStructId(), channelDef, ls.getLocale());
     } else {
         // Create an error channel if channel is missing or not approved
         String missingChannel = "Unknown";
         if (channelDef != null) {
             missingChannel = channelDef.getName();
         }
-        structure = MissingChannelDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId());
+        structure = getElementForChannel(doc, channelPrefix + ls.getStructId(), MissingChannelDefinition.INSTANCE, null);
+//        structure = MissingChannelDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId());
 //        structure = MissingChannelDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId(),
 //                "The '" + missingChannel + "' channel is no longer available. " +
 //                "Please remove it from your layout.",
@@ -2542,7 +2541,7 @@ public class RDBMDistributedLayoutStore
             NodeList parameters = node.getChildNodes();
             if (parameters != null && isChannel)
             {
-                IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(chanId);
+            	IPortletDefinition channelDef = portletDefinitionRegistry.getPortletDefinition(String.valueOf(chanId));
                 for (int i = 0; i < parameters.getLength(); i++)
                 {
                     if (parameters.item(i).getNodeName().equals("parameter"))
@@ -2561,7 +2560,7 @@ public class RDBMDistributedLayoutStore
                         } else
                         {
                             // override only for adhoc or if diff from chan def
-                            IChannelParameter cp = channelDef.getParameter(parmName);
+                            IPortletDefinitionParameter cp = channelDef.getParameter(parmName);
                             if (cp == null || !cp.getValue().equals(parmValue))
                             {
                                 parmStmt.clearParameters();
@@ -3001,9 +3000,40 @@ public class RDBMDistributedLayoutStore
         }
     }
     
+    private Element getElementForChannel(Document doc, String chanId, IPortletDefinition def, String locale) {
+        Element channel = doc.createElement("channel");
 
-    private static final class MissingChannelDefinition extends XmlGeneratingBaseChannelDefinition {
-        public static final IChannelDefinition INSTANCE = new MissingChannelDefinition();
+        // the ID attribute is the identifier for the Channel element
+        channel.setAttribute("ID", chanId);
+        channel.setIdAttribute("ID", true);
+
+        channel.setAttribute("chanID", def.getPortletDefinitionId().getStringId());
+        channel.setAttribute("timeout", String.valueOf(def.getTimeout()));
+        if (locale != null) {
+            channel.setAttribute("name", def.getName(locale));
+            channel.setAttribute("title", def.getTitle(locale));
+            channel.setAttribute("description", def.getDescription(locale));
+            channel.setAttribute("locale", locale);
+        } else {
+            channel.setAttribute("name", def.getName());
+            channel.setAttribute("title", def.getTitle());
+            channel.setAttribute("description", def.getDescription());
+        }
+        channel.setAttribute("fname", def.getFName());
+
+        // chanClassArg is so named to highlight that we are using the argument
+        // to the method rather than the instance variable chanClass
+        channel.setAttribute("typeID", String.valueOf(def.getType().getId()));
+        channel.setAttribute("editable", Boolean.toString(def.isEditable()));
+        channel.setAttribute("hasHelp", Boolean.toString(def.hasHelp()));
+        channel.setAttribute("hasAbout", Boolean.toString(def.hasAbout()));
+
+        return channel;
+
+    }
+    
+    private static final class MissingChannelDefinition implements IPortletDefinition {
+        public static final IPortletDefinition INSTANCE = new MissingChannelDefinition();
         
         public String getName() {
             return "Missing channel";
@@ -3024,18 +3054,14 @@ public class RDBMDistributedLayoutStore
             return "DLMStaticMissingChannel";
         }
         
+        
         public void addLocalizedDescription(String locale, String chanDesc) {
         }
         public void addLocalizedName(String locale, String chanName) {
         }
         public void addLocalizedTitle(String locale, String chanTitle) {
         }
-        public void addParameter(IChannelParameter parameter) {
-        }
-        public void addParameter(String name, String value, boolean override) {
-        }
-        @Deprecated
-        public void addParameter(String name, String value, String override) {
+        public void addParameter(IPortletDefinitionParameter parameter) {
         }
         public void clearParameters() {
         }
@@ -3060,35 +3086,19 @@ public class RDBMDistributedLayoutStore
         public int getExpirerId() {
             return 0;
         }
-        public int getId() {
-            return -1;
-        }
-        public String getJavaClass() {
+        public IPortletDefinitionParameter getParameter(String key) {
             return null;
         }
-        public String getLocale() {
+        public Set<IPortletDefinitionParameter> getParameters() {
             return null;
         }
-        public IChannelParameter getParameter(String key) {
-            return null;
-        }
-        public Set<IChannelParameter> getParameters() {
-            return null;
-        }
-        public Map<String, IChannelParameter> getParametersAsUnmodifiableMap() {
-            return null;
-        }
-        public IPortletPreference[] getPortletPreferences() {
+        public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
             return null;
         }
         public Date getPublishDate() {
             return null;
         }
         public int getPublisherId() {
-            return 0;
-        }
-        @Deprecated
-        public int getTypeId() {
             return 0;
         }
         public boolean hasAbout() {
@@ -3100,22 +3110,11 @@ public class RDBMDistributedLayoutStore
         public boolean isEditable() {
             return false;
         }
-        public boolean isPortlet() {
-            return false;
-        }
-        public boolean isSecure() {
-            return false;
-        }
-        public IPortletDefinition getPortletDefinition() {
-            return null;
-        }
-        public void removeParameter(IChannelParameter parameter) {
+        public void removeParameter(IPortletDefinitionParameter parameter) {
         }
         public void removeParameter(String name) {
         }
-        public void replaceParameters(Set<IChannelParameter> parameters) {
-        }
-        public void replacePortletPreference(List<IPortletPreference> portletPreferences) {
+        public void replaceParameters(Set<IPortletDefinitionParameter> parameters) {
         }
         public void setApprovalDate(Date approvalDate) {
         }
@@ -3135,15 +3134,9 @@ public class RDBMDistributedLayoutStore
         }
         public void setHasHelp(boolean hasHelp) {
         }
-        public void setIsSecure(boolean isSecure) {
-        }
-        public void setJavaClass(String javaClass) {
-        }
-        public void setLocale(String locale) {
-        }
         public void setName(String name) {
         }
-        public void setParameters(Set<IChannelParameter> parameters) {
+        public void setParameters(Set<IPortletDefinitionParameter> parameters) {
         }
         public void setPublishDate(Date publishDate) {
         }
@@ -3153,13 +3146,105 @@ public class RDBMDistributedLayoutStore
         }
         public void setTitle(String title) {
         }
-        public IChannelType getType() {
-            return null;
+        public IPortletType getType() {
+            return new MissingPortletType();
         }
-        public void setType(IChannelType channelType) {
+        public void setType(IPortletType channelType) {
         }
-		public ChannelLifecycleState getLifecycleState() {
+		public PortletLifecycleState getLifecycleState() {
 			return null;
 		}
+		public IPortletDefinitionId getPortletDefinitionId() {
+			return new MissingPortletDefinitionId();
+		}
+		public IPortletPreferences getPortletPreferences() {
+			return null;
+		}
+		public void setPortletPreferences(IPortletPreferences portletPreferences) {
+		}
+		public void addParameter(String name, String value) {
+		}
+		@Override
+		public void setPortletPreferences(
+				List<IPortletPreference> portletPreferences) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public String getApplicationId() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		@Override
+		public String getPortletName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		@Override
+		public boolean isFramework() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		@Override
+		public void setApplicationId(String applicationId) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void setPortletName(String portletName) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void setFramework(boolean isFramework) {
+			// TODO Auto-generated method stub
+			
+		}
     }
+    
+    private static final class MissingPortletDefinitionId implements IPortletDefinitionId {
+
+		public String getStringId() {
+			return "-1";
+		}
+
+    	
+    }
+
+    private static final class MissingPortletType implements IPortletType {
+
+		public int getId() {
+			// TODO Auto-generated method stub
+			return -1;
+		}
+
+		public String getName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public String getDescription() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public String getCpdUri() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public void setDescription(String descr) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void setCpdUri(String cpdUri) {
+			// TODO Auto-generated method stub
+			
+		}
+
+    	
+    }
+
 }

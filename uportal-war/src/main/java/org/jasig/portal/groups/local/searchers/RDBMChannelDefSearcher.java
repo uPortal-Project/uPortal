@@ -19,105 +19,83 @@
 
 package org.jasig.portal.groups.local.searchers;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.RDBMServices;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 
 /**
- * Searches the portal DB for channels.  Used by EntitySearcherImpl
- *
+ * Searches the portal DB for channels. Used by EntitySearcherImpl
+ * 
  * @author Alex Vigdor
  * @version $Revision$
  */
 
-
 public class RDBMChannelDefSearcher implements ITypedEntitySearcher {
-    private static final Log log = LogFactory.getLog(RDBMChannelDefSearcher.class);
-  private static final String is_search="select CHAN_ID from UP_CHANNEL where (UPPER(CHAN_NAME)=UPPER(?) or UPPER(CHAN_TITLE)=UPPER(?))";
-  private static final String partial_search="select CHAN_ID from UP_CHANNEL where (UPPER(CHAN_NAME) like UPPER(?) or UPPER(CHAN_TITLE) like UPPER(?))";
-  private Class chanDef;
+	private static final Log log = LogFactory
+			.getLog(RDBMChannelDefSearcher.class);
 
-  public RDBMChannelDefSearcher() {
-      chanDef = org.jasig.portal.channel.IChannelDefinition.class;
-  }
-  public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException {
-    //System.out.println("searching for channel");
-    EntityIdentifier[] r = new EntityIdentifier[0];
-    ArrayList ar = new ArrayList();
-    Connection conn = null;
-    PreparedStatement ps = null;
+	public RDBMChannelDefSearcher() {
+	}
 
-        try {
-            conn = RDBMServices.getConnection();
-            switch(method){
-              case IS:
-                ps = conn.prepareStatement(RDBMChannelDefSearcher.is_search);
-                break;
-              case STARTS_WITH:
-                query = query+"%";
-                ps = conn.prepareStatement(RDBMChannelDefSearcher.partial_search);
-                break;
-              case ENDS_WITH:
-                query = "%"+query;
-                ps = conn.prepareStatement(RDBMChannelDefSearcher.partial_search);
-                break;
-              case CONTAINS:
-                query = "%"+query+"%";
-                ps = conn.prepareStatement(RDBMChannelDefSearcher.partial_search);
-                break;
-              default:
-                throw new GroupsException("Unknown search type");
-            } 
-            try {
-            	ps.clearParameters();
-            	ps.setString(1,query);
-            	ps.setString(2,query);
-            	ResultSet rs = ps.executeQuery();
-            	try {
-            		//System.out.println(ps.toString());
-            		while (rs.next()){
-            			//System.out.println("result");
-            			ar.add(new EntityIdentifier(rs.getString(1),chanDef));
-            		} 
-            	} finally {
-            		close(rs);	
-            		}
-            } finally {
-            	close(ps);
-            }
-        } catch (Exception e) {
-            log.error("RDBMChannelDefSearcher.searchForEntities(): " + ps, e);
-        } finally {
-            RDBMServices.releaseConnection(conn);
-        }
-      return (EntityIdentifier[]) ar.toArray(r);
-  }
-  
-  public Class getType() {
-    return chanDef;
-  }
-  private static final void close(final Statement statement) {
-	  try {
-		  statement.close();
-	  } catch (SQLException e) {
-		  log.warn("problem closing statement", e);
-	  }
-  }
-  private static final void close(final ResultSet resultset) {
-	  try {
-		  resultset.close();
-	  } catch (SQLException e) {
-		  log.warn("problem closing resultset", e);
-	  }
-  }
+	public EntityIdentifier[] searchForEntities(String query, int method)
+			throws GroupsException {
+		IPortletDefinitionRegistry registry = PortletDefinitionRegistryLocator
+				.getPortletDefinitionRegistry();
+		boolean allowPartial = true;
+
+		switch (method) {
+			case IS:
+				allowPartial = false;
+				break;
+			case STARTS_WITH:
+				query = query + "%";
+				break;
+			case ENDS_WITH:
+				query = "%" + query;
+				break;
+			case CONTAINS:
+				query = "%" + query + "%";
+				break;
+			default:
+				throw new GroupsException("Unknown search type");
+		}
+
+		// get the list of matching portlet definitions
+		List<IPortletDefinition> definitions = registry.searchForPortlets(query,
+				allowPartial);
+		if (log.isDebugEnabled()) {
+			log.debug("Found " + definitions.size() + " matching definitions for query " + query);
+		}
+
+		// initialize an appropriately-sized array of EntityIdentifiers
+		EntityIdentifier[] identifiers = new EntityIdentifier[definitions
+				.size()];
+
+		// add an identifier for each matching portlet
+		for (ListIterator<IPortletDefinition> defIter = definitions
+				.listIterator(); defIter.hasNext();) {
+			IPortletDefinition definition = defIter.next();
+			identifiers[defIter.previousIndex()] = new EntityIdentifier(
+					definition.getPortletDefinitionId().getStringId(),
+					getType());
+		}
+
+		return identifiers;
+
+	}
+
+	@Override
+	public Class<? extends IBasicEntity> getType() {
+		return IPortletDefinition.class;
+	}
+
 }

@@ -227,14 +227,6 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      */
     public String getParameterValue(String parameterName);
 
-     /**
-     * Obtain a channel parameter override value.
-     *
-     * @param parameterName a <code>String</code> value
-     * @return a <code>boolean</code> value
-     */
-    public boolean getParameterOverrideValue(String parameterName);
-
     /**
      * Obtain values of all existing channel parameters.
      *
@@ -254,22 +246,6 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      *
      */
     public void clearParameters();
-
-    /**
-     * Determine if a given parameter can be overriden by the user.
-     * (defaults to true)
-     * @param parameterName a <code>String</code> value
-     * @return a <code>boolean</code> value
-     */
-    public boolean canOverrideParameter(String parameterName);
-
-    /**
-     * Set parameter override flag.
-     *
-     * @param parameterName a <code>String</code> value
-     * @param canOverride a <code>boolean</code> flag.
-     */
-    public void setParameterOverride(String parameterName, boolean canOverride);
 
     /**
      * Remove a channel parameter.

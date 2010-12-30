@@ -25,22 +25,8 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="channelRegistryStore" class="org.jasig.portal.channel.JpaChannelRegistryStore">
-        <property name="channelDao" ref="channelDefinitionDao"/>
-        <property name="channelTypeDao" ref="channelTypeDao"/>
+    <bean id="cpdCache" class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+        <property name="cacheName" value="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE" />
     </bean>
-    
-    <bean id="channelPublishingDefinitionDao" class="org.jasig.portal.portlets.portletadmin.xmlsupport.XmlChannelPublishingDefinitionDao">
-        <property name="channelRegistryStore" ref="channelRegistryStore" />
-        <property name="cpdCache">
-            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheName" value="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE" />
-            </bean>
-        </property>
-    </bean>
-    
-    <bean id="channelPublishingService" class="org.jasig.portal.channel.ChannelPublishingServiceImpl">
-        <property name="channelRegistryStore" ref="channelRegistryStore"/>
-    </bean>
-    
+        
 </beans>

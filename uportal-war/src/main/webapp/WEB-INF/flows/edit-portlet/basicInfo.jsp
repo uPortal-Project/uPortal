@@ -51,10 +51,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
     
-    <form:form modelAttribute="channel" action="${queryUrl}" method="POST">
+    <form:form modelAttribute="portlet" action="${queryUrl}" method="POST">
 	
 	<!-- Portlet Messages -->
-    <spring:hasBindErrors name="channel">
+    <spring:hasBindErrors name="portlet">
         <div class="portlet-msg-error portlet-msg error" role="alert">
             <form:errors path="*" element="div"/>
         </div> <!-- end: portlet-msg -->
@@ -95,16 +95,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             	<td class="fl-text-align-right"><spring:message code="portlet.timeout"/>:</td>
             	<td><form:input path="timeout"/>ms</td>
             </tr>  
-            <tr>
-            	<td class="fl-text-align-right"><spring:message code="portlet.secure"/>:</td>
-            	<td><form:checkbox path="secure"/></td>
-            </tr> 
-            <c:if test="${ channel.typeId < 0 }">
-              <tr>
-              	<td class="fl-text-align-right"><spring:message code="portlet.class"/>:</td>
-              	<td><form:input path="javaClass"/></td>
-              </tr>
-          	</c:if>
           </tbody>
         </table>
         

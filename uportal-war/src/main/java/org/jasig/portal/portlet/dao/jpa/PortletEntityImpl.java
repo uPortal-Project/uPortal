@@ -147,7 +147,11 @@ class PortletEntityImpl implements IPortletEntity {
      * @see org.jasig.portal.om.portlet.IPortletEntity#getPortletDefinitionId()
      */
     public IPortletDefinitionId getPortletDefinitionId() {
-        return this.portletDefinition.getPortletDefinitionId();
+    	if (this.portletDefinition != null) {
+            return this.portletDefinition.getPortletDefinitionId();
+    	} else {
+    		return null;
+    	}
     }
 
     /* (non-Javadoc)

@@ -20,7 +20,7 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<%@ page import="org.jasig.portal.channel.ChannelLifecycleState,java.util.Set" %>
+<%@ page import="org.jasig.portal.portlet.om.PortletLifecycleState,java.util.Set" %>
 
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
 <portlet:actionURL var="queryUrl">
@@ -52,10 +52,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
      
-    <form:form modelAttribute="channel" action="${queryUrl}" method="POST">
+    <form:form modelAttribute="portlet" action="${queryUrl}" method="POST">
 
     <!-- Portlet Messages -->
-    <spring:hasBindErrors name="channel">
+    <spring:hasBindErrors name="portlet">
         <div class="portlet-msg-error portlet-msg error" role="alert">
             <form:errors path="*" element="div"/>
         </div> <!-- end: portlet-msg -->
@@ -97,8 +97,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->       
     <c:set var="lStates" value="${ lifecycleStates }"/>
     <% Set states = (Set) pageContext.getAttribute("lStates"); %>
-    <c:if test="<%= states.contains(ChannelLifecycleState.PUBLISHED) %>">
-    <div class="portlet-section" id="${n}publishingDateSection" style="${ channel.lifecycleState == 'PUBLISHED' || channel.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
+    <c:if test="<%= states.contains(PortletLifecycleState.PUBLISHED) %>">
+    <div class="portlet-section" id="${n}publishingDateSection" style="${ portlet.lifecycleState == 'PUBLISHED' || portlet.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
       <div class="titlebar">
         <h3 class="title" role="heading"><spring:message code="auto.publish.optional"/></h3>
       </div>
@@ -116,7 +116,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <td class="fl-text-align-right"><spring:message code="auto.publish.date.time"/></td>
                 <td>
                    <form:input path="publishDate" size="10" cssClass="cal-datepicker"/>
-                   <span style="${ channel.publishDate == null ? 'display:none' : '' }">
+                   <span style="${ portlet.publishDate == null ? 'display:none' : '' }">
                          <form:select path="publishHour">
                             <c:forEach begin="1" end="12" var="hour">
                                 <form:option value="${ hour }"/>
@@ -143,8 +143,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </c:if>
     
      <!-- Portlet Section -->
-    <c:if test="<%= states.contains(ChannelLifecycleState.EXPIRED) %>">
-    <div class="portlet-section" id="${n}expirationDateSection" style="${ channel.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
+    <c:if test="<%= states.contains(PortletLifecycleState.EXPIRED) %>">
+    <div class="portlet-section" id="${n}expirationDateSection" style="${ portlet.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
       <div class="titlebar">
         <h3 class="title" role="heading"><spring:message code="auto.expire.optional"/></h3>
       </div>
@@ -162,7 +162,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <td class="fl-text-align-right"><spring:message code="auto.expire.date.time"/></td>
                 <td>
                    <form:input path="expirationDate" size="10" cssClass="cal-datepicker"/>
-                     <span style="${ channel.expirationDate == null ? 'display:none' : '' }">
+                     <span style="${ portlet.expirationDate == null ? 'display:none' : '' }">
                      <form:select path="expirationHour">
                         <c:forEach begin="1" end="12" var="hour">
                                 <form:option value="${ hour }"/>

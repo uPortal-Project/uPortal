@@ -19,7 +19,13 @@
 
 package org.jasig.portal.portlet.om;
 
-import org.jasig.portal.channel.IChannelDefinition;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
 
 
 /**
@@ -28,25 +34,156 @@ import org.jasig.portal.channel.IChannelDefinition;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletDefinition {
+public interface IPortletDefinition extends IBasicEntity {
     /**
      * @return The unique identifier for this portlet definition.
      */
     public IPortletDefinitionId getPortletDefinitionId();
     
     /**
-     * @return The {@link IChannelDefinition} this portlet definition is based on.
-     */
-    public IChannelDefinition getChannelDefinition();
-    
-    /**
      * @return The preferences for this portlet definition, will not be null.
      */
     public IPortletPreferences getPortletPreferences();
-    
+
+    public void setPortletPreferences(List<IPortletPreference> portletPreferences);
+
     /**
      * @param portletPreferences The preferences for this portlet definition.
      * @throws IllegalArgumentException If preferences is null.
      */
     public void setPortletPreferences(IPortletPreferences portletPreferences);
+    
+    public PortletLifecycleState getLifecycleState();
+    
+	public String getFName();
+
+	public String getName();
+
+	public String getDescription();
+	
+	public String getApplicationId();
+	
+	public String getPortletName();
+	
+	public boolean isFramework();
+
+	public String getTitle();
+
+	public int getTimeout();
+
+	public IPortletType getType();
+
+	public int getPublisherId();
+
+	public int getApproverId();
+
+	public Date getPublishDate();
+
+	public Date getApprovalDate();
+	
+	public int getExpirerId();
+	
+	public Date getExpirationDate();
+
+	public boolean isEditable();
+
+	public boolean hasHelp();
+
+	public boolean hasAbout();
+
+	public Set<IPortletDefinitionParameter> getParameters();
+
+	public IPortletDefinitionParameter getParameter(String key);
+
+	public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap();
+
+	// I18n
+	public String getName(String locale);
+
+	public String getDescription(String locale);
+
+	public String getTitle(String locale);
+
+	// Setter methods
+	public void setFName(String fname);
+
+	public void setName(String name);
+
+	public void setDescription(String descr);
+
+	public void setTitle(String title);
+
+	public void setTimeout(int timeout);
+
+	public void setApplicationId(String applicationId);
+	
+	public void setPortletName(String portletName);
+	
+	public void setFramework(boolean isFramework);
+
+	public void setType(IPortletType channelType);
+
+	public void setPublisherId(int publisherId);
+
+	public void setApproverId(int approvalId);
+
+	public void setPublishDate(Date publishDate);
+
+	public void setApprovalDate(Date approvalDate);
+
+	public void setExpirerId(int expirerId);
+	
+	public void setExpirationDate(Date expirationDate);
+
+	public void setEditable(boolean editable);
+
+	public void setHasHelp(boolean hasHelp);
+
+	public void setHasAbout(boolean hasAbout);
+
+	public void clearParameters();
+
+	public void setParameters(Set<IPortletDefinitionParameter> parameters);
+
+	public void replaceParameters(Set<IPortletDefinitionParameter> parameters);
+
+	public void addLocalizedTitle(String locale, String chanTitle);
+
+	public void addLocalizedName(String locale, String chanName);
+
+	public void addLocalizedDescription(String locale, String chanDesc);
+	
+	/**
+	 * Implementation required by IBasicEntity interface.
+	 * 
+	 * @return EntityIdentifier
+	 */
+	public EntityIdentifier getEntityIdentifier();
+
+	/**
+	 * Adds a parameter to this channel definition
+	 * 
+	 * @param parameter
+	 *            the channel parameter to add
+	 */
+	public void addParameter(IPortletDefinitionParameter parameter);
+
+	public void addParameter(String name, String value);
+
+	/**
+	 * Removes a parameter from this channel definition
+	 * 
+	 * @param parameter
+	 *            the channel parameter to remove
+	 */
+	public void removeParameter(IPortletDefinitionParameter parameter);
+
+	/**
+	 * Removes a parameter from this channel definition
+	 * 
+	 * @param name
+	 *            the parameter name
+	 */
+	public void removeParameter(String name);
+
 }

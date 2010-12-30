@@ -29,13 +29,13 @@ import org.danann.cernunnos.SimpleReagent;
 import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 import org.dom4j.Element;
-import org.jasig.portal.ChannelRegistryStoreFactory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 
 public class GetMemberKeyPhrase implements Phrase {
 
@@ -76,12 +76,12 @@ public class GetMemberKeyPhrase implements Phrase {
 
             // Next see if it's a <channel> element...
             if (e.getName().equals("channel")) {
-                IChannelDefinition def = ChannelRegistryStoreFactory.getChannelRegistryStoreImpl().getChannelDefinition(e.getText());
-                return String.valueOf(def.getId());
+            	IPortletDefinition def = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry().getPortletDefinitionByFname(e.getText());
+                return String.valueOf(def.getPortletDefinitionId().getStringId());
             }
 
             // Must be a group...
-            Class[] leafTypes = new Class[] {IPerson.class, IChannelDefinition.class};
+            Class[] leafTypes = new Class[] {IPerson.class, IPortletDefinition.class};
             for (int i=0; i < leafTypes.length && rslt == null; i++) {
                 EntityIdentifier[] eis = GroupService.searchForGroups(e.getText(), IGroupConstants.IS, leafTypes[i]);
                 if (eis.length == 1) {

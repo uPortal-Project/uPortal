@@ -23,13 +23,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -52,24 +50,10 @@ import org.springframework.stereotype.Service;
  */
 @Service("portletEntityPreferenceHandler")
 public class PortletEntityPreferenceHandler {
-    private IChannelRegistryStore channelRegistryStore;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private DataSource dataSource;
     
-    /**
-     * @return the channelRegistryStore
-     */
-    public IChannelRegistryStore getChannelRegistryStore() {
-        return channelRegistryStore;
-    }
-    /**
-     * @param channelRegistryStore the channelRegistryStore to set
-     */
-    @Autowired
-    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-        this.channelRegistryStore = channelRegistryStore;
-    }
     /**
      * @return the portletDefinitionRegistry
      */
@@ -148,22 +132,18 @@ public class PortletEntityPreferenceHandler {
     
     protected IPortletEntity getPortletEntity(String fName, String channelSubscribeId, int userId) {
         //Load the channel definition
-        final IChannelDefinition channelDefinition;
+        final IPortletDefinition portletDefinition;
         try {
-            channelDefinition = this.channelRegistryStore.getChannelDefinition(fName);
+            portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fName);
         }
         catch (Exception e) {
             throw new DataRetrievalFailureException("Failed to retrieve ChannelDefinition for fName='" + fName + "'", e);
         }
         
         //The channel definition for the fName MUST exist for this class to function
-        if (channelDefinition == null) {
+        if (portletDefinition == null) {
             throw new EmptyResultDataAccessException("No ChannelDefinition exists for fName='" + fName + "'", 1);
         }
-        
-        //get/create the portlet definition
-        final int channelDefinitionId = channelDefinition.getId();
-        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getOrCreatePortletDefinition(channelDefinitionId);
         
         //get/create the portlet entity
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();

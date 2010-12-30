@@ -25,8 +25,8 @@
     http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
     <on-start>
-        <set name="flowScope.channelTypes" 
-            value="channelRegistryStore.getChannelTypes()"/>
+        <set name="flowScope.portletTypes" 
+            value="portletTypeRegistry.getPortletTypes()"/>
     </on-start>
 
     <!-- 
@@ -40,20 +40,20 @@
         <!-- If we're editing an already-existing portlet, create a form and
             populate it with the selected portlet's data -->
         <transition on="editPortlet" to="edit-portlet">
-            <set name="flowScope.channel" 
-                value="portletAdministrationHelper.getChannelDefinitionForm(requestParameters.chanId.replace('chan', ''))"/>
+            <set name="flowScope.portlet" 
+                value="portletAdministrationHelper.getPortletDefinitionForm(requestParameters.portletId)"/>
         </transition>
         <!-- If we're creating a new portlet, create a new form -->
         <transition on="createPortlet" to="edit-portlet">
-            <set name="flowScope.channel" 
-                value="new org.jasig.portal.portlets.portletadmin.ChannelDefinitionForm()"/>
+            <set name="flowScope.portlet" 
+                value="new org.jasig.portal.portlets.portletadmin.PortletDefinitionForm()"/>
         </transition>
         <!-- If we're deleting a portlet, confirm the user wants to delete it -->
         <transition on="removePortlet" to="confirmRemove">
-            <set name="flowScope.channel"
-                value="portletAdministrationHelper.getChannelDefinitionForm(requestParameters.chanId.replace('chan', ''))"/>
-            <set name="flowScope.channelId"
-                value="requestParameters.chanId.replace('chan', '')"/>
+            <set name="flowScope.portlet"
+                value="portletAdministrationHelper.getPortletDefinitionForm(requestParameters.portletId)"/>
+            <set name="flowScope.portletId"
+                value="requestParameters.portletId"/>
         </transition>
     </view-state>
     
@@ -63,7 +63,7 @@
      | Edit or create the selected portlet 
      +-->
     <subflow-state id="edit-portlet" subflow="edit-portlet">
-        <input name="channel" value="channel"/>
+        <input name="portlet" value="portlet"/>
         <transition on="finishPortletEdit" to="finishPortletEdit"/>
         <transition on="cancelPortletEdit" to="finishPortletEdit"/>
     </subflow-state>
@@ -78,7 +78,7 @@
                 value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person"
                 value="personManager.getPerson(servletRequest)"/>
-            <evaluate expression="portletAdministrationHelper.removePortletRegistration(flowScope.channelId,flashScope.person)"/>
+            <evaluate expression="portletAdministrationHelper.removePortletRegistration(flowScope.portletId,flashScope.person)"/>
         </transition>
         <transition on="cancel" to="listChannels"/>
     </view-state>

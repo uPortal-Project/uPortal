@@ -43,10 +43,8 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletURLProvider.TYPE;
-import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
@@ -112,7 +110,6 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
-    private IChannelRegistryStore channelRegistryStore;
     private IPortalRequestUtils portalRequestUtils;
 
     /**
@@ -154,14 +151,6 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         this.portletWindowRegistry = portletWindowRegistry;
     }
     
-    /**
-     * @param channelRegistryStore the channelRegistryStore to set
-     */
-    @Autowired
-    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-        this.channelRegistryStore = channelRegistryStore;
-    }
-
     /**
 	 * @param portalRequestUtils the portalRequestUtils to set
 	 */
@@ -690,12 +679,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         //Find the channel and portlet definitions
         final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(portletNodeId);
         final String channelPublishId = channelNode.getChannelPublishId();
-        final IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(Integer.parseInt(channelPublishId));
-        if(null == channelDefinition) {
-            throw new IllegalArgumentException("No channel definition found for publish id: " + channelPublishId);
-        }
-        
-        final IPortletDefinition portletDefinition = channelDefinition.getPortletDefinition();
+
+        final IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(channelPublishId);
         if (portletDefinition == null) {
             throw new IllegalArgumentException("No portlet defintion found for channel definition '" + channelPublishId + "'.");
         }
@@ -814,8 +799,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider, IUrlGenerator 
         }
         
         final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletEntity.getPortletDefinitionId());
-        final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
-        final String fname = channelDefinition.getFName();
+        final String fname = portletDefinition.getFName();
         final String targetedPortletString = fname + PORTLET_PATH_ELEMENT_SEPERATOR + channelSubscribeId;
         
         //Add targeted portlet information if rendering in a single-portlet state: /fname.chanid

@@ -23,16 +23,15 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
@@ -54,7 +53,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
     private static final String DELEGATE_PORTLET_ACTION_REDIRECT_URL = "DELEGATE_PORTLET_ACTION_REDIRECT_URL";
 
     
-    private IChannelRegistryStore channelRegistryStore;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
     private IPersonManager personManager;
     private IPortletEntityRegistry portletEntityRegistry;
@@ -63,8 +62,8 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
     private IPortalUrlProvider portalUrlProvider;
     
     @Autowired
-    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-        this.channelRegistryStore = channelRegistryStore;
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
@@ -97,12 +96,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
      */
     @Override
     public PortletDelegationDispatcher createRequestDispatcher(PortletRequest portletRequest, String fName) {
-        final IChannelDefinition channelDefinition = this.channelRegistryStore.getChannelDefinition(fName);
-        if (channelDefinition == null || !channelDefinition.isPortlet()) {
-            return null;
-        }
-        
-        final IPortletDefinition portletDefinition = channelDefinition.getPortletDefinition();
+    	final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fName);
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
         
         return this.createRequestDispatcher(portletRequest, portletDefinitionId);

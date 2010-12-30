@@ -19,7 +19,7 @@
 
 package org.jasig.portal.groups;
 
-import org.jasig.portal.channel.IChannelDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;
 
 /**
@@ -31,7 +31,7 @@ import org.jasig.portal.security.IPerson;
 
 public interface IGroupConstants {
     public final String EVERYONE = IPerson.class.getName();
-    public final String CHANNEL_CATEGORIES = IChannelDefinition.class.getName();
+    public final String PORTLET_CATEGORIES = IPortletDefinition.class.getName();
     public final String PORTAL_ADMINISTRATORS = EVERYONE + ".PortalAdministrators";
     
     //Search method constants

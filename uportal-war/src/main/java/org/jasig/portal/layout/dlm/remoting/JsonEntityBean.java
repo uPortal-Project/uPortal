@@ -23,9 +23,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jasig.portal.ChannelCategory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlet.om.PortletCategory;
 
 /**
  * <p>Entity bean for JSON output.  Used for categories, groups, and people.</p>
@@ -51,7 +51,7 @@ public class JsonEntityBean implements Serializable {
 		
 	public JsonEntityBean() { }
 	
-	public JsonEntityBean(ChannelCategory category) {
+	public JsonEntityBean(PortletCategory category) {
 		
 		this.entityType = ENTITY_CATEGORY;
 		this.id = category.getId();

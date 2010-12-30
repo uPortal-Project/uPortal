@@ -33,8 +33,8 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.IChannelParameter;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.xml.stream.InjectingXMLEventReader;
 
 /**
@@ -90,7 +90,7 @@ public class TransientUserLayoutXMLEventReader extends InjectingXMLEventReader {
                 //append channel element iff subscribeId describes a transient channel, and not a regular layout channel
                 final String subscribeId = this.userLayoutManager.getFocusedId();
                 if (null != subscribeId && !subscribeId.equals("") && this.userLayoutManager.isTransientChannel(subscribeId)) {
-                    IChannelDefinition chanDef = null;
+                    IPortletDefinition chanDef = null;
                     try {
                         chanDef = this.userLayoutManager.getChannelDefinition(subscribeId);
                     }
@@ -109,8 +109,7 @@ public class TransientUserLayoutXMLEventReader extends InjectingXMLEventReader {
                         channelAttrs.add(EVENT_FACTORY.createAttribute("name", chanDef.getName()));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("description", chanDef.getDescription()));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("title", chanDef.getTitle()));
-                        channelAttrs.add(EVENT_FACTORY.createAttribute("class", chanDef.getJavaClass()));
-                        channelAttrs.add(EVENT_FACTORY.createAttribute("chanID", Integer.toString(chanDef.getId())));
+                        channelAttrs.add(EVENT_FACTORY.createAttribute("chanID", chanDef.getPortletDefinitionId().getStringId()));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("fname", chanDef.getFName()));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("timeout", Integer.toString(chanDef.getTimeout())));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("hasHelp", Boolean.toString(chanDef.hasHelp())));
@@ -120,7 +119,7 @@ public class TransientUserLayoutXMLEventReader extends InjectingXMLEventReader {
                         transientEventBuffer.offer(startChannel);
 
                         // add channel parameter elements
-                        for(final IChannelParameter parm : chanDef.getParameters())
+                        for(final IPortletDefinitionParameter parm : chanDef.getParameters())
                         {
                             final Collection<Attribute> parameterAttrs = new LinkedList<Attribute>();
                             parameterAttrs.add(EVENT_FACTORY.createAttribute("name",parm.getName()));

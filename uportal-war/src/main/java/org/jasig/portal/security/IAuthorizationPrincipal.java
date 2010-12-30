@@ -22,7 +22,7 @@ package org.jasig.portal.security;
 import java.util.Vector;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.channel.ChannelLifecycleState;
+import org.jasig.portal.portlet.om.PortletLifecycleState;
 
 /**
  * An <code>IAuthorizationPrincipal</code> represents a portal entity to which
@@ -39,34 +39,34 @@ public interface IAuthorizationPrincipal {
  * @param channelPublishId int - the Channel Id
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-    boolean canManage(int channelPublishId) throws AuthorizationException;
+    boolean canManage(String channelPublishId) throws AuthorizationException;
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to publish (used only by SLM).
  * @return boolean
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-    public boolean canManage(ChannelLifecycleState state, String categoryId) throws AuthorizationException;
+    public boolean canManage(PortletLifecycleState state, String categoryId) throws AuthorizationException;
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to use the CONFIG PortletMode on the specified channel
  * @param channelPublishId
  * @return
  * @throws AuthorizationException
  */
-    public boolean canConfigure(int channelPublishId) throws AuthorizationException;
+    public boolean canConfigure(String channelPublishId) throws AuthorizationException;
 /**
  * Answers if this <code>IAuthoriztionPrincipal</code> has permission to render this channel.
  * @return boolean
  * @param channelPublishId int - the Channel publish Id
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-    boolean canRender(int channelPublishId) throws AuthorizationException;
+    boolean canRender(String channelPublishId) throws AuthorizationException;
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to subscribe to this channel.
  * @return boolean
  * @param channelPublishId int - the Channel Id
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
-    boolean canSubscribe(int channelPublishId) throws AuthorizationException;
+    boolean canSubscribe(String channelPublishId) throws AuthorizationException;
 /**
  * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code>,
  * including inherited <code>Permissions</code>.

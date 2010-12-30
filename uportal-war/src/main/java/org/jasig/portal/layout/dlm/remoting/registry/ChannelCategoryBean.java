@@ -26,7 +26,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.jasig.portal.ChannelCategory;
+import org.jasig.portal.portlet.om.PortletCategory;
 
 public class ChannelCategoryBean implements Comparable<ChannelCategoryBean>, Serializable {
 	
@@ -41,7 +41,7 @@ public class ChannelCategoryBean implements Comparable<ChannelCategoryBean>, Ser
         channels = new TreeSet<ChannelBean>();
    	}
    	
-   	public ChannelCategoryBean(ChannelCategory category) {
+   	public ChannelCategoryBean(PortletCategory category) {
    		this.id = category.getId();
    		this.name = category.getName();
    		this.description = category.getDescription();

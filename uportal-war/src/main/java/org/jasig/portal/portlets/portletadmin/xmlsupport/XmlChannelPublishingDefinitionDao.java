@@ -29,13 +29,15 @@ import java.util.MissingResourceException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.IChannelRegistryStore;
-import org.jasig.portal.channel.IChannelType;
+import org.jasig.portal.portlet.om.IPortletType;
+import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Service;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -43,6 +45,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service("channelPublishingDefinitionDao")
 public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefinitionDao, ResourceLoaderAware, InitializingBean {
     private static final String CUSTOM_CPD_PATH = "/org/jasig/portal/portlets/portletadmin/CustomChannel.cpd";
     private static final String SHARED_PARAMETERS_PATH = "/org/jasig/portal/channels/SharedParameters.cpd";
@@ -56,7 +59,7 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
 
     
     private Map<Integer, ChannelPublishingDefinition> cpdCache;
-    private IChannelRegistryStore channelRegistryStore;
+    private IPortletTypeRegistry portletTypeRegistry;
     private ResourceLoader resourceLoader;
     
     
@@ -64,11 +67,14 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
         this.channelPublishingDefinitionParser.processAnnotations(new Class[] { ChannelPublishingDefinition.class, CPDParameterList.class });
     }
     
+    @javax.annotation.Resource(name="cpdCache")
     public void setCpdCache(Map<Integer, ChannelPublishingDefinition> cpdCache) {
         this.cpdCache = cpdCache;
     }
-    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-        this.channelRegistryStore = channelRegistryStore;
+    
+    @Autowired(required = true)
+    public void setPortletTypeRegistry(IPortletTypeRegistry portletTypeRegistry) {
+        this.portletTypeRegistry = portletTypeRegistry;
     }
 
 
@@ -94,12 +100,12 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
      * @see org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao#getChannelPublishingDefinitions()
      */
     @Override
-    public Map<IChannelType, ChannelPublishingDefinition> getChannelPublishingDefinitions() {
-        final List<IChannelType> channelTypes = this.channelRegistryStore.getChannelTypes();
+    public Map<IPortletType, ChannelPublishingDefinition> getChannelPublishingDefinitions() {
+        final List<IPortletType> channelTypes = this.portletTypeRegistry.getPortletTypes();
         
-        final Map<IChannelType, ChannelPublishingDefinition> cpds = new LinkedHashMap<IChannelType, ChannelPublishingDefinition>(channelTypes.size());
+        final Map<IPortletType, ChannelPublishingDefinition> cpds = new LinkedHashMap<IPortletType, ChannelPublishingDefinition>(channelTypes.size());
         
-        for (final IChannelType channelType : channelTypes) {
+        for (final IPortletType channelType : channelTypes) {
             final ChannelPublishingDefinition cpd = this.getChannelPublishingDefinition(channelType.getId());
             cpds.put(channelType, cpd);
         }
@@ -111,7 +117,7 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
         // if the CPD is not already in the cache, determine the CPD URI
         final String cpdUri;
         if (channelTypeId >= 0) {
-            final IChannelType type = this.channelRegistryStore.getChannelType(channelTypeId);
+            final IPortletType type = this.portletTypeRegistry.getPortletType(channelTypeId);
             if (type == null) {
                 throw new IllegalArgumentException("No ChannelType registered with id: " + channelTypeId);
             }

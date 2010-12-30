@@ -26,9 +26,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -41,16 +41,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.channel.IChannelDefinition;
-import org.jasig.portal.channel.IChannelParameter;
 import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlet.registry.NotAPortletException;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletFailureExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletRenderExecutionWorker;
@@ -278,10 +276,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         try {
             portletWindow = this.getDefaultPortletWindow(subscribeId, request);
         }
-        catch (NotAPortletException nape) {
-            this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
-            return;
-        }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to start portlet head rendering: " + subscribeId, e);
             return;
@@ -332,10 +326,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         final IPortletWindow portletWindow;
         try {
             portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-        }
-        catch (NotAPortletException nape) {
-            this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
-            return;
         }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to start portlet rendering: " + subscribeId, e);
@@ -409,10 +399,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 		try {
 			portletWindow = this.getDefaultPortletWindow(subscribeId, request);
 		}
-		catch (NotAPortletException nape) {
-			this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
-			return false;
-		}
 		catch (DataRetrievalFailureException e) {
 			this.logger.warn("Failed to test if portlet should render header: " + subscribeId, e);
 			return false;
@@ -429,10 +415,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         final IPortletWindow portletWindow;
         try {
             portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-        }
-        catch (NotAPortletException nape) {
-            this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
-            return false;
         }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to test if portlet should render body: " + subscribeId, e);
@@ -486,10 +468,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 		try {
 			portletWindow = this.getDefaultPortletWindow(subscribeId, request);
 		}
-		catch (NotAPortletException nape) {
-			this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
-			return "";
-		}
 		catch (DataRetrievalFailureException e) {
 			this.logger.warn("Failed to output portlet: " + subscribeId, e);
 			return "";
@@ -510,10 +488,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         final IPortletWindow portletWindow;
         try {
             portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-        }
-        catch (NotAPortletException nape) {
-            this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
-            return "";
         }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to output portlet: " + subscribeId, e);
@@ -564,10 +538,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         try {
             portletWindow = this.getDefaultPortletWindow(subscribeId, request);
         }
-        catch (NotAPortletException nape) {
-            this.logger.warn("Channel with subscribeId '" + subscribeId + "' is not a portlet");
-            return "";
-        }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to get portlet title: " + subscribeId, e);
             return "";
@@ -583,8 +553,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     public String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
         final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
         final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
-        final IChannelDefinition channelDefinition = parentPortletDefinition.getChannelDefinition();
-        final IChannelParameter disableDynamicTitle = channelDefinition.getParameter("disableDynamicTitle");
+        final IPortletDefinitionParameter disableDynamicTitle = parentPortletDefinition.getParameter("disableDynamicTitle");
         
         if (disableDynamicTitle == null || !Boolean.parseBoolean(disableDynamicTitle.getValue())) {
             final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
@@ -605,7 +574,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         }
         
 		// return portlet title from channel definition
-        return channelDefinition.getTitle();
+        return parentPortletDefinition.getTitle();
     }
 
     protected IPortletWindow getDefaultPortletWindow(String subscribeId, HttpServletRequest request) {
@@ -614,9 +583,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
             final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, subscribeId);
             final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
             return portletWindow;
-        }
-        catch (NotAPortletException nape) {
-            throw nape;
         }
         catch (RuntimeException re) {
             throw new DataRetrievalFailureException("Could not find IPortletWindow for subscribe id '" + subscribeId + "'", re);

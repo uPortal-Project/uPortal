@@ -22,7 +22,6 @@ package org.jasig.portal.portlet.rendering.worker;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -76,7 +75,6 @@ public class ThreadNamingPortletExecutionInterceptorAdaptor extends PortletExecu
     protected String getFname(HttpServletRequest request, IPortletWindowId portletWindowId) {
         final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
         final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
-        final IChannelDefinition channelDefinition = parentPortletDefinition.getChannelDefinition();
-        return channelDefinition.getFName();
+        return parentPortletDefinition.getFName();
       }
 }

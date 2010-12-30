@@ -21,7 +21,6 @@ package org.jasig.portal.layout.dlm.remoting;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -34,19 +33,15 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import net.sf.ehcache.Ehcache;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetUserPreferences;
 import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferencesManager;
-import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -59,6 +54,8 @@ import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
@@ -66,7 +63,6 @@ import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -88,11 +84,11 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
 	protected final Log log = LogFactory.getLog(getClass());
 	
-	private IChannelRegistryStore channelRegistryStore;
+	private IPortletDefinitionRegistry portletDefinitionRegistry;
 	
 	@Autowired(required = true)
-	public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-	    this.channelRegistryStore = channelRegistryStore;
+	public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+	    this.portletDefinitionRegistry = portletDefinitionRegistry;
 	}
 
     private IUserIdentityStore userStore;
@@ -520,10 +516,10 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
 		// gather the parameters we need to move a channel
 		String destinationId = request.getParameter("elementID");
-		int sourceId = Integer.parseInt(request.getParameter("channelID"));
+		String sourceId = request.getParameter("channelID");
 		String method = request.getParameter("position");
 
-		IChannelDefinition definition = channelRegistryStore.getChannelDefinition(sourceId);
+		IPortletDefinition definition = portletDefinitionRegistry.getPortletDefinition(sourceId);
 		
         IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(definition);
 

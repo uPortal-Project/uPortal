@@ -43,7 +43,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.CoreStylesheetDescription;
 import org.jasig.portal.CoreXSLTStylesheetDescription;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IChannelRegistryStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.StructureStylesheetDescription;
 import org.jasig.portal.StructureStylesheetUserPreferences;
@@ -54,6 +53,7 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutStructure;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.rdbm.IJoinQueryString;
@@ -102,7 +102,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
   protected IDatabaseMetadata databaseMetadata;
   protected IPersonManager personManager;
   protected ICounterStore counterStore;
-  protected IChannelRegistryStore channelRegistryStore;
+  protected IPortletDefinitionRegistry portletDefinitionRegistry;
   
   // I18n property
   protected static final boolean localeAware = LocaleManager.isLocaleAware();
@@ -128,8 +128,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     }
     
     @Autowired
-    public void setChannelRegistryStore(IChannelRegistryStore channelRegistryStore) {
-        this.channelRegistryStore = channelRegistryStore;
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
     
     @Override

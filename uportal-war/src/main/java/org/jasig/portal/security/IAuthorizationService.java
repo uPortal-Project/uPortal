@@ -22,9 +22,9 @@ package org.jasig.portal.security;
 import java.util.Vector;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.channel.ChannelLifecycleState;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlet.om.PortletLifecycleState;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -49,7 +49,7 @@ public interface IAuthorizationService
  * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
-    public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, int channelPublishId)
+    public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, String channelPublishId)
     throws AuthorizationException;
 /**
  * Answers if the principal has permission to manage this Channel.
@@ -58,7 +58,7 @@ public interface IAuthorizationService
  * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
-    public boolean canPrincipalManage(IAuthorizationPrincipal principal, int channelPublishId)
+    public boolean canPrincipalManage(IAuthorizationPrincipal principal, String channelPublishId)
     throws AuthorizationException;
 /**
  * I'm not sure what this means (Dan).  Publish what?
@@ -66,7 +66,7 @@ public interface IAuthorizationService
  * @return boolean
  * @exception AuthorizationException
  */
-    public boolean canPrincipalManage(IAuthorizationPrincipal principal, ChannelLifecycleState state, String categoryId)
+    public boolean canPrincipalManage(IAuthorizationPrincipal principal, PortletLifecycleState state, String categoryId)
     throws AuthorizationException;
 /**
  * Answers if the principal has permission to render this Channel.
@@ -75,7 +75,7 @@ public interface IAuthorizationService
  * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
-    public boolean canPrincipalRender(IAuthorizationPrincipal principal, int channelPublishId)
+    public boolean canPrincipalRender(IAuthorizationPrincipal principal, String channelPublishId)
     throws AuthorizationException;
 /**
  * Answers if the principal has permission to subscribe to this Channel.
@@ -84,7 +84,7 @@ public interface IAuthorizationService
  * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
-    public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, int channelPublishId)
+    public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String channelPublishId)
     throws AuthorizationException;
 /**
  * Answers if the owner has given the principal permission to perform the activity on

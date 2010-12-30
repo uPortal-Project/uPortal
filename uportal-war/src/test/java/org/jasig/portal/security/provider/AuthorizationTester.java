@@ -475,7 +475,7 @@ public void testAlternativePermissionPolicies() throws Exception
     print("***** ENTERING AuthorizationTester.testAlternativePermissionPolicies() *****");
     String msg = null;
     boolean testResult = false;
-    String activity = IPermission.CHANNEL_SUBSCRIBER_ACTIVITY;
+    String activity = IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
     String existingTarget = "CHAN_ID.1";
     String nonExistingTarget = "CHAN_ID.9999";
     String everyoneKey = "local" + GROUP_SEPARATOR + "0";
@@ -570,7 +570,7 @@ public void testPermissionStore() throws Exception
     print("***** ENTERING AuthorizationTester.testPermissionStore() *****");
     String msg = null;
     boolean testResult = false;
-    String activity = IPermission.CHANNEL_SUBSCRIBER_ACTIVITY;
+    String activity = IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
     String existingTarget = "CHAN_ID.1";
     String nonExistingTarget = "CHAN_ID.000";
 //    String noonePrincipal = "3.local.999";
