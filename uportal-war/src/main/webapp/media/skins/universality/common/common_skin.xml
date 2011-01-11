@@ -56,7 +56,6 @@
   <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.2.1/js/fluid-all-1.2.1-v2.min.js</js>
   
   <js>javascript/uportal/up-util.js</js>
-  <js>javascript/uportal/ajax-preferences-jquery.js</js>
   <js>javascript/uportal/up-portlet-registry.js</js>
   <js>javascript/uportal/up-entity-registry.js</js>
   <js>javascript/uportal/up-portlet-browser.js</js>
