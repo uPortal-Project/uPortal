@@ -513,7 +513,7 @@ var uportal = uportal || {};
         numberOfPortlets: 0,
         portalContext: "/uPortal",
         layoutPersistenceUrl: '/uPortal/api/layout',
-        channelRegistryUrl: '/uPortal/api/channelList',
+        channelRegistryUrl: '/uPortal/api/portletList',
         subscribableTabUrl: '/uPortal/api/subscribableTabs.json',
         mediaPath: null,
         currentSkin: null,
