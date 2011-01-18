@@ -286,6 +286,24 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </thead>
             <tfoot></tfoot>
             <tbody>
+            <c:forEach items="${ cpd.params.steps }" var="step">
+              <c:forEach items="${ step.preferences }" var="preference">
+                <c:if test="${ (preference.modify != 'subscribeOnly' && preferece.type.display != 'hidden') && (channel.portletPreferences[preference.name].value != null && channel.portletPreferences[preference.name].value != '') }">
+                  <tr>
+                    <td class="fl-text-align-right">${ fn:escapeXml(preference.label) }:</td>
+                    <td>
+                        <a href="${ setParametersUrl }" class="pa-edit">
+                            <c:set var="values" value="${channel.portletPreferences[preference.name].value}"/>
+                            ${ fn:escapeXml(fn:length(values) > 0 ? fn:escapeXml(values[0]) : '') }
+                        </a>
+                    </td>
+                    <td>
+                        ${ channel.portletPreferencesOverrides[preference.name].value ? 'X' : '' }
+                    </td>
+                  </tr>
+                </c:if>
+              </c:forEach>
+              </c:forEach>
               <c:forEach items="${ arbitraryPreferenceNames }" var="name">
                 <c:set var="paramPath" value="portletPreferences['${ name }'].value"/>
                 <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ name }'].value"/>
