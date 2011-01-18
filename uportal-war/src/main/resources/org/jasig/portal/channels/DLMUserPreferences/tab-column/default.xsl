@@ -1573,7 +1573,7 @@ function validateForm()
    </tr>
    <tr><td colspan="2"><input name="action" type="hidden" value="addTab"/></td></tr>
    <tr>
-        <td align="right" class="uportal-text12-bold">3.</td>
+        <td align="right" class="uportal-text12-bold">4.</td>
         <td>
         <table border="0" cellpadding="0" cellspacing="0">
            <tr>
