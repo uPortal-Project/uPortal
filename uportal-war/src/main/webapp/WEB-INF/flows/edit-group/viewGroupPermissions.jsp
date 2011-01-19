@@ -77,7 +77,19 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div id="${n}permissionAddingTabs" class="portlet-section" role="region">
         <div class="titlebar">
-            <h3 class="title" role="heading"><spring:message code="assignments"/></h3>   
+            <h3 class="title" role="heading"><spring:message code="assignments"/></h3>
+            
+            	<!-- NEW DEVELOPMENT - No group permissions message. -->
+                <!-- This needs to be hooked up to a real test, and then the choose > otherwise statement needs to wrap the default table display below.
+                <c:choose>
+                	<c:when test="$permissions == 0">
+                    	<p><spring:message code="no.group.permissions"/> <a href="{$add_permission_url}"><spring:message code="add.permission"/></a>.</p>
+                    </c:when>
+                    <c:otherwise>
+                    	Permissions list goes here.
+                    </c:otherwise>
+                </c:choose> -->
+                  
 
                 <div id="${n}assignmentTabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
                     <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
