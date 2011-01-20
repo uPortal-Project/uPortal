@@ -109,7 +109,7 @@ up.jQuery(function() {
     var addAssignments = function(assignments, list) {
         $(assignments).each(function(idx, assignment) {
             var li = $(document.createElement("li"));
-            var html = "<span>" + assignment.principal.name;
+            var html = "<span class=\"assignment-wrapper\"><span class=\"principal-name\">" + assignment.principal.name + "</span>";
             html += " <select id=\"permissions'" + assignment.principalId + "'\" name=\"permissions['" + assignment.principalId + "']\"><option value=\"INHERIT\">INHERIT</option><option value=\"GRANT\">GRANT</option><option value=\"DENY\">DENY</option></select></span>";
             li.html(html);
             li.find("select")

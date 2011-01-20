@@ -506,9 +506,6 @@
 .override-preference td {color:graytext; text-decoration:line-through;}
 
 /* Permissions Administration */
-.prm-mgr.view-editperm form ul {margin:0;}
-.prm-mgr.view-editperm form ul li {list-style-type:none; border-top:1px dotted #ccc;}
-.prm-mgr.view-editperm form ul li span {display:block; padding:0.5em 0em 0.5em 2em;}
 .prm-mgr .permission-lookup form {
 	background-image:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#e2e8e7), to(#fff)); 
 	background-image:-moz-linear-gradient(0% 50% 90deg, #e2e8e7, #fff);
@@ -536,3 +533,8 @@
 	color:#fff !important;
 	text-shadow:0 -1px 1px rgba(0,0,0,.5); 
 }
+.prm-mgr.view-editperm #assignments {border-top:2px solid #ccc; padding-left:20px;}
+.prm-mgr.view-editperm #assignments ul li {background:#fff url(../images/bullet_square_grey_30h.png) 0 0 repeat-y;}
+.prm-mgr.view-editperm #assignments .assignment-wrapper {background:#fff;}
+.prm-mgr.view-editperm #assignments .principal-name {color:#000;}
+.prm-mgr.view-editperm #assignments select {background:#eee;}

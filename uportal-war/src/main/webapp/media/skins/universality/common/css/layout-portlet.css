@@ -409,7 +409,7 @@
 /* Permissions Portlet 
  * Styles the ongoing information shown in the title bar * 
  * */
-ul.permission_info { padding:0; margin:0; clear:both;}
+ul.permission_info {padding:0; margin:0; clear:both;}
 ul.permission_info li {display:inline; list-style:none; padding:0; margin:0 15px 0 0; border-right:1px solid;}
 ul.permission_info li.last {border-right:none;}
 .prm-mgr .permission-lookup {margin:1em 2em 2em 2em;}
@@ -421,6 +421,11 @@ ul.permission_info li.last {border-right:none;}
 .prm-mgr .permission-lookup form span {font-size:150%;}
 .prm-mgr .permission-lookup form input[type="text"] {padding:1px 5px;}
 .prm-mgr.view-listperms .panel-list {margin-top:2em;}
+.prm-mgr.view-editperm #assignments,
+.prm-mgr.view-editperm #assignments ul {margin:0;}
+.prm-mgr.view-editperm #assignments li {list-style-type:none; line-height:30px;}
+.prm-mgr.view-editperm #assignments ul li {padding-left:16px; position:relative;}
+.prm-mgr.view-editperm #assignments ul .assignment-wrapper {display:block; padding-left:6px;}
 
 /* Portlet Manager */
 .preference-name {vertical-align: top;}

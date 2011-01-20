@@ -825,11 +825,13 @@
       <!-- Footer Links -->
       <div id="portalPageFooterLinks">
         <a href="http://www.jasig.org/" target="_blank" title="{upMsg:getMessage('go.to.jasig.site', $USER_LANG)}">
-          <xsl:value-of select="jasig.org"/>
+          <xsl:value-of select="upMsg:getMessage('jasig.org', $USER_LANG)"/>
+          <!--<xsl:value-of select="jasig.org"/>-->
         </a>
         <xsl:call-template name="portal.pipe"/>
         <a href="http://www.jasig.org/uportal" target="_blank" title="{upMsg:getMessage('go.to.uportal.site', $USER_LANG)}">
-          <xsl:value-of select="uportal.org"/>
+          <xsl:value-of select="upMsg:getMessage('uportal.org', $USER_LANG)"/>
+          <!--<xsl:value-of select="uportal.org"/>-->
         </a>
         <xsl:call-template name="portal.pipe"/>
         <a href="http://www.jasig.org/uportal/download" target="_blank" title="{upMsg:getMessage('go.to.uportal.download.site', $USER_LANG)}">
