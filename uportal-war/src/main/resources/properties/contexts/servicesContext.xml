@@ -45,7 +45,7 @@
                                 <value>group</value>
                                 <value>person</value>
                                 <value>category</value>
-                                <value>channel</value>
+                                <value>portlet</value>
                             </util:set>
                         </constructor-arg>
                     </bean>
@@ -75,7 +75,7 @@
                         <constructor-arg>
                             <util:set>
                                 <value>category</value>
-                                <value>channel</value>
+                                <value>portlet</value>
                             </util:set>
                         </constructor-arg>
                     </bean>

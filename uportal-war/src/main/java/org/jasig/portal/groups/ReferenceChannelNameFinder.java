@@ -22,6 +22,7 @@ package  org.jasig.portal.groups;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IBasicEntity;
@@ -60,11 +61,12 @@ public class ReferenceChannelNameFinder
     	IPortletDefinitionRegistry registry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
     	
         IPortletDefinition portletDefinition;
-        try {
-        	portletDefinition = registry.getPortletDefinition(key);
-        } catch (NumberFormatException e) {
-        	portletDefinition = registry.getPortletDefinition(key.split("\\.")[1]);
-        }
+    	if (StringUtils.isNumeric(key)) {
+            portletDefinition = registry.getPortletDefinition(key);
+    	} else {
+            portletDefinition = registry.getPortletDefinition(key.split("\\.")[1]);
+    	    
+    	}
         return  portletDefinition.getName();
     }
 
