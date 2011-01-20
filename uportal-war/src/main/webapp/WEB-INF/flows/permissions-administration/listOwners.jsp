@@ -45,13 +45,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content" role="main">
-  
-    <form id="${n}permissionLookupForm">
-    <p>
-        Does <input id="${n}principalSuggest" class="target-input multiselect" name="principal"/> have <input id="${n}permissionSuggest" class="target-input multiselect" name="permission"/>?
-        <input type="submit" value="<spring:message code="show.me"/>"/>
-    </p>
-    </form>
+	
+    <div class="permission-lookup">  
+        <form id="${n}permissionLookupForm">
+            <label for="${n}principalSuggest"><spring:message code="permission.suggest.principal"/></label>
+            <input type="text" id="${n}principalSuggest" name="principal" value="John"/>
+            <label for="${n}permissionSuggest"><spring:message code="permission.suggest.permission"/></label>
+            <input type="text" id="${n}permissionSuggest" name="permission" value="permission"/>
+            <span class="punctuation">?</span>
+            <input type="submit" value="<spring:message code="show.me"/>"/>
+        </form>
+    </div>
   
   	<!-- Panel list -->
     <div class="fl-col-flex2 panel-list icon-large"> 
@@ -102,6 +106,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 </div> <!-- end: portlet -->
 
+<!-- This script was for allowing multi-select on the Does John permission lookup. It was decided that there should not be multi-select on the lookup. Leaving it in temporarily while development is finished.
 <script type="text/javascript">
 up.jQuery(function() {
     var $ = up.jQuery;
@@ -148,5 +153,5 @@ up.jQuery(function() {
     });
     
 });
-</script>
+</script>-->
 

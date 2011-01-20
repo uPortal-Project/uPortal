@@ -412,6 +412,15 @@
 ul.permission_info { padding:0; margin:0; clear:both;}
 ul.permission_info li {display:inline; list-style:none; padding:0; margin:0 15px 0 0; border-right:1px solid;}
 ul.permission_info li.last {border-right:none;}
+.prm-mgr .permission-lookup {margin:1em 2em 2em 2em;}
+.prm-mgr .permission-lookup form {margin:0; padding:0.7em 1em;}
+.prm-mgr .permission-lookup form label,
+.prm-mgr .permission-lookup form input {float:none;}
+.prm-mgr .permission-lookup form label,
+.prm-mgr .permission-lookup form input[type="text"],
+.prm-mgr .permission-lookup form span {font-size:150%;}
+.prm-mgr .permission-lookup form input[type="text"] {padding:1px 5px;}
+.prm-mgr.view-listperms .panel-list {margin-top:2em;}
 
 /* Portlet Manager */
 .preference-name {vertical-align: top;}
@@ -422,7 +431,7 @@ ul.permission_info li.last {border-right:none;}
  * is defined here:
  *  uportal-war/src/main/webapp/media/skins/universality/common/javascript/uportal/flyout-nav.js
  */
-on-top
+.on-top
 {
   z-index: 10000;
 }
