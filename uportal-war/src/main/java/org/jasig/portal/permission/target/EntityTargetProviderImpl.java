@@ -144,8 +144,8 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
      * @return all groups target
      */
     protected IPermissionTarget getAllGroupsTarget() {
-        return new PermissionTargetImpl(IPermission.ALL_CATEGORIES_TARGET,
-                IPermission.ALL_CATEGORIES_TARGET);
+        return new PermissionTargetImpl(IPermission.ALL_GROUPS_TARGET,
+                IPermission.ALL_GROUPS_TARGET);
     }
 
     /**
@@ -156,8 +156,8 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
      * @return all portlets target
      */
     protected IPermissionTarget getAllPortletsTarget() {
-        return new PermissionTargetImpl(IPermission.ALL_CATEGORIES_TARGET,
-                IPermission.ALL_CATEGORIES_TARGET);
+        return new PermissionTargetImpl(IPermission.ALL_PORTLETS_TARGET,
+                IPermission.ALL_PORTLETS_TARGET);
     }
     
 }

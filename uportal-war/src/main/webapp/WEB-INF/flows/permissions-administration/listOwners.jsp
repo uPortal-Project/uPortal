@@ -34,6 +34,45 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | http://www.ja-sig.org/wiki/x/cQ
 -->
 
+<style type="text/css">
+    .up-autocomplete-dropdown {
+        display: none; position: absolute; border: 1px solid #AAA; padding: 0px; min-width: 200px; min-height: 100px; z-index: 100}
+    /* close */
+    .up-autocomplete-dropdown .up-autocomplete-close {padding: 5px 7px; text-align: right; border-bottom: 1px solid #CCC;}
+    /* list */
+    .up-autocomplete-dropdown .up-autocomplete-matches {max-height: 250px; overflow: auto;}
+    .up-autocomplete-dropdown .up-autocomplete-matches,
+    .up-autocomplete-dropdown .up-autocomplete-matches li {padding: 0; margin: 0; list-style: none;}
+    .up-autocomplete-dropdown .up-autocomplete-matches li {display: block; float:none; padding: 2px 5px;}
+    /* anchors */
+    .up-autocomplete-dropdown .up-autocomplete-matches a {display: block; padding: 0 0 0 20px;}
+    /* loader */
+    .up-autocomplete-dropdown .up-autocomplete-loading {position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
+    .up-autocomplete-dropdown .up-autocomplete-loading span {visibility: hidden;}
+    /* no members message */
+    .up-autocomplete-dropdown .up-autocomplete-noresults.info {display: none; margin: 5px 7px;}
+
+    .up-autocomplete-dropdown {background-color: #FFF; -moz-box-shadow: 0px 0px 5px 0px #999; -webkit-box-shadow: 0 0 5px 0 #999; box-shadow: 0px 0px 5px 0px #999;}
+    /* close */
+    .up-autocomplete-dropdown .up-autocomplete-close {background-color: #F8F8F8;}
+    .up-autocomplete-dropdown .up-autocomplete-close a {font-size: 77%;}
+    /* list */
+    .up-autocomplete-dropdown .up-autocomplete-matches li:hover,
+    .up-autocomplete-dropdown .up-autocomplete-matches li:focus {background-color:#FFC;}
+    /* anchors */
+    .up-autocomplete-dropdown .up-autocomplete-matches a {background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/add.png") 0% 50% no-repeat; text-decoration: none;}
+    .up-autocomplete-dropdown .up-autocomplete-matches a:hover,
+    .up-autocomplete-dropdown .up-autocomplete-matches a:focus {color:#000;}
+    /* selected */
+    .up-autocomplete-dropdown .up-autocomplete-matches .selected {background-color:#D1F0E0;}
+    .up-autocomplete-dropdown .up-autocomplete-matches .selected:hover,
+    .up-autocomplete-dropdown .up-autocomplete-matches .selected:focus {background-color:#C8F0DD;}
+    .up-autocomplete-dropdown .up-autocomplete-matches .selected a {color: #248222; background-image: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png"); font-weight: bold;}
+    /* loader */
+    .up-autocomplete-dropdown .up-autocomplete-loading {background: #EFEFEF url("../images/loading.gif") 50% 50% no-repeat;}
+
+</style>
+
 <!-- Portlet -->
 <div class="fl-widget portlet prm-mgr view-listperms" role="section">
     
@@ -48,10 +87,44 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	
     <div class="permission-lookup">  
         <form id="${n}permissionLookupForm">
+                        
             <label for="${n}principalSuggest"><spring:message code="permission.suggest.principal"/></label>
-            <input type="text" id="${n}principalSuggest" name="principal" value="John"/>
+            <div id="${n}principalSuggest" style="display:inline">
+                <input class="up-autocomplete-searchterm" type="text" value="John"/>
+                <div class="up-autocomplete-dropdown">
+                    <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
+                    <div class="up-autocomplete-noresults portlet-msg info" role="alert">
+                        <p>No members</p>
+                    </div>
+                    <ul class="up-autocomplete-matches">
+                        <li class="up-autocomplete-match group">
+                            <a href="javascript:;" class="up-autocomplete-match-link" title="&nbsp;">
+                                <span class="up-autocomplete-match-text">&nbsp;</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="up-autocomplete-loading"><span>Loading . . .</span></div>
+                </div>
+            </div>
+            
             <label for="${n}permissionSuggest"><spring:message code="permission.suggest.permission"/></label>
-            <input type="text" id="${n}permissionSuggest" name="permission" value="permission"/>
+            <div id="${n}permissionSuggest"  style="display:inline">
+                <input class="up-autocomplete-searchterm" type="text" value="Permission"/>
+                <div class="up-autocomplete-dropdown">
+                    <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
+                    <div class="up-autocomplete-noresults portlet-msg info" role="alert">
+                        <p>No members</p>
+                    </div>
+                    <ul class="up-autocomplete-matches">
+                        <li class="up-autocomplete-match group">
+                            <a href="javascript:;" class="up-autocomplete-match-link" title="&nbsp;">
+                                <span class="up-autocomplete-match-text">&nbsp;</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="up-autocomplete-loading"><span>Loading . . .</span></div>
+                </div>
+            </div>
             <span class="punctuation">?</span>
             <input type="submit" value="<spring:message code="show.me"/>"/>
         </form>
@@ -106,52 +179,69 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 </div> <!-- end: portlet -->
 
-<!-- This script was for allowing multi-select on the Does John permission lookup. It was decided that there should not be multi-select on the lookup. Leaving it in temporarily while development is finished.
 <script type="text/javascript">
 up.jQuery(function() {
     var $ = up.jQuery;
 
-    var submitForm = function(){
-        alert("Sorry, I'm not implemented yet! :(");
-        return false;
-    };
-
     $(document).ready(function(){
-        $("#${n}principalSuggest").tokenInput(
-            "<c:url value="/api/permissions/principals.json"/>",
+
+        var submitForm = function(){
+            if (console) {
+                console.log("NOT IMPLEMENTED");
+                console.log("Selected principal: " + principalSuggest.getValue());
+                console.log("Selected permission: " + permissionSuggest.getValue());
+            }
+            return false;
+        };
+
+        var principalSuggest = up.Autocomplete(
+            "#${n}principalSuggest", 
             {
-                prePopulate: [],
-                tokenLimit: 1,
-                onResult: function(results) {
+                initialText: "John",
+                searchFunction: function(searchterm) {
                     var principals = [];
-                    $(results.groups).each( function (idx, group) {
-                        principals.push({ id: group.principalString, name: group.name || group.keys });
-                    });
-                    $(results.people).each( function (idx, person) {
-                        principals.push({ id: person.principalString, name: person.name || person.id });
+                    $.ajax({
+                       url: "<c:url value="/api/permissions/principals.json"/>",
+                       data: { q: searchterm },
+                       async: false,
+                       success: function (data) {
+                           $(data.groups).each( function (idx, group) {
+                               principals.push({ value: group.principalString, text: group.name || group.keys });
+                           });
+                           $(data.people).each( function (idx, person) {
+                               principals.push({ value: person.principalString, text: person.name || person.id });
+                           });
+                       }
                     });
                     return principals;
                 }
-            } 
+            }
         );
-        
-        $("#${n}permissionSuggest").tokenInput(
-            "<c:url value="/api/permissions/activities.json"/>",
+
+        var permissionSuggest = up.Autocomplete(
+            "#${n}permissionSuggest", 
             {
-                prePopulate: [],
-                tokenLimit: 1,
-                onResult: function(results) {
-                    var activities = [];
-                    $(results.activities).each( function (idx, activity) {
-                        activities.push({ id: activity.id, name: activity.name || activity.fname });
+                initialText: "Permission",
+                searchFunction: function(searchterm) {
+                    var principals = [];
+                    $.ajax({
+                       url: "<c:url value="/api/permissions/activities.json"/>",
+                       data: { q: searchterm },
+                       async: false,
+                       success: function (data) {
+                           $(data.activities).each( function (idx, activity) {
+                               principals.push({ value: activity.fname, text: activity.name || activity.fname });
+                           });
+                       }
                     });
-                    return activities;
+                    return principals;
                 }
-            } 
+            }
         );
+
         $("#${n}permissionLookupForm").submit(submitForm);
     });
     
 });
-</script>-->
+</script>
 

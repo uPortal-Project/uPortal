@@ -52,8 +52,8 @@
   <js included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
   
-  <js included="plain">/ResourceServingWebapp/rs/fluid/1.2.1/js/fluid-all-1.2.1-v2.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.2.1/js/fluid-all-1.2.1-v2.min.js</js>
+  <js included="plain">/ResourceServingWebapp/rs/fluid/1.3/js/fluid-all-1.3.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.3/js/fluid-all-1.3.js</js>
   
   <js>javascript/uportal/up-util.js</js>
   <js>javascript/uportal/up-portlet-registry.js</js>
@@ -69,6 +69,7 @@
   <js>javascript/uportal/up-layout-persistence.js</js>
   <js>javascript/uportal/up-url-provider.js</js>
   <js>javascript/uportal/up-layout-preferences.js</js>
+  <js>javascript/uportal/up-autocomplete.js</js>
   <js>javascript/uportal/up-showHideToggle.js</js>
   <js>javascript/uportal/entity-selector.js</js>
   <js>javascript/uportal/up-parameter-editor.js</js>
