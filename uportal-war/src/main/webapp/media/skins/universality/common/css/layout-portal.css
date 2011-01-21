@@ -381,17 +381,18 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Sidebar Navigation: Icons */
 #portalSidebar #portalNavigation .portal-navigation-add,
 #portalSidebar #portalNavigation .portal-navigation-delete,
-#portalSidebar #portalNavigation .portal-navigation-gripper {display: block; position: absolute; text-decoration: none; border: none;}
+#portalSidebar #portalNavigation .portal-navigation-gripper {display: none;}
+#portalSidebar #portalNavigation .active .portal-navigation-gripper {display: block; position: absolute; text-decoration: none; border: none;}
 #portalSidebar #portalNavigation .portal-navigation-add:hover,
 #portalSidebar #portalNavigation .portal-navigation-delete:hover {background-position: 0px -16px;}
 #portalSidebar #portalNavigation .portal-navigation-delete,
 #portalSidebar #portalNavigation .portal-navigation-delete span,
-#portalSidebar #portalNavigation .portal-navigation-gripper,
-#portalSidebar #portalNavigation .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
-#portalSidebar #portalNavigation .portal-navigation-delete span,
-#portalSidebar #portalNavigation .portal-navigation-gripper span {visibility: hidden;}
+#portalSidebar #portalNavigation .active .portal-navigation-gripper,
+#portalSidebar #portalNavigation .active .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
+#portalSidebar #portalNavigation .active .portal-navigation-delete span,
+#portalSidebar #portalNavigation .active .portal-navigation-gripper span {visibility: hidden;}
 #portalSidebar #portalNavigation .portal-navigation-add {height:16px; top: 1px; left: auto; right: 2px; padding:0px 0px 0px 16px; color: #000; text-transform: capitalize; background: transparent url("../images/add.png") 0px 0px no-repeat;}
-#portalSidebar #portalNavigation .portal-navigation-gripper {top: 0px; left: auto; right: 18px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat; padding: 0;}
+#portalSidebar #portalNavigation .active .portal-navigation-gripper {top: 0px; left: auto; right: 18px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat; padding: 0;}
 #portalSidebar #portalNavigation .portal-navigation-delete {top: 0px; right: 0px; cursor: pointer; background: transparent url("../images/remove.png") 0px 0px no-repeat; padding: 0;}
 
 
@@ -420,19 +421,20 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigation, #portalNavigationInner {background-color: transparent;}
 #portalNavigationInner {position: relative;}
 /* Navigation: Icons (common) */
+#portalNavigation .portal-navigation-gripper { display: none }
 #portalNavigation .portal-navigation-add,
 #portalNavigation .portal-navigation-delete,
-#portalNavigation .portal-navigation-gripper {display: block; position: absolute; text-decoration: none; border: none;}
+#portalNavigation .active .portal-navigation-gripper {display: block; position: absolute; text-decoration: none; border: none;}
 #portalNavigation .portal-navigation-add:hover,
 #portalNavigation .portal-navigation-delete:hover {background-position: 0px -16px;}
 #portalNavigation .portal-navigation-delete,
 #portalNavigation .portal-navigation-delete span,
-#portalNavigation .portal-navigation-gripper,
-#portalNavigation .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
+#portalNavigation .active .portal-navigation-gripper,
+#portalNavigation .active .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
 #portalNavigation .portal-navigation-delete span,
-#portalNavigation .portal-navigation-gripper span {visibility: hidden;}
+#portalNavigation .active .portal-navigation-gripper span {visibility: hidden;}
 #portalNavigation .portal-navigation-add {height:16px; top: 1px; right: 2em;  padding:0px 0px 0px 16px; background: transparent url("../images/add.png") 0px 0px no-repeat;}
-#portalNavigation .portal-navigation-gripper {top: 0px; left: 0px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat; padding: 0;}
+#portalNavigation .active .portal-navigation-gripper {top: 0px; left: 0px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat; padding: 0;}
 #portalNavigation .portal-navigation-delete {top: 0px; right: 0px; cursor: pointer; background: transparent url("../images/remove.png") 0px 0px no-repeat; padding: 0;}
 /* Navigation: Subrow */
 #portalNavigationSubrow {padding:0.5em 0;}
