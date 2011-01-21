@@ -170,8 +170,8 @@ var up = up || {};
                     var tab, tabShortId, method, targetTab, targetTabShortId, tabPosition, listItems;
                     
                     // Capture moved tab & set defaults.
-                    tab = item;
-                    tabShortId = up.defaultNodeIdExtractor(tab.context);
+                    tab = $(item);
+                    tabShortId = up.defaultNodeIdExtractor(tab);
                     method = that.options.insertBefore;
                     targetTab = null;
                     targetTabShortId = null;
