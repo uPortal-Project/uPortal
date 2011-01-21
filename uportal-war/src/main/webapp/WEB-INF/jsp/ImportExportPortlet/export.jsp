@@ -23,37 +23,37 @@
 
 <!-- Portlet -->
 <div class="fl-widget portlet imp-exp view-export" role="section">
-	
+    
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    	<h2 class="title" role="heading">Export Portlet Entities</h2>
+        <h2 class="title" role="heading"><spring:message code="export.portlet.entities"/></h2>
         <div class="toolbar" role="toolbar">
             <ul>
-                <li><a class="button" href="<portlet:renderURL><portlet:param name="view" value="import"/></portlet:renderURL>">Import</a></li>
-                <li><a class="button" href="<portlet:renderURL><portlet:param name="view" value="delete"/></portlet:renderURL>">Delete</a></li>
+                <li><a class="button" href="<portlet:renderURL/>"><spring:message code="import"/></a></li>
+                <li><a class="button" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>"><spring:message code="delete"/></a></li>
             </ul>
         </div>
     </div>
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">
-		
+    <div class="fl-widget-content content portlet-content" role="main">
+        
         <!-- Note -->
         <div class="portlet-note" role="note">
             <p>Select an entity to export. You can allow/disallow entity types using Portlet Preferences.  See uPortal's portlet.xml file for details.</p>
         </div>
         
         <div class="portlet-form">
-            <form method="POST" action="<portlet:actionURL><portlet:param name="action" value="doExport"/><portlet:param name="view" value="status"/></portlet:actionURL>">
+            <form id="${n}form" method="POST" action="javascript:;">
                 
                 <table class="purpose-layout">
-                	<tr>
+                    <tr>
                     <td class="label">
-                    	<label class="portlet-form-label" for="entityType">Type:</label>
+                        <label class="portlet-form-label" for="${n}entityType"><spring:message code="type"/>:</label>
                     </td>
                     <td>
-                        <select id="entityType" name="entityType">
-                            <option>[Select Type]</option>
+                        <select id="${n}entityType" name="entityType">
+                            <option>[<spring:message code="select.type"/>]</option>
                             <c:forEach items="${supportedTypes}" var="type">
                                 <option value="${fn:escapeXml(type)}">${fn:escapeXml(type)}</option>
                             </c:forEach>
@@ -62,18 +62,37 @@
                     </tr>
                     <tr>
                         <td class="label">
-                        	<label class="portlet-form-label" for="sysid">Id:</label>
+                            <label class="portlet-form-label" for="${n}sysid"><spring:message code="id"/>:</label>
                         </td>
                         <td>
-                        	<input type="text" id="sysid" name="sysid"/>
+                            <input type="text" id="${n}sysid" name="sysid"/>
                         </td>
                     </tr>
                 </table>
                 <div class="buttons">
-                    <input class="button primary" type="submit" value="Export"/>
+                    <a id="${n}exportLink" class="button primary" target="_blank" href=""><spring:message code="export"/></a>
                 </div>
             </form>
         </div>
         
-	</div> <!-- end: portlet-content -->
+    </div> <!-- end: portlet-content -->
 </div> <!-- end: portlet -->
+
+<script type="text/javascript">
+    up.jQuery(document).ready(function () {
+        var $ = up.jQuery;
+        
+        var updateLink = function () {
+            var entityType, sysId, url;
+            
+            entityType = $("#${n}entityType").val();
+            sysId = $("#${n}sysid").val();
+            
+            $("#${n}exportLink").attr("href", "<c:url value="/api/entity/"/>" + entityType + "/" + sysId + "?download=true");
+        };
+        
+        $("#${n}entityType").change(updateLink);
+        $("#${n}sysid").change(updateLink);
+        
+    });
+</script>

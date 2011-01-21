@@ -26,22 +26,22 @@
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    	<h2 class="title" role="heading">Delete Portlet Entities</h2>
+        <h2 class="title" role="heading"><spring:message code="delete.portlet.entities"/></h2>
         <div class="toolbar" role="toolbar">
             <ul>
-                <li><a class="button" href="<portlet:renderURL><portlet:param name="view" value="import"/></portlet:renderURL>">Import</a></li>
-                <li><a class="button" href="<portlet:renderURL><portlet:param name="view" value="export"/></portlet:renderURL>">Export</a></li>
+                <li><a class="button" href="<portlet:renderURL/>"><spring:message code="import"/></a></li>
+                <li><a class="button" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>"><spring:message code="export"/></a></li>
             </ul>
-    	</div>
+        </div>
     </div>
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">   
-		
+    <div class="fl-widget-content content portlet-content" role="main">   
+        
         <!-- Messages -->
         <div class="portlet-msg-error portlet-msg error" role="alert">
             <div class="titlebar">
-            	<h3 class="title">Warning</h3>
+                <h3 class="title">Warning</h3>
             </div>
             <div class="content">
                 <p>Deleting some entities can do very bad things to your portal.  By default, all delete operations are disabled;  use this feature with caution.</p>
@@ -54,15 +54,15 @@
         </div>
         
         <div class="portlet-form">
-            <form method="POST" action="<portlet:actionURL><portlet:param name="action" value="doDelete"/><portlet:param name="view" value="status"/></portlet:actionURL>">
+            <form id="${n}form" method="POST">
                 <table class="purpose-layout">
-                	<tr>
+                    <tr>
                         <td class="label">
-                        	<label class="portlet-form-label" for="entityType">Type:</label>
+                            <label class="portlet-form-label" for="entityType"><spring:message code="type"/>:</label>
                         </td>
                         <td>
                             <select id="entityType" name="entityType">
-                                <option>[Select Type]</option>
+                                <option>[<spring:message code="select.type"/>]</option>
                                 <c:forEach items="${supportedTypes}" var="type">
                                     <option value="${fn:escapeXml(type)}">${fn:escapeXml(type)}</option>
                                 </c:forEach>
@@ -71,10 +71,10 @@
                     </tr>
                     <tr>
                         <td class="label">
-                        	<label class="portlet-form-label" for="sysid">Id:</label>
+                            <label class="portlet-form-label" for="sysid"><spring:message code="id"/>:</label>
                         </td>
                         <td>
-                        	<input type="text" id="sysid" name="sysid"/>
+                            <input type="text" id="sysid" name="sysid"/>
                         </td>
                     </tr>
                 </table>
@@ -86,3 +86,23 @@
     
     </div> <!-- end: portlet-content -->
 </div> <!-- end:portlet -->
+
+<script type="text/javascript">
+    up.jQuery(document).ready(function () {
+        var $ = up.jQuery;
+        
+        $("#${n}form").submit(function () {
+           var form, entityType, sysId, href;
+           
+           form = this;
+           entityType = form.entityType.value;
+           sysId = form.sysid.value;
+           $.ajax({
+               url: "<c:url value="/api/entity/"/>" + entityType + "/" + sysId,
+               type: "DELETE"
+           });
+           
+           return false;
+        });
+    });
+</script>

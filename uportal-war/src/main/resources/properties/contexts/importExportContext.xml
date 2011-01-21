@@ -367,6 +367,9 @@
         <entry key="fragment-definition">
             <ref bean="export-fragment-definition"/>
         </entry>
+        <entry key="user">
+            <ref bean="export-user"/>
+        </entry>
     </util:map>
 
     <bean id="export-group_membership" class="org.danann.cernunnos.runtime.PojoTask">
@@ -528,6 +531,48 @@
         </property>
     </bean>
 
+    <bean id="export-user" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/export-user.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <!-- 
+     | Nested Tasks
+     +-->
+
+    <util:map id="deleteTasks" map-class="java.util.concurrent.ConcurrentHashMap">
+        <entry key="layout">
+            <ref bean="delete-layout"/>
+        </entry>
+    </util:map>
+    
+    <bean id="delete-layout" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/delete-layout.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE">
+                    <ref bean="PortalDb"/>
+                </entry>
+                <entry key="SqlAttributes.TRANSACTION_MANAGER">
+                    <ref bean="transactionManager"/>
+                </entry>
+            </util:map>
+        </property>
+    </bean>    
+
     <!-- 
      | Nested Tasks
      +-->
@@ -605,9 +650,35 @@
             </util:map>
         </property>
     </bean>
-
+    
     <!-- 
      | Non-Task Dependencies 
      +-->
 
+    <util:map id="identifierAttributeNames">
+        <entry key="user" value="USER_NAME"/>
+        <entry key="layout" value="USER_NAME"/>
+        <entry key="profile" value="USER_NAME"/>
+        <entry key="portlet" value="FNAME"/>
+        <entry key="portlet-type" value="NAME"/>
+        <entry key="group_membership" value="GROUP_NAME"/>
+        <entry key="theme" value="NAME"/>
+        <entry key="structure" value="NAME"/>
+        <entry key="entity-type" value="NAME"/>
+        <entry key="fragment-definition" value="NAME"/>
+    </util:map>
+    
+    <util:list id="importExportTypes">
+        <value>user</value>
+        <value>layout</value>
+        <value>profile</value>
+        <value>portlet</value>
+        <value>portlet-type</value>
+        <value>group_membership</value>
+        <value>theme</value>
+        <value>structure</value>
+        <value>entity-type</value>
+        <value>fragment-definition</value>
+    </util:list>
+    
 </beans>

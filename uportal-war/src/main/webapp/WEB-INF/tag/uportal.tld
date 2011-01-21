@@ -82,6 +82,11 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    <tag>
+        <name>compressJs</name>
+        <tag-class>org.jasig.portal.utils.jsp.CompressJsTag</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
     <function>
         <name>contains</name>
         <function-class>org.jasig.portal.utils.jsp.Util</function-class>

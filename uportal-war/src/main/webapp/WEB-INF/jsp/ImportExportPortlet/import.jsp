@@ -19,47 +19,137 @@
 
 --%>
 
-<%@ include file="/WEB-INF/jsp/include.jsp" %>
+<%@ include file="/WEB-INF/jsp/include.jsp"%>
 
 <!-- Portlet -->
 <div class="fl-widget portlet imp-exp view-import" role="section">
-	
+    
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    	<h2 class="title" role="heading">Import Portlet Entities</h2>
+        <h2 class="title" role="heading"><spring:message code="import.portlet.entities"/></h2>
         <div class="toolbar" role="toolbar">
             <ul>
-                <li><a class="button" href="<portlet:renderURL><portlet:param name="view" value="export"/></portlet:renderURL>">Export</a></li>
-                <li><a class="button" href="<portlet:renderURL><portlet:param name="view" value="delete"/></portlet:renderURL>">Delete</a></li>
+                <li><a class="button" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>"><spring:message code="export"/></a></li>
+                <li><a class="button" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>"><spring:message code="delete"/></a></li>
             </ul>
         </div>
     </div>
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">
-    	
+    <div class="fl-widget-content content portlet-content" role="main">
+        
         <!-- Note -->
         <div class="portlet-note" role="note">
-            <p>Upload an entity to be imported. You can allow/disallow entity types using Portlet Preferences.  See uPortal's portlet.xml file for details.</p>
+            <p><spring:message code="upload.an.entity.to.be.imported"/></p>
         </div>
         
-        <div class="portlet-form">
-            <form method="POST" enctype="multipart/form-data" action="<portlet:actionURL><portlet:param name="action" value="doImport"/><portlet:param name="view" value="status"/></portlet:actionURL>">
-                <table class="purpose-layout">
-                	<tr>
-                        <td class="label">
-                        	<label class="portlet-form-label" for="entityFile">File:</label>
-                        </td>
-                        <td>
-                        	<input type="file" id="entityFile" name="entityFile"/>
-                        </td>
-                    </tr>
-                </table>
-                <div class="buttons">
-                    <input class="button primary" type="submit" value="Import"/>
+        <div id="uploader-contents">
+            
+            <!-- This is the markup for the Fluid Uploader component itself. -->
+            <form class="flc-uploader fl-uploader" 
+                  method="get" 
+                  enctype="multipart/form-data">
+                      
+                <!-- The file queue -->
+                <div class="fl-uploader-queue-wrapper">
+                    <!-- Top of the queue -->
+                    <div class="fl-uploader-queue-header">
+                        <table cellspacing="0" cellpadding="0" summary="Headers for the file queue." role="presentation">
+                            <caption><spring:message code="file.upload.queue"/>:</caption>
+                            <tr>
+                                <th scope="col" class="fl-uploader-file-name"><spring:message code="file.name"/></th>
+                                <th scope="col" class="fl-uploader-file-size"><spring:message code="size"/></th>
+                                <th scope="col" class="fl-uploader-file-actions">&nbsp;</th>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <!-- Scrollable view -->
+                    <div class="flc-scroller fl-scroller">
+                        <div class="fl-scroller-inner">
+                            <table cellspacing="0" class="flc-uploader-queue fl-uploader-queue" summary="Queue of files to upload." role="presentation">
+                                <tbody>
+                                    <!-- Rows will be rendered in here. -->
+                                    
+                                    <!-- Template markup for the file queue rows -->
+                                    <tr class="flc-uploader-file-tmplt flc-uploader-file fl-uploader-hidden-templates">
+                                        <th class="flc-uploader-file-name fl-uploader-file-name" scope="row">File Name Placeholder</th>
+                                        <td class="flc-uploader-file-size fl-uploader-file-size">0 KB</td>
+                                        <td class="fl-uploader-file-actions">
+                                            <button type="button" class="flc-uploader-file-action fl-uploader-file-action" tabindex="-1">
+                                                <span class="fl-uploader-button-text fl-uploader-hidden">Remove file from queue</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Template for the file error info rows -->
+                                    <tr class="flc-uploader-file-error-tmplt fl-uploader-file-error fl-uploader-hidden-templates">
+                                        <td colspan="3" class="flc-uploader-file-error"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="flc-uploader-file-progressor-tmplt fl-uploader-file-progress">
+                                <span class="fl-uploader-file-progress-text fl-uploader-hidden">76%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flc-uploader-browse-instructions fl-uploader-browse-instructions">
+                        Choose <em>Browse files</em> to add files to the queue 
+                    </div>
+        
+                    <!-- Foot of the queue -->
+                    <div class="flc-uploader-queue-footer fl-uploader-queue-footer">
+                        <table cellspacing="0" cellpadding="0" summary="Status of file queue." role="presentation">
+                            <tr>
+                                <td class="flc-uploader-total-progress-text">
+                                    Total: 0 files (0 KB)
+                                </td>
+                                <td class=".fl-uploader-footer-buttons" align="right" >
+                                    <span class="flc-uploader-button-browse fl-uploader-browse">
+                                        <span class="flc-uploader-button-browse-text">Browse files</span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="flc-uploader-total-progress fl-uploader-total-progress-okay">&nbsp;</div>
+                    </div>
                 </div>
-            </form>
+                
+                <!-- Action buttons -->
+                <div class="fl-uploader-btns">
+                    <button type="button" class="flc-uploader-button-pause fl-uploader-pause fl-uploader-hidden">Stop Upload</button>
+                    <button type="button" class="flc-uploader-button-upload fl-uploader-upload fl-uploader-button-default fl-uploader-dim" disabled="disabled">Upload</button>
+                </div>
+                
+                <div class="flc-uploader-status-region fl-offScreen-hidden"></div>
+            </form>        
         </div>
         
-	</div> <!-- end: portlet-content -->
+    </div> <!-- end: portlet-content -->
 </div> <!-- end: portlet -->
+
+<script type="text/javascript">
+    up.jQuery(document).ready(function () {
+        var myUpload = up.fluid.uploader(".flc-uploader", {
+            strategy: {
+                type: "fluid.uploader.progressiveStrategy",
+                options: {
+                    // Special options for the Flash version of Uploader.
+                    flashSettings: {
+                        // This option points to the location of the SWFUpload Flash object that ships with Fluid Infusion.
+                        flashURL: "/ResourceServingWebapp/rs/fluid/1.3/lib/swfupload.swf",
+                        
+                        // This option points to the location of the Browse Files button used with Flash 10 clients.
+                        flashButtonImageURL: "infusion/components/uploader/images/browse.png"
+                    }
+                }
+            },
+            queueSettings: {
+                // Set the uploadURL to the URL for posting files to your server.
+                uploadURL: "<c:url value="/api/import"/>",
+                fileQueueLimit: 1
+            }
+        });
+    });
+</script> 
