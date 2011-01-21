@@ -221,7 +221,7 @@
 .up #portalNavigationList .single.active {border-left: 1px solid #465E93; border-left:1px solid rgba(0,0,0,0.25);}
 /* Navigation: icons */
 .up #portalNavigation .portal-navigation-add {background: transparent url("images/add.png") 0px 0px no-repeat; color: #FFF; top: 3px;}
-.up #portalNavigation .portal-navigation-gripper {background: transparent url("images/gripper.png") 0px 0px no-repeat;}
+.up #portalNavigation .active .portal-navigation-gripper {background: transparent url("images/gripper.png") 0px 0px no-repeat;}
 .up #portalNavigation .portal-navigation-delete {background: transparent url("images/remove.png") 0px 0px no-repeat;}
 /* Fluid Layout Customizer (Header: drag and drop) */
 .up .fl-reorderer-header-avatar {background-color: #000; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; -moz-box-shadow: 0px 0px 4px 0px #333; -webkit-box-shadow: 0px 0px 4px 0px #333;
