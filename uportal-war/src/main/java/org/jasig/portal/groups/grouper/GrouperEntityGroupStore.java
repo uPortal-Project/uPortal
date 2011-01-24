@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.EntityGroupImpl;
 import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.GroupsException;
@@ -42,9 +43,13 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
 
+import edu.internet2.middleware.grouperClient.api.GcAddMember;
 import edu.internet2.middleware.grouperClient.api.GcFindGroups;
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.api.GcGetMembers;
+import edu.internet2.middleware.grouperClient.api.GcGetSubjects;
+import edu.internet2.middleware.grouperClient.api.GcGroupDelete;
+import edu.internet2.middleware.grouperClient.api.GcGroupSave;
 import edu.internet2.middleware.grouperClient.api.GcHasMember;
 import edu.internet2.middleware.grouperClient.util.GrouperClientUtils;
 import edu.internet2.middleware.grouperClient.ws.StemScope;
@@ -53,7 +58,10 @@ import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResults;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetMembersResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetMembersResults;
+import edu.internet2.middleware.grouperClient.ws.beans.WsGetSubjectsResults;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
+import edu.internet2.middleware.grouperClient.ws.beans.WsGroupLookup;
+import edu.internet2.middleware.grouperClient.ws.beans.WsGroupToSave;
 import edu.internet2.middleware.grouperClient.ws.beans.WsHasMemberResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsHasMemberResults;
 import edu.internet2.middleware.grouperClient.ws.beans.WsQueryFilter;
@@ -433,23 +441,42 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.groups.IEntitySearcher#searchForEntities(java.lang.String, int, java.lang.Class)
+    /**
+     * @see org.jasig.portal.groups.IEntitySearcher#searchForEntities(java.lang.String,
+     *      int, java.lang.Class)
      */
     @SuppressWarnings("unchecked")
     public EntityIdentifier[] searchForEntities(String query, int method,
             Class type) throws GroupsException {
-        return new EntityIdentifier[]{};
+
+        WsGetSubjectsResults wsGetSubjectsResults = new GcGetSubjects()
+                .assignSearchString(query).execute();
+
+        EntityIdentifier[] entityIdentifiers = new EntityIdentifier[GrouperClientUtils
+                .length(wsGetSubjectsResults.getWsSubjects())];
+
+        int i = 0;
+        for (WsSubject wsSubject : wsGetSubjectsResults.getWsSubjects()) {
+
+            EntityIdentifier entityIdentifier = new EntityIdentifier(
+                    wsSubject.getId(),
+                    "g:gsa".equals(wsSubject.getSourceId()) ? EntityTypes.GROUP_ENTITY_TYPE
+                            : EntityTypes.LEAF_ENTITY_TYPE);
+            entityIdentifiers[i] = entityIdentifier;
+            i++;
+    }
+      return entityIdentifiers;
+    
     }
     
-    /* (non-Javadoc)
+    /**
      * @see org.jasig.portal.groups.IEntityStore#newInstance(java.lang.String)
      */
     public IEntity newInstance(String key) throws GroupsException {
         return new EntityImpl(key, null);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.jasig.portal.groups.IEntityStore#newInstance(java.lang.String, java.lang.Class)
      */
     @SuppressWarnings("unchecked")
@@ -576,39 +603,69 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
         }
     }
 
-    /*
-     * UNSUPPORTED WRITE OPERATIONS
-     * 
-     * The Grouper group service does not currently support operations that 
-     * require write access or locking.  This implementation may be updated
-     * in the future to include those features.
-     */
-
-    /* (non-Javadoc)
+    /**
      * @see org.jasig.portal.groups.IEntityGroupStore#update(org.jasig.portal.groups.IEntityGroup)
      */
     public void update(IEntityGroup group) throws GroupsException {
-        throw new UnsupportedOperationException(
-            "Group updates are not supported by the Grouper groups service");
+
+        // assume key is fully qualified group name
+        String groupName = group.getLocalKey();
+
+        String description = group.getDescription();
+
+        // the name is the displayExtension
+        String displayExtension = group.getName();
+
+        WsGroupToSave wsGroupToSave = new WsGroupToSave();
+        wsGroupToSave.setCreateParentStemsIfNotExist("T");
+        wsGroupToSave.setWsGroupLookup(new WsGroupLookup(groupName, null));
+        WsGroup wsGroup = new WsGroup();
+        wsGroup.setName(groupName);
+        wsGroup.setDisplayExtension(displayExtension);
+        wsGroup.setDescription(description);
+        wsGroupToSave.setWsGroup(wsGroup);
+
+        new GcGroupSave().addGroupToSave(wsGroupToSave).execute();
+
+        updateMembers(group);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.jasig.portal.groups.IEntityGroupStore#updateMembers(org.jasig.portal.groups.IEntityGroup)
      */
     public void updateMembers(IEntityGroup group) throws GroupsException {
-        throw new UnsupportedOperationException(
-            "Group updates are not supported by the Grouper groups service");
+
+        // assume key is fully qualified group name
+        String groupName = group.getLocalKey();
+
+        GcAddMember gcAddMember = new GcAddMember().assignGroupName(groupName);
+
+        Iterator<IGroupMember> membersIterator = group.getMembers();
+
+        while (membersIterator != null && membersIterator.hasNext()) {
+            IGroupMember iGroupMember = membersIterator.next();
+            EntityIdentifier entityIdentifier = iGroupMember
+                    .getEntityIdentifier();
+
+            String identifier = entityIdentifier.getKey();
+
+            gcAddMember.addSubjectIdentifier(identifier);
+        }
+        gcAddMember.execute();
+
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.jasig.portal.groups.IEntityGroupStore#delete(org.jasig.portal.groups.IEntityGroup)
      */
     public void delete(IEntityGroup group) throws GroupsException {
-        throw new UnsupportedOperationException(
-             "Group deletion is not supported by the Grouper groups service");
+
+        String groupName = group.getLocalKey();
+        new GcGroupDelete().addGroupLookup(new WsGroupLookup(groupName, null))
+                .execute();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.jasig.portal.groups.IEntityGroupStore#findLockable(java.lang.String)
      */
     public ILockableEntityGroup findLockable(String key) throws GroupsException {
@@ -616,8 +673,9 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
             "Group locking is not supported by the Grouper groups service");
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.groups.IEntityGroupStore#newInstance(java.lang.Class)
+    /*
+     * @see
+     * org.jasig.portal.groups.IEntityGroupStore#newInstance(java.lang.Class)
      */
     @SuppressWarnings("unchecked")
     public IEntityGroup newInstance(Class entityType) throws GroupsException {
