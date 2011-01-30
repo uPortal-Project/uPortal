@@ -21,6 +21,8 @@ package org.jasig.portal.portlet.om;
 import java.util.Date;
 import java.util.Set;
 
+import javax.servlet.http.Cookie;
+
 /**
  * Interface describing the parent cookie used to relate all
  * Portlet Cookies to one HTTP Cookie.
@@ -30,6 +32,7 @@ import java.util.Set;
  */
 public interface IPortalCookie {
 	
+	public static final String PORTAL_COOKIE_NAME = IPortalCookie.class.getPackage().getName() + ".PORTLET_COOKIE_TOKEN";
 	/**
 	 * 
 	 * @return the unique value for this cookie
@@ -60,4 +63,14 @@ public interface IPortalCookie {
 	 * @return the set of {@link IPortletCookie}s linked to this instance
 	 */
 	Set<IPortletCookie> getPortletCookies();
+	
+	/**
+	 * Generate the "master" {@link Cookie} from this instance.
+	 * Unlike {@link IPortletCookie}s, this {@link Cookie} is actually
+	 * returned to the browser.
+	 * 
+	 * @return
+	 */
+	Cookie toMasterCookie();
+
 }

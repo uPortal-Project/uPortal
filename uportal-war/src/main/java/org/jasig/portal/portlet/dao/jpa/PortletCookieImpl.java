@@ -22,13 +22,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.servlet.http.Cookie;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.jasig.portal.portlet.om.IPortletCookie;
-import org.jasig.portal.portlet.om.IPortletEntity;
 
 /**
  * JPA annotated {@link IPortletCookie} implementation.
@@ -75,9 +74,6 @@ class PortletCookieImpl implements IPortletCookie {
 	@Column(name = "SECURE", nullable = false, updatable = true)
 	private boolean secure = false;
 	
-	@ManyToOne(targetEntity = PortletEntityImpl.class)
-	private final IPortletEntity portletEntity;
-	
 	/**
 	 * For ORM internal use only
 	 */
@@ -85,17 +81,14 @@ class PortletCookieImpl implements IPortletCookie {
 	private PortletCookieImpl() {
 		this.internalPortletCookieId = -1;
 		this.name = null;
-		this.portletEntity = null;
 	}
 	/**
 	 * 
 	 * @param name
-	 * @param portletEntity
 	 */
-	PortletCookieImpl(String name, IPortletEntity portletEntity) {
+	PortletCookieImpl(String name) {
 		this.internalPortletCookieId = -1;
 		this.name = name;
-		this.portletEntity = portletEntity;
 	}
 	
 	
@@ -148,12 +141,6 @@ class PortletCookieImpl implements IPortletCookie {
 		return secure;
 	}
 	/**
-	 * @return the portletEntity
-	 */
-	public IPortletEntity getPortletEntity() {
-		return portletEntity;
-	}
-	/**
 	 * @param comment the comment to set
 	 */
 	public void setComment(String comment) {
@@ -195,6 +182,24 @@ class PortletCookieImpl implements IPortletCookie {
 	public void setSecure(boolean secure) {
 		this.secure = secure;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.om.IPortletCookie#toCookie()
+	 */
+	@Override
+	public Cookie toCookie() {
+		Cookie cookie = new Cookie(this.name, this.value);
+		cookie.setComment(this.comment);
+		if(this.domain != null) {
+			// FYI: setDomain requires non-null argument (requirement not documented)
+			cookie.setDomain(this.domain);
+		}
+		cookie.setMaxAge(this.maxAge);
+		cookie.setPath(this.path);
+		cookie.setSecure(this.secure);
+		cookie.setVersion(this.version);
+		return cookie;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -213,8 +218,6 @@ class PortletCookieImpl implements IPortletCookie {
 		builder.append(name);
 		builder.append(", path=");
 		builder.append(path);
-		builder.append(", portletEntity=");
-		builder.append(portletEntity);
 		builder.append(", secure=");
 		builder.append(secure);
 		builder.append(", value=");
@@ -239,8 +242,6 @@ class PortletCookieImpl implements IPortletCookie {
 		result = prime * result + maxAge;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((path == null) ? 0 : path.hashCode());
-		result = prime * result
-				+ ((portletEntity == null) ? 0 : portletEntity.hashCode());
 		result = prime * result + (secure ? 1231 : 1237);
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		result = prime * result + version;
@@ -293,13 +294,6 @@ class PortletCookieImpl implements IPortletCookie {
 				return false;
 			}
 		} else if (!path.equals(other.path)) {
-			return false;
-		}
-		if (portletEntity == null) {
-			if (other.portletEntity != null) {
-				return false;
-			}
-		} else if (!portletEntity.equals(other.portletEntity)) {
 			return false;
 		}
 		if (secure != other.secure) {

@@ -30,6 +30,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.servlet.http.Cookie;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -69,7 +70,7 @@ class PortalCookieImpl implements IPortalCookie {
 	@Column(name = "VALUE", nullable = false, updatable = false, unique = true)
 	private final String value;
 	
-	@OneToMany(targetEntity = PortletCookieImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = PortletCookieImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	private Set<IPortletCookie> portletCookies;
 	
 	/**
@@ -138,6 +139,17 @@ class PortalCookieImpl implements IPortalCookie {
 	 */
 	public void setExpires(Date expires) {
 		this.expires = expires;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.om.IPortalCookie#toSuperCookie()
+	 */
+	@Override
+	public Cookie toMasterCookie() {
+		Cookie cookie = new Cookie(PORTAL_COOKIE_NAME, this.value);
+		cookie.setComment("uPortal Portlet Master Cookie");
+		cookie.setMaxAge(7200);
+		return cookie;
 	}
 
 	/* (non-Javadoc)

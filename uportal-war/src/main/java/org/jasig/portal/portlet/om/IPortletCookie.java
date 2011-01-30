@@ -18,8 +18,6 @@
  */
 package org.jasig.portal.portlet.om;
 
-import java.util.Date;
-
 import javax.servlet.http.Cookie;
 
 /**
@@ -32,12 +30,6 @@ import javax.servlet.http.Cookie;
  * @version $Id$
  */
 public interface IPortletCookie {
-
-	/**
-	 * 
-	 * @return the {@link IPortletEntity} that this cookie is for
-	 */
-	IPortletEntity getPortletEntity();
 	
 	/**
 	 * @see Cookie#getName()
@@ -140,4 +132,10 @@ public interface IPortletCookie {
 	 * @param version
 	 */
 	void setVersion(int version);
+	
+	/**
+	 * 
+	 * @return a new {@link Cookie} created from the values of the fields in this instance
+	 */
+	Cookie toCookie();
 }

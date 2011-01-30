@@ -19,14 +19,11 @@
 package org.jasig.portal.portlet.dao;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
-import org.jasig.portal.portlet.om.IPortletEntityId;
 
 /**
  * Interface for creating/updating/deleting {@link IPortalCookie} and related {@link IPortletCookie}s.
@@ -64,48 +61,29 @@ public interface IPortletCookieDao {
 	public void deletePortalCookie(IPortalCookie portalCookie);
 	
 	/**
-	 * Add a {@link IPortletCookie} to the specified {@link IPortalCookie} for
-	 * the {@link IPortletEntityId}.
+	 * Add a {@link IPortletCookie} to the specified {@link IPortalCookie}.
 	 * 
 	 * @param portalCookie
-	 * @param portletEntityId
 	 * @param cookie
 	 * @return
 	 */
-	public IPortalCookie storePortletCookie(IPortalCookie portalCookie, IPortletEntityId portletEntityId, Cookie cookie);
+	public IPortalCookie storePortletCookie(IPortalCookie portalCookie, Cookie cookie);
 	/**
-	 * Update the {@link IPortletCookie} to the specified {@link IPortalCookie} for
-	 * the {@link IPortletEntityId}.
+	 * Update the {@link IPortletCookie} in the specified {@link IPortalCookie}.
 	 * 
 	 * @param portalCookie
-	 * @param portletEntityId
 	 * @param cookie
 	 * @return the updated {@link IPortalCookie}
 	 */
-	public IPortalCookie updatePortletCookie(IPortalCookie portalCookie, IPortletEntityId portletEntityId, Cookie cookie);
+	public IPortalCookie updatePortletCookie(IPortalCookie portalCookie, Cookie cookie);
 	
 	/**
-	 * Remove the {@link IPortletCookie} from the specified {@link IPortalCookie} for
-	 * the {@link IPortletEntityId}.
+	 * Remove the {@link IPortletCookie} from the specified {@link IPortalCookie}.
 	 * 
 	 * @param portalCookie
-	 * @param portletEntityId
 	 * @param cookie
 	 * @return the updated {@link IPortalCookie}
 	 */
-	public IPortalCookie deletePortletCookie(IPortalCookie portalCookie, IPortletEntityId portletEntityId, Cookie cookie);
+	public IPortalCookie deletePortletCookie(IPortalCookie portalCookie,Cookie cookie);
 	
-	/**
-	 * 
-	 * @param portletEntityId
-	 * @return a never null, but possibly empty, {@link Set} of {@link IPortletCookie}s stored for the {@link IPortletEntityId}
-	 */
-	public List<IPortletCookie> getPortletCookiesForEntity(IPortletEntityId portletEntityId);
-	
-	/**
-	 * 
-	 * @param portletEntityId
-	 * @return true if {@link IPortletCookie}s are stored for the specified {@link IPortletEntityId}.
-	 */
-	public boolean entityHasStoredPortletCookies(IPortletEntityId portletEntityId);
 }
