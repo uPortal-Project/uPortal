@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
 public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
 	
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
+	
+	private final Log log = LogFactory.getLog(this.getClass());
 	
 	@Autowired(required = true)
 	public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
@@ -133,7 +137,12 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         while (iter.hasNext()) {
             IGroupMember gm = (IGroupMember)iter.next();
             if (gm.isEntity()) {
-                portletDefs.add(portletDefinitionRegistry.getPortletDefinition(gm.getKey()));
+            	IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(gm.getKey());
+            	if(portletDefinition != null) {
+            		portletDefs.add(portletDefinition);
+            	} else {
+            		log.error("portletDefinition was null for groupMember key " + gm.getKey() );
+            	}   
             }
         }
         return portletDefs;
