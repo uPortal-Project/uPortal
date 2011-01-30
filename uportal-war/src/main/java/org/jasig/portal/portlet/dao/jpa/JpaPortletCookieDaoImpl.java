@@ -29,12 +29,14 @@ import javax.servlet.http.Cookie;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
-import org.jasig.portal.portlet.om.IPortletEntity;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 
 	private final SecureRandom secureRandom = new SecureRandom();
-
+	private final Log log = LogFactory.getLog(this.getClass());
 	private int portalCookieLifetimeMinutes = 60;
 	private EntityManager entityManager;
 	
@@ -135,8 +137,24 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 	/**
 	 * Intended for periodic execution, this method will delete all {@link IPortalCookie}s
 	 * from persistence that have expired.
+	 * 
+	 * Uses Spring's {@link Scheduled} annotation with a 60 second fixedDelay.
+	 * 
+	 * @see Scheduled
 	 */
+	@Scheduled(fixedDelay=60000)
+	@SuppressWarnings("unchecked")
 	public void purgeExpiredCookies() {
+		Date now = new Date();
+		log.debug("begin portal cookie expiration");
+		final Query query = this.entityManager.createQuery("from PortalCookieImpl portalCookie " +
+        	"where portalCookie.expires <= :now");
+		query.setParameter("now", now);
+		List<IPortalCookie> cookies = query.getResultList();
+		log.debug("found " + cookies.size() + " portal cookies eligible for removal");
+		for(IPortalCookie cookie: cookies) {
+			this.entityManager.remove(cookie);
+		}
 		
 	}
 
