@@ -28,7 +28,8 @@
     <bean id="minimizedStateHandlerInterceptor" class="org.jasig.portal.portlets.MinimizedStateHandlerInterceptor" />           
 
     <bean id="urlCanonicalizingFilter" class="org.jasig.portal.url.UrlCanonicalizingFilter" />
-
+    <bean id="createPortletCookieFilter" class="org.jasig.portal.web.CreatePortletCookieFilter"/>
+	<bean id="destroyPortletCookieFilter" class="org.jasig.portal.web.DestroyPortletCookieFilter"/>
     <bean id="multipartResolver"
         class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
     

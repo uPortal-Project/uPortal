@@ -19,14 +19,20 @@
 
 package org.jasig.portal.portlet.container;
 
+import java.util.Date;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.PortletResponseContext;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.driver.PortletServlet;
+import org.jasig.portal.portlet.dao.IPortletCookieDao;
+import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.springframework.util.Assert;
 
@@ -41,6 +47,7 @@ public abstract class AbstractPortletContextImpl {
     protected final HttpServletRequest containerRequest;
     protected final HttpServletResponse containerResponse;
     protected final IPortletWindow portletWindow;
+    protected final IPortletCookieDao portletCookieDao;
 
     //Objects provided by the PortletServlet via the init method
     //The servlet objects are from the scope of the cross-context dispatch
@@ -49,17 +56,20 @@ public abstract class AbstractPortletContextImpl {
     
     public AbstractPortletContextImpl(
             PortletContainer portletContainer, IPortletWindow portletWindow,
-            HttpServletRequest containerRequest, HttpServletResponse containerResponse) {
+            HttpServletRequest containerRequest, HttpServletResponse containerResponse,
+            IPortletCookieDao portletCookieDao) {
         
         Assert.notNull(portletContainer, "portletContainer cannot be null");
         Assert.notNull(containerRequest, "containerRequest cannot be null");
         Assert.notNull(containerResponse, "containerResponse cannot be null");
         Assert.notNull(portletWindow, "portletWindow cannot be null");
+        Assert.notNull(portletCookieDao, "portletCookieDao cannot be null");
         
         this.portletContainer = portletContainer;
         this.containerRequest = containerRequest;
         this.containerResponse = containerResponse;
         this.portletWindow = portletWindow;
+        this.portletCookieDao = portletCookieDao;
     }
 
     /**
@@ -122,5 +132,22 @@ public abstract class AbstractPortletContextImpl {
      */
     public HttpServletResponse getServletResponse() {
         return this.servletResponse;
+    }
+    
+    /**
+     * Extract the {@link IPortalCookie} from the servlet request, if present.
+     * 
+     * @return the {@link IPortalCookie} from the servlet request
+     */
+    public IPortalCookie getPortalCookie() {
+    	Cookie [] servletRequestCookies = servletRequest.getCookies();
+    	for(Cookie cookie: servletRequestCookies) {
+    		if(IPortalCookie.PORTAL_COOKIE_NAME.equals(cookie.getName())) {
+    			IPortalCookie portalCookie = this.portletCookieDao.getPortalCookie(cookie.getValue());
+    			return portalCookie;
+    		}
+    	}
+    	
+    	return null;
     }
 }

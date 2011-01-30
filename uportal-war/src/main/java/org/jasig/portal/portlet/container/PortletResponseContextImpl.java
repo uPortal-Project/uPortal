@@ -31,6 +31,8 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResponseContext;
 import org.apache.pluto.container.ResourceURLProvider;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
+import org.jasig.portal.portlet.dao.IPortletCookieDao;
+import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.springframework.util.Assert;
@@ -51,8 +53,9 @@ public class PortletResponseContextImpl extends AbstractPortletContextImpl imple
     
     public PortletResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider) {
-        super(portletContainer, portletWindow, containerRequest, containerResponse);
+            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
+            IPortletCookieDao portletCookieDao) {
+        super(portletContainer, portletWindow, containerRequest, containerResponse, portletCookieDao);
         
         Assert.notNull(requestPropertiesManager, "requestPropertiesManager can not be null");
         Assert.notNull(portalUrlProvider, "portletUrlCreator can not be null");
@@ -66,7 +69,9 @@ public class PortletResponseContextImpl extends AbstractPortletContextImpl imple
      */
     @Override
     public void addProperty(Cookie cookie) {
-        // TODO Auto-generated method stub
+        IPortalCookie portalCookie = getPortalCookie();
+        
+        portalCookie = this.portletCookieDao.storePortletCookie(portalCookie, cookie);
     }
 
     /* (non-Javadoc)

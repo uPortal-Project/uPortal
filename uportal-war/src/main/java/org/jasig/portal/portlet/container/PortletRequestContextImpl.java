@@ -19,12 +19,14 @@
 
 package org.jasig.portal.portlet.container;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletRequest;
@@ -38,13 +40,15 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.driver.PortletServlet;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
+import org.jasig.portal.portlet.dao.IPortletCookieDao;
+import org.jasig.portal.portlet.om.IPortalCookie;
+import org.jasig.portal.portlet.om.IPortletCookie;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.AbstractHttpServletRequestWrapper;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.ParameterMap;
-import org.jasig.portal.utils.FilteringEnumeration;
 import org.springframework.util.Assert;
 
 /**
@@ -67,9 +71,10 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
     public PortletRequestContextImpl(
             PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortalRequestInfo portalRequestInfo) {
+            IRequestPropertiesManager requestPropertiesManager, IPortalRequestInfo portalRequestInfo,
+            IPortletCookieDao portletCookieDao) {
         
-        super(portletContainer, portletWindow, containerRequest, containerResponse);
+        super(portletContainer, portletWindow, containerRequest, containerResponse, portletCookieDao);
         
         Assert.notNull(requestPropertiesManager, "requestPropertiesManager cannot be null");
         Assert.notNull(portalRequestInfo, "portalRequestInfo cannot be null");
@@ -141,7 +146,6 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      * @see org.apache.pluto.container.PortletRequestContext#getAttributeNames()
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Enumeration<String> getAttributeNames() {
         return Collections.enumeration(this.attributes.keySet());
     }
@@ -163,8 +167,23 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      */
     @Override
     public Cookie[] getCookies() {
-        //TODO cookie support
-        return new Cookie[0];
+    	List<Cookie> resultCookies = new ArrayList<Cookie>();
+    
+    	IPortalCookie portalCookie = getPortalCookie();
+    	if(portalCookie != null) {
+    		Set<IPortletCookie> portletCookies = portalCookie.getPortletCookies();
+        
+    		for(IPortletCookie portletCookie: portletCookies)  {
+    			resultCookies.add(portletCookie.toCookie());
+    		}
+    	}
+        
+        Cookie [] servletRequestCookies = servletRequest.getCookies();
+        for(Cookie servletRequestCookie: servletRequestCookies) {
+        	resultCookies.add(servletRequestCookie);
+        }
+        
+        return resultCookies.toArray(new Cookie[resultCookies.size()]);
     }
 
     /* (non-Javadoc)

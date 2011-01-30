@@ -34,6 +34,7 @@ import org.apache.pluto.container.PortletURLProvider;
 import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.apache.pluto.container.util.PrintWriterServletOutputStream;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
+import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.IPortalUrlProvider;
@@ -50,10 +51,11 @@ public class PortletMimeResponseContextImpl extends PortletResponseContextImpl i
     
     public PortletMimeResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider) {
+            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
+            IPortletCookieDao portletCookieDao) {
 
         super(portletContainer, portletWindow, containerRequest, containerResponse, 
-                requestPropertiesManager, portalUrlProvider);
+                requestPropertiesManager, portalUrlProvider, portletCookieDao);
         
         this.portletWriter = (PrintWriter)containerRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_PRINT_WRITER);
     }

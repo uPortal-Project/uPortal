@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResourceRequestContext;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
+import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;
@@ -46,11 +47,12 @@ public class PortletResourceRequestContextImpl extends PortletRequestContextImpl
     public PortletResourceRequestContextImpl(
             PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortalRequestInfo portalRequestInfo) {
+            IRequestPropertiesManager requestPropertiesManager, IPortalRequestInfo portalRequestInfo,
+            IPortletCookieDao portletCookieDao) {
         
         super(portletContainer, portletWindow, 
                 containerRequest, containerResponse, 
-                requestPropertiesManager, portalRequestInfo);
+                requestPropertiesManager, portalRequestInfo, portletCookieDao);
     }
         
 
