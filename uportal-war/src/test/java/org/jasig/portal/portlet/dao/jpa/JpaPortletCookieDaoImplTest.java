@@ -20,7 +20,6 @@ package org.jasig.portal.portlet.dao.jpa;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,12 +28,8 @@ import javax.servlet.http.Cookie;
 import org.apache.commons.lang.time.DateUtils;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletType;
-import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.test.jpa.AbstractJpaTests;
 
 /**
@@ -48,9 +43,6 @@ public class JpaPortletCookieDaoImplTest extends AbstractJpaTests {
 	
 	private EntityManager entityManager;
 	private JpaPortletCookieDaoImpl portletCookieDao;
-	private JpaPortletTypeDao jpaChannelTypeDao;
-    private JpaPortletDefinitionDao jpaPortletDefinitionDao;
-    private JpaPortletEntityDao jpaPortletEntityDao;
 	
     public JpaPortletCookieDaoImplTest() {
         this.setDependencyCheck(false);
@@ -77,29 +69,12 @@ public class JpaPortletCookieDaoImplTest extends AbstractJpaTests {
 	public void setPortletCookieDao(JpaPortletCookieDaoImpl portletCookieDao) {
 		this.portletCookieDao = portletCookieDao;
 	}
-	/**
-	 * @param jpaChannelTypeDao the jpaChannelTypeDao to set
-	 */
-	public void setJpaChannelTypeDao(JpaPortletTypeDao jpaChannelTypeDao) {
-		this.jpaChannelTypeDao = jpaChannelTypeDao;
-	}
-	/**
-	 * @param jpaPortletDefinitionDao the jpaPortletDefinitionDao to set
-	 */
-	public void setJpaPortletDefinitionDao(
-			JpaPortletDefinitionDao jpaPortletDefinitionDao) {
-		this.jpaPortletDefinitionDao = jpaPortletDefinitionDao;
-	}
-	/**
-	 * @param jpaPortletEntityDao the jpaPortletEntityDao to set
-	 */
-	public void setJpaPortletEntityDao(JpaPortletEntityDao jpaPortletEntityDao) {
-		this.jpaPortletEntityDao = jpaPortletEntityDao;
-	}
+
 
 	/**
 	 * 
 	 */
+	@Test
 	public void testPortalCookieLifeCycle() {
 		IPortalCookie newCookie = this.portletCookieDao.createPortalCookie();
 		Assert.assertNotNull(newCookie);
@@ -136,37 +111,18 @@ public class JpaPortletCookieDaoImplTest extends AbstractJpaTests {
 	/**
 	 * 
 	 */
+	@Test
 	public void testPortletCookieLifeCycle() {
-		final IPortletType channelType = this.jpaChannelTypeDao.createPortletType("BaseType", "foobar");
-        this.checkPoint();
-        
-        //Create a definition
-        IPortletDefinition chanDef1 = this.jpaPortletDefinitionDao.createPortletDefinition(channelType, "fname1", IPortletRenderer.class.getName(), "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
-        this.checkPoint();
-        
-        IPortletEntity portEnt1 = this.jpaPortletEntityDao.createPortletEntity(chanDef1.getPortletDefinitionId(), "chanSub1", 1);
-        IPortletEntityId portletEntityId = portEnt1.getPortletEntityId();
-        this.checkPoint();
-        
-        portEnt1 = this.jpaPortletEntityDao.getPortletEntity("chanSub1", 1);
-        Assert.assertNotNull(portEnt1);
-        
         IPortalCookie portalCookie = this.portletCookieDao.createPortalCookie();
         final String portalCookieValue = portalCookie.getValue();
 		Assert.assertNotNull(portalCookie);
 		
 		this.checkPoint();
-		Assert.assertFalse(this.portletCookieDao.entityHasStoredPortletCookies(portletEntityId));
-		List<IPortletCookie> persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
-		Assert.assertEquals(0, persistedPortletCookies.size());
 		
 		Cookie cookie = new Cookie("cookieName1", "cookieValue1");
-		portalCookie = this.portletCookieDao.storePortletCookie(portalCookie, portletEntityId, cookie);
+		portalCookie = this.portletCookieDao.storePortletCookie(portalCookie, cookie);
 		
 		this.checkPoint();
-		
-		persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
-		Assert.assertEquals(1, persistedPortletCookies.size());
 		
 		portalCookie = this.portletCookieDao.getPortalCookie(portalCookieValue);
 		Assert.assertEquals(1, portalCookie.getPortletCookies().size());
@@ -176,12 +132,10 @@ public class JpaPortletCookieDaoImplTest extends AbstractJpaTests {
 		Assert.assertFalse(portletCookie1.isSecure());
 		
 		cookie.setSecure(true);
-		this.portletCookieDao.updatePortletCookie(portalCookie, portletEntityId, cookie);
+		this.portletCookieDao.updatePortletCookie(portalCookie, cookie);
 		
 		this.checkPoint();
 		
-		persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
-		Assert.assertEquals(1, persistedPortletCookies.size());
 		
 		portalCookie = this.portletCookieDao.getPortalCookie(portalCookieValue);
 		Assert.assertEquals(1, portalCookie.getPortletCookies().size());
@@ -191,22 +145,15 @@ public class JpaPortletCookieDaoImplTest extends AbstractJpaTests {
 		Assert.assertTrue(portletCookie1.isSecure());
 		
 		Cookie cookie2 = new Cookie("cookieName2", "cookieValue2");
-		portalCookie = this.portletCookieDao.storePortletCookie(portalCookie, portletEntityId, cookie2);
+		portalCookie = this.portletCookieDao.storePortletCookie(portalCookie, cookie2);
 		
 		this.checkPoint();
-		
-		persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
-		Assert.assertEquals(2, persistedPortletCookies.size());
 		
 		portalCookie = this.portletCookieDao.getPortalCookie(portalCookieValue);
 		Assert.assertEquals(2, portalCookie.getPortletCookies().size());
-		Assert.assertTrue(this.portletCookieDao.entityHasStoredPortletCookies(portletEntityId));
-		this.portletCookieDao.deletePortletCookie(portalCookie, portletEntityId, cookie);
+		this.portletCookieDao.deletePortletCookie(portalCookie, cookie);
 		
 		this.checkPoint();
-		
-		persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
-		Assert.assertEquals(1, persistedPortletCookies.size());
 		
 		portalCookie = this.portletCookieDao.getPortalCookie(portalCookieValue);
 		Assert.assertEquals(1, portalCookie.getPortletCookies().size());
@@ -214,17 +161,12 @@ public class JpaPortletCookieDaoImplTest extends AbstractJpaTests {
 		Assert.assertEquals("cookieName2", portletCookie1.getName());
 		Assert.assertEquals("cookieValue2", portletCookie1.getValue());
 		
-		Assert.assertTrue(this.portletCookieDao.entityHasStoredPortletCookies(portletEntityId));
-		this.portletCookieDao.deletePortletCookie(portalCookie, portletEntityId, cookie2);
+		this.portletCookieDao.deletePortletCookie(portalCookie, cookie2);
 		
 		this.checkPoint();
 		
 		portalCookie = this.portletCookieDao.getPortalCookie(portalCookieValue);
 		Assert.assertEquals(0, portalCookie.getPortletCookies().size());
-		persistedPortletCookies = this.portletCookieDao.getPortletCookiesForEntity(portletEntityId);
-		Assert.assertEquals(0, persistedPortletCookies.size());
-		
-		Assert.assertFalse(this.portletCookieDao.entityHasStoredPortletCookies(portletEntityId));
 	}
 	
 	
