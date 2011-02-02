@@ -150,7 +150,7 @@
   <xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
   <xsl:param name="baseActionURL">render.userLayoutRootNode.uP</xsl:param>
   <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
-  <xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view&amp;uP_sparam=activeTab&amp;activeTab=1</xsl:param>
+  <xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;amp;uP_reload_layout=true&amp;amp;uP_sparam=targetRestriction&amp;amp;targetRestriction=no targetRestriction parameter&amp;amp;uP_sparam=targetAction&amp;amp;targetAction=no targetAction parameter&amp;amp;uP_sparam=selectedID&amp;amp;selectedID=&amp;amp;uP_cancel_targets=true&amp;amp;uP_sparam=mode&amp;amp;mode=view</xsl:param>
   <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
   <xsl:param name="PORTAL_VIEW">
   	<xsl:choose>

@@ -60,7 +60,7 @@
 			channel.userInputs.push({ name: $(parameters[i]).attr("name"), value: $(parameters[i]).attr("value") });
 	    }
 	    return channel;
-	}
+	};
 
 	that.getCategory = function(categoryId) {
 		return Category($("category[ID=" + categoryId + "]:first", settings.channelXml));

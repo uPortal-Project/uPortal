@@ -123,7 +123,7 @@
     </xsl:variable>
     
     <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
-      <a id="tabLink_{@ID}" href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
+      <a id="tabLink_{@ID}" href="{$BASE_ACTION_URL}?uP_root=root&amp;amp;uP_sparam=activeTab&amp;amp;activeTab={position()}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
         <span class="portal-navigation-label"><xsl:value-of select="@name"/></span>
       </a>
       <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
@@ -171,15 +171,17 @@
           <xsl:for-each select="//navigation/tab">
             <xsl:variable name="TAB_POSITION" select="position()"/>
             <h3><xsl:value-of select="@name"/></h3>
-            <ul class="fl-listmenu">
-              <xsl:for-each select="tabChannel">
-                <li>
-                  <a href="{$BASE_ACTION_URL}?uP_root={@ID}&amp;uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}" title="{@name}">  <!-- Navigation item link. -->
-                    <span><xsl:value-of select="@name"/></span>
-                  </a>
-                </li>
-              </xsl:for-each>
-            </ul>
+            <xsl:if test="count(tabChannel) > 0">
+                <ul class="fl-listmenu">
+                  <xsl:for-each select="tabChannel">
+                    <li>
+                      <a href="{$BASE_ACTION_URL}?uP_root={@ID}&amp;amp;uP_sparam=activeTab&amp;amp;activeTab={$TAB_POSITION}" title="{@name}">  <!-- Navigation item link. -->
+                        <span><xsl:value-of select="@name"/></span>
+                      </a>
+                    </li>
+                  </xsl:for-each>
+                </ul>
+            </xsl:if>
           </xsl:for-each>
     		</div>
       </div>  
@@ -232,6 +234,7 @@
             <xsl:otherwise>portal-subnav-container-inner</xsl:otherwise>
           </xsl:choose>
         </xsl:attribute>
+        <xsl:if test="count(tabChannel) > 0">
         <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
         	<xsl:choose>
           	<xsl:when test="$CONTEXT='flyout'">
@@ -245,8 +248,8 @@
                     <xsl:otherwise></xsl:otherwise>
                   </xsl:choose>
                 </xsl:variable>
-                <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
-                  <a href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}&amp;uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
+                <li class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+                  <a href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;amp;activeTab={$TAB_POSITION}&amp;amp;uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
                       <span class="portal-subnav-label"><xsl:value-of select="@name"/></span>
                   </a>
                 </li>
@@ -265,7 +268,7 @@
                   </xsl:choose>
                 </xsl:variable>
                 <li id="uPchannel_{@ID}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
-                  <a href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;activeTab={$TAB_POSITION}&amp;uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
+                  <a href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;amp;activeTab={$TAB_POSITION}&amp;amp;uP_root={@ID}" title="{@name}" class="portal-subnav-link">  <!-- Navigation item link. -->
                     <span class="portal-subnav-label">UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}</span>
                   </a>
                 </li>
@@ -274,6 +277,7 @@
             </xsl:otherwise>
           </xsl:choose>
         </ul>
+        </xsl:if>
     	</div> 
     </div>
     

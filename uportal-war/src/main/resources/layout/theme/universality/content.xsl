@@ -166,7 +166,7 @@
       </xsl:if>
       <xsl:if test="not(//focused) and @minimized='false'"> <!-- Focus. -->
         <!-- UNCOMMENT FOR MINIMIZE CONTROL
-        <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=true&amp;uP_save=all" title="{$TOKEN[@name='PORTLET_MINIMIZE_LONG_LABEL']}" class="up-portlet-control minimize">
+        <a href="{$BASE_ACTION_URL}?uP_root=root&amp;amp;uP_tcattr=minimized&amp;amp;minimized_channelId={@ID}&amp;amp;minimized_{@ID}_value=true&amp;amp;uP_save=all" title="{$TOKEN[@name='PORTLET_MINIMIZE_LONG_LABEL']}" class="up-portlet-control minimize">
           <span><xsl:value-of select="$TOKEN[@name='PORTLET_MINIMIZE_LABEL']"/></span>
         </a>
         -->
@@ -176,7 +176,7 @@
       </xsl:if>
       <xsl:if test="@minimized='true'"> <!-- Return from Minimized. -->
         <!-- UNCOMMENT FOR UNMINIMIZE CONTROL
-        <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_tcattr=minimized&amp;minimized_channelId={@ID}&amp;minimized_{@ID}_value=false&amp;uP_save=all" title="{$TOKEN[@name='PORTLET_RETURN_LONG_LABEL']}" class="up-portlet-control return">
+        <a href="{$BASE_ACTION_URL}?uP_root=root&amp;amp;uP_tcattr=minimized&amp;amp;minimized_channelId={@ID}&amp;amp;minimized_{@ID}_value=false&amp;amp;uP_save=all" title="{$TOKEN[@name='PORTLET_RETURN_LONG_LABEL']}" class="up-portlet-control return">
           <span><xsl:value-of select="$TOKEN[@name='PORTLET_RETURN_LABEL']"/></span>
         </a>
         -->

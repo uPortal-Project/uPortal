@@ -408,7 +408,10 @@
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <li id="{$qLinkID}" class="{$POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+    <li class="{$POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+      <xsl:if test="$qLinkID != ''">
+        <xsl:attribute name="id"><xsl:value-of select="$qLinkID"/></xsl:attribute>
+      </xsl:if>
       <a href="{$BASE_ACTION_URL}?uP_root={@ID}" title="{@name}">  <!-- Navigation item link. -->
         <span>
           UP:CHANNEL_TITLE-{<xsl:value-of select="@ID" />}
@@ -459,11 +462,11 @@
   -->
   <xsl:template name="breadcrumb">
       <div id="portalPageBodyBreadcrumb">
-      <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view" title="{$TOKEN[@name='HOME_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/></a>
+      <a href="{$BASE_ACTION_URL}?uP_root=root&amp;amp;uP_reload_layout=true&amp;amp;uP_sparam=targetRestriction&amp;amp;targetRestriction=no targetRestriction parameter&amp;amp;uP_sparam=targetAction&amp;amp;targetAction=no targetAction parameter&amp;amp;uP_sparam=selectedID&amp;amp;selectedID=&amp;amp;uP_cancel_targets=true&amp;amp;uP_sparam=mode&amp;amp;mode=view" title="{$TOKEN[@name='HOME_LONG_LABEL']}"><xsl:value-of select="$TOKEN[@name='HOME_LABEL']"/></a>
       <span class="breadcrumb-separator">&gt;</span>
       <xsl:for-each select="/layout/navigation/tab">
         <xsl:if test="@activeTab='true'">
-          <a href="{$BASE_ACTION_URL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={position()}">
+          <a href="{$BASE_ACTION_URL}?uP_root=root&amp;amp;uP_sparam=activeTab&amp;amp;activeTab={position()}">
             <xsl:attribute name="title">
                 <xsl:value-of select="@name"/>
             </xsl:attribute>
@@ -483,8 +486,8 @@
    | This template renders the page title.
   -->
   <xsl:template name="page.title">
-  	<a name="pageContent" class="skip-link" title="Reference anchor: the starting point of the page content"> <!-- Skip navigation target. -->
-      <h1 id="portalPageBodyTitle">
+    <h1 id="portalPageBodyTitle">
+      <a name="pageContent" class="skip-link" title="Reference anchor: the starting point of the page content"> <!-- Skip navigation target. -->
         <xsl:choose>
           <xsl:when test="//focused"> <!-- When focused, include the focused portlet title -->
             UP:CHANNEL_TITLE-{<xsl:value-of select="//focused/channel/@ID" />}
@@ -493,8 +496,8 @@
             <xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/>
           </xsl:otherwise>
         </xsl:choose>
-      </h1>
-    </a>
+      </a>
+    </h1>
   </xsl:template>
   <!-- ========================================== -->
   

@@ -41,7 +41,7 @@
     <div id="ajaxMenus" style="display:none;">
      <!-- Add Channel Menu -->
      <div id="focusedContentAddingDialog" title="{$TOKEN[@name='AJAX_ADD_FOCUSED_PORTLET_DIALOG_TITLE']}">
-      <form>
+      <form action="javascript:;">
        <fieldset>
         <legend><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_TO_LAYOUT']"/></legend>
         <xsl:for-each select="/layout/navigation/tab">
@@ -81,29 +81,35 @@
           <li><a href="#channel-tab-2"><span><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_SEARCH']"/></span></a></li>
          </ul>
          <div id="channel-tab-1">
-          <h4 id="channelLoading"><xsl:value-of select="$TOKEN[@name='AJAX_LOADING_PORTLET_LIST']"/></h4>
-         <table cellspacing="0" cellpadding="0" border="0">
-          <tr>
-           <td class="portlet-section-subheader"><label for="categorySelectMenu"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_CATEGORY_COLUMN']"/></label></td>
-           <td class="portlet-section-subheader"><label for="channelSelectMenu"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_CATEGORY_PORTLET']"/></label></td>
-          </tr>
-          <tr>
-           <td><select id="categorySelectMenu" size="14" style="width: 150px; background: url({$SKIN_PATH}/images/loading.gif) no-repeat center center"></select></td>
-           <td><select id="channelSelectMenu" size="14" style="width: 300px; background: url({$SKIN_PATH}/images/loading.gif) no-repeat center center"></select></td>
-          </tr>
-         </table>
+          <p id="channelLoading"><xsl:value-of select="$TOKEN[@name='AJAX_LOADING_PORTLET_LIST']"/></p>
+          <div class="fl-col-flex columns ui-helper-clearfix">
+            <div class="fl-col-flex30 column-left">
+              <div class="portlet-section-subheader"><label for="categorySelectMenu"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_CATEGORY_COLUMN']"/></label></div>
+              <div>
+                <select id="categorySelectMenu" size="14" style="display:none;"><option>placeholder</option></select>
+              </div>
+            </div>
+            <div class="fl-col-flex65 column-right">
+              <div class="portlet-section-subheader"><label for="channelSelectMenu"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_PORTLET_COLUMN']"/></label></div>
+              <div>
+                <select id="channelSelectMenu" size="14" style="width: 250px; display:none;"><option>placeholder</option></select>
+              </div>
+            </div>
+          </div>
          </div>
          <div id="channel-tab-2">
          <p>
           <label class="portlet-form-field-label" for="addChannelSearchTerm"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_SEARCH_LABEL']"/></label>&#160;
           <input id="addChannelSearchTerm" type="text"/>
          </p>
-         <h3><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_SEARCH_RESULTS_TITLE']"/></h3>
-         <ul id="addChannelSearchResults" style="list-style-type: none; list-style-image: none; padding: 0px; margin-left: 5px; max-height:15em; min-height:15em; overflow: auto"></ul>
+         <h2><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_SEARCH_RESULTS_TITLE']"/></h2>
+         <ul id="addChannelSearchResults" style="list-style-type: none; list-style-image: none; padding: 0px; margin-left: 5px; max-height:15em; min-height:15em; overflow: auto">
+           <li style="display:none;">Example result</li>
+         </ul>
          </div>
         </div>
-      <h3 class="portal-section-header"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_DETAILS_TITLE']"/></h3>
-      <h4 id="channelTitle" class="portal-section-subheader"></h4>
+      <h2 class="portal-section-header"><xsl:value-of select="$TOKEN[@name='AJAX_ADD_PORTLET_DETAILS_TITLE']"/></h2>
+      <h3 id="channelTitle" class="portal-section-subheader"></h3>
       <p id="channelDescription"></p>
       <p style="padding-top: 10px;">
        <input id="addChannelId" type="hidden"/>
@@ -113,7 +119,7 @@
      </div>
      
      <div id="pageLayoutDialog" title="{$TOKEN[@name='AJAX_EDIT_PAGE_DIALOG_TITLE']}">
-      <form>
+      <form action="javascript:;">
       <p>
        <label for="pageName" class="portlet-form-label"><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_PAGE_NAME']"/></label><br/>
        <input id="pageName" name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
@@ -174,8 +180,8 @@
      </div>	
   
      <div id="skinChoosingDialog" title="{$TOKEN[@name='AJAX_SELECT_SKIN_DIALOG_TITLE']}">
-      <form>
-       <h4 id="skinLoading"><xsl:value-of select="$TOKEN[@name='AJAX_SELECT_SKIN_LOADING_MESSAGE']"/></h4>
+      <form action="javascript:;">
+       <p id="skinLoading"><xsl:value-of select="$TOKEN[@name='AJAX_SELECT_SKIN_LOADING_MESSAGE']"/></p>
        <p class="portlet-form-label">
         <xsl:value-of select="$TOKEN[@name='AJAX_SELECT_SKIN_TITLE']"/>
        </p>
@@ -186,7 +192,7 @@
       </form>
      </div>
      
-     <div id="portalDropWarning" style="display:none;">
+     <div id="portalDropWarning" class="drop-warning" style="display:none;">
       <p><xsl:value-of select="$TOKEN[@name='AJAX_PORTAL_DROP_WARNING_MESSAGE']"/></p>
      </div>
      

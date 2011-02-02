@@ -180,7 +180,7 @@
                 <ul class="fl-list-menu fl-list-brief">
                     <xsl:for-each select="channel-nav">
                         <li>
-                            <a class="flc-screenNavigator-backButton" href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;activeTab={../navblock/@ID}&amp;uP_root={@ID}" title="To view {@name}">
+                            <a class="flc-screenNavigator-backButton" href="{$BASE_ACTION_URL}?uP_sparam=activeTab&amp;amp;activeTab={../navblock/@ID}&amp;amp;uP_root={@ID}" title="To view {@name}">
                                 <xsl:value-of select="@name" />
                             </a>
                         </li>

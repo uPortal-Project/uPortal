@@ -83,7 +83,7 @@ public class MediaManager {
   
   //doctype fields
   public static String HTMLPublicId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.HTMLPublicId", "-//W3C//DTD HTML 4.01 Transitional//EN");
-  public static String HTMLSystemId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.HTMLSystemId", "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd");
+  public static String HTMLSystemId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.HTMLSystemId", "http://www.w3.org/TR/html4/loose.dtd");
   public static String XHTMLPublicId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.XHTMLPublicId", "-//W3C//DTD XHTML 1.0 Transitional//EN");
   public static String XHTMLSystemId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.XHTMLSystemId", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
   public static String WMLPublicId = PropertiesManager.getProperty("org.jasig.portal.MediaManager.WMLPublicId", "-//WAPFORUM//DTD WML 1.1//EN");
@@ -388,6 +388,7 @@ public class MediaManager {
       frmt.setPreserveSpace(true);
       frmt.setIndenting(outputIndenting);
       frmt.setDoctype(HTMLPublicId, HTMLSystemId);
+      frmt.setPreserveEmptyAttributes(true);
       frmt.setOmitDocumentType(omitDoctype);
       return  new CachingHTMLSerializer(out, frmt);
     }

@@ -69,7 +69,7 @@
       </xsl:choose>
     </xsl:variable>
     
-    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <html lang="en">
       <head>
         <title>
           <xsl:choose>
@@ -347,10 +347,6 @@
     	</div> <!-- End portalPageBodyInner -->
     </div> <!-- End portalPageBody -->
     
-    <div id="portalDropWarning" class="drop-warning">
-    	<p>The box cannot be placed any higher in this column.</p>
-    </div>
-  
   </xsl:template>
   <!-- ========================================= -->
 

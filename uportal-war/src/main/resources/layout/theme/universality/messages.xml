@@ -167,7 +167,7 @@
         <token name="AJAX_ADD_PORTLET_SEARCH">Search</token>
         <token name="AJAX_LOADING_PORTLET_LIST">Loading portlet list . . . </token>
         <token name="AJAX_ADD_PORTLET_DIALOG_TITLE">Add Content</token>
-        <token name="AJAX_ADD_PORTLET_CATEGORY_COLUMN">Column</token>
+        <token name="AJAX_ADD_PORTLET_CATEGORY_COLUMN">Category</token>
         <token name="AJAX_ADD_PORTLET_PORTLET_COLUMN">Portlet</token>
         <token name="AJAX_ADD_PORTLET_SEARCH_LABEL">Search for: </token>
         <token name="AJAX_ADD_PORTLET_SEARCH_RESULTS_TITLE">Matching portlets</token>
