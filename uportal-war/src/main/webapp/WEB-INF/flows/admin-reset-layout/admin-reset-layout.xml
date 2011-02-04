@@ -24,18 +24,22 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-    <input name="person" type="org.jasig.services.persondir.IPersonAttributes" required="true" />
+    <subflow-state id="personLookup" subflow="person-lookup">
+        <input name="showCancelButton" value="'false'" />
+        <input name="personSearchResults_selectAndGoButtonTextKey" value="'personSearchResults.resetUserLayoutButton'" />
+        <input name="personDetails_selectAndGoButtonTextKey" value="'personDetails.resetUserLayoutButton'" />
+        
+        <output name="person" />
+
+        <transition to="personLookup" on="cancelPersonLookup" />
+        <transition to="resetLayout" on="returnSelectedPerson" />
+    </subflow-state>
     
-    <view-state id="reset-confirm">
-        <transition on="confirm" to="reset-result">
-            <evaluate expression="userLayoutHelper.resetUserLayout(person)"/>
-        </transition>
-        <transition on="cancel" to="reset-complete"/>
-    </view-state>
+    <subflow-state id="resetLayout" subflow="reset-user-layout">
+        <input name="person" value="person" />
+
+        <transition to="restart-reset" on="reset-complete" />
+    </subflow-state>
     
-    <view-state id="reset-result">
-        <transition on="continue" to="reset-complete" />        
-    </view-state>
-    
-    <end-state id="reset-complete"/>
+    <end-state id="restart-reset"/>
 </flow>

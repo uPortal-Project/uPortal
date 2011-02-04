@@ -65,8 +65,17 @@ public interface IPersonLookupHelper {
     public Set<String> getQueryAttributes(ExternalContext externalContext);
 
     /**
+     * Obtain the person ({@link IPersonAttributes}) representing oneself.
+     * 
+     * @param externalContext The {@link ExternalContext} to get the flows's configuration from
+     * @return The {@link IPersonAttributes} for the current user
+     */
+    public IPersonAttributes getSelf(ExternalContext externalContext);
+
+    /**
      * Execute a query for users using the attributes in the passed {@link PersonQuery} object.
      * 
+     * @param externalContext The {@link ExternalContext} to get the flows's configuration from
      * @param query Query to run for users.
      * @return Map of users with their name attribute as the key.
      */

@@ -38,7 +38,7 @@
             <map>
                 <entry key="view">
                     <bean class="org.jasig.portal.portlets.flow.ParamaterizableFlowHandler">
-                        <property name="flowId" value="admin-reset-layout" />
+                        <property name="flowId" value="reset-my-layout" />
                     </bean>
                 </entry>
             </map>

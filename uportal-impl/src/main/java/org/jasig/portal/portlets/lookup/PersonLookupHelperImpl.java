@@ -94,6 +94,18 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         
         return queryAttributes;
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlets.lookup.IPersonLookupHelper#getSelf(org.springframework.webflow.context.ExternalContext)
+     */
+    public IPersonAttributes getSelf(ExternalContext externalContext) {
+        
+        final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
+        final String username = portletRequest.getRemoteUser();
+        
+        return this.personAttributeDao.getPerson(username);
+        
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.lookup.IPersonLookupHelper#doPersonQuery(org.springframework.webflow.context.ExternalContext, org.jasig.portal.portlets.lookup.PersonQuery)
