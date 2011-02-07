@@ -82,6 +82,14 @@ public interface IPersonLookupHelper {
     public Set<String> getDisplayAttributes(ExternalContext externalContext);
 
     /**
+     * Obtain the person ({@link IPersonAttributes}) representing oneself.
+     * 
+     * @param externalContext The {@link ExternalContext} to get the flows's configuration from
+     * @return The {@link IPersonAttributes} for the current user
+     */
+    public IPersonAttributes getSelf(ExternalContext externalContext);
+
+    /**
      * Search for people matching the specified query, limited to the permissions
      * of the searching user.  Both the returned person list and the attributes
      * of the returned people will be filtered according to the searching user's

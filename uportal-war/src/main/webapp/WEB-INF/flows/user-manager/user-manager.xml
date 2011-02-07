@@ -57,7 +57,7 @@
         <transition on="editUser" to="editLocalAccount"/>
         <transition on="swap" to="swapIdentity"/>
         <transition on="viewPermissions" to="viewPermissions"/>
-        <transition on="resetLayout" to="reset-confirm"/>
+        <transition on="resetLayout" to="resetLayout"/>
         <transition on="confirmRemove" to="confirmRemove"/>
         <transition on="cancel" to="personLookup"/>
     </view-state>
@@ -67,18 +67,14 @@
         <!--<transition on="editPermission" to="edit-permission"/>-->
     </view-state>
 
-    <view-state id="reset-confirm">
-        <transition on="confirm" to="reset-result">
-            <evaluate expression="userLayoutHelper.resetUserLayout(person)"/>
-        </transition>
-        <transition on="cancel" to="viewUserDetails"/>
-    </view-state>
-    
-    <view-state id="reset-result">
-        <transition on="continue" to="viewUserDetails">
-            <evaluate expression="userLayoutHelper.resetUserLayout(person)"/>
-        </transition>
-    </view-state>
+    <!--
+     | Layout reseting
+     +-->
+    <subflow-state id="resetLayout" subflow="reset-user-layout">
+        <input name="person" value="person" />
+
+        <transition to="viewUserDetails" on="reset-complete" />
+    </subflow-state>
     
     <!--
      | Local account editing
