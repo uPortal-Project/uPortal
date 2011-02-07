@@ -58,11 +58,13 @@ public class CreatePortletCookieFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		boolean hasCookie = false;
 		Cookie [] cookies = request.getCookies();
-		for(Cookie cookie: cookies) {
-			if(IPortalCookie.PORTAL_COOKIE_NAME.equals(cookie.getName())) {
-				hasCookie = true;
-				break;
-			}
+		if (cookies != null) {  // getCookies() returns null if there aren't any
+	        for(Cookie cookie: cookies) {
+	            if(IPortalCookie.PORTAL_COOKIE_NAME.equals(cookie.getName())) {
+	                hasCookie = true;
+	                break;
+	            }
+	        }
 		}
 		
 		if(!hasCookie) {
