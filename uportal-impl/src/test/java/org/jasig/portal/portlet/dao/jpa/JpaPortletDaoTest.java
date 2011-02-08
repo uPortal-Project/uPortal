@@ -25,32 +25,31 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.concurrent.Callable;
 
 import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channel.IChannelType;
-import org.jasig.portal.channel.dao.jpa.JpaChannelDefinitionDao;
-import org.jasig.portal.channel.dao.jpa.JpaChannelTypeDao;
+import org.jasig.portal.channel.dao.IChannelDefinitionDao;
+import org.jasig.portal.channel.dao.IChannelTypeDao;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
+import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
+import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
-import org.springframework.test.jpa.AbstractJpaTests;
 
 /**
  * @author Eric Dalquist <a href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
  * @version $Revision: 337 $
  */
-public class JpaPortletDaoTest extends AbstractJpaTests {
-    private EntityManager entityManager;
-    private JpaChannelTypeDao jpaChannelTypeDao;
-    private JpaChannelDefinitionDao jpaChannelDefinitionDao;
-    private JpaPortletDefinitionDao jpaPortletDefinitionDao;
-    private JpaPortletEntityDao jpaPortletEntityDao;
+public class JpaPortletDaoTest extends BaseJpaDaoTest {
+    private IChannelTypeDao jpaChannelTypeDao;
+    private IChannelDefinitionDao jpaChannelDefinitionDao;
+    private IPortletDefinitionDao jpaPortletDefinitionDao;
+    private IPortletEntityDao jpaPortletEntityDao;
     
     public JpaPortletDaoTest() {
         this.setDependencyCheck(false);
@@ -61,150 +60,210 @@ public class JpaPortletDaoTest extends AbstractJpaTests {
         return new String[] {"classpath:jpaTestApplicationContext.xml"};
     }
 
-    @PersistenceContext
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public void setJpaChannelTypeDao(IChannelTypeDao jpaChannelTypeDao) {
+        this.jpaChannelTypeDao = jpaChannelTypeDao;
     }
-    public void setJpaPortletEntityDao(final JpaPortletEntityDao jpaPortletEntityDao) {
-        this.jpaPortletEntityDao = jpaPortletEntityDao;
-    }
-    public void setJpaPortletDefinitionDao(final JpaPortletDefinitionDao dao) {
-        this.jpaPortletDefinitionDao = dao;
-    }
-    public void setJpaChannelDefinitionDao(JpaChannelDefinitionDao jpaChannelDefinitionDao) {
+    public void setJpaChannelDefinitionDao(IChannelDefinitionDao jpaChannelDefinitionDao) {
         this.jpaChannelDefinitionDao = jpaChannelDefinitionDao;
     }
-    public void setJpaChannelTypeDao(JpaChannelTypeDao jpaChannelTypeDao) {
-        this.jpaChannelTypeDao = jpaChannelTypeDao;
+    public void setJpaPortletDefinitionDao(IPortletDefinitionDao jpaPortletDefinitionDao) {
+        this.jpaPortletDefinitionDao = jpaPortletDefinitionDao;
+    }
+    public void setJpaPortletEntityDao(IPortletEntityDao jpaPortletEntityDao) {
+        this.jpaPortletEntityDao = jpaPortletEntityDao;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onSetUp() throws Exception {
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                for (final IChannelDefinition channelDefinition : jpaChannelDefinitionDao.getChannelDefinitions()) {
+                    jpaChannelDefinitionDao.deleteChannelDefinition(channelDefinition);
+                }
+                
+                for (final IChannelType channelType : jpaChannelTypeDao.getChannelTypes()) {
+                    jpaChannelTypeDao.deleteChannelType(channelType);
+                }
+                
+                return null;
+            }
+        });
     }
 
     
     public void testNoopOperations() throws Exception {
-        final IPortletDefinitionId portletDefinitionId = new PortletDefinitionIdImpl(1);
-        final IPortletDefinition nullPortDef1 = this.jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
-        assertNull(nullPortDef1);
-        
-        final IPortletEntity nullPortEnt1 = this.jpaPortletEntityDao.getPortletEntity("chanSub1", 1);
-        assertNull(nullPortEnt1);
-        
-        final Set<IPortletEntity> portEnts = this.jpaPortletEntityDao.getPortletEntities(new PortletDefinitionIdImpl(1));
-        assertEquals(Collections.emptySet(), portEnts);
+        execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                final IPortletDefinitionId portletDefinitionId = new PortletDefinitionIdImpl(1);
+                final IPortletDefinition nullPortDef1 = jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
+                assertNull(nullPortDef1);
+                
+                final IPortletEntity nullPortEnt1 = jpaPortletEntityDao.getPortletEntity("chanSub1", 1);
+                assertNull(nullPortEnt1);
+                
+                final Set<IPortletEntity> portEnts = jpaPortletEntityDao.getPortletEntities(new PortletDefinitionIdImpl(1));
+                assertEquals(Collections.emptySet(), portEnts);
+                
+                return null;
+            }
+        });
     }
 
     public void testAllDefinitionDaoMethods() throws Exception {
-        final IChannelType channelType = this.jpaChannelTypeDao.createChannelType("BaseType", IChannelType.class.getName(), "foobar");
-        this.checkPoint();
+        execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                final IChannelType channelType = jpaChannelTypeDao.createChannelType("BaseType", IChannelType.class.getName(), "foobar");
+                
+                //Create a definition
+                final IChannelDefinition chanDef1 = jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname1", IPortletAdaptor.class.getName(), "Test Portlet 1", "Test Portlet 1 Title");
+                final IPortletDefinition portDef1 = jpaPortletDefinitionDao.getPortletDefinition(chanDef1.getId());
+                
+                //Try all of the retrieval options
+                final IPortletDefinition portDef1a = jpaPortletDefinitionDao.getPortletDefinition(portDef1.getPortletDefinitionId());
+                assertEquals(portDef1, portDef1a);
+                
+                //Create a second definition with the same app/portlet
+                final IChannelDefinition chanDef2 = jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname2", IPortletAdaptor.class.getName(), "Test Portlet 2", "Test Portlet 2 Title");
+                IPortletDefinition portDef2 = jpaPortletDefinitionDao.getPortletDefinition(chanDef2.getId());
+                
+                
+                // Add some preferences
+                portDef2 = jpaPortletDefinitionDao.getPortletDefinition(portDef2.getPortletDefinitionId());
+                final IPortletPreferences prefs2 = portDef2.getPortletPreferences();
+                final List<IPortletPreference> prefsList2 = prefs2.getPortletPreferences();
+                prefsList2.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
+                prefsList2.add(new PortletPreferenceImpl("prefName2", true, "val3", "val4"));
+                
+                jpaPortletDefinitionDao.updatePortletDefinition(portDef2);
+                
+                
+                // Check prefs, remove one and another
+                final IPortletDefinition portDef3 = jpaPortletDefinitionDao.getPortletDefinition(portDef2.getPortletDefinitionId());
+                final IPortletPreferences prefs3 = portDef3.getPortletPreferences();
+                final List<IPortletPreference> prefsList3 = prefs3.getPortletPreferences();
+                
+                final List<IPortletPreference> expectedPrefsList3 = new ArrayList<IPortletPreference>();
+                expectedPrefsList3.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
+                expectedPrefsList3.add(new PortletPreferenceImpl("prefName2", true, "val3", "val4"));
+                
+                assertEquals(expectedPrefsList3, prefsList3);
+                
+                
+                prefsList3.remove(1);
+                prefsList3.add(new PortletPreferenceImpl("prefName3", false, "val5", "val6"));
+                
+                jpaPortletDefinitionDao.updatePortletDefinition(portDef3);
+                
         
-        //Create a definition
-        final IChannelDefinition chanDef1 = this.jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname1", IPortletAdaptor.class.getName(), "Test Portlet 1", "Test Portlet 1 Title");
-        final IPortletDefinition portDef1 = this.jpaPortletDefinitionDao.getPortletDefinition(chanDef1.getId());
-        this.checkPoint();
-        
-        //Try all of the retrieval options
-        final IPortletDefinition portDef1a = this.jpaPortletDefinitionDao.getPortletDefinition(portDef1.getPortletDefinitionId());
-        assertEquals(portDef1, portDef1a);
-        
-        //Create a second definition with the same app/portlet
-        final IChannelDefinition chanDef2 = this.jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname2", IPortletAdaptor.class.getName(), "Test Portlet 2", "Test Portlet 2 Title");
-        IPortletDefinition portDef2 = this.jpaPortletDefinitionDao.getPortletDefinition(chanDef2.getId());
-        this.checkPoint();
-        
-        
-        // Add some preferences
-        portDef2 = this.jpaPortletDefinitionDao.getPortletDefinition(portDef2.getPortletDefinitionId());
-        final IPortletPreferences prefs2 = portDef2.getPortletPreferences();
-        final List<IPortletPreference> prefsList2 = prefs2.getPortletPreferences();
-        prefsList2.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
-        prefsList2.add(new PortletPreferenceImpl("prefName2", true, "val3", "val4"));
-        
-        this.jpaPortletDefinitionDao.updatePortletDefinition(portDef2);
-        this.checkPoint();
-        
-        
-        // Check prefs, remove one and another
-        final IPortletDefinition portDef3 = this.jpaPortletDefinitionDao.getPortletDefinition(portDef2.getPortletDefinitionId());
-        final IPortletPreferences prefs3 = portDef3.getPortletPreferences();
-        final List<IPortletPreference> prefsList3 = prefs3.getPortletPreferences();
-        
-        final List<IPortletPreference> expectedPrefsList3 = new ArrayList<IPortletPreference>();
-        expectedPrefsList3.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
-        expectedPrefsList3.add(new PortletPreferenceImpl("prefName2", true, "val3", "val4"));
-        
-        assertEquals(expectedPrefsList3, prefsList3);
-        
-        
-        prefsList3.remove(1);
-        prefsList3.add(new PortletPreferenceImpl("prefName3", false, "val5", "val6"));
-        
-        this.jpaPortletDefinitionDao.updatePortletDefinition(portDef3);
-        this.checkPoint();
-        
-
-        // Check prefs
-        final IPortletDefinition portDef4 = this.jpaPortletDefinitionDao.getPortletDefinition(portDef3.getPortletDefinitionId());
-        final IPortletPreferences prefs4 = portDef4.getPortletPreferences();
-        final List<IPortletPreference> prefsList4 = prefs4.getPortletPreferences();
-        
-        final List<IPortletPreference> expectedPrefsList4 = new ArrayList<IPortletPreference>();
-        expectedPrefsList4.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
-        expectedPrefsList4.add(new PortletPreferenceImpl("prefName3", false, "val5", "val6"));
-        
-        assertEquals(expectedPrefsList4, prefsList4);
+                // Check prefs
+                final IPortletDefinition portDef4 = jpaPortletDefinitionDao.getPortletDefinition(portDef3.getPortletDefinitionId());
+                final IPortletPreferences prefs4 = portDef4.getPortletPreferences();
+                final List<IPortletPreference> prefsList4 = prefs4.getPortletPreferences();
+                
+                final List<IPortletPreference> expectedPrefsList4 = new ArrayList<IPortletPreference>();
+                expectedPrefsList4.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
+                expectedPrefsList4.add(new PortletPreferenceImpl("prefName3", false, "val5", "val6"));
+                
+                assertEquals(expectedPrefsList4, prefsList4);
+                
+                return null;
+            }
+        });
     }
     
     public void testAllEntityDaoMethods() throws Exception {
-        final IChannelType channelType = this.jpaChannelTypeDao.createChannelType("BaseType", IChannelType.class.getName(), "foobar");
-        this.checkPoint();
-        
-        //Create a definition
-        final IChannelDefinition chanDef1 = this.jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname1", IPortletAdaptor.class.getName(), "Test Portlet 1", "Test Portlet 1 Title");
-        IPortletDefinition portDef1 = this.jpaPortletDefinitionDao.getPortletDefinition(chanDef1.getId());
-        this.checkPoint();
-        
-        IPortletEntity portEnt1 = this.jpaPortletEntityDao.createPortletEntity(portDef1.getPortletDefinitionId(), "chanSub1", 1);
-        this.checkPoint();
-        
-        
-        final IPortletEntity portEnt1a = this.jpaPortletEntityDao.getPortletEntity(portEnt1.getPortletEntityId());
-        assertEquals(portEnt1, portEnt1a);
-        
-        final IPortletEntity portEnt1b = this.jpaPortletEntityDao.getPortletEntity("chanSub1", 1);
-        assertEquals(portEnt1, portEnt1b);
-        
-        final Set<IPortletEntity> portletEntities1 = this.jpaPortletEntityDao.getPortletEntities(portDef1.getPortletDefinitionId());
-        assertEquals(Collections.singleton(portEnt1), portletEntities1);
-        
-        final Set<IPortletEntity> portletEntitiesByUser = this.jpaPortletEntityDao.getPortletEntitiesForUser(1);
-        assertEquals(Collections.singleton(portEnt1), portletEntitiesByUser);
+        final int channelDefId = execute(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                final IChannelType channelType = jpaChannelTypeDao.createChannelType("BaseType", IChannelType.class.getName(), "foobar");
+                
+                //Create a definition
+                final IChannelDefinition chanDef1 = jpaChannelDefinitionDao.createChannelDefinition(channelType, "fname1", IPortletAdaptor.class.getName(), "Test Portlet 1", "Test Portlet 1 Title");
+                return chanDef1.getId();
+            }
+        });
         
         
+        final IPortletDefinitionId portletDefinitionId = execute(new Callable<IPortletDefinitionId>() {
+            @Override
+            public IPortletDefinitionId call() throws Exception {
+                IPortletDefinition portDef1 = jpaPortletDefinitionDao.getPortletDefinition(channelDefId);
+                
+                return portDef1.getPortletDefinitionId();
+            }
+        });
         
         
-        //Try deleting whole tree
-        portDef1 = this.jpaPortletDefinitionDao.getPortletDefinition(portDef1.getPortletDefinitionId());
-        portDef1.getPortletPreferences().getPortletPreferences().add(new PortletPreferenceImpl("defpref1", false, "dpv1", "dpv2"));
-        this.jpaPortletDefinitionDao.updatePortletDefinition(portDef1);
-        this.checkPoint();
-        
-        
-        portEnt1 = this.jpaPortletEntityDao.getPortletEntity(portEnt1.getPortletEntityId());
-        portEnt1.getPortletPreferences().getPortletPreferences().add(new PortletPreferenceImpl("entpref1", false, "epv1", "epv2"));
-        this.jpaPortletEntityDao.updatePortletEntity(portEnt1);
-        this.checkPoint();
+        final IPortletEntityId portletEntityId = execute(new Callable<IPortletEntityId>() {
+            @Override
+            public IPortletEntityId call() throws Exception {
+                IPortletEntity portEnt1 = jpaPortletEntityDao.createPortletEntity(portletDefinitionId, "chanSub1", 1);
+                
+                return portEnt1.getPortletEntityId();
+            }
+        });
+                
 
-        
-        final IChannelDefinition chanDef2 = this.jpaChannelDefinitionDao.getChannelDefinition(chanDef1.getId());
-        this.jpaChannelDefinitionDao.deleteChannelDefinition(chanDef2);
-        this.checkPoint();
-        
-        
-        final Set<IPortletEntity> portletEntities2 = this.jpaPortletEntityDao.getPortletEntities(portDef1.getPortletDefinitionId());
-        assertEquals(Collections.emptySet(), portletEntities2);
-    }
-
-    private void checkPoint() {
-        this.entityManager.flush();
-        this.entityManager.clear();
+        execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception { 
+                final IPortletEntity portEnt1a = jpaPortletEntityDao.getPortletEntity(portletEntityId);
+                assertNotNull(portEnt1a);
+                
+                final IPortletEntity portEnt1b = jpaPortletEntityDao.getPortletEntity("chanSub1", 1);
+                assertEquals(portEnt1a, portEnt1b);
+                
+                final Set<IPortletEntity> portletEntities1 = jpaPortletEntityDao.getPortletEntities(portletDefinitionId);
+                assertEquals(Collections.singleton(portEnt1a), portletEntities1);
+                
+                final Set<IPortletEntity> portletEntitiesByUser = jpaPortletEntityDao.getPortletEntitiesForUser(1);
+                assertEquals(Collections.singleton(portEnt1a), portletEntitiesByUser);
+                
+                return null;
+            }
+        });
+                
+        execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception { 
+                //Add entity and preferences
+                final IPortletDefinition portDef1 = jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
+                portDef1.getPortletPreferences().getPortletPreferences().add(new PortletPreferenceImpl("defpref1", false, "dpv1", "dpv2"));
+                jpaPortletDefinitionDao.updatePortletDefinition(portDef1);
+                
+                final IPortletEntity portEnt1 = jpaPortletEntityDao.getPortletEntity(portletEntityId);
+                portEnt1.getPortletPreferences().getPortletPreferences().add(new PortletPreferenceImpl("entpref1", false, "epv1", "epv2"));
+                jpaPortletEntityDao.updatePortletEntity(portEnt1);
+                
+                return null;
+            }
+        });
+                
+        execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception { 
+                //Delete whole tree
+                final IChannelDefinition chanDef2 = jpaChannelDefinitionDao.getChannelDefinition(channelDefId);
+                jpaChannelDefinitionDao.deleteChannelDefinition(chanDef2);
+                
+                return null;
+            }
+        });
+                
+        execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception { 
+                //Verify it is gone
+                final Set<IPortletEntity> portletEntities2 = jpaPortletEntityDao.getPortletEntities(portletDefinitionId);
+                assertEquals(Collections.emptySet(), portletEntities2);
+                
+                return null;
+            }
+        });
     }
     
     public static class Util {

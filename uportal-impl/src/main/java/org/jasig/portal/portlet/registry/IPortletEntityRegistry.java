@@ -20,6 +20,7 @@
 package org.jasig.portal.portlet.registry;
 
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -33,6 +34,12 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
  * @version $Revision$
  */
 public interface IPortletEntityRegistry {
+    /**
+     * @param portletEntityId The ID of the portlet entity to get a lock for
+     * @return The Lock for the Portlet Entity
+     */
+    public Lock getPortletEntityLock(IPortletEntityId portletEntityId);
+    
     /**
      * Get an existing portlet entity for the entity id. If no entity exists for the id null will be returned.
      * 

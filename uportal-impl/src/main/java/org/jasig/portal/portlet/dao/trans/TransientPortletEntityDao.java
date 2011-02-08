@@ -150,7 +150,12 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
         final IPortletEntity portletEntity = this.delegatePortletEntityDao.getPortletEntity(portletEntityId);
         return this.wrapEntity(portletEntity);
     }
-
+    
+    @Override
+    public boolean portletEntityExists(IPortletEntityId portletEntityId) {
+        return this.delegatePortletEntityDao.portletEntityExists(portletEntityId);
+    }
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.dao.IPortletEntityDao#getPortletEntity(java.lang.String, int)
      */

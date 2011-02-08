@@ -25,7 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +38,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
-import org.jasig.portal.portlet.om.AbstractObjectId;
+import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -44,6 +47,8 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.orm.hibernate3.HibernateJdbcException;
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -58,6 +63,7 @@ import org.springframework.web.util.WebUtils;
 public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public static final String INTERIM_PORTLET_ENTITY_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".INTERIM_PORTLET_ENTITY_MAP";
     public static final String PORTLET_ENTITY_ID_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_ID_MAP";
+    public static final String PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE";
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -220,58 +226,127 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public void storePortletEntity(IPortletEntity portletEntity) {
         Validate.notNull(portletEntity, "portletEntity can not be null");
         
-        final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-        final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-        final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
-        
-        if (portletEntity instanceof PersistentPortletEntityWrapper) {
-            //Unwrap the persistent entity
-            portletEntity = ((PersistentPortletEntityWrapper)portletEntity).getPersistentEntity();
+        final IPortletEntityId wrapperPortletEntityId = portletEntity.getPortletEntityId();
+        final Lock portletEntityLock = this.getPortletEntityLock(wrapperPortletEntityId);
+        portletEntityLock.lock();
+        try {
             
-            //Already persistent entity that still has prefs 
-            if (preferences.size() > 0) {
-                this.portletEntityDao.updatePortletEntity(portletEntity);
+            final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
+            final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+            
+            if (portletEntity instanceof PersistentPortletEntityWrapper) {
+                //Unwrap the persistent entity
+                portletEntity = ((PersistentPortletEntityWrapper)portletEntity).getPersistentEntity();
+                
+                //Already persistent entity that still has prefs 
+                if (preferences.size() > 0) {
+                    try {
+                        this.portletEntityDao.updatePortletEntity(portletEntity);
+                    }
+                    catch (HibernateJdbcException e) {
+                        //Check if this exception is from the entity being deleted from under us.
+                        final boolean exists = this.portletEntityDao.portletEntityExists(portletEntity.getPortletEntityId());
+                        if (!exists) {
+                            this.logger.warn("The persistent portlet has already been deleted: " + portletEntity + ". The passed entity has preferences so a new persistent entity will be created");
+                            this.createPersistentEntity(portletEntity, wrapperPortletEntityId, preferences);
+                        }
+                        else {
+                            throw e;
+                        }
+                    }
+                }
+                //Already persistent entity with no preferences, DELETE!
+                else {
+                    this.deletePersistentEntity(portletEntity, wrapperPortletEntityId);
+                }
             }
-            //Already persistent entity with no preferences, DELETE!
             else {
-                this.portletEntityDao.deletePortletEntity(portletEntity);
-                
-                //remove the persistent ID mapping after the delete
-                this.removePersistentId(portletEntityId);
-                
-                //Setup an interim entity in its place
-                final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
-                final String channelSubscribeId = portletEntity.getChannelSubscribeId();
-                final int userId = portletEntity.getUserId();
-                final IPortletEntity interimPortletEntity = this.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
-                
-                if (this.logger.isTraceEnabled()) {
-                    this.logger.trace("Persistent portlet entity " + portletEntityId + " no longer has preferences. Deleted it and created InterimPortletEntity " + interimPortletEntity.getPortletEntityId());
+                //There are preferences on the interim entity, create an store it
+                if (preferences.size() > 0) {
+                    final IPortletEntity persistentEntity = createPersistentEntity(portletEntity, wrapperPortletEntityId, preferences);
+                    
+                    if (this.logger.isTraceEnabled()) {
+                        this.logger.trace("InterimPortletEntity " + wrapperPortletEntityId + " now has preferences. Deleted it and created persistent portlet entity " + persistentEntity.getPortletEntityId());
+                    }
+                }
+                else {
+                    final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+                    final int userId = portletEntity.getUserId();
+                    final IPortletEntity persistentEntity = this.portletEntityDao.getPortletEntity(channelSubscribeId, userId);
+                    if (persistentEntity != null) {
+                        this.logger.warn("A persistent portlet entity already exists: " + persistentEntity + ". The passed entity has no preferences so the persistent version will be deleted");
+                        this.deletePersistentEntity(persistentEntity, wrapperPortletEntityId);
+                    }
                 }
             }
         }
+        finally {
+            portletEntityLock.unlock();
+        }
+    }
+    
+    /**
+     * Create a persistent portlet entity
+     */
+    protected IPortletEntity createPersistentEntity(IPortletEntity portletEntity,
+            final IPortletEntityId wrapperPortletEntityId, final List<IPortletPreference> preferences) {
+        
+        final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
+        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+        final int userId = portletEntity.getUserId();
+        
+        IPortletEntity persistentEntity = this.portletEntityDao.getPortletEntity(channelSubscribeId, userId);
+        if (persistentEntity != null) {
+            this.logger.warn("A persistent portlet entity already exists: " + persistentEntity + ". The preferences from the passed in entity will be copied to the persistent entity: " + portletEntity);
+        }
         else {
-            //There are preferences on the interim entity, create an store it
-            if (preferences.size() > 0) {
-                final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
-                final String channelSubscribeId = portletEntity.getChannelSubscribeId();
-                final int userId = portletEntity.getUserId();
-                final IPortletEntity persistantEntity = this.portletEntityDao.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
-
-                persistantEntity.setPortletPreferences(portletPreferences);
-                
-                this.portletEntityDao.updatePortletEntity(persistantEntity);
-                
-                //Remove the in-memory interim entity
-                this.removeInterimPortletEntity(portletEntityId);
-                
-                //Setup the persistent ID mapping
-                this.setPersistentIdMapping(portletEntityId, persistantEntity.getPortletEntityId());
-                
-                if (this.logger.isTraceEnabled()) {
-                    this.logger.trace("InterimPortletEntity " + portletEntityId + " now has preferences. Deleted it and created persistent portlet entity " + persistantEntity.getPortletEntityId());
-                }
+            persistentEntity = this.portletEntityDao.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
+        }
+        
+        //Copy over preferences to avoid modifying any part of the interim entity by reference
+        final IPortletPreferences persistentPortletPreferences = persistentEntity.getPortletPreferences();
+        final List<IPortletPreference> persistentPreferences = persistentPortletPreferences.getPortletPreferences();
+        //Only do the copy if the List objects are not the same instance
+        if (persistentPreferences != preferences) {
+            persistentPreferences.clear();
+            for (final IPortletPreference preference : preferences) {
+                persistentPreferences.add(new PortletPreferenceImpl(preference));
             }
+        }
+        
+        this.portletEntityDao.updatePortletEntity(persistentEntity);
+        
+        //Remove the in-memory interim entity
+        this.removeInterimPortletEntity(wrapperPortletEntityId);
+        
+        //Setup the persistent ID mapping
+        this.setPersistentIdMapping(wrapperPortletEntityId, persistentEntity.getPortletEntityId());
+        return persistentEntity;
+    }
+    
+    /**
+     * Delete a persistent portlet entity.
+     */
+    protected void deletePersistentEntity(IPortletEntity portletEntity, final IPortletEntityId wrapperId) {
+        try {
+            this.portletEntityDao.deletePortletEntity(portletEntity);
+        }
+        catch (HibernateOptimisticLockingFailureException e) {
+            this.logger.warn("Failed to delete persistent portlet entity, it likely was already deleted, taking no further actions. " + portletEntity, e);
+            return;
+        }
+        
+        //remove the persistent ID mapping after the delete
+        this.removePersistentId(wrapperId);
+        
+        //Setup an interim entity in its place
+        final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
+        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+        final int userId = portletEntity.getUserId();
+        final IPortletEntity interimPortletEntity = this.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
+        
+        if (this.logger.isTraceEnabled()) {
+            this.logger.trace("Persistent portlet entity " + wrapperId + " no longer has preferences. Deleted it and created InterimPortletEntity " + interimPortletEntity.getPortletEntityId());
         }
     }
     
@@ -308,6 +383,38 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
 
         return this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
     }
+    
+    @Override
+    public Lock getPortletEntityLock(IPortletEntityId portletEntityId) {
+        final HttpSession session = this.getSession();
+        if (session == null) {
+            return null;
+        }
+        
+        ConcurrentMap<IPortletEntityId, Lock> lockMap;
+        //Sync on the session to ensure other threads aren't creating the Map at the same time
+        synchronized (WebUtils.getSessionMutex(session)) {
+            lockMap = (ConcurrentMap<IPortletEntityId, Lock>)session.getAttribute(PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE);
+            if (lockMap == null) {
+                lockMap = new ConcurrentHashMap<IPortletEntityId, Lock>();
+                session.setAttribute(PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE, lockMap);
+            }
+        }
+        
+        Lock lock = lockMap.get(portletEntityId);
+                
+        if (lock == null) {
+            lock = new ReentrantLock(true);
+            final Lock existingLock = lockMap.putIfAbsent(portletEntityId, lock);
+            
+            if (existingLock != null) {
+                lock = existingLock;
+            }
+        }
+        
+        return lock;
+    }
+    
     
     protected void setPersistentIdMapping(IPortletEntityId wrapperId, IPortletEntityId persistentId) {
         final HttpSession session = this.getSession();

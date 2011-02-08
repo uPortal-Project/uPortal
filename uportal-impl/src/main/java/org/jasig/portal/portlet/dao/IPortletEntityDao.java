@@ -66,6 +66,13 @@ public interface IPortletEntityDao {
     public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId);
     
     /**
+     * Check if a {@link IPortletEntity} actually exists in the database.
+     * 
+     * @param portletEntityId The id of the entity to check for.
+     */
+    public boolean portletEntityExists(IPortletEntityId portletEntityId);
+    
+    /**
      * Get a {@link IPortletEntity} for the specified channel subscribe id and user id.
      * 
      * @param channelSubscribeId The channel subscription id from the user's layout to get the entity for

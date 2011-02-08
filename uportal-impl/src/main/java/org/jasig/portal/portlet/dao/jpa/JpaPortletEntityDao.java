@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -133,11 +134,22 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     }
 
     public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId) {
-        Validate.notNull(portletEntityId, "portletEntity can not be null");
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
         
-        final long internalPortletEntityId = Long.parseLong(portletEntityId.getStringId());
+        final long internalPortletEntityId = getNativePortletEntityId(portletEntityId);
         final PortletEntityImpl portletEntity = this.entityManager.find(PortletEntityImpl.class, internalPortletEntityId);
         return portletEntity;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public boolean portletEntityExists(IPortletEntityId portletEntityId) {
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+        
+        this.entityManager.clear();
+        
+        final long internalPortletEntityId = getNativePortletEntityId(portletEntityId);
+        final PortletEntityImpl portletEntity = this.entityManager.find(PortletEntityImpl.class, internalPortletEntityId);
+        return portletEntity != null;
     }
 
     /* (non-Javadoc)
@@ -197,8 +209,13 @@ public class JpaPortletEntityDao  implements IPortletEntityDao {
     @Transactional
     public void updatePortletEntity(IPortletEntity portletEntity) {
         Validate.notNull(portletEntity, "portletEntity can not be null");
-        
+
         this.entityManager.persist(portletEntity);
+    }
+
+    protected long getNativePortletEntityId(IPortletEntityId portletEntityId) {
+        final long internalPortletEntityId = Long.parseLong(portletEntityId.getStringId());
+        return internalPortletEntityId;
     }
 
 }

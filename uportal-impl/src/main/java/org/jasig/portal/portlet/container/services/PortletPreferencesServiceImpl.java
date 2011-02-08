@@ -26,12 +26,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.PortletWindow;
 import org.apache.pluto.descriptors.portlet.PortletDD;
@@ -39,6 +42,7 @@ import org.apache.pluto.descriptors.portlet.PortletPreferenceDD;
 import org.apache.pluto.descriptors.portlet.PortletPreferencesDD;
 import org.apache.pluto.internal.InternalPortletPreference;
 import org.apache.pluto.spi.optional.PortletPreferencesService;
+import org.jasig.portal.channel.IChannelDefinition;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -53,6 +57,7 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.utils.threading.NoopLock;
 import org.springframework.beans.factory.annotation.Required;
 
 /**
@@ -63,6 +68,8 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class PortletPreferencesServiceImpl implements PortletPreferencesService {
     protected static final String PORTLET_PREFERENCES_MAP_ATTRIBUTE = PortletPreferencesServiceImpl.class.getName() + ".PORTLET_PREFERENCES_MAP";
+    
+    protected final Log logger = LogFactory.getLog(getClass());
     
     private IPersonManager personManager;
     private IPortletWindowRegistry portletWindowRegistry;
@@ -276,8 +283,9 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         }
 
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
-        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
+        IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
+        final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
         final PortletDD portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
 
         //Is this CONFIG mode
@@ -289,52 +297,88 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         //Add deploy preferences
         final List<IPortletPreference> descriptorPreferencesList = this.getDescriptorPreferences(portletDescriptor);
         this.addPreferencesToMap(descriptorPreferencesList, basePreferences);
-        
-        //Add definition preferences if not config mode
+  
+        //Get the definition and entity preferences objects
         final IPortletPreferences definitionPreferences = portletDefinition.getPortletPreferences();
-        if (!configMode) {
-            final List<IPortletPreference> definitionPreferencesList = definitionPreferences.getPortletPreferences();
-            this.addPreferencesToMap(definitionPreferencesList, basePreferences);
-        }
-
-        final List<IPortletPreference> preferencesList = new ArrayList<IPortletPreference>(newPreferences.length);
         
-        for (InternalPortletPreference internalPreference : newPreferences) {
-            //Ignore preferences with null names
-            final String name = internalPreference.getName();
-            if (name == null) {
-                continue;
-            }
-
-            //Convert to a uPortal preference class to ensure quality check and persistence works
-            final IPortletPreference preference = new PortletPreferenceImpl(internalPreference);
-            
-            //If the preference exactly equals a descriptor or definition preference ignore it
-            final InternalPortletPreference basePreference = basePreferences.get(name);
-            if (preference.equals(basePreference)) {
-                continue;
-            }
-            
-            //New preference, add it to the list
-            preferencesList.add(preference);
-        }
-
-        //If in config mode store the preferences on the definition
+        final Lock prefLock;
         if (configMode) {
-            definitionPreferences.setPortletPreferences(preferencesList);
-            this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
+            //In config mode we don't worry about locking
+            prefLock = NoopLock.INSTANCE;
         }
-        //If not a guest or if guest prefs are shared store them on the entity
-        else if (this.isStoreInEntity(portletRequest)) {
-            //Update the portlet entity with the new preferences
-            final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
-            entityPreferences.setPortletPreferences(preferencesList);
-            this.portletEntityRegistry.storePortletEntity(portletEntity);
-        }
-        //Must be a guest and share must be off so store the prefs on the session
         else {
-            //Store memory preferences
-            this.storeSessionPreferences(portletEntity.getPortletEntityId(), httpServletRequest, preferencesList);
+            prefLock = this.portletEntityRegistry.getPortletEntityLock(portletEntityId);
+        }
+
+        //Do a tryLock firsrt so that we can warn about concurrent preference modification if it fails
+        boolean locked = prefLock.tryLock();
+        try {
+            if (!locked) {
+                final IChannelDefinition channelDefinition = portletDefinition.getChannelDefinition();
+                logger.warn("Concurrent portlet preferences modification by: " + channelDefinition.getFName() +  " " +
+                		"This has the potential for changes to preferences to be lost. " +
+                		"This portlet should be modified to synchronize its preference modifications appropriately", new Throwable());
+                
+                prefLock.lock();
+                locked = true;
+                
+                //Refresh the portlet entity that may have been changed by the thread we were blocked by
+                if (!configMode) {
+                    portletEntity = this.portletEntityRegistry.getPortletEntity(portletEntityId);
+                }
+            }
+            
+            //Add definition preferences if not config mode
+            if (!configMode) {
+                final List<IPortletPreference> definitionPreferencesList = definitionPreferences.getPortletPreferences();
+                this.addPreferencesToMap(definitionPreferencesList, basePreferences);
+            }
+    
+            final List<IPortletPreference> preferencesList = new ArrayList<IPortletPreference>(newPreferences.length);
+            
+            for (InternalPortletPreference internalPreference : newPreferences) {
+                //Ignore preferences with null names
+                final String name = internalPreference.getName();
+                if (name == null) {
+                    continue;
+                }
+    
+                //Convert to a uPortal preference class to ensure quality check and persistence works
+                final IPortletPreference preference = new PortletPreferenceImpl(internalPreference);
+                
+                //If the preference exactly equals a descriptor or definition preference ignore it
+                final InternalPortletPreference basePreference = basePreferences.get(name);
+                if (preference.equals(basePreference)) {
+                    continue;
+                }
+                
+                //New preference, add it to the list
+                preferencesList.add(preference);
+            }
+    
+            //If in config mode store the preferences on the definition
+            if (configMode) {
+                definitionPreferences.setPortletPreferences(preferencesList);
+                this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
+            }
+            //If not a guest or if guest prefs are shared store them on the entity
+            else if (this.isStoreInEntity(portletRequest)) {
+                //Update the portlet entity with the new preferences
+                final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
+                entityPreferences.setPortletPreferences(preferencesList);
+                this.portletEntityRegistry.storePortletEntity(portletEntity);
+            }
+            //Must be a guest and share must be off so store the prefs on the session
+            else {
+                //Store memory preferences
+                this.storeSessionPreferences(portletEntityId, httpServletRequest, preferencesList);
+            }
+        }
+        finally {
+            //check if locked, needed due to slighly more complex logic around the tryLock and logging
+            if (locked) {
+                prefLock.unlock();
+            }
         }
     }
     
