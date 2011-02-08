@@ -160,11 +160,11 @@ public class JpaPortletDefinitionDao implements IPortletDefinitionDao {
 		return portletDefinitions;
 	}
 	
+    @Override
     @Transactional
-    public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String clazz, String name, String title, String applicationId, String portletName, boolean isFramework) {
+    public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title, String applicationId, String portletName, boolean isFramework) {
         Validate.notNull(portletType, "portletType can not be null");
         Validate.notEmpty(fname, "fname can not be null");
-        Validate.notEmpty(clazz, "clazz can not be null");
         Validate.notEmpty(name, "name can not be null");
         Validate.notEmpty(title, "title can not be null");
         
@@ -179,6 +179,7 @@ public class JpaPortletDefinitionDao implements IPortletDefinitionDao {
     /* (non-Javadoc)
      * @see org.jasig.portal.dao.portlet.IPortletDefinitionDao#updatePortletDefinition(org.jasig.portal.om.portlet.IPortletDefinition)
      */
+    @Override
     @Transactional
     public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition) {
         Validate.notNull(portletDefinition, "portletDefinition can not be null");

@@ -72,13 +72,11 @@ public class PortletPreferencesImpl implements IPortletPreferences {
     @IndexColumn(name = "PREF_ORDER")
     @Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
     private List<IPortletPreference> portletPreferences = new ArrayList<IPortletPreference>(0);
-    
-    
+   
     public PortletPreferencesImpl() {
         this.portletPreferencesId = -1;
     }
     
-
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.prefs.IPortletPreferences#getPortletPreferences()
      */

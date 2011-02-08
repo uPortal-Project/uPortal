@@ -81,16 +81,16 @@ import org.jasig.portal.portlet.om.PortletLifecycleState;
             @Parameter(name = "column", value = "NEXT_UP_PORTLET_DEF_HI")
         }
     )
-public class PortletDefinitionImpl implements IPortletDefinition {
+class PortletDefinitionImpl implements IPortletDefinition {
     //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
     @Id
     @GeneratedValue(generator = "UP_PORTLET_DEF_GEN")
     @Column(name = "PORTLET_DEF_ID")
     private final long internalPortletDefinitionId;
     
-    //Hidden reference to the parent portlet definition, used by hibernate for referential integrety
+    //Hidden reference to the parent portlet definition, used by hibernate for referential integrety MUST BE LAZY FETCH
     @SuppressWarnings("unused")
-    @OneToMany(mappedBy = "portletDefinition", targetEntity = PortletEntityImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "portletDefinition", targetEntity = PortletEntityImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     private Set<IPortletEntity> portletEntities = null;
 
     @OneToOne(targetEntity = PortletPreferencesImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)

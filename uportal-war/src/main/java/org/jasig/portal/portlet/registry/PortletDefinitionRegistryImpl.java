@@ -32,7 +32,6 @@ import org.apache.pluto.container.driver.PortletRegistryService;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
-import org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletType;
@@ -130,8 +129,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     }
 
     public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title, String applicationId, String portletName, boolean isFramework) {
-    	IPortletDefinition def = new PortletDefinitionImpl(portletType, fname, name, title, applicationId, portletName, isFramework);
-    	return portletDefinitionDao.updatePortletDefinition(def);
+        return this.portletDefinitionDao.createPortletDefinition(portletType, fname, name, title, applicationId, portletName, isFramework);
     }
 
 	/* (non-Javadoc)

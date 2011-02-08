@@ -23,60 +23,64 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
-import javax.persistence.EntityManager;
-
-import org.springframework.test.jpa.AbstractJpaTests;
+import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
 
 /**
  * @author awills
  */
-public class JpaFragmentDefinitionDaoTest extends AbstractJpaTests /*implements BeanFactoryAware*/ {
-    private FragmentDefinitionDao dao;
+public class JpaFragmentDefinitionDaoTest extends BaseJpaDaoTest {
+    private IFragmentDefinitionDao dao;
 
     @Override
     protected String[] getConfigLocations() {
         return new String[] {"classpath:jpaTestApplicationContext.xml"};
     }
 
-    public void setFragmentDefinitionDao(final FragmentDefinitionDao dao) {
+    public void setFragmentDefinitionDao(final IFragmentDefinitionDao dao) {
         this.dao = dao;
     }
             
     public void testNoopOperations() throws Exception {
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
 
-        final FragmentDefinition nullFd = this.dao.getFragmentDefinition("THIS_IS_NOT_IN_FACT_A_FRAGMENT");
-        assertNull(nullFd);
-        
-        final FragmentDefinition fakeFd = MockFragmentDefinition.newFragmentDefinition("THIS_IS_NOT_IN_FACT_A_FRAGMENT");
-        this.dao.removeFragmentDefinition(fakeFd);
+                final FragmentDefinition nullFd = dao.getFragmentDefinition("THIS_IS_NOT_IN_FACT_A_FRAGMENT");
+                assertNull(nullFd);
+                
+                final FragmentDefinition fakeFd = MockFragmentDefinition.newFragmentDefinition("THIS_IS_NOT_IN_FACT_A_FRAGMENT");
+                dao.removeFragmentDefinition(fakeFd);
+                
+                return null;
+            }
+        });
                 
     }
 
     public void testAllMethods() throws Exception {
-        
-        FragmentDefinition foo1 = MockFragmentDefinition.newFragmentDefinition("foo");
-        this.dao.updateFragmentDefinition(foo1);
-        FragmentDefinition bar1 = MockFragmentDefinition.newFragmentDefinition("bar");
-        this.dao.updateFragmentDefinition(bar1);
-        assertFalse(foo1.getName().equals(bar1.getName()));
-        checkPoint();
-        
-        FragmentDefinition foo2 = this.dao.getFragmentDefinition("foo");
-        assertNotNull(foo2);
-        assertTrue(foo1.getName().equals(foo2.getName()));
-        FragmentDefinition bar2 = this.dao.getFragmentDefinition("bar");
-        assertNotNull(bar2);
-        assertTrue(bar1.getName().equals(bar2.getName()));
-        assertFalse(foo2.getName().equals(bar2.getName()));
-        checkPoint();
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                FragmentDefinition foo1 = MockFragmentDefinition.newFragmentDefinition("foo");
+                dao.updateFragmentDefinition(foo1);
+                FragmentDefinition bar1 = MockFragmentDefinition.newFragmentDefinition("bar");
+                dao.updateFragmentDefinition(bar1);
+                assertFalse(foo1.getName().equals(bar1.getName()));
 
-    }
+                FragmentDefinition foo2 = dao.getFragmentDefinition("foo");
+                assertNotNull(foo2);
+                assertTrue(foo1.getName().equals(foo2.getName()));
+                FragmentDefinition bar2 = dao.getFragmentDefinition("bar");
+                assertNotNull(bar2);
+                assertTrue(bar1.getName().equals(bar2.getName()));
+                assertFalse(foo2.getName().equals(bar2.getName()));
+                
+                return null;
+            }
+        });
 
-    private void checkPoint() {
-        final EntityManager entityManager = this.dao.getEntityManager();
-        entityManager.flush();
-        entityManager.clear();
     }
     
     public static class Util {

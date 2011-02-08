@@ -61,4 +61,7 @@ public interface IPortletDefinitionDao {
 
     public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial);
 
+    public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title,
+            String applicationId, String portletName, boolean isFramework);
+
 }
