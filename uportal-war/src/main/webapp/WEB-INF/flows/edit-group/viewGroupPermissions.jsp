@@ -102,8 +102,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                             <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
                                             <li>
                                                 <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                                                    <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
-                                                    <li class="flc-pager-pageLink-disabled">2</li>
+                                                    <li class="flc-pager-pageLink-default"><a href="javascript:;">1</a></li>
+                                                    <li class="flc-pager-pageLink-skip">...</li>
                                                     <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
                                                 </ul>
                                             </li>
@@ -197,19 +197,53 @@ up.jQuery(function() {
         return rslt;
     };
 
+    var getBaseComponent = function (row, index) {
+        var tree = { };
+        if (row.inherited) {
+            tree.decorators = [{ type: "addClass", classes: "inherited" }];
+        }
+        return tree;
+    };
+    
     // Initialize the pager
     var options = {
         columnDefs: [
-            { key: "permissionOwner", valuebinding: "*.ownerName", sortable: true },
-            { key: "permissionActivity", valuebinding: "*.activityName", sortable: true },
-            { key: "permissionPrincipal", valuebinding: "*.principalName", sortable: true },
-            { key: "permissionTarget", valuebinding: "*.targetName", sortable: true },
+            { key: "permissionOwner", valuebinding: "*.ownerName", sortable: true, 
+                components: function (row, index) {
+                    var tree = getBaseComponent(row, index);
+                    tree.value = '\${*.ownerName}';
+                    return tree;
+                }
+            },
+            { key: "permissionActivity", valuebinding: "*.activityName", sortable: true, 
+                components: function (row, index) {
+                    var tree = getBaseComponent(row, index);
+                    tree.value = '\${*.activityName}';
+                    return tree;
+                }
+            },
+            { key: "permissionPrincipal", valuebinding: "*.principalName", sortable: true,
+                components: function (row, index) {
+                    var tree = getBaseComponent(row, index);
+                    tree.value = '\${*.principalName}';
+                    return tree;
+                }
+            },
+            { key: "permissionTarget", valuebinding: "*.targetName", sortable: true,
+                components: function (row, index) {
+                    var tree = getBaseComponent(row, index);
+                    tree.value = '\${*.targetName}';
+                    return tree;
+                }
+            },
             { key: "permissionEdit", valuebinding: "*.ownerKey",
-                components: {
-                    target: editUrl.replace("OWNER", '${"${*.ownerKey}"}')
+                components: function (row, index) {
+                    var tree = getBaseComponent(row, index);
+                    tree.target = editUrl.replace("OWNER", '${"${*.ownerKey}"}')
                                     .replace("ACTIVITY", '${"${*.activityKey}"}')
-                                    .replace("TARGET", '${"${*.targetKey}"}'),
-                    linktext: "<spring:message code="edit"/>"
+                                    .replace("TARGET", '${"${*.targetKey}"}');
+                    tree.linktext = "<spring:message code="edit"/>";
+                    return tree;
                 }
             }
         ],
