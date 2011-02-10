@@ -288,7 +288,7 @@ public class PermissionsRESTController {
         // first get the permissions explicitly set for this principal
         IPermission[] directPermissions = permissionStore.select(null, p.getPrincipalString(), null, null, null);
         for (IPermission permission : directPermissions) {
-            directAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getTarget()));
+            directAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getTarget(), false));
         }
         
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
@@ -300,7 +300,7 @@ public class PermissionsRESTController {
                 IAuthorizationPrincipal parentPrincipal = authService.newPrincipal(parent);
                 IPermission[] parentPermissions = permissionStore.select(null, parentPrincipal.getPrincipalString(), null, null, null);
                 for (IPermission permission : parentPermissions) {
-                    inheritedAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getTarget()));
+                    inheritedAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getTarget(), true));
                 }
             }
         }
@@ -341,7 +341,7 @@ public class PermissionsRESTController {
         // first get the permissions explicitly set for this principal
         IPermission[] directPermissions = permissionStore.select(null, null, null, target, null);
         for (IPermission permission : directPermissions) {
-            directAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getPrincipal()));
+            directAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getPrincipal(), false));
         }
 
         IAuthorizationService authService = AuthorizationImpl.singleton();
@@ -357,7 +357,7 @@ public class PermissionsRESTController {
                 IAuthorizationPrincipal parentPrincipal = authService.newPrincipal(parent);
                 IPermission[] parentPermissions = permissionStore.select(null, null, null, parentPrincipal.getKey(), null);
                 for (IPermission permission : parentPermissions) {
-                    inheritedAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getPrincipal()));
+                    inheritedAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getPrincipal(), true));
                 }
             }
         }
@@ -380,7 +380,15 @@ public class PermissionsRESTController {
         }
 
         for (UniquePermission permission : inheritedAssignments) {
-            IAuthorizationPrincipal principal = authService.newPrincipal(permission.getIdentifier(), IEntityGroup.class);
+            JsonEntityBean e = groupListHelper.getEntityForPrincipal(permission.getIdentifier());
+            Class<?> clazz;
+            EntityEnum entityType = EntityEnum.getEntityEnum(e.getEntityType());
+            if (entityType.isGroup()) {
+                clazz = IEntityGroup.class;
+            } else {
+                clazz = entityType.getClazz();
+            }
+            IAuthorizationPrincipal principal = authService.newPrincipal(e.getId(), clazz);
             if (principal.hasPermission(permission.getOwner(), permission.getActivity(), p.getKey())) {
                 permissions.add(getPermissionOnTarget(permission, entity));
             }
@@ -416,9 +424,9 @@ public class PermissionsRESTController {
         perm.setTargetKey(permission.getIdentifier());
         perm.setPrincipalKey(entity.getId());
         perm.setPrincipalName(entity.getName());
+        perm.setInherited(permission.isInherited());
         
         try {
-            perm.setInherited(false);
 
             IPermissionOwner owner = permissionOwnerDao.getPermissionOwner(permission.getOwner());
             if (owner != null) {
@@ -450,9 +458,9 @@ public class PermissionsRESTController {
         perm.setActivityKey(permission.getActivity());
         perm.setTargetKey(entity.getId());
         perm.setTargetName(entity.getName());
+        perm.setInherited(permission.isInherited());
         
         try {
-            perm.setInherited(false);
 
             IPermissionOwner owner = permissionOwnerDao.getPermissionOwner(permission.getOwner());
             if (owner != null) {
@@ -482,38 +490,32 @@ public class PermissionsRESTController {
     
     protected class UniquePermission {
         
-        private String owner;
-        private String activity;
-        private String identifier;
+        private final String owner;
+        private final String activity;
+        private final String identifier;
+        private final boolean inherited;
         
-        public UniquePermission(String owner, String activity, String identifier) {
+        public UniquePermission(String owner, String activity, String identifier, boolean inherited) {
             this.owner = owner;
             this.activity = activity;
             this.identifier = identifier;
+            this.inherited = inherited;
         }
 
         public String getOwner() {
             return owner;
         }
 
-        public void setOwner(String owner) {
-            this.owner = owner;
-        }
-
         public String getActivity() {
             return activity;
-        }
-
-        public void setActivity(String activity) {
-            this.activity = activity;
         }
 
         public String getIdentifier() {
             return identifier;
         }
 
-        public void setIdentifier(String target) {
-            this.identifier = target;
+        public boolean isInherited() {
+            return inherited;
         }
         
         @Override
