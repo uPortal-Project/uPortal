@@ -37,6 +37,7 @@
             <set name="flowScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.ownerFname)"></set>
             <set name="flowScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activityFname)"></set>
         </transition>
+        <transition on="lookupPermission" to="permissionLookupResult"/>
     </view-state>
     
     <!-- Display the list of activities for the chosen owner system -->
@@ -80,6 +81,19 @@
         <transition on="#{breadcrumb == 'listActivities'}" to="listActivities"/>
         <transition on="#{breadcrumb == 'showActivity'}" to="showActivity"/>
     </subflow-state>
+
+    <!-- VIEW PERMISSIONS view state -->    
+    <view-state id="permissionLookupResult">
+        <on-entry>
+            <set name="viewScope.principal" value="requestParameters.principal"/>
+            <set name="viewScope.activity" value="requestParameters.activity"/>
+            <set name="viewScope.principalDisplayName" value="requestParameters.principalDisplayName"/>
+            <set name="viewScope.activityDisplayName" value="requestParameters.activityDisplayName"/>
+        </on-entry>
+        <transition on="group" to="reviewGroup"/>
+        <transition on="editPermission" to="edit-permission"/>
+    </view-state>
+
     
     <!-- End state -->
     <end-state id="finishPermissionEdit" />

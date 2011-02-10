@@ -23,6 +23,11 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 
+<portlet:actionURL var="permissionLookupUrl">
+    <portlet:param name="execution" value="${ flowExecutionKey }"/>
+    <portlet:param name="_eventId" value="lookupPermission"/>
+</portlet:actionURL>
+
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | For the standards and guidelines that govern
@@ -86,11 +91,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <div class="fl-widget-content portlet-content" role="main">
 	
     <div class="permission-lookup">  
-        <form id="${n}permissionLookupForm">
+        <form id="${n}permissionLookupForm" action="${permissionLookupUrl}" method="POST">
                         
             <label for="${n}principalSuggest"><spring:message code="permission.suggest.principal"/></label>
             <div id="${n}principalSuggest" style="display:inline">
-                <input class="up-autocomplete-searchterm" type="text" value="John"/>
+                <input class="up-autocomplete-searchterm" type="text" name="principalDisplayName" value="John"/>
+                <input type="hidden" name="principal"/>
                 <div class="up-autocomplete-dropdown">
                     <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
                     <div class="up-autocomplete-noresults portlet-msg info" role="alert">
@@ -109,7 +115,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             
             <label for="${n}permissionSuggest"><spring:message code="permission.suggest.permission"/></label>
             <div id="${n}permissionSuggest"  style="display:inline">
-                <input class="up-autocomplete-searchterm" type="text" value="Permission"/>
+                <input class="up-autocomplete-searchterm" type="text" name="activityDisplayName" value="Permission"/>
+                <input type="hidden" name="activity"/>
                 <div class="up-autocomplete-dropdown">
                     <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
                     <div class="up-autocomplete-noresults portlet-msg info" role="alert">
@@ -186,12 +193,9 @@ up.jQuery(function() {
     $(document).ready(function(){
 
         var submitForm = function(){
-            if (console) {
-                console.log("NOT IMPLEMENTED");
-                console.log("Selected principal: " + principalSuggest.getValue());
-                console.log("Selected permission: " + permissionSuggest.getValue());
-            }
-            return false;
+            var form = this;
+            form.principal.value = principalSuggest.getValue();
+            form.activity.value = permissionSuggest.getValue();
         };
 
         var principalSuggest = up.Autocomplete(
@@ -206,10 +210,10 @@ up.jQuery(function() {
                        async: false,
                        success: function (data) {
                            $(data.groups).each( function (idx, group) {
-                               principals.push({ value: group.principalString, text: group.name || group.keys });
+                               principals.push({ value: group.id, text: group.name || group.keys });
                            });
                            $(data.people).each( function (idx, person) {
-                               principals.push({ value: person.principalString, text: person.name || person.id });
+                               principals.push({ value: person.id, text: person.name || person.id });
                            });
                        }
                     });
