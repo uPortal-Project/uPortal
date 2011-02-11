@@ -292,9 +292,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    portletDef.setName(form.getName());
 	    portletDef.setTimeout(form.getTimeout());
 	    portletDef.setTitle(form.getTitle());
-	    portletDef.setApplicationId(form.getApplicationId());
-	    portletDef.setPortletName(form.getPortletName());
-	    portletDef.setFramework(form.isFramework());
+	    portletDef.getPortletDescriptorKey().setWebAppName(form.getApplicationId());
+	    portletDef.getPortletDescriptorKey().setPortletName(form.getPortletName());
+	    portletDef.getPortletDescriptorKey().setFrameworkPortlet(form.isFramework());
 	    
 	    Date now = new Date();
 

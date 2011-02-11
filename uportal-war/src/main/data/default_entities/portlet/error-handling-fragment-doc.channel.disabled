@@ -6,9 +6,9 @@
   <desc>Displays static HTML documenting the Error Handling fragment.</desc>
   <type>XML XSLT</type>
   <timeout>10000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Development</category>
   </categories>
@@ -21,13 +21,13 @@
       <name>xmlUri</name>  
       <value>error/errorHandlingTabDoc/errorHandlingTab.xml</value>  
       <description/>  
-      <ovrd>N</ovrd> 
+      <ovrd>false</ovrd> 
     </parameter>
     <parameter> 
       <name>xslUri</name>  
       <value>webproxy/xhtml.xsl</value>  
       <description/>  
-      <ovrd>N</ovrd> 
+      <ovrd>false</ovrd> 
     </parameter>
   </parameters>
   <portletPreferences/>

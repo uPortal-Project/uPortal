@@ -5,13 +5,15 @@
   <fname>uportal-links</fname>
   <desc>Useful uPortal links.</desc>
   <type>CMS</type>
-  <applicationId>/SimpleContentPortlet</applicationId>
-  <portletName>cms</portletName>
-  <isFramework>false</isFramework>
+  <portlet-descriptor>
+    <webAppName>/SimpleContentPortlet</webAppName>
+    <portletName>cms</portletName>
+    <isFramework>false</isFramework>
+  </portlet-descriptor>
   <timeout>10000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>News</category>
   </categories>

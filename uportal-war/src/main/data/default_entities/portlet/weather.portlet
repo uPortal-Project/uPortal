@@ -26,13 +26,15 @@
   <fname>weather</fname>
   <desc>The Weather Module allows you to access the latest weather conditions and 5-day forecasts for the cities you select.</desc>  
   <type>Portlet</type>
-  <applicationId>/WeatherPortlet</applicationId>
-  <portletName>Weather</portletName>
-  <isFramework>false</isFramework>
+  <portlet-descriptor>
+    <webAppName>/WeatherPortlet</webAppName>
+    <portletName>Weather</portletName>
+    <isFramework>false</isFramework>
+  </portlet-descriptor>
   <timeout>15000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>true</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Information</category>
   </categories>

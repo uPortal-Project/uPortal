@@ -5,13 +5,15 @@
   <fname>chronicle-wired</fname>
   <desc>Top stories from The Chronicle of Higher Education: Wired Campus Edition</desc>
   <type>RSS</type>
-  <applicationId>/NewsReaderPortlet</applicationId>
-  <portletName>single-feed-news</portletName>
-  <isFramework>false</isFramework>
+  <portlet-descriptor>
+    <webAppName>/NewsReaderPortlet</webAppName>
+    <portletName>single-feed-news</portletName>
+    <isFramework>false</isFramework>
+  </portlet-descriptor>
   <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Entertainment</category>
     <category>News</category>

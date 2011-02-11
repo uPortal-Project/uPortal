@@ -6,9 +6,9 @@
   <desc>CSS Viewer channel</desc>
   <type>XML SSL</type>
   <timeout>5000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>Y</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>true</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Development</category>
   </categories>
@@ -20,13 +20,13 @@
       <name>sslUri</name>  
       <value>CGenericXSLT/CSSViewer/CSSViewer.ssl</value>  
       <description/>  
-      <ovrd>N</ovrd> 
+      <ovrd>false</ovrd> 
     </parameter>
     <parameter> 
       <name>xmlUri</name>  
       <value>CGenericXSLT/CSSViewer/cssViewer.xml</value>  
       <description/>  
-      <ovrd>N</ovrd> 
+      <ovrd>false</ovrd> 
     </parameter>
   </parameters>
   <portletPreferences/>

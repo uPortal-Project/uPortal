@@ -312,7 +312,7 @@
                                     <concurrent>
                                         <handle-error>
                                             <try>
-                                                <echo-ln>Import Channel:  ${Attributes.LOCATION}</echo-ln>
+                                                <echo-ln>Import Portlet:  ${Attributes.LOCATION}</echo-ln>
                                                 <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
                                                   <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
                                                       <choose>
@@ -320,7 +320,7 @@
                                                                 <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
                                                           </when>
                                                           <otherwise>
-                                                              <echo-ln>WARNING: Should not be here.  Unsupported Channel version.</echo-ln>
+                                                              <echo-ln>WARNING: Should not be here.  Unsupported Portlet version.</echo-ln>
                                                               <crn location="${importScriptUrl}"/>
                                                           </otherwise>
                                                       </choose>
@@ -328,7 +328,7 @@
                                                 </with-attribute>
                                             </try>
                                             <catch>
-                                                <echo-ln>ERROR Failed to import Channel from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <echo-ln>ERROR Failed to import Portlet from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
                                                 <throw/>
                                             </catch>
                                         </handle-error>

@@ -26,12 +26,14 @@
   <fname>portlet-admin</fname>
   <desc>Portlet for Portlet Administration</desc>
   <type>Portlet</type>
-  <portletName>PortletAdministration</portletName>
-  <isFramework>true</isFramework>
+  <portlet-descriptor>
+    <portletName>PortletAdministration</portletName>
+    <isFramework>true</isFramework>
+  </portlet-descriptor>
   <timeout>50000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>uPortal</category>
   </categories>

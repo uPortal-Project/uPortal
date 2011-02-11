@@ -31,6 +31,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -60,6 +61,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
@@ -110,15 +112,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	@Index(name = "IDX_PORTLET_DEF__FNAME")
 	private String fname;
 	
-	@Column(name = "PORTLET_APPLICATION_ID", length = 255)
-	private String applicationId;
-
-	@Column(name = "PORTLET_APPLICATION_NAME", length = 255, nullable = false)
-	private String portletName;
-
-	@Column(name = "PORTLET_FRAMEWORK", nullable = false)
-	private boolean isFramework;
-
     @Column(name = "PORTLET_TITLE", length = 128, nullable = false)
     private String title;
 
@@ -171,6 +164,9 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	@org.hibernate.annotations.MapKey(columns = @Column(name = "LOCALE", length = 64, nullable = false))
 	private Map<String, PortletLocalizationData> localizations = new HashMap<String, PortletLocalizationData>();
 
+	@Embedded
+	private PortletDescriptorKeyImpl portletDescriptorKey;
+	
     /**
      * Used to initialize fields after persistence actions.
      */
@@ -209,9 +205,11 @@ class PortletDefinitionImpl implements IPortletDefinition {
         this.name = name;
         this.fname = fname;
         this.title = title;
-        this.applicationId = applicationId;
-        this.portletName = portletName;
-        this.isFramework = isFramework;
+        
+        this.portletDescriptorKey = new PortletDescriptorKeyImpl();
+        this.portletDescriptorKey.setWebAppName(applicationId);
+        this.portletDescriptorKey.setPortletName(portletName);
+        this.portletDescriptorKey.setFrameworkPortlet(isFramework);
     }
 
     /* (non-Javadoc)
@@ -490,28 +488,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		this.portletType = portletType;
 	}
 
-	public String getApplicationId() {
-		return applicationId;
-	}
-
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
-	}
-
-	public String getPortletName() {
-		return portletName;
-	}
-
-	public void setPortletName(String portletName) {
-		this.portletName = portletName;
-	}
-
-	public boolean isFramework() {
-		return isFramework;
-	}
-
-	public void setFramework(boolean isFramework) {
-		this.isFramework = isFramework;
+	public IPortletDescriptorKey getPortletDescriptorKey() {
+	    return this.portletDescriptorKey;
 	}
 
 	public void clearParameters() {

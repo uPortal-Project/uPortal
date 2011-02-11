@@ -26,13 +26,15 @@
   <fname>test-portlet-2</fname>
   <desc>Test portlet 2 from Apache Pluto</desc>
   <type>Portlet</type>
-  <applicationId>/pluto-testsuite</applicationId>
-  <portletName>TestPortlet2</portletName>
-  <isFramework>false</isFramework>
+  <portlet-descriptor>
+    <webAppName>/pluto-testsuite</webAppName>
+    <portletName>TestPortlet2</portletName>
+    <isFramework>false</isFramework>
+  </portlet-descriptor>
   <timeout>600000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Testing</category>
   </categories>

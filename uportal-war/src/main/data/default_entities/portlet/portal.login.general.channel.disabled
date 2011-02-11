@@ -6,9 +6,9 @@
   <desc>uPortal Login Channel</desc>
   <type>Custom</type>
   <timeout>10000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>Y</hashelp>
-  <hasabout>Y</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>true</hashelp>
+  <hasabout>true</hasabout>
   <categories/>
   <groups>
     <group>Everyone</group>

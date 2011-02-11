@@ -26,12 +26,14 @@
   <fname>user-locales-selector</fname>
   <desc>Allows a user to indicate locale preferences</desc>
   <type>Portlet</type>
-  <portletName>UserLocale</portletName>
-  <isFramework>true</isFramework>
+  <portlet-descriptor>
+    <portletName>UserLocale</portletName>
+    <isFramework>true</isFramework>
+  </portlet-descriptor>
   <timeout>30000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>uPortal</category>
   </categories>

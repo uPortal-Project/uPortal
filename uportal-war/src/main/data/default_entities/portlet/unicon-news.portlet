@@ -26,13 +26,15 @@
   <fname>unicon-news</fname>
   <desc>Unicon News Recent RSS</desc>
   <type>Portlet</type>
-  <applicationId>/NewsReaderPortlet</applicationId>
-  <portletName>single-feed-news</portletName>
-  <isFramework>false</isFramework>
+  <portlet-descriptor>
+    <webAppName>/NewsReaderPortlet</webAppName>
+    <portletName>single-feed-news</portletName>
+    <isFramework>false</isFramework>
+  </portlet-descriptor>
   <timeout>60000</timeout>
-  <hasedit>Y</hasedit>
-  <hashelp>Y</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>true</hasedit>
+  <hashelp>true</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>News</category>
   </categories>

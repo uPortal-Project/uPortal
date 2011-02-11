@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,17 +24,21 @@ public class ExternalPortletRepresentation implements Serializable {
 	private String fname;
 	private String desc;
 	private String type;
-	private String applicationId;
-	private String portletName;
-	private boolean framework;
 	private int timeout;
 	private boolean hasEdit;
 	private boolean hasHelp;
 	private boolean hasAbout;
+    private ExternalPortletDescriptorKeyRepresentation descriptor = new ExternalPortletDescriptorKeyRepresentation();
 	private List<String> categories = new ArrayList<String>();
 	private List<String> groups = new ArrayList<String>();
+	private List<String> users = new ArrayList<String>();
 	private List<ExternalPortletParameterRepresentation> parameters = new ArrayList<ExternalPortletParameterRepresentation>();
 	private List<ExternalPortletPreferenceRepresentation> preferences = new ArrayList<ExternalPortletPreferenceRepresentation>();
+
+	@XmlAttribute(name = "script")
+	public String getScript() {
+	    return "classpath://org/jasig/portal/io/import-portlet_v3-3.crn";
+	}
 	
 	@XmlElement(name = "title")
 	public String getTitle() {
@@ -79,32 +84,14 @@ public class ExternalPortletRepresentation implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
-
-	@XmlElement(name = "applicationId")
-	public String getApplicationId() {
-		return applicationId;
+	
+	@XmlElement(name = "portlet-descriptor")
+	public ExternalPortletDescriptorKeyRepresentation getDescriptor() {
+	    return this.descriptor;
 	}
-
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
-	}
-
-	@XmlElement(name = "portletName")
-	public String getPortletName() {
-		return portletName;
-	}
-
-	public void setPortletName(String portletName) {
-		this.portletName = portletName;
-	}
-
-	@XmlElement(name = "isFramework")
-	public boolean isFramework() {
-		return framework;
-	}
-
-	public void setFramework(boolean framework) {
-		this.framework = framework;
+	
+	public void setDescriptor(ExternalPortletDescriptorKeyRepresentation descriptor) {
+	    this.descriptor = descriptor;
 	}
 
 	@XmlElement(name = "timeout")
@@ -116,7 +103,7 @@ public class ExternalPortletRepresentation implements Serializable {
 		this.timeout = timeout;
 	}
 
-	@XmlElement(name = "hasEdit")
+	@XmlElement(name = "hasedit")
 	public boolean isHasEdit() {
 		return hasEdit;
 	}
@@ -125,7 +112,7 @@ public class ExternalPortletRepresentation implements Serializable {
 		this.hasEdit = hasEdit;
 	}
 
-	@XmlElement(name = "hasHelp")
+	@XmlElement(name = "hashelp")
 	public boolean isHasHelp() {
 		return hasHelp;
 	}
@@ -134,7 +121,7 @@ public class ExternalPortletRepresentation implements Serializable {
 		this.hasHelp = hasHelp;
 	}
 
-	@XmlElement(name = "hasAbout")
+	@XmlElement(name = "hasabout")
 	public boolean isHasAbout() {
 		return hasAbout;
 	}
@@ -170,6 +157,20 @@ public class ExternalPortletRepresentation implements Serializable {
 	public void addGroup(String group) {
 		this.groups.add(group);
 	}
+
+    @XmlElement(name = "user")
+    @XmlElementWrapper(name = "users")
+    public List<String> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<String> users) {
+        this.users = users;
+    }
+    
+    public void addUser(String user) {
+        this.users.add(user);
+    }
 
 	@XmlElement(name = "parameter")
 	@XmlElementWrapper(name = "parameters")

@@ -150,10 +150,9 @@ public class PortletPublishingServiceImpl implements IPortletPublishingService, 
         	if (member.isGroup()) {
         		rep.addGroup(EntityNameFinderService.instance().getNameFinder(member.getType()).getName(member.getKey()));
         	} else {
-        		rep.addGroup(member.getKey());
+        		rep.addUser(member.getKey());
         	}
         }
-
 		
 		return rep;
 	}
@@ -203,7 +202,10 @@ public class PortletPublishingServiceImpl implements IPortletPublishingService, 
 		if (def == null) {
 			def = portletDefinitionRegistry.createPortletDefinition(
 					portletType, portletRep.getFname(), portletRep.getName(),
-					portletRep.getTitle(), portletRep.getApplicationId(), portletRep.getPortletName(), portletRep.isFramework());
+                    portletRep.getTitle(), 
+                    portletRep.getDescriptor().getWebAppName(), 
+                    portletRep.getDescriptor().getPortletName(), 
+                    portletRep.getDescriptor().isFramework());
 		}
 		
 		def.setName(portletRep.getName());

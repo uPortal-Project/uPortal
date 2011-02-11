@@ -5,12 +5,14 @@
   <fname>layout-sitemap</fname>
   <desc>A quick view of all your tabs and channels</desc>
   <type>Portlet</type>
-  <portletName>Sitemap</portletName>
-  <isFramework>true</isFramework>
+  <portlet-descriptor>
+    <portletName>Sitemap</portletName>
+    <isFramework>true</isFramework>
+  </portlet-descriptor>
   <timeout>30000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>uPortal</category>
   </categories>

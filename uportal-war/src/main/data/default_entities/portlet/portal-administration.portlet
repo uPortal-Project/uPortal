@@ -26,12 +26,14 @@
   <fname>portal-administration</fname>
   <desc>Useful administrative links for managing portal entities and impersonating users</desc>
   <type>Portlet</type>
-  <portletName>PortalAdministration</portletName>
-  <isFramework>true</isFramework>
+  <portlet-descriptor>
+    <portletName>PortalAdministration</portletName>
+    <isFramework>true</isFramework>
+  </portlet-descriptor>
   <timeout>50000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>uPortal</category>
   </categories>

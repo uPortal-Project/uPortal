@@ -61,12 +61,8 @@ public interface IPortletDefinition extends IBasicEntity {
 
 	public String getDescription();
 	
-	public String getApplicationId();
+	public IPortletDescriptorKey getPortletDescriptorKey();
 	
-	public String getPortletName();
-	
-	public boolean isFramework();
-
 	public String getTitle();
 
 	public int getTimeout();
@@ -114,12 +110,6 @@ public interface IPortletDefinition extends IBasicEntity {
 	public void setTitle(String title);
 
 	public void setTimeout(int timeout);
-
-	public void setApplicationId(String applicationId);
-	
-	public void setPortletName(String portletName);
-	
-	public void setFramework(boolean isFramework);
 
 	public void setType(IPortletType channelType);
 

@@ -5,13 +5,15 @@
   <fname>e-online</fname>
   <desc>Recent news from E! Online.</desc>
   <type>RSS</type>
-  <applicationId>/NewsReaderPortlet</applicationId>
-  <portletName>single-feed-news</portletName>
-  <isFramework>false</isFramework>
+  <portlet-descriptor>
+    <webAppName>/NewsReaderPortlet</webAppName>
+    <portletName>single-feed-news</portletName>
+    <isFramework>false</isFramework>
+  </portlet-descriptor>
   <timeout>10000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Entertainment</category>
   </categories>

@@ -192,14 +192,14 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     public Tuple<String, String> getPortletDescriptorKeys(IPortletDefinition portletDefinition) {
         
         final String portletApplicationId;
-        if (portletDefinition.isFramework()) {
+        if (portletDefinition.getPortletDescriptorKey().isFrameworkPortlet()) {
             portletApplicationId = this.servletContext.getContextPath();
         }
         else {
-            portletApplicationId = portletDefinition.getApplicationId();
+            portletApplicationId = portletDefinition.getPortletDescriptorKey().getWebAppName();
         }
         
-        final String portletName = portletDefinition.getPortletName();
+        final String portletName = portletDefinition.getPortletDescriptorKey().getPortletName();
         
         return new Tuple<String, String>(portletApplicationId, portletName);
     }

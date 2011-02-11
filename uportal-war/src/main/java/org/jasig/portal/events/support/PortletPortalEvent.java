@@ -34,7 +34,6 @@ public abstract class PortletPortalEvent extends PortalEvent {
 	
 	public PortletPortalEvent(final Object source, final IPerson person, final IPortletDefinition portletDefinition, final EventType eventType) {
 		super(source, person, eventType);
-		System.out.println("ID: " + portletDefinition.getPortletDefinitionId());
 		this.portletDefinition = portletDefinition;
 	}
 

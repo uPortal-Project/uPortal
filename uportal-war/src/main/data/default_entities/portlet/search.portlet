@@ -26,12 +26,14 @@
   <fname>search</fname>
   <desc>Search portlet</desc>
   <type>Portlet</type>
-  <portletName>Search</portletName>
-  <isFramework>true</isFramework>
+  <portlet-descriptor>
+    <portletName>Search</portletName>
+    <isFramework>true</isFramework>
+  </portlet-descriptor>
   <timeout>30000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Information</category>
   </categories>
@@ -55,7 +57,7 @@
     </portletPreference>
     <portletPreference>
       <name>gsaEnabled</name>
-      <values><value>false</value></values>
+      <values><value>true</value></values>
     </portletPreference>
     <portletPreference>
       <name>portletRegistryEnabled</name>

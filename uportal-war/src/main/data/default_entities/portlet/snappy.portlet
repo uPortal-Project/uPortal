@@ -5,13 +5,15 @@
   <fname>snappy</fname>
   <desc>Mockup image rotator thingy.</desc>
   <type>Advanced CMS</type>
-  <applicationId>/SimpleContentPortlet</applicationId>
-  <portletName>cms</portletName>
-  <isFramework>false</isFramework>
+  <portlet-descriptor>
+    <webAppName>/SimpleContentPortlet</webAppName>
+    <portletName>cms</portletName>
+    <isFramework>false</isFramework>
+  </portlet-descriptor>
   <timeout>10000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Information</category>
   </categories>

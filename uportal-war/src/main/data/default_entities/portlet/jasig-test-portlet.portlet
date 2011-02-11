@@ -26,13 +26,15 @@
   <fname>jasig-test-portlet</fname>
   <desc>Test Portlet from JASIG</desc>
   <type>Portlet</type>
-  <applicationId>/FunctionalTestsPortlet</applicationId>
-  <portletName>FunctionalTestsPortlet</portletName>
-  <isFramework>false</isFramework>
+  <portlet-descriptor>
+    <webAppName>/FunctionalTestsPortlet</webAppName>
+    <portletName>FunctionalTestsPortlet</portletName>
+    <isFramework>false</isFramework>
+  </portlet-descriptor>
   <timeout>60000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Testing</category>
   </categories>

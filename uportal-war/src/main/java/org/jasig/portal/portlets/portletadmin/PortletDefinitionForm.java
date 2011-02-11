@@ -127,9 +127,9 @@ public class PortletDefinitionForm implements Serializable {
 		this.setTitle(def.getTitle());
 		this.setTimeout(def.getTimeout());
 		this.setTypeId(def.getType().getId());
-		this.setApplicationId(def.getApplicationId());
-		this.setPortletName(def.getPortletName());
-		this.setFramework(def.isFramework());
+		this.setApplicationId(def.getPortletDescriptorKey().getWebAppName());
+		this.setPortletName(def.getPortletDescriptorKey().getPortletName());
+		this.setFramework(def.getPortletDescriptorKey().isFrameworkPortlet());
 		this.setEditable(def.isEditable());
 		this.setHasHelp(def.hasHelp());
 		this.setHasAbout(def.hasAbout());

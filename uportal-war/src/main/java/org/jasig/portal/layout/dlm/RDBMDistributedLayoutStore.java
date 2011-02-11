@@ -74,6 +74,7 @@ import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
@@ -3170,36 +3171,12 @@ public class RDBMDistributedLayoutStore
 			// TODO Auto-generated method stub
 			
 		}
-		@Override
-		public String getApplicationId() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		@Override
-		public String getPortletName() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		@Override
-		public boolean isFramework() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-		@Override
-		public void setApplicationId(String applicationId) {
-			// TODO Auto-generated method stub
-			
-		}
-		@Override
-		public void setPortletName(String portletName) {
-			// TODO Auto-generated method stub
-			
-		}
-		@Override
-		public void setFramework(boolean isFramework) {
-			// TODO Auto-generated method stub
-			
-		}
+        @Override
+        public IPortletDescriptorKey getPortletDescriptorKey() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
     }
     
     private static final class MissingPortletDefinitionId implements IPortletDefinitionId {

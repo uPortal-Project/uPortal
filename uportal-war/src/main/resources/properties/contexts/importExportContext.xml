@@ -59,6 +59,9 @@
     <entry key="classpath://org/jasig/portal/io/import-channel_v3-2.crn">
       <ref bean="import-channel_v3-2" />
     </entry>
+    <entry key="classpath://org/jasig/portal/io/import-portlet_v3-3.crn">
+      <ref bean="import-portlet_v3-3" />
+    </entry>
     <entry key="classpath://org/jasig/portal/io/import-structure_v2-6.crn">
       <ref bean="import-structure_v2-6" />
     </entry>
@@ -226,6 +229,22 @@
   <bean id="import-channel_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
     <property name="location">
       <value>classpath://org/jasig/portal/io/import-channel_v3-2.crn</value>
+    </property>
+    <property name="requestAttributes">
+      <util:map>
+        <entry key="SqlAttributes.DATA_SOURCE">
+          <ref bean="PortalDb" />
+        </entry>
+        <entry key="SqlAttributes.TRANSACTION_MANAGER">
+          <ref bean="transactionManager" />
+        </entry>
+      </util:map>
+    </property>
+  </bean>
+    
+  <bean id="import-portlet_v3-3" class="org.danann.cernunnos.runtime.PojoTask">
+    <property name="location">
+      <value>classpath://org/jasig/portal/io/import-portlet_v3-3.crn</value>
     </property>
     <property name="requestAttributes">
       <util:map>

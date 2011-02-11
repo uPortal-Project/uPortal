@@ -25,13 +25,15 @@
   <fname>portlet-cas-test</fname>
   <desc>Tests uPortal's ability to pass a valid CAS ticket to a portlet through the UserInfo map.</desc>
   <type>Portlet</type>
-  <applicationId>/cas-proxy-test-portlet</applicationId>
-  <portletName>ProxyCasTest</portletName>
-  <isFramework>false</isFramework>
+  <portlet-descriptor>
+    <webAppName>/cas-proxy-test-portlet</webAppName>
+    <portletName>ProxyCasTest</portletName>
+    <isFramework>false</isFramework>
+  </portlet-descriptor>
   <timeout>60000</timeout>
-  <hasedit>Y</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>true</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Development</category>
   </categories>

@@ -26,12 +26,14 @@
   <fname>fragment-admin</fname>
   <desc>Portlet for Fragment Administration in the header</desc>
   <type>Portlet</type>
-  <portletName>FragmentAdministration</portletName>
-  <isFramework>true</isFramework>
+  <portlet-descriptor>
+    <portletName>FragmentAdministration</portletName>
+    <isFramework>true</isFramework>
+  </portlet-descriptor>
   <timeout>50000</timeout>
-  <hasedit>N</hasedit>
-  <hashelp>N</hashelp>
-  <hasabout>N</hasabout>
+  <hasedit>false</hasedit>
+  <hashelp>false</hashelp>
+  <hasabout>false</hasabout>
   <categories>
     <category>Administration</category>
   </categories>
