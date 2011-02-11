@@ -36,6 +36,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>commons-logging</artifactId>
+            		<groupId>commons-logging</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         
         <dependency>
@@ -60,6 +66,12 @@
             <artifactId>cas-server-core</artifactId>
             <version>${cas-server.version}</version>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>commons-logging</artifactId>
+            		<groupId>commons-logging</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         
         <!-- ===== Runtime Dependencies ============================== -->
@@ -101,6 +113,12 @@
             <artifactId>cas-client-core</artifactId>
             <version>${casclient.version}</version>
             <scope>runtime</scope>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>commons-logging</artifactId>
+            		<groupId>commons-logging</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         
         <dependency>
