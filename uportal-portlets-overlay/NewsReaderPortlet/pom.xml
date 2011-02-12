@@ -22,11 +22,33 @@
             <version>${NewsReaderPortlet.version}</version>
             <type>war</type>
         </dependency>
+        
+        <dependency>
+            <groupId>${jdbc.groupId}</groupId>
+            <artifactId>${jdbc.artifactId}</artifactId>
+            <version>${jdbc.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <filters>
+                        <filter>${basedir}/../../uportal-war/target/classes/properties/rdbm.properties</filter>
+                    </filters>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/src/main/resources</directory>
+                            <targetPath>WEB-INF/classes</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
            <plugin>
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
