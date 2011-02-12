@@ -40,7 +40,7 @@ public interface IPermissionOwnerDao {
      * @param id
      * @return
      */
-    public IPermissionOwner getPermissionOwner(Long id);
+    public IPermissionOwner getPermissionOwner(long id);
 
     /**
      * Retrieve the permission owner with the specified functional name.
@@ -55,10 +55,11 @@ public interface IPermissionOwnerDao {
      * name.  If no matching permission owner can be found, create a new
      * permission owner instance with the supplied functional name.
      * 
+     * @Param name Name of the permission owner
      * @param fname functional name of the desired permission owner
      * @return      
      */
-    public IPermissionOwner getOrCreatePermissionOwner(String fname);
+    public IPermissionOwner getOrCreatePermissionOwner(String name, String fname);
 
     /**
      * Retrieve a list of all known permission owners from the data store.
@@ -82,7 +83,7 @@ public interface IPermissionOwnerDao {
      * @param id
      * @return
      */
-    public IPermissionActivity getPermissionActivity(Long id);
+    public IPermissionActivity getPermissionActivity(long id);
 
     /**
      * Retrieve a permission activity under the specified permission owner
@@ -92,7 +93,7 @@ public interface IPermissionOwnerDao {
      * @param activityFname  functional name of the desired activity
      * @return
      */
-    public IPermissionActivity getPermissionActivity(Long ownerId, String activityFname);
+    public IPermissionActivity getPermissionActivity(long ownerId, String activityFname);
     
     /**
      * Retrieve a permission activity under the specified permission owner
@@ -115,7 +116,7 @@ public interface IPermissionOwnerDao {
      * @param fname  activity fname
      * @return
      */
-    public IPermissionActivity getOrCreatePermissionActivity(IPermissionOwner owner, String fname);
+    public IPermissionActivity getOrCreatePermissionActivity(IPermissionOwner owner, String name, String fname, String targetProviderKey);
     
     /**
      * Persist a permission activity to the data layer, creating or updating

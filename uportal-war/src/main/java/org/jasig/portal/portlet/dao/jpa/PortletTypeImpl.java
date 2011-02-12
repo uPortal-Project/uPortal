@@ -20,20 +20,27 @@
 package org.jasig.portal.portlet.dao.jpa;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletType;
 
 /**
@@ -45,20 +52,34 @@ import org.jasig.portal.portlet.om.IPortletType;
  */
 @Entity
 @Table(name = "UP_PORTLET_TYPE")
-@GenericGenerator(name = "UP_PORTLET_TYPE_DEF_GEN", strategy = "native", parameters = {
-		@Parameter(name = "sequence", value = "UP_PORTLET_TYPE_DEF_SEQ"),
-		@Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-		@Parameter(name = "column", value = "NEXT_UP_PORTLET_TYPE_DEF_HI") })
+@SequenceGenerator(
+        name="UP_PORTLET_TYPE_GEN",
+        sequenceName="UP_PORTLET_TYPE_SEQ",
+        allocationSize=1
+    )
+@TableGenerator(
+        name="UP_PORTLET_TYPE_GEN",
+        pkColumnValue="UP_PORTLET_TYPE",
+        allocationSize=1
+    )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletTypeImpl implements Serializable, IPortletType {
     private static final long serialVersionUID = 1L;
 
     @Id
-	@GeneratedValue(generator = "UP_PORTLET_TYPE_DEF_GEN")
+	@GeneratedValue(generator = "UP_PORTLET_TYPE_GEN")
 	@Column(name = "TYPE_ID")
 	private final int internalId;
+    
+    //Hidden reference to the child portlet definitions, used to allow cascading deletes where when a portlet type is deleted all associated definitions are also deleted
+    //MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance will be TERRIBLE
+    @SuppressWarnings("unused")
+    @OneToMany(mappedBy = "portletType", targetEntity = PortletDefinitionImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<IPortletDefinition> portletDefinitions = null;
+
 
     @Column(name = "TYPE_NAME", length = 70, unique = true, nullable = false)
-    @Index(name = "IDX_PORTLET_TYPE__NAME")
     private final String name;
 
 	@Column(name = "TYPE_DESCR", length = 2000)
@@ -92,7 +113,8 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.IPortletType#getId()
 	 */
-	public int getId() {
+	@Override
+    public int getId() {
 		return this.internalId;
 	}
 
@@ -100,7 +122,8 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.IPortletType#getName()
 	 */
-	public String getName() {
+	@Override
+    public String getName() {
 		return name;
 	}
 
@@ -108,7 +131,8 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.IPortletType#getDescription()
 	 */
-	public String getDescription() {
+	@Override
+    public String getDescription() {
 		return descr;
 	}
 
@@ -116,7 +140,8 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.IPortletType#getCpdUri()
 	 */
-	public String getCpdUri() {
+	@Override
+    public String getCpdUri() {
 		return cpdUri;
 	}
 
@@ -126,13 +151,15 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.IPortletType#setDescription(java.lang.String)
 	 */
-	public void setDescription(String descr) {
+	@Override
+    public void setDescription(String descr) {
 		this.descr = descr;
 	}
 
     /* (non-Javadoc)
      * @see org.jasig.portal.channel.IPortletType#setCpdUri(java.lang.String)
      */
+    @Override
     public void setCpdUri(String cpdUri) {
         this.cpdUri = cpdUri;
     }

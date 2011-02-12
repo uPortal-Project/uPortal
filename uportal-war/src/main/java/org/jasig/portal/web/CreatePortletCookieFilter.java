@@ -22,11 +22,10 @@ import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.dao.IPortletCookieDao;
+import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -39,16 +38,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 public class CreatePortletCookieFilter extends OncePerRequestFilter {
 
-	private IPortletCookieDao portletCookieDao;
-	/**
-	 * @param portletCookieDao the portletCookieDao to set
-	 */
+	private IPortletCookieService portletCookieService;
+	
 	@Autowired
-	public void setPortletCookieDao(IPortletCookieDao portletCookieDao) {
-		this.portletCookieDao = portletCookieDao;
-	}
+	public void setPortletCookieService(IPortletCookieService portletCookieService) {
+        this.portletCookieService = portletCookieService;
+    }
 
-	/*
+    /*
 	 * (non-Javadoc)
 	 * @see org.springframework.web.filter.OncePerRequestFilter#doFilterInternal(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain)
 	 */
@@ -56,28 +53,9 @@ public class CreatePortletCookieFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		boolean hasCookie = false;
-		Cookie [] cookies = request.getCookies();
-		if (cookies != null) {  // getCookies() returns null if there aren't any
-	        for(Cookie cookie: cookies) {
-	            if(IPortalCookie.PORTAL_COOKIE_NAME.equals(cookie.getName())) {
-	                hasCookie = true;
-	                break;
-	            }
-	        }
-		}
-		
-		if(!hasCookie) {
-			IPortalCookie portalCookie = this.portletCookieDao.createPortalCookie();
-		
-			// TODO construct proper mechanism for setting PORTLET_COOKIE_TOKEN expires time
-    	
-			response.addCookie(portalCookie.toMasterCookie());
-		}
+	    
+	    this.portletCookieService.updatePortalCookie(request, response);
 		
 		filterChain.doFilter(request, response);
 	}
-
-	
-
 }

@@ -19,6 +19,10 @@
 
 package org.jasig.portal.portlet.dao.jpa;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,38 +41,39 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author Eric Dalquist <a href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
  * @version $Revision: 337 $
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:jpaTestApplicationContext.xml")
 public class JpaPortletDaoTest extends BaseJpaDaoTest {
     private IPortletTypeDao jpaChannelTypeDao;
     private IPortletDefinitionDao jpaPortletDefinitionDao;
     private IPortletEntityDao jpaPortletEntityDao;
-    
-    public JpaPortletDaoTest() {
-        this.setDependencyCheck(false);
-    }
-    
-    @Override
-    protected String[] getConfigLocations() {
-        return new String[] {"classpath:jpaTestApplicationContext.xml"};
-    }
 
+    @Autowired
     public void setJpaPortletEntityDao(final IPortletEntityDao jpaPortletEntityDao) {
         this.jpaPortletEntityDao = jpaPortletEntityDao;
     }
+    @Autowired
     public void setJpaPortletDefinitionDao(final IPortletDefinitionDao dao) {
         this.jpaPortletDefinitionDao = dao;
     }
+    @Autowired
     public void setJpaChannelTypeDao(IPortletTypeDao jpaChannelTypeDao) {
         this.jpaChannelTypeDao = jpaChannelTypeDao;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    protected void onSetUp() throws Exception {
+    @Before
+    public void onSetUp() throws Exception {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
@@ -85,7 +90,7 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
         });
     }
 
-    
+    @Test
     public void testNoopOperations() throws Exception {
         execute(new Callable<Object>() {
             @Override
@@ -105,6 +110,7 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
         });
     }
 
+    @Test
     public void testAllDefinitionDaoMethods() throws Exception {
         execute(new Callable<Object>() {
             @Override
@@ -165,6 +171,7 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
         });
     }
     
+    @Test
     public void testAllEntityDaoMethods() throws Exception {
         final IPortletDefinitionId portletDefinitionId = execute(new Callable<IPortletDefinitionId>() {
             @Override
@@ -197,6 +204,9 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
                 
                 final IPortletEntity portEnt1b = jpaPortletEntityDao.getPortletEntity("chanSub1", 1);
                 assertEquals(portEnt1a, portEnt1b);
+                
+                final IPortletEntity portEnt1c = jpaPortletEntityDao.getPortletEntity("chanSub1", 1);
+                assertEquals(portEnt1b, portEnt1c);
                 
                 final Set<IPortletEntity> portletEntities1 = jpaPortletEntityDao.getPortletEntities(portletDefinitionId);
                 assertEquals(Collections.singleton(portEnt1a), portletEntities1);

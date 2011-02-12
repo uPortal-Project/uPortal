@@ -21,6 +21,9 @@ package org.jasig.portal.tools.dbloader;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -38,6 +41,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.resolver.DialectResolver;
+import org.hibernate.dialect.resolver.StandardDialectResolver;
 import org.hibernate.engine.Mapping;
 import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.Index;
@@ -48,6 +53,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.NonTransientDataAccessResourceException;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -70,7 +76,7 @@ public class HibernateDbLoader implements IDbLoader {
     
     private JdbcTemplate jdbcTemplate;
     private TransactionTemplate transactionTemplate;
-    private Dialect dialect;
+    private Dialect preferedDialect;
     
     /**
      * @param jdbcTemplate the jdbcTemplate to set
@@ -89,27 +95,39 @@ public class HibernateDbLoader implements IDbLoader {
     }
 
     /**
-     * @return the dialect
-     */
-    public Dialect getDialect() {
-        return this.dialect;
-    }
-    /**
      * @param dialect the dialect to set
      */
-    @Autowired
+    @Autowired(required=false)
     public void setDialect(Dialect dialect) {
-        this.dialect = dialect;
+        this.preferedDialect = dialect;
     }
 
     
     /* (non-Javadoc)
      * @see org.jasig.portal.tools.dbloader.IDbLoader#process(org.jasig.portal.tools.dbloader.DbLoaderConfiguration)
      */
+    @Override
     public void process(DbLoaderConfiguration configuration) throws ParserConfigurationException, SAXException, IOException {
         final List<String> script = new ArrayList<String>();
         
-        final ITableDataProvider tableData = this.loadTables(configuration);
+        final Dialect dialect;
+        if (this.preferedDialect != null) {
+            dialect = this.preferedDialect;
+        }
+        else {
+            dialect = this.jdbcTemplate.execute(new ConnectionCallback<Dialect>() {
+                @Override
+                public Dialect doInConnection(Connection con) throws SQLException, DataAccessException {
+                    final DatabaseMetaData metaData = con.getMetaData();
+                    final DialectResolver dialectResolver = new StandardDialectResolver();
+                    return dialectResolver.resolveDialect(metaData);
+                }
+            });
+            
+            logger.info("Resolved Hibernate Dialect: " + dialect.getClass().getName());
+        }
+        
+        final ITableDataProvider tableData = this.loadTables(configuration, dialect);
         
         //Handle table drop/create
         if (configuration.isDropTables() || configuration.isCreateTables()) {
@@ -182,7 +200,7 @@ public class HibernateDbLoader implements IDbLoader {
         }
     }
     
-    protected ITableDataProvider loadTables(DbLoaderConfiguration configuration) throws ParserConfigurationException, SAXException, IOException {
+    protected ITableDataProvider loadTables(DbLoaderConfiguration configuration, Dialect dialect) throws ParserConfigurationException, SAXException, IOException {
         //Locate tables.xml
         final Resource tablesFile = configuration.getTablesFile();
         if (!tablesFile.exists()) {
@@ -195,28 +213,6 @@ public class HibernateDbLoader implements IDbLoader {
         saxParser.parse(new InputSource(tablesFile.getInputStream()), dh);
 
         return dh;
-    }
-
-    /**
-     * Load the appropriate database dialect
-     */
-    @SuppressWarnings("unchecked")
-    protected Dialect getDialect(String dialectName) {
-        final Dialect dialect;
-        try {
-            final Class<Dialect> dialectClass = (Class<Dialect>) Class.forName(dialectName);
-            dialect = dialectClass.newInstance();
-        }
-        catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("No Hibernate Dialect Class found for configured Dialect '" + dialectName + "'", e);
-        }
-        catch (InstantiationException e) {
-            throw new IllegalArgumentException("No Hibernate Dialect Class found for configured Dialect '" + dialectName + "'", e);
-        }
-        catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("No Hibernate Dialect Class found for configured Dialect '" + dialectName + "'", e);
-        }
-        return dialect;
     }
     
     /**

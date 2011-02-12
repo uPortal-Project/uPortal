@@ -29,8 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,23 +41,27 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -74,15 +80,18 @@ import org.jasig.portal.portlet.om.PortletLifecycleState;
  */
 @Entity
 @Table(name = "UP_PORTLET_DEF")
-@GenericGenerator(
-        name = "UP_PORTLET_DEF_GEN", 
-        strategy = "native", 
-        parameters = {
-            @Parameter(name = "sequence", value = "UP_PORTLET_DEF_SEQ"),
-            @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-            @Parameter(name = "column", value = "NEXT_UP_PORTLET_DEF_HI")
-        }
+@SequenceGenerator(
+        name="UP_PORTLET_DEF_GEN",
+        sequenceName="UP_PORTLET_DEF_SEQ",
+        allocationSize=5
     )
+@TableGenerator(
+        name="UP_PORTLET_DEF_GEN",
+        pkColumnValue="UP_PORTLET_DEF",
+        allocationSize=5
+    )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortletDefinitionImpl implements IPortletDefinition {
     //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
     @Id
@@ -90,14 +99,15 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @Column(name = "PORTLET_DEF_ID")
     private final long internalPortletDefinitionId;
     
-    //Hidden reference to the parent portlet definition, used by hibernate for referential integrety MUST BE LAZY FETCH
+    //Hidden reference to the child portlet entities, used to allow cascading deletes where when a portlet definition is deleted all associated entities are also deleted
+    //MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance will be TERRIBLE
     @SuppressWarnings("unused")
-    @OneToMany(mappedBy = "portletDefinition", targetEntity = PortletEntityImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "portletDefinition", targetEntity = PortletEntityImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<IPortletEntity> portletEntities = null;
 
-    @OneToOne(targetEntity = PortletPreferencesImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = PortletPreferencesImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, orphanRemoval= true)
     @JoinColumn(name = "PORTLET_PREFS_ID", nullable = false)
-    @Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
+    @Fetch(FetchMode.JOIN)
     private IPortletPreferences portletPreferences = null;
     
 
@@ -109,10 +119,10 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
 	@Column(name = "PORTLET_FNAME", length = 255, nullable = false, unique = true)
 	@Type(type = "fname")
-	@Index(name = "IDX_PORTLET_DEF__FNAME")
 	private String fname;
 	
     @Column(name = "PORTLET_TITLE", length = 128, nullable = false)
+    @Index(name = "IDX_PORTLET_DEF__TITLE")
     private String title;
 
     @ManyToOne(targetEntity = PortletTypeImpl.class, optional = false)
@@ -155,13 +165,17 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	@Column(name = "PORTLET_HAS_ABOUT", nullable = false)
 	private boolean hasAbout = false;
 
-	@org.hibernate.annotations.CollectionOfElements(fetch = FetchType.EAGER, targetElement = PortletDefinitionParameterImpl.class)
+	@ElementCollection(fetch = FetchType.EAGER, targetClass = PortletDefinitionParameterImpl.class)
 	@JoinTable(name = "UP_PORTLET_PARAM", joinColumns = @JoinColumn(name = "PORTLET_ID"))
+	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+	@Fetch(FetchMode.JOIN)
 	private Set<IPortletDefinitionParameter> parameters = new HashSet<IPortletDefinitionParameter>();
 
-	@org.hibernate.annotations.CollectionOfElements(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.EAGER, targetClass = PortletLocalizationData.class)
 	@JoinTable(name = "UP_PORTLET_MDATA", joinColumns = @JoinColumn(name = "PORTLET_ID"))
-	@org.hibernate.annotations.MapKey(columns = @Column(name = "LOCALE", length = 64, nullable = false))
+	@MapKeyColumn(name = "LOCALE", length = 64, nullable = false)
+	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+	@Fetch(FetchMode.JOIN)
 	private Map<String, PortletLocalizationData> localizations = new HashMap<String, PortletLocalizationData>();
 
 	@Embedded
@@ -215,6 +229,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletDefinitionId()
      */
+    @Override
     public IPortletDefinitionId getPortletDefinitionId() {
         return this.portletDefinitionId;
     }
@@ -222,6 +237,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletPreferences()
      */
+    @Override
     public IPortletPreferences getPortletPreferences() {
         return this.portletPreferences;
     }
@@ -229,40 +245,39 @@ class PortletDefinitionImpl implements IPortletDefinition {
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletDefinition#setPortletPreferences(org.jasig.portal.om.portlet.prefs.IPortletPreferences)
      */
+    @Override
     public void setPortletPreferences(IPortletPreferences portletPreferences) {
         Validate.notNull(portletPreferences, "portletPreferences can not be null");
         this.portletPreferences = portletPreferences;
     }
-    
-	public Set<IPortletEntity> getPortletEntities() {
-		return portletEntities;
-	}
 
-	public void setPortletEntities(Set<IPortletEntity> portletEntities) {
-		this.portletEntities = portletEntities;
-	}
-
-	public String getName() {
+	@Override
+    public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	@Override
+    public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getFName() {
+	@Override
+    public String getFName() {
 		return fname;
 	}
 
-	public void setFName(String fname) {
+	@Override
+    public void setFName(String fname) {
 		this.fname = fname;
 	}
 
-	public String getTitle() {
+	@Override
+    public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	@Override
+    public void setTitle(String title) {
 		this.title = title;
 	}
 
@@ -274,75 +289,93 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		this.portletType = portletType;
 	}
 
-	public String getDescription() {
+	@Override
+    public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	@Override
+    public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public int getTimeout() {
+	@Override
+    public int getTimeout() {
 		return timeout;
 	}
 
-	public void setTimeout(int timeout) {
+	@Override
+    public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
 
-	public int getPublisherId() {
+	@Override
+    public int getPublisherId() {
 		return publisherId;
 	}
 
-	public void setPublisherId(int publisherId) {
+	@Override
+    public void setPublisherId(int publisherId) {
 		this.publisherId = publisherId;
 	}
 
-	public int getApproverId() {
+	@Override
+    public int getApproverId() {
 		return approverId;
 	}
 
-	public void setApproverId(int approverId) {
+	@Override
+    public void setApproverId(int approverId) {
 		this.approverId = approverId;
 	}
 
-	public int getExpirerId() {
+	@Override
+    public int getExpirerId() {
 		return expirerId;
 	}
 
-	public void setExpirerId(int expirerId) {
+	@Override
+    public void setExpirerId(int expirerId) {
 		this.expirerId = expirerId;
 	}
 
-	public Date getPublishDate() {
+	@Override
+    public Date getPublishDate() {
 		return publishDate;
 	}
 
-	public void setPublishDate(Date publishDate) {
+	@Override
+    public void setPublishDate(Date publishDate) {
 		this.publishDate = publishDate;
 	}
 
-	public Date getApprovalDate() {
+	@Override
+    public Date getApprovalDate() {
 		return approvalDate;
 	}
 
-	public void setApprovalDate(Date approvalDate) {
+	@Override
+    public void setApprovalDate(Date approvalDate) {
 		this.approvalDate = approvalDate;
 	}
 
-	public Date getExpirationDate() {
+	@Override
+    public Date getExpirationDate() {
 		return expirationDate;
 	}
 
-	public void setExpirationDate(Date expirationDate) {
+	@Override
+    public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
 
-	public boolean isEditable() {
+	@Override
+    public boolean isEditable() {
 		return editable;
 	}
 
-	public void setEditable(boolean editable) {
+	@Override
+    public void setEditable(boolean editable) {
 		this.editable = editable;
 	}
 
@@ -350,7 +383,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		return hasHelp;
 	}
 
-	public void setHasHelp(boolean hasHelp) {
+	@Override
+    public void setHasHelp(boolean hasHelp) {
 		this.hasHelp = hasHelp;
 	}
 
@@ -358,15 +392,18 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		return hasAbout;
 	}
 
-	public void setHasAbout(boolean hasAbout) {
+	@Override
+    public void setHasAbout(boolean hasAbout) {
 		this.hasAbout = hasAbout;
 	}
 
-	public Set<IPortletDefinitionParameter> getParameters() {
+	@Override
+    public Set<IPortletDefinitionParameter> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(Set<IPortletDefinitionParameter> parameters) {
+	@Override
+    public void setParameters(Set<IPortletDefinitionParameter> parameters) {
 		this.parameters = parameters;
 	}
 
@@ -449,7 +486,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	}
 
 
-	public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
+	@Override
+    public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
 	    final Map<String, IPortletDefinitionParameter> parameterMap = new LinkedHashMap<String, IPortletDefinitionParameter>();
 	    
 	    for (final IPortletDefinitionParameter param : this.parameters) {
@@ -459,7 +497,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		return Collections.unmodifiableMap(parameterMap);
 	}
 
-	public String getName(String locale) {
+	@Override
+    public String getName(String locale) {
 		PortletLocalizationData localeData = localizations.get(locale);
 		if (localeData != null && localeData.getName() != null) {
 			return localeData.getName();
@@ -467,7 +506,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		return name;
 	}
 
-	public String getDescription(String locale) {
+	@Override
+    public String getDescription(String locale) {
 		PortletLocalizationData localeData = localizations.get(locale);
 		if (localeData != null && localeData.getDescription() != null) {
 			return localeData.getDescription();
@@ -475,7 +515,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		return description;
 	}
 
-	public String getTitle(String locale) {
+	@Override
+    public String getTitle(String locale) {
 		PortletLocalizationData localeData = localizations.get(locale);
 		if (localeData != null && localeData.getTitle() != null) {
 			return localeData.getTitle();
@@ -484,19 +525,23 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		return title;
 	}
 
-	public void setType(IPortletType portletType) {
+	@Override
+    public void setType(IPortletType portletType) {
 		this.portletType = portletType;
 	}
 
-	public IPortletDescriptorKey getPortletDescriptorKey() {
-	    return this.portletDescriptorKey;
-	}
+    @Override
+    public IPortletDescriptorKey getPortletDescriptorKey() {
+        return this.portletDescriptorKey;
+    }
 
-	public void clearParameters() {
+	@Override
+    public void clearParameters() {
 		parameters.clear();
 	}
 
-	public void addLocalizedDescription(String locale, String chanDesc) {
+	@Override
+    public void addLocalizedDescription(String locale, String chanDesc) {
 		PortletLocalizationData localeData = localizations.get(locale);
 		if (localeData == null) {
 			localeData = new PortletLocalizationData();
@@ -505,7 +550,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		localizations.put(locale, localeData);
 	}
 
-	public void addLocalizedName(String locale, String chanName) {
+	@Override
+    public void addLocalizedName(String locale, String chanName) {
 		PortletLocalizationData localeData = localizations.get(locale);
 		if (localeData == null) {
 			localeData = new PortletLocalizationData();
@@ -514,7 +560,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		localizations.put(locale, localeData);
 	}
 
-	public void addLocalizedTitle(String locale, String chanTitle) {
+	@Override
+    public void addLocalizedTitle(String locale, String chanTitle) {
 		PortletLocalizationData localeData = localizations.get(locale);
 		if (localeData == null) {
 			localeData = new PortletLocalizationData();
@@ -523,35 +570,42 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		localizations.put(locale, localeData);
 	}
 
-	public void removeParameter(IPortletDefinitionParameter parameter) {
+	@Override
+    public void removeParameter(IPortletDefinitionParameter parameter) {
 		this.parameters.remove(parameter.getName());
 	}
 
-	public void removeParameter(String name) {
+	@Override
+    public void removeParameter(String name) {
 		this.parameters.remove(name);
 	}
 
-	public void replaceParameters(Set<IPortletDefinitionParameter> parameters) {
+	@Override
+    public void replaceParameters(Set<IPortletDefinitionParameter> parameters) {
 		this.parameters.clear();
 		for (IPortletDefinitionParameter param : parameters) {
 			this.parameters.add(new PortletDefinitionParameterImpl(param));
 		}
 	}
 	
-	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+	@Override
+    public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
 		this.portletPreferences.setPortletPreferences(portletPreferences);
 	}
 
-	public EntityIdentifier getEntityIdentifier() {
+	@Override
+    public EntityIdentifier getEntityIdentifier() {
 		return new EntityIdentifier(String.valueOf(this.portletDefinitionId.getStringId()),
 				IPortletDefinition.class);
 	}
 
+    @Override
     public void addParameter(IPortletDefinitionParameter parameter) {
 		addParameter(parameter);
 	}
 
-	public void addParameter(String name, String value) {
+	@Override
+    public void addParameter(String name, String value) {
 		addParameter(new PortletDefinitionParameterImpl(name, value));
 	}
 
@@ -569,6 +623,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	    this.parameters.add(newParameter);
 	}
 
+    @Override
     public PortletLifecycleState getLifecycleState() {
 		Date now = new Date();
 		if (this.getExpirationDate() != null && this.getExpirationDate().before(now)) {

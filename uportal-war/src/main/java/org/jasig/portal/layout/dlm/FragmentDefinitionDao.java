@@ -21,83 +21,98 @@ package org.jasig.portal.layout.dlm;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class FragmentDefinitionDao implements IFragmentDefinitionDao {
-
-    // Static Members
-    private static final String GET_ALL_FRAGMENTS = "SELECT x FROM FragmentDefinition x ORDER BY x.precedence DESC";
-    private static final String FIND_FRAGMENT_BY_NAME = "SELECT x FROM FragmentDefinition x WHERE x.name = :name";
-    
+public class FragmentDefinitionDao extends BasePortalJpaDao implements IFragmentDefinitionDao {
     private static final String GET_ALL_FRAGMENTS_CACHE_REGION = FragmentDefinition.class.getName() + ".query.GET_ALL_FRAGMENTS";
     private static final String FIND_FRAGMENT_BY_NAME_CACHE_REGION = FragmentDefinition.class.getName() + ".query.FIND_FRAGMENT_BY_NAME";
 
-    // Instance Members.
-    private EntityManager entityManager;
 
-    /**
-     * @return the entityManager
-     */
-    public EntityManager getEntityManager() {
-        return entityManager;
+    private CriteriaQuery<FragmentDefinition> findAllFragmentsQuery;
+    private CriteriaQuery<FragmentDefinition> findFragmentByNameQuery;
+    private ParameterExpression<String> nameParameter;
+
+    @Override
+    protected void buildCriteriaQueries(CriteriaBuilder cb) {
+        this.nameParameter = cb.parameter(String.class, "name");
+        
+        this.findAllFragmentsQuery = this.buildFindAllFragmentsQuery(cb);
+        this.findFragmentByNameQuery = this.buildFindFragmentByNameQuery(cb);
     }
 
-    /**
-     * @param entityManager the entityManager to set
-     */
-    @PersistenceContext(unitName="uPortalPersistence")
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    protected CriteriaQuery<FragmentDefinition> buildFindAllFragmentsQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<FragmentDefinition> criteriaQuery = cb.createQuery(FragmentDefinition.class);
+        final Root<FragmentDefinition> fragDefRoot = criteriaQuery.from(FragmentDefinition.class);
+        criteriaQuery.select(fragDefRoot);
+        
+        return criteriaQuery;
+    }
+
+    protected CriteriaQuery<FragmentDefinition> buildFindFragmentByNameQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<FragmentDefinition> criteriaQuery = cb.createQuery(FragmentDefinition.class);
+        final Root<FragmentDefinition> fragDefRoot = criteriaQuery.from(FragmentDefinition.class);
+        criteriaQuery.select(fragDefRoot);
+        criteriaQuery.where(
+            cb.equal(fragDefRoot.get(FragmentDefinition_.name), this.nameParameter)
+        );
+        
+        return criteriaQuery;
     }
     
-    @SuppressWarnings("unchecked")
+    @Override
     public List<FragmentDefinition> getAllFragments() {
-
-        final Query query = this.entityManager.createQuery(GET_ALL_FRAGMENTS);
-        query.setHint("org.hibernate.cacheable", true);
-        query.setHint("org.hibernate.cacheRegion", GET_ALL_FRAGMENTS_CACHE_REGION);
+        final TypedQuery<FragmentDefinition> query = this.createQuery(this.findAllFragmentsQuery, GET_ALL_FRAGMENTS_CACHE_REGION);
         final List<FragmentDefinition> rslt = query.getResultList();
         return rslt;
         
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public FragmentDefinition getFragmentDefinition(String name) {
-        
-        final Query query = this.entityManager.createQuery(FIND_FRAGMENT_BY_NAME);
-        query.setParameter("name", name);
-        query.setHint("org.hibernate.cacheable", true);
-        query.setHint("org.hibernate.cacheRegion", FIND_FRAGMENT_BY_NAME_CACHE_REGION);
+        final TypedQuery<FragmentDefinition> query = this.createQuery(this.findFragmentByNameQuery, FIND_FRAGMENT_BY_NAME_CACHE_REGION);
+        query.setParameter(this.nameParameter, name);
         query.setMaxResults(1);
         
         final List<FragmentDefinition> list = query.getResultList();
-        final FragmentDefinition rslt = (FragmentDefinition) DataAccessUtils.uniqueResult(list);
+        final FragmentDefinition rslt = DataAccessUtils.uniqueResult(list);
         return rslt;
         
     }
 
+    @Override
     @Transactional
     public void updateFragmentDefinition(FragmentDefinition fd) {
         
         Validate.notNull(fd, "FragmentDefinition can not be null");
-        this.entityManager.merge(fd);
+        this.entityManager.persist(fd);
         
     }
 
+    @Override
     @Transactional
     public void removeFragmentDefinition(FragmentDefinition fd) {
         
         Validate.notNull(fd, "FragmentDefinition can not be null");
-        this.entityManager.remove(fd);
+        final FragmentDefinition persistentFragmentDefinition;
+        if (this.entityManager.contains(fd)) {
+            persistentFragmentDefinition = fd;
+        }
+        else {
+            persistentFragmentDefinition = this.entityManager.merge(fd);
+        }
         
+        this.entityManager.remove(persistentFragmentDefinition);
     }
 
 }

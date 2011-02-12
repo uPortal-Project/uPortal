@@ -19,6 +19,11 @@
 
 package org.jasig.portal.layout.dlm;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -26,22 +31,26 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author awills
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:jpaTestApplicationContext.xml")
 public class JpaFragmentDefinitionDaoTest extends BaseJpaDaoTest {
     private IFragmentDefinitionDao dao;
 
-    @Override
-    protected String[] getConfigLocations() {
-        return new String[] {"classpath:jpaTestApplicationContext.xml"};
-    }
-
+    @Autowired
     public void setFragmentDefinitionDao(final IFragmentDefinitionDao dao) {
         this.dao = dao;
     }
-            
+         
+    @Test
     public void testNoopOperations() throws Exception {
         this.execute(new Callable<Object>() {
             @Override
@@ -59,6 +68,7 @@ public class JpaFragmentDefinitionDaoTest extends BaseJpaDaoTest {
                 
     }
 
+    @Test
     public void testAllMethods() throws Exception {
         this.execute(new Callable<Object>() {
             @Override

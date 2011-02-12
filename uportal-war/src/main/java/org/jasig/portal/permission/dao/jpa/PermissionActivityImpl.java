@@ -21,23 +21,21 @@ package org.jasig.portal.permission.dao.jpa;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.permission.IPermissionActivity;
-import org.jasig.portal.permission.IPermissionOwner;
 
 /**
  * PermissionActivityImpl represents the default JPA implementation of 
@@ -49,18 +47,26 @@ import org.jasig.portal.permission.IPermissionOwner;
  */
 @Entity
 @Table(name = "UP_PERMISSION_ACTIVITY")
-@GenericGenerator(name = "UP_PERMISSION_ACTIVITY_GEN", strategy = "native", parameters = {
-        @Parameter(name = "sequence", value = "UP_PERMISSION_ACTIVITY_SEQ"),
-        @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-        @Parameter(name = "column", value = "NEXT_UP_PERMISSION_ACTIVITY__HI") })
-public class PermissionActivityImpl implements IPermissionActivity, Serializable {
+@SequenceGenerator(
+        name="UP_PERMISSION_ACTIVITY_GEN",
+        sequenceName="UP_PERMISSION_ACTIVITY_SEQ",
+        allocationSize=5
+    )
+@TableGenerator(
+        name="UP_PERMISSION_ACTIVITY_GEN",
+        pkColumnValue="UP_PERMISSION_ACTIVITY",
+        allocationSize=5
+    )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+class PermissionActivityImpl implements IPermissionActivity, Serializable {
     
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "UP_PERMISSION_ACTIVITY_GEN")
     @Column(name = "ACTIVITY_ID")
-    private Long id;
+    private final long id;
     
     @Column(name = "ACTIVITY_FNAME", length = 128, nullable = false, unique = true)
     private String fname;
@@ -74,50 +80,57 @@ public class PermissionActivityImpl implements IPermissionActivity, Serializable
     @Column(name = "OWNER_TARGET_PROVIDER", length = 255, nullable = false)
     private String targetProviderKey;
     
-    @ManyToOne(targetEntity = PermissionOwnerImpl.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNER_ID", nullable = false, updatable = false)
-    private final IPermissionOwner owner;
-
     /*
      * Internal, for hibernate
      */
     @SuppressWarnings("unused")
     private PermissionActivityImpl() {
-        this.owner = null;
+        this.id = -1;
     }
 
-    public PermissionActivityImpl(IPermissionOwner owner) {
-        this.owner = owner;
+    public PermissionActivityImpl(String name, String fname, String targetProviderKey) {
+        this.id = -1;
+        this.name = name;
+        this.fname = fname;
+        this.targetProviderKey = targetProviderKey;
     }
     
+    @Override
     public String getFname() {
         return this.fname;
     }
 
+    @Override
     public void setFname(String fname) {
         this.fname = fname;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return this.description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public String getTargetProviderKey() {
         return this.targetProviderKey;
     }
 
+    @Override
     public void setTargetProviderKey(String targetProviderKey) {
         this.targetProviderKey = targetProviderKey;
     }
@@ -126,18 +139,10 @@ public class PermissionActivityImpl implements IPermissionActivity, Serializable
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @JsonIgnore
-    public IPermissionOwner getOwner() {
-        return owner;
-    }
-
     /**
      * @see java.lang.Object#equals(Object)
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
@@ -153,6 +158,7 @@ public class PermissionActivityImpl implements IPermissionActivity, Serializable
     /**
      * @see java.lang.Object#hashCode()
      */
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(464270933, -1074792143).append(this.fname)
                 .toHashCode();
@@ -161,6 +167,7 @@ public class PermissionActivityImpl implements IPermissionActivity, Serializable
     /**
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("id", this.id)

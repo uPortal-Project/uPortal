@@ -19,17 +19,19 @@
 
 package org.jasig.portal.layout.dlm.providers;
 
-import org.w3c.dom.Node;
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
-
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
 import org.jasig.portal.security.IPerson;
+import org.w3c.dom.Node;
 
 /**
  * Used to target a fragment to all users of the system including guest users.
@@ -38,15 +40,19 @@ import org.jasig.portal.security.IPerson;
  * @since uPortal 2.5
  */
 @Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AllUsersEvaluatorFactory extends Evaluator implements EvaluatorFactory
 {
     public static final String RCS_ID = "@(#) $Header$";
 
+    @Override
     public Evaluator getEvaluator( Node audience )
     {
         return this;
     }
     
+    @Override
     public boolean isApplicable( IPerson p )
     {
         return true;

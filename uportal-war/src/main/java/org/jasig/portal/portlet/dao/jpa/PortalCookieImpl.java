@@ -22,18 +22,23 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.servlet.http.Cookie;
+import javax.persistence.TableGenerator;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 
@@ -47,19 +52,23 @@ import org.jasig.portal.portlet.om.IPortletCookie;
 @Table(
 		name = "UP_PORTAL_COOKIES"
 	)
-@GenericGenerator(
-        name = "UP_PORTAL_COOKIE_GEN", 
-        strategy = "native", 
-        parameters = {
-            @Parameter(name = "sequence", value = "UP_PORTAL_COOKIE_SEQ"),
-            @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-            @Parameter(name = "column", value = "NEXT_UP_PORTAL_COOKIE_HI")
-        }
+@SequenceGenerator(
+        name="UP_PORTAL_COOKIES_GEN",
+        sequenceName="UP_PORTAL_COOKIES_SEQ",
+        allocationSize=5
     )
+@TableGenerator(
+        name="UP_PORTAL_COOKIES_GEN",
+        pkColumnValue="UP_PORTAL_COOKIES",
+        allocationSize=5
+    )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortalCookieImpl implements IPortalCookie {
+    public static final String UP_PORTAL_COOKIES__DELETE_EXPIRED = "UP_PORTAL_COOKIES__DELETE_EXPIRED";
 
 	@Id
-    @GeneratedValue(generator = "UP_PORTAL_COOKIE_GEN")
+    @GeneratedValue(generator = "UP_PORTAL_COOKIES_GEN")
     @Column(name = "PORTAL_COOKIE_ID")
     private final long internalPortalCookieId;
 	
@@ -67,11 +76,14 @@ class PortalCookieImpl implements IPortalCookie {
 	private final Date created;
 	@Column(name = "EXPIRES", nullable = false, updatable = true)
 	private Date expires;
-	@Column(name = "VALUE", nullable = false, updatable = false, unique = true)
+	@Column(name = "VALUE", length=100, nullable = false, updatable = false, unique = true)
 	private final String value;
 	
-	@OneToMany(targetEntity = PortletCookieImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	private Set<IPortletCookie> portletCookies;
+	@OneToMany(targetEntity = PortletCookieImpl.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "PORTAL_COOKIE_ID")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Fetch(FetchMode.JOIN)
+    private Set<IPortletCookie> portletCookies;
 	
 	/**
 	 * For ORM internal use only
@@ -109,47 +121,41 @@ class PortalCookieImpl implements IPortalCookie {
 	/**
 	 * @return the created
 	 */
-	public Date getCreated() {
+	@Override
+    public Date getCreated() {
 		return created;
 	}
 
 	/**
 	 * @return the expires
 	 */
-	public Date getExpires() {
+	@Override
+    public Date getExpires() {
 		return expires;
 	}
 
 	/**
 	 * @return the value
 	 */
-	public String getValue() {
+	@Override
+    public String getValue() {
 		return value;
 	}
 
 	/**
 	 * @return the portletCookies
 	 */
-	public Set<IPortletCookie> getPortletCookies() {
+	@Override
+    public Set<IPortletCookie> getPortletCookies() {
 		return portletCookies;
 	}
 
 	/**
 	 * @param expires the expires to set
 	 */
-	public void setExpires(Date expires) {
-		this.expires = expires;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.om.IPortalCookie#toSuperCookie()
-	 */
 	@Override
-	public Cookie toMasterCookie() {
-		Cookie cookie = new Cookie(PORTAL_COOKIE_NAME, this.value);
-		cookie.setComment("uPortal Portlet Master Cookie");
-		cookie.setMaxAge(7200);
-		return cookie;
+    public void setExpires(Date expires) {
+		this.expires = expires;
 	}
 
 	/* (non-Javadoc)
@@ -172,71 +178,29 @@ class PortalCookieImpl implements IPortalCookie {
 		return builder.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((created == null) ? 0 : created.hashCode());
-		result = prime * result + ((expires == null) ? 0 : expires.hashCode());
-		result = prime
-				* result
-				+ (int) (internalPortalCookieId ^ (internalPortalCookieId >>> 32));
-		result = prime * result
-				+ ((portletCookies == null) ? 0 : portletCookies.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
+        return result;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof PortalCookieImpl)) {
-			return false;
-		}
-		PortalCookieImpl other = (PortalCookieImpl) obj;
-		if (created == null) {
-			if (other.created != null) {
-				return false;
-			}
-		} else if (!created.equals(other.created)) {
-			return false;
-		}
-		if (expires == null) {
-			if (other.expires != null) {
-				return false;
-			}
-		} else if (!expires.equals(other.expires)) {
-			return false;
-		}
-		if (internalPortalCookieId != other.internalPortalCookieId) {
-			return false;
-		}
-		if (portletCookies == null) {
-			if (other.portletCookies != null) {
-				return false;
-			}
-		} else if (!portletCookies.equals(other.portletCookies)) {
-			return false;
-		}
-		if (value == null) {
-			if (other.value != null) {
-				return false;
-			}
-		} else if (!value.equals(other.value)) {
-			return false;
-		}
-		return true;
-	}
-
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PortalCookieImpl other = (PortalCookieImpl) obj;
+        if (this.value == null) {
+            if (other.value != null)
+                return false;
+        }
+        else if (!this.value.equals(other.value))
+            return false;
+        return true;
+    }
 }

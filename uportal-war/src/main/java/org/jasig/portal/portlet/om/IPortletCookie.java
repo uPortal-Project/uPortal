@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.portlet.om;
 
+import java.util.Date;
+
 import javax.servlet.http.Cookie;
 
 /**
@@ -64,7 +66,7 @@ public interface IPortletCookie {
 	 * @see Cookie#getMaxAge()
 	 * @return the cookie max age (in minutes)
 	 */
-	int getMaxAge();
+	Date getExpires();
 	
 	/**
 	 * @see Cookie#getSecure()
@@ -115,7 +117,7 @@ public interface IPortletCookie {
 	 * @see Cookie#setMaxAge(int)
 	 * @param domain
 	 */
-	void setMaxAge(int maxAge);
+	void setExpires(Date expires);
 	
 	/**
 	 * Set the cookie secure flag.
@@ -132,6 +134,11 @@ public interface IPortletCookie {
 	 * @param version
 	 */
 	void setVersion(int version);
+	
+	/**
+	 * Update all of the fields from the specified Cookie
+	 */
+	void updateFromCookie(Cookie cookie);
 	
 	/**
 	 * 

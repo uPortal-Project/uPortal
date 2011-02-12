@@ -58,6 +58,20 @@
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
 
         <repository>            
             <id>sonatype-nexus-snapshots</id>
@@ -82,6 +96,12 @@
             <url>http://repository.apache.org/snapshots</url>
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2/</url>
+            <layout>default</layout>
         </pluginRepository>
     </pluginRepositories>
 
@@ -149,11 +169,8 @@
         <ehcache-spring-annotations.version>1.1.2</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.3</ehcache-web.version>
         <grouperClient.version>1.6.1</grouperClient.version>
-        <hibernate-annotations.version>3.3.1.GA</hibernate-annotations.version>
-        <hibernate-commons-annotations.version>3.3.0.ga</hibernate-commons-annotations.version>
-        <hibernate-entitymanager.version>3.3.2.GA</hibernate-entitymanager.version>
-        <hibernate-tools.version>3.2.0.ga</hibernate-tools.version>
-        <hibernate.version>3.2.6.ga</hibernate.version>
+        <hibernate.version>3.6.1.Final</hibernate.version>
+        <hibernate-jpamodelgen.version>1.1.1.Final</hibernate-jpamodelgen.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
         <jackson.version>1.6.2</jackson.version>
         <javassist.version>3.8.0.GA</javassist.version> 
@@ -336,11 +353,6 @@
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
                 <version>${mail.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.persistence</groupId>
-                <artifactId>persistence-api</artifactId>
-                <version>${persistence-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.portlet</groupId>
@@ -528,39 +540,13 @@
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
-                <artifactId>ejb3-persistence</artifactId>
-                <version>${ejb3-persistence.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate</artifactId>
-                <version>${hibernate.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>net.sf.ehcache</groupId>
-                        <artifactId>ehcache</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-annotations</artifactId>
-                <version>${hibernate-annotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-commons-annotations</artifactId>
-                <version>${hibernate-commons-annotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate-entitymanager.version}</version>
+                <version>${hibernate.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-tools</artifactId>
-                <version>${hibernate-tools.version}</version>
+                <artifactId>hibernate-jpamodelgen</artifactId>
+                <version>${hibernate-jpamodelgen.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.resource-aggregator</groupId>

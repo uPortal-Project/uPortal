@@ -21,11 +21,15 @@ package org.jasig.portal.layout.dlm.providers;
 
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.jasig.portal.layout.dlm.Evaluator;
@@ -43,6 +47,9 @@ import org.jasig.portal.spring.locator.UserFragmentSubscriptionDaoLocator;
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
+@Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SubscribedTabEvaluator extends Evaluator {
     
     @Column(name = "OWNER_ID")

@@ -24,6 +24,8 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -40,40 +42,41 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:jpaTestApplicationContext.xml")
 public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     private IPortletTypeDao jpaPortletTypeDao;
     private IPortletDefinitionDao jpaPortletDefinitionDao;
     private IPortletEntityDao jpaPortletEntityDao;
     
     
-    public PortletEntityRegistryImplTest() {
-        this.setDependencyCheck(false);
-    }
-    
-    @Override
-    protected String[] getConfigLocations() {
-        return new String[] {"classpath:jpaTestApplicationContext.xml"};
-    }
-
+    @Autowired
     public void setJpaPortletEntityDao(IPortletEntityDao jpaPortletEntityDao) {
         this.jpaPortletEntityDao = jpaPortletEntityDao;
     }
+    @Autowired
     public void setJpaPortletDefinitionDao(IPortletDefinitionDao dao) {
         this.jpaPortletDefinitionDao = dao;
     }
+    @Autowired
     public void setJpaChannelTypeDao(IPortletTypeDao jpaChannelTypeDao) {
         this.jpaPortletTypeDao = jpaChannelTypeDao;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    protected void onSetUp() throws Exception {
+    @Before
+    public void onSetUp() throws Exception {
         this.execute(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
@@ -90,7 +93,6 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         });
     }
 
-    @SuppressWarnings("deprecation")
     protected IPortletDefinitionId createDefaultPorltetDefinition() {
         return this.execute(new Callable<IPortletDefinitionId>() {
             @Override
@@ -107,6 +109,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     }
     
     //persistent with prefs & not in db - create new & update
+    @Test
     public void testPersistentWithPrefsNotInDb() throws Throwable {
         final IPortletDefinitionId portDefId1 = this.createDefaultPorltetDefinition();
         
@@ -236,6 +239,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     }
     
     //persistent with no prefs & not in db - noop
+    @Test
     public void testPersistentNoPrefsNotInDb() throws Throwable {
         final IPortletDefinitionId portDefId1 = this.createDefaultPorltetDefinition();
         
@@ -357,6 +361,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     }
     
     //interim with no prefs & in db - delete db version
+    @Test
     public void testInterimNoPrefsAlreadyPersistent() throws Throwable {
         final IPortletDefinitionId portDefId1 = this.createDefaultPorltetDefinition();
         
@@ -447,6 +452,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     }
     
     //interim with prefs & in db - get db version & update
+    @Test
     public void testInterimAddingPrefsAlreadyPersistent() throws Throwable {
         final IPortletDefinitionId portDefId1 = this.createDefaultPorltetDefinition();
         
@@ -545,6 +551,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     }
     
     //persistent with no prefs & in db - delete & create interim
+    @Test
     public void testPersistentRemovePrefs() throws Exception {
         //Mock setup
         final IPortalRequestUtils requestUtils = createMock(IPortalRequestUtils.class);
@@ -630,6 +637,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     }
 
     //persistent with prefs & in db - update
+    @Test
     public void testPersistentUpdatingPrefs() throws Exception {
         //Mock setup
         final IPortalRequestUtils requestUtils = createMock(IPortalRequestUtils.class);
@@ -715,6 +723,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     }
 
     //interim with no prefs & not in db - noop
+    @Test
     public void testInterimNoPrefs() throws Exception {
         //Mock setup
         final IPortalRequestUtils requestUtils = createMock(IPortalRequestUtils.class);
@@ -772,6 +781,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     }
 
     //interim with prefs & not in db - create new & update, delete interim
+    @Test
     public void testInterimAddingPrefs() throws Exception {
         //Mock setup
         final IPortalRequestUtils requestUtils = createMock(IPortalRequestUtils.class);

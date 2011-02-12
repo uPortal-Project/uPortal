@@ -19,16 +19,14 @@
 
 package org.jasig.portal.dao.usertype;
 
-import org.hibernate.Hibernate;
+import org.hibernate.type.descriptor.sql.ClobTypeDescriptor;
 
 /**
- * Version of BaseEscapedStringType that stores its data in a VARCHAR.
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class EscapedTextType extends BaseEscapedStringType {
-    public EscapedTextType() {
-        super(Hibernate.TEXT);
+public class EscapedClobType extends BaseEscapedStringType {
+    public EscapedClobType() {
+        super(ClobTypeDescriptor.STREAM_BINDING);
     }
 }

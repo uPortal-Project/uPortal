@@ -19,18 +19,24 @@
 
 package org.jasig.portal.permission.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.dao.IPermissionOwnerDao;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * JpaPermissionOwnerDao provides a default JPA/Hibernate implementation of
@@ -40,28 +46,43 @@ import org.springframework.dao.support.DataAccessUtils;
  * @version $Revision$
  * @since 3.3
  */
-public class JpaPermissionOwnerDao implements IPermissionOwnerDao {
-
-    private static final String FIND_ALL_PERMISSION_OWNERS = "from PermissionOwnerImpl owner";
-    private static final String FIND_PERMISSION_OWNER_BY_FNAME = 
-        "from PermissionOwnerImpl owner where owner.fname = :fname";
-    private static final String FIND_PERMISSION_ACTIVITY_BY_OWNER_ID = 
-        "from PermissionActivityImpl activity left join fetch activity.owner where activity.owner.id = :ownerId and activity.fname = :fname";
-    private static final String FIND_PERMISSION_ACTIVITY_BY_OWNER_FNAME = 
-        "from PermissionActivityImpl activity left join fetch activity.owner where activity.owner.fname = :ownerFname and activity.fname = :activityFname";
-
+public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissionOwnerDao {
+    private static final String FIND_ALL_PERMISSION_OWNERS_CACHE_REGION = PermissionOwnerImpl.class.getName() + ".query.FIND_ALL_PERMISSION_OWNERS";
+    private static final String FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION = PermissionOwnerImpl.class.getName() + ".query.FIND_PERMISSION_OWNER_BY_FNAME";
+    
     protected final Log log = LogFactory.getLog(getClass());
+    
+    private CriteriaQuery<PermissionOwnerImpl> findAllPermissionOwners;
+    private CriteriaQuery<PermissionOwnerImpl> findPermissionOwnerByFname;
+    private ParameterExpression<String> fnameParameter;
 
-    private EntityManager entityManager;
-
-    /**
-     * @param entityManager
-     *            the entityManager to set
-     */
-    @PersistenceContext(unitName="uPortalPersistence")
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    @Override
+    protected void buildCriteriaQueries(CriteriaBuilder cb) {
+        this.fnameParameter = cb.parameter(String.class, "fname");
+        
+        this.findAllPermissionOwners = this.buildFindAllPermissionOwners(cb);
+        this.findPermissionOwnerByFname = this.buildFindPermissionOwnerByFname(cb);
     }
+
+    protected CriteriaQuery<PermissionOwnerImpl> buildFindAllPermissionOwners(final CriteriaBuilder cb) {
+        final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
+        final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
+        criteriaQuery.select(ownerRoot);
+        
+        return criteriaQuery;
+    }
+
+    protected CriteriaQuery<PermissionOwnerImpl> buildFindPermissionOwnerByFname(final CriteriaBuilder cb) {
+        final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
+        final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
+        criteriaQuery.select(ownerRoot);
+        criteriaQuery.where(
+                cb.equal(ownerRoot.get(PermissionOwnerImpl_.fname), this.fnameParameter)
+            );
+        
+        return criteriaQuery;
+    }
+
 
     /*
      * (non-Javadoc)
@@ -69,26 +90,25 @@ public class JpaPermissionOwnerDao implements IPermissionOwnerDao {
      * @see
      * org.jasig.portal.permissions.dao.IPermissionOwnerDao#getAllPermissible()
      */
+    @Override
     public List<IPermissionOwner> getAllPermissionOwners() {
-
-        final Query query = this.entityManager
-                .createQuery(FIND_ALL_PERMISSION_OWNERS);
+        final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findAllPermissionOwners, FIND_ALL_PERMISSION_OWNERS_CACHE_REGION);
         
-        @SuppressWarnings("unchecked")
-        final List<IPermissionOwner> owners = query.getResultList();
-        
-        return owners;
+        final List<PermissionOwnerImpl> resultList = query.getResultList();
+        return new ArrayList<IPermissionOwner>(resultList);
     }
 
     /*
      * (non-Javadoc)
      * @see org.jasig.portal.permission.dao.IPermissionOwnerDao#getOrCreatePermissionOwner(java.lang.String)
      */
-    public IPermissionOwner getOrCreatePermissionOwner(String fname) {
+    @Override
+    @Transactional
+    public IPermissionOwner getOrCreatePermissionOwner(String name, String fname) {
         IPermissionOwner owner = getPermissionOwner(fname);
         if (owner == null) {
-            owner = new PermissionOwnerImpl();
-            owner.setFname(fname);
+            owner = new PermissionOwnerImpl(name, fname);
+            this.entityManager.persist(owner);
         }
         return owner;
     }
@@ -97,7 +117,8 @@ public class JpaPermissionOwnerDao implements IPermissionOwnerDao {
      * (non-Javadoc)
      * @see org.jasig.portal.permission.dao.IPermissionOwnerDao#getPermissionOwner(java.lang.Long)
      */
-    public IPermissionOwner getPermissionOwner(Long id){
+    @Override
+    public IPermissionOwner getPermissionOwner(long id){
         return entityManager.find(PermissionOwnerImpl.class, id);
     }
 
@@ -105,14 +126,14 @@ public class JpaPermissionOwnerDao implements IPermissionOwnerDao {
      * (non-Javadoc)
      * @see org.jasig.portal.permission.dao.IPermissionOwnerDao#getPermissionOwner(java.lang.String)
      */
+    @Override
     public IPermissionOwner getPermissionOwner(String fname){
-        final Query query = this.entityManager.createQuery(FIND_PERMISSION_OWNER_BY_FNAME);
-        query.setParameter("fname", fname);
+        final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findPermissionOwnerByFname, FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION);
+        query.setParameter(this.fnameParameter, fname);
         query.setMaxResults(1);
         
-        @SuppressWarnings("unchecked")
-        final List<IPermissionOwner> owners = query.getResultList();
-        IPermissionOwner owner = (IPermissionOwner) DataAccessUtils.uniqueResult(owners);
+        final List<PermissionOwnerImpl> owners = query.getResultList();
+        final IPermissionOwner owner = DataAccessUtils.uniqueResult(owners);
         return owner;
         
     }
@@ -121,6 +142,8 @@ public class JpaPermissionOwnerDao implements IPermissionOwnerDao {
      * (non-Javadoc)
      * @see org.jasig.portal.permission.dao.IPermissionOwnerDao#saveOwner(org.jasig.portal.permission.IPermissionOwner)
      */
+    @Override
+    @Transactional
     public IPermissionOwner saveOwner(IPermissionOwner owner) {
         this.entityManager.persist(owner);
         return owner;
@@ -130,12 +153,14 @@ public class JpaPermissionOwnerDao implements IPermissionOwnerDao {
      * (non-Javadoc)
      * @see org.jasig.portal.permission.dao.IPermissionOwnerDao#getOrCreatePermissionActivity(org.jasig.portal.permission.IPermissionOwner, java.lang.String)
      */
+    @Override
+    @Transactional
     public IPermissionActivity getOrCreatePermissionActivity(
-            IPermissionOwner owner, String fname) {
+            IPermissionOwner owner, String name, String fname, String targetProviderKey) {
         IPermissionActivity activity = getPermissionActivity(owner.getId(), fname);
         if (activity == null) {
-            activity = new PermissionActivityImpl(owner);
-            activity.setFname(fname);
+            activity = new PermissionActivityImpl(name, fname, targetProviderKey);
+            owner.getActivities().add(activity);
         }
         return activity;
     }
@@ -144,7 +169,8 @@ public class JpaPermissionOwnerDao implements IPermissionOwnerDao {
      * (non-Javadoc)
      * @see org.jasig.portal.permission.dao.IPermissionOwnerDao#getPermissionActivity(java.lang.Long)
      */
-    public IPermissionActivity getPermissionActivity(Long id) {
+    @Override
+    public IPermissionActivity getPermissionActivity(long id) {
         return entityManager.find(PermissionActivityImpl.class, id);
     }
 
@@ -152,44 +178,46 @@ public class JpaPermissionOwnerDao implements IPermissionOwnerDao {
      * (non-Javadoc)
      * @see org.jasig.portal.permission.dao.IPermissionOwnerDao#getPermissionActivity(java.lang.Long, java.lang.String)
      */
-    public IPermissionActivity getPermissionActivity(Long ownerId,
-            String activityFname) {
-        final Query query = this.entityManager.createQuery(FIND_PERMISSION_ACTIVITY_BY_OWNER_ID);
-        query.setParameter("ownerId", ownerId);
-        query.setParameter("fname", activityFname);
-        query.setMaxResults(1);
-        
-        @SuppressWarnings("unchecked")
-        final List<IPermissionActivity> activities = query.getResultList();
-        IPermissionActivity activity = (IPermissionActivity) DataAccessUtils.uniqueResult(activities);
-        return activity;
+    @Override
+    public IPermissionActivity getPermissionActivity(long ownerId, String activityFname) {
+        final IPermissionOwner permissionOwner = this.getPermissionOwner(ownerId);
+        return findActivity(permissionOwner, activityFname);
     }
 
     /*
      * (non-Javadoc)
      * @see org.jasig.portal.permission.dao.IPermissionOwnerDao#getPermissionActivity(java.lang.String, java.lang.String)
      */
-    public IPermissionActivity getPermissionActivity(String ownerFname,
-            String activityFname) {
-        final Query query = this.entityManager.createQuery(FIND_PERMISSION_ACTIVITY_BY_OWNER_FNAME);
-        query.setParameter("ownerFname", ownerFname);
-        query.setParameter("activityFname", activityFname);
-        query.setMaxResults(1);
-        
-        @SuppressWarnings("unchecked")
-        final List<IPermissionActivity> activities = query.getResultList();
-        IPermissionActivity activity = (IPermissionActivity) DataAccessUtils.uniqueResult(activities);
-        return activity;
+    @Override
+    public IPermissionActivity getPermissionActivity(String ownerFname, String activityFname) {
+        final IPermissionOwner permissionOwner = this.getPermissionOwner(ownerFname);
+        return findActivity(permissionOwner, activityFname);
     }
 
     /*
      * (non-Javadoc)
      * @see org.jasig.portal.permission.dao.IPermissionOwnerDao#savePermissionActivity(org.jasig.portal.permission.IPermissionActivity)
      */
-    public IPermissionActivity savePermissionActivity(
-            IPermissionActivity activity) {
+    @Override
+    @Transactional
+    public IPermissionActivity savePermissionActivity(IPermissionActivity activity) {
         this.entityManager.persist(activity);
         return activity;
     }
 
+
+    protected IPermissionActivity findActivity(final IPermissionOwner permissionOwner, String activityFname) {
+        if (permissionOwner == null) {
+            return null;
+        }
+        
+        final Set<IPermissionActivity> activities = permissionOwner.getActivities();
+        for (final IPermissionActivity permissionActivity : activities) {
+            if (activityFname.equals(permissionActivity.getFname())) {
+                return permissionActivity;
+            }
+        }
+        
+        return null;
+    }
 }

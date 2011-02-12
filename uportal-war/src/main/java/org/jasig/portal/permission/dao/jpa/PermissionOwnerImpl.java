@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,15 +31,18 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 
@@ -52,18 +56,26 @@ import org.jasig.portal.permission.IPermissionOwner;
  */
 @Entity
 @Table(name = "UP_PERMISSION_OWNER")
-@GenericGenerator(name = "UP_PERMISSION_OWNER_GEN", strategy = "native", parameters = {
-		@Parameter(name = "sequence", value = "UP_PERMISSION_OWNER_SEQ"),
-		@Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-		@Parameter(name = "column", value = "NEXT_UP_PERMISSION_OWNER__HI") })
-public class PermissionOwnerImpl implements IPermissionOwner, Serializable {
+@SequenceGenerator(
+        name="UP_PERMISSION_OWNER_GEN",
+        sequenceName="UP_PERMISSION_OWNER_SEQ",
+        allocationSize=1
+    )
+@TableGenerator(
+        name="UP_PERMISSION_OWNER_GEN",
+        pkColumnValue="UP_PERMISSION_OWNER",
+        allocationSize=1
+    )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+class PermissionOwnerImpl implements IPermissionOwner, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
 	@GeneratedValue(generator = "UP_PERMISSION_OWNER_GEN")
     @Column(name = "OWNER_ID")
-	private Long id;
+	private final Long id;
 	
     @Column(name = "OWNER_FNAME", length = 128, nullable = false, unique = true)
     private String fname;
@@ -74,40 +86,58 @@ public class PermissionOwnerImpl implements IPermissionOwner, Serializable {
     @Column(name = "OWNER_DESCRIPTION", length = 255)
     private String description;
 
-    @OneToMany(mappedBy = "owner", targetEntity = PermissionActivityImpl.class, fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
-    @JoinTable(name = "UP_PERMISSION_ACTIVITY", joinColumns = @JoinColumn(name = "OWNER_ID"))
+    @OneToMany(targetEntity = PermissionActivityImpl.class, fetch = FetchType.EAGER, cascade = { CascadeType.ALL }, orphanRemoval=true)
+    @JoinColumn(name = "OWNER_ID")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Fetch(FetchMode.JOIN)
     private Set<IPermissionActivity> activities = new HashSet<IPermissionActivity>();
 
+    //For use by hibernate reflection
+    @SuppressWarnings("unused")
+    private PermissionOwnerImpl() {
+        this.id = -1l;
+    }
     
-	public Long getId() {
+    public PermissionOwnerImpl(String name, String fname) {
+        this.id = -1l;
+        this.fname = fname;
+        this.name = name;
+    }
+
+
+
+    @Override
+    public Long getId() {
 		return this.id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getFname() {
+	@Override
+    public String getFname() {
 		return this.fname;
 	}
 
-	public void setFname(String fname) {
+	@Override
+    public void setFname(String fname) {
 		this.fname = fname;
 	}
 
-	public String getName() {
+	@Override
+    public String getName() {
 		return this.name;
 	}
 
-	public void setName(String name) {
+	@Override
+    public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getDescription() {
+	@Override
+    public String getDescription() {
 		return this.description;
 	}
 
-	public void setDescription(String description) {
+	@Override
+    public void setDescription(String description) {
 		this.description = description;
 	}
 
@@ -119,10 +149,12 @@ public class PermissionOwnerImpl implements IPermissionOwner, Serializable {
         return this.fname;
     }
 
+    @Override
     public Set<IPermissionActivity> getActivities() {
         return this.activities;
     }
 
+    @Override
     public void setActivities(Set<IPermissionActivity> activities) {
         this.activities = activities;
     }
@@ -130,6 +162,7 @@ public class PermissionOwnerImpl implements IPermissionOwner, Serializable {
     /**
      * @see java.lang.Object#equals(Object)
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
@@ -145,6 +178,7 @@ public class PermissionOwnerImpl implements IPermissionOwner, Serializable {
     /**
      * @see java.lang.Object#hashCode()
      */
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(464270933, -1074792143).append(this.fname)
                 .toHashCode();
@@ -153,6 +187,7 @@ public class PermissionOwnerImpl implements IPermissionOwner, Serializable {
     /**
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("id", this.id)

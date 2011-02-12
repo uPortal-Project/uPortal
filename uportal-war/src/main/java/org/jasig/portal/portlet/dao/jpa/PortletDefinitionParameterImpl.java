@@ -21,6 +21,7 @@ package org.jasig.portal.portlet.dao.jpa;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Table;
@@ -29,6 +30,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 
 /**
@@ -38,9 +41,12 @@ import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
  */
 @Embeddable
 @Table(name = "UP_PORTLET_PARAM")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletDefinitionParameterImpl implements IPortletDefinitionParameter, Serializable {
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "PORTLET_PARM_NAME", length = 255, nullable = false)
+    @Column(name = "PORTLET_PARM_NAME", length = 255, nullable = false)
 	String name;
 
 	@Column(name = "PORTLET_PARM_VAL", length = 2000)
@@ -84,7 +90,8 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
      * (non-Javadoc)
      * @see org.jasig.portal.channel.IChannelParameter#getName()
      */
-	public String getName() {
+	@Override
+    public String getName() {
 		return this.name;
 	}
 
@@ -92,7 +99,8 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.IChannelParameter#getValue()
 	 */
-	public String getValue() {
+	@Override
+    public String getValue() {
 		return this.value;
 	}
 
@@ -100,7 +108,8 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.IChannelParameter#getDescription()
 	 */
-	public String getDescription() {
+	@Override
+    public String getDescription() {
 		return this.descr;
 	}
 
@@ -111,7 +120,8 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.IChannelParameter#setName(java.lang.String)
 	 */
-	public void setName(String name) {
+	@Override
+    public void setName(String name) {
 		this.name = name;
 	}
 
@@ -119,7 +129,8 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.IChannelParameter#setValue(java.lang.String)
 	 */
-	public void setValue(String value) {
+	@Override
+    public void setValue(String value) {
 		this.value = value;
 	}
 
@@ -127,7 +138,8 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.IChannelParameter#setDescription(java.lang.String)
 	 */
-	public void setDescription(String descr) {
+	@Override
+    public void setDescription(String descr) {
 		this.descr = descr;
 	}
 

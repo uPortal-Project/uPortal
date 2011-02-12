@@ -19,14 +19,12 @@
 
 package org.jasig.portal.portlet.container;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletRequest;
@@ -40,10 +38,9 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.driver.PortletServlet;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
-import org.jasig.portal.portlet.dao.IPortletCookieDao;
-import org.jasig.portal.portlet.om.IPortalCookie;
-import org.jasig.portal.portlet.om.IPortletCookie;
+import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.AbstractHttpServletRequestWrapper;
 import org.jasig.portal.url.IPortalRequestInfo;
@@ -72,9 +69,9 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
             PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
             IRequestPropertiesManager requestPropertiesManager, IPortalRequestInfo portalRequestInfo,
-            IPortletCookieDao portletCookieDao) {
+            IPortletCookieService portletCookieService) {
         
-        super(portletContainer, portletWindow, containerRequest, containerResponse, portletCookieDao);
+        super(portletContainer, portletWindow, containerRequest, containerResponse, portletCookieService);
         
         Assert.notNull(requestPropertiesManager, "requestPropertiesManager cannot be null");
         Assert.notNull(portalRequestInfo, "portalRequestInfo cannot be null");
@@ -167,23 +164,8 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      */
     @Override
     public Cookie[] getCookies() {
-    	List<Cookie> resultCookies = new ArrayList<Cookie>();
-    
-    	IPortalCookie portalCookie = getPortalCookie();
-    	if(portalCookie != null) {
-    		Set<IPortletCookie> portletCookies = portalCookie.getPortletCookies();
-        
-    		for(IPortletCookie portletCookie: portletCookies)  {
-    			resultCookies.add(portletCookie.toCookie());
-    		}
-    	}
-        
-        Cookie [] servletRequestCookies = servletRequest.getCookies();
-        for(Cookie servletRequestCookie: servletRequestCookies) {
-        	resultCookies.add(servletRequestCookie);
-        }
-        
-        return resultCookies.toArray(new Cookie[resultCookies.size()]);
+    	final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
+        return this.portletCookieService.getAllPortletCookies(this.servletRequest, portletWindowId);
     }
 
     /* (non-Javadoc)

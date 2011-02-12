@@ -22,7 +22,7 @@
 
 <!DOCTYPE hibernate-configuration PUBLIC
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
-        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
     <session-factory>
@@ -33,6 +33,10 @@
         <property name="hibernate.cache.use_second_level_cache">true</property>
         <property name="hibernate.cache.use_minimal_puts">true</property>
         <property name="hibernate.jdbc.batch_size">25</property>
+        <property name="hibernate.max_fetch_depth">3</property>
+        <property name="hibernate.default_batch_fetch_size">16</property>
+        <property name="hibernate.id.new_generator_mappings">true</property>
+        <property name="hibernate.jdbc.use_streams_for_binary">true</property>
         
         <property name="hibernate.current_session_context_class">thread</property>
         
@@ -57,7 +61,7 @@
         <mapping class="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
-        
+        <!-- 
         <class-cache class="org.jasig.portal.layout.dlm.Evaluator" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" usage="nonstrict-read-write"/>
         <class-cache class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" usage="nonstrict-read-write"/>
@@ -74,5 +78,6 @@
         <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences" usage="nonstrict-read-write"/>
         <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values" usage="nonstrict-read-write"/>
         <collection-cache collection="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes" usage="nonstrict-read-write"/>
+        -->
     </session-factory>
 </hibernate-configuration>

@@ -22,21 +22,24 @@ package org.jasig.portal.fragment.subscribe.dao.jpa;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.security.IPerson;
@@ -55,23 +58,18 @@ import org.jasig.portal.security.IPerson;
 		      @UniqueConstraint(columnNames = {"USER_ID","FRAGMENT_OWNER"})
 			}
 		)
-@org.hibernate.annotations.Table(
-        appliesTo = "UP_USER_FRAGMENT_SUBSCRIPTION", 
-        indexes = {
-            @Index(name = "IDX_USER_FRAG__USER", columnNames = "USER_ID")
-        }
+@SequenceGenerator(
+        name="UP_USER_FRAGMENT_SUBSCRIPTION_GEN",
+        sequenceName="UP_USER_FRAGMENT_SUB_SEQ",
+        allocationSize=10
     )
-@GenericGenerator(
-        name = "UP_USER_FRAGMENT_SUBSCRIPTION_GEN", 
-        strategy = "native", 
-        parameters = {
-            @Parameter(name = "sequence", value = "UP_USER_FRAGMENT_SUBSCRIPTION_SEQ"),
-            @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-            @Parameter(name = "column", value = "NEXT_UP_USER_FRAGMENT_SUBSCRIPTION_HI")
-        }
+@TableGenerator(
+        name="UP_USER_FRAGMENT_SUBSCRIPTION_GEN",
+        pkColumnValue="UP_USER_FRAGMENT_SUBSCRIPTION",
+        allocationSize=10
     )
-    
-
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
 	
    //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
@@ -81,6 +79,7 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
    private final long userFragmentInfoId;
    
    @Column(name = "USER_ID", updatable = false, nullable = false)
+   @Index(name = "IDX_USER_FRAG__USER", columnNames = "USER_ID")
    private final int userId;
    
    @Column(name = "FRAGMENT_OWNER",updatable = false, nullable = false)
@@ -126,21 +125,25 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
    }
 
 
-	public int getUserId() {
+	@Override
+    public int getUserId() {
 		return userId;
 	}
 
 
-	public String getFragmentOwner() {
+	@Override
+    public String getFragmentOwner() {
 		return fragmentOwner;
 	}
 
 
-	public boolean isActive() {
+	@Override
+    public boolean isActive() {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	@Override
+    public void setActive(boolean active) {
 		this.active = active;
 	}
 
@@ -157,7 +160,8 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
 		return lastUpdatedDate;
 	}
 	
-	public long getId() {
+	@Override
+    public long getId() {
 		return userFragmentInfoId;
 	}
 	
@@ -174,7 +178,8 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
 		this.creationDate =  new GregorianCalendar();
 	}
 	
-	public void setInactive() {
+	@Override
+    public void setInactive() {
 		this.active = false;
 	}
 	
@@ -184,6 +189,7 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
      *
      * @return EntityIdentifier with attribute 'fragment owner' as key.
      */
+    @Override
     public EntityIdentifier getEntityIdentifier() {
         return m_eid;
     }

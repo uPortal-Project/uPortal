@@ -26,14 +26,11 @@
     <attribute key="OWNER_FNAME">${valueOf(fname)}</attribute>
     <attribute key="OWNER_DESC">${valueOf(desc)}</attribute>
 
-    <!-- Create a new activities list for this permission owner -->
-    <attribute key="ACTIVITIES">${groovy(new HashSet())}</attribute>
-
     <subtasks>
         <sql-transaction>
         	<with>
         		<!-- Retrieve the applicable owner, or if none exists, create a new one -->
-        		<attribute key="OWNER">${groovy(permissionOwnerDao.getOrCreatePermissionOwner(OWNER_FNAME))}</attribute>
+        		<attribute key="OWNER">${groovy(permissionOwnerDao.getOrCreatePermissionOwner(OWNER_NAME, OWNER_FNAME))}</attribute>
 	        		
 	        		<subtasks>
 	        		<!-- Add each activity to the owner -->
@@ -46,12 +43,8 @@
 			                <subtasks>
 			                    <groovy>
 			                        <script>
-			                            act = new org.jasig.portal.permission.dao.jpa.PermissionActivityImpl(OWNER);
-			                            act.setName(ACTIVITY_NAME);
-			                            act.setFname(ACTIVITY_FNAME);
+                                        act = permissionOwnerDao.getOrCreatePermissionActivity(OWNER, ACTIVITY_NAME, ACTIVITY_FNAME, ACTIVITY_TARGET_PROVIDER);
 			                            act.setDescription(ACTIVITY_DESC);
-			                            act.setTargetProviderKey(ACTIVITY_TARGET_PROVIDER);
-			                            ACTIVITIES.add(act);
 			                        </script>
 			                    </groovy>
 			                </subtasks>
@@ -61,10 +54,7 @@
 			        <!-- Set the owner properties and persist it -->
 		            <groovy>
 		                <script>
-		                    OWNER.setName(OWNER_NAME);
-		                    OWNER.setFname(OWNER_FNAME);
 		                    OWNER.setDescription(OWNER_DESC);
-		                    OWNER.setActivities(ACTIVITIES);
 		                    permissionOwnerDao.saveOwner(OWNER);
 		                </script>
 		            </groovy>

@@ -31,9 +31,9 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResponseContext;
 import org.apache.pluto.container.ResourceURLProvider;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
-import org.jasig.portal.portlet.dao.IPortletCookieDao;
-import org.jasig.portal.portlet.om.IPortalCookie;
+import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.springframework.util.Assert;
 import org.w3c.dom.DOMException;
@@ -54,8 +54,8 @@ public class PortletResponseContextImpl extends AbstractPortletContextImpl imple
     public PortletResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
             IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
-            IPortletCookieDao portletCookieDao) {
-        super(portletContainer, portletWindow, containerRequest, containerResponse, portletCookieDao);
+            IPortletCookieService portletCookieService) {
+        super(portletContainer, portletWindow, containerRequest, containerResponse, portletCookieService);
         
         Assert.notNull(requestPropertiesManager, "requestPropertiesManager can not be null");
         Assert.notNull(portalUrlProvider, "portletUrlCreator can not be null");
@@ -69,9 +69,8 @@ public class PortletResponseContextImpl extends AbstractPortletContextImpl imple
      */
     @Override
     public void addProperty(Cookie cookie) {
-        IPortalCookie portalCookie = getPortalCookie();
-        
-        portalCookie = this.portletCookieDao.storePortletCookie(portalCookie, cookie);
+        final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
+        this.portletCookieService.addCookie(this.servletRequest, portletWindowId, cookie);
     }
 
     /* (non-Javadoc)

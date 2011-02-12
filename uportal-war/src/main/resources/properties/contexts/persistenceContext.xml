@@ -72,7 +72,6 @@
 
     <!-- Adapter that can inject a cacheProvider into the hibernate entity manager -->
     <bean id="jpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
-        <property name="databasePlatform" value="${hibernate.dialect}" />
         <!-- hibernateCacheProvider is a named service (org.jasig.portal.utils.cache.hibernate.EhCacheProvider) -->
         <property name="cacheProvider" ref="hibernateCacheProvider" />
     </bean>
@@ -102,13 +101,8 @@
     <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
         <property name="dataSource" ref="PortalDb" />  
         <property name="configuration" ref="hibernateCfg" />
-        <property name="dialect" value="${hibernate.dialect}" /> 
     </bean>
     <bean name="hibernateCfg" class="org.springframework.core.io.ClassPathResource">
     	<constructor-arg><value>properties/db/hibernate.cfg.xml</value></constructor-arg>
     </bean>
-    <bean name="hibernateDialectName" class="java.lang.String">
-    	<constructor-arg><value>${hibernate.dialect}</value></constructor-arg>
-    </bean>
-    <bean name="hibernateDialect" class="${hibernate.dialect}"/>
 </beans>

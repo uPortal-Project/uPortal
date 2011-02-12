@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
-import org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl;
 import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
@@ -158,8 +157,10 @@ public class UserAccountHelper {
         // if this is a new user, create an account object with the specified
         // username
         if (form.getId() < 0) {
-            account = new LocalAccountPersonImpl();
-            account.setName(form.getUsername());
+            account = accountDao.getPerson(form.getUsername());
+            if (account == null) {
+                account = accountDao.createPerson(form.getUsername());
+            }
         } 
         
         // otherwise, get the existing account from the database

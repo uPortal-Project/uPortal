@@ -58,6 +58,11 @@ public interface ILocalAccountDao {
     public ILocalAccountPerson getPerson(String username);
     
     /**
+     * Create a new local account for the specified username
+     */
+    public ILocalAccountPerson createPerson(String username);
+    
+    /**
      * Return a list of all local portal accounts.
      * 
      * @return

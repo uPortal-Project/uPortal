@@ -23,14 +23,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -38,11 +42,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.pluto.container.PortletPreference;
 import org.apache.pluto.container.om.portlet.Preference;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.portlet.om.IPortletPreference;
 
@@ -52,15 +56,18 @@ import org.jasig.portal.portlet.om.IPortletPreference;
  */
 @Entity
 @Table(name = "UP_PORTLET_PREF")
-@GenericGenerator(
-        name = "UP_PORTLET_PREF_GEN", 
-        strategy = "native", 
-        parameters = {
-            @Parameter(name = "sequence", value = "UP_PORTLET_PREF_SEQ"),
-            @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-            @Parameter(name = "column", value = "NEXT_UP_PORTLET_PREF_HI")
-        }
+@SequenceGenerator(
+        name="UP_PORTLET_PREF_GEN",
+        sequenceName="UP_PORTLET_PREF_SEQ",
+        allocationSize=10
     )
+@TableGenerator(
+        name="UP_PORTLET_PREF_GEN",
+        pkColumnValue="UP_PORTLET_PREF",
+        allocationSize=10
+    )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletPreferenceImpl implements IPortletPreference {
 
     @Id
@@ -68,22 +75,23 @@ public class PortletPreferenceImpl implements IPortletPreference {
     @Column(name = "PORTLET_PREF_ID")
     private final long portletPreferenceId;
     
-    @Column(name = "NAME", nullable = false)
-    @Type(type = "nullSafeText")
+    @Column(name = "NAME")//, nullable = false)
+    @Type(type = "nullSafeClob")
     private String name = null;
     
     @Column(name = "READ_ONLY", nullable = false)
     private boolean readOnly = false;
     
-    @CollectionOfElements(fetch = FetchType.EAGER)
+    @ElementCollection(fetch =FetchType.EAGER, targetClass = String.class)
     @JoinTable(
         name = "UP_PORTLET_PREF_VALUES",
         joinColumns = @JoinColumn(name = "PORTLET_PREF_ID")
     )
     @IndexColumn(name = "VALUE_ORDER")
-    @Type(type = "nullSafeText")
+    @Type(type = "nullSafeClob")
     @Column(name = "VALUE")
-    @Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Fetch(FetchMode.JOIN)
     private List<String> values = null;
     
     
@@ -126,6 +134,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
      * (non-Javadoc)
      * @see org.apache.pluto.container.PortletPreference#getName()
      */
+    @Override
     public String getName() {
         return this.name;
     }
@@ -134,6 +143,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
      * (non-Javadoc)
      * @see org.apache.pluto.container.PortletPreference#getValues()
      */
+    @Override
     public String[] getValues() {
         if (this.values == null) {
             return null;
@@ -146,6 +156,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
      * (non-Javadoc)
      * @see org.apache.pluto.container.PortletPreference#isReadOnly()
      */
+    @Override
     public boolean isReadOnly() {
         return this.readOnly;
     }
@@ -159,6 +170,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
      * (non-Javadoc)
      * @see org.apache.pluto.container.PortletPreference#setValues(java.lang.String[])
      */
+    @Override
     public void setValues(String[] values) {
         if (values == null) {
             this.values = null;
@@ -176,6 +188,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
      * (non-Javadoc)
      * @see org.apache.pluto.container.PortletPreference#clone()
      */
+    @Override
     public PortletPreference clone() {
         return new PortletPreferenceImpl(this);
     }

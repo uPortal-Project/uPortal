@@ -22,55 +22,71 @@ package org.jasig.portal.persondir.dao.jpa;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "UP_PERSON_ATTR")
-@GenericGenerator(name = "UP_PERSON_ATTR_GEN", strategy = "native", parameters = {
-        @Parameter(name = "sequence", value = "UP_PERSON_ATTR_SEQ"),
-        @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-        @Parameter(name = "column", value = "NEXT_UP_PERSON_ATTR_HI") })
-public class LocalAccountPersonAttributeImpl implements Serializable {
-    
+@SequenceGenerator(
+        name="UP_PERSON_ATTR_GEN",
+        sequenceName="UP_PERSON_ATTR_SEQ",
+        allocationSize=10
+    )
+@TableGenerator(
+        name="UP_PERSON_ATTR_GEN",
+        pkColumnValue="UP_PERSON_ATTR",
+        allocationSize=10
+    )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+class LocalAccountPersonAttributeImpl implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "UP_PERSON_ATTR_GEN")
-    private int id;
+    private final int id;
     
     @Column(name = "ATTR_NAME", nullable = false)
     private String name;
     
-    @CollectionOfElements(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(
         name = "UP_PERSON_ATTR_VALUES",
         joinColumns = @JoinColumn(name = "ATTR_ID")
     )
     @IndexColumn(name = "VALUE_ORDER")
-    @Type(type = "nullSafeText")
+    @Type(type = "nullSafeString")
     @Column(name = "ATTR_VALUE")
-    @Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Fetch(FetchMode.JOIN)
     private List<String> values = null;
 
     @SuppressWarnings("unused")
     private LocalAccountPersonAttributeImpl() { 
+        this.id = -1;
     }
     
     public LocalAccountPersonAttributeImpl(String name, List<String> values) {
+        this.id = -1;
         this.name = name;
         this.values = values;
     }

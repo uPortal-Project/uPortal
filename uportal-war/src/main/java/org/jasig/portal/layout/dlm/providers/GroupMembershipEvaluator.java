@@ -19,12 +19,14 @@
 
 package org.jasig.portal.layout.dlm.providers;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
@@ -50,6 +52,8 @@ import org.jasig.portal.services.GroupService;
  * @since uPortal 2.5
  */
 @Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class GroupMembershipEvaluator extends Evaluator
 {
     private static final int MEMBER_OF_MODE = 0;
@@ -122,7 +126,8 @@ public class GroupMembershipEvaluator extends Evaluator
         }
     }
 
-      public boolean isApplicable(IPerson p)
+      @Override
+    public boolean isApplicable(IPerson p)
       {
           if (groupKey == null || p == null)
               return false;

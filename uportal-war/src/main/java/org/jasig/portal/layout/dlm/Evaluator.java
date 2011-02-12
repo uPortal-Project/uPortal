@@ -19,16 +19,21 @@
 
 package org.jasig.portal.layout.dlm;
 
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.dom4j.Element;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.security.IPerson;
 
 /**
@@ -37,16 +42,20 @@ import org.jasig.portal.security.IPerson;
  */
 @Entity
 @Table(name = "UP_DLM_EVALUATOR")
-@GenericGenerator(
-        name = "UP_DLM_EVALUATOR_GEN", 
-        strategy = "native", 
-        parameters = {
-            @Parameter(name = "sequence", value = "UP_DLM_EVALUATOR_SEQ"),
-            @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-            @Parameter(name = "column", value = "NEXT_UP_DLM_EVALUATOR_HI")
-        }
+@SequenceGenerator(
+        name="UP_DLM_EVALUATOR_GEN",
+        sequenceName="UP_DLM_EVALUATOR_SEQ",
+        allocationSize=1
     )
+@TableGenerator(
+        name="UP_DLM_EVALUATOR_GEN",
+        pkColumnValue="UP_DLM_EVALUATOR",
+        allocationSize=1
+    )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="EVALUATOR_TYPE")
 public abstract class Evaluator {
     
     public static final String RCS_ID = "@(#) $Header$";
@@ -56,6 +65,7 @@ public abstract class Evaluator {
     @SuppressWarnings("unused")
     @Id
     @GeneratedValue(generator = "UP_DLM_EVALUATOR_GEN")
+    @Column(name = "EVALUATOR_ID")
     private final long evaluatorId;
         
     public Evaluator() {

@@ -19,16 +19,14 @@
 
 package org.jasig.portal.dao.usertype;
 
-import org.hibernate.Hibernate;
+import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
 
 /**
- * Version of BaseEscapedStringType that stores its data in a CLOB.
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class EscapedStringType extends BaseEscapedStringType {
     public EscapedStringType() {
-        super(Hibernate.STRING);
+        super(VarcharTypeDescriptor.INSTANCE);
     }
 }

@@ -57,6 +57,7 @@ import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.container.EventImpl;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -70,8 +71,11 @@ import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.jasig.portal.xml.XmlUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -81,6 +85,8 @@ import org.springframework.stereotype.Service;
 @Service("eventCoordinationService")
 public class PortletEventCoordinatationService implements IPortletEventCoordinationService {
     private static final String PORTLET_EVENT_QUEUE = PortletEventCoordinatationService.class.getName() + ".PORTLET_EVENT_QUEUE";
+    
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
@@ -158,6 +164,11 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     
     @Override
     public void resolveQueueEvents(PortletEventQueue resolvedEvents, List<Event> events, HttpServletRequest request) {
+        //Skip all processing if there are no new events.
+        if (events.isEmpty()) {
+            return;
+        }
+        
         //Get all the portlets the user is subscribed to
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
@@ -169,7 +180,15 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
             final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, channelSubscribeId);
             final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
             
-            final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
+            final PortletDefinition portletDescriptor;
+            try {
+                portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
+            }
+            catch (DataRetrievalFailureException e) {
+                final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+                this.logger.warn("Failed to retrieve portlet descriptor for: " + portletDefinition.getFName() + " Event handling for this portlet will be skipped." , e);
+                continue;
+            }
             
             final List<? extends EventDefinitionReference> supportedProcessingEvents = portletDescriptor.getSupportedProcessingEvents();
             //Skip portlets that don't handle any events

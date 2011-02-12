@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaInterceptor;
-import org.springframework.test.annotation.AbstractAnnotationAwareTransactionalTests;
 
 /**
  * Base class for JPA based unit tests that want TX and entity manager support
@@ -35,23 +35,19 @@ import org.springframework.test.annotation.AbstractAnnotationAwareTransactionalT
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class BaseJpaDaoTest extends AbstractAnnotationAwareTransactionalTests {
+public abstract class BaseJpaDaoTest {
     protected JpaInterceptor jpaInterceptor;
-
-    public BaseJpaDaoTest() {
-        super();
-    }
-
-    public BaseJpaDaoTest(String name) {
-        super(name);
-    }
     
+    @Autowired
     public final void setJpaInterceptor(JpaInterceptor jpaInterceptor) {
         this.jpaInterceptor = jpaInterceptor;
     }
 
+    /**
+     * Executes the callback inside of a {@link JpaInterceptor}.
+     */
     @SuppressWarnings("unchecked")
-    public <T> T execute(final Callable<T> callable) {
+    public final <T> T execute(final Callable<T> callable) {
         try {
             return (T)this.jpaInterceptor.invoke(new MethodInvocation() {
                 @Override
@@ -88,7 +84,11 @@ public abstract class BaseJpaDaoTest extends AbstractAnnotationAwareTransactiona
         }
     }
 
-    public <T> T executeInThread(String name, final Callable<T> callable) {
+    /**
+     * Executes the callback in a new thread inside of a {@link JpaInterceptor}. Waits for the
+     * Thread to return.
+     */
+    public final <T> T executeInThread(String name, final Callable<T> callable) {
         final List<RuntimeException> exception = new LinkedList<RuntimeException>();
         final List<T> retVal = new LinkedList<T>();
         

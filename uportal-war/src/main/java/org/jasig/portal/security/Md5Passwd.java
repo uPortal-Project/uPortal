@@ -27,7 +27,6 @@ import java.sql.SQLException;
 
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
-import org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl;
 import org.jasig.portal.spring.locator.LocalAccountDaoLocator;
 import org.jasig.portal.spring.locator.PortalPasswordServiceLocator;
 
@@ -59,9 +58,9 @@ public class Md5Passwd {
         if (!create) {
             System.out.println("No such user: " + user);
             return;
-        } else {
-            account = new LocalAccountPersonImpl();
         }
+        
+        account = accountDao.createPerson(user);
     }
 
     String spass;

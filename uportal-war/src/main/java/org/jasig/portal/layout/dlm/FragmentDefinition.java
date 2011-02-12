@@ -22,6 +22,7 @@ package org.jasig.portal.layout.dlm;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,7 +37,8 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.IndexColumn;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
@@ -50,6 +52,8 @@ import org.w3c.dom.NodeList;
  * @since uPortal 2.5
  */
 @Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class FragmentDefinition extends Evaluator
 {
     
@@ -77,10 +81,10 @@ public class FragmentDefinition extends Evaluator
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(targetEntity = Evaluator.class, cascade=CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)
     @IndexColumn(name = "EVAL_INDEX")
     @JoinTable(name = "UP_DLM_EVALUATOR_PAREN", joinColumns = @JoinColumn(name = "PAREN_EVAL_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_EVAL_ID"))
-    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<Evaluator> evaluators = null;
 
     /* These variables are bound to a uP userId later in the life cycle, not managed by hibernate */
@@ -313,6 +317,7 @@ public class FragmentDefinition extends Evaluator
         }
     }
 
+    @Override
     public boolean isApplicable( IPerson p )
     {
         boolean isApplicable = false;

@@ -53,13 +53,6 @@ public interface IPermissionOwner {
 	public Long getId();
 
 	/**
-	 * Set the unique numerical identifier for this permission owner.
-	 * 
-	 * @param id
-	 */
-	public void setId(Long id);
-
-	/**
 	 * Get the unique, unchanging functional name for this permission owner.
 	 * This identifier should not change over time and should consist of 
 	 * a short, meaningful string.

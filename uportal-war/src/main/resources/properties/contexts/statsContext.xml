@@ -144,7 +144,7 @@
 
     <!-- Adapater that can inject a cacheProvider into the hibernate entity manager -->
     <bean id="statsJpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
-        <property name="databasePlatform" value="${hibernate.dialect}" />
+        <!-- <property name="databasePlatform" value="${hibernate.d ialect}" /> -->
         <property name="cacheProvider" ref="hibernateCacheProvider" />
     </bean>
 
@@ -163,6 +163,5 @@
     <bean name="statsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
         <property name="configuration" value="classpath:/properties/db/stats/hibernate.cfg.xml" />
         <property name="dataSource" ref="StatsDB" />
-        <property name="dialect" value="${hibernate.dialect}" />
     </bean>
 </beans>

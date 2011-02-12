@@ -24,8 +24,14 @@ import java.sql.Connection;
 
 import javax.sql.DataSource;
 
-import org.hibernate.cfg.AnnotationConfiguration;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.resolver.DialectFactory;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
@@ -36,6 +42,8 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @version $Revision$
  */
 public class DataSourceSchemaExport implements ISchemaExport {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private Resource configuration;
     private DataSource dataSource;
     private String dialect;
@@ -84,8 +92,9 @@ public class DataSourceSchemaExport implements ISchemaExport {
      * @param drop If existing database objects should be dropped before creating new objects
      * @param outputFile Optional file to write out the SQL to.
      */
+    @Override
     public void hbm2ddl(boolean export, boolean create, boolean drop, String outputFile) {
-        final AnnotationConfiguration configuration = new AnnotationConfiguration();
+        final Configuration configuration = new Configuration();
         try {
             configuration.configure(this.configuration.getURL());
         }
@@ -93,11 +102,21 @@ public class DataSourceSchemaExport implements ISchemaExport {
             throw new IllegalArgumentException("Could not load configuration file '" + this.configuration + "'", e);
         }
         
-        configuration.setProperty("hibernate.dialect", this.dialect);
-        configuration.buildMappings();
         
         final Connection connection = DataSourceUtils.getConnection(this.dataSource);
         try {
+            if (StringUtils.isNotEmpty(this.dialect)) {
+                configuration.setProperty(Environment.DIALECT, this.dialect);
+            }
+            else {
+                final Dialect dialect = DialectFactory.buildDialect(configuration.getProperties(), connection);
+                final String dialectName = dialect.getClass().getName();
+                configuration.setProperty(Environment.DIALECT, dialectName);
+                this.logger.info("Resolved Hibernate Dialect: {}", dialectName);
+            }
+            
+            configuration.buildMappings();
+            
             final SchemaExport exporter = new SchemaExport(configuration, connection);
             exporter.setFormat(false);
             if (outputFile != null) {

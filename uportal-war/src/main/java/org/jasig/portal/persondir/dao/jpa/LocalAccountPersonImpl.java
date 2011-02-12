@@ -21,6 +21,7 @@ package org.jasig.portal.persondir.dao.jpa;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -29,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,30 +39,41 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.TableGenerator;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 
 @Entity
 @Table(name = "UP_PERSON_DIR")
-@GenericGenerator(name = "UP_PERSON_DIR_GEN", strategy = "native", parameters = {
-        @Parameter(name = "sequence", value = "UP_PERSON_DIR_SEQ"),
-        @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-        @Parameter(name = "column", value = "NEXT_UP_PERSON_DIR_HI") })
-public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
-    
+@SequenceGenerator(
+        name="UP_PERSON_DIR_GEN",
+        sequenceName="UP_PERSON_DIR_SEQ",
+        allocationSize=5
+    )
+@TableGenerator(
+        name="UP_PERSON_DIR_GEN",
+        pkColumnValue="UP_PERSON_DIR",
+        allocationSize=5
+    )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "UP_PERSON_DIR_GEN")
     @Column(name = "USER_DIR_ID")
     private final long id;
     
-    @Column(name = "USER_NAME", length = 35, nullable = false)
+    @Column(name = "USER_NAME", length = 35, nullable = false, unique = true)
     private String name;
     
     @Column(name = "ENCRPTD_PSWD", length = 256)
@@ -69,15 +82,23 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     @Column(name = "LST_PSWD_CGH_DT")
     private Date lastPasswordChange;
 
-    @OneToMany(targetEntity = LocalAccountPersonAttributeImpl.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = LocalAccountPersonAttributeImpl.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "USER_DIR_ID", nullable = false)
-    @Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Fetch(FetchMode.JOIN)
     private Collection<LocalAccountPersonAttributeImpl> attributes = new ArrayList<LocalAccountPersonAttributeImpl>(0);
 
-    public LocalAccountPersonImpl() {
+    @SuppressWarnings("unused")
+    private LocalAccountPersonImpl() {
         this.id = -1;
     }
     
+    public LocalAccountPersonImpl(String name) {
+        this.id = -1;
+        this.name = name;
+    }
+    
+    @Override
     public long getId() {
         return id;
     }
@@ -85,6 +106,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getName()
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -92,6 +114,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#setName(java.lang.String)
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -99,6 +122,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getPassword()
      */
+    @Override
     public String getPassword() {
         return password;
     }
@@ -106,6 +130,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#setPassword(java.lang.String)
      */
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
@@ -113,6 +138,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getLastPasswordChange()
      */
+    @Override
     public Date getLastPasswordChange() {
         return lastPasswordChange;
     }
@@ -120,6 +146,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#setLastPasswordChange(java.util.Date)
      */
+    @Override
     public void setLastPasswordChange(Date lastPasswordChange) {
         this.lastPasswordChange = lastPasswordChange;
     }
@@ -127,6 +154,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getAttributeValue(java.lang.String)
      */
+    @Override
     public Object getAttributeValue(String name) {
         final List<Object> values = this.getAttributeValues(name);
         if (values != null && values.size() > 0) {
@@ -139,6 +167,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getAttributeValues(java.lang.String)
      */
+    @Override
     public List<Object> getAttributeValues(String name) {
         if (name == null) {
             throw new IllegalArgumentException("name cannot be null");
@@ -156,6 +185,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getAttributes()
      */
+    @Override
     public Map<String, List<Object>> getAttributes() {
         final Map<String, List<Object>> attributeMap = new LinkedHashMap<String, List<Object>>();
         
@@ -178,9 +208,16 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
         return Collections.unmodifiableMap(attributeMap);
     }
     
+    
+    @Override
+    public void setAttribute(String name, String... values) {
+        this.setAttribute(name, Arrays.asList(values));
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#setAttribute(java.lang.String, java.util.List)
      */
+    @Override
     public void setAttribute(String name, List<String> values) {
         for (LocalAccountPersonAttributeImpl attribute : attributes) {
             if (name.equals(attribute.getName())) {
@@ -206,6 +243,7 @@ public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#setAttributes(java.util.Map)
      */
+    @Override
     public void setAttributes(Map<String, List<String>> attributes) {
         //Tries to modify as many of the existing attributes in place to reduce DB churn in hibernate
         

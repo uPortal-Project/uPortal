@@ -18,8 +18,6 @@
  */
 package org.jasig.portal.portlet.dao;
 
-import java.util.Date;
-
 import javax.servlet.http.Cookie;
 
 import org.jasig.portal.portlet.om.IPortalCookie;
@@ -37,14 +35,14 @@ public interface IPortletCookieDao {
 	 * 
 	 * @return a brand new {@link IPortalCookie}
 	 */
-	public IPortalCookie createPortalCookie();
+	public IPortalCookie createPortalCookie(int maxAge);
 	
 	/**
 	 * 
 	 * @param portalCookie
 	 * @return
 	 */
-	public IPortalCookie updatePortalCookieExpiration(IPortalCookie portalCookie, Date expiration);
+	public IPortalCookie updatePortalCookieExpiration(IPortalCookie portalCookie, int maxAge);
 	
 	/**
 	 * 
@@ -52,22 +50,7 @@ public interface IPortletCookieDao {
 	 * @return the matching {@link IPortalCookie} with the same value, or null if doesn't exist
 	 */
 	public IPortalCookie getPortalCookie(String value);
-	
-	/**
-	 * Delete the specified {@link IPortalCookie}.
-	 * 
-	 * @param portalCookie
-	 */
-	public void deletePortalCookie(IPortalCookie portalCookie);
-	
-	/**
-	 * Add a {@link IPortletCookie} to the specified {@link IPortalCookie}.
-	 * 
-	 * @param portalCookie
-	 * @param cookie
-	 * @return
-	 */
-	public IPortalCookie storePortletCookie(IPortalCookie portalCookie, Cookie cookie);
+
 	/**
 	 * Update the {@link IPortletCookie} in the specified {@link IPortalCookie}.
 	 * 
@@ -75,15 +58,12 @@ public interface IPortletCookieDao {
 	 * @param cookie
 	 * @return the updated {@link IPortalCookie}
 	 */
-	public IPortalCookie updatePortletCookie(IPortalCookie portalCookie, Cookie cookie);
+	public IPortalCookie addOrUpdatePortletCookie(IPortalCookie portalCookie, Cookie cookie);
+	
 	
 	/**
-	 * Remove the {@link IPortletCookie} from the specified {@link IPortalCookie}.
-	 * 
-	 * @param portalCookie
-	 * @param cookie
-	 * @return the updated {@link IPortalCookie}
-	 */
-	public IPortalCookie deletePortletCookie(IPortalCookie portalCookie,Cookie cookie);
-	
+     * Intended for periodic execution, this method will delete all {@link IPortalCookie}s and {@link IPortletCookie}s
+     * from persistence that have expired.
+     */
+    public void purgeExpiredCookies();
 }

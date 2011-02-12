@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.dao.jpa;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +32,9 @@ import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
@@ -40,10 +43,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -57,21 +60,20 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
 @Entity
 @Table(
         name = "UP_PORTLET_ENT", 
-        uniqueConstraints = @UniqueConstraint(columnNames = { "CHANNEL_SUB_ID", "USER_ID" })
+        uniqueConstraints = @UniqueConstraint(name = "IDX_PORT_END__USR_CHAN_SUB",  columnNames = { "CHANNEL_SUB_ID", "USER_ID" })
     )
-@org.hibernate.annotations.Table(
-        appliesTo = "UP_PORTLET_ENT", 
-        indexes = @Index(name = "IDX_PORT_END__USR_CHAN_SUB", columnNames = { "CHANNEL_SUB_ID", "USER_ID" })
+@SequenceGenerator(
+        name="UP_PORTLET_ENT_GEN",
+        sequenceName="UP_PORTLET_ENT_SEQ",
+        allocationSize=10
     )
-@GenericGenerator(
-        name = "UP_PORTLET_ENT_GEN", 
-        strategy = "native", 
-        parameters = {
-            @Parameter(name = "sequence", value = "UP_PORTLET_ENT_SEQ"),
-            @Parameter(name = "table", value = "UP_JPA_UNIQUE_KEY"),
-            @Parameter(name = "column", value = "NEXT_UP_PORTLET_ENT_HI")
-        }
+@TableGenerator(
+        name="UP_PORTLET_ENT_GEN",
+        pkColumnValue="UP_PORTLET_ENT",
+        allocationSize=10
     )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortletEntityImpl implements IPortletEntity {
     //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
     @Id
@@ -90,9 +92,9 @@ class PortletEntityImpl implements IPortletEntity {
     @JoinColumn(name = "PORTLET_DEF_ID", nullable = false)
     private final IPortletDefinition portletDefinition;
 
-    @OneToOne(targetEntity = PortletPreferencesImpl.class, cascade = { CascadeType.ALL })
+    @OneToOne(targetEntity = PortletPreferencesImpl.class, cascade = { CascadeType.ALL }, orphanRemoval=true)
     @JoinColumn(name = "PORTLET_PREFS_ID", nullable = false)
-    @Cascade( { org.hibernate.annotations.CascadeType.DELETE_ORPHAN, org.hibernate.annotations.CascadeType.ALL })
+    @Fetch(FetchMode.JOIN)
     private IPortletPreferences portletPreferences = null;
     
 
@@ -139,6 +141,7 @@ class PortletEntityImpl implements IPortletEntity {
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletEntity#getPortletEntityId()
      */
+    @Override
     public IPortletEntityId getPortletEntityId() {
         return this.portletEntityId;
     }
@@ -146,17 +149,18 @@ class PortletEntityImpl implements IPortletEntity {
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletEntity#getPortletDefinitionId()
      */
+    @Override
     public IPortletDefinitionId getPortletDefinitionId() {
     	if (this.portletDefinition != null) {
             return this.portletDefinition.getPortletDefinitionId();
-    	} else {
-    		return null;
-    	}
+    	} 
+		return null;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletEntity#getChannelSubscribeId()
      */
+    @Override
     public String getChannelSubscribeId() {
         return this.channelSubscribeId;
     }
@@ -164,6 +168,7 @@ class PortletEntityImpl implements IPortletEntity {
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletEntity#getUserId()
      */
+    @Override
     public int getUserId() {
         return this.userId;
     }
@@ -171,6 +176,7 @@ class PortletEntityImpl implements IPortletEntity {
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletEntity#getPortletPreferences()
      */
+    @Override
     public IPortletPreferences getPortletPreferences() {
         return this.portletPreferences;
     }
@@ -178,6 +184,7 @@ class PortletEntityImpl implements IPortletEntity {
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletEntity#setPortletPreferences(org.jasig.portal.om.portlet.prefs.IPortletPreferences)
      */
+    @Override
     public void setPortletPreferences(IPortletPreferences portletPreferences) {
         Validate.notNull(portletPreferences, "portletPreferences can not be null");
         this.portletPreferences = portletPreferences;

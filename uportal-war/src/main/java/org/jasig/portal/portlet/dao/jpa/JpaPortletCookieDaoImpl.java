@@ -20,23 +20,28 @@ package org.jasig.portal.portlet.dao.jpa;
 
 import java.security.SecureRandom;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.Cookie;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,35 +53,48 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Qualifier("persistence")
-public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
-
+public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortletCookieDao {
+    private static final String FIND_COOKIE_BY_VALUE_CACHE_REGION = PortalCookieImpl.class.getName() + ".query.FIND_COOKIE_BY_VALUE";
+    
 	private final SecureRandom secureRandom = new SecureRandom();
 	private final Log log = LogFactory.getLog(this.getClass());
-	private int portalCookieLifetimeMinutes = 60;
-	private EntityManager entityManager;
-	
-	/**
-	 * @param entityManager the entityManager to set
-	 */
-	@PersistenceContext(unitName="uPortalPersistence")
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
-	/**
-	 * Default value is 60 minutes.
-	 * 
-	 * @return the portalCookieLifetimeMinutes
-	 */
-	public int getPortalCookieLifetimeMinutes() {
-		return portalCookieLifetimeMinutes;
-	}
-	/**
-	 * @param portalCookieLifetimeMinutes the portalCookieLifetimeMinutes to set
-	 */
-	public void setPortalCookieLifetimeMinutes(int portalCookieLifetimeMinutes) {
-		this.portalCookieLifetimeMinutes = portalCookieLifetimeMinutes;
-	}
 
+	private CriteriaQuery<PortalCookieImpl> findPortalCookieByValueQuery;
+	private CriteriaQuery<PortalCookieImpl> findExpiredPortalCookieQuery;
+    private ParameterExpression<String> valueParameter;
+    private ParameterExpression<Date> nowParameter;
+
+    @Override
+    protected void buildCriteriaQueries(CriteriaBuilder cb) {
+        this.valueParameter = cb.parameter(String.class, "value");
+        this.nowParameter = cb.parameter(Date.class, "now");
+        
+        this.findPortalCookieByValueQuery = this.buildFindPortalCookieByValueQuery(cb);
+        this.findExpiredPortalCookieQuery = this.buildFindExpiredPortalCookieQuery(cb);
+    }
+    
+    protected CriteriaQuery<PortalCookieImpl> buildFindPortalCookieByValueQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
+        final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
+        criteriaQuery.select(typeRoot);
+        criteriaQuery.where(
+            cb.equal(typeRoot.get(PortalCookieImpl_.value), this.valueParameter)
+        );
+        
+        return criteriaQuery;
+    }
+    
+    protected CriteriaQuery<PortalCookieImpl> buildFindExpiredPortalCookieQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
+        final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
+        criteriaQuery.select(typeRoot);
+        criteriaQuery.where(
+            cb.lessThanOrEqualTo(typeRoot.get(PortalCookieImpl_.expires), this.nowParameter)
+        );
+        
+        return criteriaQuery;
+    }
+	
 	/**
 	 * Generates a 40 character unique value.
 	 * @return
@@ -84,7 +102,7 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 	private String generateNewCookieId() {
 		final byte[] keyBytes = new byte[30];
 		this.secureRandom.nextBytes(keyBytes);
-		return new String(Base64.encodeBase64(keyBytes));
+		return Base64.encodeBase64URLSafeString(keyBytes);
 	}
 	
 	/* (non-Javadoc)
@@ -92,145 +110,74 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 	 */
 	@Override
 	@Transactional
-	public IPortalCookie createPortalCookie() {
-		final String uniqueId = generateNewCookieId();
-		Date expiration = DateUtils.addMinutes(new Date(), this.portalCookieLifetimeMinutes);
+	public IPortalCookie createPortalCookie(int maxAge) {
+	    //Make sure our unique ID doesn't already exist by really small random chance
+		String uniqueId;
+		do {
+		    uniqueId = generateNewCookieId();
+		} while (this.getPortalCookie(uniqueId) != null);
 		
-		IPortalCookie portalCookie = new PortalCookieImpl(uniqueId, expiration);
+		//Calculate the expiration date for the cookie
+		final Date expiration = DateUtils.addSeconds(new Date(), maxAge);
+		
+		//Create and persist
+		final IPortalCookie portalCookie = new PortalCookieImpl(uniqueId, expiration);
 		this.entityManager.persist(portalCookie);
 		
-		IPortalCookie result = getPortalCookie(uniqueId);
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.cookies.IPortalCookieDao#deletePortalCookie(org.jasig.portal.portlet.om.IPortalCookie)
-	 */
-	@Override
-	@Transactional
-	public void deletePortalCookie(IPortalCookie portalCookie) {
-		IPortalCookie persisted;
-		if(this.entityManager.contains(portalCookie)) {
-			persisted = portalCookie;
-		} else {
-			persisted = this.entityManager.merge(portalCookie);
-		}
-
-		this.entityManager.remove(persisted);
+		return portalCookie;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.cookies.IPortalCookieDao#getPortalCookie(java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public IPortalCookie getPortalCookie(String portalCookieValue) {
-		final Query query = this.entityManager.createQuery("from PortalCookieImpl portalCookie " +
-		        "where portalCookie.value = :portalCookieValue");
-		query.setParameter("portalCookieValue", portalCookieValue);
+	    final TypedQuery<PortalCookieImpl> query = this.createQuery(this.findPortalCookieByValueQuery, FIND_COOKIE_BY_VALUE_CACHE_REGION);
+	    
+		query.setParameter(this.valueParameter, portalCookieValue);
 		query.setMaxResults(1);
-		List<IPortalCookie> results = query.getResultList();
-		IPortalCookie cookie = DataAccessUtils.uniqueResult(results);
-		return cookie;
+        
+		final List<PortalCookieImpl> results = query.getResultList();
+		return DataAccessUtils.uniqueResult(results);
 	}
 
-	/**
-	 * Intended for periodic execution, this method will delete all {@link IPortalCookie}s
-	 * from persistence that have expired.
-	 * 
-	 * Uses Spring's {@link Scheduled} annotation with a 60 second fixedDelay.
-	 * 
-	 * @see Scheduled
-	 */
-	@Scheduled(fixedDelay=60000)
-	@SuppressWarnings("unchecked")
+    @Override
+    @Transactional
+    public IPortalCookie updatePortalCookieExpiration(IPortalCookie portalCookie, int maxAge) {
+        
+        //Calculate expiration date and update the portal cookie
+        Date expiration = DateUtils.addSeconds(new Date(), maxAge);
+        portalCookie.setExpires(expiration);
+        
+        this.entityManager.persist(portalCookie);
+        
+        return portalCookie;
+    }
+    
+	@Override
+	@Transactional
 	public void purgeExpiredCookies() {
-		Date now = new Date();
+		final Date now = new Date();
+
 		log.debug("begin portal cookie expiration");
-		final Query query = this.entityManager.createQuery("from PortalCookieImpl portalCookie " +
-        	"where portalCookie.expires <= :now");
-		query.setParameter("now", now);
-		List<IPortalCookie> cookies = query.getResultList();
-		log.debug("found " + cookies.size() + " portal cookies eligible for removal");
-		for(IPortalCookie cookie: cookies) {
-			this.entityManager.remove(cookie);
-		}
-		
-	}
+		//TODO Figure out a JPQL DELETE statement to do the purging instead of having to load every expird portal cookie from the DB first
+//		final Query deletePortalCookies = this.entityManager.createNamedQuery(PortalCookieImpl.UP_PORTAL_COOKIES__DELETE_EXPIRED);
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#deletePortletCookie(org.jasig.portal.portlet.om.IPortalCookie, javax.servlet.http.Cookie)
-	 */
-	@Override
-	public IPortalCookie deletePortletCookie(IPortalCookie portalCookie,
-			Cookie cookie) {
+		final TypedQuery<PortalCookieImpl> deletePortalCookies = this.entityManager.createQuery(this.findExpiredPortalCookieQuery);
+		deletePortalCookies.setParameter(this.nowParameter, now);
 		
-		IPortalCookie persisted;
-		if(this.entityManager.contains(portalCookie)) {
-			persisted = portalCookie;
-		} else {
-			persisted = this.entityManager.merge(portalCookie);
+		final List<PortalCookieImpl> resultList = deletePortalCookies.getResultList();
+		for (final PortalCookieImpl portalCookie : resultList) {
+		    this.entityManager.remove(portalCookie);
 		}
-
-		IPortletCookie persistedPortletCookie = null;
-		for(IPortletCookie p: persisted.getPortletCookies()) {
-			if(p.getName().equals(cookie.getName())) {
-				persistedPortletCookie = p;
-				break;
-			}
-		}
-		if(persistedPortletCookie != null) {
-			this.entityManager.remove(persistedPortletCookie);
-			persisted.getPortletCookies().remove(persistedPortletCookie);
-			
-			persisted = this.entityManager.merge(persisted);
-		}
-		return persisted;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#storePortletCookie(org.jasig.portal.portlet.om.IPortalCookie, javax.servlet.http.Cookie)
-	 */
-	@Override
-	@Transactional
-	public IPortalCookie storePortletCookie(IPortalCookie portalCookie,
-			Cookie cookie) {
-		IPortletCookie portletCookie = cloneCookieAsPortletCookie(cookie);
+		log.info("Purged " + resultList.size() + " portal cookies");
 		
-		IPortalCookie persisted;
-		if(this.entityManager.contains(portalCookie)) {
-			persisted = portalCookie;
-		} else {
-			persisted = this.entityManager.merge(portalCookie);
-		}
-		
-		this.entityManager.persist(portletCookie);
-		persisted.getPortletCookies().add(portletCookie);
-		
-		this.entityManager.persist(persisted);
-		return persisted;
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.dao.IPortletCookieDao#updatePortalCookieExpiration(org.jasig.portal.portlet.om.IPortalCookie, java.util.Date)
-	 */
-	@Override
-	@Transactional
-	public IPortalCookie updatePortalCookieExpiration(
-			IPortalCookie portalCookie, Date expiration) {
-		IPortalCookie persisted;
-		if(this.entityManager.contains(portalCookie)) {
-			persisted = portalCookie;
-		} else {
-			persisted = this.entityManager.merge(portalCookie);
-		}
-		
-		persisted.setExpires(expiration);
-		this.entityManager.persist(persisted);
-		return persisted;
+		log.debug("begin portlet cookie expiration");
+        final Query deletePortletCookies = this.entityManager.createNamedQuery(PortletCookieImpl.UP_PORTLET_COOKIES__DELETE_EXPIRED);
+        deletePortletCookies.setParameter("expirationDate", now);
+        
+        final int portletCookiesDeleted = deletePortletCookies.executeUpdate();
+        log.info("Purged " + portletCookiesDeleted + " portlet cookies");
 	}
 
 	/*
@@ -239,53 +186,37 @@ public class JpaPortletCookieDaoImpl implements IPortletCookieDao {
 	 */
 	@Override
 	@Transactional
-	public IPortalCookie updatePortletCookie(IPortalCookie portalCookie,
-			Cookie cookie) {
+	public IPortalCookie addOrUpdatePortletCookie(IPortalCookie portalCookie, Cookie cookie) {
+	    final Set<IPortletCookie> portletCookies = portalCookie.getPortletCookies();
+	    
+	    boolean found = false;
+	    final String name = cookie.getName();
+        for (final Iterator<IPortletCookie> portletCookieItr = portletCookies.iterator(); portletCookieItr.hasNext(); ) {
+	        final IPortletCookie portletCookie = portletCookieItr.next();
+	        if (name.equals(portletCookie.getName())) {
+	            //Delete cookies with a maxAge of 0
+	            if (cookie.getMaxAge() == 0) {
+	                portletCookieItr.remove();
+	                this.entityManager.remove(portletCookie);
+	            }
+	            else {
+	                portletCookie.updateFromCookie(cookie);
+	            }
+	            
+	            found = true;
+	            break;
+	        }
+        }
+        
+        if (!found) {
+            IPortletCookie newPortletCookie = new PortletCookieImpl(cookie);
+            portletCookies.add(newPortletCookie);
+        }
+        
+		this.entityManager.persist(portalCookie);
 		
-		IPortalCookie persisted;
-		if(this.entityManager.contains(portalCookie)) {
-			persisted = portalCookie;
-		} else {
-			persisted = this.entityManager.merge(portalCookie);
-		}
-		
-		
-		IPortletCookie persistedPortletCookie = null;
-		for(IPortletCookie p: persisted.getPortletCookies()) {
-			if(p.getName().equals(cookie.getName())) {
-				persistedPortletCookie = p;
-				break;
-			}
-		}
-		
-		if(persistedPortletCookie != null) {
-			persistedPortletCookie = this.entityManager.merge(persistedPortletCookie);
-			persisted.getPortletCookies().remove(persistedPortletCookie);
-			
-			IPortletCookie newPortletCookie = cloneCookieAsPortletCookie(cookie);
-			persisted.getPortletCookies().add(newPortletCookie);
-			
-			this.entityManager.persist(portalCookie);
-			this.entityManager.remove(persistedPortletCookie);
-		}
-		
-		return persisted;
+		return portalCookie;
 	}
-
-	/**
-	 * Helper method to convert a {@link Cookie} into a {@link IPortletCookie}.
-	 * 
-	 * @param cookie
-	 * @return
-	 */
-	protected IPortletCookie cloneCookieAsPortletCookie(Cookie cookie) {
-		PortletCookieImpl portletCookie = new PortletCookieImpl(cookie.getName());
-		portletCookie.setComment(cookie.getComment());
-		portletCookie.setDomain(cookie.getDomain());
-		portletCookie.setMaxAge(cookie.getMaxAge());
-		portletCookie.setPath(cookie.getPath());
-		portletCookie.setSecure(cookie.getSecure());
-		portletCookie.setValue(cookie.getValue());
-		return portletCookie;
-	}
+	
+	
 }

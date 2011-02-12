@@ -19,13 +19,17 @@
 
 package org.jasig.portal.portlet.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.springframework.dao.support.DataAccessUtils;
@@ -41,32 +45,50 @@ import org.springframework.transaction.annotation.Transactional;
  * @revision $Revision$
  */
 @Repository
-public class JpaPortletTypeDao implements IPortletTypeDao {
-
-    private static final String FIND_ALL_PORTLET_TYPE = "from PortletTypeImpl portlet";
-    private static final String FIND_PORTLET_TYPE_BY_NAME = "from PortletTypeImpl type where type.name = :name";
-    
+public class JpaPortletTypeDao extends BasePortalJpaDao implements IPortletTypeDao {
     private static final String FIND_PORTLET_TYPE_BY_NAME_CACHE_REGION = PortletTypeImpl.class.getName() + ".query.FIND_PORTLET_TYPE_BY_NAME";
     private static final String FIND_ALL_PORTLET_TYPE_CACHE_REGION = PortletTypeImpl.class.getName() + ".query.FIND_ALL_PORTLET_TYPE";
     
     
-    private EntityManager entityManager;
+    // Public API methods
     
-    /**
-     * @param entityManager the entityManager to set
-     */
-    @PersistenceContext(unitName="uPortalPersistence")
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    private CriteriaQuery<PortletTypeImpl> findAllTypesQuery;
+    private CriteriaQuery<PortletTypeImpl> findTypeByNameQuery;
+    private ParameterExpression<String> nameParameter;
+
+    @Override
+    protected void buildCriteriaQueries(CriteriaBuilder cb) {
+        this.nameParameter = cb.parameter(String.class, "name");
+        
+        this.findAllTypesQuery = this.buildFindAllTypesQuery(cb);
+        this.findTypeByNameQuery = this.buildFindTypeByNameQuery(cb);
     }
 
+    protected CriteriaQuery<PortletTypeImpl> buildFindAllTypesQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<PortletTypeImpl> criteriaQuery = cb.createQuery(PortletTypeImpl.class);
+        final Root<PortletTypeImpl> typeRoot = criteriaQuery.from(PortletTypeImpl.class);
+        criteriaQuery.select(typeRoot);
+        
+        return criteriaQuery;
+    }
+
+    protected CriteriaQuery<PortletTypeImpl> buildFindTypeByNameQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<PortletTypeImpl> criteriaQuery = cb.createQuery(PortletTypeImpl.class);
+        final Root<PortletTypeImpl> typeRoot = criteriaQuery.from(PortletTypeImpl.class);
+        criteriaQuery.select(typeRoot);
+        criteriaQuery.where(
+            cb.equal(typeRoot.get(PortletTypeImpl_.name), this.nameParameter)
+        );
+        
+        return criteriaQuery;
+    }
     
-    // Public API methods
     
     /*
      * (non-Javadoc)
      * @see org.jasig.portal.channel.dao.IChannelTypeDao#deleteChannelType(org.jasig.portal.channel.IChannelType)
      */
+    @Override
     @Transactional
 	public void deletePortletType(IPortletType type) {
         Validate.notNull(type, "definition can not be null");
@@ -84,6 +106,7 @@ public class JpaPortletTypeDao implements IPortletTypeDao {
     /* (non-Javadoc)
      * @see org.jasig.portal.channel.dao.IChannelTypeDao#createChannelType(java.lang.String, java.lang.String, java.lang.String)
      */
+    @Override
     @Transactional
     public IPortletType createPortletType(String name, String cpdUri) {
         Validate.notEmpty(name, "name can not be null");
@@ -100,7 +123,8 @@ public class JpaPortletTypeDao implements IPortletTypeDao {
      * (non-Javadoc)
      * @see org.jasig.portal.channel.dao.IChannelTypeDao#getChannelType(int)
      */
-	public IPortletType getPortletType(int id) {
+	@Override
+    public IPortletType getPortletType(int id) {
 		return this.entityManager.find(PortletTypeImpl.class, id);
 	}
 
@@ -108,37 +132,33 @@ public class JpaPortletTypeDao implements IPortletTypeDao {
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.dao.IChannelTypeDao#getChannelType(java.lang.String)
 	 */
-    @SuppressWarnings("unchecked")
+    @Override
 	public IPortletType getPortletType(String name) {
-        final Query query = this.entityManager.createQuery(FIND_PORTLET_TYPE_BY_NAME);
-        query.setParameter("name", name);
-        query.setHint("org.hibernate.cacheable", true);
-        query.setHint("org.hibernate.cacheRegion", FIND_PORTLET_TYPE_BY_NAME_CACHE_REGION);
+        final TypedQuery<PortletTypeImpl> query = this.createQuery(this.findTypeByNameQuery, FIND_PORTLET_TYPE_BY_NAME_CACHE_REGION);
+        query.setParameter(this.nameParameter, name);
         query.setMaxResults(1);
         
-        final List<IPortletType> channelTypes = query.getResultList();
-        IPortletType type = (IPortletType) DataAccessUtils.uniqueResult(channelTypes);
-		return type;
+        final List<PortletTypeImpl> channelTypes = query.getResultList();
+        return DataAccessUtils.uniqueResult(channelTypes);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.dao.IChannelTypeDao#getChannelTypes()
 	 */
-    @SuppressWarnings("unchecked")
+    @Override
 	public List<IPortletType> getPortletTypes() {
-        final Query query = this.entityManager.createQuery(FIND_ALL_PORTLET_TYPE);
-        query.setHint("org.hibernate.cacheable", true);
-        query.setHint("org.hibernate.cacheRegion", FIND_ALL_PORTLET_TYPE_CACHE_REGION);
-        final List<IPortletType> channelTypes = query.getResultList();
-		return channelTypes;
+        final TypedQuery<PortletTypeImpl> query = this.createQuery(this.findAllTypesQuery, FIND_ALL_PORTLET_TYPE_CACHE_REGION);
+        final List<PortletTypeImpl> portletTypes = query.getResultList();
+		return new ArrayList<IPortletType>(portletTypes);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.channel.dao.IChannelTypeDao#saveChannelType(org.jasig.portal.channel.IChannelType)
 	 */
-	@Transactional
+	@Override
+    @Transactional
 	public IPortletType updatePortletType(IPortletType type) {
         Validate.notNull(type, "type can not be null");
         

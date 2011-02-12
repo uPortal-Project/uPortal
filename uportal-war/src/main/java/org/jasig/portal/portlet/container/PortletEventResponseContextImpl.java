@@ -26,7 +26,7 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletEventResponseContext;
 import org.apache.pluto.container.driver.PortletContextService;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
-import org.jasig.portal.portlet.dao.IPortletCookieDao;
+import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalUrlProvider;
 
@@ -39,9 +39,9 @@ public class PortletEventResponseContextImpl extends PortletStateAwareResponseCo
     public PortletEventResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
             IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
-            PortletContextService portletContextService, IPortletCookieDao portletCookieDao) {
+            PortletContextService portletContextService, IPortletCookieService portletCookieService) {
 
-        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletContextService, portletCookieDao);
+        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletContextService, portletCookieService);
         
     }
 }

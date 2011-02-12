@@ -50,6 +50,8 @@ public interface ILocalAccountPerson {
 
     public Map<String, List<Object>> getAttributes();
 
+    public void setAttribute(String name, String... values);
+    
     public void setAttribute(String name, List<String> values);
 
     public void setAttributes(Map<String, List<String>> values);

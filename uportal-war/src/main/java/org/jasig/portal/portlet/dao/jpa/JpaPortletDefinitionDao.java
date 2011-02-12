@@ -19,13 +19,17 @@
 
 package org.jasig.portal.portlet.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -41,100 +45,154 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$
  */
 @Repository
-public class JpaPortletDefinitionDao implements IPortletDefinitionDao {
-
-    private static final String FIND_ALL_PORTLET_DEFS = "from PortletDefinitionImpl portlet";
-    private static final String FIND_PORTLET_DEF_BY_FNAME = 
-        "from PortletDefinitionImpl portlet where portlet.fname = :fname";
-    private static final String FIND_PORTLET_DEF_BY_NAME = 
-        "from PortletDefinitionImpl portlet where portlet.name = :name";
-    private static final String SEARCH_PORTLETS_EXACT_MATCH = 
-        "from PortletDefinitionImpl portlet where portlet.name = :name or portlet.title = :title";
-    private static final String SEARCH_PORTLETS_PARTIAL_MATCH = 
-        "from PortletDefinitionImpl portlet where portlet.name like :name or portlet.title like :title";
+public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortletDefinitionDao {
 
     private static final String FIND_ALL_PORTLET_DEFS_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_ALL_PORTLET_DEFS";
     private static final String FIND_PORTLET_DEF_BY_FNAME_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_FNAME";
     private static final String FIND_PORTLET_DEF_BY_NAME_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_NAME";
+    private static final String FIND_PORTLET_DEF_BY_NAME_OR_TITLE_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_NAME_OR_TITLE";
 
-    private EntityManager entityManager;
+    private CriteriaQuery<PortletDefinitionImpl> findAllPortletDefinitions;
+    private CriteriaQuery<PortletDefinitionImpl> findDefinitionByFnameQuery;
+    private CriteriaQuery<PortletDefinitionImpl> findDefinitionByNameQuery;
+    private CriteriaQuery<PortletDefinitionImpl> findDefinitionByNameOrTitleQuery;
+    private CriteriaQuery<PortletDefinitionImpl> searchDefinitionByNameOrTitleQuery;
+    private ParameterExpression<String> fnameParameter;
+    private ParameterExpression<String> nameParameter;
+    private ParameterExpression<String> titleParameter;
     
-    /**
-     * @return the entityManager
-     */
-    public EntityManager getEntityManager() {
-        return entityManager;
+    @Override
+    protected void buildCriteriaQueries(CriteriaBuilder cb) {
+        this.fnameParameter = cb.parameter(String.class, "fname");
+        this.nameParameter = cb.parameter(String.class, "name");
+        this.titleParameter = cb.parameter(String.class, "title");
+        
+        this.findAllPortletDefinitions = this.buildFindAllPortletDefinitions(cb);
+        this.findDefinitionByFnameQuery = this.buildFindDefinitionByFnameQuery(cb);
+        this.findDefinitionByNameQuery = this.buildFindDefinitionByNameQuery(cb);
+        this.findDefinitionByNameOrTitleQuery = this.buildFindDefinitionByNameOrTitleQuery(cb);
+        this.searchDefinitionByNameOrTitleQuery = this.buildSearchDefinitionByNameOrTitleQuery(cb);
     }
-    /**
-     * @param entityManager the entityManager to set
-     */
-    @PersistenceContext(unitName="uPortalPersistence")
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
 
+    protected CriteriaQuery<PortletDefinitionImpl> buildFindAllPortletDefinitions(final CriteriaBuilder cb) {
+        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
+        final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
+        criteriaQuery.select(definitionRoot);
+        
+        return criteriaQuery;
+    }
+    
+    protected CriteriaQuery<PortletDefinitionImpl> buildFindDefinitionByFnameQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
+        final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
+        criteriaQuery.select(definitionRoot);
+        criteriaQuery.where(
+            cb.equal(definitionRoot.get(PortletDefinitionImpl_.fname), this.fnameParameter)
+        );
+        
+        return criteriaQuery;
+    }
+    
+    protected CriteriaQuery<PortletDefinitionImpl> buildFindDefinitionByNameQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
+        final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
+        criteriaQuery.select(definitionRoot);
+        criteriaQuery.where(
+            cb.equal(definitionRoot.get(PortletDefinitionImpl_.name), this.nameParameter)
+        );
+        
+        return criteriaQuery;
+    }
+    
+    protected CriteriaQuery<PortletDefinitionImpl> buildFindDefinitionByNameOrTitleQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
+        final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
+        criteriaQuery.select(definitionRoot);
+        criteriaQuery.where(
+            cb.or(
+                cb.equal(definitionRoot.get(PortletDefinitionImpl_.name), this.nameParameter),
+                cb.equal(definitionRoot.get(PortletDefinitionImpl_.title), this.titleParameter)
+            )
+        );
+        
+        return criteriaQuery;
+    }
+    
+    protected CriteriaQuery<PortletDefinitionImpl> buildSearchDefinitionByNameOrTitleQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
+        final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
+        criteriaQuery.select(definitionRoot);
+        criteriaQuery.where(
+            cb.or(
+                cb.like(definitionRoot.get(PortletDefinitionImpl_.name), this.nameParameter),
+                cb.like(definitionRoot.get(PortletDefinitionImpl_.title), this.titleParameter)
+            )
+        );
+        
+        return criteriaQuery;
+    }
+
+    
+    @Override
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId) {
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
         
-        final long internalPortletDefinitionId = Long.parseLong(portletDefinitionId.getStringId());
+        final long internalPortletDefinitionId = getNativePortletDefinitionId(portletDefinitionId);
         final PortletDefinitionImpl portletDefinition = this.entityManager.find(PortletDefinitionImpl.class, internalPortletDefinitionId);
         
         return portletDefinition;
     }
     
+    @Override
     public IPortletDefinition getPortletDefinition(String portletDefinitionIdString) {
         Validate.notNull(portletDefinitionIdString, "portletDefinitionIdString can not be null");
         
-        final long internalPortletDefinitionId = Long.parseLong(portletDefinitionIdString);
+        final long internalPortletDefinitionId = getNativePortletDefinitionId(portletDefinitionIdString);
         final PortletDefinitionImpl portletDefinition = this.entityManager.find(PortletDefinitionImpl.class, internalPortletDefinitionId);
         
         return portletDefinition;
     }
 
-	public IPortletDefinition getPortletDefinitionByFname(String fname) {
-        final Query query = this.entityManager.createQuery(FIND_PORTLET_DEF_BY_FNAME);
-        query.setParameter("fname", fname);
-        query.setHint("org.hibernate.cacheable", true);
-        query.setHint("org.hibernate.cacheRegion", FIND_PORTLET_DEF_BY_FNAME_CACHE_REGION);
+	@Override
+    public IPortletDefinition getPortletDefinitionByFname(String fname) {
+	    final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findDefinitionByFnameQuery, FIND_PORTLET_DEF_BY_FNAME_CACHE_REGION);
+        query.setParameter(this.fnameParameter, fname);
         query.setMaxResults(1);
         
-        @SuppressWarnings("unchecked")
-        final List<IPortletDefinition> portletDefinitions = query.getResultList();
-        IPortletDefinition definition = (IPortletDefinition) DataAccessUtils.uniqueResult(portletDefinitions);
-		return definition;
+        final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
+        return DataAccessUtils.uniqueResult(portletDefinitions);
 	}
 
+    @Override
     public IPortletDefinition getPortletDefinitionByName(String name) {
-        final Query query = this.entityManager.createQuery(FIND_PORTLET_DEF_BY_NAME);
-        query.setParameter("name", name);
-        query.setHint("org.hibernate.cacheable", true);
-        query.setHint("org.hibernate.cacheRegion", FIND_PORTLET_DEF_BY_NAME_CACHE_REGION);
+        final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findDefinitionByNameQuery, FIND_PORTLET_DEF_BY_NAME_CACHE_REGION);
+        query.setParameter(this.nameParameter, name);
         query.setMaxResults(1);
         
-        @SuppressWarnings("unchecked")
-        final List<IPortletDefinition> portletDefinitions = query.getResultList();
-        IPortletDefinition definition = (IPortletDefinition) DataAccessUtils.uniqueResult(portletDefinitions);
-		return definition;
+        final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
+        return DataAccessUtils.uniqueResult(portletDefinitions);
     }
     
+    @Override
     public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial) {
-    	String queryString = allowPartial ? SEARCH_PORTLETS_PARTIAL_MATCH : SEARCH_PORTLETS_EXACT_MATCH;
-    	term = term.toUpperCase();
-    	if (allowPartial) {
-    		term = "%".concat(term).concat("%");
-    	}
-        final Query query = this.entityManager.createQuery(queryString);
+        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery;
+        if (allowPartial) {
+            criteriaQuery = this.searchDefinitionByNameOrTitleQuery;
+            term = "%" + term.toUpperCase() + "%";
+        }
+        else {
+            criteriaQuery = this.findDefinitionByNameOrTitleQuery;
+        }
+        
+        final TypedQuery<PortletDefinitionImpl> query = this.createQuery(criteriaQuery, FIND_PORTLET_DEF_BY_NAME_OR_TITLE_CACHE_REGION);
         query.setParameter("name", term);
         query.setParameter("title", term);
-//        query.setHint("org.hibernate.cacheable", true);
-//        query.setHint("org.hibernate.cacheRegion", FIND_PORTLET_DEF_BY_NAME_CACHE_REGION);
         
-        @SuppressWarnings("unchecked")
-		final List<IPortletDefinition> portletDefinitions = query.getResultList();
-		return portletDefinitions;
+        final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
+		return new ArrayList<IPortletDefinition>(portletDefinitions);
     }
 
+    @Override
     @Transactional
 	public void deletePortletDefinition(IPortletDefinition definition) {
         Validate.notNull(definition, "definition can not be null");
@@ -150,14 +208,12 @@ public class JpaPortletDefinitionDao implements IPortletDefinitionDao {
         this.entityManager.remove(persistentPortletDefinition);
 	}
 
-	public List<IPortletDefinition> getPortletDefinitions() {
-        final Query query = this.entityManager.createQuery(FIND_ALL_PORTLET_DEFS);
-        query.setHint("org.hibernate.cacheable", true);
-        query.setHint("org.hibernate.cacheRegion", FIND_ALL_PORTLET_DEFS_CACHE_REGION);
+	@Override
+    public List<IPortletDefinition> getPortletDefinitions() {
+	    final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findAllPortletDefinitions, FIND_ALL_PORTLET_DEFS_CACHE_REGION);
         
-        @SuppressWarnings("unchecked")
-        final List<IPortletDefinition> portletDefinitions = query.getResultList();
-		return portletDefinitions;
+        final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
+        return new ArrayList<IPortletDefinition>(portletDefinitions);
 	}
 	
     @Override
@@ -186,5 +242,12 @@ public class JpaPortletDefinitionDao implements IPortletDefinitionDao {
         
         this.entityManager.persist(portletDefinition);
         return portletDefinition;
+    }
+
+    protected long getNativePortletDefinitionId(IPortletDefinitionId portletDefinitionId) {
+        return Long.parseLong(portletDefinitionId.getStringId());
+    }
+    protected long getNativePortletDefinitionId(String portletDefinitionId) {
+        return Long.parseLong(portletDefinitionId);
     }
 }

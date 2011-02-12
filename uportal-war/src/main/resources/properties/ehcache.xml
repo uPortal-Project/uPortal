@@ -232,58 +232,28 @@
         
 
     <!-- 
-     | Caches ChannelType objects
+     | Caches PortletType objects
      | - 1 x channel type
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl"
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
-     | Query cache for ChannelType
+     | Query cache for PortletType
      | - 1 x channel type
      +-->
-    <cache name="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl.query.FIND_CHAN_TYPE_BY_NAME"
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl.query.FIND_PORTLET_TYPE_BY_NAME"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
-     | Query cache for ChannelType
+     | Query cache for PortletType
      | - unique query that gets all channel types
      +-->
-    <cache name="org.jasig.portal.channel.dao.jpa.ChannelTypeImpl.query.FIND_ALL_CHAN_TYPE"
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl.query.FIND_ALL_PORTLET_TYPE"
         eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
-    <!-- 
-     | Caches ChannelDefinition objects
-     | - 1 x channel definition
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Query cache for ChannelDefinition
-     | - unique query, no parameters
-     +-->
-    <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl.query.FIND_ALL_CHANNEL_DEFS"
-        eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Query cache for ChannelDefinition
-     | - 1 x channel definition
-     +-->
-    <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl.query.FIND_CHANNEL_DEF_BY_FNAME"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Query cache for ChannelDefinition
-     | - 1 x channel definition search
-     +-->
-    <cache name="org.jasig.portal.channel.dao.jpa.ChannelDefinitionImpl.query.FIND_CHANNEL_DEF_BY_NAME"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
     <!-- 
      | Caches PortletDefinitionImpl objects
      | - 1 x published portlet

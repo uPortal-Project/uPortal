@@ -25,7 +25,7 @@
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.jasig.portal.portlet.dao.jpa">
-    <typedef name="nullSafeText" class="org.jasig.portal.dao.usertype.EscapedTextType" />
+    <typedef name="nullSafeClob" class="org.jasig.portal.dao.usertype.EscapedClobType" />
     <typedef name="nullSafeString" class="org.jasig.portal.dao.usertype.EscapedStringType" />
     <typedef name="fname" class="org.jasig.portal.dao.usertype.FunctionalNameType" />
 </hibernate-mapping> 

@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.hibernate.MappingException;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Mappings;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Index;
@@ -45,16 +47,19 @@ import org.xml.sax.SAXException;
  * @version $Revision$
  */
 public class TableXmlHandler extends BaseDbXmlHandler implements ITableDataProvider {
+    private final Mappings mappings = new Configuration().createMappings();
     private final Dialect dialect;
     
     public TableXmlHandler(Dialect dialect) {
         this.dialect = dialect;
     }
     
+    @Override
     public Map<String, Table> getTables() {
         return this.tables;
     }
     
+    @Override
     public Map<String, Map<String, Integer>> getTableColumnTypes() {
         return tableColumnTypes;
     }
@@ -141,7 +146,7 @@ public class TableXmlHandler extends BaseDbXmlHandler implements ITableDataProvi
             
             final String hibType = this.getHibernateType(sqlType);
 
-            final SimpleValue value = new SimpleValue(this.currentTable);
+            final SimpleValue value = new SimpleValue(this.mappings, this.currentTable);
             value.setTypeName(hibType);
             
             this.currentColumn.setValue(value);

@@ -436,12 +436,13 @@ public class PermissionsRESTController {
             IPermissionActivity activity = permissionOwnerDao.getPermissionActivity(permission.getOwner(), permission.getActivity());
             if (activity != null) {
                 perm.setActivityName(activity.getName());
-            }
-            IPermissionTargetProvider targetProvider = targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey());
-            if (targetProvider != null) {
-                IPermissionTarget target = targetProvider.getTarget(permission.getIdentifier());
-                if (target != null) {
-                    perm.setTargetName(target.getName());
+            
+                IPermissionTargetProvider targetProvider = targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey());
+                if (targetProvider != null) {
+                    IPermissionTarget target = targetProvider.getTarget(permission.getIdentifier());
+                    if (target != null) {
+                        perm.setTargetName(target.getName());
+                    }
                 }
             }
             

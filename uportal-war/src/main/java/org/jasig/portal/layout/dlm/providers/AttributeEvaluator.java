@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout.dlm.providers;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -27,7 +28,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.security.IPerson;
@@ -37,6 +39,8 @@ import org.jasig.portal.security.IPerson;
  * @since uPortal 2.5
  */
 @Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AttributeEvaluator
     extends Evaluator
 {
@@ -111,6 +115,7 @@ public class AttributeEvaluator
         this.value = value;
     }
     
+    @Override
     public boolean isApplicable( IPerson p )
     {
         String attrib = (String) p.getAttribute( name );

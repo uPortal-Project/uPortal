@@ -57,7 +57,6 @@
 
     <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="generateDdl" value="true" />
-        <property name="databasePlatform" value="${hibernate.dialect}" />
     </bean>
     
     <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">

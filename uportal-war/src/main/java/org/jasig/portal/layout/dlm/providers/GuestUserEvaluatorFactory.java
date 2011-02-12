@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout.dlm.providers;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
@@ -27,7 +28,8 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
-
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
@@ -42,6 +44,8 @@ import org.w3c.dom.Node;
  * @since uPortal 2.5
  */
 @Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class GuestUserEvaluatorFactory extends Evaluator implements EvaluatorFactory {
     
     public static final String RCS_ID = "@(#) $Header$";
@@ -49,10 +53,12 @@ public class GuestUserEvaluatorFactory extends Evaluator implements EvaluatorFac
     @Transient
     private final Log log = LogFactory.getLog(getClass());
 
+    @Override
     public Evaluator getEvaluator( Node audience )
     {
         return this;
     }
+    @Override
     public boolean isApplicable( IPerson p )
     {
         if (log.isDebugEnabled()) {
