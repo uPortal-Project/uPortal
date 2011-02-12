@@ -84,9 +84,29 @@
                 
                 <!--header-->
                 <header>
-                    <xsl:for-each select="child::folder[@type='header']">
-                        <xsl:copy-of select=".//channel"/>
-                    </xsl:for-each>
+                    <xsl:choose>
+        				<xsl:when test="$userLayoutRoot = 'root'">
+        					<!-- BEGIN display channel-headers for each channel visible on the page -->
+           					<xsl:for-each select="child::folder[@type='header']/descendant::channel">
+        						<channel-header ID="{@ID}"/>
+      						</xsl:for-each>
+      						<xsl:for-each select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
+        						<channel-header ID="{@ID}"/>
+      						</xsl:for-each>
+      						<xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
+        						<channel-header ID="{@ID}"/>
+      						</xsl:for-each>
+      
+      						<xsl:for-each select="child::folder[@type='header']">
+          						<xsl:copy-of select=".//channel"/>
+      						</xsl:for-each> 
+      						<!-- END display channel-headers for each channel visible on the page -->  
+        				</xsl:when>
+      					<xsl:otherwise>
+      						<!-- display only focused channel-header -->
+      						<channel-header ID="{$userLayoutRoot}"/>
+      					</xsl:otherwise>  
+     				</xsl:choose>
                 </header>
                 
                 <!--mobile navigation-->
