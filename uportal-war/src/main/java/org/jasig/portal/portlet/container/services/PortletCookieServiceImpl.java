@@ -19,12 +19,17 @@
 
 package org.jasig.portal.portlet.container.services;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
@@ -32,6 +37,7 @@ import org.jasig.portal.portlet.om.IPortletCookie;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
 /**
  * @author Eric Dalquist
@@ -40,6 +46,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class PortletCookieServiceImpl implements IPortletCookieService {
     
+	private static final String SESSION_ATTRIBUTE__SESSION_ONLY_COOKIE_MAP = PortletCookieServiceImpl.class.getName() + ".SESSION_ONLY_COOKIE_MAP";
+	
     private IPortletCookieDao portletCookieDao;
     
     private String cookieName = DEFAULT_PORTAL_COOKIE_NAME;
@@ -47,7 +55,6 @@ public class PortletCookieServiceImpl implements IPortletCookieService {
     private String domain = null;
     private String path = null;
     private int maxAge = (int)TimeUnit.DAYS.toSeconds(365);
-    private boolean secure = true;
     
     @Autowired
     public void setPortletCookieDao(IPortletCookieDao portletCookieDao) {
@@ -60,12 +67,6 @@ public class PortletCookieServiceImpl implements IPortletCookieService {
     public void setMaxAge(int maxAge) {
         this.maxAge = maxAge;
     }
-    /**
-     * @param secure If the cookie should be set with the secure flag. Defaults to false.
-     */
-    public void setSecure(boolean secure) {
-        this.secure = secure;
-    }
 
    @Override
     public void updatePortalCookie(HttpServletRequest request, HttpServletResponse response) {
@@ -73,7 +74,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService {
         final IPortalCookie portalCookie = this.getOrCreatePortalCookie(request);
         
         //Create the browser cookie
-        final Cookie cookie = this.createCookie(portalCookie);
+        final Cookie cookie = this.createCookie(portalCookie, request.isSecure());
         
         //Update the expiration date of the portal cookie stored in the DB
         this.portletCookieDao.updatePortalCookieExpiration(portalCookie, cookie.getMaxAge());
@@ -92,17 +93,28 @@ public class PortletCookieServiceImpl implements IPortletCookieService {
         
         //Get cookies that have been set by portlets
         final IPortalCookie portalCookie = this.getPortalCookie(request);
-        final Set<IPortletCookie> portletCookies = portalCookie.getPortletCookies();
+        Set<IPortletCookie> portletCookies = Collections.emptySet();
+        if(portalCookie != null) {
+        	portletCookies = portalCookie.getPortletCookies();
+        }
+        
+        // finally get portlet cookies from session (all maxAge -1)
+        Map<String, Cookie> sessionOnlyPortletCookieMap = getSessionOnlyPortletCookieMap(request);
+        Collection<Cookie> sessionOnlyCookies = sessionOnlyPortletCookieMap.values();
         
         //Merge into a single array
-        final Cookie[] cookies = new Cookie[servletCookies.length + portletCookies.size()];
+        final Cookie[] cookies = new Cookie[servletCookies.length + portletCookies.size() + sessionOnlyCookies.size()];
         System.arraycopy(servletCookies, 0, cookies, 0, servletCookies.length);
 
         int cookieIdx = servletCookies.length;
         for (final IPortletCookie portletCookie : portletCookies) {
             final Cookie cookie = portletCookie.toCookie(); 
-            cookies[cookieIdx] = cookie;
+            cookies[cookieIdx++] = cookie;
         }
+        for(Cookie sessionOnlyCookie: sessionOnlyCookies) {
+        	cookies[cookieIdx++] = sessionOnlyCookie;
+        }
+       
         
         return cookies;
     }
@@ -110,16 +122,50 @@ public class PortletCookieServiceImpl implements IPortletCookieService {
     @Override
     public void addCookie(HttpServletRequest request, IPortletWindowId portletWindowId, Cookie cookie) {
         final IPortalCookie portalCookie = this.getOrCreatePortalCookie(request);
-        this.portletCookieDao.addOrUpdatePortletCookie(portalCookie, cookie);
+        if(cookie.getMaxAge() == -1) {
+        	// persist only in the session
+            Map<String, Cookie> sessionOnlyPortletCookies = getSessionOnlyPortletCookieMap(request);
+            sessionOnlyPortletCookies.put(cookie.getName(), cookie);
+            
+        } else {
+        	this.portletCookieDao.addOrUpdatePortletCookie(portalCookie, cookie);
+        }
+        
     }
     
-    protected Cookie createCookie(IPortalCookie portalCookie) {
+    /**
+     * Get the {@link Map} of {@link Cookie}s stored in the {@link HttpSession} specifically
+     * used for storing {@link Cookie}s with a maxAge equal to -1.
+     * Will create the map if it doesn't yet exist.
+     * 
+     * @param request
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	protected Map<String, Cookie> getSessionOnlyPortletCookieMap(final HttpServletRequest request) {
+    	final HttpSession session = request.getSession();
+        synchronized(WebUtils.getSessionMutex(session)) {
+        	Map<String, Cookie> sessionOnlyPortletCookies = (Map<String, Cookie>) session.getAttribute(SESSION_ATTRIBUTE__SESSION_ONLY_COOKIE_MAP);
+        	if(sessionOnlyPortletCookies == null) {
+        		sessionOnlyPortletCookies = new ConcurrentHashMap<String, Cookie>();
+        		session.setAttribute(SESSION_ATTRIBUTE__SESSION_ONLY_COOKIE_MAP, sessionOnlyPortletCookies);	
+        	}
+        	return sessionOnlyPortletCookies;
+        }
+    }
+    /**
+     * Convert the {@link IPortalCookie} into a servlet {@link Cookie}.
+     * 
+     * @param portalCookie
+     * @return
+     */
+    protected Cookie createCookie(IPortalCookie portalCookie, boolean secure) {
         final Cookie cookie = new Cookie(this.cookieName, portalCookie.getValue());
         
         //Set the cookie's feilds
         cookie.setComment(this.comment);
         cookie.setMaxAge(this.maxAge);
-        cookie.setSecure(this.secure);
+        cookie.setSecure(secure);
         if (this.domain != null) {
             cookie.setDomain(this.domain);
         }
