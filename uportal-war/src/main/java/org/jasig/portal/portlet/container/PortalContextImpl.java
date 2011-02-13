@@ -29,9 +29,6 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.tools.versioning.Version;
-import org.jasig.portal.tools.versioning.VersionsManager;
 
 /**
  * Provides basic information about uPortal and features it supports. The
@@ -45,6 +42,11 @@ public class PortalContextImpl implements PortalContext {
     private Properties portalProperties = new Properties();
     private Set<PortletMode> portletModes = Collections.emptySet();
     private Set<WindowState> windowStates = Collections.emptySet();
+    private String portalVersion;
+    
+    public void setPortalVersion(String portalVersion) {
+        this.portalVersion = portalVersion;
+    }
 
     /**
      * @return the portalProperties, will not be null.
@@ -94,16 +96,15 @@ public class PortalContextImpl implements PortalContext {
     /* (non-Javadoc)
      * @see javax.portlet.PortalContext#getPortalInfo()
      */
+    @Override
     public String getPortalInfo() {
-        //TODO Refactor this to use an injected utility to retrieve the version once VersionsManager is reviewed
-        final VersionsManager versionManager = VersionsManager.getInstance();
-        final Version version = versionManager.getVersion(IPermission.PORTAL_PUBLISH);
-        return "uPortal/" + version.dottedTriple();
+        return "uPortal/" + this.portalVersion;
     }
 
     /* (non-Javadoc)
      * @see javax.portlet.PortalContext#getProperty(java.lang.String)
      */
+    @Override
     public String getProperty(String name) {
         Validate.notNull(name, "Property name can not be null");
         return this.portalProperties.getProperty(name);
@@ -112,6 +113,7 @@ public class PortalContextImpl implements PortalContext {
     /* (non-Javadoc)
      * @see javax.portlet.PortalContext#getPropertyNames()
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Enumeration<String> getPropertyNames() {
         return (Enumeration<String>) this.portalProperties.propertyNames();
@@ -120,6 +122,7 @@ public class PortalContextImpl implements PortalContext {
     /* (non-Javadoc)
      * @see javax.portlet.PortalContext#getSupportedPortletModes()
      */
+    @Override
     public Enumeration<PortletMode> getSupportedPortletModes() {
         return Collections.enumeration(this.portletModes);
     }
@@ -127,6 +130,7 @@ public class PortalContextImpl implements PortalContext {
     /* (non-Javadoc)
      * @see javax.portlet.PortalContext#getSupportedWindowStates()
      */
+    @Override
     public Enumeration<WindowState> getSupportedWindowStates() {
         return Collections.enumeration(this.windowStates);
     }

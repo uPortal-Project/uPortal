@@ -19,12 +19,10 @@
 
 package org.jasig.portal.portlets.registerportal.data;
 
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import org.jasig.portal.portlets.registerportal.IPortalDataCollector;
-import org.jasig.portal.tools.versioning.Version;
-import org.jasig.portal.tools.versioning.VersionsManager;
 
 /**
  * Gathers JVM System Properties
@@ -33,26 +31,24 @@ import org.jasig.portal.tools.versioning.VersionsManager;
  * @version $Revision$
  */
 public class PortalVersionsCollector implements IPortalDataCollector {
+    private String portalVersion;
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.registerportal.IPortalDataCollector#getData()
      */
+    public void setPortalVersion(String portalVersion) {
+        this.portalVersion = portalVersion;
+    }
+
+    @Override
     public Map<String, String> getData() {
-        final VersionsManager versionsManager = VersionsManager.getInstance();
-        
-        final Map<String, String> data = new LinkedHashMap<String, String>();
-        
-        final Version[] versions = versionsManager.getVersions();
-        for (final Version version : versions) {
-            data.put(version.getFname(), version.dottedTriple());
-        }
-        
-        return data;
+        return Collections.singletonMap("uPortal Version", this.portalVersion);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.registerportal.IPortalDataCollector#getKey()
      */
+    @Override
     public String getKey() {
         return "uPortalVersions";
     }

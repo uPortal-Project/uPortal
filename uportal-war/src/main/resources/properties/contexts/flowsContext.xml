@@ -72,7 +72,9 @@
         <property name="collectors">
             <list>
                 <bean class="org.jasig.portal.portlets.registerportal.data.JvmDataCollector" />
-                <bean class="org.jasig.portal.portlets.registerportal.data.PortalVersionsCollector" />
+                <bean class="org.jasig.portal.portlets.registerportal.data.PortalVersionsCollector">
+                    <property name="portalVersion" value="${org.jasig.portal.version}" />
+                </bean>
                 <bean class="org.jasig.portal.portlets.registerportal.data.DatabaseInfoCollector">
                     <property name="databaseMetadata" ref="PortalDB.metadata" />
                 </bean>

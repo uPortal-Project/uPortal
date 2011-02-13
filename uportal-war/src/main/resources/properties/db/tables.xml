@@ -25,49 +25,6 @@
 
 
 <tables>
-  <table sinceMajor="2" sinceMinor="4">
-    <name>UP_VERSIONS</name>
-    <desc>Holds version numbers of the portal and any channels that wish to register their versions</desc>
-    <columns>
-      <column>
-        <name>FNAME</name>
-        <type>VARCHAR</type>
-        <param>255</param>
-        <desc>The functional name of the entity.</desc>
-     </column>
-      <column>
-        <name>MAJOR</name>
-        <type>INTEGER</type>
-        <desc>The entity's major portion of the version number which is currently installed in the portal</desc>
-      </column>
-      <column>
-        <name>MINOR</name>
-        <type>INTEGER</type>
-        <desc>The entity's minor portion of the version number which is currently installed in the portal</desc>
-      </column>
-      <column>
-        <name>MICRO</name>
-        <type>INTEGER</type>
-        <desc>The entity's micro portion of the version number which is currently installed in the portal</desc>
-      </column>
-      <column>
-        <name>DESCRIPTION</name>
-        <type>VARCHAR</type>
-       <param>255</param>
-        <desc>A description of the code represented by the functional name</desc>
-      </column>
-    </columns>
-    <not-null>FNAME</not-null>
-    <primary-key>FNAME</primary-key>
-    <unique>
-        <name>UPV_VERSION_UNQ</name>
-        <column-ref>FNAME</column-ref>
-        <column-ref>MAJOR</column-ref>
-        <column-ref>MINOR</column-ref>
-        <column-ref>MICRO</column-ref>
-    </unique>
-  </table>
-
   <table sinceMajor="2" sinceMinor="0">
     <name>UP_USER</name>
     <desc>Entries that uniquely identify a portal session for a particular user</desc>

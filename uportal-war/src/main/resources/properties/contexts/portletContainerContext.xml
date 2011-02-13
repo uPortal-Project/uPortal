@@ -70,6 +70,7 @@
         		<prop key="javax.portlet.markup.head.element.support">true</prop>
         	</props>
         </property>
+        <property name="portalVersion" value="${org.jasig.portal.version}" />
     </bean>
     
     <bean id="personDirectoryUserInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
