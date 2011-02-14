@@ -36,7 +36,6 @@
         <property name="hibernate.max_fetch_depth">3</property>
         <property name="hibernate.default_batch_fetch_size">16</property>
         <property name="hibernate.id.new_generator_mappings">true</property>
-        <property name="hibernate.jdbc.use_streams_for_binary">true</property>
         
         <property name="hibernate.current_session_context_class">thread</property>
         

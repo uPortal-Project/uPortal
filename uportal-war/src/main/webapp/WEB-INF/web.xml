@@ -203,21 +203,11 @@
         <filter-name>createPortletCookieFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
-    
+
+    <!-- MUST BE THE FIRST FILTER -->
     <filter-mapping>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <servlet-name>RenderingDispatcherServlet</servlet-name>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>urlCanonicalizingFilter</filter-name>
-        <servlet-name>RenderingDispatcherServlet</servlet-name>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>RequestContextFilter</filter-name>
-        <servlet-name>*</servlet-name>
-        <url-pattern>*</url-pattern>
+        <filter-name>OpenEntityManagerInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     
     <filter-mapping>
@@ -239,10 +229,21 @@
         <filter-name>maxInactiveFilter</filter-name>
         <url-pattern>/Login</url-pattern>
     </filter-mapping>
-
+    
     <filter-mapping>
-        <filter-name>OpenEntityManagerInViewFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>urlCanonicalizingFilter</filter-name>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>RequestContextFilter</filter-name>
+        <servlet-name>*</servlet-name>
+        <url-pattern>*</url-pattern>
     </filter-mapping>
     
     <filter-mapping>

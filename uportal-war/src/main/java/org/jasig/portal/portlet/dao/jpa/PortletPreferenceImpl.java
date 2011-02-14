@@ -76,7 +76,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
     private final long portletPreferenceId;
     
     @Column(name = "NAME")//, nullable = false)
-    @Type(type = "nullSafeClob")
+    @Type(type = "materialized_clob")
     private String name = null;
     
     @Column(name = "READ_ONLY", nullable = false)
@@ -88,7 +88,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
         joinColumns = @JoinColumn(name = "PORTLET_PREF_ID")
     )
     @IndexColumn(name = "VALUE_ORDER")
-    @Type(type = "nullSafeClob")
+    @Type(type = "materialized_clob")
     @Column(name = "VALUE")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)

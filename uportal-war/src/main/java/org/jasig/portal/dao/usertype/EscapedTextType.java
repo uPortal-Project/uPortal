@@ -19,14 +19,14 @@
 
 package org.jasig.portal.dao.usertype;
 
-import org.hibernate.type.descriptor.sql.ClobTypeDescriptor;
+import org.hibernate.type.descriptor.sql.LongVarcharTypeDescriptor;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class EscapedClobType extends BaseEscapedStringType {
-    public EscapedClobType() {
-        super(ClobTypeDescriptor.STREAM_BINDING);
+public class EscapedTextType extends BaseEscapedStringType {
+    public EscapedTextType() {
+        super(LongVarcharTypeDescriptor.INSTANCE);
     }
 }

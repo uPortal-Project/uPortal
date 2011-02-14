@@ -34,8 +34,6 @@ import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
 import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
 import org.hibernate.usertype.UserType;
-import org.springframework.orm.jpa.EntityManagerHolder;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Base class for custom UserType impls
