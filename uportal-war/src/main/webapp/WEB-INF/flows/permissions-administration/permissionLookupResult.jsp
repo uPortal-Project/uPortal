@@ -124,7 +124,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             <tbody id="${n}permissionsBody">
                                 <tr rsf:id="row:">
                                     <td headers="${n}permissionOwner"><span rsf:id="permissionOwner"></span></td>
-                                    <td headers="${n}permissionActivity"><span rsf:id="permissionActivity"></span></td>
+                                    <td headers="${n}permissionActivity" rsf:id="permissionActivity"></td>
                                     <td headers="${n}permissionTarget"><span rsf:id="permissionTarget"></span></td>
                                     <td headers="${n}permissionEdit"><a href="" rsf:id="permissionEdit"></a></td>
                                 </tr>
@@ -185,37 +185,28 @@ up.jQuery(function() {
     // Initialize the pager
     var options = {
         columnDefs: [
-            { key: "permissionOwner", valuebinding: "*.ownerName", sortable: true, 
-                components: function (row, index) {
-                    var tree = getBaseComponent(row, index);
-                    tree.value = '\${*.ownerName}';
-                    return tree;
-                }
-            },
-            { key: "permissionActivity", valuebinding: "*.activityName", sortable: true, 
-                components: function (row, index) {
-                    var tree = getBaseComponent(row, index);
-                    tree.value = '\${*.activityName}';
-                    return tree;
-                }
-            },
-            { key: "permissionTarget", valuebinding: "*.targetName", sortable: true,
-                components: function (row, index) {
-                    var tree = getBaseComponent(row, index);
-                    tree.value = '\${*.targetName}';
-                    return tree;
-                }
-            },
-            { key: "permissionEdit", valuebinding: "*.ownerKey",
-                components: function (row, index) {
-                    var tree = getBaseComponent(row, index);
-                    tree.target = editUrl.replace("OWNER", '${"${*.ownerKey}"}')
-                                    .replace("ACTIVITY", '${"${*.activityKey}"}')
-                                    .replace("TARGET", '${"${*.targetKey}"}');
-                    tree.linktext = "<spring:message code="edit"/>";
-                    return tree;
-                }
-            }
+             { key: "permissionOwner", valuebinding: "*.ownerName", sortable: true },
+             { 
+                 key: "permissionActivity", 
+                 valuebinding: "*.activityName", 
+                 sortable: true,
+                 components: function (row, index) {
+                     var markup = '<span>${"${*.activityName}"}</span>';
+                     if (row.inherited) {
+                         markup += ' <span class="inherited-permission">Inherited</span>';
+                     }
+                     return { markup: markup };
+                 }
+             },
+             { key: "permissionTarget", valuebinding: "*.targetName", sortable: true },
+             { key: "permissionEdit", valuebinding: "*.ownerKey",
+                 components: {
+                     target: editUrl.replace("OWNER", '${"${*.ownerKey}"}')
+                                     .replace("ACTIVITY", '${"${*.activityKey}"}')
+                                     .replace("TARGET", '${"${*.targetKey}"}'),
+                     linktext: "<spring:message code="edit"/>"
+                 }
+             }
         ],
         bodyRenderer: {
           type: "fluid.pager.selfRender",
