@@ -506,6 +506,19 @@
 .override-preference td {color:graytext; text-decoration:line-through;}
 
 /* Permissions Administration */
+.prm-mgr table .inherited-permission {
+    display: inline-block;
+	margin-left: 1em;
+    padding: 0.2em 0.5em;
+	background: none repeat scroll 0 0 #B0C4DE;
+    color: #FFFFFF;
+    font-size: 80%;
+    font-weight: bold;  
+    text-transform: uppercase;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
 .prm-mgr .permission-lookup form {
 	background-image:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#e2e8e7), to(#fff)); 
 	background-image:-moz-linear-gradient(0% 50% 90deg, #e2e8e7, #fff);
