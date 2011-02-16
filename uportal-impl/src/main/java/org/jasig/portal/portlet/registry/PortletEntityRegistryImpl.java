@@ -46,6 +46,7 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.utils.threading.NoopLock;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.orm.hibernate3.HibernateJdbcException;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
@@ -388,7 +389,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public Lock getPortletEntityLock(IPortletEntityId portletEntityId) {
         final HttpSession session = this.getSession();
         if (session == null) {
-            return null;
+            return NoopLock.INSTANCE;
         }
         
         ConcurrentMap<IPortletEntityId, Lock> lockMap;
