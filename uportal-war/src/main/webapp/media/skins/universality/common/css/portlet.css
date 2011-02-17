@@ -578,4 +578,8 @@
 .prm-mgr.view-editperm #assignments ul li {background:#fff url(../images/bullet_square_grey_30h.png) 0 0 repeat-y;}
 .prm-mgr.view-editperm #assignments .assignment-wrapper {background:#fff;}
 .prm-mgr.view-editperm #assignments .principal-name {color:#000;}
-.prm-mgr.view-editperm #assignments select {background:#eee;}
+.prm-mgr.view-editperm #assignments select {background:#eee; border-width:2px; border-style:solid;}
+.prm-mgr.view-editperm #assignments select.grant,
+.prm-mgr.view-editperm #assignments select.inherit-grant {border-color:green;}
+.prm-mgr.view-editperm #assignments select.deny,
+.prm-mgr.view-editperm #assignments select.inherit-deny {border-color:red;}

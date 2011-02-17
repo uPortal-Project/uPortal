@@ -118,6 +118,7 @@ up.jQuery(function() {
                     $("#${n}inputs").find("input[principal=" + $(this).attr("principal") + "]").val( $(this).val() );
                     $("#assignments").find("select[principal=" + $(this).attr("principal") + "]").val( $(this).val() );
                 });
+				
             if (assignment.children.length > 0) {
                 var ul = $(document.createElement("ul"));
                 li.append(ul);
