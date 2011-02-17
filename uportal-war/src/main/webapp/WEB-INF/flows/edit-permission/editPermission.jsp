@@ -82,17 +82,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
                 <form:errors path="*"/>  
                 
-                <ul id="assignments"></ul>    
+                <ul id="assignments"></ul>
   
-                <div id="${n}inputs" style="display:none">
-                </div>
-  
-                <!-- Buttons -->
-                <div class="buttons">
-                    <input class="button primary" type="submit" value="<spring:message code="submit"/>" name="_eventId_submit"/>
-                    <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
-                </div> <!-- end: buttons -->
-                
             </form:form>
     
     </div> <!-- end: portlet-content -->
@@ -104,21 +95,37 @@ up.jQuery(function() {
     var $ = up.jQuery;
 
     var allAssignments;
-    var permissions = { <c:forEach items="${ permissionDefinition.permissions }" var="permission" varStatus="status">'${ permission.key }': '${ permission.value }'${ status.last ? '' : ',' }</c:forEach> };
 
+    var inheritRegex = /INHERIT_/;
     var addAssignments = function(assignments, list) {
         $(assignments).each(function(idx, assignment) {
+            
+            var type = assignment.type;
+            if (type.match(inheritRegex)) {
+                type = "INHERIT";
+            }
+            
+            var inheritText;
+            if (assignment.type == 'INHERIT_GRANT') {
+                inheritText = "Inherit (Grant)";
+            } else if (assignment.type == "INHERIT_DENY") {
+                inheritText = "Inherit (Deny)";
+            } else {
+                inheritText = "Inherit";
+            }
+            
             var li = $(document.createElement("li"));
-            var html = "<span class=\"assignment-wrapper\"><span class=\"principal-name\">" + assignment.principal.name + "</span>";
-            html += " <select id=\"permissions'" + assignment.principalId + "'\" name=\"permissions['" + assignment.principalId + "']\"><option value=\"INHERIT\">INHERIT</option><option value=\"GRANT\">GRANT</option><option value=\"DENY\">DENY</option></select></span>";
-            li.html(html);
-            li.find("select")
-                .val(assignment.type).attr("principal", assignment.principalId)
-                .change(function(){ 
-                    $("#${n}inputs").find("input[principal=" + $(this).attr("principal") + "]").val( $(this).val() );
-                    $("#assignments").find("select[principal=" + $(this).attr("principal") + "]").val( $(this).val() );
-                });
-				
+            var span = $(document.createElement("span")).addClass("assignment-wrapper")
+                .addClass(assignment.type.toLowerCase())
+                .append($(document.createElement("span")).addClass("principal-name").text(assignment.principal.name + " "));
+            var select = $(document.createElement("select"));
+            var html = "<option value=\"INHERIT\">" + inheritText + "</option>";
+            html += "<option value=\"GRANT\">Grant</option>";
+            html += "<option value=\"DENY\">Deny</option></select></span>";
+            select.html(html).val(type);
+            span.append(select);
+            li.append(span);
+
             if (assignment.children.length > 0) {
                 var ul = $(document.createElement("ul"));
                 li.append(ul);
@@ -126,24 +133,19 @@ up.jQuery(function() {
             }
             list.append(li);
 
-            var input = $("#${n}inputs").find("input[principal=" + assignment.principalId + "]");
-            if (input.size() > 0) {
-                $(input).val(assignment.type);
-            } else {
-                $("#${n}inputs").append(
-                    $(document.createElement("input"))
-                        .attr("name", "permissions['" + assignment.principalId + "']")
-                        .attr("principal", assignment.principalId)
-                        .val(assignment.type)
-                );
-            }
         });
     };
     
     $(document).ready(function(){
         $.get(
             "<c:url value="/api/permissionAssignmentMap"/>", 
-            { permissions: JSON.stringify(permissions) },
+            { 
+                owner: '${ permissionDefinition.owner.fname }',
+                activity: '${ permissionDefinition.activity.fname }',
+                target: '${ permissionDefinition.target.key }',
+                principals: [<c:forEach items="${ principals }" var="principal" varStatus="status">'${ principal.principalString }'${ status.last ? '' : ', '}</c:forEach>],
+                
+            },
             function(data) {
                 allAssignments = data.assignments;
                 addAssignments(allAssignments, $("#assignments"));

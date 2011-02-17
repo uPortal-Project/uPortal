@@ -41,7 +41,9 @@ public class Assignment implements Comparable<Assignment>, Serializable {
     
     public enum Type {
         
-        INHERIT,
+        INHERIT_GRANT,
+        
+        INHERIT_DENY,
         
         GRANT,
         
@@ -55,7 +57,7 @@ public class Assignment implements Comparable<Assignment>, Serializable {
      * @param principal User or group to which this permissions record applies
      */
     public Assignment(String principalId, JsonEntityBean principal) {
-        this(principalId, principal, Type.INHERIT);
+        this(principalId, principal, Type.INHERIT_DENY);
     }
 
     /**

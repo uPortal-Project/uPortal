@@ -29,8 +29,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntityGroup;
@@ -40,12 +38,17 @@ import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.permissionsadmin.Assignment;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionStore;
+import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -67,8 +70,17 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         this.groupListHelper = groupListHelper;
     }
 
+    private IPermissionStore permissionStore;
+    
+    @Autowired
+    public void setPermissionStore(IPermissionStore permissionStore) {
+        this.permissionStore = permissionStore;
+    }
+
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView getOwners(
+    public ModelAndView getOwners(@RequestParam("principals[]") String[] principals,
+            @RequestParam("owner") String owner, @RequestParam("activity") String activity,
+            @RequestParam("target") String target,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         
@@ -79,23 +91,22 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
             return null;
         }
         
-        // get the serialized JSON permissions map from the request
-        String json = request.getParameter("permissions");
-        
-        // de-serialize the string into a map
-        JSONObject jsonObject = JSONObject.fromObject( json );  
-        @SuppressWarnings("unchecked")
-        Map<String,String> permissions = (Map<String,String>) JSONObject.toBean( jsonObject, HashMap.class );  
-        
         // Build the set of existing assignments
         List<Assignment> flatAssignmentsList = new ArrayList<Assignment>();
-        for (String principal : permissions.keySet()) {
+        for (String principal : principals) {
             
             JsonEntityBean bean = groupListHelper.getEntityForPrincipal(principal);
 
             if (bean != null) {
-                Assignment.Type y = Assignment.Type.valueOf(permissions.get(principal).toUpperCase());
-                flatAssignmentsList.add(new Assignment(principal, bean, y));
+                
+                IAuthorizationService authService = AuthorizationImpl.singleton();
+                EntityEnum entityType = EntityEnum.getEntityEnum(bean.getEntityType());
+                IAuthorizationPrincipal p = authService.newPrincipal(bean.getId(), entityType.isGroup() ? IEntityGroup.class : entityType.getClazz());
+                
+                // first get the permissions explicitly set for this principal
+                Assignment.Type type = getAssignmentType(p, owner, activity, target);
+                flatAssignmentsList.add(new Assignment(principal, bean, type));
+
             } else {
                 log.warn("Unable to resolve the following principal (will " +
                         "be omitted from the list of assignments):  " + 
@@ -104,21 +115,16 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
             
         }
         
-        Map<JsonEntityBean,Assignment.Type> grantOrDenyMap = new HashMap<JsonEntityBean,Assignment.Type>();
-        for (Assignment a : flatAssignmentsList) {
-            grantOrDenyMap.put(a.getPrincipal(), a.getType());
-        }
-        
         List<Assignment> assignments = new ArrayList<Assignment>();
         for (Assignment a : flatAssignmentsList) {
-            placeInHierarchy(a, assignments, grantOrDenyMap);
+            placeInHierarchy(a, assignments, owner, activity, target);
         }
         
         Map<String,Object> model = Collections.<String,Object>singletonMap("assignments", assignments); 
         return new ModelAndView("jsonView", model);
     }
     
-    private void placeInHierarchy(Assignment a, List<Assignment> hierarchy, Map<JsonEntityBean,Assignment.Type> grantOrDenyMap) {
+    private void placeInHierarchy(Assignment a, List<Assignment> hierarchy, String owner, String activity, String target) {
 
         // Assertions.
         if (a == null) {
@@ -135,12 +141,6 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         for (Assignment root : hierarchy) {
             Assignment duplicate = root.findDecendentOrSelfIfExists(a.getPrincipal());
             if (duplicate != null) {
-                // We don't add, but *do* override INHERIT with anything else in 
-                // this circumstance;  we don't add nodes to the selection 
-                // basket for the sake of setting INHERIT permissions. 
-                if (duplicate.getType().equals(Assignment.Type.INHERIT)) {
-                    duplicate.setType(a.getType());
-                }
                 return;
             }
         }
@@ -180,13 +180,11 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
                     // find a match, or (2) reach a root;  type is INHERIT, 
                     // unless (by chance) there's something specified in an 
                     // entry on grantOrDenyMap.
-                    Assignment.Type assignmentType = grantOrDenyMap.containsKey(bean) 
-                                                        ? grantOrDenyMap.get(bean) 
-                                                        : Assignment.Type.INHERIT;  // default...
                     IAuthorizationPrincipal principal = authService.newPrincipal(group);
+                    Assignment.Type assignmentType = getAssignmentType(principal, owner, activity, target);
                     parent = new Assignment(principal.getPrincipalString(), bean, assignmentType);
                     parent.addChild(a);
-                    placeInHierarchy(parent, hierarchy, grantOrDenyMap);
+                    placeInHierarchy(parent, hierarchy, owner, activity, target);
                 }
             }
         } else {
@@ -196,4 +194,17 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
 
     }
 
+    private Assignment.Type getAssignmentType(IAuthorizationPrincipal principal, String owner, String activity, String target) {
+        IPermission[] directPermissions = permissionStore.select(owner, principal.getPrincipalString(), activity, target, null);
+        Assignment.Type type;
+        if (directPermissions.length > 0) {
+            type = directPermissions[0].getType().equals(IPermission.PERMISSION_TYPE_GRANT) ? Assignment.Type.GRANT : Assignment.Type.DENY;
+        } else  if (principal.hasPermission(owner, activity, target)) {
+            type = Assignment.Type.INHERIT_GRANT;
+        } else {
+            type = Assignment.Type.INHERIT_DENY;
+        }
+        return type;
+    }
+    
 }
