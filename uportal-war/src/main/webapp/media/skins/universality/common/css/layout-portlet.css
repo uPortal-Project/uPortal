@@ -282,6 +282,22 @@
 .fl-pager-controls {padding:.69em .69em;}
 .flc-pager-links a {vertical-align:middle;}
 
+/* Auto Complete */
+.up-autocomplete-dropdown {display: none; position: absolute; padding: 0px; min-width: 200px; min-width: 100px; z-index: 100}
+/* close */
+.up-autocomplete-dropdown .up-autocomplete-close {padding: 5px 7px; text-align: right;}
+/* list */
+.up-autocomplete-dropdown .up-autocomplete-matches {max-height: 250px; overflow: auto;}
+.up-autocomplete-dropdown .up-autocomplete-matches,
+.up-autocomplete-dropdown .up-autocomplete-matches li {padding: 0; margin: 0; list-style: none;}
+/* anchors */
+.up-autocomplete-dropdown .up-autocomplete-matches a {display: block; padding:0; text-decoration:none;}
+/* loader */
+.up-autocomplete-dropdown .up-autocomplete-loading {position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
+.up-autocomplete-dropdown .up-autocomplete-loading span {visibility: hidden;}
+/* no members message */
+.up-autocomplete-dropdown .up-autocomplete-noresults.info {display: none; margin: 5px 7px;}
+
 
 /* Selection Basket */
 .portlet .selection-basket a {padding: 0 0 0 20px;}

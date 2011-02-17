@@ -39,45 +39,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | http://www.ja-sig.org/wiki/x/cQ
 -->
 
-<style type="text/css">
-    .up-autocomplete-dropdown {
-        display: none; position: absolute; border: 1px solid #AAA; padding: 0px; min-width: 200px; min-height: 100px; z-index: 100}
-    /* close */
-    .up-autocomplete-dropdown .up-autocomplete-close {padding: 5px 7px; text-align: right; border-bottom: 1px solid #CCC;}
-    /* list */
-    .up-autocomplete-dropdown .up-autocomplete-matches {max-height: 250px; overflow: auto;}
-    .up-autocomplete-dropdown .up-autocomplete-matches,
-    .up-autocomplete-dropdown .up-autocomplete-matches li {padding: 0; margin: 0; list-style: none;}
-    .up-autocomplete-dropdown .up-autocomplete-matches li {display: block; float:none; padding: 2px 5px;}
-    /* anchors */
-    .up-autocomplete-dropdown .up-autocomplete-matches a {display: block; padding: 0 0 0 20px;}
-    /* loader */
-    .up-autocomplete-dropdown .up-autocomplete-loading {position: absolute; top: 0; left: 0; right: 0; bottom: 0;}
-    .up-autocomplete-dropdown .up-autocomplete-loading span {visibility: hidden;}
-    /* no members message */
-    .up-autocomplete-dropdown .up-autocomplete-noresults.info {display: none; margin: 5px 7px;}
-
-    .up-autocomplete-dropdown {background-color: #FFF; -moz-box-shadow: 0px 0px 5px 0px #999; -webkit-box-shadow: 0 0 5px 0 #999; box-shadow: 0px 0px 5px 0px #999;}
-    /* close */
-    .up-autocomplete-dropdown .up-autocomplete-close {background-color: #F8F8F8;}
-    .up-autocomplete-dropdown .up-autocomplete-close a {font-size: 77%;}
-    /* list */
-    .up-autocomplete-dropdown .up-autocomplete-matches li:hover,
-    .up-autocomplete-dropdown .up-autocomplete-matches li:focus {background-color:#FFC;}
-    /* anchors */
-    .up-autocomplete-dropdown .up-autocomplete-matches a {background: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/add.png") 0% 50% no-repeat; text-decoration: none;}
-    .up-autocomplete-dropdown .up-autocomplete-matches a:hover,
-    .up-autocomplete-dropdown .up-autocomplete-matches a:focus {color:#000;}
-    /* selected */
-    .up-autocomplete-dropdown .up-autocomplete-matches .selected {background-color:#D1F0E0;}
-    .up-autocomplete-dropdown .up-autocomplete-matches .selected:hover,
-    .up-autocomplete-dropdown .up-autocomplete-matches .selected:focus {background-color:#C8F0DD;}
-    .up-autocomplete-dropdown .up-autocomplete-matches .selected a {color: #248222; background-image: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png"); font-weight: bold;}
-    /* loader */
-    .up-autocomplete-dropdown .up-autocomplete-loading {background: #EFEFEF url("../images/loading.gif") 50% 50% no-repeat;}
-
-</style>
-
 <!-- Portlet -->
 <div class="fl-widget portlet prm-mgr view-listperms" role="section">
     
@@ -94,11 +55,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <form id="${n}permissionLookupForm" action="${permissionLookupUrl}" method="POST">
                         
             <label for="${n}principalSuggest"><spring:message code="permission.suggest.principal"/></label>
-            <div id="${n}principalSuggest" style="display:inline">
-                <input class="up-autocomplete-searchterm" type="text" name="principalDisplayName" value="John"/>
+            <div id="${n}principalSuggest" class="principal-input">
+                <input class="up-autocomplete-searchterm" type="text" name="principalDisplayName" value="John" autocomplete="off"/>
                 <input type="hidden" name="principal"/>
                 <div class="up-autocomplete-dropdown">
-                    <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
                     <div class="up-autocomplete-noresults portlet-msg info" role="alert">
                         <p>No members</p>
                     </div>
@@ -110,15 +70,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         </li>
                     </ul>
                     <div class="up-autocomplete-loading"><span>Loading . . .</span></div>
+                    <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
                 </div>
             </div>
             
             <label for="${n}permissionSuggest"><spring:message code="permission.suggest.permission"/></label>
-            <div id="${n}permissionSuggest"  style="display:inline">
-                <input class="up-autocomplete-searchterm" type="text" name="activityDisplayName" value="Permission"/>
+            <div id="${n}permissionSuggest" class="activity-input">
+                <input class="up-autocomplete-searchterm" type="text" name="activityDisplayName" value="Permission" autocomplete="off"/>
                 <input type="hidden" name="activity"/>
                 <div class="up-autocomplete-dropdown">
-                    <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
                     <div class="up-autocomplete-noresults portlet-msg info" role="alert">
                         <p>No members</p>
                     </div>
@@ -130,6 +90,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         </li>
                     </ul>
                     <div class="up-autocomplete-loading"><span>Loading . . .</span></div>
+                    <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
                 </div>
             </div>
             <span class="punctuation">?</span>
