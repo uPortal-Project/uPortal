@@ -305,7 +305,8 @@
 		
 		// Tab editing persistence functions
 		var addTab = function() {
-			$.post(settings.preferencesUrl, {action: 'addTab'}, function(xml) {
+		    var data = {action: 'addTab', tabGroup: $("#activeTabGroup").text()};
+			$.post(settings.preferencesUrl, data, function(xml) {
                 if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
 				window.location = settings.portalUrl + "?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab=" + 
 					($("#portalNavigationList > li").length + 1);

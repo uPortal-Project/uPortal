@@ -182,6 +182,7 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
     private ApplicationEventPublisher applicationEventPublisher;
     private CarResources carResources;
     private ResourcesElementsProvider resourcesElementsProvider;
+    private String useTabGroups = "false";  // Optional new feature -- default is status quo
     
     /**
      * @return the portletRequestParameterManager
@@ -230,6 +231,10 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
 	@Required
 	public void setResourcesElementsProvider(ResourcesElementsProvider resourcesElementsProvider) {
 		this.resourcesElementsProvider = resourcesElementsProvider;
+	}
+	
+	public void setUseTabGroups(String useTabGroups) {
+	    this.useTabGroups = useTabGroups;
 	}
 	
 	/* (non-Javadoc)
@@ -619,6 +624,9 @@ public class StaticRenderingPipeline implements IPortalRenderingPipeline, Applic
                     if (externalLoginUrl != null) {
                         tst.setParameter("EXTERNAL_LOGIN_URL", externalLoginUrl);
                     }
+
+                    // Enable the Tab Groups feature?
+                    tst.setParameter("useTabGroups", useTabGroups);
 
                     Hashtable<String, String> tupTable = userPreferences.getThemeStylesheetUserPreferences()
                             .getParameterValues();

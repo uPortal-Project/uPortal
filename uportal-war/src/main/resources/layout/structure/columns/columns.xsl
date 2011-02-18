@@ -28,6 +28,9 @@
 <xsl:param name="userLayoutRoot">root</xsl:param>
 <xsl:param name="focusedTabID">none</xsl:param>
 
+<!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
+<xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @tabGroup]" use="@tabGroup"/>
+
   <xsl:variable name="activeTabIdx">
     <!-- if the activeTab is a number then it is the active tab index -->
     <!-- otherwise it is the ID of the active tab. If it is the ID -->
@@ -77,6 +80,16 @@
   </xsl:variable>
 
   <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIdx]/@ID"/>
+  
+  <!-- Evaluate the 'activeTabGroup' (optional feature) -->
+  <xsl:variable name="activeTabGroup">
+    <xsl:choose>
+      <xsl:when test="//folder[@ID=$activeTabID]/@tabGroup">
+        <xsl:value-of select="//folder[@ID=$activeTabID]/@tabGroup"/>
+      </xsl:when>
+      <xsl:otherwise>DEFAULT_TABGROUP</xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable> 
 
 <!-- document fragment template. See structure stylesheet for more comments -->
 <xsl:template match="layout_fragment">
@@ -91,6 +104,17 @@
 <xsl:template match="layout">
    <xsl:for-each select="folder[@type='root']">
   <layout>
+  
+  <!-- This element is not (presently) consumed by the theme transform, but it can be written to the logs easy debugging -->
+    <debug>
+        <data name="activeTab"><xsl:value-of select="$activeTab"/></data>
+        <data name="focusedTabID"><xsl:value-of select="$focusedTabID"/></data>
+        <data name="activeTabIdx"><xsl:value-of select="$activeTabIdx"/></data>
+        <data name="activeTabID"><xsl:value-of select="$activeTabID"/></data>
+        <data name="activeTabGroup"><xsl:value-of select="$activeTabGroup"/></data>
+        <data name="tabsInTabGroup"><xsl:value-of select="count(/layout/folder/folder[@tabGroup=$activeTabGroup and @type='regular' and @hidden='false'])"/></data>
+    </debug>
+  
     <xsl:if test="/layout/@dlm:fragmentName">
         <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
     </xsl:if>
@@ -135,50 +159,37 @@
 
 <xsl:template name="tabList">
   <navigation>
+    <!-- The tabGroups (optional feature) -->
+    <tabGroupsList>
+      <xsl:attribute name="activeTabGroup">
+        <xsl:value-of select="$activeTabGroup"/>
+      </xsl:attribute>
+      <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']"><!-- These are standard tabs -->
+        <!-- Process only the first tab in each Tab Group (avoid duplicates) -->
+        <xsl:if test="self::node()[generate-id() = generate-id(key('tabGroupKey',@tabGroup)[1])]">
+          <tabGroup name="{@tabGroup}" firstTabIndex="{position()}">
+            <xsl:value-of select="@tabGroup"/>
+          </tabGroup>
+        </xsl:if>
+      </xsl:for-each>
+    </tabGroupsList>
+    <!-- The tabs -->  
     <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
       <tab>
-          <xsl:attribute name="ID">
-            <xsl:value-of select="@ID"/>
-          </xsl:attribute>
-          <xsl:attribute name="externalId">
-            <xsl:value-of select="@externalId"/>
-          </xsl:attribute>
-          <xsl:attribute name="immutable">
-            <xsl:value-of select="@immutable"/>
-          </xsl:attribute>
-          <xsl:attribute name="unremovable">
-            <xsl:value-of select="@unremovable"/>
-          </xsl:attribute>
-          <xsl:if test="@dlm:moveAllowed = 'false'">
-            <xsl:attribute name="dlm:moveAllowed">false</xsl:attribute>
-          </xsl:if>
-          <xsl:if test="@dlm:deleteAllowed = 'false'">
-            <xsl:attribute name="dlm:deleteAllowed">false</xsl:attribute>
-          </xsl:if>
-          <xsl:if test="@dlm:editAllowed = 'false'">
-            <xsl:attribute name="dlm:editAllowed">false</xsl:attribute>
-          </xsl:if>
-          <xsl:if test="@dlm:addChildAllowed = 'false'">
-            <xsl:attribute name="dlm:addChildAllowed">false</xsl:attribute>
-          </xsl:if>
-          <xsl:if test="@dlm:precedence > 0">
-            <xsl:attribute name="dlm:precedence"><xsl:value-of select="@dlm:precedence"/></xsl:attribute>
-          </xsl:if>
+        <!-- Copy folder attributes verbatim -->
+        <xsl:for-each select="attribute::*">
+          <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
+        </xsl:for-each>
+        <!-- Add 'activeTab' and 'activeTabPosition' attributes as appropriate -->
         <xsl:choose>
-      	  <xsl:when test="$activeTabID = @ID">
-      	    <xsl:attribute name="activeTab">true</xsl:attribute>
+          <xsl:when test="$activeTabID = @ID">
+            <xsl:attribute name="activeTab">true</xsl:attribute>
             <xsl:attribute name="activeTabPosition"><xsl:value-of select="$activeTabID"/></xsl:attribute>
-      	  </xsl:when>
-      	  <xsl:otherwise>
-      	    <xsl:attribute name="activeTab">false</xsl:attribute>
-      	  </xsl:otherwise>
-      	</xsl:choose>
-          <xsl:attribute name="priority">
-            <xsl:value-of select="@priority"/>
-          </xsl:attribute>
-          <xsl:attribute name="name">
-            <xsl:value-of select="@name"/>
-          </xsl:attribute>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:attribute name="activeTab">false</xsl:attribute>
+          </xsl:otherwise>
+        </xsl:choose>
         <xsl:for-each select="./descendant::channel">
           <tabChannel name="{@name}" ID="{@ID}" fname="{@fname}">
             <xsl:choose>

@@ -72,6 +72,9 @@ public class UpdatePreferencesServlet extends HttpServlet {
 
 	private static IUserLayoutStore ulStore = UserLayoutStoreFactory
 			.getUserLayoutStoreImpl();
+	
+    private static final String TAB_GROUP_PARAMETER = "tabGroup";  // matches incoming JS
+    private static final String TAB_GROUP_DEFAULT = "DEFAULT_TABGROUP";  // matches default in structure transform
 
 	// default tab name
 	protected final static String BLANK_TAB_NAME = "New Tab";
@@ -706,6 +709,32 @@ public class UpdatePreferencesServlet extends HttpServlet {
 		newColumn.setUnremovable(false);
 		newColumn.setImmutable(false);
 		ulm.addNode(newColumn, nodeId, null);
+
+        // ## 'tabGroup' value (optional feature)
+        // Set the 'tabGroup' attribute on the folder element that describes 
+        // this new tab;  use the currently active tabGroup.
+        if (request.getParameter(TAB_GROUP_PARAMETER)!= null) {
+
+            String tabGroup = request.getParameter(TAB_GROUP_PARAMETER);
+            if (log.isDebugEnabled()) {
+                log.debug(TAB_GROUP_PARAMETER + "=" + tabGroup);
+            }
+
+            if (!TAB_GROUP_DEFAULT.equals(tabGroup) && tabGroup.trim().length() != 0) {
+                // Persists SSUP values to the database
+                try {
+                    StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
+                                            .getStructureStylesheetUserPreferences();
+                    ssup.setFolderAttributeValue(nodeId, TAB_GROUP_PARAMETER , tabGroup);
+                    ulStore.setStructureStylesheetUserPreferences(per, 
+                            upm.getUserPreferences().getProfile().getProfileId(), 
+                            ssup);
+                } catch(Exception e) {
+                    log.debug("failed to set tabGroup", e);
+                }
+            }
+
+        }
 
 		try {
 			// save the user's layout

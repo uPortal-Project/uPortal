@@ -28,6 +28,7 @@
         <property name="portletWindowRegistry" ref="portletWindowRegistry" />
         <property name="carResources" ref="carResources" />
         <property name="resourcesElementsProvider" ref="resourcesElementsProvider"/>
+        <property name="useTabGroups" value="${org.jasig.portal.layout.useTabGroups}"/>
     </bean>
     
     <bean id="resourcesElementsProvider" class="org.jasig.resource.aggr.util.ResourcesElementsProviderImpl">

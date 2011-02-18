@@ -154,15 +154,24 @@
   <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
   <xsl:param name="PORTAL_VIEW">
   	<xsl:choose>
-  		<xsl:when test="//layout_fragment">detached</xsl:when>
+      <xsl:when test="//layout_fragment">detached</xsl:when>
       <xsl:when test="//focused">focused</xsl:when>
       <xsl:otherwise>dashboard</xsl:otherwise>
     </xsl:choose>
   </xsl:param>
   <xsl:param name="USE_AJAX" select="'true'"/>
+  <xsl:param name="useTabGroups">false</xsl:param>
+  <xsl:variable name="USE_TAB_GROUPS">
+    <xsl:choose>
+      <!-- Shut off Tab Groups automatically if there's only one -->
+      <xsl:when test="count(/layout/navigation/tabGroupsList/tabGroup) &lt; 2">false</xsl:when>
+      <xsl:otherwise><xsl:value-of select="$useTabGroups"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+  <xsl:variable name="ACTIVE_TAB_GROUP" select="/layout/navigation/tabGroupsList/@activeTabGroup"/>
   <xsl:param name="JS_LIBRARY_SKIN">
   	<xsl:choose>
-  		<xsl:when test="$USE_AJAX='true'">jqueryui</xsl:when>
+      <xsl:when test="$USE_AJAX='true'">jqueryui</xsl:when>
       <xsl:otherwise></xsl:otherwise>
     </xsl:choose>
   </xsl:param>
