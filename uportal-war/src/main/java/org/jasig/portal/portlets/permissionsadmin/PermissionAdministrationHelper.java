@@ -208,7 +208,7 @@ public class PermissionAdministrationHelper {
             
             Assignment.Type assignmentType = Assignment.Type.valueOf(entry.getValue());
             
-            if (assignmentType != null && !Assignment.Type.INHERIT.equals(assignmentType)) {
+            if (assignmentType != null && !Assignment.Type.INHERIT_GRANT.equals(assignmentType)) {
                 
                 JsonEntityBean principal = groupListHelper.getEntityForPrincipal(entry.getKey());
                 
@@ -265,7 +265,7 @@ public class PermissionAdministrationHelper {
         while (parameterNames.hasMoreElements()) {
             String paramName = parameterNames.nextElement();
             String value = request.getParameter(paramName);
-            if (paramName.startsWith("permissions") && !Assignment.Type.INHERIT.toString().equals(value)) {
+            if (paramName.startsWith("permissions") && !Assignment.Type.INHERIT_GRANT.toString().equals(value)) {
                 String principal = paramName.substring(13, paramName.length()-2);
                 newPermissions.put(principal, value);
             }
