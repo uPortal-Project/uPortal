@@ -21,7 +21,6 @@ package org.jasig.portal.security.remoting;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +41,7 @@ import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.security.provider.AuthorizationImpl;
+import org.jasig.portal.security.provider.PermissionImpl;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +75,46 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
     @Autowired
     public void setPermissionStore(IPermissionStore permissionStore) {
         this.permissionStore = permissionStore;
+    }
+    
+    public ModelAndView updatePermission(
+            @RequestParam("principal") String principal,
+            @RequestParam("assignment") String assignment,
+            @RequestParam("principals[]") String[] principals,
+            @RequestParam("owner") String owner,
+            @RequestParam("activity") String activity,
+            @RequestParam("target") String target, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        
+        JsonEntityBean bean = groupListHelper.getEntityForPrincipal(principal);
+
+        if (bean != null) {
+            
+            IAuthorizationService authService = AuthorizationImpl.singleton();
+            EntityEnum entityType = EntityEnum.getEntityEnum(bean.getEntityType());
+            IAuthorizationPrincipal p = authService.newPrincipal(bean.getId(), entityType.isGroup() ? IEntityGroup.class : entityType.getClazz());
+            
+            Assignment.Type type = Assignment.Type.valueOf(assignment);
+
+            IPermission[] directPermissions = permissionStore.select(owner, p.getPrincipalString(), activity, target, null);
+            authService.removePermissions(directPermissions);
+            
+            if (type.equals(Assignment.Type.GRANT) || type.equals(Assignment.Type.DENY)) {
+                IPermission permission = new PermissionImpl(owner);
+                permission.setActivity(activity);
+                permission.setPrincipal(bean.getPrincipalString());
+                permission.setTarget(target);
+                permission.setType(type.name());
+            }
+            
+        } else {
+            log.warn("Unable to resolve the following principal (will " +
+                    "be omitted from the list of assignments):  " + 
+                    principal);
+        }
+
+        
+        return getOwners(principals, owner, activity, target, request, response);
     }
 
     @RequestMapping(method = RequestMethod.GET)
