@@ -30,6 +30,7 @@ import javax.portlet.PortletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.permission.IPermissionActivity;
@@ -40,6 +41,8 @@ import org.jasig.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +56,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PermissionAdministrationHelper {
+    
+    public static final String PERMISSIONS_OWNER = "UP_PERMISSIONS";
+    public static final String EDIT_PERMISSION = "EDIT_PERMISSION";
+    public static final String VIEW_PERMISSION = "VIEW_PERMISSION";
 
     protected final Log log = LogFactory.getLog(getClass());
     
@@ -77,7 +84,21 @@ public class PermissionAdministrationHelper {
             IPermissionTargetProviderRegistry targetProviderRegistry) {
         this.targetProviderRegistry = targetProviderRegistry;
     }
+
+    public boolean canEditPermission(IPerson currentUser, String target) {
+        
+        EntityIdentifier ei = currentUser.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        return (ap.hasPermission(PERMISSIONS_OWNER, EDIT_PERMISSION, target));
+    }
     
+    public boolean canViewPermission(IPerson currentUser, String target) {
+        
+        EntityIdentifier ei = currentUser.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        return (ap.hasPermission(PERMISSIONS_OWNER, VIEW_PERMISSION, target));
+    }
+
     /**
      * Get a List of JsonEntityBeans representing the principals currently
      * assigned permissions in a PermissionDefinitionForm.
