@@ -205,14 +205,14 @@ public class PortletAdministrationHelper implements ServletContextAware {
                 	// first assume this is a group
                 	IEntityGroup group = GroupService.findGroup(prins[mp].getKey());
                 	if (group != null) {
-                    	bean = new JsonEntityBean(group, EntityEnum.GROUP.toString());
+                    	bean = new JsonEntityBean(group, EntityEnum.GROUP);
                 	} 
                 	
                 	// if a matching group can't be found, try to find a matching
                 	// non-group entity
                 	else {
                     	IGroupMember member = AuthorizationService.instance().getGroupMember(prins[mp]);
-                    	bean = new JsonEntityBean(member, EntityEnum.PERSON.toString());
+                    	bean = new JsonEntityBean(member, EntityEnum.PERSON);
                     	String name = groupListHelper.lookupEntityName(bean);
                     	bean.setName(name);
                 	}
@@ -253,7 +253,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		IGroupMember[] groupMembers = new IGroupMember[form.getGroups().size()];
 		for (int i = 0; i < groupMembers.length; i++) {
 			JsonEntityBean bean = form.getGroups().get(i);
-			EntityEnum entityEnum = EntityEnum.getEntityEnum(bean.getEntityType());
+			EntityEnum entityEnum = EntityEnum.getEntityEnum(bean.getEntityTypeAsString());
 			if (entityEnum.isGroup()) {
 				groupMembers[i] = GroupService.findGroup(bean.getId());
 			} else {

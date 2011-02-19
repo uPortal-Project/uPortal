@@ -31,6 +31,7 @@ import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.RuntimeAuthorizationException;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,7 @@ public class GroupAdministrationHelper {
 		form.setName(group.getName());
 		form.setDescription(group.getDescription());
 		form.setCreatorId(group.getCreatorID());
-		form.setType(groupListHelper.getEntityType(group));
+		form.setType(groupListHelper.getEntityType(group).toString());
 		
 		// add child groups to our group form bean
 		@SuppressWarnings("unchecked")
@@ -107,10 +108,7 @@ public class GroupAdministrationHelper {
 	public void deleteGroup(String key, IPerson deleter) {
 
         if (!canDeleteGroup(deleter, key)) {
-        	// TODO: how should this permission error be handled?
-			throw new RuntimeException("User [" + deleter
-					+ "] does not have permission to remove group with key "
-					+ key);
+            throw new RuntimeAuthorizationException(deleter, DELETE_PERMISSION, key);
         }
 		
 		log.info("Deleting group with key " + key);
@@ -142,10 +140,7 @@ public class GroupAdministrationHelper {
 	public void updateGroupDetails(GroupForm groupForm, IPerson updater) {
 
         if (!canEditGroup(updater, groupForm.getKey())) {
-        	// TODO: how should this permission error be handled?
-			throw new RuntimeException("User [" + updater
-					+ "] does not have permission to update group with key "
-					+ groupForm.getKey());
+			throw new RuntimeAuthorizationException(updater, EDIT_PERMISSION, groupForm.getKey());
         }
 
 		if (log.isDebugEnabled()) {
@@ -172,10 +167,7 @@ public class GroupAdministrationHelper {
 	public void updateGroupMembers(GroupForm groupForm, IPerson updater) {
 
         if (!canEditGroup(updater, groupForm.getKey())) {
-        	// TODO: how should this permission error be handled?
-			throw new RuntimeException("User [" + updater
-					+ "] does not have permission to update group with key "
-					+ groupForm.getKey());
+            throw new RuntimeAuthorizationException(updater, EDIT_PERMISSION, groupForm.getKey());
         }
 
 		if (log.isDebugEnabled()) {
@@ -196,7 +188,7 @@ public class GroupAdministrationHelper {
 		// add all the group membership information from the group form
 		// to the group
 		for (JsonEntityBean child : groupForm.getMembers()) {
-			EntityEnum type = EntityEnum.getEntityEnum(child.getEntityType());
+			EntityEnum type = EntityEnum.getEntityEnum(child.getEntityTypeAsString());
 			if (type.isGroup()) {
 				IEntityGroup member = GroupService.findGroup(child.getId());
 				group.addMember(member);
@@ -223,10 +215,7 @@ public class GroupAdministrationHelper {
 	public void createGroup(GroupForm groupForm, JsonEntityBean parent, IPerson creator) {
 		
         if (!canCreateMemberGroup(creator, parent.getId())) {
-        	// TODO: how should this permission error be handled?
-			throw new RuntimeException("User [" + creator
-					+ "] does not have permission to create groups under group with key "
-					+ parent.getId());
+            throw new RuntimeAuthorizationException(creator, CREATE_PERMISSION, groupForm.getKey());
         }
 
 		if (log.isDebugEnabled()) {
@@ -249,7 +238,7 @@ public class GroupAdministrationHelper {
 		// add all the group membership information from the group form
 		// to the group
 		for (JsonEntityBean child : groupForm.getMembers()) {
-			EntityEnum childType = EntityEnum.getEntityEnum(child.getEntityType());
+			EntityEnum childType = EntityEnum.getEntityEnum(child.getEntityTypeAsString());
 			if (childType.isGroup()) {
 				IEntityGroup member = GroupService.findGroup(child.getId());
 				group.addMember(member);
@@ -275,7 +264,6 @@ public class GroupAdministrationHelper {
         
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        // TODO create new user editing permission
         return (ap.hasPermission(GROUPS_OWNER, EDIT_PERMISSION, target));
     }
     

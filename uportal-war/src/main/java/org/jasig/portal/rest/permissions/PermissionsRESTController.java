@@ -367,7 +367,7 @@ public class PermissionsRESTController {
         for (UniquePermission permission : directAssignments) {
             JsonEntityBean e = groupListHelper.getEntityForPrincipal(permission.getIdentifier());
             Class<?> clazz;
-            EntityEnum entityType = EntityEnum.getEntityEnum(e.getEntityType());
+            EntityEnum entityType = EntityEnum.getEntityEnum(e.getEntityTypeAsString());
             if (entityType.isGroup()) {
                 clazz = IEntityGroup.class;
             } else {
@@ -382,7 +382,7 @@ public class PermissionsRESTController {
         for (UniquePermission permission : inheritedAssignments) {
             JsonEntityBean e = groupListHelper.getEntityForPrincipal(permission.getIdentifier());
             Class<?> clazz;
-            EntityEnum entityType = EntityEnum.getEntityEnum(e.getEntityType());
+            EntityEnum entityType = EntityEnum.getEntityEnum(e.getEntityTypeAsString());
             if (entityType.isGroup()) {
                 clazz = IEntityGroup.class;
             } else {

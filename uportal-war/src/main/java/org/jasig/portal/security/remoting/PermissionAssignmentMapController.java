@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
@@ -58,7 +59,6 @@ import org.springframework.web.servlet.ModelAndView;
  * @version $Revision$
  */
 @Controller
-@RequestMapping("/permissionAssignmentMap")
 public class PermissionAssignmentMapController extends AbstractPermissionsController {
     
     protected final Log log = LogFactory.getLog(getClass());
@@ -77,6 +77,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         this.permissionStore = permissionStore;
     }
     
+    @RequestMapping(value="/updatePermission", method = RequestMethod.GET)
     public ModelAndView updatePermission(
             @RequestParam("principal") String principal,
             @RequestParam("assignment") String assignment,
@@ -91,20 +92,19 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         if (bean != null) {
             
             IAuthorizationService authService = AuthorizationImpl.singleton();
-            EntityEnum entityType = EntityEnum.getEntityEnum(bean.getEntityType());
-            IAuthorizationPrincipal p = authService.newPrincipal(bean.getId(), entityType.isGroup() ? IEntityGroup.class : entityType.getClazz());
+            IAuthorizationPrincipal p = groupListHelper.getPrincipalForEntity(bean);
             
-            Assignment.Type type = Assignment.Type.valueOf(assignment);
-
             IPermission[] directPermissions = permissionStore.select(owner, p.getPrincipalString(), activity, target, null);
             authService.removePermissions(directPermissions);
             
-            if (type.equals(Assignment.Type.GRANT) || type.equals(Assignment.Type.DENY)) {
+            assignment = assignment.toUpperCase();
+            if (assignment.equals(Assignment.Type.GRANT.toString()) || assignment.equals(Assignment.Type.DENY.toString())) {
                 IPermission permission = new PermissionImpl(owner);
                 permission.setActivity(activity);
                 permission.setPrincipal(bean.getPrincipalString());
                 permission.setTarget(target);
-                permission.setType(type.name());
+                permission.setType(assignment);
+                authService.addPermissions(new IPermission[]{ permission });
             }
             
         } else {
@@ -117,7 +117,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         return getOwners(principals, owner, activity, target, request, response);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value="/permissionAssignmentMap", method = RequestMethod.GET)
     public ModelAndView getOwners(@RequestParam("principals[]") String[] principals,
             @RequestParam("owner") String owner, @RequestParam("activity") String activity,
             @RequestParam("target") String target,
@@ -139,9 +139,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
 
             if (bean != null) {
                 
-                IAuthorizationService authService = AuthorizationImpl.singleton();
-                EntityEnum entityType = EntityEnum.getEntityEnum(bean.getEntityType());
-                IAuthorizationPrincipal p = authService.newPrincipal(bean.getId(), entityType.isGroup() ? IEntityGroup.class : entityType.getClazz());
+                IAuthorizationPrincipal p = groupListHelper.getPrincipalForEntity(bean);
                 
                 // first get the permissions explicitly set for this principal
                 Assignment.Type type = getAssignmentType(p, owner, activity, target);
@@ -188,7 +186,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         // To proceed, we need to know about the containing 
         // groups (if any) for this principal...
         IGroupMember member = null;
-        EntityEnum entityEnum = EntityEnum.getEntityEnum(a.getPrincipal().getEntityType());
+        EntityEnum entityEnum = a.getPrincipal().getEntityType();
         if (entityEnum.isGroup()) {
             member = GroupService.findGroup(a.getPrincipal().getId());
         } else {
@@ -202,7 +200,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
             while (it.hasNext()) {
                 IEntityGroup group = (IEntityGroup) it.next();
 
-                String beanType = EntityEnum.getEntityEnum(group.getEntityType(), true).toString();
+                EntityEnum beanType = EntityEnum.getEntityEnum(group.getEntityType(), true);
 
                 JsonEntityBean bean = new JsonEntityBean(group, beanType);
                 Assignment parent = null;

@@ -93,12 +93,14 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	 */
 	public JsonEntityBean getRootEntity(String groupType) {
 		
+	    EntityEnum type = EntityEnum.getEntityEnum(groupType);
+	    
 		String rootKey;
-		if (EntityEnum.GROUP.toString().equals(groupType)) {
+		if (EntityEnum.GROUP.equals(type)) {
 			rootKey = "local.0";
-		} else if (EntityEnum.CATEGORY.toString().equals(groupType)) {
+		} else if (EntityEnum.CATEGORY.equals(type)) {
 	        IEntityGroup categoryGroup = GroupService.getDistinguishedGroup(IGroupConstants.PORTLET_CATEGORIES);
-	        return new JsonEntityBean(categoryGroup, EntityEnum.CATEGORY.toString());
+	        return new JsonEntityBean(categoryGroup, EntityEnum.CATEGORY);
 		} else {
 			throw new IllegalArgumentException("Unable to determine a root entity for group type '" + groupType + "'");
 		}
@@ -127,9 +129,9 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		 * in the future.
 		 */
 		
-		if (EntityEnum.GROUP.toString().equals(groupType)) {
+		if (EntityEnum.GROUP.equals(groupType)) {
 			set.add(EntityEnum.PERSON.toString());
-		} else if (EntityEnum.CATEGORY.toString().equals(groupType)) {
+		} else if (EntityEnum.CATEGORY.equals(groupType)) {
 			set.add(EntityEnum.PORTLET.toString());
 		} else {
 			throw new IllegalArgumentException("Unable to determine a root entity for group type '" + groupType + "'");
@@ -156,13 +158,13 @@ public class GroupListHelperImpl implements IGroupListHelper {
 			if(entity == null) {
 				return null;
 			} else {
-				JsonEntityBean jsonBean = new JsonEntityBean(entity, entityEnum.toString());
+				JsonEntityBean jsonBean = new JsonEntityBean(entity, entityEnum);
 				if (populateChildren) {
 					@SuppressWarnings("unchecked")
 					Iterator<IGroupMember> members = (Iterator<IGroupMember>) entity.getMembers();
 					jsonBean = populateChildren(jsonBean, members);
 				}
-                if (EntityEnum.GROUP.toString().equals(jsonBean.getEntityType()) || EntityEnum.PERSON.toString().equals(jsonBean.getEntityType())) {
+                if (EntityEnum.GROUP.equals(jsonBean.getEntityType()) || EntityEnum.PERSON.equals(jsonBean.getEntityType())) {
                     IAuthorizationPrincipal principal = getPrincipalForEntity(jsonBean);
                     jsonBean.setPrincipalString(principal.getPrincipalString());
                 }
@@ -176,12 +178,12 @@ public class GroupListHelperImpl implements IGroupListHelper {
 			if(entity == null || entity instanceof IEntityGroup) {
 				return null;
 			}
-			JsonEntityBean jsonBean = new JsonEntityBean(entity, entityEnum.toString());
+			JsonEntityBean jsonBean = new JsonEntityBean(entity, entityEnum);
 			
 			// the group member interface doesn't include the entity name, so
 			// we'll need to look that up manually
 			jsonBean.setName(lookupEntityName(jsonBean));
-            if (EntityEnum.GROUP.toString().equals(jsonBean.getEntityType()) || EntityEnum.PERSON.toString().equals(jsonBean.getEntityType())) {
+            if (EntityEnum.GROUP.equals(jsonBean.getEntityType()) || EntityEnum.PERSON.equals(jsonBean.getEntityType())) {
                 IAuthorizationPrincipal principal = getPrincipalForEntity(jsonBean);
                 jsonBean.setPrincipalString(principal.getPrincipalString());
             }
@@ -197,15 +199,14 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	public JsonEntityBean getEntity(IGroupMember member) {
 
 		// get the type of this member entity
-		String entityType = getEntityType(member);
-		EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
+		EntityEnum entityEnum = getEntityType(member);
 		
 		// construct a new entity bean for this entity
 		JsonEntityBean entity;
 		if (entityEnum.isGroup()) {
-			entity = new JsonEntityBean((IEntityGroup) member, entityEnum.toString());
+			entity = new JsonEntityBean((IEntityGroup) member, entityEnum);
 		} else {
-			entity = new JsonEntityBean(member, entityEnum.toString());
+			entity = new JsonEntityBean(member, entityEnum);
 		}
 		
 		// if the name hasn't been set yet, look up the entity name
@@ -213,7 +214,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 			entity.setName(lookupEntityName(entity));
 		}
         
-        if (EntityEnum.GROUP.toString().equals(entity.getEntityType()) || EntityEnum.PERSON.toString().equals(entity.getEntityType())) {
+        if (EntityEnum.GROUP.equals(entity.getEntityType()) || EntityEnum.PERSON.equals(entity.getEntityType())) {
             IAuthorizationPrincipal principal = getPrincipalForEntity(entity);
             entity.setPrincipalString(principal.getPrincipalString());
         }
@@ -244,7 +245,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
         
         // attempt to determine the entity type class for this principal
         Class entityType;
-        EntityEnum jsonType = EntityEnum.getEntityEnum(entity.getEntityType()); 
+        EntityEnum jsonType = entity.getEntityType(); 
         if (jsonType.isGroup()) {
             entityType = IEntityGroup.class;
         } else {
@@ -288,14 +289,14 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntityType(org.jasig.portal.groups.IGroupMember)
 	 */
-	public String getEntityType(IGroupMember entity) {
+	public EntityEnum getEntityType(IGroupMember entity) {
 		
 	    if (IEntityGroup.class.isAssignableFrom(entity.getClass())) {
-	        return EntityEnum.getEntityEnum(entity.getEntityType(), true).toString();
+	        return EntityEnum.getEntityEnum(entity.getEntityType(), true);
 	    } 
 	    
 	    else {
-            return EntityEnum.getEntityEnum(entity.getEntityType(), false).toString();
+            return EntityEnum.getEntityEnum(entity.getEntityType(), false);
 	    }
 	    
 	}
@@ -327,7 +328,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	 */
 	public String lookupEntityName(JsonEntityBean entity) {
 		
-		EntityEnum entityEnum = EntityEnum.getEntityEnum(entity.getEntityType());
+		EntityEnum entityEnum = entity.getEntityType();
 		IEntityNameFinder finder;
 		if (entityEnum.isGroup()) {
 			finder = EntityNameFinderService.instance()

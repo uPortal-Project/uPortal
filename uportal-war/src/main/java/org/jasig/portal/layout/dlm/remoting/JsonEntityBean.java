@@ -26,6 +26,7 @@ import java.util.List;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.om.PortletCategory;
+import org.jasig.portal.portlets.groupselector.EntityEnum;
 
 /**
  * <p>Entity bean for JSON output.  Used for categories, groups, and people.</p>
@@ -40,7 +41,7 @@ public class JsonEntityBean implements Serializable {
 	public static final String ENTITY_GROUP = "group";
 	public static final String ENTITY_PERSON = "person";
 	
-	private String entityType;
+	private EntityEnum entityType;
 	private String id;
 	private String name;
 	private String creatorId;
@@ -53,20 +54,20 @@ public class JsonEntityBean implements Serializable {
 	
 	public JsonEntityBean(PortletCategory category) {
 		
-		this.entityType = ENTITY_CATEGORY;
+		this.entityType = EntityEnum.CATEGORY;
 		this.id = category.getId();
 		this.name = category.getName();
 		this.creatorId = category.getCreatorId();
 		this.description = category.getDescription();
 	}
 	
-	public JsonEntityBean(IGroupMember groupMember, String entityType) {
+	public JsonEntityBean(IGroupMember groupMember, EntityEnum entityType) {
 		
 		this.entityType = entityType;
 		this.id = groupMember.getKey();
 	}
 
-	public JsonEntityBean(IEntityGroup entityGroup, String entityType) {
+	public JsonEntityBean(IEntityGroup entityGroup, EntityEnum entityType) {
 		
 		this.entityType = entityType;
 		this.id = entityGroup.getKey();
@@ -74,12 +75,17 @@ public class JsonEntityBean implements Serializable {
 		this.creatorId = entityGroup.getCreatorID();
 		this.description = entityGroup.getDescription();
 	}
-	
-	public String getEntityType() {
-		return entityType;
+	public EntityEnum getEntityType() {
+	    return entityType;
+	}
+	public String getEntityTypeAsString() {
+		return entityType.toString().toUpperCase();
 	}
 	public void setEntityType(String entityType) {
-		this.entityType = entityType;
+		this.entityType = EntityEnum.getEntityEnum(entityType);
+	}
+	public void setEntityType(EntityEnum entityType) {
+	    this.entityType = entityType;
 	}
 	public String getId() {
 		return id;

@@ -30,6 +30,8 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupadmin.GroupAdministrationHelper;
+import org.jasig.portal.portlets.groupselector.EntityEnum;
+import org.jasig.portal.portlets.lookup.IPersonLookupHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -79,12 +81,35 @@ public class EntitiesRESTController  {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
 		}
-		
-		else if (!ap.hasPermission(GroupAdministrationHelper.GROUPS_OWNER, GroupAdministrationHelper.VIEW_PERMISSION, result.getPrincipalString())) {
+
+		// get the type for this entity
+		EntityEnum type = result.getEntityType();
+
+		// if the located entity is a group, check to make sure the requesting
+		// user has the view group permission
+        if (type.isGroup()
+                && !ap.hasPermission(GroupAdministrationHelper.GROUPS_OWNER,
+                        GroupAdministrationHelper.VIEW_PERMISSION,
+                        result.getPrincipalString())) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
+        } 
+        
+		// if the located entity is a person, check to make sure the requesting
+		// user has the view person permission
+        else if (type.equals(EntityEnum.PERSON)
+                && !ap.hasPermission(IPersonLookupHelper.USERS_OWNER,
+                        IPersonLookupHelper.VIEW_USER_PERMISSION,
+                        result.getPrincipalString())) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return null;
+            
 		}
 
+        // TODO: check permissions for portlets
+
+		// if a valid entity was returned and all permission checks passed,
+		// return the entity as a JSON object
     	else {
 			ModelAndView mv = new ModelAndView();
 			mv.addObject("entity", result);

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 
 /**
@@ -66,7 +67,7 @@ public interface IGroupListHelper {
 	 * @param entity	Entity whose type needs to be determined
 	 * @return			One of the possible EntityEnum string representations
 	 */
-	public String getEntityType(IGroupMember entity); 
+	public EntityEnum getEntityType(IGroupMember entity); 
 	
 	/**
 	 * Find the name of a specified entity.

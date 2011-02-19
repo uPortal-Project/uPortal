@@ -129,7 +129,7 @@ public class Assignment implements Comparable<Assignment>, Serializable {
         Assignment rslt = null;  // default...
         
         if (principal.getId().equals(this.principal.getId()) 
-                && principal.getEntityType().equals(this.principal.getEntityType())) {
+                && principal.getEntityTypeAsString().equals(this.principal.getEntityTypeAsString())) {
             rslt = this;
         } else {
             for (Assignment a : children) {

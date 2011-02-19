@@ -54,13 +54,13 @@ public enum EntityEnum {
 	 * @return
 	 */
 	public static EntityEnum getEntityEnum(String type) {
-		if (PORTLET.toString().equals(type)) {
+		if (PORTLET.toString().equalsIgnoreCase(type)) {
 			return PORTLET;
-		} else if (CATEGORY.toString().equals(type)) {
+		} else if (CATEGORY.toString().equalsIgnoreCase(type)) {
 			return CATEGORY;
-		} else if (PERSON.toString().equals(type)) {
+		} else if (PERSON.toString().equalsIgnoreCase(type)) {
 			return PERSON;
-		} else if (GROUP.toString().equals(type)) {
+		} else if (GROUP.toString().equalsIgnoreCase(type)) {
 			return GROUP;
 		}
 		return null;

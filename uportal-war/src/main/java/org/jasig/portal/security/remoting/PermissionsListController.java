@@ -125,7 +125,7 @@ public class PermissionsListController extends AbstractPermissionsController {
 
             Map<String,String> entry = new HashMap<String,String>();
             entry.put("owner", p.getOwner());
-            entry.put("principalType", bean.getEntityType());
+            entry.put("principalType", bean.getEntityTypeAsString());
             entry.put("principalName", bean.getName());
             entry.put("principalKey", p.getPrincipal());
             entry.put("activity", p.getActivity());
