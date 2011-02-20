@@ -51,7 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Nicholas Blair
  * @version $Id$
  */
-@Repository
+@Repository("portletCookieDao")
 @Qualifier("persistence")
 public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortletCookieDao {
     private static final String FIND_COOKIE_BY_VALUE_CACHE_REGION = PortalCookieImpl.class.getName() + ".query.FIND_COOKIE_BY_VALUE";

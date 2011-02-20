@@ -26,7 +26,7 @@ import javax.servlet.http.Cookie;
  * Internal interface for a JSR-286 Portlet cookie.
  * 
  * Mimics the Java EE {@link Cookie} class, with the addition of
- * a reference to the parent {@link IPortletEntity} that created the cookie.
+ * a few methods to help with integration.
  * 
  * @author Nicholas Blair
  * @version $Id$

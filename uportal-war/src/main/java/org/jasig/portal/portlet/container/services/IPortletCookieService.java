@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
+ * Service interface for implementing Cookie support for Portlets.
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -36,6 +38,7 @@ public interface IPortletCookieService {
     /**
      * Check if the portal cookie already exists, if it does update its feilds, if not
      * create it.
+     * Should be called for every request via a Servlet Filter.
      */
     public void updatePortalCookie(HttpServletRequest request, HttpServletResponse response);
     

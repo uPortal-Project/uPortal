@@ -115,6 +115,10 @@ class PortletCookieImpl implements IPortletCookie {
 		this.updateFromCookie(cookie);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portal.portlet.om.IPortletCookie#updateFromCookie(javax.servlet.http.Cookie)
+	 */
 	@Override
     public void updateFromCookie(Cookie cookie) {
         this.setComment(cookie.getComment());
@@ -247,7 +251,7 @@ class PortletCookieImpl implements IPortletCookie {
 		    maxAge = -1;
 		}
 		else {
-		    maxAge = (int)TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - this.expires.getTime());
+		    maxAge = (int)TimeUnit.MILLISECONDS.toSeconds(this.expires.getTime() - System.currentTimeMillis());
 		}
 		cookie.setMaxAge(maxAge);
 		cookie.setPath(this.path);

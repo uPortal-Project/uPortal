@@ -39,6 +39,7 @@
                 <ref bean="cacheMaintenanceTrigger" />
                 <ref bean="dlmFragmentCleanerTrigger" />
                 <ref bean="statsQueueFlushingTrigger" />
+                <ref bean="expiredPortletCookieRemovalTrigger" />
             </list>
         </property>
     </bean>
@@ -83,5 +84,17 @@
         </property>
         <property name="startDelay" value="1000" />
         <property name="repeatInterval" value="1000" />
+    </bean>
+    
+    <!-- remove all expired persisted portlet cookies every 60 seconds -->
+    <bean id="expiredPortletCookieRemovalTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    	<property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetMethod" value="purgeExpiredCookies" />
+                <property name="targetObject" ref="portletCookieDao" />
+            </bean>
+        </property>
+        <property name="startDelay" value="60000" />
+        <property name="repeatInterval" value="60000" />
     </bean>
 </beans>
