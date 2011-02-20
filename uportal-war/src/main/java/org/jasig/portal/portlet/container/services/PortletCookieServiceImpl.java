@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +40,7 @@ import org.jasig.portal.portlet.om.IPortletCookie;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -48,7 +50,7 @@ import org.springframework.web.util.WebUtils;
  * @version $Revision$
  */
 @Service("portletCookieService")
-public class PortletCookieServiceImpl implements IPortletCookieService {
+public class PortletCookieServiceImpl implements IPortletCookieService, ServletContextAware {
     
 	private static final String SESSION_ATTRIBUTE__SESSION_ONLY_COOKIE_MAP = PortletCookieServiceImpl.class.getName() + ".SESSION_ONLY_COOKIE_MAP";
 	private static final String SESSION_ATTRIBUTE__PORTAL_COOKIE_ID = PortletCookieServiceImpl.class.getName() + ".PORTAL_COOKIE_ID";
@@ -57,7 +59,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService {
     private String cookieName = DEFAULT_PORTAL_COOKIE_NAME;
     private String comment = DEFAULT_PORTAL_COOKIE_COMMENT;
     private String domain = null;
-    private String path = null;
+    private String path = "/";
     private int maxAge = (int)TimeUnit.DAYS.toSeconds(365);
     private boolean portalCookieAlwaysSecure = false;
     
@@ -66,21 +68,23 @@ public class PortletCookieServiceImpl implements IPortletCookieService {
         this.portletCookieDao = portletCookieDao;
     }
     
-    /**
+    /* (non-Javadoc)
+	 * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
+	 */
+	@Override
+	public void setServletContext(ServletContext servletContext) {
+		this.path = servletContext.getContextPath() + "/";
+	}
+
+	/**
      * @param maxAge The max number of seconds the portal cookie should live for. Defaults to 365 days. 
      */
     public void setMaxAge(int maxAge) {
         this.maxAge = maxAge;
     }
-    /**
-	 * @param path The path for the root IPortalCookie. Defaults to "/".
-	 */
-	public void setPath(String path) {
-		this.path = path;
-	}
 
 	/**
-	 * @param portalCookieAlwaysSecure the portalCookieAlwaysSecure to set
+	 * @param portalCookieAlwaysSecure Set a value of true to set the portal cookie's secure flag to 'true' regardless of the request's secure flag.
 	 */
 	public void setPortalCookieAlwaysSecure(boolean portalCookieAlwaysSecure) {
 		this.portalCookieAlwaysSecure = portalCookieAlwaysSecure;
@@ -128,14 +132,22 @@ public class PortletCookieServiceImpl implements IPortletCookieService {
     
     @Override
     public Cookie[] getAllPortletCookies(HttpServletRequest request, IPortletWindowId portletWindowId) {
-        //Get the cookies from the servlet request
+    	final IPortalCookie portalCookie = this.getPortalCookie(request);
+    	 
+    	//Get the cookies from the servlet request
         Cookie[] servletCookies = request.getCookies();
         if (servletCookies == null) {
             servletCookies = new Cookie[0];
+        } else if(portalCookie != null) {
+        	for(int i=0; i< servletCookies.length; i++) {
+        		if(servletCookies[i].getName().equals(this.cookieName)) {
+        			// replace cookie in the array with converted IPortalCookie (so secure, domain, path, maxAge are set)
+        			servletCookies[i] = convertToCookie(portalCookie, this.portalCookieAlwaysSecure || request.isSecure());
+        		}
+        	}
         }
         
         //Get cookies that have been set by portlets, suppressing expired
-        final IPortalCookie portalCookie = this.getPortalCookie(request);
         Set<IPortletCookie> portletCookies = new HashSet<IPortletCookie>();
         if(portalCookie != null) {
         	Date now = new Date();
