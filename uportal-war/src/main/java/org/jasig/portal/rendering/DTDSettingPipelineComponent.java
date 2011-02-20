@@ -19,6 +19,8 @@
 
 package org.jasig.portal.rendering;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLEventFactory;
@@ -60,7 +62,8 @@ public class DTDSettingPipelineComponent extends StAXPipelineComponentWrapper {
     public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
         final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
         final DTDAddingXMLEventReader eventReader = new DTDAddingXMLEventReader(pipelineEventReader.getEventReader());
-        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(eventReader);
+        final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
+        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(eventReader, outputProperties);
     }
 
     private class DTDAddingXMLEventReader extends InjectingXMLEventReader {

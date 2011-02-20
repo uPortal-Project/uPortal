@@ -190,6 +190,8 @@
 
     <bean id="xslPortalUrlProvider" class="org.jasig.portal.url.xml.XsltPortalUrlProvider" />
     
+    <bean id="xalanMessageHelper" class="org.jasig.portal.security.xslt.XalanMessageHelper"/>
+    
     <bean id="userInstanceManager" class="org.jasig.portal.spring.EasyMockFactoryBean">
         <constructor-arg value="org.jasig.portal.user.IUserInstanceManager" />
     </bean>
@@ -205,5 +207,10 @@
     <bean id="resourcesElementsProvider" class="org.jasig.portal.spring.EasyMockFactoryBean">
         <constructor-arg value="org.jasig.resource.aggr.util.ResourcesElementsProvider" />
     </bean>
+    
+    <bean id="xalanMessageHelperBean" class="org.jasig.portal.spring.EasyMockFactoryBean">
+        <constructor-arg value="org.jasig.portal.security.xslt.IXalanMessageHelper" />
+    </bean>
+    
     
 </beans>

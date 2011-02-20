@@ -122,7 +122,8 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
         //Return the chunked data
         final List<CharacterEvent> characterEvents = chunkingEventReader.getCharacterEvents();
         final CharacterEventBufferReader characterEventReader = new CharacterEventBufferReader(characterEvents.listIterator());
-        return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(characterEventReader);
+        final Map<String, String> outputProperties = eventReader.getOutputProperties();
+        return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(characterEventReader, outputProperties);
     }
 
     @Override

@@ -19,6 +19,8 @@
 
 package org.jasig.portal.rendering;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,7 +30,6 @@ import org.jasig.portal.character.stream.events.CharacterDataEventImpl;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.character.stream.events.PortletContentPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEvent;
-import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEventImpl;
 import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
 import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.utils.cache.CacheKey;
@@ -70,7 +71,8 @@ public class PortletRenderingIncorporationComponent extends CharacterPipelineCom
         final CharacterEventReader eventReader = pipelineEventReader.getEventReader();
         final PortletIncorporatingEventReader portletIncorporatingEventReader = new PortletIncorporatingEventReader(eventReader, request, response);
         
-        return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(portletIncorporatingEventReader);
+        final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
+        return new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(portletIncorporatingEventReader, outputProperties);
     }
 
     private class PortletIncorporatingEventReader extends FilteringCharacterEventReader {

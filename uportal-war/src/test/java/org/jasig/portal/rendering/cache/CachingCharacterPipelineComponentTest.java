@@ -91,8 +91,8 @@ public class CachingCharacterPipelineComponentTest {
         final MockHttpServletRequest mockReq = new MockHttpServletRequest();
         final MockHttpServletResponse mockRes = new MockHttpServletResponse();
         final CacheKey cacheKey = new CacheKey("testCacheKey");
-        final List<CharacterEvent> eventBuffer = Collections.emptyList();
-        final Element cacheElement = new Element(cacheKey, eventBuffer);
+        final PipelineEventReader<CharacterEventReader, CharacterEvent> eventReader = new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(new CharacterEventBufferReader(Collections.EMPTY_LIST.listIterator()));
+        final Element cacheElement = new Element(cacheKey, eventReader);
         
         final Ehcache cache = createMock(Ehcache.class);
         final CharacterPipelineComponent targetComponent = createMock(CharacterPipelineComponent.class);

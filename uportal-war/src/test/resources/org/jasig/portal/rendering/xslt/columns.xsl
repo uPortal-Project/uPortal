@@ -23,6 +23,8 @@
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   
+  <xsl:output method="xml" indent="yes" media-type="text/html"/>
+  
   <xsl:param name="activeTabFName"></xsl:param>
   <xsl:param name="focusedPortletFName"></xsl:param>
   

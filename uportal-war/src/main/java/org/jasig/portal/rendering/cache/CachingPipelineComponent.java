@@ -19,10 +19,10 @@
 
 package org.jasig.portal.rendering.cache;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -87,36 +87,39 @@ public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWr
         //Get the key for this request from the target component and see if there is a cache entry
         final CacheKey cacheKey = this.wrappedComponent.getCacheKey(request, response);
         Element element = this.cache.get(cacheKey);
-        List<E> eventCache = null;
+        PipelineEventReader<R, E> cachedEventReader = null;
         if (element != null) {
-            eventCache = (List<E>)element.getObjectValue();
+            cachedEventReader = (PipelineEventReader<R, E>)element.getObjectValue();
+        }
+
+        //If there was a cached reader return it immediately
+        if (cachedEventReader != null) {
+            logger.debug("{} - Founed  cached events for key {}", new Object[] {this.beanName, cacheKey});
+            return cachedEventReader;
         }
         
         //No cached data for key, call target component to get events and an updated cache key
-        if (eventCache == null) {
-            logger.debug("{} - No cached events found for key {}, calling parent", this.beanName, cacheKey);
-            final PipelineEventReader<R, E> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
-    
-            //Copy the events from the reader into a buffer to be cached
-            eventCache = new LinkedList<E>();
-            for (final E event : pipelineEventReader) {
-                eventCache.add(event);
-            }
-    
-            //Cache the buffer
-            element = new Element(cacheKey, Collections.unmodifiableList(eventCache));
-            this.cache.put(element);
-            logger.debug("{} - Cached {} events for key {}", new Object[] {this.beanName, eventCache.size(), cacheKey});
+        logger.debug("{} - No cached events found for key {}, calling parent", this.beanName, cacheKey);
+        final PipelineEventReader<R, E> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
+
+        //Copy the events from the reader into a buffer to be cached
+        final List<E> eventCache = new LinkedList<E>();
+        for (final E event : pipelineEventReader) {
+            eventCache.add(event);
         }
-        else {
-            logger.debug("{} - Founed {} cached events for key {}", new Object[] {this.beanName, eventCache.size(), cacheKey});
-        }
-        
-        //Ugly!!! Needed because XMLEventReader implements Iterator but does not parameterize it
+
         final R eventReader = this.createEventReader(eventCache.listIterator());
-        
-        return new PipelineEventReaderImpl<R, E>(eventReader);
+        final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
+        cachedEventReader = new PipelineEventReaderImpl<R, E>(eventReader, outputProperties);
+
+        //Cache the buffer
+        element = new Element(cacheKey, cachedEventReader);
+        this.cache.put(element);
+        logger.debug("{} - Cached {} events for key {}", new Object[] {this.beanName, eventCache.size(), cacheKey});
+
+        return cachedEventReader;
     }
     
+    //Ugly!!! Needed because XMLEventReader implements Iterator but does not parameterize it
     protected abstract R createEventReader(ListIterator<E> eventCache);
 }

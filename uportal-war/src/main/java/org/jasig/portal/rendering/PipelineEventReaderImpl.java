@@ -19,7 +19,10 @@
 
 package org.jasig.portal.rendering;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Generic {@link PipelineEventReader} implementation
@@ -28,15 +31,23 @@ import java.util.Iterator;
  * @version $Revision$
  */
 public class PipelineEventReaderImpl<R, E> implements PipelineEventReader<R, E> {
-    protected final R eventReader;
+    private final R eventReader;
+    private final Map<String, String> outputProperties;
     
     public PipelineEventReaderImpl(R eventReader) {
         this.eventReader = eventReader;
+        this.outputProperties = new LinkedHashMap<String, String>();
+    }
+    
+    public PipelineEventReaderImpl(R eventReader, Map<String, String> outputProperties) {
+        this.eventReader = eventReader;
+        this.outputProperties = new LinkedHashMap<String, String>(outputProperties);
     }
 
     /* (non-Javadoc)
      * @see java.lang.Iterable#iterator()
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Iterator<E> iterator() {
         return (Iterator<E>)this.eventReader;
@@ -48,6 +59,24 @@ public class PipelineEventReaderImpl<R, E> implements PipelineEventReader<R, E> 
     @Override
     public R getEventReader() {
         return this.eventReader;
+    }
+    
+    public String setOutputProperty(String name, String value) {
+        if (value == null) {
+            return this.outputProperties.remove(name);
+        }
+        
+        return this.outputProperties.put(name, value);
+    }
+    
+    @Override
+    public String getOutputProperty(String name) {
+        return this.outputProperties.get(name);
+    }
+
+    @Override
+    public Map<String, String> getOutputProperties() {
+        return Collections.unmodifiableMap(this.outputProperties);
     }
 
     /* (non-Javadoc)

@@ -30,6 +30,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.ErrorListener;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -97,7 +98,7 @@ public class XSLTComponent extends StAXPipelineComponentWrapper implements BeanN
         final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
         
         final Transformer transformer = this.transformerSource.getTransformer(request, response);
-
+        
         //Setup a URIResolver based on the current resource loader
         transformer.setURIResolver(this.uriResolver);
         
@@ -151,9 +152,15 @@ public class XSLTComponent extends StAXPipelineComponentWrapper implements BeanN
             throw new RuntimeException("Failed to transform document", e);
         }
         
+        final String mediaType = transformer.getOutputProperty(OutputKeys.MEDIA_TYPE);
+        
         final List<XMLEvent> eventBuffer = eventWriterBuffer.getEventBuffer();
         final XMLEventReader outputEventReader = new XMLEventBufferReader(eventBuffer.listIterator()); 
-        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(outputEventReader);
+        
+        final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
+        final PipelineEventReaderImpl<XMLEventReader, XMLEvent> pipelineEventReaderImpl = new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(outputEventReader, outputProperties);
+        pipelineEventReaderImpl.setOutputProperty(OutputKeys.MEDIA_TYPE, mediaType);
+        return pipelineEventReaderImpl;
     }
 
     @Override

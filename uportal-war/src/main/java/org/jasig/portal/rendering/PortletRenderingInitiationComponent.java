@@ -19,6 +19,8 @@
 
 package org.jasig.portal.rendering;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -71,7 +73,8 @@ public class PortletRenderingInitiationComponent extends StAXPipelineComponentWr
         final XMLEventReader eventReader = pipelineEventReader.getEventReader();
         final PortletRenderingXMLEventReader filteredEventReader = new PortletRenderingXMLEventReader(request, response, eventReader);
         
-        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(filteredEventReader);
+        final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
+        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(filteredEventReader, outputProperties);
     }
 
     private class PortletRenderingXMLEventReader extends FilteringXMLEventReader {

@@ -92,8 +92,8 @@ public class CachingStAXPipelineComponentTest {
         final MockHttpServletRequest mockReq = new MockHttpServletRequest();
         final MockHttpServletResponse mockRes = new MockHttpServletResponse();
         final CacheKey cacheKey = new CacheKey("testCacheKey");
-        final List<XMLEvent> eventBuffer = Collections.emptyList();
-        final Element cacheElement = new Element(cacheKey, eventBuffer);
+        final PipelineEventReader<XMLEventReader, XMLEvent> eventReader = new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(new XMLEventBufferReader(Collections.EMPTY_LIST.listIterator()));
+        final Element cacheElement = new Element(cacheKey, eventReader);
         
         final Ehcache cache = createMock(Ehcache.class);
         final StAXPipelineComponent targetComponent = createMock(StAXPipelineComponent.class);

@@ -96,7 +96,7 @@
    | NOTE: Due to the internals of the rendering pipeline the 'omit-xml-declaration', 
    |    'doctype-public', and 'doctype-system' options have no effect here.
   -->
-  <xsl:output method="xml" indent="yes"/>
+  <xsl:output method="xml" indent="yes" media-type="text/html"/>
   <!-- ========================================= -->
   
   

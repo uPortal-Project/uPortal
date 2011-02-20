@@ -19,6 +19,9 @@
 
 package org.jasig.portal.rendering;
 
+import java.util.Map;
+
+
 /**
  * Event reader for the rendering pipeline.
  * 
@@ -32,4 +35,17 @@ public interface PipelineEventReader<R, E> extends Iterable<E> {
      * @return The native event reader
      */
     public R getEventReader();
+    
+    /**
+     * Get an output property in effect for the rendering pipeline
+     * 
+     * @param name Name of the property
+     * @return Value of the property, null if not set
+     */
+    public String getOutputProperty(String name);
+    
+    /**
+     * @return A read-only map of all output properties
+     */
+    public Map<String, String> getOutputProperties();
 }

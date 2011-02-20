@@ -80,7 +80,8 @@ public class StAXAttributeIncorporationComponent extends StAXPipelineComponentWr
         final PipelineEventReader<XMLEventReader, XMLEvent> cachingEventReader = this.wrappedComponent.getEventReader(request, response);
         final XMLEventReader eventReader = new AttributeIncorporatingXMLEventReader(request, response, cachingEventReader.getEventReader());
         
-        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(eventReader);
+        final Map<String, String> outputProperties = cachingEventReader.getOutputProperties();
+        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(eventReader, outputProperties);
     }
     
     private final class AttributeIncorporatingXMLEventReader extends FilteringXMLEventReader {

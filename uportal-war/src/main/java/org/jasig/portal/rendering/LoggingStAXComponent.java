@@ -21,6 +21,7 @@ package org.jasig.portal.rendering;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,7 +81,8 @@ public class LoggingStAXComponent extends StAXPipelineComponentWrapper {
         final XMLEventReader eventReader = pipelineEventReader.getEventReader();
         final LoggingXMLEventReader loggingEventReader = new LoggingXMLEventReader(eventReader);
         
-        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(loggingEventReader);
+        final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
+        return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(loggingEventReader, outputProperties);
     }
     
     private class LoggingXMLEventReader extends FilteringXMLEventReader {

@@ -25,12 +25,16 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.events.XMLEvent;
+import javax.xml.transform.OutputKeys;
 
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.security.xslt.IXalanMessageHelper;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
@@ -66,6 +70,7 @@ public class RenderingPipelineIntegrationTest {
     private IPortletWindowRegistry portletWindowRegistry;
     private ResourcesElementsProvider resourcesElementsProvider;
     private IUserInstanceManager userInstanceManager;
+    private IXalanMessageHelper xalanMessageHelper;
 
     @Autowired
     public void setComponent(
@@ -92,6 +97,11 @@ public class RenderingPipelineIntegrationTest {
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
+    
+    @Autowired
+    public void setXalanMessageHelper(IXalanMessageHelper xalanMessageHelper) {
+        this.xalanMessageHelper = xalanMessageHelper;
+    }
 
     @Ignore
     @Test
@@ -113,7 +123,7 @@ public class RenderingPipelineIntegrationTest {
                 .andReturn(".fl-mist").anyTimes();
         
         
-        replay(this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager);
+        replay(this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager, this.xalanMessageHelper);
         
         final PipelineEventReader<?, ?> eventReader = this.component.getEventReader(request, response);
         
@@ -121,7 +131,10 @@ public class RenderingPipelineIntegrationTest {
             logger.debug(toString(event));
         }
         
-        verify(this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager);
+        verify(this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager, this.xalanMessageHelper);
+        
+        final String mediaType = eventReader.getOutputProperty(OutputKeys.MEDIA_TYPE);
+        assertEquals("text/html", mediaType);
     }
     
     private String toString(Object event) throws Exception {
