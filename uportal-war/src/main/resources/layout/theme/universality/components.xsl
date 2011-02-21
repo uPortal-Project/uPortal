@@ -335,8 +335,7 @@
   <xsl:template name="welcome">  
     <xsl:if test="$AUTHENTICATED='true'"> <!-- Welcome only displays if the user is logged in. -->
       <div id="portalWelcome">
-          <xsl:variable name="test">&lt;span&gt;<xsl:value-of select="$USER_NAME"/>&lt;/span&gt;</xsl:variable>
-          <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG, $test)"/>
+          <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/>&#160;<span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
       </div>
     </xsl:if>
   </xsl:template>
