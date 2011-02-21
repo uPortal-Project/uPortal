@@ -153,7 +153,10 @@ up.jQuery(function() {
         $.ajax({
              url: "<c:url value="/api/permissionAssignments"/>",
              async: false,
-             data: { owner: '${ owner.fname }', activity: '${ activity.fname }' },
+             data: { 
+                 owner: '<spring:escapeBody javaScriptEscape="true">${ owner.fname }</spring:escapeBody>', 
+                 activity: '<spring:escapeBody javaScriptEscape="true">${ activity.fname }</spring:escapeBody>' 
+             },
              dataType: "json",
              error: function(XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus + " : " + errorThrown);

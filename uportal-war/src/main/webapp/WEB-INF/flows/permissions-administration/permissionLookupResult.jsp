@@ -56,7 +56,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
-        ${ activityDisplayName } permissions assigned to ${ principalDisplayName }
+        <spring:message code="activityName.permissions.assigned.to.principalName" arguments="${ fn:escapeXml(activityDisplayName) }, ${ principalDisplayName }"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
   
@@ -165,7 +165,7 @@ up.jQuery(function() {
              },
              success: function(data) {
                  $(data.assignments).each(function (idx, assignment) {
-                     if (assignment.activityKey == '${activity}') {
+                     if (assignment.activityKey == '<spring:escapeBody javaScriptEscape="true">${activity}</spring:escapeBody>') {
                          rslt.push(assignment);
                      }
                  });
@@ -193,7 +193,7 @@ up.jQuery(function() {
                  components: function (row, index) {
                      var markup = '<span>${"${*.activityName}"}</span>';
                      if (row.inherited) {
-                         markup += ' <span class="inherited-permission">Inherited</span>';
+                         markup += ' <span class="inherited-permission"><spring:message code="inherited"/></span>';
                      }
                      return { markup: markup };
                  }

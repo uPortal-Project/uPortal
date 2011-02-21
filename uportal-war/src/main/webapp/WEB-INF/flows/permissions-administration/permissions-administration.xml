@@ -91,7 +91,10 @@
             <set name="viewScope.activityDisplayName" value="requestParameters.activityDisplayName"/>
         </on-entry>
         <transition on="group" to="reviewGroup"/>
-        <transition on="editPermission" to="edit-permission"/>
+        <transition on="editPermission" to="edit-permission">
+            <set name="flowScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.owner)"/>
+            <set name="flowScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activity)"/>
+        </transition>
     </view-state>
 
     
