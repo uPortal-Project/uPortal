@@ -61,11 +61,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </c:forEach>
         </div>
         <h2 class="title" role="heading">
-            <c:set var="message"><span class="name"><spring:escapeBody htmlEscape="true">${ fn:escapeXml(permissionDefinition.activity.name )}</spring:escapeBody></span></c:set>
+            <c:set var="message"><span class="name">${ fn:escapeXml(permissionDefinition.activity.name )}</span></c:set>
             <spring:message code="edit.assignment.for.name" arguments="${ message }" htmlEscape="false"/>
         </h2>
         <h3 class="subtitle">
-            <c:set var="message"><span class="name"><spring:escapeBody htmlEscape="true">${ fn:escapeXml(permissionDefinition.target.name )}</spring:escapeBody></span></c:set>
+            <c:set var="message"><span class="name">${ fn:escapeXml(permissionDefinition.target.name )}</span></c:set>
             <spring:message code="with.target.name" arguments="${ message }" htmlEscape="false"/>
         </h3>
         <div class="toolbar">
@@ -100,29 +100,35 @@ up.jQuery(function() {
     var addAssignments = function(assignments, list) {
         $(assignments).each(function(idx, assignment) {
             
+            // determine the current select menu option
             var type = assignment.type;
             if (type.match(inheritRegex)) {
                 type = "INHERIT";
             }
             
+            // determine the text for the inherit option
             var inheritText;
             if (assignment.type == 'INHERIT_GRANT') {
-                inheritText = "Inherit (Grant)";
+                inheritText = "<spring:message code="inherit.grant"/>";
             } else if (assignment.type == "INHERIT_DENY") {
-                inheritText = "Inherit (Deny)";
+                inheritText = "<spring:message code="inherit.deny"/>";
             } else {
-                inheritText = "Inherit";
+                inheritText = "<spring:message code="inherit"/>";
             }
             
+            // build up the markup
             var li = $(document.createElement("li"));
             var span = $(document.createElement("span")).addClass("assignment-wrapper")
-                .addClass(assignment.type.toLowerCase())
                 .append($(document.createElement("span")).addClass("principal-name").text(assignment.principal.name + " "));
             var select = $(document.createElement("select"));
             var html = "<option value=\"INHERIT\">" + inheritText + "</option>";
-            html += "<option value=\"GRANT\">Grant</option>";
-            html += "<option value=\"DENY\">Deny</option></select></span>";
-            select.html(html).val(type);
+            html += "<option value=\"GRANT\"><spring:message code="grant"/></option>";
+            html += "<option value=\"DENY\"><spring:message code="deny"/></option></select></span>";
+            select.html(html).val(type)
+                .addClass(assignment.type.toLowerCase().replace("_", "-"))
+                .change(function () {
+                updatePermission(assignment.principalId, $(this).val());
+            });
             span.append(select);
             li.append(span);
 
@@ -136,10 +142,13 @@ up.jQuery(function() {
         });
     };
     
-    $(document).ready(function(){
+    var updatePermission = function(principal, type) {
+        $("#assignments").html("");
         $.get(
-            "<c:url value="/api/permissionAssignmentMap"/>", 
+            "<c:url value="/api/updatePermission"/>", 
             { 
+                principal: principal,
+                assignment: type,
                 owner: '${ permissionDefinition.owner.fname }',
                 activity: '${ permissionDefinition.activity.fname }',
                 target: '${ permissionDefinition.target.key }',
@@ -152,7 +161,27 @@ up.jQuery(function() {
             },
             "json"
         );
-    });
+    };
+    
+    var renderPermissionMap = function() {
+        $("#assignments").html("");
+        $.get(
+                "<c:url value="/api/permissionAssignmentMap"/>", 
+                {
+                    owner: '${ permissionDefinition.owner.fname }',
+                    activity: '${ permissionDefinition.activity.fname }',
+                    target: '${ permissionDefinition.target.key }',
+                    principals: [<c:forEach items="${ principals }" var="principal" varStatus="status">'${ principal.principalString }'${ status.last ? '' : ', '}</c:forEach>],
+                },
+                function(data) {
+                    allAssignments = data.assignments;
+                    addAssignments(allAssignments, $("#assignments"));
+                },
+                "json"
+            );
+    };
+    
+    $(document).ready(renderPermissionMap);
 
 
 });
