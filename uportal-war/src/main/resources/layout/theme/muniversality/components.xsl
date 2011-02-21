@@ -44,75 +44,6 @@
     exclude-result-prefixes="upAuth upGroup upMsg" 
     version="1.0">
     
-<!-- ======================================================================================================================================================== -->
-<!-- ========== PUBLIC VIEW ================================================================================================================================= -->
-<!-- ======================================================================================================================================================== -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: MOBILE WRAPPER GUEST =============================== -->
-<!-- ========================================================================= -->
-<!--
-| YELLOW
-| This tempate adds a 'mobile-guest' class name wrapper.
-| Only those with knowledge of xsl should configure this template.
--->
-<xsl:template name="mobile.wrapper.guest">
-	<xsl:attribute name="class">mobile-guest</xsl:attribute>
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: MOBILE HEADER PUBLIC =============================== -->
-<!-- ========================================================================= -->
-<!--
-| YELLOW
-| This tempate renders the header when unauthenticated.
-| Only those with knowledge of xsl should configure this template.
--->
-<xsl:template name="mobile.header.public">
-	<div class="mobile-header">
-        
-        <!--*** start: logo ***-->
-        <div class="mobile-logo">
-            <img src="{$SKIN_PATH}/images/mportal_logo.gif" title="{$TOKEN[@name='LOGO_TITLE']}" alt="{$TOKEN[@name='LOGO']}" />
-        </div>
-        <!--*** end: logo ***-->
-        
-        <!--*** start: welcome ***-->
-        <h4>
-            <xsl:value-of select="$TOKEN[@name='WELCOME_PRE']" />
-            <xsl:value-of select="$TOKEN[@name='WELCOME_LOGIN_HEADER']" />
-            <xsl:value-of select="$TOKEN[@name='WELCOME_POST']" />
-        </h4>
-        <!--*** end: welcome ***-->
-        
-    </div>
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-
-<!-- ======================================================================================================================================================== -->
-<!-- ========== AUTHENTICATED VIEW ========================================================================================================================== -->
-<!-- ======================================================================================================================================================== -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: MOBILE WRAPPER ===================================== -->
-<!-- ========================================================================= -->
-<!--
-| YELLOW
-| This tempate adds a 'mobile' class name wrapper.
-| Only those with knowledge of xsl should configure this template.
--->
-<xsl:template name="mobile.wrapper">
-	<xsl:attribute name="class">mobile</xsl:attribute>
-</xsl:template>
-<!-- ========================================================================= -->
-
-
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: MOBILE HEADER ====================================== -->
 <!-- ========================================================================= -->
@@ -122,25 +53,21 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.header">
-    <div class="flc-screenNavigator-navbar fl-navbar fl-table">
-        <div class="fl-table-row">
-            <h1 class="fl-table-cell">uPortal Mobile</h1>
-            <div class="fl-table-cell up-mobile-nav">
-                <xsl:call-template name="mobile.auth.link"/>
-            </div>
-        </div>
+    <div data-role="header" data-backbtn="false" data-position="inline">
+        <h1>uPortal Mobile</h1>
+        <xsl:call-template name="mobile.auth.link"/>
     </div>
 </xsl:template>
     
 <xsl:template name="mobile.auth.link">
     <xsl:choose>
         <xsl:when test="$AUTHENTICATED='true'">
-            <a id="up-page-auth-button" href="Logout" title="{$TOKEN[@name='LOGOUT_LONG_LABEL']}" class="fl-button">
-                <span class="fl-button-inner"><xsl:value-of select="$TOKEN[@name='LOGOUT_LABEL']"/></span>
+            <a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('logout', $USER_LANG)}" class="ui-btn-right">
+                <span><xsl:value-of select="upMsg:getMessage('logout', $USER_LANG)"/></span>
             </a>
         </xsl:when>
         <xsl:otherwise>
-            <a id="up-page-auth-button" title="{$TOKEN[@name='LOGIN_LONG_LABEL']}" class="fl-button">
+            <a title="{upMsg:getMessage('home', $USER_LANG)}" class="ui-btn-right">
                 <xsl:attribute name="href">
                     <xsl:choose>
                         <xsl:when test="$EXTERNAL_LOGIN_URL != ''">
@@ -157,7 +84,7 @@
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:attribute>
-                <span class="fl-button-inner"><xsl:value-of select="$TOKEN[@name='LOGIN_LABEL']"/></span>
+                <span><xsl:value-of select="upMsg:getMessage('login', $USER_LANG)"/></span>
             </a>
         </xsl:otherwise>
     </xsl:choose>        
@@ -175,56 +102,30 @@
 | list-items within an <ul> list. Only those with knowledge of xsl should configure this template. 
 | Template contents can be any valid XSL or XHTML.
 -->  
-<xsl:template match="mobilenavigation">
-    <div class="fl-panel">
-        <div class="fl-note fl-bevel-white fl-font-size-80 right">
-            <xsl:if test="$AUTHENTICATED='true'">
-                Welcome <xsl:value-of select="$USER_NAME"/>            
-            </xsl:if>
-        </div>
-    </div>
-    <xsl:variable name="ALL_GROUPS" select="//group" />
-    <xsl:for-each select="$ALL_GROUPS">
+<xsl:template name="mobile.navigation">
+    <xsl:for-each select="//group">
         <xsl:if test="count(channel-nav) > 0">
-            <div id="tab-section_{navblock/@ID}" class="fl-container fl-container-autoHeading">
-                <h3><xsl:value-of select="navblock/@name"/></h3>
-                <ul class="fl-list-menu fl-list-brief">
-                    <xsl:for-each select="channel-nav">
-                        <li>
-                        	<xsl:variable name="portletUrl">
-                                <xsl:call-template name="portletUrl">
-                                    <xsl:with-param name="subscribeId" select="@ID" />
-                                    <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
-                                </xsl:call-template>
-      						</xsl:variable>
-                            <a class="flc-screenNavigator-backButton" href="{$portletUrl}" title="To view {@name}">
-                                <xsl:value-of select="@name" />
-                            </a>
-                        </li>
-                    </xsl:for-each>
-                </ul>
-            </div>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="list-divider"><xsl:value-of select="navblock/@name"/></li>
+                <xsl:for-each select="channel-nav">
+                    <li>
+                        <xsl:variable name="portletUrl">
+                            <xsl:call-template name="portletUrl">
+                                <xsl:with-param name="subscribeId" select="@ID" />
+                                <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                            </xsl:call-template>
+                        </xsl:variable>
+                        <a href="{$portletUrl}" title="To view {@name}">
+                            <!--img class="fl-icon" src="{@iconUrl}"/>-->
+                            <xsl:value-of select="@name" />
+                        </a>
+                    </li>
+                </xsl:for-each>
+            </ul>
         </xsl:if>
     </xsl:for-each>
 </xsl:template>
-<!-- ========================================================================= -->
 
-<xsl:template name="mobile.navigation">
-    <xsl:if test="count(//mobilenavigation/group) &gt; 0">
-        <div class="up-mobile-navigation-container fl-panel up-mobile-nav">
-            <xsl:apply-templates select="mobilenavigation"/>
-        </div>        
-    </xsl:if>
-</xsl:template>
-
-<xsl:template name="mobile.navigation.focused">
-    <xsl:if test="count(//mobilenavigation/group) &gt; 0">
-        <div class="up-mobile-navigation-container fl-panel up-mobile-nav" style="display:none;">
-            <xsl:apply-templates select="mobilenavigation"/>
-        </div>        
-    </xsl:if>
-</xsl:template>
-    
 <!-- ======================================================================================================================================================== -->
 <!-- ========== FOCUSED VIEW ================================================================================================================================ -->
 <!-- ======================================================================================================================================================== -->
@@ -239,43 +140,16 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.header.focused">
-    <div class="flc-screenNavigator-navbar fl-navbar fl-table">
-        <div class="fl-table-row">
-            
-            <div class="fl-table-cell up-mobile-focus">
-            	<xsl:variable name="basePortalUrl">
-        			<xsl:call-template name="portalUrl"/>
-      			</xsl:variable>
-                <a id="up-page-back-button" href="basePortalUrl" class="fl-button fl-backButton">
-                    <span class="fl-button-inner">Back</span>
-                </a>
-            </div>
-
-            <xsl:call-template name="mobile.channel.title.focused"/>
-
-            <div class="fl-table-cell up-mobile-nav" style="display:none">
-                <xsl:call-template name="mobile.auth.link"/>
-            </div>
-            
-        </div>
+    <xsl:variable name="basePortalUrl">
+        <xsl:call-template name="portalUrl"/>
+    </xsl:variable>
+    <div data-role="header" data-position="inline">
+        <a href="{$basePortalUrl}" data-icon="home" data-direction="reverse">
+            <xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/>
+        </a>
+        <h1><xsl:value-of select="//content/focused/channel/@name" /></h1>
+        <xsl:call-template name="mobile.auth.link"/>
     </div>
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: MOBILE CHANNEL TITLE FOCUSED ======================= -->
-<!-- ========================================================================= -->
-<!--
-| YELLOW
-| This tempate renders the channel's title.
-| Only those with knowledge of xsl should configure this template.
--->
-<xsl:template name="mobile.channel.title.focused">
-    <h1 class="fl-table-cell up-mobile-nav" style="display:none">uPortal Mobile</h1>
-    <h1 class="fl-table-cell up-mobile-focus">
-        <xsl:value-of select="content/focused/channel/@name" />
-    </h1>
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -288,62 +162,9 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.channel.content.focused">
-    <div class="up-mobile-focused-content up-mobile-focus">
-        <xsl:apply-templates select="content" mode="focused" />
-    </div>
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: FOCUSED CONTENT ==================================== -->
-<!-- ========================================================================= -->
-<!-- 
-| RED
-| This template copies the portlet or channel content into the portal 
-| to be rendered when content is focused. This template should not 
-| need alteration and only those with knowledge of xsl should configure
-| this template. Template contents can be any valid XSL or XHTML.
--->
-<xsl:template match="content/focused/channel" mode="focused">
     <div class="portlet-content-container">
-        <xsl:copy-of select="." />
+        <xsl:copy-of select="//content/focused/channel" />
     </div>
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-<xsl:template name="mobile.navigation.script">
-    <script type="text/javascript">
-        up.jQuery(document).ready(function(){
-            up.jQuery("#up-page-back-button").click(function(){
-                up.jQuery(".up-mobile-focus").hide();
-                up.jQuery(".up-mobile-nav").show();
-                return false;
-            }).attr("href","javascript:;");
-        });
-    </script>
-</xsl:template>
-
-
-<!-- ======================================================================================================================================================== -->
-<!-- ========== COMMON ====================================================================================================================================== -->
-<!-- ======================================================================================================================================================== -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: MOBILE FOOTER ====================================== -->
-<!-- ========================================================================= -->
-<!-- 
-| YELLOW
-| The footer template currently contains the portal's copyright information. This area can be 
-| customized to contain any number of links or institution identifiers. This template renders 
-| in all areas of the portal (unauthenticated, focused and non-focused). Modifications to the 
-| footer should be made in muniversality.xsl under the footer template. Only those with knowledge 
-| of xsl should configure this template. Template contents can be any valid XSL or XHTML.
--->
-<xsl:template name="mobile.footer">
-	<xsl:call-template name="footer" />
 </xsl:template>
 <!-- ========================================================================= -->
 

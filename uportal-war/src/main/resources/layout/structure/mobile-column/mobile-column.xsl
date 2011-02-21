@@ -206,9 +206,12 @@
 <!--=====START: CHANNEL-NAVIGATION TEMPLATE RULE=====-->
     <xsl:template match="channel" mode="navigation">
         <xsl:if test="not(parameter[@name='hideFromMobile']/@value = 'true')">
-            <channel-nav>
-                <xsl:copy-of select="@*"/>
-                <xsl:copy-of select="child::*"/>
+            <channel-nav name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}">
+                <xsl:if test="parameter[@name='iconUrl']">
+                  <xsl:attribute name="iconUrl">
+                    <xsl:value-of select="parameter[@name='iconUrl']/@value"/>
+                  </xsl:attribute>
+                </xsl:if>
             </channel-nav>
         </xsl:if>
     </xsl:template>

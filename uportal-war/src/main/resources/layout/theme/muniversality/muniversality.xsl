@@ -88,8 +88,6 @@
 <xsl:import href="../resourcesTemplates.xsl" />  <!-- Templates for Skin Resource generation -->
 <xsl:import href="../urlTemplates.xsl" />        <!-- Templates for URL generation -->
 <xsl:import href="components.xsl" />
-<xsl:import href="nonfocused.xsl" />
-<xsl:import href="focused.xsl" />
 <!-- ========================================================================= -->
 
 
@@ -129,15 +127,14 @@
 | YELLOW
 | Skin Settings can be used to change the location of skin files.
 --> 
-<xsl:param name="skin">uportal3</xsl:param>
+<xsl:param name="skin">iphone</xsl:param>
 <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
 <xsl:variable name="SKIN" select="$skin"/>
-<xsl:variable name="MEDIA_PATH">/media/skins/muniversality</xsl:variable>
+<xsl:variable name="MEDIA_PATH">media/skins/muniversality</xsl:variable>
 <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
 <xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
 <xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
 <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
-<xsl:variable name="SKIN_CONFIG_URL" select="concat('../../../../../',$SKIN_PATH,'/skin.xml')"/>
 <xsl:variable name="FLUID_THEME">
     <xsl:call-template name="skinParameter">
         <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
@@ -181,7 +178,6 @@
 <xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param> 
 -->
 
-<xsl:variable name="TOKEN" select="document($MESSAGE_DOC_URL)/theme-messages/tokens[lang($USER_LANG)]/token"/>
 <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
     
 
@@ -217,7 +213,7 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="page.title">
-   <title><xsl:value-of select="$TOKEN[@name='PORTAL_PAGE_TITLE']" /></title>
+   <title><xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)" /></title>
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -234,8 +230,8 @@
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="description" content="{$TOKEN[@name='PORTAL_META_DESCRIPTION']}" />
-    <meta name="keywords" content="{$TOKEN[@name='PORTAL_META_KEYWORDS']}" />
+    <meta name="description" content="{upMsg:getMessage('portal.page.meta.description', $USER_LANG)}" />
+    <meta name="keywords" content="{upMsg:getMessage('portal.page.meta.keywords', $USER_LANG)}" />
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -251,8 +247,8 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="footer">
-    <p class="fl-panel fl-note fl-bevel-white fl-font-size-80">
-    	<a href="{$TOKEN[@name='COPYRIGHT_URL']}"><xsl:value-of select="$TOKEN[@name='COPYRIGHT_TEXT']" /></a>
+    <p>
+    	<a href="http://www.jasig.org/uportal/about/license">uPortal is licensed under the Apache License, Version 2.0</a>
     </p>
 </xsl:template>
 <!-- ========================================================================= -->
@@ -279,14 +275,27 @@
             <xsl:call-template name="page.js" />
         </head>
         <body class="up {$FLUID_THEME_CLASS}">
-            <xsl:choose>
-                <xsl:when test="//focused">
-                    <xsl:apply-templates mode="focused" />
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates />
-                </xsl:otherwise>
-            </xsl:choose>
+            <div data-role="page">
+                <xsl:choose>
+                    <xsl:when test="//focused">
+                        <xsl:call-template name="mobile.header.focused" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="mobile.header" />
+                    </xsl:otherwise>
+                </xsl:choose>
+                <div data-role="content">
+                    <xsl:choose>
+                        <xsl:when test="//focused">
+                            <xsl:call-template name="mobile.channel.content.focused" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:call-template name="mobile.navigation" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:call-template name="footer" />
+                </div>
+            </div>
         </body>
     </html>
 </xsl:template>

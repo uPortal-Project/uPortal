@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<resources xmlns="http://www.jasig.org/uportal/web/skin"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/sandbox/resource-aggregator/tags/resource-aggregator-parent-1.0.0/resource-aggregator-api/src/main/resources/skin-configuration.xsd">
+  
+  <!--css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css-->
+  
+  <css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3.min.css</css>
+  
+  <!--css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/valencia/jquery.mobile.theme.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/valencia/jquery.mobile.theme.min.css</css-->
+  
+  <!-- Visual style for portlet content. An extension of the uportal3 skin. -->
+  <css>../../universality/uportal3/portlet.css</css>
+
+  <js included="plain">/ResourceServingWebapp/rs/jquery/1.5/jquery-1.5.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.5/jquery-1.5.min.js</js>
+  
+  <js included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
+  
+  <js included="plain">/ResourceServingWebapp/rs/fluid/1.3/js/fluid-all-1.3.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.3/js/fluid-all-1.3.js</js>
+  
+  <js>../common/javascript/up-mobile-config.js</js>
+
+  <js included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/jquery.mobile-1.0a3.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/jquery.mobile-1.0a3.min.js</js>
+  
+  <js>../../universality/common/javascript/uportal/up-util.js</js>
+  <js>../../universality/common/javascript/uportal/up-portlet-registry.js</js>
+  <js>../../universality/common/javascript/uportal/up-entity-registry.js</js>
+  <js>../../universality/common/javascript/uportal/up-portlet-browser.js</js>
+  <js>../../universality/common/javascript/uportal/up-layout-draggable-manager.js</js>
+  <js>../../universality/common/javascript/uportal/up-layout-gallery.js</js>
+  <js>../../universality/common/javascript/uportal/up-fragment-permissions-manager.js</js>
+  <js>../../universality/common/javascript/uportal/up-subscription-browser.js</js>
+  <js>../../universality/common/javascript/uportal/up-layout-selector.js</js>
+  <js>../../universality/common/javascript/uportal/up-skin-selector.js</js>
+  <js>../../universality/common/javascript/uportal/up-tab-manager.js</js>
+  <js>../../universality/common/javascript/uportal/up-layout-persistence.js</js>
+  <js>../../universality/common/javascript/uportal/up-url-provider.js</js>
+  <js>../../universality/common/javascript/uportal/up-layout-preferences.js</js>
+  <js>../../universality/common/javascript/uportal/up-autocomplete.js</js>
+  <js>../../universality/common/javascript/uportal/up-showHideToggle.js</js>
+  <js>../../universality/common/javascript/uportal/entity-selector.js</js>
+  <js>../../universality/common/javascript/uportal/up-parameter-editor.js</js>
+  <js>../../universality/common/javascript/uportal/flyout-nav.js</js>
+  <js>../../universality/common/javascript/jquery.tokeninput.js</js>
+</resources>

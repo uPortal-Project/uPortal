@@ -26,32 +26,16 @@
  
   <parameter name="fss-theme">fl-theme-iphone</parameter>
 
-  <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css>
-  
-  <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-layout.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-layout.min.css</css>
-    
+  <css import="true">../common/common_skin.xml</css>
+
   <!-- Default jqueryui css -->
-  <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css>
+  <!--css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css-->
     
-  <css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-theme-iphone.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-mobile-theme-iphone.min.css</css>
-
   <!-- Support for legacy uPortal css classes. -->
-  <css>legacy.css</css>
+  <!--css>legacy.css</css>
+  <css>portal.css</css-->
 
-  <!-- Visual style for portlet content. An extension of the uportal3 skin. -->
-  <css>../../universality/uportal3/portlet.css</css>
-      
-
-  <js included="plain">/ResourceServingWebapp/rs/jquery/1.4.2/jquery-1.4.2.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.4.2/jquery-1.4.2.min.js</js>
+  <js import="true">../common/common_skin.xml</js>
   
-  <js included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
-  
-  <js included="plain">/ResourceServingWebapp/rs/fluid/1.2.1/js/fluid-all-1.2.1.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.2.1/js/fluid-all-1.2.1.min.js</js>
 </resources>
