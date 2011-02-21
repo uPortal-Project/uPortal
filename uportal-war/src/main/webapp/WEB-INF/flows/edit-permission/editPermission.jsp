@@ -95,6 +95,7 @@ up.jQuery(function() {
     var $ = up.jQuery;
 
     var allAssignments;
+    var principals = [<c:forEach items="${ principals }" var="principal" varStatus="status">'${ principal }'${ status.last ? '' : ', '}</c:forEach>];
 
     var inheritRegex = /INHERIT_/;
     var addAssignments = function(assignments, list) {
@@ -152,7 +153,7 @@ up.jQuery(function() {
                 owner: '${ permissionDefinition.owner.fname }',
                 activity: '${ permissionDefinition.activity.fname }',
                 target: '${ permissionDefinition.target.key }',
-                principals: [<c:forEach items="${ principals }" var="principal" varStatus="status">'${ principal.principalString }'${ status.last ? '' : ', '}</c:forEach>],
+                principals: principals
                 
             },
             function(data) {
@@ -171,7 +172,7 @@ up.jQuery(function() {
                     owner: '${ permissionDefinition.owner.fname }',
                     activity: '${ permissionDefinition.activity.fname }',
                     target: '${ permissionDefinition.target.key }',
-                    principals: [<c:forEach items="${ principals }" var="principal" varStatus="status">'${ principal.principalString }'${ status.last ? '' : ', '}</c:forEach>],
+                    principals: principals
                 },
                 function(data) {
                     allAssignments = data.assignments;

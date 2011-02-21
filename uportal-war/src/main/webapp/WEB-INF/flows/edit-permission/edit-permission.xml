@@ -30,12 +30,11 @@
      | This object encapsulates stateful information about this subflow;  must be an 
      | instance of org.jasig.portal.portlets.permissionsadmin.PermissionDefinitionForm.
      +-->
-    <input name="permissionDefinition"/>
+    <input name="owner" required="true"/>
+    <input name="activity" required="true"/>
+    <input name="target" required="true"/>
+    <input name="principals" required="true"/>
     <input name="breadcrumbs" required="false"/>
-    
-    <on-start>
-        <set name="flowScope.principals" value="permissionAdministrationHelper.getPrincipals(permissionDefinition)"/>
-    </on-start>
     
     <view-state id="editPermission" model="permissionDefinition">
         <transition on="choosePrinicipals" to="choosePrinicipals"/>
@@ -44,7 +43,6 @@
         <transition on="breadcrumb" to="followBreadcrumb" bind="false" validate="false">
             <set name="flowScope.selectedBreadcrumb" value="requestParameters.breadcrumb"/>
         </transition>
-        <transition on="done" to="done"/>
     </view-state>
 
     <!-- Sub-flow to choose principals (groups and users) -->
@@ -69,19 +67,14 @@
         <input name="pageSubtitleArgument" value="''" />
 
         <!-- Group input/output mapping -->
-        <input name="selectedGroups" value="principals"/>
-        <output name="selectedGroups" value="principals"/>
+        <input name="selectedGroups" value="permissionAdministrationHelper.getEntitiesForPrincipals(principals)"/>
+        <output name="selectedGroups" value="flashScope.entities"/>
         
         <transition on="back" to="editPermission"/>
         <transition on="finish" to="editPermission">
-            <evaluate expression="permissionAdministrationHelper.updatePrincipals(permissionDefinition, principals)"/>
+            <set name="principals" value="permissionAdministrationHelper.getPrincipalsForEntities(entities)"/>
         </transition>
     </subflow-state>
-
-    <action-state id="save">
-        <evaluate expression="permissionAdministrationHelper.savePermissions(permissionDefinition)"/>
-        <transition to="done"/>
-    </action-state>
 
     <end-state id="cancel">
         <output name="breadcrumb" value="''"/>

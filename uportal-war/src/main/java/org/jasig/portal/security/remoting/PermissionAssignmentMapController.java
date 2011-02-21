@@ -30,17 +30,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.permissionsadmin.Assignment;
+import org.jasig.portal.portlets.permissionsadmin.IPermissionAdministrationHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.security.provider.PermissionImpl;
 import org.jasig.portal.services.AuthorizationService;
@@ -70,6 +72,20 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         this.groupListHelper = groupListHelper;
     }
 
+    private IPermissionAdministrationHelper permissionAdministrationHelper;
+    
+    @Autowired(required = true)
+    public void setPermissionAdministrationHelper(IPermissionAdministrationHelper permissionAdministrationHelper) {
+        this.permissionAdministrationHelper = permissionAdministrationHelper;
+    }
+    
+    private IPersonManager personManager;
+    
+    @Autowired(required = true)
+    public void setPersonManager(IPersonManager personManager) {
+        this.personManager = personManager;
+    }
+
     private IPermissionStore permissionStore;
     
     @Autowired
@@ -86,7 +102,15 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
             @RequestParam("activity") String activity,
             @RequestParam("target") String target, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        
+
+        // ensure the current user is authorized to update and view permissions
+        final IPerson currentUser = personManager.getPerson((HttpServletRequest) request);
+        if (!permissionAdministrationHelper.canEditPermission(currentUser, target) || 
+                !permissionAdministrationHelper.canViewPermission(currentUser, target)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return null;
+        }
+
         JsonEntityBean bean = groupListHelper.getEntityForPrincipal(principal);
 
         if (bean != null) {
@@ -124,9 +148,9 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         
-        // ensure the current user is authorized to see permission owners
-        // TODO: remove dependency on permission portlet subscription permission
-        if (!this.isAuthorized(request)) {
+        // ensure the current user is authorized to view permissions
+        final IPerson currentUser = personManager.getPerson((HttpServletRequest) request);
+        if (!permissionAdministrationHelper.canViewPermission(currentUser, target)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }

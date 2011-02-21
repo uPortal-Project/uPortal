@@ -69,9 +69,13 @@
             <evaluate expression="breadcrumbs.put('listOwners', 'Categories')"/>
             <evaluate expression="breadcrumbs.put('listActivities', owner.name)"/>
             <evaluate expression="breadcrumbs.put('showActivity', activity.name)"/>
+            <set name="flashScope.principals" value="permissionAdministrationHelper.getCurrentPrincipals(owner, activity, requestParameters.target)"/>
         </on-entry>
-        <input name="permissionDefinition" value="permissionAdministrationHelper.getForm(owner, activity, requestParameters.target)"/>
         
+        <input name="owner" value="owner"/>
+        <input name="activity" value="activity"/>
+        <input name="target" value="requestParameters.target"/>
+        <input name="principals" value="principals"/>
         <input name="breadcrumbs" value="breadcrumbs"/>
         <output name="breadcrumb" value="flowScope.breadcrumb"/>
         
