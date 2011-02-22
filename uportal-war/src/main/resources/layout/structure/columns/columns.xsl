@@ -29,7 +29,7 @@
 <xsl:param name="focusedTabID">none</xsl:param>
 
 <!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
-<xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @tabGroup]" use="@tabGroup"/>
+<xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/>
 
   <xsl:variable name="activeTabIdx">
     <!-- if the activeTab is a number then it is the active tab index -->
