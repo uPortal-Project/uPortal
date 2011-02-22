@@ -38,6 +38,12 @@
       <description>Identifier used to reference a tab externally, such as within a URL</description>  
       <type>2</type> 
     </parameter>
+    <parameter>
+      <name>tabGroup</name>
+      <default-value>DEFAULT_TABGROUP</default-value>
+      <description>Allows the theme to sort tabs into groups (optional feature)</description>
+      <type>2</type>
+    </parameter>
     <parameter> 
       <name>width</name>  
       <default-value>100%</default-value>  

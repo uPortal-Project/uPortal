@@ -134,6 +134,7 @@
                                         <ref bean="xslPortalUrlProvider"/>
                                     </entry>
                                     <entry key="EXTERNAL_LOGIN_URL" value="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
+                                    <entry key="useTabGroups" value="${org.jasig.portal.layout.useTabGroups}"/>
                                 </map>
                             </property>
                             <property name="parameterExpressions">

@@ -433,12 +433,13 @@ var uportal = uportal || {};
                         }
                     );
                 },
-                onTabAdd: function (tabLabel, columns) {
+                onTabAdd: function (tabLabel, columns, tabGroup) {
                     that.persistence.update(
                         {
                             action: "addTab",
                             tabName: tabLabel,
-                            widths: columns
+                            widths: columns,
+                            tabGroup: tabGroup
                         },
                         function (data) {
                             window.location = that.urlProvider.getTabUrl(data.tabId);

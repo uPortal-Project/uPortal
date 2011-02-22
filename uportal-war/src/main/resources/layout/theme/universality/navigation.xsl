@@ -44,7 +44,9 @@
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
-    exclude-result-prefixes="upAuth upGroup upMsg" 
+    xmlns:url="xalan://java.net.URLEncoder"
+    xmlns:xalan="http://xml.apache.org/xalan"
+    exclude-result-prefixes="upAuth upGroup upMsg url xalan" 
     version="1.0">
       
   <!-- ========== TEMPLATE: NAVIGATION ========== -->
@@ -60,12 +62,56 @@
     	<xsl:when test="$CONTEXT = 'header'">  <!-- When the context is 'header' render the main navigation as tabs. -->
       	
         <div id="portalNavigation">
-        	<div id="portalNavigationInner" class="{$CONTEXT}">
+          <!-- Optional Tab Groups -->
+          <xsl:if test="$USE_TAB_GROUPS='true'">
+            <h3 class="fl-offScreen-hidden">Tab Groups</h3>
+            <div id="portalNavigationTabGroup">
+              <span id="activeTabGroup" style="display:none;"><xsl:value-of select="/layout/navigation/tabGroupsList/@activeTabGroup"/></span>
+              <ul id="portalNavigationTabGroupsList">
+                <xsl:for-each select="tabGroupsList/tabGroup">
+                  <xsl:variable name="TABGROUP_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
+                    <xsl:choose>
+                      <xsl:when test="position()=1 and position()=last()">singleTabGroup</xsl:when>
+                      <xsl:when test="position()=1">firstTabGroup</xsl:when>
+                      <xsl:when test="position()=last()">lastTabGroup</xsl:when>
+                      <xsl:otherwise></xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:variable>
+                  <xsl:variable name="TABGROUP_CSS">
+                    <xsl:choose>
+                      <xsl:when test="/layout/navigation/tabGroupsList/@activeTabGroup=.">tabGroupListActive <xsl:value-of select="$TABGROUP_POSITION"/></xsl:when>
+                      <xsl:otherwise><xsl:value-of select="$TABGROUP_POSITION"/></xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:variable>
+                  <xsl:variable name="TABGROUP_LABEL">
+                    <xsl:choose>
+                      <xsl:when test="@name='DEFAULT_TABGROUP'"><xsl:value-of select="upMsg:getMessage('navigation.tabgroup.default', $USER_LANG)"/></xsl:when>
+                      <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+                    </xsl:choose>
+                  </xsl:variable>
+                  <xsl:variable name="TABGROUP_URL">
+                    <xsl:call-template name="layoutUrl">
+                      <xsl:with-param name="folderId" select="@firstTabId" />
+                    </xsl:call-template>
+                  </xsl:variable>
+                  <li class="{$TABGROUP_CSS}">
+                    <a href="{$TABGROUP_URL}" title="{.}"><span class="portal-tabGroup-label"><xsl:value-of select="$TABGROUP_LABEL"/></span></a>
+                  </li>
+                </xsl:for-each>
+              </ul>
+            </div>
+          </xsl:if>
+          <!-- Tabs -->
+          <div id="portalNavigationInner" class="{$CONTEXT}">
           	<a name="mainNavigation" class="skip-link" title="Reference anchor: main nagivation"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
             <ul id="portalNavigationList" class="fl-tabs flc-reorderer-column">
-              <xsl:apply-templates select="tab">
-                <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
-              </xsl:apply-templates>
+              <xsl:for-each select="tab">
+                <xsl:if test="$USE_TAB_GROUPS!='true' or self::node()[@tabGroup=$ACTIVE_TAB_GROUP]">
+                 <xsl:apply-templates select=".">
+                   <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
+                 </xsl:apply-templates>
+                </xsl:if>
+              </xsl:for-each>
             </ul>
             
             <xsl:if test="$USE_SUBNAVIGATION_ROW='true'">
@@ -97,10 +143,14 @@
                 </xsl:if>
           	</div>
             <div class="fl-widget-content">
-            	<ul id="portalNavigationList" class="fl-listmenu flc-reorderer-column">
-              	<xsl:apply-templates select="tab">
-                	<xsl:with-param name="CONTEXT" select="$CONTEXT"/>
-                </xsl:apply-templates>
+              <ul id="portalNavigationList" class="fl-listmenu flc-reorderer-column">
+                <xsl:for-each select="tab">
+                  <xsl:if test="$USE_TAB_GROUPS!='true' or self::node()[@tabGroup=$ACTIVE_TAB_GROUP]">
+                   <xsl:apply-templates select=".">
+                     <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
+                   </xsl:apply-templates>
+                  </xsl:if>
+                </xsl:for-each>
               </ul>
             </div>
           </div>

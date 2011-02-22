@@ -82,7 +82,10 @@ import org.w3c.dom.NodeList;
 @RequestMapping("/layout")
 public class UpdatePreferencesServlet implements InitializingBean {
 
-	protected final Log log = LogFactory.getLog(getClass());
+    private static final String TAB_GROUP_PARAMETER = "tabGroup";  // matches incoming JS
+    private static final String TAB_GROUP_DEFAULT = "DEFAULT_TABGROUP";  // matches default in structure transform
+
+    protected final Log log = LogFactory.getLog(getClass());
 	
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 	
@@ -113,7 +116,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
     }
 
 	// default tab name
-	protected final static String DEFAULT_TAB_NAME = "New Tab";
+	protected static final String DEFAULT_TAB_NAME = "New Tab";
 
     public void afterPropertiesSet() throws Exception {
     }
@@ -653,6 +656,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
 		// add the tab to the layout
 		ulm.addNode(newTab, ulm.getRootFolderId(), null);
+
 		try {
 			// save the user's layout
             saveLayout(per, ulm, upm, null);
@@ -663,9 +667,9 @@ public class UpdatePreferencesServlet implements InitializingBean {
 		// get the id of the newly added tab
 		String tabId = newTab.getId();
 
-        int count = 0;
         StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
             .getStructureStylesheetUserPreferences();
+        
         for (String width : widths) {
 
             // create new column element
@@ -689,8 +693,24 @@ public class UpdatePreferencesServlet implements InitializingBean {
             } catch (Exception e) {
                 log.error("Error saving new column widths", e);
             }
-            count++;
-            
+
+        }
+
+        // ## 'tabGroup' value (optional feature)
+        // Set the 'tabGroup' attribute on the folder element that describes 
+        // this new tab;  use the currently active tabGroup.
+        if (request.getParameter(TAB_GROUP_PARAMETER)!= null) {
+
+            String tabGroup = request.getParameter(TAB_GROUP_PARAMETER).trim();
+            if (log.isDebugEnabled()) {
+                log.debug(TAB_GROUP_PARAMETER + "=" + tabGroup);
+            }
+
+            if (!TAB_GROUP_DEFAULT.equals(tabGroup) && tabGroup.length() != 0) {
+                // Persists SSUP values to the database
+                ssup.setFolderAttributeValue(tabId, TAB_GROUP_PARAMETER , tabGroup);
+            }
+
         }
 
         try {
