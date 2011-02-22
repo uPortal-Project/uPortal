@@ -20,7 +20,6 @@
 package org.jasig.portal.portlets.search;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,6 @@ import org.jasig.portal.portlets.search.gsa.GsaSearchService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
-import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -91,6 +89,8 @@ public class SearchPortletController {
         this.attributes.add("mail");
         this.attributes.add("homePhone");
         this.attributes.add("mobile");
+        this.attributes.add("telephoneNumber");
+        this.attributes.add("postalAddress");
     }
 
     /**
@@ -101,12 +101,14 @@ public class SearchPortletController {
      * @return
      */
     @RequestMapping
-    public ModelAndView getSearchResults(PortletRequest request, @RequestParam(value="query", required=false) String query) {
+    public ModelAndView getSearchResults(PortletRequest request,
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "engine", required = false) String engine) {
         final Map<String,Object> model = new HashMap<String, Object>();
         
         // if no search has been supplied, simply show the search form
         if (StringUtils.isBlank(query)) {
-            return new ModelAndView("/jsp/Search/search", model);
+            return new ModelAndView("/jsp/Search/mobileSearch", model);
         }
         
         // determine which search types are enabled for this portlet configuration
@@ -118,7 +120,7 @@ public class SearchPortletController {
         /*
          * If directory search is enabled, find people matching the search query.
          */
-        if (directoryEnabled) {
+        if (directoryEnabled && (engine != null && "directory".equals(engine))) {
 
             // TODO: allow configuration of search query attributes
             final Map<String, Object> queryAttributes = new HashMap<String, Object>();
@@ -144,7 +146,7 @@ public class SearchPortletController {
         /*
          * If GSA search is enabled, get GSA results for the current query
          */
-        if (gsaEnabled) {
+        if (gsaEnabled && (engine != null && "campus-web".equals(engine))) {
             
             // get the GSA search configuration from the portlet preferences
             String baseUrl = prefs.getValue("gsaBaseUrl", null);
@@ -158,8 +160,20 @@ public class SearchPortletController {
         model.put("portletRegistryEnabled", portletRegistryEnabled);
         
         model.put("query", query);
-        
-        return new ModelAndView("/jsp/Search/search", model);
+        model.put("engine", engine);
+
+        String viewName = getViewName(request);
+        return new ModelAndView(viewName, model);
+    }
+ 
+    public String getViewName(PortletRequest request) {
+        // TODO: use theme to select view
+        String userAgent = request.getProperty("user-agent");
+        if (userAgent.contains("iPhone") || userAgent.contains("Android")) {
+            return "/jsp/Search/mobileSearch";
+        } else {
+            return "/jsp/Search/search";
+        }
     }
     
 }
