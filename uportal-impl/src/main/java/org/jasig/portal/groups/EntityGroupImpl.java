@@ -28,6 +28,8 @@ import java.util.Set;
 
 import javax.naming.Name;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.GroupService;
 
@@ -63,6 +65,7 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup
     private String name;
     private String description;
     protected IIndividualGroupService localGroupService;
+    private final Log log = LogFactory.getLog(getClass());
 
     // A group and its members share an entityType.
     private java.lang.Class leafEntityType;
@@ -201,10 +204,20 @@ public boolean deepContains(IGroupMember gm) throws GroupsException
 
     boolean found = false;
     Iterator it = getMemberGroups();
-    while ( it.hasNext() && !found )
-    {
+    while (it.hasNext() && !found) {
         IEntityGroup group = (IEntityGroup) it.next();
-        found = group.deepContains(gm);
+        if (group != null) {
+            found = group.deepContains(gm);
+        } else {
+            // Something bad has happened:  we've abruptly lost a group node to 
+            // which this group node refers.  This is an ERROR condition, but we 
+            // shouldn't simply throw an exception because we know (from 
+            // experience) it could make the portal unusable.  We definitely, 
+            // need, however, to send a strong message.
+            String msg = "Groups Integrety Error:  Group '" + this.getName() 
+                    + "' refers to a child group that is no longer available";
+            log.error(msg);
+        }
     }
 
     return found;
