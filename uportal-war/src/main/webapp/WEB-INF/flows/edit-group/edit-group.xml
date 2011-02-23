@@ -158,8 +158,10 @@
         <on-entry>
             <set name="flashScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.owner)"/>
             <set name="flashScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activity)"/>
+            <set name="flashScope.targetProvider" value="permissionTargetProviderRegistry.getTargetProvider(activity.targetProviderKey)"/>
+            <set name="flashScope.target" value="targetProvider.getTarget(requestParameters.target)"/>
         </on-entry>
-        <input name="permissionDefinition" value="permissionAdministrationHelper.getForm(owner, activity, requestParameters.target)"/>
+        <input name="permissionDefinition" value="permissionAdministrationHelper.getForm(owner, activity, flashScope.target)"/>
         <transition on="cancel" to="viewGroupPermissions"/>
         <transition on="done" to="viewGroupPermissions"/>
     </subflow-state>

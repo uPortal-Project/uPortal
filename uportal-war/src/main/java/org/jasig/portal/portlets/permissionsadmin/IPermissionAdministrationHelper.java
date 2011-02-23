@@ -9,6 +9,8 @@ import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.security.IPerson;
 
 /**
+ * IPermissionAdministrationHelper is designed to offer access to common
+ * permissions administration operations.
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Revision$
@@ -16,12 +18,9 @@ import org.jasig.portal.security.IPerson;
 public interface IPermissionAdministrationHelper {
 
     public static final String PERMISSIONS_OWNER = "UP_PERMISSIONS";
-    public static final String VIEW_OWNER = "VIEW_OWNER";
-    public static final String EDIT_OWNER = "EDIT_OWNER";
-    public static final String VIEW_ACTIVITY = "VIEW_ACTIVITY";
-    public static final String EDIT_ACTIVITY = "EDIT_ACTIVITY";
-    public static final String EDIT_PERMISSION = "EDIT_PERMISSION";
-    public static final String VIEW_PERMISSION = "VIEW_PERMISSION";
+    public static final String EDIT_PERMISSION = "EDIT_PERMISSIONS";
+    public static final String VIEW_PERMISSION = "VIEW_PERMISSIONS";
+    public static final String ALL_PERMISSIONS_TARGET = "ALL";
 
     public boolean canEditOwner(IPerson currentUser, String owner);
 

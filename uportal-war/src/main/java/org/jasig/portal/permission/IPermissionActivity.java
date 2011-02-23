@@ -32,6 +32,8 @@ package org.jasig.portal.permission;
  */
 public interface IPermissionActivity {
 
+    public Long getId();
+    
     /**
      * Get the unique, unchanging functional name for this permission activity.
      * This identifier should not change over time and should consist of 

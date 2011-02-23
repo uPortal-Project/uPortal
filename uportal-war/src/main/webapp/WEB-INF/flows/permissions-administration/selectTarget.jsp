@@ -74,8 +74,25 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Section -->
     <div class="portlet-form">
         <form id="${n}targetForm" action="${ formUrl }" method="POST">
-            <label for="${n}target"><spring:message code="select.target.instruction"/>:</label> 
-            <input id="${n}target" class="target-input multiselect" name="target"/>
+            <label for="${n}targetSuggest"><spring:message code="select.target.instruction"/>:</label>
+            <div id="${n}targetSuggest" class="target-input">
+                <input class="up-autocomplete-searchterm" type="text" name="targetDisplayName" value="Target" autocomplete="off"/>
+                <input type="hidden" name="target"/>
+                <div class="up-autocomplete-dropdown">
+                    <div class="up-autocomplete-noresults portlet-msg info" role="alert">
+                        <p>No members</p>
+                    </div>
+                    <ul class="up-autocomplete-matches">
+                        <li class="up-autocomplete-match group">
+                            <a href="javascript:;" class="up-autocomplete-match-link" title="&nbsp;">
+                                <span class="up-autocomplete-match-text">&nbsp;</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="up-autocomplete-loading"><span>Loading . . .</span></div>
+                    <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
+                </div>
+            </div>
 
             <!-- Buttons -->
             <div class="buttons">
@@ -97,25 +114,33 @@ up.jQuery(function() {
 
     var submitForm = function(){
         var form = this;
-        var target = $("#${n}target").val().split(",")[0];
-        $("#${n}target").val(target);
+        form.target.value = targetSuggest.getValue();
     };
 
-    $(document).ready(function(){
-        $("#${n}target").tokenInput(
-            "<c:url value="/api/permissions/${activity.id}/targets.json"/>",
+    var targetSuggest = up.Autocomplete(
+            "#${n}targetSuggest", 
             {
-                prePopulate: [],
-                tokenLimit: 1,
-                onResult: function(results) {
+                initialText: "Target",
+                searchFunction: function(searchterm) {
                     var targets = [];
-                    $(results.targets).each( function (idx, target) {
-                        targets.push({ id: target.key, name: target.name || target.key });
+                    $.ajax({
+                       url: "<c:url value="/api/permissions/${activity.id}/targets.json"/>",
+                       data: { q: searchterm },
+                       async: false,
+                       success: function (data) {
+                           $(data.targets).each( function (idx, target) {
+                               targets.push({ value: target.key, text: target.name || target.key });
+                           });
+                       }
                     });
                     return targets;
                 }
-            } 
+            }
         );
+
+    $(document).ready(function(){
+        
+        
         $("#${n}targetForm").submit(submitForm);
     });
     

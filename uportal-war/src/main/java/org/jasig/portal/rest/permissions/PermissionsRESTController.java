@@ -47,6 +47,7 @@ import org.jasig.portal.permission.target.IPermissionTarget;
 import org.jasig.portal.permission.target.IPermissionTargetProvider;
 import org.jasig.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
+import org.jasig.portal.portlets.permissionsadmin.IPermissionAdministrationHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
@@ -108,6 +109,13 @@ public class PermissionsRESTController {
     @Autowired
     public void setGroupListHelper(IGroupListHelper groupListHelper) {
         this.groupListHelper = groupListHelper;
+    }
+    
+    private IPermissionAdministrationHelper permissionAdministrationHelper;
+    
+    @Autowired
+    public void setPermissionAdministrationHelper(IPermissionAdministrationHelper permissionAdministrationHelper) {
+        this.permissionAdministrationHelper = permissionAdministrationHelper;
     }
 
     /**
@@ -294,7 +302,8 @@ public class PermissionsRESTController {
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
-            for (Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
+            for (@SuppressWarnings("unchecked")
+            Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
                 IEntityGroup parent = iter.next();
 
                 IAuthorizationPrincipal parentPrincipal = authService.newPrincipal(parent);
@@ -351,7 +360,8 @@ public class PermissionsRESTController {
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
-            for (Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
+            for (@SuppressWarnings("unchecked")
+            Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
                 IEntityGroup parent = iter.next();
 
                 IAuthorizationPrincipal parentPrincipal = authService.newPrincipal(parent);
@@ -404,16 +414,8 @@ public class PermissionsRESTController {
     
     protected boolean isAuthorized(HttpServletRequest request) {
 
-        // TODO: figure out how we want to actually handle permissions
-        
         final IPerson person = personManager.getPerson((HttpServletRequest) request);
-        if (person != null) {
-            IAuthorizationService authServ = AuthorizationImpl.singleton();
-            IAuthorizationPrincipal principal = authServ.newPrincipal((String) person.getAttribute(IPerson.USERNAME), IPerson.class);
-            return principal.hasPermission("UP_PERMISSION", "VIEW_PERMISSIONS", "REST");
-        }
-        
-        return false;
+        return (person != null && permissionAdministrationHelper.canViewPermission(person, null));
     }
     
     protected JsonPermission getPermissionForPrincipal(UniquePermission permission, JsonEntityBean entity) {

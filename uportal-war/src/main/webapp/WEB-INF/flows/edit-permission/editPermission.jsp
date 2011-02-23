@@ -61,11 +61,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </c:forEach>
         </div>
         <h2 class="title" role="heading">
-            <c:set var="message"><span class="name">${ fn:escapeXml(permissionDefinition.activity.name )}</span></c:set>
+            <c:set var="message"><span class="name">${ fn:escapeXml(activity.name )}</span></c:set>
             <spring:message code="edit.assignment.for.name" arguments="${ message }" htmlEscape="false"/>
         </h2>
         <h3 class="subtitle">
-            <c:set var="message"><span class="name">${ fn:escapeXml(permissionDefinition.target.name )}</span></c:set>
+            <c:set var="message"><span class="name">${ fn:escapeXml(target.name )}</span></c:set>
             <spring:message code="with.target.name" arguments="${ message }" htmlEscape="false"/>
         </h3>
         <div class="toolbar">
@@ -78,13 +78,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Portlet Content -->
     <div class="fl-widget-content content portlet-content" role="main">
 
-            <form:form method="POST" id="${n}editPermissionForm" action="${ formUrl }" commandName="permissionDefinition">
+            <form method="POST" id="${n}editPermissionForm" action="javascript:;">
 
-                <form:errors path="*"/>  
-                
                 <ul id="assignments"></ul>
   
-            </form:form>
+            </form>
     
     </div> <!-- end: portlet-content -->
 
@@ -150,9 +148,9 @@ up.jQuery(function() {
             { 
                 principal: principal,
                 assignment: type,
-                owner: '${ permissionDefinition.owner.fname }',
-                activity: '${ permissionDefinition.activity.fname }',
-                target: '${ permissionDefinition.target.key }',
+                owner: '${ owner.fname }',
+                activity: '${ activity.fname }',
+                target: '${ target.key }',
                 principals: principals
                 
             },
@@ -169,9 +167,9 @@ up.jQuery(function() {
         $.get(
                 "<c:url value="/api/permissionAssignmentMap"/>", 
                 {
-                    owner: '${ permissionDefinition.owner.fname }',
-                    activity: '${ permissionDefinition.activity.fname }',
-                    target: '${ permissionDefinition.target.key }',
+                    owner: '${ owner.fname }',
+                    activity: '${ activity.fname }',
+                    target: '${ target.key }',
                     principals: principals
                 },
                 function(data) {

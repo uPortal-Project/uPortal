@@ -94,11 +94,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <ul id="pager-top" class="fl-pager-ui">
                 <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
                 <li>
-                    <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                        <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
-                        <li class="flc-pager-pageLink-disabled">2</li>
-                        <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
-                    </ul>
+                     <ul class="flc-pager-links demo-pager-links" style="margin:0; display:inline">
+                         <li class="flc-pager-pageLink"><a href="#">1</a></li>
+                         <li class="flc-pager-pageLink-skip">...</li>
+                         <li class="flc-pager-pageLink"><a href="#">2</a></li>
+                     </ul>
                 </li>
                 <li class="flc-pager-next"><a href="#"><spring:message code="next"/> &gt;</a></li>
                 <li>
