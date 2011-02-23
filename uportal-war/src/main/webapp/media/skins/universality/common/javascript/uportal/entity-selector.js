@@ -305,7 +305,7 @@ var up = up || {};
         $.each(entity.children, function (idx, obj) {
             var li, list;
             li = '<li class="' + obj.entityType + '"><a href="javascript:;"><span class="' + that.options.styles.memberLink + '" key="' + obj.entityType + ':' +  obj.id + '">' + obj.name + '</span></a></li>';
-            list = entityBrowserContent.find("." + obj.entityType).find("." + that.options.styles.memberList);
+            list = entityBrowserContent.find("." + obj.entityType.toLowerCase()).find("." + that.options.styles.memberList);
             list.append(li);
             list.show();
         });//end:loop.
