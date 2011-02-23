@@ -60,7 +60,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <input type="hidden" name="principal"/>
                 <div class="up-autocomplete-dropdown">
                     <div class="up-autocomplete-noresults portlet-msg info" role="alert">
-                        <p>No members</p>
+                        <p><spring:message code="no.matches"/></p>
                     </div>
                     <ul class="up-autocomplete-matches">
                         <li class="up-autocomplete-match group">
@@ -69,18 +69,18 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             </a>
                         </li>
                     </ul>
-                    <div class="up-autocomplete-loading"><span>Loading . . .</span></div>
-                    <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
+                    <div class="up-autocomplete-loading"><span><spring:message code="loading"/></span></div>
+                    <div class="up-autocomplete-close"><a href="javascript:;"><spring:message code="close"/></a></div>
                 </div>
             </div>
             
             <label for="${n}permissionSuggest"><spring:message code="permission.suggest.permission"/></label>
             <div id="${n}permissionSuggest" class="activity-input">
-                <input class="up-autocomplete-searchterm" type="text" name="activityDisplayName" value="Permission" autocomplete="off"/>
+                <input class="up-autocomplete-searchterm" type="text" name="activityDisplayName" value="<spring:message code="permission"/>" autocomplete="off"/>
                 <input type="hidden" name="activity"/>
                 <div class="up-autocomplete-dropdown">
                     <div class="up-autocomplete-noresults portlet-msg info" role="alert">
-                        <p>No members</p>
+                        <p><spring:message code="no.matches"/></p>
                     </div>
                     <ul class="up-autocomplete-matches">
                         <li class="up-autocomplete-match group">
@@ -89,8 +89,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             </a>
                         </li>
                     </ul>
-                    <div class="up-autocomplete-loading"><span>Loading . . .</span></div>
-                    <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
+                    <div class="up-autocomplete-loading"><span><spring:message code="loading"/></span></div>
+                    <div class="up-autocomplete-close"><a href="javascript:;"><spring:message code="close"/></a></div>
                 </div>
             </div>
             <span class="punctuation">?</span>
@@ -186,7 +186,7 @@ up.jQuery(function() {
         var permissionSuggest = up.Autocomplete(
             "#${n}permissionSuggest", 
             {
-                initialText: "Permission",
+                initialText: "<spring:message code="permission"/>",
                 searchFunction: function(searchterm) {
                     var principals = [];
                     $.ajax({

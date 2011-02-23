@@ -76,11 +76,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <form id="${n}targetForm" action="${ formUrl }" method="POST">
             <label for="${n}targetSuggest"><spring:message code="select.target.instruction"/>:</label>
             <div id="${n}targetSuggest" class="target-input">
-                <input class="up-autocomplete-searchterm" type="text" name="targetDisplayName" value="Target" autocomplete="off"/>
+                <input class="up-autocomplete-searchterm" type="text" name="targetDisplayName" value="<spring:message code="target"/>" autocomplete="off"/>
                 <input type="hidden" name="target"/>
                 <div class="up-autocomplete-dropdown">
                     <div class="up-autocomplete-noresults portlet-msg info" role="alert">
-                        <p>No members</p>
+                        <p><spring:message code="no.matches"/></p>
                     </div>
                     <ul class="up-autocomplete-matches">
                         <li class="up-autocomplete-match group">
@@ -89,8 +89,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             </a>
                         </li>
                     </ul>
-                    <div class="up-autocomplete-loading"><span>Loading . . .</span></div>
-                    <div class="up-autocomplete-close"><a href="javascript:;">Close</a></div>
+                    <div class="up-autocomplete-loading"><span><spring:message code="loading"/></span></div>
+                    <div class="up-autocomplete-close"><a href="javascript:;"><spring:message code="close"/></a></div>
                 </div>
             </div>
 
@@ -120,7 +120,7 @@ up.jQuery(function() {
     var targetSuggest = up.Autocomplete(
             "#${n}targetSuggest", 
             {
-                initialText: "Target",
+                initialText: "<spring:message code="target"/>",
                 searchFunction: function(searchterm) {
                     var targets = [];
                     $.ajax({
