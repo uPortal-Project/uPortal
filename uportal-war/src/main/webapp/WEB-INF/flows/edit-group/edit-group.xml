@@ -156,14 +156,25 @@
     <!-- EDIT PERMISSION subflow -->
     <subflow-state id="edit-permission" subflow="edit-permission">
         <on-entry>
+            <set name="flashScope.breadcrumbs" value="new java.util.LinkedHashMap()"/>
+            <evaluate expression="breadcrumbs.put('reviewGroup', group.name)"/>
+            <evaluate expression="breadcrumbs.put('viewGroupPermissions', 'Permissions')"/>
             <set name="flashScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.owner)"/>
-            <set name="flashScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activity)"/>
+            <set name="flashScope.activity" value="permissionOwnerDao.getPermissionActivity(requestParameters.owner, requestParameters.activity)"/>
             <set name="flashScope.targetProvider" value="permissionTargetProviderRegistry.getTargetProvider(activity.targetProviderKey)"/>
             <set name="flashScope.target" value="targetProvider.getTarget(requestParameters.target)"/>
+            <set name="flashScope.principals" value="permissionAdministrationHelper.getCurrentPrincipals(owner, activity, requestParameters.target)"/>
         </on-entry>
-        <input name="permissionDefinition" value="permissionAdministrationHelper.getForm(owner, activity, flashScope.target)"/>
-        <transition on="cancel" to="viewGroupPermissions"/>
-        <transition on="done" to="viewGroupPermissions"/>
+        
+        <input name="owner" value="owner"/>
+        <input name="activity" value="activity"/>
+        <input name="target" value="flashScope.target"/>
+        <input name="principals" value="principals"/>
+        <input name="breadcrumbs" value="breadcrumbs"/>
+        <output name="breadcrumb" value="flowScope.breadcrumb"/>
+
+        <transition on="#{breadcrumb == 'reviewGroup'}" to="reviewGroup"/>
+        <transition on="#{breadcrumb == 'viewGroupPermissions'}" to="viewGroupPermissions"/>
     </subflow-state>
 
     <!-- CONFIRM REMOVAL view -->    
