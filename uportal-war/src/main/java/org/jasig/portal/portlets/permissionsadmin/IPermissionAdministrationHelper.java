@@ -1,7 +1,7 @@
 package org.jasig.portal.portlets.permissionsadmin;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.permission.IPermissionActivity;
@@ -34,11 +34,11 @@ public interface IPermissionAdministrationHelper {
 
     public boolean canViewPermission(IPerson currentUser, String target);
 
-    public List<String> getPrincipalsForEntities(Collection<JsonEntityBean> entities);
+    public Set<String> getPrincipalsForEntities(Collection<JsonEntityBean> entities);
 
-    public List<JsonEntityBean> getEntitiesForPrincipals(Collection<String> principals);
+    public Set<JsonEntityBean> getEntitiesForPrincipals(Collection<String> principals);
 
-    public List<String> getCurrentPrincipals(IPermissionOwner owner,
+    public Set<String> getCurrentPrincipals(IPermissionOwner owner,
             IPermissionActivity activity, String targetKey);
 
 }

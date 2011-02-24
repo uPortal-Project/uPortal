@@ -19,9 +19,9 @@
 
 package org.jasig.portal.portlets.permissionsadmin;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -109,9 +109,9 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
         return (ap.hasPermission(PERMISSIONS_OWNER, VIEW_PERMISSION, ALL_PERMISSIONS_TARGET));
     }
 
-    public List<JsonEntityBean> getEntitiesForPrincipals(Collection<String> principals) {
+    public Set<JsonEntityBean> getEntitiesForPrincipals(Collection<String> principals) {
         
-        List<JsonEntityBean> entities = new ArrayList<JsonEntityBean>();
+        Set<JsonEntityBean> entities = new HashSet<JsonEntityBean>();
         
         // add a permission for each member of the principals collection
         for (String principal : principals) {
@@ -122,9 +122,9 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
         return entities;
     }
     
-    public List<String> getPrincipalsForEntities(Collection<JsonEntityBean> entities) {
+    public Set<String> getPrincipalsForEntities(Collection<JsonEntityBean> entities) {
         
-        List<String> principals = new ArrayList<String>();
+        Set<String> principals = new HashSet<String>();
         
         // add a permission for each member of the principals collection
         for (JsonEntityBean entity : entities) {
@@ -134,13 +134,13 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
         return principals;
     }
     
-    public List<String> getCurrentPrincipals(IPermissionOwner owner, IPermissionActivity activity, String targetKey) {
+    public Set<String> getCurrentPrincipals(IPermissionOwner owner, IPermissionActivity activity, String targetKey) {
 
         // Find permissions that match the inputs from the IPermissionStore
         IPermission[] permissions = permissionStore.select(owner.getFname(), null, activity.getFname(), targetKey, null);
         
         // Build the set of existing assignments
-        List<String> principals = new ArrayList<String>();
+        Set<String> principals = new HashSet<String>();
         for (IPermission p : permissions) {
             principals.add(p.getPrincipal());
         }
