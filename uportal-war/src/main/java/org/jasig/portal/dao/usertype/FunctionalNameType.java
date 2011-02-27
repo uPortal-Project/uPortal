@@ -22,6 +22,7 @@ package org.jasig.portal.dao.usertype;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.HibernateException;
@@ -38,6 +39,20 @@ public class FunctionalNameType extends BaseUserType<String> {
     public static final Pattern INVALID_CHARS_PATTERN = Pattern.compile("[^\\w-]");
     public static final Pattern VALID_CHARS_PATTERN = Pattern.compile("[\\w-]");
     public static final Pattern VALID_FNAME_PATTERN = Pattern.compile("^[\\w-]+$");
+    
+    public static void validate(String fname) {
+        if (!isValid(fname)) {
+            throw new IllegalArgumentException("'" + fname + "' does not validate against FunctionalName pattern: " + VALID_FNAME_PATTERN.pattern());
+        }
+    }
+    public static boolean isValid(String fname) {
+        if (fname == null) {
+            return false;
+        }
+
+        final Matcher matcher = VALID_FNAME_PATTERN.matcher(fname);
+        return matcher.matches();
+    }
 
     public FunctionalNameType() {
         super(VarcharTypeDescriptor.INSTANCE, StringTypeDescriptor.INSTANCE);
@@ -51,7 +66,7 @@ public class FunctionalNameType extends BaseUserType<String> {
             return null;
         }
         
-        if (!VALID_FNAME_PATTERN.matcher(value).matches()) {
+        if (!isValid(value)) {
             throw new IllegalArgumentException("Value from database '" + value + "' does not validate against pattern: " + VALID_FNAME_PATTERN.pattern());
         }
 
@@ -60,7 +75,7 @@ public class FunctionalNameType extends BaseUserType<String> {
 
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
-        if (value != null && !VALID_FNAME_PATTERN.matcher((String) value).matches()) {
+        if (value != null && !isValid((String) value)) {
             throw new IllegalArgumentException("Value being stored '" + value + "' does not validate against pattern: " + VALID_FNAME_PATTERN.pattern());
         }
         

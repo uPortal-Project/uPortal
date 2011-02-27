@@ -20,7 +20,6 @@
 package org.jasig.portal.portlets.portletadmin;
 
 import java.util.Date;
-import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
@@ -60,11 +59,10 @@ public class PortletDefinitionFormValidator {
 	}
 	
 	public void validateBasicInfo(PortletDefinitionForm def, MessageContext context) {
-		Matcher matcher = FunctionalNameType.VALID_FNAME_PATTERN.matcher(def.getFname());
 		if (StringUtils.isEmpty(def.getFname())) {
 			context.addMessage(new MessageBuilder().error().source("fName")
 					.code("please.enter.fname").build());
-		} else if (!matcher.matches()) {
+		} else if (!FunctionalNameType.isValid(def.getFname())) {
 			context.addMessage(new MessageBuilder().error().source("fName")
 					.code("fname.invalid").build());		
 		} 
