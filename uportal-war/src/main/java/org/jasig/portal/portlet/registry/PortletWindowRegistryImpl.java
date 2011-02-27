@@ -62,7 +62,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     public static final String TRANSIENT_WINDOW_ID_PREFIX = "tp.";
     public static final String TRANSIENT_PORTLET_WINDOW_MAP_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".TRANSIENT_PORTLET_WINDOW_MAP";
     public static final String PORTLET_WINDOW_MAP_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW_MAP";
-    
+
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private IPortletEntityRegistry portletEntityRegistry;

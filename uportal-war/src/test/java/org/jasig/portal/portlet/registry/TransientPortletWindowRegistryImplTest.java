@@ -47,7 +47,7 @@ import org.jasig.portal.utils.web.PortalWebUtils;
  */
 public class TransientPortletWindowRegistryImplTest extends TestCase {
     public void testGetTransientWindow() throws Exception {
-        final TransientPortletWindowRegistryImpl transientPortletWindowRegistry = new TransientPortletWindowRegistryImpl();
+        final PortletWindowRegistryImpl transientPortletWindowRegistry = new PortletWindowRegistryImpl();
         
         final HttpServletRequest request = createMock(HttpServletRequest.class);
         final HttpSession session = createMock(HttpSession.class);
@@ -73,7 +73,7 @@ public class TransientPortletWindowRegistryImplTest extends TestCase {
         expect(request.getAttribute(PortletWindowRegistryImpl.PORTLET_WINDOW_MAP_ATTRIBUTE)).andReturn(portletWindowMap);
         expect(sourcePortletWindow.getPortletEntityId()).andReturn(portletEntityId);
         expect(request.getAttribute(PortalWebUtils.REQUEST_MUTEX_ATTRIBUTE)).andReturn(request).times(2);
-        expect(request.getAttribute(TransientPortletWindowRegistryImpl.TRANSIENT_PORTLET_WINDOW_MAP_ATTRIBUTE)).andReturn(transientPortletWindowMap).times(2);
+        expect(request.getAttribute(PortletWindowRegistryImpl.TRANSIENT_PORTLET_WINDOW_MAP_ATTRIBUTE)).andReturn(transientPortletWindowMap).times(2);
         expect(portletEntityId.getStringId()).andReturn("peid1").times(2);
         expect(portletEntityRegistry.getParentPortletDefinition(portletEntityId)).andReturn(portletDefinition);
         expect(portletDefinition.getPortletDefinitionId()).andReturn(portletDefinitionId);
@@ -98,8 +98,8 @@ public class TransientPortletWindowRegistryImplTest extends TestCase {
         
         assertTrue(portletWindow1 == portletWindow2);
         assertEquals(1, transientPortletWindowMap.size());
-        assertEquals(TransientPortletWindowRegistryImpl.TRANSIENT_WINDOW_ID_PREFIX + "peid1", portletWindowId.getStringId());
-        assertEquals(TransientPortletWindowRegistryImpl.TRANSIENT_WINDOW_ID_PREFIX + "peid1", portletWindow2.getPortletWindowId().getStringId());
+        assertEquals(PortletWindowRegistryImpl.TRANSIENT_WINDOW_ID_PREFIX + "peid1", portletWindowId.getStringId());
+        assertEquals(PortletWindowRegistryImpl.TRANSIENT_WINDOW_ID_PREFIX + "peid1", portletWindow2.getPortletWindowId().getStringId());
         assertEquals("peid1", portletWindow2.getPortletEntityId().getStringId());
 
         verify(request, session, sourcePortletWindowId, sourcePortletWindow, portletEntityId, 
