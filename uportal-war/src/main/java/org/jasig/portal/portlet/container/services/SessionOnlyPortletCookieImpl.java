@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.portlet.container.services;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -34,8 +35,13 @@ import org.jasig.portal.portlet.om.IPortletCookie;
  * @author Nicholas Blair
  * @version $Id$
  */
-class SessionOnlyPortletCookieImpl implements IPortletCookie {
+class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7216859047141530039L;
+	
 	private final String name;
 	private String value;
 	private String comment;
