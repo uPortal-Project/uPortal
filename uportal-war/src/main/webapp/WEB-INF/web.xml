@@ -272,7 +272,7 @@
 
 	 <filter-mapping>
         <filter-name>createPortletCookieFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
     </filter-mapping>
     <servlet>
         <servlet-name>Login</servlet-name>

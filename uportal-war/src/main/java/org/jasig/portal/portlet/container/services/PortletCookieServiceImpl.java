@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -61,6 +61,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     private String domain = null;
     private String path = "/";
     private int maxAge = (int)TimeUnit.DAYS.toSeconds(365);
+    private long maxAgeUpdateInterval = TimeUnit.MINUTES.toMillis(5);
     private boolean portalCookieAlwaysSecure = false;
     
     @Autowired
@@ -83,7 +84,37 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         this.maxAge = maxAge;
     }
 
-	/**
+    /**
+     * @param cookieName The name of the cookie to set on the browser. Defaults to {@link #DEFAULT_PORTAL_COOKIE_NAME}
+     * WARNING if you change this in an existing deployment all existing portal cookies will be orphaned.
+     */
+    public void setCookieName(String cookieName) {
+        this.cookieName = cookieName;
+    }
+
+    /**
+     * @param comment The comment for the cookie that is set. Defaults to {@link #DEFAULT_PORTAL_COOKIE_COMMENT}
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    /**
+     * @param domain The domain to set, it is recommended to leave this null.
+     */
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    /**
+     * @param maxAgeUpdateInterval How frequently (in ms) the maxAge date on the portal cookie should be updated. Defaults to 5 minutes.
+     * Only portal cookies older than 5 minutes will be updated in the client's browser and the db with a new maxAge
+     */
+    public void setMaxAgeUpdateInterval(long maxAgeUpdateInterval) {
+        this.maxAgeUpdateInterval = maxAgeUpdateInterval;
+    }
+
+    /**
 	 * @param portalCookieAlwaysSecure Set a value of true to set the portal cookie's secure flag to 'true' regardless of the request's secure flag.
 	 */
 	public void setPortalCookieAlwaysSecure(boolean portalCookieAlwaysSecure) {
@@ -103,14 +134,17 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         //Create the browser cookie
         final Cookie cookie = this.convertToCookie(portalCookie, this.portalCookieAlwaysSecure || request.isSecure());
         
-        //Update the expiration date of the portal cookie stored in the DB
-        this.portletCookieDao.updatePortalCookieExpiration(portalCookie, cookie.getMaxAge());
-        
-        // Update expiration dates of portlet cookies stored in session
-        removeExpiredPortletCookies(request);
-        
-        //Update the cookie in the users browser
-        response.addCookie(cookie);
+        //Update the expiration date of the portal cookie stored in the DB if the update interval has passed
+        final Date expires = portalCookie.getExpires();
+        if ((System.currentTimeMillis() - this.maxAgeUpdateInterval) > (expires.getTime() - TimeUnit.SECONDS.toMillis(this.maxAge))) {
+            this.portletCookieDao.updatePortalCookieExpiration(portalCookie, cookie.getMaxAge());
+            
+            // Update expiration dates of portlet cookies stored in session
+            removeExpiredPortletCookies(request);
+            
+            //Update the cookie in the users browser
+            response.addCookie(cookie);
+        }
     }
    
    /**

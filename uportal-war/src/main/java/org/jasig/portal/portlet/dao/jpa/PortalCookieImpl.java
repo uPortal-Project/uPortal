@@ -55,18 +55,16 @@ import org.jasig.portal.portlet.om.IPortletCookie;
 @SequenceGenerator(
         name="UP_PORTAL_COOKIES_GEN",
         sequenceName="UP_PORTAL_COOKIES_SEQ",
-        allocationSize=5
+        allocationSize=100
     )
 @TableGenerator(
         name="UP_PORTAL_COOKIES_GEN",
         pkColumnValue="UP_PORTAL_COOKIES",
-        allocationSize=5
+        allocationSize=100
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortalCookieImpl implements IPortalCookie {
-    public static final String UP_PORTAL_COOKIES__DELETE_EXPIRED = "UP_PORTAL_COOKIES__DELETE_EXPIRED";
-
 	@Id
     @GeneratedValue(generator = "UP_PORTAL_COOKIES_GEN")
     @Column(name = "PORTAL_COOKIE_ID")
