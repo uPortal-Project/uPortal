@@ -28,7 +28,7 @@
                         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-    
+                        
     <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:/properties/dataSource.properties" />
     </bean>
@@ -63,21 +63,6 @@
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
 
-    <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao">
-    </bean>
-    
-    <bean id="portletTypeDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletTypeDao">
-    </bean>
-
-    <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
-    </bean>
-    
-    <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao">
-        <property name="portletDefinitionDao" ref="portletDefinitionDao" />
-    </bean>
-    
-    <bean id="portletCookieDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletCookieDaoImpl">
-    </bean>
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>

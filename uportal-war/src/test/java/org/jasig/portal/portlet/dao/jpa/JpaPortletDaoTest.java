@@ -53,7 +53,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version $Revision: 337 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaTestApplicationContext.xml")
+@ContextConfiguration(locations = "classpath:jpaPortletDaoTestContext.xml")
 public class JpaPortletDaoTest extends BaseJpaDaoTest {
     private IPortletTypeDao jpaChannelTypeDao;
     private IPortletDefinitionDao jpaPortletDefinitionDao;

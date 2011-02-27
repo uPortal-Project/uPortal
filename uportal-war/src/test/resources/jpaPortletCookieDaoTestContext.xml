@@ -29,9 +29,9 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
     
-    <bean id="localAccountDao" class="org.jasig.portal.persondir.dao.jpa.JpaLocalAccountDaoImpl">
+    <bean id="portletCookieDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletCookieDaoImpl">
     </bean>
-
+    
     <import resource="classpath:sharedJpaTestContext.xml"/>
 </beans>
 

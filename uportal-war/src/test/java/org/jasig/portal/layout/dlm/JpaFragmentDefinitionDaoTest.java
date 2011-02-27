@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author awills
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaTestApplicationContext.xml")
+@ContextConfiguration(locations = "classpath:jpaFragmentDefinitionDaoTestContext.xml")
 public class JpaFragmentDefinitionDaoTest extends BaseJpaDaoTest {
     private IFragmentDefinitionDao dao;
 

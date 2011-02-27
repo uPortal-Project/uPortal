@@ -29,9 +29,10 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
     
-    <bean id="localAccountDao" class="org.jasig.portal.persondir.dao.jpa.JpaLocalAccountDaoImpl">
-    </bean>
 
+    <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao">
+    </bean>
+    
     <import resource="classpath:sharedJpaTestContext.xml"/>
 </beans>
 

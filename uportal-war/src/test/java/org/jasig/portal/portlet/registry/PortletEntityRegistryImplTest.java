@@ -55,7 +55,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaTestApplicationContext.xml")
+@ContextConfiguration(locations = "classpath:jpaPortletDaoTestContext.xml")
 public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     private IPortletTypeDao jpaPortletTypeDao;
     private IPortletDefinitionDao jpaPortletDefinitionDao;

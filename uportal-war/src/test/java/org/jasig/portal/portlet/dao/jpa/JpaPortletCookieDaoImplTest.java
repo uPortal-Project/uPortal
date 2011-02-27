@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaTestApplicationContext.xml")
+@ContextConfiguration(locations = "classpath:jpaPortletCookieDaoTestContext.xml")
 public class JpaPortletCookieDaoImplTest extends BaseJpaDaoTest {
 	
 	private IPortletCookieDao portletCookieDao;

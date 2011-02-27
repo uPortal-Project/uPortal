@@ -29,9 +29,17 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
     
-    <bean id="localAccountDao" class="org.jasig.portal.persondir.dao.jpa.JpaLocalAccountDaoImpl">
+
+    <bean id="portletTypeDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletTypeDao">
     </bean>
 
+    <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao">
+    </bean>
+    
+    <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao">
+        <property name="portletDefinitionDao" ref="portletDefinitionDao" />
+    </bean>
+    
     <import resource="classpath:sharedJpaTestContext.xml"/>
 </beans>
 
