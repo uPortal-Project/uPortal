@@ -52,15 +52,22 @@ import org.springframework.web.util.WebUtils;
 @Service("portletCookieService")
 public class PortletCookieServiceImpl implements IPortletCookieService, ServletContextAware {
     
-	private static final String SESSION_ATTRIBUTE__SESSION_ONLY_COOKIE_MAP = PortletCookieServiceImpl.class.getName() + ".SESSION_ONLY_COOKIE_MAP";
-	private static final String SESSION_ATTRIBUTE__PORTAL_COOKIE_ID = PortletCookieServiceImpl.class.getName() + ".PORTAL_COOKIE_ID";
+	/**
+	 * Name of the {@link HttpSession} attribute used for storing a concurrent map of portlet cookies that do not need to be persisted.
+	 */
+	static final String SESSION_ATTRIBUTE__SESSION_ONLY_COOKIE_MAP = PortletCookieServiceImpl.class.getName() + ".SESSION_ONLY_COOKIE_MAP";
+	/**
+	 * Name of the {@link HttpSession} attribute used to track the value of the {@link IPortalCookie} (useful if the client does not accept cookies).
+	 */
+	static final String SESSION_ATTRIBUTE__PORTAL_COOKIE_ID = PortletCookieServiceImpl.class.getName() + ".PORTAL_COOKIE_ID";
     private IPortletCookieDao portletCookieDao;
     
+    protected static final int DEFAULT_MAX_AGE = (int)TimeUnit.DAYS.toSeconds(365);
     private String cookieName = DEFAULT_PORTAL_COOKIE_NAME;
     private String comment = DEFAULT_PORTAL_COOKIE_COMMENT;
     private String domain = null;
     private String path = "/";
-    private int maxAge = (int)TimeUnit.DAYS.toSeconds(365);
+    private int maxAge = DEFAULT_MAX_AGE;
     private long maxAgeUpdateInterval = TimeUnit.MINUTES.toMillis(5);
     private boolean portalCookieAlwaysSecure = false;
     
@@ -290,6 +297,9 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     protected IPortalCookie locatePortalCookieInSession(HttpSession session) {
     	synchronized(WebUtils.getSessionMutex(session)) {
     		final String portalCookieId = (String) session.getAttribute(SESSION_ATTRIBUTE__PORTAL_COOKIE_ID);
+    		if(portalCookieId == null) {
+    			return null;
+    		}
     		IPortalCookie portalCookie = this.portletCookieDao.getPortalCookie(portalCookieId);
     		return portalCookie;
     	}
