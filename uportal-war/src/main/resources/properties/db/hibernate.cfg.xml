@@ -40,6 +40,10 @@
         <property name="hibernate.current_session_context_class">thread</property>
         
         <mapping resource="properties/db/global.hbm.xml"/> 
+        <mapping class="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl"/>
+        <mapping class="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"/>
+        <mapping class="org.jasig.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"/>
+        <mapping class="org.jasig.portal.layout.dao.jpa.StylesheetParameterDescriptorImpl"/>
         <mapping class="org.jasig.portal.layout.dlm.Evaluator" />
         <mapping class="org.jasig.portal.layout.dlm.FragmentDefinition" />
         <mapping class="org.jasig.portal.layout.dlm.providers.AllUsersEvaluatorFactory" />
@@ -60,23 +64,5 @@
         <mapping class="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
-        <!-- 
-        <class-cache class="org.jasig.portal.layout.dlm.Evaluator" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletCookieImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl" usage="nonstrict-read-write"/>
-        <class-cache class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl" usage="nonstrict-read-write"/>
-        
-        <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences" usage="nonstrict-read-write"/>
-        <collection-cache collection="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values" usage="nonstrict-read-write"/>
-        <collection-cache collection="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes" usage="nonstrict-read-write"/>
-        -->
     </session-factory>
 </hibernate-configuration>
