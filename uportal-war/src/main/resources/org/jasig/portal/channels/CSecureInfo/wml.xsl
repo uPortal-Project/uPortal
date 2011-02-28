@@ -32,7 +32,7 @@
 
     <p align="left"><b>Attention:</b></p>
     <p align="right">
-	This channel must be rendered using a secure protocol (i.e. https).</span>
+	This channel must be rendered using a secure protocol (i.e. https).
     </p>
 
   </xsl:template>
