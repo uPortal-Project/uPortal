@@ -27,8 +27,8 @@
   <!--css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css-->
   
-  <css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3-default.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3-default.min.css</css>
   
   <!--css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/valencia/jquery.mobile.theme.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/valencia/jquery.mobile.theme.min.css</css-->

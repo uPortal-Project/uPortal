@@ -17,27 +17,9 @@
  * under the License.
  */
 
-
-/* Fluid Pager */
-.up .fl-pager ul.fl-pager-ui {text-align:right}
-.up .fl-pager .fl-pager-ui li {list-style-type:none; display:inline; padding-left:5px}
-.up .fl-pager .fl-pager-ui a.fl-pager-disabled,
-.up .fl-pager .fl-pager-ui .fl-pager-disabled a { color: #777777; border: 0; text-decoration: none; cursor: default; }
-.up .fl-pager .fl-pager-ui a.fl-pager-currentPage,
-.up .fl-pager .fl-pager-ui .fl-pager-currentPage a { color: #000000; border: 0; text-decoration: none; cursor: default;}
-
-/* 
-------------------------------------
-  Overrides to jQuery UI css.
------------------------------------- 
-*/
-
-.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus { color: #ffffff important!; }
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button, 
-.ui-widget {font-size: 1em; font-family:arial,helvetica,clean,sans-serif;}
-.ui-tabs .ui-tabs-nav li { list-style-image:none; list-style-position:outside;list-style-type:none; }
-
-.ui-tabs .ui-tabs-nav li a {
-    font-size: 0.8em;
-    padding:0.2em 0.5em;
+.ui-content .ui-header {
+    margin-top: -15px;
+    margin-left: -15px;
+    margin-bottom: 15px;
+    width:320px;
 }

@@ -33,8 +33,9 @@
   <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css-->
     
   <!-- Support for legacy uPortal css classes. -->
-  <!--css>legacy.css</css>
-  <css>portal.css</css-->
+  <!--css>legacy.css</css-->
+
+  <css>portal.css</css>
 
   <js import="true">../common/common_skin.xml</js>
   
