@@ -155,6 +155,7 @@
                             </property>
                         </bean>
                         <bean class="org.jasig.portal.rendering.xslt.LocaleTransformerConfigurationSource" />
+                        <bean class="org.jasig.portal.rendering.xslt.DeviceTypeTransformerConfigurationSource" />
                         <bean class="org.jasig.portal.web.skin.ResourcesElementsXsltcHelper" />
                     </list>
                 </property>

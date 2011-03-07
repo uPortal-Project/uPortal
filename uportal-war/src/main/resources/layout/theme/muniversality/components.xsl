@@ -54,7 +54,7 @@
 -->
 <xsl:template name="mobile.header">
     <div data-role="header" data-backbtn="false" data-position="inline">
-        <h1>uPortal Mobile</h1>
+        <h1>uMobile</h1>
         <xsl:call-template name="mobile.auth.link"/>
     </div>
 </xsl:template>
@@ -143,13 +143,14 @@
     <xsl:variable name="basePortalUrl">
         <xsl:call-template name="portalUrl"/>
     </xsl:variable>
-    <div data-role="header" data-position="inline">
-        <a href="{$basePortalUrl}" data-icon="home" data-direction="reverse">
-            <xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/>
-        </a>
-        <h1><xsl:value-of select="//content/focused/channel/@name" /></h1>
-        <xsl:call-template name="mobile.auth.link"/>
-    </div>
+    <xsl:if test="$NATIVE != 'true'">
+        <div data-role="header" data-position="inline">
+            <a href="{$basePortalUrl}" data-icon="home" data-direction="reverse">
+                <xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/>
+            </a>
+            <h1><xsl:value-of select="//content/focused/channel/@name" /></h1>
+        </div>
+    </xsl:if>
 </xsl:template>
 <!-- ========================================================================= -->
 

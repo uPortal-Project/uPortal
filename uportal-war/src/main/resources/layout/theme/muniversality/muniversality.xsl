@@ -166,6 +166,7 @@
 | Portal Settings should generally not be (and not need to be) modified.
 -->
 <xsl:param name="AUTHENTICATED" select="'false'"/>
+<xsl:param name="NATIVE" select="'false'"/>
 <xsl:param name="USER_ID">guest</xsl:param>
 <xsl:param name="userName">Guest User</xsl:param>
 <xsl:param name="USER_NAME"><xsl:value-of select="$userName"/></xsl:param>
@@ -227,7 +228,7 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="page.meta">
-    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+    <meta name="viewport" content="width=device-width; initial-scale=1.0;" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="description" content="{upMsg:getMessage('portal.page.meta.description', $USER_LANG)}" />
@@ -247,9 +248,9 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="footer">
-    <p>
+    <!--<p>
     	<a href="http://www.jasig.org/uportal/about/license">uPortal is licensed under the Apache License, Version 2.0</a>
-    </p>
+    </p>-->
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -275,7 +276,7 @@
             <xsl:call-template name="page.js" />
         </head>
         <body class="up {$FLUID_THEME_CLASS}">
-            <div data-role="page">
+            <div data-role="page" id="page">
                 <xsl:choose>
                     <xsl:when test="//focused">
                         <xsl:call-template name="mobile.header.focused" />
