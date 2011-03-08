@@ -49,6 +49,7 @@ import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -58,6 +59,7 @@ import org.springframework.web.util.WebUtils;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     public static final String TRANSIENT_WINDOW_ID_PREFIX = "tp.";
     public static final String TRANSIENT_PORTLET_WINDOW_MAP_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".TRANSIENT_PORTLET_WINDOW_MAP";
