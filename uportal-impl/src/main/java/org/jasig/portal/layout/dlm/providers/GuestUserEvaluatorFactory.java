@@ -84,5 +84,9 @@ public class GuestUserEvaluatorFactory extends Evaluator implements EvaluatorFac
         return this.getClass();
     }
 
+    @Override
+    public String getSummary() {
+        return "(GUEST)";
+    }
 
 }

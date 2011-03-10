@@ -74,4 +74,9 @@ public class AllUsersEvaluatorFactory extends Evaluator implements EvaluatorFact
         return this.getClass();
     }
 
+    @Override
+    public String getSummary() {
+        return "(ANYONE)";
+    }
+
 }

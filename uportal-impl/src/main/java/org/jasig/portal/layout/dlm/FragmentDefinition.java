@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout.dlm;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -159,6 +160,11 @@ public class FragmentDefinition extends Evaluator
     
     public int getEvaluatorCount() {
         return this.evaluators == null ? 0 : this.evaluators.size();
+    }
+    
+    public List<Evaluator> getAudience() {
+        // defensive copy...
+        return new ArrayList<Evaluator>(evaluators);
     }
     
     public int getIndex() {
@@ -379,6 +385,12 @@ public class FragmentDefinition extends Evaluator
                         "FragmentDefinition instances and should " +
                         "not be invoked.";
         throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public String getSummary() {
+        // This method is for audience evaluators...
+        throw new UnsupportedOperationException();
     }
 
 }

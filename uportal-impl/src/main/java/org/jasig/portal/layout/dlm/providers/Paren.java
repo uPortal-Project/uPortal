@@ -171,5 +171,40 @@ public class Paren extends Evaluator {
         return this.evaluators.get(0).getFactoryClass();
     }
 
+    @Override
+    public String getSummary() {
+        
+        StringBuilder rslt = new StringBuilder();
+        
+        switch (type) {
+            case AND:
+            case OR:
+                String operator = type.equals(Type.AND) ? " && " : " || ";
+                for (int i=0; i < evaluators.size(); i++) {
+                    if (i > 0) {
+                        rslt.append(operator);
+                    }
+                    Evaluator ev = evaluators.get(i);
+                    rslt.append(ev.getSummary());
+                }
+                if (evaluators.size() > 1) {
+                    rslt.insert(0, "(").append(")");
+                }
+                break;
+            case NOT:
+                rslt.append("!");
+                if (!evaluators.isEmpty()) {
+                    rslt.append(evaluators.get(0).getSummary());
+                } else {
+                    rslt.append("()");
+                }
+                break;
+            default:
+                throw new RuntimeException("Unrecognized Type: " + type);
+        }
+        
+        return rslt.toString();
+    }
+
 
 }
