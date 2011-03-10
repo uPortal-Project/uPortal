@@ -77,6 +77,11 @@ public class ParenTest extends TestCase {
             throw new UnsupportedOperationException();
         }
         
+        @Override
+        public String getSummary() {
+            return "(NO ONE)";
+        }
+
     }
 
 }

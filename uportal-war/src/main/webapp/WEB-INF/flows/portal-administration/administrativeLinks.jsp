@@ -66,6 +66,9 @@
             <li>
                 <a href="render.userLayoutRootNode.uP?uP_fname=permissionsmanager">Manage permissions</a>
             </li>
+            <li>
+                <a href="render.userLayoutRootNode.uP?uP_fname=fragment-audit">Audit DLM Fragments</a>
+            </li>
         </ul>
       </div>
     </div>
