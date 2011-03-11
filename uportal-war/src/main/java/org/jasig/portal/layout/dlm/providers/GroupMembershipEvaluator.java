@@ -189,4 +189,18 @@ public class GroupMembershipEvaluator extends Evaluator
         return GroupMembershipEvaluatorFactory.class;
     }
 
+    @Override
+    public String getSummary() {
+
+        StringBuilder rslt = new StringBuilder();
+        rslt.append("(");
+        rslt.append("MEMBER OF '").append(this.groupName).append("'");
+        if (evaluatorMode == DEEP_MEMBER_OF_MODE) {
+            rslt.append(" OR ANY DESCENDANT GROUP");
+        }
+        rslt.append(")");
+        return rslt.toString();
+
+    }
+
 }

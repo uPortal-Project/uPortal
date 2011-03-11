@@ -30,9 +30,9 @@ import org.jasig.portal.security.provider.PersonImpl;
 public class ParenTest extends TestCase {
 
     public void testIsApplicable() {
-        
+
         IPerson p = new PersonImpl();
-        
+
         // Paren.Type.OR...
         Paren orParen = new Paren(Paren.Type.OR);
         orParen.addEvaluator(new AllUsersEvaluatorFactory());
@@ -42,7 +42,7 @@ public class ParenTest extends TestCase {
         orParen = new Paren(Paren.Type.OR);
         orParen.addEvaluator(new NoUsersEvaluatorFactory());
         assertFalse("false should make false", orParen.isApplicable(p));
-        
+
         // Paren.Type.AND...
         Paren andParen = new Paren(Paren.Type.AND);
         andParen.addEvaluator(new AllUsersEvaluatorFactory());
@@ -59,7 +59,7 @@ public class ParenTest extends TestCase {
         assertTrue("false should make true", notParen.isApplicable(p));
 
     }
-    
+
     private static class NoUsersEvaluatorFactory extends Evaluator {
 
         @Override
@@ -76,7 +76,12 @@ public class ParenTest extends TestCase {
         public void toElement(Element parent) {
             throw new UnsupportedOperationException();
         }
-        
+
+        @Override
+        public String getSummary() {
+            return "(NO ONE)";
+        }
+
     }
 
 }

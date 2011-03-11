@@ -110,4 +110,9 @@ public class SubscribedTabEvaluator extends Evaluator {
         parent.add(rslt);
     }
 
+    @Override
+    public String getSummary() {
+        return "(OPT-IN USERS)";
+    }
+
 }

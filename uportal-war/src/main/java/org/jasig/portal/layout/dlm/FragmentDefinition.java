@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout.dlm;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -398,6 +399,12 @@ public class FragmentDefinition extends Evaluator
                         "FragmentDefinition instances and should " +
                         "not be invoked.";
         throw new UnsupportedOperationException(msg);
+    }
+
+    @Override
+    public String getSummary() {
+        // This method is for audience evaluators...
+        throw new UnsupportedOperationException();
     }
 
 }

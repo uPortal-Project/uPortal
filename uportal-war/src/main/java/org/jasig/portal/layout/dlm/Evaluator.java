@@ -75,7 +75,7 @@ public abstract class Evaluator {
     public abstract boolean isApplicable( IPerson person );
     
     /**
-     * Serializes this <code>Evaluator</code> into the same XML format supported 
+     * Serializes this {@link Evaluator} into the same XML format supported 
      * by dlm.xml.  <b>NOTE:</b>  this method will only yield usable XML if 
      * invoked on an instance of {@link FragmentDefinition};  all other 
      * subclasses will return only XML fragments.
@@ -85,5 +85,13 @@ public abstract class Evaluator {
     public abstract void toElement(Element parent);
     
     public abstract Class<? extends EvaluatorFactory> getFactoryClass();
+    
+    /**
+     * Provides a one-line, human-readable description of the users who are 
+     * members of the fragment audience based on this {@link Evaluator}.
+     * 
+     * @return A short description of what this {@link Evaluator} does
+     */
+    public abstract String getSummary();
 
 }

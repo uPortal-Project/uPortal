@@ -185,5 +185,39 @@ public class AttributeEvaluator
         return PersonEvaluatorFactory.class;
     }
 
+    @Override
+    public String getSummary() {
+        
+        String relationship;
+        switch (mode) {
+            case CONTAINS:
+                relationship = "CONTAINS";
+                break;
+            case EQUALS:
+                relationship = "EQUALS";
+                break;
+            case STARTS_WITH:
+                relationship = "STARTS WITH";
+                break;
+            case ENDS_WITH:
+                relationship = "ENDS WITH";
+                break;
+            case EXISTS:
+                relationship = "EXISTS";
+                break;
+            default:
+                throw new RuntimeException("Unsupported MODE: " + mode);
+        }
+        
+        StringBuilder rslt = new StringBuilder();
+        rslt.append("(");
+        rslt.append("person attribute '").append(name).append("' ").append(relationship);
+        if (mode != EXISTS) {
+            rslt.append(" '").append(value).append("'");
+        }
+        rslt.append(")");
+        return rslt.toString();
+
+    }
 
 }
