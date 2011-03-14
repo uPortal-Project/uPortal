@@ -63,6 +63,10 @@
             <strong><spring:message code="fragmentAudit.audience.label"/>:</strong>
             <ul class="audience"></ul>
         </p>
+        <p>
+            <strong><spring:message code="fragmentAudit.portlets.label"/>:</strong>
+            <ul class="portlets"></ul>
+        </p>
     </div>
 </div>
 
@@ -88,6 +92,9 @@
                     copy.find(".precedence").text(frag.precedence);
                     $(frag.audience).each(function(index, audience) {
                         copy.find(".audience").append("<li>" + audience + "</li>");
+                    });
+                    $(frag.portlets).each(function(index, portlet) {
+                        copy.find(".portlets").append("<li>" + portlet + "</li>");
                     });
                     $("#${n}fragments").append(copy);
                     copy.show();

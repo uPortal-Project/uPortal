@@ -23,14 +23,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.layout.dlm.ConfigurationLoader;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
+import org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.AdminEvaluator;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -39,7 +50,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 /**
  * Spring controller that returns a JSON or XML representation of DLM fragments.  For
@@ -60,11 +72,27 @@ import org.springframework.web.servlet.mvc.AbstractController;
 @RequestMapping("/fragmentList")
 public class FragmentListController {
     
-    private static final Sort DEFAULT_SORT = Sort.PRECEDENCE; 
+    private static final Sort DEFAULT_SORT = Sort.PRECEDENCE;
+    private static final String CHANNEL_FNAME_XPATH = "//channel/@fname";
     
     private ConfigurationLoader dlmConfig;
-    private IPersonManager personManager;
-    
+    private IPersonManager personManager;    
+    private RDBMDistributedLayoutStore userLayoutStore;
+    private XPathExpression expr;
+    private IPortletDefinitionRegistry portletRegistry;
+    private final Log log = LogFactory.getLog(getClass());
+     
+    public FragmentListController() {
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        try {
+            expr = xpath.compile(CHANNEL_FNAME_XPATH);
+        } catch (XPathExpressionException e) {
+            String msg = "Failed to bootstrap an XPathExpression";
+            log.error(msg, e);
+            throw new RuntimeException(msg, e);
+        }
+    }
+
     @Autowired
     public void setConfigurationLoader(ConfigurationLoader dlmConfig) {
         this.dlmConfig = dlmConfig;
@@ -75,8 +103,18 @@ public class FragmentListController {
         this.personManager = personManager;
     }
 
+    @Autowired
+    public void setUserLayoutStore(RDBMDistributedLayoutStore userLayoutStore) {
+        this.userLayoutStore = userLayoutStore;
+    }
+
+    @Autowired
+    public void setPortletRegistry(IPortletDefinitionRegistry portletRegistry) {
+        this.portletRegistry = portletRegistry;
+    }
+        
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView listFragments(HttpServletRequest req) {
+    public ModelAndView listFragments(HttpServletRequest req) throws ServletException {
 
         // Verify that the user is allowed to use this service
         IPerson user = personManager.getPerson(req);
@@ -84,9 +122,43 @@ public class FragmentListController {
             throw new AuthorizationException("User " + user.getUserName() + " not an administrator.");
         }
 
+        Map<String,Document> fragmentLayoutMap = null;
+        if (userLayoutStore != null) {
+            try {
+                fragmentLayoutMap = userLayoutStore.getFragmentLayoutCopies();
+            } catch (Exception e) {
+                String msg = "Failed to access fragment layouts";
+                log.error(msg, e);
+                throw new ServletException(msg, e);
+            }
+        }
+        
         List<FragmentBean> fragments = new ArrayList<FragmentBean>(); 
         for (FragmentDefinition frag : dlmConfig.getFragments()) {
-            fragments.add(FragmentBean.fromFragmentDefinition(frag));
+            
+            Document layout = fragmentLayoutMap != null 
+                                ? fragmentLayoutMap.get(frag.getOwnerId())
+                                : null;
+
+            List<String> portlets = null;
+            if (layout != null) {
+                portlets = new ArrayList<String>();
+                try {
+                    NodeList channelFNames = (NodeList) expr.evaluate(layout, XPathConstants.NODESET);
+                    for (int i=0; i < channelFNames.getLength(); i++) {
+                        String fname = channelFNames.item(i).getTextContent();
+                        IPortletDefinition pDef = portletRegistry.getPortletDefinitionByFname(fname);
+                        portlets.add(pDef.getTitle());
+                    }
+                } catch (XPathExpressionException e) {
+                    String msg = "Failed to search layout documents for channels";
+                    log.error(msg, e);
+                    throw new ServletException(msg, e);
+                }
+            }
+            
+            fragments.add(FragmentBean.create(frag, portlets));
+
         }
         
         // Determine & follow sorting preference...
@@ -146,8 +218,9 @@ public class FragmentListController {
         private final String ownerId;
         private final Double precedence;
         private final List<String> audience;
+        private final List<String> portlets;
         
-        public static FragmentBean fromFragmentDefinition(FragmentDefinition frag) {
+        public static FragmentBean create(FragmentDefinition frag, List<String> portlets) {
             
             // Assertions.
             if (frag == null) {
@@ -155,8 +228,11 @@ public class FragmentListController {
                 throw new IllegalArgumentException(msg);
             }
             
+            // NB:  'portlets' may be null
+            
             return new FragmentBean(frag.getName(), frag.getOwnerId(), 
-                            frag.getPrecedence(), frag.getEvaluators());
+                            frag.getPrecedence(), frag.getEvaluators(),
+                            portlets);
             
         }
         
@@ -176,7 +252,11 @@ public class FragmentListController {
             return audience;
         }
         
-        private FragmentBean(String name, String ownerId, Double precedence, List<Evaluator> audience) {
+        public List<String> getPortlets() {
+            return portlets;
+        }
+ 
+        private FragmentBean(String name, String ownerId, Double precedence, List<Evaluator> audience, List<String> portlets) {            
 
             this.name = name;
             this.ownerId = ownerId;
@@ -187,6 +267,11 @@ public class FragmentListController {
                 list.add(ev.getSummary());
             }
             this.audience = Collections.unmodifiableList(list);
+            if (portlets != null) {
+                this.portlets = Collections.unmodifiableList(portlets);
+            } else {
+                this.portlets = Collections.emptyList();
+            }
 
         }
         
