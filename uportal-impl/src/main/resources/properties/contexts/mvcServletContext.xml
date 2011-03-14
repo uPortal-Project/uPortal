@@ -59,6 +59,7 @@
         class="org.jasig.portal.layout.dlm.remoting.FragmentListController">
         <property name="configurationLoader" ref="dlmConfigurationLoader"/>
         <property name="personManager" ref="personManager"/>
+        <property name="channelRegistryStore" ref="channelRegistryStore"/>
     </bean>
 
 </beans>
