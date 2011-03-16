@@ -54,16 +54,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 /**
- * Spring controller that returns a JSON or XML representation of DLM fragments.  For
+ * Spring controller that returns a JSON representation of DLM fragments.  For
  * non-admins, this will only display the channels the user is allowed to
  * manage or subscribe to.  Admins have a choice of viewing manageable,
  * subscribable, or all channels by the "type" request parameter.</p>
  * <p>Request parameters:</p>
  * <ul>
- *   <li>xml: if "true", return an XML view of the channels rather than a
- *   JSON view</li>
- *   <li>type: "subscribe", "manage", or "all".  Displays subscribable,
- *   manageable, or all channels (admin only).  Default is subscribable.
+ *   <li>sort: either 'PRECEDENCE' or 'NAME'</li>
  * </ul>
  *
  * @author Drew Wills, drew@unicon.net
