@@ -150,4 +150,7 @@ public interface IPortletExecutionManager {
      */
     public String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
+    public int getPortletNewItemCount(String subscribeId, HttpServletRequest request, HttpServletResponse response);
+
+    public int getPortletNewItemCount(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 }

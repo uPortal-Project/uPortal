@@ -33,6 +33,7 @@ import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletContainer;
@@ -235,11 +236,19 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         
         final String title = (String)httpServletRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE);
+        final String newItemCountString = (String)httpServletRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_NEW_ITEM_COUNT);
+        final int newItemCount;
+        if (newItemCountString != null && StringUtils.isNumeric(newItemCountString)) {
+            newItemCount = Integer.parseInt(newItemCountString);
+        } else {
+            newItemCount = 0;
+        }
+        
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Retrieved title '" + title + "' from request for: " + portletWindow);
         }
         
-        return new PortletRenderResult(title, System.currentTimeMillis() - start);
+        return new PortletRenderResult(title, newItemCount, System.currentTimeMillis() - start);
     }
     
     
@@ -281,11 +290,19 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         
         final String title = (String)httpServletRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE);
+        final String newItemCountString = (String)httpServletRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_NEW_ITEM_COUNT);
+        final int newItemCount;
+        if (newItemCountString != null && StringUtils.isNumeric(newItemCountString)) {
+            newItemCount = Integer.parseInt(newItemCountString);
+        } else {
+            newItemCount = 0;
+        }
+
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Retrieved title '" + title + "' from request for: " + portletWindow);
         }
         
-        return new PortletRenderResult(title, System.currentTimeMillis() - start);
+        return new PortletRenderResult(title, newItemCount, System.currentTimeMillis() - start);
 	}
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.rendering.IPortletRenderer#doServeResource(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.Writer)

@@ -577,6 +577,39 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         return parentPortletDefinition.getTitle();
     }
 
+    public int getPortletNewItemCount(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
+        Assert.notNull(subscribeId, "subscribeId cannot be null");
+        
+        final IPortletWindow portletWindow;
+        try {
+            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
+        }
+        catch (DataRetrievalFailureException e) {
+            this.logger.warn("Failed to get portlet new item count: " + subscribeId, e);
+            return 0;
+        }
+
+        return this.getPortletNewItemCount(portletWindow.getPortletWindowId(), request, response);
+    }
+
+    public int getPortletNewItemCount(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+        final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
+        final int timeout = getPortletRenderTimeout(portletWindowId, request);
+        
+        try {
+            final PortletRenderResult portletRenderResult = tracker.get(timeout);
+            if (portletRenderResult != null) {
+                final int newItemCount = portletRenderResult.getNewItemCount();
+                return newItemCount;
+            }
+        }
+        catch (Exception e) {
+            logger.warn("unable to get portlet new item count for portletWindowId " + portletWindowId);
+        }
+        
+        return 0;
+    }
+
     protected IPortletWindow getDefaultPortletWindow(String subscribeId, HttpServletRequest request) {
         try {
             final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);

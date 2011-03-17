@@ -29,10 +29,12 @@ package org.jasig.portal.portlet.rendering;
 public class PortletRenderResult {
     private final String title;
     private final long renderTime;
+    private final int newItemCount;
 
-    public PortletRenderResult(String title, long renderTime) {
+    public PortletRenderResult(String title, int newItemCount, long renderTime) {
         this.title = title;
         this.renderTime = renderTime;
+        this.newItemCount = newItemCount;
     }
 
     /**
@@ -47,6 +49,13 @@ public class PortletRenderResult {
      */
     public long getRenderTime() {
         return this.renderTime;
+    }
+    
+    /**
+     * @return The number of new items reported by the portlet for the current user
+     */
+    public int getNewItemCount() {
+        return this.newItemCount;
     }
 
     @Override

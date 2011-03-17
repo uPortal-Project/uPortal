@@ -37,6 +37,10 @@ public enum CharacterEventTypes {
      */
     PORTLET_TITLE,
     /**
+     * @see PortletNewItemCountPlaceholderEvent
+     */
+    PORTLET_NEW_ITEM_COUNT,
+    /**
      * @see PortletHelpPlaceholderEvent
      */
     PORTLET_HELP,

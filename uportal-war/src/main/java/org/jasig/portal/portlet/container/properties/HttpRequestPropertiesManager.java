@@ -19,6 +19,9 @@
 
 package org.jasig.portal.portlet.container.properties;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +69,17 @@ public class HttpRequestPropertiesManager extends BaseRequestPropertiesManager {
 
         properties.put("REMOTE_ADDR", new String[] { httpServletRequest.getRemoteAddr() });
         properties.put("REQUEST_METHOD", new String[] { httpServletRequest.getMethod() });
+        
+        Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            Enumeration<String> values = httpServletRequest.getHeaders(name);
+            List<String> v = new ArrayList<String>();
+            while (values.hasMoreElements()) {
+                v.add(values.nextElement());
+            }
+            properties.put(name, v.toArray(new String[v.size()]));
+        }
 
         return properties;
     }
