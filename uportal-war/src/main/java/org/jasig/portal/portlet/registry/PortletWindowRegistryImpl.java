@@ -427,7 +427,10 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         final String channelSubscribeId = portletEntity.getChannelSubscribeId();
         final String minimized = themeStylesheetUserPreferences.getChannelAttributeValue(channelSubscribeId, "minimized");
         
-        if (Boolean.parseBoolean(minimized)) {
+
+        // TODO: Make minimized portlet window profile names configurable 
+        final String profileName = userPreferences.getProfile().getProfileFname();
+        if (Boolean.parseBoolean(minimized) || "mobileDefault".equals(profileName) || "android".equals(profileName)) {
             portletWindow.setWindowState(WindowState.MINIMIZED);
         }
     }
