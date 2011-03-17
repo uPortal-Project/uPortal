@@ -206,13 +206,27 @@
 <!--=====START: CHANNEL-NAVIGATION TEMPLATE RULE=====-->
     <xsl:template match="channel" mode="navigation">
         <xsl:if test="not(parameter[@name='hideFromMobile']/@value = 'true')">
-            <channel-nav name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}">
-                <xsl:if test="parameter[@name='iconUrl']">
-                  <xsl:attribute name="iconUrl">
-                    <xsl:value-of select="parameter[@name='iconUrl']/@value"/>
-                  </xsl:attribute>
-                </xsl:if>
-            </channel-nav>
+            <xsl:choose>
+                <xsl:when test="$userLayoutRoot='root'">
+                    <!-- 
+                        For main navigation view, include channel element so
+                        we can make use of portlet title and new item count
+                        placeholders even though we aren't including the portlet
+                        markup itself.
+                    -->
+                    <xsl:copy-of select="."/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <!--
+                        In focus mode, avoid including the channel element itself
+                        and instead print out a navigation element.  Including
+                        the channel element without including at least one 
+                        rendering placeholder is considered a bug and will
+                        lead to portlet crashes.
+                    -->
+                    <channel-nav name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:if>
     </xsl:template>
 <!--=====END: CHANNEL-NAVIGATION TEMPLATE RULE=====-->

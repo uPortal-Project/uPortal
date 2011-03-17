@@ -104,10 +104,10 @@
 -->  
 <xsl:template name="mobile.navigation">
     <xsl:for-each select="//group">
-        <xsl:if test="count(channel-nav) > 0">
+        <xsl:if test="count(channel) > 0">
             <ul data-role="listview" data-inset="true">
                 <li data-role="list-divider"><xsl:value-of select="navblock/@name"/></li>
-                <xsl:for-each select="channel-nav">
+                <xsl:for-each select="channel">
                     <li>
                         <xsl:variable name="portletUrl">
                             <xsl:call-template name="portletUrl">
@@ -119,6 +119,10 @@
                             <!--img class="fl-icon" src="{@iconUrl}"/>-->
                             <xsl:value-of select="@name" />
                         </a>
+                        <xsl:variable name="newItemCountClasses">
+                            ui-li-count up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}
+                        </xsl:variable>
+                        <span class="{$newItemCountClasses}">{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</span>
                     </li>
                 </xsl:for-each>
             </ul>
@@ -141,7 +145,10 @@
 -->
 <xsl:template name="mobile.header.focused">
     <xsl:variable name="basePortalUrl">
-        <xsl:call-template name="portalUrl"/>
+        <xsl:call-template name="portletUrl">
+            <xsl:with-param name="fname"><xsl:value-of select="//content/focused/channel/@fname"/></xsl:with-param>
+            <xsl:with-param name="state">MINIMIZED</xsl:with-param>
+        </xsl:call-template>
     </xsl:variable>
     <xsl:if test="$NATIVE != 'true'">
         <div data-role="header" data-position="inline">
