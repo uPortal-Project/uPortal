@@ -43,5 +43,17 @@
         <desc>Delete local uPortal accounts</desc>
         <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
     </activity>
+    <activity>
+        <name>View user</name>
+        <fname>VIEW_USER</fname>
+        <desc>View a user.</desc>
+        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>View user attribute</name>
+        <fname>VIEW_USER_ATTRIBUTE</fname>
+        <desc>View a specific user attribute.  This permission applies to that attribute for all visible users</desc>
+        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
+    </activity>
   </activities>
 </permission-owner>
