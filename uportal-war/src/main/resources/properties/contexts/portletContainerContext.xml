@@ -111,7 +111,4 @@
     </bean>
     -->
     
-    <!--********** Portlet Registries ********** -->
-    <!--bean id="portletWindowRegistry" class="org.jasig.portal.portlet.registry.TransientPortletWindowRegistryImpl" /-->
-    
 </beans>

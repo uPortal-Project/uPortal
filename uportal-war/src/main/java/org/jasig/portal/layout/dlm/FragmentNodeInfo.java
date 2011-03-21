@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
  * @author mboyd@sungardsct.com
  * @since uPortal 2.6
  */
-class FragmentNodeInfo
+public class FragmentNodeInfo
 {
     protected Element node = null;
     

@@ -32,6 +32,7 @@ import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -40,9 +41,12 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Repository
 public class JpaStylesheetDescriptorDao extends BasePortalJpaDao implements IStylesheetDescriptorDao {
+    private static final String FIND_ALL_DESCRIPTORS_CACHE_REGION = StylesheetDescriptorImpl.class.getName() + ".query.FIND_ALL_DESCRIPTORS";
     private static final String FIND_DESCRIPTOR_BY_NAME_CACHE_REGION = StylesheetDescriptorImpl.class.getName() + ".query.FIND_DESCRIPTOR_BY_NAME";
 
+    private CriteriaQuery<StylesheetDescriptorImpl> findAllDescriptors;
     private CriteriaQuery<StylesheetDescriptorImpl> findDescriptorByNameQuery;
     private ParameterExpression<String> nameParameter;
     
@@ -50,7 +54,16 @@ public class JpaStylesheetDescriptorDao extends BasePortalJpaDao implements ISty
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
         this.nameParameter = cb.parameter(String.class, "name");
         
+        this.findAllDescriptors = this.buildFindAllDescriptors(cb);
         this.findDescriptorByNameQuery = this.buildFindDescriptorByNameQuery(cb);
+    }
+    
+    protected CriteriaQuery<StylesheetDescriptorImpl> buildFindAllDescriptors(final CriteriaBuilder cb) {
+        final CriteriaQuery<StylesheetDescriptorImpl> criteriaQuery = cb.createQuery(StylesheetDescriptorImpl.class);
+        final Root<StylesheetDescriptorImpl> descriptorRoot = criteriaQuery.from(StylesheetDescriptorImpl.class);
+        criteriaQuery.select(descriptorRoot);
+        
+        return criteriaQuery;
     }
     
     protected CriteriaQuery<StylesheetDescriptorImpl> buildFindDescriptorByNameQuery(final CriteriaBuilder cb) {
@@ -75,6 +88,13 @@ public class JpaStylesheetDescriptorDao extends BasePortalJpaDao implements ISty
         this.entityManager.persist(stylesheetDescriptor);
         
         return stylesheetDescriptor;
+    }
+    
+    @Override
+    public List<? extends IStylesheetDescriptor> getStylesheetDescriptors() {
+        final TypedQuery<StylesheetDescriptorImpl> query = this.createQuery(this.findAllDescriptors, FIND_ALL_DESCRIPTORS_CACHE_REGION);
+        final List<StylesheetDescriptorImpl> results = query.getResultList();
+        return results;
     }
 
     /* (non-Javadoc)

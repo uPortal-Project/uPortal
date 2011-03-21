@@ -20,10 +20,9 @@
 package org.jasig.portal.layout.dlm;
 
 import java.io.StringWriter;
-import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -60,8 +59,7 @@ public class ILFBuilder
     public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(ILFBuilder.class);
 
-    public static Document constructILF( Document PLF, Vector sequence, IPerson person)
-    throws javax.xml.parsers.ParserConfigurationException, AuthorizationException
+    public static Document constructILF( Document PLF, List<Document> sequence, IPerson person)
     {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Constructing ILF for IPerson='" + person + "'");
@@ -91,10 +89,10 @@ public class ILFBuilder
                 ei.getType());
 
         // now merge fragments one at a time into ILF document
-        Enumeration fragments = sequence.elements();
-
-        while( fragments.hasMoreElements() )
-            mergeFragment( (Document) fragments.nextElement(), result, ap );
+        
+        for (final Document document : sequence) {
+            mergeFragment( document, result, ap );
+        }
         return result;
     }
 

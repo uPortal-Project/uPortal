@@ -27,8 +27,8 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -77,7 +77,7 @@ public class UserLayoutHelperImpl extends SimpleJdbcDaoSupport implements IUserL
 		IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
 		try {
 			// determine user profile            
-			UserProfile userProfile = userLayoutStore.getUserProfileByFname(person, DEFAULT_LAYOUT_FNAME);
+			IUserProfile userProfile = userLayoutStore.getUserProfileByFname(person, DEFAULT_LAYOUT_FNAME);
 
 			// Finally set the layout id to 0.  This orphans the existing layout but it will be replaced by the default 
 			// when the user logs in

@@ -81,16 +81,8 @@ protected static void logNoTransactionWarning()
  */
 public static void rollback(Connection conn) throws java.sql.SQLException
 {
-	try
-	{
-			RDBMServices.rollback(conn);
-			RDBMServices.setAutoCommit(conn, true);
-	}
-	catch (SQLException sqle)
-	{
-		log.error("Error rolling back connection.", sqle);
-		throw sqle;
-	}
+	RDBMServices.rollback(conn);
+	RDBMServices.setAutoCommit(conn, true);
 }
 /**
  * @param conn java.sql.Connection

@@ -94,10 +94,6 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getUserLayout();
     }
 
-    public void setUserLayout(IUserLayout userLayout) throws PortalException {
-        man.setUserLayout(userLayout);
-    } 
-    
     @Override
     public XMLEventReader getUserLayoutReader() {
         final XMLEventReader userLayoutReader = man.getUserLayoutReader();
@@ -442,9 +438,9 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         ulnd.setChannelTypeId("" + chanDef.getType().getId());
         ulnd.setFunctionalName(chanDef.getFName());
         ulnd.setTimeout(chanDef.getTimeout());
-        ulnd.setEditable(chanDef.isEditable());
-        ulnd.setHasHelp(chanDef.hasHelp());
-        ulnd.setHasAbout(chanDef.hasAbout());
+//        ulnd.setEditable(chanDef.isEditable());
+//        ulnd.setHasHelp(chanDef.hasHelp());
+//        ulnd.setHasAbout(chanDef.hasAbout());
 
         Set<IPortletDefinitionParameter> parms = chanDef.getParameters();
         for ( IPortletDefinitionParameter parm : parms )

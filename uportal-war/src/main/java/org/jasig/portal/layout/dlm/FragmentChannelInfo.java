@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
  * @author mboyd@sungardsct.com
  * @since uPortal 2.5 
  */
-class FragmentChannelInfo extends FragmentNodeInfo
+public class FragmentChannelInfo extends FragmentNodeInfo
 {
     FragmentChannelInfo(Element channel)
     {

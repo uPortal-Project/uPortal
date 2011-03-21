@@ -19,7 +19,7 @@
 
 package org.jasig.portal.events.support;
 
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
@@ -34,7 +34,7 @@ public class PageRenderTimePortalEvent extends LayoutPortalEvent {
     private final long renderTime;
     
     
-    public PageRenderTimePortalEvent(Object source, IPerson person, final UserProfile profile,
+    public PageRenderTimePortalEvent(Object source, IPerson person, final IUserProfile profile,
             final IUserLayoutFolderDescription folder, long renderTime) {
         super(source, person, profile, folder, EventType.getEventType("PAGE_RENDER_TIME"));
         

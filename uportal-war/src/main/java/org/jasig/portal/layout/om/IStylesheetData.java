@@ -27,9 +27,9 @@ package org.jasig.portal.layout.om;
  */
 public interface IStylesheetData {
     public enum Scope {
-        REQUEST,
+        PERSISTENT,
         SESSION,
-        PERSISTENT;
+        REQUEST;
     }
 
     /**
@@ -38,9 +38,8 @@ public interface IStylesheetData {
     public long getId();
     
     /**
-     * @param name Name of the attribute/parameter
+     * Name of the attribute/parameter
      */
-    public void setName(String name);
     public String getName();
     
     /**

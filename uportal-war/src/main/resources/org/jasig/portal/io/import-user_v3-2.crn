@@ -93,7 +93,10 @@
                                 || FIRST_NAME != null || LAST_NAME != null || EMAIL != null)}">
                                 <groovy>
                                     <script>
-                                        def account = accountStore.createPerson(USER_NAME)
+                                        def account = accountStore.getPerson(USER_NAME)
+                                        if (account == null) {
+                                            account = accountStore.createPerson(USER_NAME)
+                                        }
                                         account.setPassword(ENCRPTD_PSWD)
                                         account.setLastPasswordChange(LST_PSWD_CGH_DT)
                                         account.setAttribute("given", FIRST_NAME)

@@ -19,9 +19,9 @@
 
 package org.jasig.portal.rendering.xslt;
 
-import org.jasig.portal.StructureStylesheetUserPreferences;
-import org.jasig.portal.StylesheetUserPreferences;
-import org.jasig.portal.UserPreferences;
+import javax.servlet.http.HttpServletRequest;
+
+import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 
 /**
  * Returns {@link StructureStylesheetUserPreferences}
@@ -35,9 +35,9 @@ public class StructureTransformerConfigurationSource extends PreferencesTransfor
     protected String getName() {
         return "StructureTransformerConfigurationSource";
     }
-
+    
     @Override
-    protected StylesheetUserPreferences getStylesheetUserPreferences(UserPreferences userPreferences) {
-        return userPreferences.getStructureStylesheetUserPreferences();
+    protected IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
+        return this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
     }
 }

@@ -19,7 +19,6 @@
 
 package org.jasig.portal.layout.dlm;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -70,7 +69,7 @@ public class FragmentDefinition extends Evaluator
 
     private static final Log LOG = LogFactory.getLog(FragmentDefinition.class);
 
-    @Column(name = "FRAGMENT_NAME")
+    @Column(name = "FRAGMENT_NAME", unique = true)
     private String name = null;
 
     @Column(name = "OWNER_ID")

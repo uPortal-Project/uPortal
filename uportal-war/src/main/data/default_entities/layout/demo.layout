@@ -33,6 +33,7 @@
           <value>50%</value>
         </structure-attribute>
         <channel unremovable="" immutable="" hidden="" fname="word-of-the-day"/>
+        <!-- 
         <channel unremovable="" immutable="" hidden="" fname="number-guessing-game">
           <param>
             <name>maxNum</name>
@@ -43,6 +44,7 @@
             <value>50</value>
           </param>
         </channel>
+         -->
         <channel unremovable="" immutable="" hidden="" fname="daily-business-cartoon"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
@@ -59,8 +61,8 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="person-attributes"/>
-        <channel unremovable="" immutable="" hidden="" fname="css-viewer"/>
+        <!-- <channel unremovable="" immutable="" hidden="" fname="person-attributes"/>
+        <channel unremovable="" immutable="" hidden="" fname="css-viewer"/> -->
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
         <structure-attribute type="folder">
@@ -68,13 +70,13 @@
           <value>50%</value>
         </structure-attribute>
         <channel unremovable="" immutable="" hidden="" fname="snooper"/>
-        <channel unremovable="" immutable="" hidden="" fname="uportal-data-dictionary"/>
+        <!-- <channel unremovable="" immutable="" hidden="" fname="uportal-data-dictionary"/> -->
       </column>
     </tab>
   </root>
   <profile name="My web browser profile"> 
     <description>A sample profile for web browsers</description>  
-    <structure name="DLM Tabs and columns"/>  
-    <theme name="DLM XHTML"/> 
+    <structure name="DLMTabsColumns"/>  
+    <theme name="DLMXHTML"/> 
   </profile>
 </layout>

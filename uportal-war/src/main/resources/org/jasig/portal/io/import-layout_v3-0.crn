@@ -32,89 +32,20 @@
  |   - Settings defined in classpath://properties/db/entities/import.properties
  |
  +-->
-<sql-query>
-    <sql>
-        SELECT USER_ID, USER_NAME
-        FROM UP_USER
-        WHERE USER_NAME = ?
-    </sql>
-    <parameter value="${valueOf(@username)}" />
-    <subtasks>
-        <with>
-            <attribute key="LAYOUT_ID">${groovy(1)}</attribute> <!-- TODO eventually support more than just one layout for a user -->
-            <attribute key="PROFILE_FNAME">${user_profile_fname_default}</attribute>
-            <attribute key="USER_NAME">${valueOf(@username)}</attribute>
-            <attribute key="STRUCTURE_STYLESHEET_NAME">${valueOf(profile/structure/@name)}</attribute>
-            <attribute key="THEME_STYLESHEET_NAME">${valueOf(profile/theme/@name)}</attribute>
-            <subtasks>
-                <with>
-                    <attribute key="STRUCTURE_STYLESHEET_ID">${crn(lookup-ss_struct_id.crn)}</attribute>
-                    <attribute key="THEME_STYLESHEET_ID">${crn(lookup-ss_theme_id.crn)}</attribute>
-                    <subtasks>
-                        <sql-transaction>
-                            <!-- Setup the layout's profile -->
-                            <!--with-attribute key="Attributes.NODE" value="${singleNode(profile)}">
-                                <if test="${groovy(Attributes.NODE != null)}">
-                                     <append-node node="${attributeNode(username=${USER_NAME})}"/>
-                                     <append-node>
-                                        <name>${valueOf(@fname)}</name>
-                                     </append-node>
-                                    <append-node>
-                                        <fname>${valueOf(@fname)}</fname>
-                                    </append-node>
-                                    <delete-node node="${singleNode(@fname)}"/>
-                                     <crn location="import-profile_v3-2.crn"/>
-                                </if>
-                            </with-attribute-->
-                            
-                            <with-attribute key="PROFILE_ID" value="${crn(lookup-profile_id.crn)}">
-        
-                                <!-- Clear the way by deleting existing layout nodes and ancillary data -->
-                                <crn location="delete-layout.crn"/>
-                                
-                                <with-attribute key="Attributes.NODE" value="${singleNode(root)}">
-                                    <if test="${groovy(Attributes.NODE != null)}">
-    
-                                        <sequence sequence-name="STRUCT_ID_SEQ">
-                                            <with-attribute key="INIT_STRUCT_ID" value="${crn(import-layout-node.crn)}">
-                                                <!-- Layout (itself) -->
-                                                <sql-statement sql="INSERT INTO UP_USER_LAYOUT(LAYOUT_TITLE, USER_ID, LAYOUT_ID, INIT_STRUCT_ID) 
-                                                                    VALUES(?, ?, ?, ?)">
-                                                    <parameter value="Standard Layout"/><!-- Limited to 15 characters... -->
-                                                    <parameter value="${USER_ID}"/>
-                                                    <parameter value="${LAYOUT_ID}"/>
-                                                    <parameter value="${INIT_STRUCT_ID}"/>
-                                                </sql-statement>
-                                                
-                                                <!-- NEXT_STRUCT_ID column (UP_USER table) -->
-                                                <sql-statement sql="UPDATE UP_USER
-                                                                    SET NEXT_STRUCT_ID = ? 
-                                                                    WHERE USER_ID = ?">
-                                                    <parameter value="${sequence(STRUCT_ID_SEQ)}"/>
-                                                    <parameter value="${USER_ID}"/>
-                                                </sql-statement>
-                                            </with-attribute>
-                                        </sequence>
-                                    </if>
-                                </with-attribute>
-                                
-                                <!-- Now do portlet entity preferences -->
-                                <with-attribute key="Attributes.NODE" value="${singleNode(preferences)}">
-                                    <if test="${jexl(Attributes.NODE != null)}">
-                                        <crn location="import-preferences.crn"/>
-                                    </if>
-                                </with-attribute>
-                                    
-                            </with-attribute>
-                            
-                        </sql-transaction>
-                    </subtasks>
-                </with>
-            </subtasks>
-        </with>
-    </subtasks>
-    <empty-result>
-        <echo-ln>WARNING: No user ${valueOf(@username)} exists for corresponding layout. The layout will NOT be imported.</echo-ln>
-        <log logger-name="org.jasig.portal.io.import-layout" level="warn">WARNING: No user ${valueOf(@username)} exists for corresponding layout. The layout will NOT be imported.</log>
-    </empty-result>
-</sql-query>
+<xslt context="${Attributes.ORIGIN}" stylesheet="upgradeLayout_v3-2.xsl">
+    <with>
+        <attribute key="USER_NAME">${valueOf(@username)}</attribute>
+        <attribute key="profileElement">${singleNode(profile)}</attribute>
+        <subtasks>
+            <if test="${jexl(profileElement ne null)}">
+                <delete-node node="${singleNode(profile)}"/>
+                <echo-ln>Import Profile:  ${Attributes.LOCATION}</echo-ln>
+                <with-attribute key="Attributes.NODE" value="${profileElement}">
+                    <crn location="import-profile_v3-2.crn"/>
+                </with-attribute>
+            </if>
+            
+            <crn location="import-layout_v3-2.crn"/>
+        </subtasks>
+    </with>
+</xslt>

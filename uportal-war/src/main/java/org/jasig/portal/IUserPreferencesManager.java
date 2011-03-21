@@ -17,10 +17,7 @@
  * under the License.
  */
 
-package  org.jasig.portal;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+package org.jasig.portal;
 
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.security.IPerson;
@@ -36,7 +33,7 @@ public interface IUserPreferencesManager {
      * Returns current person object
      * @return current <code>IPerson</code>
      */
-    public IPerson getPerson ();
+    public IPerson getPerson();
 
     /**
      * Returns {@link IUserLayoutManager} object for performing layout-related operations.
@@ -46,64 +43,22 @@ public interface IUserPreferencesManager {
     public IUserLayoutManager getUserLayoutManager();
 
     /**
-     * Reload the user's structure stylesheet
-     * 
-     * @param req
-     * @throws Exception
-     */
-    public void reloadStructureStylesheet(HttpServletRequest req) throws Exception;
-
-    /**
-     * Returns a global channel Id given a channel instance Id
-     * @param channelInstanceId instance id of a channel
-     * @return channel global id
-     */
-    //    public String getChannelPublishId (String channelInstanceId);
-
-    /**
-     * Determine if the user agent associated with this session has been successfuly mapped to a profile
-     * @return <code>true</code> if no mapping was found
-     */
-    public boolean isUserAgentUnmapped();
-
-    /*
-     * Resets both user layout and user preferences.
-     * Note that if any of the two are "null", old values will be used.
-     */
-    public void setNewUserLayoutAndUserPreferences (IUserLayoutManager newLayout, UserPreferences newPreferences) throws PortalException;
-
-    /**
-     * Returns a copy of the user preferences
-     * @return a copy of the <code>UserPreferences</code> object
-     */
-    public UserPreferences getUserPreferencesCopy ();
-
-    /**
      * Returns current profile.
      * @return current <code>UserProfile</code>
      */
-    public UserProfile getCurrentProfile ();
+    public IUserProfile getUserProfile();
 
     /**
      * Returns current theme stylesheet description
-     * @return current <code>ThemeStylesheetDescription</code>
+     * @deprecated use {@link #getUserProfile()} and {@link UserProfile#getThemeStylesheetId()}
      */
-    public ThemeStylesheetDescription getThemeStylesheetDescription () throws Exception;
+    @Deprecated
+    public long getThemeStylesheetDescriptorId();
 
     /**
      * Returns current structure stylesheet description
-     * @return current <code>StructureStylesheetDescription</code>
+     * @deprecated use {@link #getUserProfile()} and {@link UserProfile#getStructureStylesheetId()}
      */
-    public StructureStylesheetDescription getStructureStylesheetDescription () throws Exception;
-
-    /**
-     * Returns current user preferences.
-     * @return current <code>UserPreferences</code>
-     */
-    public UserPreferences getUserPreferences();
-
-    public void finishedSession(HttpSession session);
+    @Deprecated
+    public long getStructureStylesheetDescriptorId();
 }
-
-
-

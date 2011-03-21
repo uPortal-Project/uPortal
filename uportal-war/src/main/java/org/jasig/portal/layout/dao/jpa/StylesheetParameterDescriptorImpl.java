@@ -20,8 +20,13 @@
 package org.jasig.portal.layout.dao.jpa;
 
 import javax.persistence.Cacheable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -33,18 +38,39 @@ import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
  */
 @Entity
 @Table(
-        name = "UP_SS_PARAM_DESC"
+        name = "UP_SS_DESC_PARAM"
+    )
+@SequenceGenerator(
+        name="UP_SS_DESC_PARAM_GEN",
+        sequenceName="UP_SS_DESC_PARAM_SEQ",
+        allocationSize=5
+    )
+@TableGenerator(
+        name="UP_SS_DESC_PARAM_GEN",
+        pkColumnValue="UP_SS_DESC_PARAM",
+        allocationSize=5
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class StylesheetParameterDescriptorImpl extends AbstractStylesheetDataImpl implements IStylesheetParameterDescriptor {
+    @Id
+    @GeneratedValue(generator = "UP_SS_DESC_PARAM_GEN")
+    @Column(name="SS_DESC_PARAM_ID")
+    private final long id;
+
     //Required by hibernate for reflective creation
     @SuppressWarnings("unused")
     private StylesheetParameterDescriptorImpl() {
-        super();
+        this.id = -1;
     }
 
     public StylesheetParameterDescriptorImpl(String name, Scope scope) {
         super(name, scope);
+        this.id = -1;
+    }
+
+    @Override
+    public long getId() {
+        return this.id;
     }
 }

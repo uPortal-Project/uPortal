@@ -19,6 +19,8 @@
 
 package org.jasig.portal.layout.dao;
 
+import java.util.List;
+
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 
 /**
@@ -32,6 +34,11 @@ public interface IStylesheetDescriptorDao {
      * Create and persist a new stylesheet descriptor, name and resource are required
      */
     public IStylesheetDescriptor createStylesheetDescriptor(String name, String stylesheetResource);
+    
+    /**
+     * @return all of the persisted stylesheet descriptors
+     */
+    public List<? extends IStylesheetDescriptor> getStylesheetDescriptors();
     
     /**
      * Lookup a descriptor by id

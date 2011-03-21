@@ -28,6 +28,7 @@
     <typedef name="nullSafeText" class="org.jasig.portal.dao.usertype.EscapedTextType" />
     <typedef name="nullSafeString" class="org.jasig.portal.dao.usertype.EscapedStringType" />
     <typedef name="fname" class="org.jasig.portal.dao.usertype.FunctionalNameType" />
+    <typedef name="windowState" class="org.jasig.portal.dao.usertype.WindowStateType" />
 </hibernate-mapping> 
 
  

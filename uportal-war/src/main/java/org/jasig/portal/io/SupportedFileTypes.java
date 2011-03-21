@@ -30,13 +30,13 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.XPath;
-import org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore;
+import org.jasig.portal.layout.IUserLayoutStore;
 
 public enum SupportedFileTypes {
 
     LAYOUT("layout", "@username") {
         @Override
-        protected boolean appliesTo(Element e, RDBMDistributedLayoutStore rdbmdls) {
+        protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
             boolean rslt = false;  // default
             boolean isLayout = e.getName().equals(rootElementNodeName);
             if (isLayout) {
@@ -48,7 +48,7 @@ public enum SupportedFileTypes {
     },
     FRAGMENT_LAYOUT("layout", "@username", "fragment-layout") {
         @Override
-        protected boolean appliesTo(Element e, RDBMDistributedLayoutStore rdbmdls) {
+        protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
             boolean rslt = false;  // default
             boolean isLayout = e.getName().equals(rootElementNodeName);
             if (isLayout) {
@@ -83,7 +83,7 @@ public enum SupportedFileTypes {
     },
     PERMISSION("permission", null) {
         @Override
-        protected boolean appliesTo(Element e, RDBMDistributedLayoutStore rdbmdls) {
+        protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
             return false;
         }
         @Override
@@ -124,7 +124,7 @@ public enum SupportedFileTypes {
     },
     MEMBERSHIP("membership", null) {
         @Override
-        protected boolean appliesTo(Element e, RDBMDistributedLayoutStore rdbmdls) {
+        protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
             return false;
         }
         @Override
@@ -137,7 +137,7 @@ public enum SupportedFileTypes {
     GROUP("group", "name") {
         private final XPath childrenXPath = fac.createXPath("children");
         @Override
-        protected boolean appliesTo(Element e, RDBMDistributedLayoutStore rdbmdls) {
+        protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
             boolean rslt = false;  // default
             boolean isGroup = e.getName().equals(rootElementNodeName);
             if (isGroup) {
@@ -154,7 +154,7 @@ public enum SupportedFileTypes {
     GROUP_MEMBERSHIP("group", "name", "group_membership") {
         private final XPath childrenXPath = fac.createXPath("children");
         @Override
-        protected boolean appliesTo(Element e, RDBMDistributedLayoutStore rdbmdls) {
+        protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
             boolean rslt = false;  // default
             boolean isGroup = e.getName().equals(rootElementNodeName);
             if (isGroup) {
@@ -169,7 +169,7 @@ public enum SupportedFileTypes {
     USER("user", "@username") {
         private final XPath templateUserXPath = fac.createXPath("default-user");
         @Override
-        protected boolean appliesTo(Element e, RDBMDistributedLayoutStore rdbmdls) {
+        protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
             boolean rslt = false;  // default
             boolean isUser = e.getName().equals(rootElementNodeName);
             if (isUser) {
@@ -184,7 +184,7 @@ public enum SupportedFileTypes {
     TEMPLATE_USER("user", "@username", "template-user") {
         private final XPath templateUserXPath = fac.createXPath("default-user");
         @Override
-        protected boolean appliesTo(Element e, RDBMDistributedLayoutStore rdbmdls) {
+        protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
             boolean rslt = false;  // default
             boolean isUser = e.getName().equals(rootElementNodeName);
             if (isUser) {
@@ -232,7 +232,7 @@ public enum SupportedFileTypes {
      * Public API.
      */
     
-    public static SupportedFileTypes getApplicableFileType(Element e, RDBMDistributedLayoutStore rdbmdls) {
+    public static SupportedFileTypes getApplicableFileType(Element e, IUserLayoutStore rdbmdls) {
         
         // Assertions.
         if (e == null) {
@@ -240,7 +240,7 @@ public enum SupportedFileTypes {
             throw new IllegalArgumentException(msg);
         }
         if (rdbmdls == null) {
-            String msg = "Argument 'rdbmdls' [RDBMDistributedLayoutStore] cannot be null";
+            String msg = "Argument 'rdbmdls' [IUserLayoutStore] cannot be null";
             throw new IllegalArgumentException(msg);
         }
         
@@ -284,7 +284,7 @@ public enum SupportedFileTypes {
         this.fileExtension = fileExtension;
     }
 
-    protected boolean appliesTo(Element e, RDBMDistributedLayoutStore rdbmdls) {
+    protected boolean appliesTo(Element e, IUserLayoutStore rdbmdls) {
         return e.getName().equals(rootElementNodeName);
     }
 

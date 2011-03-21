@@ -1,0 +1,49 @@
+
+<portlet-definition
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition ../../../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd"
+    script="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"
+    version="4.0"
+>
+
+  <title>Sports Illustrated</title>
+  <name>Sports Illustrated</name>
+  <fname>sports-illustrated</fname>
+  <desc>Top stories from Sports Illustrated</desc>
+  <type>RSS</type>
+  <timeout>10000</timeout>
+  <portlet-descriptor>
+    <webAppName>/NewsReaderPortlet</webAppName>
+    <portletName>single-feed-news</portletName>
+  </portlet-descriptor>
+  
+  
+  
+  
+    <category>Entertainment</category>
+  
+  
+    <group>Everyone</group>
+  
+  
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/internet-news-reader.png</value>
+    </parameter>
+  
+  
+    <portlet-preference> 
+      <name>name</name>
+      <value>Sports Illustrated</value>
+    </portlet-preference>
+    <portlet-preference> 
+      <name>url</name>
+      <value>http://rss.cnn.com/rss/si_topstories.rss</value>
+    </portlet-preference>
+    <portlet-preference> 
+      <name>summaryView</name>
+      <value>flyout</value>
+    </portlet-preference>
+  
+</portlet-definition>

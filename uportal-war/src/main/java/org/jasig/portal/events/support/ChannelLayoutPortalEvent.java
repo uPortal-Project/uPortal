@@ -20,7 +20,7 @@
 package org.jasig.portal.events.support;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
@@ -34,11 +34,11 @@ import org.jasig.portal.security.IPerson;
  * @since 2.6
  */
 public abstract class ChannelLayoutPortalEvent extends PortalEvent {
-    private final UserProfile profile;
+    private final IUserProfile profile;
 	private final IUserLayoutChannelDescription description;
     private final IUserLayoutNodeDescription parentNode;
 	
-	public ChannelLayoutPortalEvent(final Object source, final IPerson person, final UserProfile profile, 
+	public ChannelLayoutPortalEvent(final Object source, final IPerson person, final IUserProfile profile, 
 	        final IUserLayoutChannelDescription description, final IUserLayoutNodeDescription parentNode, 
 	        final EventType eventType) {
 		
@@ -51,7 +51,7 @@ public abstract class ChannelLayoutPortalEvent extends PortalEvent {
 		this.parentNode = parentNode;
 	}
 
-    public final UserProfile getProfile() {
+    public final IUserProfile getProfile() {
 		return this.profile;
 	}
 	public final IUserLayoutChannelDescription getChannelDescription() {

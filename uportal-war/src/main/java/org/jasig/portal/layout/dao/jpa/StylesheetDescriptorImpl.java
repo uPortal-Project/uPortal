@@ -19,7 +19,10 @@
 
 package org.jasig.portal.layout.dao.jpa;
 
-import java.util.LinkedHashSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
@@ -30,6 +33,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -44,8 +48,10 @@ import org.hibernate.annotations.Type;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
 import org.jasig.portal.layout.om.IOutputPropertyDescriptor;
+import org.jasig.portal.layout.om.IStylesheetData;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
+import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 
 /**
  * JPA implementation of stylesheet descriptor data
@@ -55,25 +61,31 @@ import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
  */
 @Entity
 @Table(
-        name = "UP_SS_DESCRIPTOR"
+        name = "UP_SS_DESC"
     )
 @SequenceGenerator(
-        name="UP_SS_DESCRIPTOR_GEN",
-        sequenceName="UP_SS_DESCRIPTOR_SEQ",
+        name="UP_SS_DESC_GEN",
+        sequenceName="UP_SS_DESC_SEQ",
         allocationSize=5
     )
 @TableGenerator(
-        name="UP_SS_DESCRIPTOR_GEN",
-        pkColumnValue="UP_SS_DESCRIPTOR",
+        name="UP_SS_DESC_GEN",
+        pkColumnValue="UP_SS_DESC",
         allocationSize=5
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @Id
-    @GeneratedValue(generator = "UP_SS_DESCRIPTOR_GEN")
-    @Column(name = "ID")
+    @GeneratedValue(generator = "UP_SS_DESC_GEN")
+    @Column(name = "SS_DESC_ID")
     private final long id;
+    
+    //Hidden reference to the child stylesheet user preferences, used to allow cascading deletes where when a stylesheet descriptor is deleted all associated preferences are also deleted
+    //MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance will be TERRIBLE
+    @SuppressWarnings("unused")
+    @OneToMany(mappedBy = "stylesheetDescriptor", targetEntity = StylesheetUserPreferencesImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<IStylesheetUserPreferences> stylesheetUserPreferences = null;
     
     @Column(name = "NAME", length=100, nullable = false, unique = true)
     @Type(type = "fname")
@@ -86,22 +98,25 @@ class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     private String stylesheetResource;
     
     @OneToMany(targetEntity = OutputPropertyDescriptorImpl.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "STYLESHEET_ID")
+    @JoinColumn(name = "SS_DESC_ID", nullable=false)
+    @MapKey(name="name")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-    private Set<IOutputPropertyDescriptor> outputProperties = new LinkedHashSet<IOutputPropertyDescriptor>(0);
+    private Map<String, IOutputPropertyDescriptor> outputProperties = new LinkedHashMap<String, IOutputPropertyDescriptor>(0);
     
     @OneToMany(targetEntity = StylesheetParameterDescriptorImpl.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "STYLESHEET_ID")
+    @MapKey(name="name")
+    @JoinColumn(name = "SS_DESC_ID", nullable=false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-    private Set<IStylesheetParameterDescriptor> stylesheetParameters = new LinkedHashSet<IStylesheetParameterDescriptor>(0);
+    private Map<String, IStylesheetParameterDescriptor> stylesheetParameters = new LinkedHashMap<String, IStylesheetParameterDescriptor>(0);
     
     @OneToMany(targetEntity = LayoutAttributeDescriptorImpl.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "STYLESHEET_ID")
+    @MapKey(name="name")
+    @JoinColumn(name = "SS_DESC_ID", nullable=false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-    private Set<ILayoutAttributeDescriptor> layoutAttributes = new LinkedHashSet<ILayoutAttributeDescriptor>(0);
+    private Map<String, ILayoutAttributeDescriptor> layoutAttributes = new LinkedHashMap<String, ILayoutAttributeDescriptor>(0);
     
     
     //Required for Hibernate reflection
@@ -115,7 +130,22 @@ class StylesheetDescriptorImpl implements IStylesheetDescriptor {
         this.setName(name);
         this.setStylesheetResource(stylesheetResource);
     }
+    
 
+    @Override
+    public String getDataId() {
+        return this.getName();
+    }
+
+    @Override
+    public String getDataTitle() {
+        return this.getName();
+    }
+
+    @Override
+    public String getDataDescription() {
+        return this.getDescription();
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.om.IStylesheetDescriptor#getId()
@@ -175,55 +205,88 @@ class StylesheetDescriptorImpl implements IStylesheetDescriptor {
         return this.stylesheetResource;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#getOutputProperties()
-     */
+
     @Override
-    public Set<IOutputPropertyDescriptor> getOutputProperties() {
-        return this.outputProperties;
+    public Collection<IOutputPropertyDescriptor> getOutputPropertyDescriptors() {
+        return Collections.unmodifiableCollection(this.outputProperties.values());
+    }
+    
+    @Override
+    public void setOutputPropertyDescriptors(Collection<IOutputPropertyDescriptor> outputPropertyDescriptors) {
+        setMap(this.outputProperties, outputPropertyDescriptors);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#setOutputProperties(java.util.Set)
-     */
     @Override
-    public void setOutputProperties(Set<IOutputPropertyDescriptor> outputProperties) {
-        Validate.notNull(outputProperties);
-        this.outputProperties = outputProperties;
+    public IOutputPropertyDescriptor getOutputPropertyDescriptor(String name) {
+        return this.outputProperties.get(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#getStylesheetParameters()
-     */
     @Override
-    public Set<IStylesheetParameterDescriptor> getStylesheetParameters() {
-        return this.stylesheetParameters;
+    public IOutputPropertyDescriptor setOutputPropertyDescriptor(IOutputPropertyDescriptor outputPropertyDescriptor) {
+        return this.outputProperties.put(outputPropertyDescriptor.getName(), outputPropertyDescriptor);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#setStylesheetParameters(java.util.Set)
-     */
     @Override
-    public void setStylesheetParameters(Set<IStylesheetParameterDescriptor> stylesheetParameters) {
-        Validate.notNull(stylesheetParameters);
-        this.stylesheetParameters = stylesheetParameters;
+    public IOutputPropertyDescriptor removeOutputPropertyDescriptor(String name) {
+        return this.outputProperties.remove(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#getLayoutAttributes()
-     */
     @Override
-    public Set<ILayoutAttributeDescriptor> getLayoutAttributes() {
-        return this.layoutAttributes;
+    public Collection<IStylesheetParameterDescriptor> getStylesheetParameterDescriptors() {
+        return Collections.unmodifiableCollection(this.stylesheetParameters.values());
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#setLayoutAttributes(java.util.Set)
-     */
     @Override
-    public void setLayoutAttributes(Set<ILayoutAttributeDescriptor> layoutAttributes) {
-        Validate.notNull(layoutAttributes);
-        this.layoutAttributes = layoutAttributes;
+    public void setStylesheetParameterDescriptors(Collection<IStylesheetParameterDescriptor> stylesheetParameterDescriptors) {
+        setMap(this.stylesheetParameters, stylesheetParameterDescriptors);
+    }
+
+    @Override
+    public IStylesheetParameterDescriptor getStylesheetParameterDescriptor(String name) {
+        return this.stylesheetParameters.get(name);
+    }
+
+    @Override
+    public IStylesheetParameterDescriptor setStylesheetParameterDescriptor(
+            IStylesheetParameterDescriptor stylesheetParameterDescriptor) {
+        return this.stylesheetParameters.put(stylesheetParameterDescriptor.getName(), stylesheetParameterDescriptor);
+    }
+
+    @Override
+    public IStylesheetParameterDescriptor removeStylesheetParameterDescriptor(String name) {
+        return this.stylesheetParameters.remove(name);
+    }
+
+    @Override
+    public Collection<ILayoutAttributeDescriptor> getLayoutAttributeDescriptors() {
+        return Collections.unmodifiableCollection(this.layoutAttributes.values());
+    }
+
+    @Override
+    public void setLayoutAttributeDescriptors(Collection<ILayoutAttributeDescriptor> layoutAttributeDescriptors) {
+        setMap(this.layoutAttributes, layoutAttributeDescriptors);
+    }
+
+    @Override
+    public ILayoutAttributeDescriptor getLayoutAttributeDescriptor(String name) {
+        return this.layoutAttributes.get(name);
+    }
+
+    @Override
+    public ILayoutAttributeDescriptor setLayoutAttributeDescriptor(ILayoutAttributeDescriptor layoutAttributeDescriptor) {
+        return this.layoutAttributes.put(layoutAttributeDescriptor.getName(), layoutAttributeDescriptor);
+    }
+
+    @Override
+    public ILayoutAttributeDescriptor removeLayoutAttributeDescriptor(String name) {
+        return this.layoutAttributes.remove(name);
+    }
+    
+    protected <T extends IStylesheetData> void setMap(Map<String, T> dataMap, Collection<T> dataCollection) {
+        dataMap.clear();
+        for (final T data : dataCollection) {
+            dataMap.put(data.getName(), data);
+        }
     }
 
     @Override

@@ -34,7 +34,7 @@
           <value>50%</value>
         </structure-attribute>
         <channel unremovable="" immutable="" hidden="" fname="uportal-news"/>
-        <channel unremovable="" immutable="" hidden="" fname="uportal-powered-sites"/>
+        <!-- <channel unremovable="" immutable="" hidden="" fname="uportal-powered-sites"/> -->
         <channel unremovable="" immutable="" hidden="" fname="jasig-news"/>
         <channel unremovable="" immutable="" hidden="" fname="unicon-news"/>
       </column>
@@ -52,7 +52,7 @@
   </root>
   <profile name="HTML browser profile"> 
     <description>A system profile for common web browsers</description>  
-    <structure name="DLM Tabs and columns"/>  
-    <theme name="DLM XHTML"/> 
+    <structure name="DLMTabsColumns"/>  
+    <theme name="DLMXHTML"/> 
   </profile>
 </layout>

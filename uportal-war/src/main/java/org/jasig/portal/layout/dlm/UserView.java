@@ -19,7 +19,7 @@
 
 package org.jasig.portal.layout.dlm;
 
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.w3c.dom.Document;
 
 
@@ -31,33 +31,24 @@ class UserView
 {
     public static final String RCS_ID = "@(#) $Header$";
 
-    private int userId = -1;
-    DistributedUserPreferences structUserPrefs = null;
-    DistributedUserPreferences themeUserPrefs = null;
+    private final int userId;
     Document layout = null;
     int layoutId = 0;
     int profileId = 1;
     String profileFname = "default"; /* Was 1 when profileId was the key. */
-    int structureStylesheetId = 0;
-    int themeStylesheetId = 0;
 
     UserView (int fragmentOwnerUserId)
     {
         this.userId = fragmentOwnerUserId;
     }
     
-    UserView(int fragmentOwnerUserId, UserProfile profile, Document layout,
-            DistributedUserPreferences ssup, DistributedUserPreferences tsup)
+    UserView(int fragmentOwnerUserId, IUserProfile profile, Document layout)
     {
         this.userId = fragmentOwnerUserId;
         layoutId = profile.getLayoutId();
         profileId = profile.getProfileId();
         profileFname = profile.getProfileFname();
-        structureStylesheetId = profile.getStructureStylesheetId();
-        themeStylesheetId = profile.getThemeStylesheetId();
         this.layout = layout;
-        structUserPrefs = ssup;
-        themeUserPrefs = tsup;
     }
     
     public int getUserId() {

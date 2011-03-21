@@ -31,10 +31,6 @@ public interface FrameworkMBean {
   public long getRenderMax();
   public long getRenderTotalRenders();
 
-  /* sessions */
-  public long getUserSessionCount();
-  public long getGuestSessionCount();
-
   public String[] getRecentProblems();
 
   /* Database information */

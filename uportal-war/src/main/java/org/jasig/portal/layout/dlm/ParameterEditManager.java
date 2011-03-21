@@ -43,7 +43,7 @@ public class ParameterEditManager
     public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(ParameterEditManager.class);
 
-    private static RDBMDistributedLayoutStore dls = null;
+    private static IUserLayoutStore dls = null;
 
     /**
      * Hands back the single instance of RDBMDistributedLayoutStore. There is
@@ -52,13 +52,11 @@ public class ParameterEditManager
      * instance. This method is solely for convenience so that we don't have to
      * keep calling UserLayoutStoreFactory and casting the resulting class.
      */
-    private static RDBMDistributedLayoutStore getDLS()
+    private static IUserLayoutStore getDLS()
     {
         if ( dls == null )
         {
-            IUserLayoutStore uls = null;
-            uls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-            dls = (RDBMDistributedLayoutStore) uls;
+            dls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
         }
         return dls;
     }

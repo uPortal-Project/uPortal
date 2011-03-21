@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
@@ -35,7 +36,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.w3c.dom.Document;
 
 /**
  * Provides API for layout caching service
@@ -43,24 +43,25 @@ import org.w3c.dom.Document;
 public class LayoutCachingService implements ApplicationListener, ILayoutCachingService {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private Map<Serializable, Document> layoutCache;
+    private Map<Serializable, DistributedUserLayout> layoutCache;
     
     /**
      * @return the layoutCache
      */
-    public Map<Serializable, Document> getLayoutCache() {
+    public Map<Serializable, DistributedUserLayout> getLayoutCache() {
         return layoutCache;
     }
     /**
      * @param layoutCache the layoutCache to set
      */
-    public void setLayoutCache(Map<Serializable, Document> layoutCache) {
+    public void setLayoutCache(Map<Serializable, DistributedUserLayout> layoutCache) {
         this.layoutCache = layoutCache;
     }
 
     /* (non-Javadoc)
      * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
      */
+    @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof UserLoggedOutPortalEvent || event instanceof UserSessionDestroyedPortalEvent) {
             final PortalEvent portalEvent = (PortalEvent)event;
@@ -71,7 +72,7 @@ public class LayoutCachingService implements ApplicationListener, ILayoutCaching
             }
             
             //Try invalidating just the layout associated with the current user and profile
-            final UserProfile currentUserProfile = (UserProfile)person.getAttribute(UserProfile.USER_PROFILE);
+            final IUserProfile currentUserProfile = (IUserProfile)person.getAttribute(IUserProfile.USER_PROFILE);
             if (currentUserProfile != null) {
                 this.removeCachedLayout(person, currentUserProfile);
                 return;
@@ -88,27 +89,30 @@ public class LayoutCachingService implements ApplicationListener, ILayoutCaching
                 return;
             }
             
-            for (final UserProfile userProfile : userProfiles.values()) {
+            for (final IUserProfile userProfile : userProfiles.values()) {
                 this.removeCachedLayout(person, userProfile);
             }
         }
     }
 
-    public void cacheLayout(IPerson owner, UserProfile profile, Document layout) {
+    @Override
+    public void cacheLayout(IPerson owner, IUserProfile profile, DistributedUserLayout layout) {
         final Serializable cacheKey = this.getCacheKey(owner, profile);
         this.layoutCache.put(cacheKey, layout);
     }
     
-    public Document getCachedLayout(IPerson owner, UserProfile profile) {
+    @Override
+    public DistributedUserLayout getCachedLayout(IPerson owner, IUserProfile profile) {
         final Serializable cacheKey = this.getCacheKey(owner, profile);
         return this.layoutCache.get(cacheKey);
     }
     
-    public void removeCachedLayout(IPerson owner, UserProfile profile) {
+    @Override
+    public void removeCachedLayout(IPerson owner, IUserProfile profile) {
         final Serializable cacheKey = this.getCacheKey(owner, profile);
         this.layoutCache.remove(cacheKey);
     }
-    protected Serializable getCacheKey(IPerson owner, UserProfile profile) {
+    protected Serializable getCacheKey(IPerson owner, IUserProfile profile) {
         return new Tuple<String, Integer>(owner.getUserName(), profile.getLayoutId());
     }
 }

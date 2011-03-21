@@ -1,0 +1,24 @@
+<stylesheet-descriptor
+    xmlns="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor ../../../resources/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd"
+    script="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"
+    version="4.0"
+>
+    <name>UniversalityAndroid</name>
+    <description>Renders DLMTabsColumns as xhtml for a mobile device</description>
+    <uri>classpath:/layout/theme/muniversality/muniversality.xsl</uri>
+    <stylesheet-parameter>
+      <name>skin</name>
+      <default-value>android</default-value>
+      <scope>PERSISTENT</scope>
+      <description>Skin name</description>
+    </stylesheet-parameter>
+    <layout-attribute>
+      <name>minimized</name>  
+      <default-value>false</default-value>  
+      <scope>PERSISTENT</scope>
+      <description>Flag determining if the channel is minimized or not</description>  
+      <targetElement>channel</targetElement>  
+    </layout-attribute>
+</stylesheet-descriptor>

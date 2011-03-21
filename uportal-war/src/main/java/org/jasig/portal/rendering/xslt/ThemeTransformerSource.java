@@ -19,11 +19,10 @@
 
 package org.jasig.portal.rendering.xslt;
 
-import org.jasig.portal.CoreStylesheetDescription;
 import org.jasig.portal.IUserPreferencesManager;
 
 /**
- * Return {@link IUserPreferencesManager#getThemeStylesheetDescription()}
+ * Return {@link IUserPreferencesManager#getThemeStylesheetDescriptorId()}
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -31,13 +30,7 @@ import org.jasig.portal.IUserPreferencesManager;
 public class ThemeTransformerSource extends BaseTransformerSource {
     
     @Override
-    protected CoreStylesheetDescription getStylesheetDescription(IUserPreferencesManager preferencesManager) {
-        try {
-            return preferencesManager.getThemeStylesheetDescription();
-        }
-        catch (Exception e) {
-            //TODO fix getThemeStylesheetDescription so it doesn't throw Exception
-            throw new RuntimeException("Failed getting ThemeStylesheetDescription from IUserPreferencesManager", e);
-        }
+    protected long getStylesheetDescriptorId(IUserPreferencesManager preferencesManager) {
+        return preferencesManager.getThemeStylesheetDescriptorId();
     }
 }

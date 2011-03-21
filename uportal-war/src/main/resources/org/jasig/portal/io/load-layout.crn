@@ -45,9 +45,11 @@
                         person.setSecurityContext(new BrokenSecurityContext());
                     
                         def profile = userLayoutStore.getUserProfileByFname(person, UserProfile.DEFAULT_PROFILE_FNAME);
-                        def layoutElement = userLayoutStore.getUserLayout(person, profile);
-                    
-                        if (layoutElement != null) {
+                        def userLayout = userLayoutStore.getUserLayout(person, profile);
+                                            
+                        if (userLayout != null) {
+                            def layoutElement = userLayout.getLayout();
+                        
                             def reader = new DOMReader();
                             def dom4jLayoutElement = reader.read(layoutElement);
                         

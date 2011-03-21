@@ -23,6 +23,6 @@
     <name>HTML mobile browser profile</name>
     <fname>mobileDefault</fname>
     <description>A sample mobile profile for common web browsers</description>
-    <structure name="DLM Mobile columns"/>
-    <theme name="Universality Mobile"/>
+    <structure name="DLMMobileColumns"/>
+    <theme name="UniversalityMobile"/>
 </profile>

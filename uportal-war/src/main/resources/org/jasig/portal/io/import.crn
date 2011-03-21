@@ -135,6 +135,38 @@
                                 </if>
                             </file-iterator>
                         </thread-pool>
+                        
+                        
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.stylesheet-descriptor.xml">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Stylesheet Descriptor:  ${Attributes.LOCATION}</echo-ln>
+                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
+                                                  <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
+                                                      <choose>
+                                                          <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
+                                                              <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
+                                                          </when>
+                                                          <otherwise>
+                                                              <echo-ln>WARNING: Should not be here.  Unsupported Portlet version.</echo-ln>
+                                                              <crn location="${importScriptUrl}"/>
+                                                          </otherwise>
+                                                      </choose>
+                                                  </with-attribute>
+                                                </with-attribute>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Stylesheet Descriptor from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <throw/>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
         
                         <!-- template-users -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
@@ -283,6 +315,7 @@
                             </file-iterator>
                         </thread-pool>
                         
+                        <!-- TODO handle .channel-type files -->
                         <!-- portlet-types -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
                             <file-iterator dir="${$1}" includes="**/*.portlet-type">
@@ -290,7 +323,7 @@
                                     <concurrent>
                                         <handle-error>
                                             <try>
-                                                <echo-ln>Import Channel Type:  ${Attributes.LOCATION}</echo-ln>
+                                                <echo-ln>Import Portlet Type:  ${Attributes.LOCATION}</echo-ln>
                                                 <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
                                                     <crn location="${valueOf(@script)}"/>
                                                 </with-attribute>
@@ -304,20 +337,25 @@
                                 </if>
                             </file-iterator>
                         </thread-pool>
-                                                        
+                        
+                        <!-- TODO handle .channel files -->
                         <!-- portlets -->
-                        <thread-pool threads="1"> <!-- single threaded for now due to lack of thread-saftey in channel publishing code -->
-                            <file-iterator dir="${$1}" includes="**/*.portlet">
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.portlet.xml">
                                 <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
                                     <concurrent>
                                         <handle-error>
                                             <try>
                                                 <echo-ln>Import Portlet:  ${Attributes.LOCATION}</echo-ln>
+                                                <!--
+                                                    TODO eventually just pass Attributes.LOCATION to jaxb importer so it can use StAX to inspect
+                                                    the first element and determine how to upgrade/import the file before unmarhsalling
+                                                -->
                                                 <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
                                                   <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
                                                       <choose>
                                                           <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
-                                                                <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
+                                                              <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
                                                           </when>
                                                           <otherwise>
                                                               <echo-ln>WARNING: Should not be here.  Unsupported Portlet version.</echo-ln>

@@ -19,83 +19,42 @@
 
 package org.jasig.portal.layout.dao.jpa;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.TableGenerator;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.MappedSuperclass;
 
 import org.apache.commons.lang.Validate;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.layout.om.IStylesheetData;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Entity
-@SequenceGenerator(
-        name="UP_STYLESHEET_DATA_GEN",
-        sequenceName="UP_STYLESHEET_DATA_SEQ",
-        allocationSize=5
-    )
-@TableGenerator(
-        name="UP_STYLESHEET_DATA_GEN",
-        pkColumnValue="UP_STYLESHEET_DATA",
-        allocationSize=5
-    )
-@Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@MappedSuperclass
 abstract class AbstractStylesheetDataImpl implements IStylesheetData {
-    @Id
-    @GeneratedValue(generator = "UP_STYLESHEET_DATA_GEN")
-    @Column(name = "ID")
-    private final long id;
-    
-    @Column(name = "NAME", length=100, nullable = false)
-    private String name;
+    @Column(name = "NAME", length=100, nullable = false, updatable = false)
+    private final String name;
     
     @Column(name = "DEFAULT_VALUE", length=500)
+    @Type(type="nullSafeString")
     private String defaultValue;
     
     @Column(name = "SCOPE", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Scope scope;
     
     @Column(name = "DESCRIPTION", length=2000)
     private String description;
     
-    //Required by hibernate for reflective creation
     AbstractStylesheetDataImpl() {
-        this.id = -1;
+        this.name = null;
     }
     
     public AbstractStylesheetDataImpl(String name, Scope scope) {
-        this.id = -1;
         this.name = name;
         this.scope = scope;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetData#getId()
-     */
-    @Override
-    public long getId() {
-        return this.id;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetData#setName(java.lang.String)
-     */
-    @Override
-    public void setName(String name) {
-        Validate.notNull(name);
-        this.name = name;
     }
 
     /* (non-Javadoc)
@@ -159,9 +118,7 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.defaultValue == null) ? 0 : this.defaultValue.hashCode());
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result + ((this.scope == null) ? 0 : this.scope.hashCode());
         return result;
     }
 
@@ -174,26 +131,18 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
         if (getClass() != obj.getClass())
             return false;
         AbstractStylesheetDataImpl other = (AbstractStylesheetDataImpl) obj;
-        if (this.defaultValue == null) {
-            if (other.defaultValue != null)
-                return false;
-        }
-        else if (!this.defaultValue.equals(other.defaultValue))
-            return false;
         if (this.name == null) {
             if (other.name != null)
                 return false;
         }
         else if (!this.name.equals(other.name))
             return false;
-        if (this.scope != other.scope)
-            return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "AbstractStylesheetDataImpl [id=" + this.id + ", name=" + this.name + ", defaultValue=" + this.defaultValue
+        return "AbstractStylesheetDataImpl [name=" + this.name + ", defaultValue=" + this.defaultValue
                 + ", scope=" + this.scope + ", description=" + this.description + "]";
     }
 }

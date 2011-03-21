@@ -19,7 +19,7 @@
 
 package org.jasig.portal.events.support;
 
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -28,7 +28,7 @@ import org.jasig.portal.security.IPerson;
 public final class ChannelUpdatedInLayoutPortalEvent extends ChannelLayoutPortalEvent {
     private static final long serialVersionUID = 1L;
 
-    public ChannelUpdatedInLayoutPortalEvent(final Object source, final IPerson person, final UserProfile profile, 
+    public ChannelUpdatedInLayoutPortalEvent(final Object source, final IPerson person, final IUserProfile profile, 
             final IUserLayoutChannelDescription description, final IUserLayoutNodeDescription parentNode) {
         super(source, person, profile, description, parentNode, EventType.getEventType("LAYOUT_CHANNEL_UPDATED"));
     }

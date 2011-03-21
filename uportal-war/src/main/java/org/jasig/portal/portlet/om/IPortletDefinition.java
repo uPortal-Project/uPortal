@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.io.xml.IPortalData;
 
 
 /**
@@ -34,7 +35,11 @@ import org.jasig.portal.IBasicEntity;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletDefinition extends IBasicEntity {
+public interface IPortletDefinition extends IBasicEntity, IPortalData {
+    public static final String EDITABLE_PARAM = "editable";
+    public static final String HAS_HELP_PARAM = "hasHelp";
+    public static final String HAS_ABOUT_PARAM = "hasAbout";
+    
     /**
      * @return The unique identifier for this portlet definition.
      */
@@ -81,12 +86,6 @@ public interface IPortletDefinition extends IBasicEntity {
 	
 	public Date getExpirationDate();
 
-	public boolean isEditable();
-
-	public boolean hasHelp();
-
-	public boolean hasAbout();
-
 	public Set<IPortletDefinitionParameter> getParameters();
 
 	public IPortletDefinitionParameter getParameter(String key);
@@ -125,12 +124,6 @@ public interface IPortletDefinition extends IBasicEntity {
 	
 	public void setExpirationDate(Date expirationDate);
 
-	public void setEditable(boolean editable);
-
-	public void setHasHelp(boolean hasHelp);
-
-	public void setHasAbout(boolean hasAbout);
-
 	public void clearParameters();
 
 	public void setParameters(Set<IPortletDefinitionParameter> parameters);
@@ -148,7 +141,8 @@ public interface IPortletDefinition extends IBasicEntity {
 	 * 
 	 * @return EntityIdentifier
 	 */
-	public EntityIdentifier getEntityIdentifier();
+	@Override
+    public EntityIdentifier getEntityIdentifier();
 
 	/**
 	 * Adds a parameter to this channel definition

@@ -27,12 +27,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.StructureStylesheetUserPreferences;
-import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserPreferences;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
+import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
@@ -61,7 +60,13 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
     private IUserInstanceManager userInstanceManager;
     private IPortalUrlProvider portalUrlProvider;
     private IPortletWindowRegistry portletWindowRegistry;
+    private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
     
+    @Autowired
+    public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
+        this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
+    }
+
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
@@ -86,11 +91,7 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         final IPerson person = userInstance.getPerson();
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-        final UserPreferences userPreferences = preferencesManager.getUserPreferences();
 
-        
-        final StructureStylesheetUserPreferences structureStylesheetUserPreferences = userPreferences.getStructureStylesheetUserPreferences();
-        final ThemeStylesheetUserPreferences themeStylesheetUserPreferences = userPreferences.getThemeStylesheetUserPreferences();
         
         
         portalRequestInfo.getTargetedLayoutNodeId();
@@ -104,7 +105,10 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                     final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, targetWindowId);
                     
                     final String channelSubscribeId = portletEntity.getChannelSubscribeId();
-                    structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", channelSubscribeId);
+                    
+                    final IStylesheetUserPreferences structureStylesheetUserPreferences = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
+                    structureStylesheetUserPreferences.setStylesheetParameter("userLayoutRoot", channelSubscribeId);
+                    this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, structureStylesheetUserPreferences);
                     
                     if (userLayoutManager instanceof TransientUserLayoutManagerWrapper) {
                         // get wrapper implementation for focusing
@@ -119,11 +123,13 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                 
             case NORMAL:
             default:
+                final IStylesheetUserPreferences structureStylesheetUserPreferences = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
                 final String tabId = portalRequestInfo.getTargetedLayoutNodeId();
                 if (tabId != null) {
-                    structureStylesheetUserPreferences.putParameterValue("focusedTabID", tabId);
+                    structureStylesheetUserPreferences.setStylesheetParameter("focusedTabID", tabId);
                 }
-                structureStylesheetUserPreferences.putParameterValue("userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
+                structureStylesheetUserPreferences.setStylesheetParameter("userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
+                this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, structureStylesheetUserPreferences);
             break;
         }
         

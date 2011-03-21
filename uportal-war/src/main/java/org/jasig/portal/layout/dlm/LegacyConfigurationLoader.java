@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
@@ -31,9 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
-import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -65,6 +65,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
     };
     
     private List<FragmentDefinition> fragments = null;
+    private Map<String, FragmentDefinition> fragmentsByName = null;
     private Properties properties = null;
     
     /**
@@ -127,21 +128,39 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
                 logger.debug("Fragments Sorted by Precedence and then index {\n" +
                     bfr.toString() + " }" );
             }
+            
+            //Store the fragments in a map by owner id for easy access
+            final Map<String, FragmentDefinition> fragmentsByName = new LinkedHashMap<String, FragmentDefinition>();
+            for (final FragmentDefinition fragmentDefinition : localFragments) {
+                fragmentsByName.put(fragmentDefinition.getName(), fragmentDefinition);
+            }
+            
             this.fragments = Collections.unmodifiableList(localFragments);
+            this.fragmentsByName = Collections.unmodifiableMap(fragmentsByName);
         }
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.dlm.ConfigurationLoader#getFragments()
      */
+    @Override
     public List<FragmentDefinition> getFragments() {
         this.loadedFlag.get();
         return this.fragments;
     }
+    
+
+    @Override
+    public FragmentDefinition getFragmentByName(String name) {
+        this.loadedFlag.get();
+        return this.fragmentsByName.get(name);
+    }
+
 
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.dlm.ConfigurationLoader#getProperty(java.lang.String)
      */
+    @Override
     public String getProperty(String propertyName) {
         this.loadedFlag.get();
         return this.properties.getProperty(propertyName);
@@ -150,6 +169,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.dlm.ConfigurationLoader#getPropertyCount()
      */
+    @Override
     public int getPropertyCount() {
         this.loadedFlag.get();
         return this.properties.size();

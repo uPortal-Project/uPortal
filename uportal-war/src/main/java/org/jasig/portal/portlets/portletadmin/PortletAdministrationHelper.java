@@ -285,16 +285,17 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			portletDef = portletDefinitionRegistry.getPortletDefinition(form.getId());
 	    }
 	    portletDef.setDescription(form.getDescription());
-	    portletDef.setEditable(form.isEditable());
 	    portletDef.setFName(form.getFname());
-	    portletDef.setHasAbout(form.isHasAbout());
-	    portletDef.setHasHelp(form.isHasHelp());
 	    portletDef.setName(form.getName());
 	    portletDef.setTimeout(form.getTimeout());
 	    portletDef.setTitle(form.getTitle());
 	    portletDef.getPortletDescriptorKey().setWebAppName(form.getApplicationId());
 	    portletDef.getPortletDescriptorKey().setPortletName(form.getPortletName());
 	    portletDef.getPortletDescriptorKey().setFrameworkPortlet(form.isFramework());
+	    
+	    portletDef.addParameter("editable", Boolean.toString(form.isEditable()));
+	    portletDef.addParameter("hasHelp", Boolean.toString(form.isHasHelp()));
+	    portletDef.addParameter("hasAbout", Boolean.toString(form.isHasAbout()));
 	    
 	    Date now = new Date();
 

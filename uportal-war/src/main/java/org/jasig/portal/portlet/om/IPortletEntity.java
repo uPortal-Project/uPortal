@@ -19,6 +19,8 @@
 
 package org.jasig.portal.portlet.om;
 
+import javax.portlet.WindowState;
+
 
 
 /**
@@ -48,6 +50,16 @@ public interface IPortletEntity {
      * @return The ID of the user this entity is for. 
      */
     public int getUserId();
+    
+    /**
+     * @return The persisted window state for this portlet
+     */
+    public WindowState getWindowState();
+    
+    /**
+     * @param state The persisted window state for this portlet
+     */
+    public void setWindowState(WindowState state);
     
     /**
      * @return The preferences for this portlet entity, will not be null.

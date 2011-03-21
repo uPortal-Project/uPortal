@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout.dlm;
 
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutStoreFactory;
 
 /**
@@ -63,8 +64,7 @@ public final class Precedence
             return;
         }
                 
-        RDBMDistributedLayoutStore dls = ( RDBMDistributedLayoutStore )
-            UserLayoutStoreFactory.getUserLayoutStoreImpl();
+        final IUserLayoutStore dls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
                 
         this.precedence = dls.getFragmentPrecedence( fragmentIndex );
         this.index = fragmentIndex;

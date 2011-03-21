@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.easymock.EasyMock;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent;
@@ -186,7 +187,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         
-        final UserProfile userProfile = new UserProfile();
+        final IUserProfile userProfile = new UserProfile();
         userProfile.setProfileId(1);
         
         final IUserLayoutChannelDescription channelDescription = EasyMock.createMock(IUserLayoutChannelDescription.class);

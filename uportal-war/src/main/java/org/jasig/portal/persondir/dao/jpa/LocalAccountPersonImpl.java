@@ -86,7 +86,7 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     @JoinColumn(name = "USER_DIR_ID", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-    private Collection<LocalAccountPersonAttributeImpl> attributes = new ArrayList<LocalAccountPersonAttributeImpl>(0);
+    private final Collection<LocalAccountPersonAttributeImpl> attributes = new ArrayList<LocalAccountPersonAttributeImpl>(0);
 
     @SuppressWarnings("unused")
     private LocalAccountPersonImpl() {

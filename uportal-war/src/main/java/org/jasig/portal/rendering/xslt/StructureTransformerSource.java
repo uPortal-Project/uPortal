@@ -19,11 +19,11 @@
 
 package org.jasig.portal.rendering.xslt;
 
-import org.jasig.portal.CoreStylesheetDescription;
 import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
 
 /**
- * Return {@link IUserPreferencesManager#getStructureStylesheetDescription()}
+ * Return {@link IUserPreferencesManager#getStructureStylesheetDescriptorId()}
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -31,13 +31,7 @@ import org.jasig.portal.IUserPreferencesManager;
 public class StructureTransformerSource extends BaseTransformerSource {
     
     @Override
-    protected CoreStylesheetDescription getStylesheetDescription(IUserPreferencesManager preferencesManager) {
-        try {
-            return preferencesManager.getStructureStylesheetDescription();
-        }
-        catch (Exception e) {
-            //TODO fix getStructureStylesheetDescription so it doesn't throw Exception
-            throw new RuntimeException("Failed getting StructureStylesheetDescription from IUserPreferencesManager", e);
-        }
+    protected long getStylesheetDescriptorId(IUserPreferencesManager preferencesManager) {
+        return preferencesManager.getStructureStylesheetDescriptorId();
     }
 }

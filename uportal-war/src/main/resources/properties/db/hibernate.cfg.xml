@@ -44,6 +44,8 @@
         <mapping class="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"/>
         <mapping class="org.jasig.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"/>
         <mapping class="org.jasig.portal.layout.dao.jpa.StylesheetParameterDescriptorImpl"/>
+        <mapping class="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl"/>
+        <mapping class="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl"/>
         <mapping class="org.jasig.portal.layout.dlm.Evaluator" />
         <mapping class="org.jasig.portal.layout.dlm.FragmentDefinition" />
         <mapping class="org.jasig.portal.layout.dlm.providers.AllUsersEvaluatorFactory" />

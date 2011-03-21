@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="https://source.jasig.org/schemas/uportal/io"
+    targetNamespace="https://source.jasig.org/schemas/uportal/io"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    version="1.0">
+    
+    <xs:complexType name="basePortalDataType" abstract="true">
+        <xs:attribute name="script" type="importScriptType" use="required" />
+    </xs:complexType>
+    
+    <xs:simpleType name="fname-type">
+        <xs:annotation>
+            <xs:appinfo>org.jasig.portal.dao.usertype.FunctionalNameType.VALID_FNAME_PATTERN</xs:appinfo>
+            <xs:documentation>
+                Constrains an XML element with the same constraint defined by the FunctionalNameType.VALID_FNAME_PATTERN
+                regular expression.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[\w-]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="importScriptType">
+        <xs:annotation>
+            <xs:documentation>
+                The Cernunnos script all portal data that uses JAXB to import must specify.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="version40Type">
+        <xs:annotation>
+            <xs:documentation>
+                Version of the portal data file. A new version type should be added in this file for each minor release
+                of uPortal.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="4.0"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+</xs:schema>

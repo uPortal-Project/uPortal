@@ -39,21 +39,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.StructureStylesheetUserPreferences;
-import org.jasig.portal.ThemeStylesheetUserPreferences;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.layout.dlm.Constants;
+import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.layout.dlm.UserPrefsHandler;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
+import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IPerson;
@@ -61,7 +61,6 @@ import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -80,7 +79,7 @@ import org.w3c.dom.NodeList;
  */
 @Controller
 @RequestMapping("/layout")
-public class UpdatePreferencesServlet implements InitializingBean {
+public class UpdatePreferencesServlet {
 
     private static final String TAB_GROUP_PARAMETER = "tabGroup";  // matches incoming JS
     private static final String TAB_GROUP_DEFAULT = "DEFAULT_TABGROUP";  // matches default in structure transform
@@ -88,29 +87,38 @@ public class UpdatePreferencesServlet implements InitializingBean {
     protected final Log log = LogFactory.getLog(getClass());
 	
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
-	
-	@Autowired(required = true)
+	private IUserIdentityStore userIdentityStore;
+	private IUserFragmentSubscriptionDao userFragmentInfoDao;
+	private IUserInstanceManager userInstanceManager;
+	private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
+	private IUserLayoutStore userLayoutStore;
+
+	@Autowired
+    public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
+        this.userLayoutStore = userLayoutStore;
+    }
+
+    @Autowired
+	public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
+        this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
+    }
+
+    @Autowired
 	public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
 	    this.portletDefinitionRegistry = portletDefinitionRegistry;
 	}
 
-    private IUserIdentityStore userStore;
-
-    @Autowired(required = true)
+    @Autowired
     public void setUserIdentityStore(IUserIdentityStore userStore) {
-        this.userStore = userStore;
+        this.userIdentityStore = userStore;
     }
     
-    private IUserFragmentSubscriptionDao userFragmentInfoDao;
-    
-    @Autowired(required = true)
+    @Autowired
     public void setUserFragmentInfoDao(IUserFragmentSubscriptionDao userFragmentInfoDao) {
         this.userFragmentInfoDao = userFragmentInfoDao;
     }
     
-    private IUserInstanceManager userInstanceManager;
-    
-    @Autowired(required = true)
+    @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
     }
@@ -118,9 +126,6 @@ public class UpdatePreferencesServlet implements InitializingBean {
 	// default tab name
 	protected static final String DEFAULT_TAB_NAME = "New Tab";
 
-    public void afterPropertiesSet() throws Exception {
-    }
-    
 	/**
 	 * Remove an element from the layout.
 	 * 
@@ -156,7 +161,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
                ulm.deleteNode(elementId);
             }
 
-            saveLayout(per, ulm, upm, null);
+            ulm.saveUserLayout();
 
             return new ModelAndView("jsonView", Collections.EMPTY_MAP);
             
@@ -213,15 +218,14 @@ public class UpdatePreferencesServlet implements InitializingBean {
         try {
             // reload user layout and stylesheet to incorporate new DLM fragment
             ulm.loadUserLayout(true);
-            upm.reloadStructureStylesheet(request);
 
             // get the target node this new tab should be moved after
             String destinationId = request.getParameter("elementID");
 
             // get the user layout for the currently-authenticated user
-            int uid = userStore.getPortalUID(fragmentOwner, false);
-            final IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-            Document userLayout = userLayoutStore.getUserLayout(per, upm.getUserPreferences().getProfile());
+            int uid = userIdentityStore.getPortalUID(fragmentOwner, false);
+            final DistributedUserLayout userLayout = userLayoutStore.getUserLayout(per, upm.getUserProfile());
+            Document layoutDocument = userLayout.getLayout();
 
             // attempt to find the new subscribed tab in the layout so we can
             // move it
@@ -231,11 +235,11 @@ public class UpdatePreferencesServlet implements InitializingBean {
                                        .append("')]");
             XPathFactory fac = XPathFactory.newInstance();
             XPath xpath = fac.newXPath();
-            NodeList nodes = (NodeList) xpath.evaluate(expression.toString(), userLayout,  XPathConstants.NODESET);
+            NodeList nodes = (NodeList) xpath.evaluate(expression.toString(), layoutDocument,  XPathConstants.NODESET);
             String sourceId = nodes.item(0).getAttributes().getNamedItem("ID").getTextContent();
             ulm.moveNode(sourceId, ulm.getParentId(destinationId), destinationId);
 
-            saveLayout(per, ulm, upm, null);
+            ulm.saveUserLayout();
 
             return new ModelAndView("jsonView", Collections.singletonMap("tabId", sourceId));
             
@@ -282,9 +286,9 @@ public class UpdatePreferencesServlet implements InitializingBean {
 			// if the target is a tab type node, move the portlet to 
 			// the end of the first column
 		    @SuppressWarnings("unchecked")
-			Enumeration columns = ulm.getChildIds(destinationId);
+			Enumeration<String> columns = ulm.getChildIds(destinationId);
 			if (columns.hasMoreElements()) {
-				ulm.moveNode(sourceId, (String) columns.nextElement(), null);
+				ulm.moveNode(sourceId, columns.nextElement(), null);
 			} else {
 
 				IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
@@ -324,7 +328,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
 		try {
 			// save the user's layout
-            saveLayout(per, ulm, upm, null);
+            ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Error saving layout", e);
 		}
@@ -335,7 +339,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 	
 	/**
 	 * Change the number of columns on a specified tab.  In the event that the user is
-	 * decresasing the number of columns, extra columns will be stripped from the 
+	 * decreasing the number of columns, extra columns will be stripped from the 
 	 * right-hand side.  Any channels in these columns will be moved to the bottom of
 	 * the last preserved column.
 	 * 
@@ -364,10 +368,10 @@ public class UpdatePreferencesServlet implements InitializingBean {
         
 		// build a list of the current columns for this tab
         @SuppressWarnings("unchecked")
-		Enumeration columns = ulm.getChildIds(tabId);
+		Enumeration<String> columns = ulm.getChildIds(tabId);
 		List<String> columnList = new ArrayList<String>();
 		while (columns.hasMoreElements()) {
-			columnList.add((String) columns.nextElement());
+			columnList.add(columns.nextElement());
 		}
         int oldColumnCount = columnList.size();
         
@@ -425,10 +429,9 @@ public class UpdatePreferencesServlet implements InitializingBean {
 		}
 
 		int count = 0;
-		StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
-		    .getStructureStylesheetUserPreferences();
+		final IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
 		for (String columnId : columnList) {
-			ssup.setFolderAttributeValue(columnId, "width", widths[count] + "%");
+		    ssup.setLayoutAttribute(columnId, "width", widths[count] + "%");
 			try {
 				// This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
 	            Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
@@ -438,9 +441,11 @@ public class UpdatePreferencesServlet implements InitializingBean {
 			}
 			count++;
 		}
+		
+		this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, ssup);
 
 		try {
-		    saveLayout(per, ulm, upm, ssup);
+		    ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Error saving layout", e);
 		}
@@ -465,7 +470,6 @@ public class UpdatePreferencesServlet implements InitializingBean {
 			HttpServletResponse response) throws IOException {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
-        IPerson per = getPerson(ui, response);
 
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
@@ -486,7 +490,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 		ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId);
 
 		try {
-            saveLayout(per, ulm, upm, null);
+            ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Failed to move tab in user layout", e);
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -512,7 +516,6 @@ public class UpdatePreferencesServlet implements InitializingBean {
 	public ModelAndView addPortlet(HttpServletRequest request, HttpServletResponse response) throws IOException, PortalException {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
-        IPerson per = getPerson(ui, response);
 
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
@@ -529,12 +532,11 @@ public class UpdatePreferencesServlet implements InitializingBean {
 		IUserLayoutNodeDescription node = null;
 		if (isTab(ulm, destinationId)) {
             @SuppressWarnings("unchecked")
-			Enumeration columns = ulm.getChildIds(destinationId);
+			Enumeration<String> columns = ulm.getChildIds(destinationId);
 			if (columns.hasMoreElements()) {
 				while (columns.hasMoreElements()) {
 					// attempt to add this channel to the column
-					node = ulm.addNode(channel, (String) columns.nextElement(),
-							null);
+					node = ulm.addNode(channel, columns.nextElement(), null);
 					// if it couldn't be added to this column, go on and try the next
 					// one.  otherwise, we're set.
 					if (node != null)
@@ -579,7 +581,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
 		try {
 			// save the user's layout
-            saveLayout(per, ulm, upm, null);
+            ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Error saving layout", e);
 		}
@@ -606,22 +608,10 @@ public class UpdatePreferencesServlet implements InitializingBean {
 	public ModelAndView chooseSkin(HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 
-        IUserInstance ui = userInstanceManager.getUserInstance(request);
-        IPerson per = getPerson(ui, response);
-        UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
-
 		String skinName = request.getParameter("skinName");
-        ThemeStylesheetUserPreferences themePrefs = upm.getUserPreferences().getThemeStylesheetUserPreferences();
-        themePrefs.putParameterValue("skin",skinName);
-		try {
-		    final IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-		    userLayoutStore.setThemeStylesheetUserPreferences(per, upm
-					.getUserPreferences().getProfile().getProfileId(), themePrefs);
-		} catch (Exception e) {
-			log.error("Error storing user skin preferences", e);
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			return null;
-		}
+		final IStylesheetUserPreferences themePrefs = this.stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
+		themePrefs.setStylesheetParameter("skin",skinName);
+		this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, themePrefs);
 
 		return new ModelAndView("jsonView", Collections.EMPTY_MAP);
 	}
@@ -659,7 +649,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
 		try {
 			// save the user's layout
-            saveLayout(per, ulm, upm, null);
+            ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Error saving layout", e);
 		}
@@ -667,8 +657,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
 		// get the id of the newly added tab
 		String tabId = newTab.getId();
 
-        StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
-            .getStructureStylesheetUserPreferences();
+        final IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
         
         for (String width : widths) {
 
@@ -685,7 +674,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
             // add the column to our layout
             ulm.addNode(newColumn, tabId, null);
             
-            ssup.setFolderAttributeValue(newColumn.getId(), "width", width + "%");
+            ssup.setLayoutAttribute(newColumn.getId(), "width", width + "%");
             try {
                 // This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
                 Element folder = ulm.getUserLayoutDOM().getElementById(newColumn.getId());
@@ -708,14 +697,14 @@ public class UpdatePreferencesServlet implements InitializingBean {
 
             if (!TAB_GROUP_DEFAULT.equals(tabGroup) && tabGroup.length() != 0) {
                 // Persists SSUP values to the database
-                ssup.setFolderAttributeValue(tabId, TAB_GROUP_PARAMETER , tabGroup);
+                ssup.setLayoutAttribute(tabId, TAB_GROUP_PARAMETER , tabGroup);
             }
 
         }
 
         try {
             // save the user's layout
-            saveLayout(per, ulm, upm, ssup);
+            ulm.saveUserLayout();
         } catch (Exception e) {
             log.warn("Error saving layout", e);
         }
@@ -755,19 +744,21 @@ public class UpdatePreferencesServlet implements InitializingBean {
 		 * Update the tab and save the layout
 		 */
 	    tab.setName(StringUtils.isBlank(tabName) ? DEFAULT_TAB_NAME : tabName);
-		ulm.updateNode(tab);
+		final boolean updated = ulm.updateNode(tab);
 		
-		try {
-			// save the user's layout
-            saveLayout(per, ulm, upm, null);
-		} catch (Exception e) {
-			log.warn("Error saving layout", e);
+		if (updated) {
+    		try {
+    			// save the user's layout
+                ulm.saveUserLayout();
+    		} catch (Exception e) {
+    			log.warn("Error saving layout", e);
+    		}
+    
+    		//TODO why do we have to do this, shouldn't modifying the layout be enough to trigger a full re-render (layout's cache key changes)
+    		final IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
+    		ssup.setLayoutAttribute(tabId, "name", tabName);
+    		this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, ssup);
 		}
-
-		// update the tab name in the in-memory structure stylesheet
-		StructureStylesheetUserPreferences ssup = upm.getUserPreferences()
-			.getStructureStylesheetUserPreferences();
-		ssup.setFolderAttributeValue(tabId, "name", tabName);
 
         Map<String, String> model = Collections.singletonMap("message", "saved new tab name");
         return new ModelAndView("jsonView", model);
@@ -778,7 +769,6 @@ public class UpdatePreferencesServlet implements InitializingBean {
     public ModelAndView updatePermissions(HttpServletRequest request, HttpServletResponse response) throws IOException {
         
         IUserInstance ui = userInstanceManager.getUserInstance(request);
-        IPerson per = getPerson(ui, response);
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
@@ -815,7 +805,7 @@ public class UpdatePreferencesServlet implements InitializingBean {
         
         try {
             // save the user's layout
-            saveLayout(per, ulm, upm, null);
+            ulm.saveUserLayout();
         } catch (Exception e) {
             log.warn("Error saving layout", e);
         }
@@ -830,10 +820,10 @@ public class UpdatePreferencesServlet implements InitializingBean {
         String userIdString = StringUtils.substringBetween(elementId, Constants.FRAGMENT_ID_USER_PREFIX, Constants.FRAGMENT_ID_LAYOUT_PREFIX);
         int userId = NumberUtils.toInt(userIdString,0);
         
-        // construct a new person object reqpresenting the fragment owner
+        // construct a new person object representing the fragment owner
         RestrictedPerson fragmentOwner = PersonFactory.createRestrictedPerson();
         fragmentOwner.setID(userId);
-        fragmentOwner.setUserName(userStore.getPortalUserName(userId));
+        fragmentOwner.setUserName(userIdentityStore.getPortalUserName(userId));
         
         // attempt to find a subscription for this fragment
         IUserFragmentSubscription subscription = userFragmentInfoDao.getUserFragmentInfo(per, fragmentOwner);
@@ -850,34 +840,6 @@ public class UpdatePreferencesServlet implements InitializingBean {
         }
     
     }
-
-	/**
-	 * Save the user's layout while preserving the current in-storage default
-	 * tab.
-	 * 
-	 * @param ulm
-	 * @param upm
-	 * @param per
-	 * @throws Exception
-	 */
-	protected void saveLayout(IPerson person, IUserLayoutManager ulm, UserPreferencesManager upm, StructureStylesheetUserPreferences ssup) throws Exception {
-
-	    // save the user's layout
-		ulm.saveUserLayout();
-
-		if (ssup != null) {
-            int profileId = upm.getUserPreferences().getProfile()
-                    .getProfileId();
-
-            // This is a brute force save of the new attributes. It requires
-            // access to the layout store. -SAB
-            final IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-            userLayoutStore.setStructureStylesheetUserPreferences(person, profileId,
-                    ssup);
-		    
-		}
-		
-	}
 	
 	/**
 	 * A folder is a tab if its parent element is the layout element

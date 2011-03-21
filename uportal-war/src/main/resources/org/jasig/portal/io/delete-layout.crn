@@ -32,20 +32,42 @@
  |
  +-->
 <!-- Use sql-query to select the USER_ID (not with-attribute) b/c deleting a non-existant user should be a no-op  -->
+
 <sql-query>
     <sql>SELECT user_id FROM up_user WHERE user_name = ?</sql>
     <parameter value="${USER_NAME}"/>
     <subtasks>
     
+    <with> 
+    <attribute key="stylesheetDescriptorDao">${groovy(PORTAL_CONTEXT.getBean(org.jasig.portal.layout.dao.IStylesheetDescriptorDao.class))}</attribute>  
+    <attribute key="stylesheetUserPreferencesDao">${groovy(PORTAL_CONTEXT.getBean(org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao.class))}</attribute>
+    <attribute key="userProfile">${groovy(new org.jasig.portal.UserProfile())}</attribute>
+    <attribute key="person">${groovy(new org.jasig.portal.security.provider.PersonImpl())}</attribute>  
+    <subtasks>
+        <groovy>
+            <script>
+                person.setID(USER_ID);
+            </script>
+        </groovy>
+    
         <sql-query>
-            <sql>SELECT structure_ss_id FROM up_user_profile WHERE user_id = ?</sql> <!--  AND profile_id = 1 -->
+            <sql>
+                SELECT profile_id, STRUCTURE_SS_ID
+                FROM up_user_profile
+                WHERE user_id = ?
+            </sql> <!--  AND profile_id = 1 -->
             <parameter value="${USER_ID}"/>
             <subtasks>
-                <!-- Structure Attributes -->
-                <sql-statement sql="DELETE FROM up_ss_user_atts WHERE user_id = ? AND ss_id = ?">
-                    <parameter value="${USER_ID}"/>
-                    <parameter value="${STRUCTURE_SS_ID}"/>
-                </sql-statement>
+                <groovy>
+                    <script>
+                        userProfile.setProfileId(PROFILE_ID);
+                        stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptor(STRUCTURE_SS_ID)
+                        stylesheetUserPreferences = stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, person, userProfile)
+                        if (stylesheetUserPreferences != null) {
+                            stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(stylesheetUserPreferences);
+                        }
+                    </script>
+                </groovy>
             </subtasks>
         </sql-query>
         
@@ -68,6 +90,8 @@
         <sql-statement sql="UPDATE up_user SET next_struct_id = 1 WHERE user_id = ?">
             <parameter value="${USER_ID}"/>
         </sql-statement>
+        </subtasks>
+    </with>
 
     </subtasks>
 </sql-query>

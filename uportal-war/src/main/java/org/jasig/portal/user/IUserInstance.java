@@ -19,8 +19,6 @@
 
 package org.jasig.portal.user;
 
-import javax.servlet.http.HttpSession;
-
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
@@ -46,16 +44,4 @@ public interface IUserInstance {
      * @return the localeManager for the user instance
      */
     public LocaleManager getLocaleManager();
-
-    /**
-     * @return the renderingLock for the user instance
-     */
-    public Object getRenderingLock();
-    
-    /**
-     * Notify the instance and all its members that the user's session is being destroyed.
-     * 
-     * @param session The session that was just destroyed for this user instance.
-     */
-    public void destroySession(HttpSession session);
 }

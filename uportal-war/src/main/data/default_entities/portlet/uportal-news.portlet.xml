@@ -1,0 +1,53 @@
+
+<portlet-definition
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition ../../../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd"
+    script="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"
+    version="4.0"
+>
+
+  <title>uPortal News</title>
+  <name>uPortal News</name>
+  <fname>uportal-news</fname>
+  <desc>uPortal News channel</desc>
+  <type>RSS</type>
+  <timeout>10000</timeout>
+  <portlet-descriptor>
+    <webAppName>/NewsReaderPortlet</webAppName>
+    <portletName>single-feed-news</portletName>
+  </portlet-descriptor>
+  
+  
+  
+  
+    <category>News</category>
+  
+  
+    <group>Everyone</group>
+  
+  
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
+    </parameter>
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/text-html.png</value>
+    </parameter>
+  
+  
+    <portlet-preference> 
+      <name>name</name>
+      <value>uPortal News</value>
+    </portlet-preference>
+    <portlet-preference> 
+      <name>url</name>
+      <value>http://jasig.org/uportal-news/feed</value>
+    </portlet-preference>
+    <portlet-preference> 
+      <name>summaryView</name>
+      <value>flyout</value>
+    </portlet-preference>
+  
+</portlet-definition>

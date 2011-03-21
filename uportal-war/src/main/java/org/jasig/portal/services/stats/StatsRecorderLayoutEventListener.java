@@ -19,7 +19,7 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelMovedInLayoutPortalEvent;
@@ -46,14 +46,14 @@ import org.jasig.portal.security.IPerson;
 public class StatsRecorderLayoutEventListener implements LayoutEventListener {
   
   IPerson person;
-  UserProfile profile;
+  IUserProfile profile;
 
   /**
    * Constructor for <code>StatsRecorderLayoutEventListener</code>.
    * @param person the owner of the layout for which this listener is listening
    * @param profile the profile of the layout for which this listener is listening
    */  
-  public StatsRecorderLayoutEventListener(IPerson person, UserProfile profile) {
+  public StatsRecorderLayoutEventListener(IPerson person, IUserProfile profile) {
     this.person = person;
     this.profile = profile;
   }

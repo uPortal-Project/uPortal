@@ -47,5 +47,5 @@ public interface IJoinQueryString {
      * @param value The query to store under the key.
      * @throws SQLException
      */
-    public void addQuery(String key, String value) throws SQLException;
+    public void addQuery(String key, String value);
 }

@@ -28,79 +28,201 @@ import org.jasig.portal.i18n.LocaleManager;
  * @author Peter Kharchenko
  * @version $Revision$
  */
-public class UserProfile implements Serializable {
-    public static final String USER_PROFILE = "UserProfile";
-    public static final String DEFAULT_PROFILE_FNAME = "default";
-    protected int id=-1;
-    protected String fname = null;
-    protected String pName;
-    protected String description;
-    protected int layout_id;
-    protected int struct_ss_id;
-    protected int theme_ss_id;
-    protected boolean system=false;
-    protected LocaleManager localeManager;
+public class UserProfile implements Serializable, IUserProfile {
+    private static final long serialVersionUID = 1L;
 
-    public UserProfile() {};
-    public UserProfile(int id, String fname, String name, String desc, int layout_id, int  struct_ss,int theme_ss) {
-    	this.id=id;
-        this.fname=fname;
-        pName=name;
-        description=desc != null ? desc : "";
-        this.layout_id=layout_id;
-        struct_ss_id=struct_ss;
-        theme_ss_id=theme_ss;
+    private int id = -1;
+    private String fname = null;
+    private String pName;
+    private String description;
+    private int layout_id;
+    private int struct_ss_id;
+    private int theme_ss_id;
+    private boolean system = false;
+    private LocaleManager localeManager;
+
+    public UserProfile() {
+    };
+
+    public UserProfile(int id, String fname, String name, String desc, int layout_id, int struct_ss, int theme_ss) {
+        this.id = id;
+        this.fname = fname;
+        pName = name;
+        description = desc != null ? desc : "";
+        this.layout_id = layout_id;
+        struct_ss_id = struct_ss;
+        theme_ss_id = theme_ss;
     }
 
     public UserProfile(UserProfile userProfile) {
-        this.id=userProfile.id;
-        this.fname=userProfile.fname;
-        pName=userProfile.pName;
-        description=userProfile.description;
-        this.layout_id=userProfile.layout_id;
-        struct_ss_id=userProfile.struct_ss_id;
-        theme_ss_id=userProfile.theme_ss_id;
+        this.id = userProfile.id;
+        this.fname = userProfile.fname;
+        pName = userProfile.pName;
+        description = userProfile.description;
+        this.layout_id = userProfile.layout_id;
+        struct_ss_id = userProfile.struct_ss_id;
+        theme_ss_id = userProfile.theme_ss_id;
     }
 
-    public int getProfileId() { return id; }
-    public String getProfileFname() { return fname; }
-    public String getProfileName() { return pName; }
-    public String getProfileDescription() { return description; }
-    public int getLayoutId() { return layout_id; }
-    public int getStructureStylesheetId() { return struct_ss_id; }
-    public int getThemeStylesheetId() { return theme_ss_id; }
-    public boolean isSystemProfile(){return system; }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#getProfileId()
+     */
+    @Override
+    public int getProfileId() {
+        return id;
+    }
 
-    public void setProfileId(int id) { this.id=id; }
-    public void setProfileFname(String fname) { this.fname=fname; }
-    public void setProfileName(String name) { pName=name; }
-    public void setProfileDescription(String desc) { description=desc; }
-    public void setLayoutId(int layout_id) { this.layout_id=layout_id; }
-    public void setStructureStylesheetId(int ss_id) { struct_ss_id=ss_id; }
-    public void setThemeStylesheetId(int ss_id) { theme_ss_id=ss_id; }
-    public void setSystemProfile(boolean s) { system=s; }
-    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#getProfileFname()
+     */
+    @Override
+    public String getProfileFname() {
+        return fname;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#getProfileName()
+     */
+    @Override
+    public String getProfileName() {
+        return pName;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#getProfileDescription()
+     */
+    @Override
+    public String getProfileDescription() {
+        return description;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#getLayoutId()
+     */
+    @Override
+    public int getLayoutId() {
+        return layout_id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#getStructureStylesheetId()
+     */
+    @Override
+    public int getStructureStylesheetId() {
+        return struct_ss_id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#getThemeStylesheetId()
+     */
+    @Override
+    public int getThemeStylesheetId() {
+        return theme_ss_id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#isSystemProfile()
+     */
+    @Override
+    public boolean isSystemProfile() {
+        return system;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#setProfileId(int)
+     */
+    @Override
+    public void setProfileId(int id) {
+        this.id = id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#setProfileFname(java.lang.String)
+     */
+    @Override
+    public void setProfileFname(String fname) {
+        this.fname = fname;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#setProfileName(java.lang.String)
+     */
+    @Override
+    public void setProfileName(String name) {
+        pName = name;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#setProfileDescription(java.lang.String)
+     */
+    @Override
+    public void setProfileDescription(String desc) {
+        description = desc;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#setLayoutId(int)
+     */
+    @Override
+    public void setLayoutId(int layout_id) {
+        this.layout_id = layout_id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#setStructureStylesheetId(int)
+     */
+    @Override
+    public void setStructureStylesheetId(int ss_id) {
+        struct_ss_id = ss_id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#setThemeStylesheetId(int)
+     */
+    @Override
+    public void setThemeStylesheetId(int ss_id) {
+        theme_ss_id = ss_id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#setSystemProfile(boolean)
+     */
+    @Override
+    public void setSystemProfile(boolean s) {
+        system = s;
+    }
+
+    @Override
     public boolean equals(Object o) {
-      boolean retValue = false;
-      if (o instanceof UserProfile) {
-        UserProfile profile = (UserProfile)o;
-        retValue = this.id == profile.id && this.system == profile.system;
-      }
-      return retValue;
+        boolean retValue = false;
+        if (o instanceof UserProfile) {
+            UserProfile profile = (UserProfile) o;
+            retValue = this.id == profile.id && this.system == profile.system;
+        }
+        return retValue;
     }
 
     // uPortal i18n
-    public void setLocaleManager(LocaleManager lm) { localeManager = lm; }
-    public LocaleManager getLocaleManager() {
-	return localeManager;
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#setLocaleManager(org.jasig.portal.i18n.LocaleManager)
+     */
+    @Override
+    public void setLocaleManager(LocaleManager lm) {
+        localeManager = lm;
     }
-    public String toString(){
-        return "name :"+pName+","+
-	        "description: "+description+","+
-	        "layout_id: "+layout_id+","+
-	        "struct_ss_id: "+struct_ss_id+","+
-	        "theme_ss_id: "+theme_ss_id+","+
-	        "system: "+system+","+
-	        "localeManager: "+localeManager;
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.IUserProfile#getLocaleManager()
+     */
+    @Override
+    public LocaleManager getLocaleManager() {
+        return localeManager;
+    }
+
+    @Override
+    public String toString() {
+        return "name :" + pName + "," + "description: " + description + "," + "layout_id: " + layout_id + ","
+                + "struct_ss_id: " + struct_ss_id + "," + "theme_ss_id: " + theme_ss_id + "," + "system: " + system
+                + "," + "localeManager: " + localeManager;
     }
 }

@@ -34,6 +34,7 @@ import org.danann.cernunnos.Task;
 import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 import org.dom4j.Element;
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore;
 
 /**
@@ -54,8 +55,8 @@ public class GenerateEntityFileNameTask implements Task {
                 new AttributePhrase(Attributes.NODE));
 
     public static final Reagent LAYOUT_STORE = new SimpleReagent("LAYOUT_STORE", 
-                "@layout-store", ReagentType.PHRASE, RDBMDistributedLayoutStore.class, 
-                "The portal's running RDBMDistributedLayoutStore instance", 
+                "@layout-store", ReagentType.PHRASE, IUserLayoutStore.class, 
+                "The portal's running IUserLayoutStore instance", 
                 new AttributePhrase("layoutStore"));
 
     // Instance Members.
@@ -85,7 +86,7 @@ public class GenerateEntityFileNameTask implements Task {
      */
     public void perform(TaskRequest req, TaskResponse res) {
         final Element rootElement = (Element) entityElement.evaluate(req, res);
-        final RDBMDistributedLayoutStore rdbmdls = (RDBMDistributedLayoutStore) layoutStore.evaluate(req, res);
+        final IUserLayoutStore rdbmdls = (IUserLayoutStore) layoutStore.evaluate(req, res);
         SupportedFileTypes y = SupportedFileTypes.getApplicableFileType(rootElement, rdbmdls);
         String entityFileName = y.getSafeFileNameWithExtension(rootElement);
         ReturnValue rslt = (ReturnValue) req.getAttribute(Attributes.RETURN_VALUE);

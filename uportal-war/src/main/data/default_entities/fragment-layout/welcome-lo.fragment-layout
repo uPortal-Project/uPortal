@@ -71,7 +71,7 @@
   </root>
   <profile name="HTML browser profile"> 
     <description>A system profile for common web browsers</description>  
-    <structure name="DLM Tabs and columns"/>  
-    <theme name="DLM XHTML"/> 
+    <structure name="DLMTabsColumns"/>  
+    <theme name="DLMXHTML"/> 
   </profile>
 </layout>

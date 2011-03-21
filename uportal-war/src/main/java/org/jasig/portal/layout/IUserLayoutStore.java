@@ -26,13 +26,14 @@
  */
 
 import java.util.Hashtable;
+import java.util.Map;
 
-import org.jasig.portal.StructureStylesheetDescription;
-import org.jasig.portal.StructureStylesheetUserPreferences;
-import org.jasig.portal.ThemeStylesheetDescription;
-import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserPreferences;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.layout.dlm.DistributedUserLayout;
+import org.jasig.portal.layout.dlm.FragmentChannelInfo;
+import org.jasig.portal.layout.dlm.FragmentNodeInfo;
+import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 
@@ -46,7 +47,7 @@ public interface IUserLayoutStore {
      * @return a <code>Document</code> containing user layout (conforms to userLayout.dtd)
      * @exception Exception if an error occurs
      */
-    public Document getUserLayout (IPerson Person, UserProfile profile) throws Exception;
+    public DistributedUserLayout getUserLayout (IPerson Person, IUserProfile profile);
 
     /**
      * Returns an <code>Element</code> representing the user's layout and 
@@ -64,7 +65,7 @@ public interface IUserLayoutStore {
      * <code>UserPreferences</code> data
      * @exception Exception if an error occurs
      */
-    public org.dom4j.Element exportLayout(IPerson person, UserProfile profile);
+    public org.dom4j.Element exportLayout(IPerson person, IUserProfile profile);
 
     /**
      * Performs the reverse of <code>exportLayout</code>.  The specified element 
@@ -84,30 +85,22 @@ public interface IUserLayoutStore {
      * @param channelsAdded a boolean flag specifying if new channels have been added to the current user layout (for performance optimization purposes)
      * @exception Exception if an error occurs
      */
-    public void setUserLayout (IPerson Person, UserProfile  profile,Document layoutXML, boolean channelsAdded) throws Exception;
+    public void setUserLayout (IPerson Person, IUserProfile  profile,Document layoutXML, boolean channelsAdded);
 
     // user profiles
-    /** Obtain user profile associated with a particular browser
-     *
-     * @param person User
-     * @param userAgent User-Agent header string
-     * @return user profile or <code>null</code> if no user profiles are associated with the given user agent.
-     */
-    public UserProfile getUserProfile (IPerson person, String userAgent) throws Exception;
-
     /** update user profile
      *
      * @param person User
      * @param profile profile update
      */
-    public void updateUserProfile (IPerson person,UserProfile profile) throws Exception;
+    public void updateUserProfile (IPerson person,IUserProfile profile);
 
     /** remove user profile from the database
      *
      * @param person User
      * @param profileId profile id
      */
-    public void deleteUserProfile (IPerson person,int profileId) throws Exception;
+    public void deleteUserProfile (IPerson person,int profileId);
 
     /**
      * Creates a new user profile in the database.
@@ -119,66 +112,58 @@ public interface IUserLayoutStore {
      * @return profile object with the profile id set to the newly generated
      *     id
      */
-    public UserProfile addUserProfile (IPerson person,UserProfile profile) throws Exception;
+    public IUserProfile addUserProfile (IPerson person,IUserProfile profile);
 
     /**  Obtains a user profile by profile id.    
      * @param person an <code>IPerson</code> object representing the user 
      * @param profileId profile id
      */
-    public UserProfile getUserProfileById (IPerson person,int profileId) throws Exception;
+    public IUserProfile getUserProfileById (IPerson person,int profileId);
 
     /**  Obtains a user profile by profile functional name.    
      * @param person an <code>IPerson</code> object representing the user 
      * @param profileFname profile functional name
      */
-    public UserProfile getUserProfileByFname (IPerson person,String profileFname) throws Exception;
+    public IUserProfile getUserProfileByFname (IPerson person,String profileFname);
 
     /** retreive a list of profiles associated with a user
      *
      * @param person User
      * @return a <code>Hashtable</code> mapping user profile ids (<code>Integer</code> objects) to the {@link UserProfile} objects
      */
-    public Hashtable<Integer, UserProfile> getUserProfileList (IPerson person) throws Exception;
-
-    // syste profiles
-    /** retreive a system profile associated with a given browser
-     *
-     * @param userAgent User-Agent header string
-     * @return profile object
-     */
-    public UserProfile getSystemProfile (String userAgent) throws Exception;
+    public Hashtable<Integer, UserProfile> getUserProfileList (IPerson person);
 
     /** update system profile
      *
      * @param profile profile object
      */
-    public void updateSystemProfile (UserProfile profile) throws Exception;
+    public void updateSystemProfile (IUserProfile profile);
 
     /** remove system profile from the database
      *
      * @param profileId profile id
      */
-    public void deleteSystemProfile (int profileId) throws Exception;
+    public void deleteSystemProfile (int profileId);
 
     /** add a new system profile to the database. During this process, a new profile id will be assigned to the profile.
      *
      * @param profile profile object (profile id within will be overwritten)
      * @return profile with an newly assigned id
      */
-    public UserProfile addSystemProfile (UserProfile profile) throws Exception;
+    public IUserProfile addSystemProfile (IUserProfile profile);
 
     /** Obtain a system profile
      * @param profileId system profile id
      */
-    public UserProfile getSystemProfileById (int profileId) throws Exception;
+    public IUserProfile getSystemProfileById (int profileId);
 
-    public UserProfile getSystemProfileByFname (String profileFname) throws Exception;
+    public IUserProfile getSystemProfileByFname (String profileFname);
 
     /** obtain a list of system profiles
      *
      * @return a <code>Hashtable</code> mapping system profile ids (<code>Integer</code> objects) to the {@link UserProfile} objects
      */
-    public Hashtable getSystemProfileList () throws Exception;
+    public Hashtable getSystemProfileList ();
 
     /** establish a browser - user profile mapping
      *
@@ -186,7 +171,7 @@ public interface IUserLayoutStore {
      * @param userAgent User-Agent header string
      * @param profileId profile id to which given user agent will be mapped
      */
-    public void setUserBrowserMapping (IPerson person,String userAgent,int profileId) throws Exception;
+    public void setUserBrowserMapping (IPerson person,String userAgent,int profileId);
 
     /** establish system profile browser mapping
      *
@@ -194,57 +179,7 @@ public interface IUserLayoutStore {
      * @param systemProfileId profile id of a profile to which given
      *     user-agent will be mapped
      */
-    public void setSystemBrowserMapping (String userAgent,int systemProfileId) throws Exception;
-
-
-    /** Retreive the entire UserPreferences object
-     *
-     * @param person User
-     * @param profile profile
-     * @return user preferences
-     */
-    public UserPreferences getUserPreferences (IPerson person, UserProfile profile) throws Exception;
-
-    /** save user preferences
-     *
-     * @param person User
-     * @param up user preferences object
-     */
-    public void putUserPreferences (IPerson person, UserPreferences up) throws Exception;
-
-    /** Obtain structure stylesheet user preferences
-     *
-     * @param person User
-     * @param profileId profile id
-     * @param stylesheetId structure stylesheet id
-     * @return structure stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
-     */
-    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception;
-
-    /** Obtain theme stylesheet user preferences
-     *
-     * @param person User
-     * @param profileId profile id
-     * @param stylesheetId theme stylesheet id
-     * @return theme stylesheet user preferences. null is returned only if userId, profileId or stylesheet with an appropriate name do not exist. If all of the parameters are valid, but the user does not have any user preference settings associated with this stylesheet, return contains stylesheet preference object filled in with the defaults defined in stylesheet description.
-     */
-    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception;
-
-    /** Save structure stylesheet user pferences
-     *
-     * @param person User
-     * @param profileId profile id
-     * @param fsup structure stylesheet user preferences
-     */
-    public void setStructureStylesheetUserPreferences (IPerson person,int profileId, StructureStylesheetUserPreferences fsup) throws Exception;
-
-    /** Save theme stylesheet user preferences
-     *
-     * @param person User
-     * @param profileId profile id
-     * @param ssup structure stylesheet user preferneces
-     */
-    public void setThemeStylesheetUserPreferences (IPerson person,int profileId, ThemeStylesheetUserPreferences ssup) throws Exception;
+    public void setSystemBrowserMapping (String userAgent,int systemProfileId);
 
 
   /* ChannelRegistry */
@@ -255,7 +190,7 @@ public interface IUserLayoutStore {
    * @return a <code>String</code> value
    * @exception Exception if an error occurs
    */
-    public String generateNewChannelSubscribeId (IPerson person) throws Exception;
+    public String generateNewChannelSubscribeId (IPerson person);
     
     /**
      * Generate a folder id for a folder being added to the user layout
@@ -264,132 +199,80 @@ public interface IUserLayoutStore {
      * @return a <code>String</code> value
      * @exception Exception if an error occurs
      */
-    public String generateNewFolderId (IPerson person) throws Exception;
-
-  /**
-   *  CoreStylesheetDescription
-   */
-  // functions that allow one to browse available core stylesheets in various ways
-  /** Obtain a list of all structure stylesheet registered in the portal
-   * that (given a proper theme stylesheet choice) can support a given mime type. 
-   * Even though structure stylesheets themselves do not carry any mime type 
-   * specification, the choice of available theme stylesheets determines if a certain
-   * structure is available for a given mime type.
-   *
-   * @param mimeType mime type that should be supported
-   * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link StructureStylesheetDescription} objects
-   */
-  public Hashtable getStructureStylesheetList (String mimeType) throws Exception;
-
-  /** Obtains a list of theme stylesheets available for a particular structure stylesheet.
-   *
-   * @param structureStylesheetId id of the structure stylehsset
-   * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link ThemeStylesheetDescription} objects
-   */
-  public Hashtable getThemeStylesheetList (int structureStylesheetId) throws Exception;
-
+    public String generateNewFolderId (IPerson person);
 
     /**
-     * Obtain a list of strcture stylesheet descriptions registered on the system
-     * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link StructureStylesheetDescription} objects
-     * @exception Exception
+     * Method for acquiring copies of fragment layouts to assist in debugging.
+     * No infrastructure code calls this but channels designed to expose the
+     * structure of the cached fragments use this to obtain copies.
+     * @return Map
      */
-    public Hashtable getStructureStylesheetList () throws Exception;
+    public Map<String, Document> getFragmentLayoutCopies();
+    
+    /**
+     * Returns an object suitable for identifying channel attribute and
+     * parameter values in a user's layout that differ from the values on the
+     * same element in a fragment. This is used by the layout manager to know
+     * which ones must be persisted.
+     *
+     * @param sId
+     * @return FragmentChannelInfo if available or null if not found.
+     */
+    public FragmentChannelInfo getFragmentChannelInfo(String sId);
+    
+    /**
+     * Returns an object suitable for identifying attribute values for folder
+     * nodes and attribute and parameter values for channel nodes in a user's
+     * layout that differ from the values on the same element in a fragment.
+     * This is used by the layout manager to know which ones must be persisted.
+     *
+     * @param sId
+     * @return FragmentNodeInfo or null if folder not found.
+     */
+    public FragmentNodeInfo getFragmentNodeInfo(String sId);
+    
+    /**
+     * Determines if a user is a fragment owner.
+     * @param person
+     * @return
+     */
+    public boolean isFragmentOwner(IPerson person);
+    public boolean isFragmentOwner(String username);
+    
+    /**
+     * Cleans out the layout fragments. This is done so that changes made to
+     * the channels within a layout are visible to the users who have that layout
+     * incorporated into their own.
+     *
+     * The interval at which this thread runs is set in the dlm.xml file as
+     * 'org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh',
+     * specified in minutes.
+     */
+    public void cleanFragments();
+    
+    public void setUserLayout (IPerson person, IUserProfile profile,
+            Document layoutXML, boolean channelsAdded,
+            boolean updateFragmentCache);
+    
+    public Document getFragmentLayout (IPerson person,
+            IUserProfile profile);
+    
+    /**
+     * Generates a new struct id for directive elements that dlm places in
+     * the PLF version of the layout tree. These elements are atifacts of the
+     * dlm storage model and used during merge but do not appear in the user's
+     * composite view.
+     */
+    public String getNextStructDirectiveId (IPerson person);
 
     /**
-     * Obtain a list of theme stylesheet descriptions registered on the system
-     * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link ThemeStylesheetDescription} objects
-     * @exception Exception
-     */
-    public Hashtable getThemeStylesheetList () throws Exception;
-
-
-  /** Obtains a list of mime types available on the installation
-   *
-   * @return Returns a hasbtale mapping mime type strings to their word
-   *     descriptions (simple String)
-   */
-  public Hashtable getMimeTypeList () throws Exception;
-
-
-
-  // functions that allow access to the entire CoreStylesheetDescription object.
-  // These functions are used when working with the stylesheet, and not for browsing purposes.
-  /** Obtains a complete description of the structure stylesheet
-   *
-   * @param stylesheetId id of the structure stylesheet
-   * @return a description of the structure stylesheet
-   */
-  public StructureStylesheetDescription getStructureStylesheetDescription (int stylesheetId) throws Exception;
-
-
-
-  /** Obtains a complete description of a theme stylesheet
-   *
-   * @param stylesheetId id of a theme stylesheet
-   * @return a description of a theme stylesheet
-   */
-  public ThemeStylesheetDescription getThemeStylesheetDescription (int stylesheetId) throws Exception;
-
-
-
-  // functions that allow to manage core stylesheet description collection
-  /** removes stylesheet description
-   *
-   * @param stylesheetId id of the stylesheet
-   */
-  public void removeStructureStylesheetDescription (int stylesheetId) throws Exception;
-
-
-
-  /** Removes theme stylesheet
-   *
-   * @param stylesheetId id of the stylesheet
-   */
-  public void removeThemeStylesheetDescription (int stylesheetId) throws Exception;
-
-
-
-  /** Registers new structure stylesheet with the portal database
-   *
-   * @param stylesheetDescriptionURI Location of the stylesheet description XML file
-   * @param stylesheetURI Location of the actual stylesshet XML file
-   * @return id assigned to the stylesheet or null if the operation failed
-   */
-  public Integer addStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) throws Exception;
-
-
-
-  /**
-   * Updates an existing structure stylesheet description.
-   * @param stylesheetDescriptionURI Location of the stylesheet description XML file
-   * @param stylesheetURI Location of the actual stylesshet XML file
-   * @param stylesheetId the id of the existing stylesheet description
-   * @return true if the update successful
-   */
-  public boolean updateStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId);
-
-
-
-  /**
-   * Updates an existing theme stylesheet description.
-   * @param stylesheetDescriptionURI Location of the stylesheet description XML file
-   * @param stylesheetURI Location of the actual stylesshet XML file
-   * @param stylesheetId the id of the existing stylesheet description
-   * @return true if the update successful
-   */
-  public boolean updateThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) throws Exception;
-
-
-
-  /** Registers a new theme stylesheet with the portal databases
-   *
-   * @param stylesheetDescriptionURI Location of the stylesheet description
-   *     XML file
-   * @param stylesheetURI Location of the actual stylesheet XML file
-   * @return id assigned to the stylesheet or null if the operation failed
-   */
-  public Integer addThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) throws Exception;
-
+    Returns a double value indicating the precedence value declared for a
+    fragment in the dlm.xml. Precedence is actually based on two elements in
+    a fragment definition: the precedence and the index of the fragment
+    definition in the dlm.xml file. If two fragments are given equal
+    precedence then the index if relied upon to resolve conflicts with UI
+    elements.
+      */
+    public double getFragmentPrecedence(int index);
 }
 

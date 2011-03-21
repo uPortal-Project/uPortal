@@ -55,6 +55,7 @@ public class PortalPropertyEditorRegistrar implements PropertyEditorRegistrar {
     /* (non-Javadoc)
      * @see org.springframework.beans.PropertyEditorRegistrar#registerCustomEditors(org.springframework.beans.PropertyEditorRegistry)
      */
+    @Override
     public void registerCustomEditors(PropertyEditorRegistry registry) {
         if (this.propertyEditors == null) {
             this.logger.warn("No PropertyEditors Map configured, returning with no action taken.");
@@ -65,8 +66,8 @@ public class PortalPropertyEditorRegistrar implements PropertyEditorRegistrar {
             final Class<?> requiredType = editorEntry.getKey();
             final PropertyEditor editor = editorEntry.getValue();
             
-            if (this.logger.isDebugEnabled()) {
-                this.logger.debug("Registering PropertyEditor '" + editor + "' for type '" + requiredType + "'");
+            if (this.logger.isTraceEnabled()) {
+                this.logger.trace("Registering PropertyEditor '" + editor + "' for type '" + requiredType + "'");
             }
             
             registry.registerCustomEditor(requiredType, editor);

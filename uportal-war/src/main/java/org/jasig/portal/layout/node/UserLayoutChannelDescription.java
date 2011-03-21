@@ -99,9 +99,9 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         this.channelTypeId = String.valueOf(definition.getType().getId());
         this.functionalName = definition.getFName();
         this.timeout = definition.getTimeout();
-        this.editable = definition.isEditable();
-        this.hasHelp = definition.hasHelp();
-        this.hasAbout = definition.hasAbout();
+//        this.editable = definition.isEditable();
+//        this.hasHelp = definition.hasHelp();
+//        this.hasAbout = definition.hasAbout();
         
         for (IPortletDefinitionParameter param : definition.getParameters()) {
             this.setParameterValue(param.getName(), param.getValue());

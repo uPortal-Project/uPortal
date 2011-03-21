@@ -19,7 +19,7 @@
 
 package org.jasig.portal.events.support;
 
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
@@ -27,7 +27,7 @@ import org.jasig.portal.security.IPerson;
 public final class UserUpdatedFolderInLayoutPortalEvent extends LayoutPortalEvent {
     private static final long serialVersionUID = 1L;
 
-	public UserUpdatedFolderInLayoutPortalEvent(final Object source, final IPerson person, final UserProfile profile,
+	public UserUpdatedFolderInLayoutPortalEvent(final Object source, final IPerson person, final IUserProfile profile,
             final IUserLayoutFolderDescription folder) {
         super(source, person, profile, folder, EventType.getEventType("LAYOUT_FOLDER_UPDATED"));
     }

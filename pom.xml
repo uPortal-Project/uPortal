@@ -175,6 +175,7 @@
         <jackson.version>1.6.2</jackson.version>
         <javassist.version>3.8.0.GA</javassist.version> 
         <jasypt.version>1.7</jasypt.version>
+        <jaxb2basics.version>0.6.0</jaxb2basics.version>
         <jdom.version>1.0</jdom.version>
         <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
         <jsp-api.version>2.1</jsp-api.version>
@@ -193,7 +194,7 @@
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
         <resource-aggregator.version>1.0.4</resource-aggregator.version>
-        <resource-server.version>1.0.14-SNAPSHOT</resource-server.version>
+        <resource-server.version>1.0.15</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
         <slf4j.version>1.6.1</slf4j.version>
         <spring-framework.version>3.0.5.RELEASE</spring-framework.version>
@@ -221,6 +222,11 @@
                 <groupId>aopalliance</groupId>
                 <artifactId>aopalliance</artifactId>
                 <version>${aopalliance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>r08</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.cernunnos</groupId>
@@ -421,6 +427,11 @@
                 <groupId>net.sf.json-lib</groupId>
                 <artifactId>json-lib-ext-spring</artifactId>
                 <version>${json-lib-ext-spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet.jaxb2_commons</groupId>
+                <artifactId>jaxb2-basics-runtime</artifactId>
+                <version>${jaxb2basics.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -660,6 +671,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
+                <version>${spring-framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-oxm</artifactId>
                 <version>${spring-framework.version}</version>
             </dependency>
             <dependency>

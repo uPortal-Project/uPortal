@@ -31,9 +31,11 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -278,12 +280,14 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
             final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
             
+            final boolean shouldBePersisted = this.shouldBePersisted(portletEntity);
+            
             if (portletEntity instanceof PersistentPortletEntityWrapper) {
                 //Unwrap the persistent entity
                 portletEntity = ((PersistentPortletEntityWrapper)portletEntity).getPersistentEntity();
                 
                 //Already persistent entity that still has prefs 
-                if (preferences.size() > 0) {
+                if (shouldBePersisted) {
                     try {
                         this.portletEntityDao.updatePortletEntity(portletEntity);
                     }
@@ -306,7 +310,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             }
             else {
                 //There are preferences on the interim entity, create an store it
-                if (preferences.size() > 0) {
+                if (shouldBePersisted) {
                     final IPortletEntity persistentEntity = createPersistentEntity(portletEntity, wrapperPortletEntityId, preferences);
                     
                     if (this.logger.isTraceEnabled()) {
@@ -327,6 +331,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         finally {
             portletEntityLock.unlock();
         }
+    }
+    
+    protected boolean shouldBePersisted(IPortletEntity portletEntity) {
+        final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
+        final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+        return CollectionUtils.isNotEmpty(preferences) || WindowState.MINIMIZED.equals(portletEntity.getWindowState());
     }
     
     /**

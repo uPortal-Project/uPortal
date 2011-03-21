@@ -11,8 +11,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
@@ -84,8 +85,9 @@ public class LayoutRESTController {
 
             final IUserPreferencesManager upm = ui.getPreferencesManager();
 
-            final UserProfile profile = upm.getCurrentProfile();
-            Document document = userLayoutStore.getUserLayout(person, profile);
+            final IUserProfile profile = upm.getUserProfile();
+            final DistributedUserLayout userLayout = userLayoutStore.getUserLayout(person, profile);
+            Document document = userLayout.getLayout();
             
             NodeList portletNodes = document.getElementsByTagName("channel");
             for (int i = 0; i < portletNodes.getLength(); i++) {

@@ -19,6 +19,8 @@
 
 package org.jasig.portal.portlet.registry;
 
+import javax.portlet.WindowState;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -43,6 +45,7 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
 class InterimPortletEntityImpl implements IPortletEntity {
     private String channelSubscribeId;
     private int userId;
+    private WindowState windowState;
     private IPortletDefinitionId portletDefinitionId;
     private IPortletPreferences portletPreferences = null;
     private IPortletEntityId portletEntityId = null;
@@ -106,7 +109,17 @@ class InterimPortletEntityImpl implements IPortletEntity {
     public int getUserId() {
         return userId;
     }
+    
+    @Override
+    public WindowState getWindowState() {
+        return this.windowState;
+    }
 
+    @Override
+    public void setWindowState(WindowState state) {
+        this.windowState = state;
+    }
+    
     /*
      * (non-Javadoc)
      * 

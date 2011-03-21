@@ -19,17 +19,15 @@
 
 package org.jasig.portal.rendering.xslt;
 
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.StylesheetUserPreferences;
-import org.jasig.portal.UserPreferences;
-import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +42,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class PreferencesTransformerConfigurationSource extends TransformerConfigurationSourceAdapter {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    private IUserInstanceManager userInstanceManager;
+    protected IStylesheetUserPreferencesService stylesheetUserPreferencesService;
     
     @Autowired
-    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        this.userInstanceManager = userInstanceManager;
+    public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
+        this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
     }
 
     /* (non-Javadoc)
@@ -57,7 +55,8 @@ public abstract class PreferencesTransformerConfigurationSource extends Transfor
     @Override
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final LinkedHashMap<String, Object> transformerParameters = this.getParameters(request, response);
-        return new CacheKey(this.getName(), transformerParameters);
+        final Properties outputProperties = this.getOutputProperties(request, response);
+        return new CacheKey(this.getName(), transformerParameters, outputProperties);
     }
 
     /* (non-Javadoc)
@@ -65,19 +64,25 @@ public abstract class PreferencesTransformerConfigurationSource extends Transfor
      */
     @Override
     public final LinkedHashMap<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final UserPreferences userPreferences = preferencesManager.getUserPreferences();
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request);
+        final Map<String, String> stylesheetParameters = stylesheetUserPreferences.getStylesheetParameters();
         
-        final StylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(userPreferences);
-        final Hashtable<String, String> parameterValues = stylesheetUserPreferences.getParameterValues();
+        this.logger.debug("Setting transformer parameters: {}", stylesheetParameters);
         
-        this.logger.debug("Setting transformer parameters: {}", parameterValues);
-        
-        return new LinkedHashMap<String, Object>(parameterValues);
+        return new LinkedHashMap<String, Object>(stylesheetParameters);
     }
     
+    @Override
+    public Properties getOutputProperties(HttpServletRequest request, HttpServletResponse response) {
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request);
+        final Properties outputProperties = stylesheetUserPreferences.getOutputProperties();
+        
+        this.logger.debug("Setting output parameters: {}", outputProperties);
+        
+        return outputProperties;
+    }
+
     protected abstract String getName();
     
-    protected abstract StylesheetUserPreferences getStylesheetUserPreferences(UserPreferences userPreferences);
+    protected abstract IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request);
 }

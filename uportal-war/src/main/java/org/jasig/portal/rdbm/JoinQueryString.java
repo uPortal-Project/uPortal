@@ -74,7 +74,7 @@ public abstract class JoinQueryString implements IJoinQueryString {
     /**
      * @see org.jasig.portal.rdbm.IJoinQueryString#addQuery(java.lang.String, java.lang.String)
      */
-    public void addQuery(final String key, final String value) throws SQLException {
+    public void addQuery(final String key, final String value) {
         queryStrings.put(key, value);
     }
 }

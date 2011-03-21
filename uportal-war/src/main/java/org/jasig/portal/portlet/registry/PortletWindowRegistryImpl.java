@@ -37,8 +37,9 @@ import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserPreferences;
+import org.jasig.portal.IUserProfile;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -71,7 +72,12 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IUserInstanceManager userInstanceManager;
     private IPortalRequestUtils portalRequestUtils;
+    private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
     
+    @Autowired
+    public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
+        this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
+    }
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
@@ -418,18 +424,19 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             return;
         }
         
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final UserPreferences userPreferences = preferencesManager.getUserPreferences();
-        final ThemeStylesheetUserPreferences themeStylesheetUserPreferences = userPreferences.getThemeStylesheetUserPreferences();
+        final IStylesheetUserPreferences themeStylesheetUserPreferences = stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
         
         final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(portletEntityId);
         final String channelSubscribeId = portletEntity.getChannelSubscribeId();
-        final String minimized = themeStylesheetUserPreferences.getChannelAttributeValue(channelSubscribeId, "minimized");
-        
+        final String minimized = themeStylesheetUserPreferences.getLayoutAttribute(channelSubscribeId, "minimized");
 
-        // TODO: Make minimized portlet window profile names configurable 
-        final String profileName = userPreferences.getProfile().getProfileFname();
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserProfile userProfile = preferencesManager.getUserProfile();
+        final String profileName = userProfile.getProfileFname();
+
+        
+        // TODO: Make minimized portlet window profile names configurable
         if (Boolean.parseBoolean(minimized) || "mobileDefault".equals(profileName) || "android".equals(profileName)) {
             portletWindow.setWindowState(WindowState.MINIMIZED);
         }

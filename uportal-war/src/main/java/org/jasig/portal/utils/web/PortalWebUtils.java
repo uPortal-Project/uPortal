@@ -19,9 +19,14 @@
 
 package org.jasig.portal.utils.web;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.util.Assert;
+import org.springframework.web.util.WebUtils;
 
 
 /**
@@ -58,5 +63,62 @@ public final class PortalWebUtils {
             mutex = servletRequest;
         }
         return mutex;
+    }
+    
+    
+    /**
+     * Get a {@link ConcurrentMap} for the specified name from the {@link ServletRequest} attributes. If it doesn't
+     * exist create it and store it in the attributes. This is done in a thread-safe matter that ensures only one
+     * Map per name & request will be created
+     * 
+     * @See {@link #getRequestAttributeMutex(ServletRequest)}
+     */
+    public static <K, V> ConcurrentMap<K, V> getMapRequestAttribute(ServletRequest servletRequest, String name) {
+        return getMapRequestAttribute(servletRequest, name, true);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <K, V> ConcurrentMap<K, V> getMapRequestAttribute(ServletRequest servletRequest, String name, boolean create) {
+        final Object mutex = getRequestAttributeMutex(servletRequest);
+        synchronized (mutex) {
+            ConcurrentMap<K, V> map = (ConcurrentMap<K, V>)servletRequest.getAttribute(name);
+            if (map == null) {
+                if (!create) {
+                    return null;
+                }
+                
+                map = new ConcurrentHashMap<K, V>();
+                servletRequest.setAttribute(name, map);
+            }
+            return map;
+        }
+    }
+    
+    /**
+     * Get a {@link ConcurrentMap} for the specified name from the {@link HttpSession} attributes. If it doesn't
+     * exist create it and store it in the attributes. This is done in a thread-safe matter that ensures only one
+     * Map per name & session will be created
+     * 
+     * @See {@link WebUtils#getSessionMutex(HttpSession)}
+     */
+    public static <K, V> ConcurrentMap<K, V> getMapSessionAttribute(HttpSession session, String name) {
+        return getMapSessionAttribute(session, name, true);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <K, V> ConcurrentMap<K, V> getMapSessionAttribute(HttpSession session, String name, boolean create) {
+        final Object mutex = WebUtils.getSessionMutex(session);
+        synchronized (mutex) {
+            ConcurrentMap<K, V> map = (ConcurrentMap<K, V>)session.getAttribute(name);
+            if (map == null) {
+                if (!create) {
+                    return null;
+                }
+                
+                map = new ConcurrentHashMap<K, V>();
+                session.setAttribute(name, map);
+            }
+            return map;
+        }
     }
 }

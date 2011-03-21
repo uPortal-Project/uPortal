@@ -130,9 +130,9 @@ public class PortletDefinitionForm implements Serializable {
 		this.setApplicationId(def.getPortletDescriptorKey().getWebAppName());
 		this.setPortletName(def.getPortletDescriptorKey().getPortletName());
 		this.setFramework(def.getPortletDescriptorKey().isFrameworkPortlet());
-		this.setEditable(def.isEditable());
-		this.setHasHelp(def.hasHelp());
-		this.setHasAbout(def.hasAbout());
+		this.setEditable(Boolean.parseBoolean(def.getParameter(IPortletDefinition.EDITABLE_PARAM).getValue()));
+		this.setHasHelp(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_HELP_PARAM).getValue()));
+		this.setHasAbout(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM).getValue()));
 		this.setLifecycleState(def.getLifecycleState());
 		
 		int order = this.getLifecycleState().getOrder();

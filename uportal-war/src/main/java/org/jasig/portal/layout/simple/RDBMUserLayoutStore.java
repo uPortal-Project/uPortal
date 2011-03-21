@@ -26,33 +26,23 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 import javax.sql.DataSource;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.sax.SAXSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.CoreStylesheetDescription;
-import org.jasig.portal.CoreXSLTStylesheetDescription;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.StructureStylesheetDescription;
-import org.jasig.portal.StructureStylesheetUserPreferences;
-import org.jasig.portal.ThemeStylesheetDescription;
-import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserPreferences;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutStructure;
+import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
@@ -64,18 +54,18 @@ import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
-import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.jdbc.support.JdbcUtils;
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
+import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 /**
  * SQL implementation for the 2.x relational database model.
@@ -93,7 +83,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     private static String PROFILE_TABLE = "UP_USER_PROFILE";
 
   //This class is instantiated ONCE so NO class variables can be used to keep state between calls
-  protected static int DEBUG = 0;
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
   
@@ -103,13 +92,21 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
   protected IPersonManager personManager;
   protected ICounterStore counterStore;
   protected IPortletDefinitionRegistry portletDefinitionRegistry;
+  protected IStylesheetDescriptorDao stylesheetDescriptorDao;
+  protected SQLExceptionTranslator exceptionTranslator;
   
   // I18n property
   protected static final boolean localeAware = LocaleManager.isLocaleAware();
   
     @Autowired
+    public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
+        this.stylesheetDescriptorDao = stylesheetDescriptorDao;
+    }
+
+    @Autowired
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.exceptionTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
     }
 
     @Autowired
@@ -163,7 +160,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 joinQuery.addQuery("ss_theme", "UP_SS_THEME UTS, UP_SS_THEME_PARM UTP WHERE UTS.SS_ID=UTP.SS_ID(+) AND");
             }
             else {
-                throw new Exception("Unknown database driver");
+                throw new RuntimeException("Unknown database driver");
             }
         }
 
@@ -185,333 +182,20 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     }
 
   /**
-   * Registers a NEW structure stylesheet with the database.
-   * @param ssd the Stylesheet description object
-   * @return an <code>Integer</code> id for the registered Stylesheet description object
-   */
-  public Integer addStructureStylesheetDescription (StructureStylesheetDescription ssd) throws Exception {
-    Connection con = this.dataSource.getConnection();
-    try {
-      // Set autocommit false for the connection
-      con.setAutoCommit(false);
-      Statement stmt = con.createStatement();
-      try {
-        // we assume that this is a new stylesheet.
-        int id = counterStore.getIncrementIntegerId("UP_SS_STRUCT");
-        ssd.setId(id);
-        String sQuery = "INSERT INTO UP_SS_STRUCT (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT) VALUES ("
-            + id + ",'" + ssd.getStylesheetName() + "','" + ssd.getStylesheetURI() + "','" + ssd.getStylesheetDescriptionURI()
-            + "','" + ssd.getStylesheetWordDescription() + "')";
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
-        stmt.executeUpdate(sQuery);
-        // insert all stylesheet params
-        for (Enumeration e = ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
-              + ",'" + pName + "','" + ssd.getStylesheetParameterDefaultValue(pName) + "','" + ssd.getStylesheetParameterWordDescription(pName)
-              + "',1)";
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
-          stmt.executeUpdate(sQuery);
-        }
-        // insert all folder attributes
-        for (Enumeration e = ssd.getFolderAttributeNames(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
-              + ",'" + pName + "','" + ssd.getFolderAttributeDefaultValue(pName) + "','" + ssd.getFolderAttributeWordDescription(pName)
-              + "',2)";
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
-          stmt.executeUpdate(sQuery);
-        }
-        // insert all channel attributes
-        for (Enumeration e = ssd.getChannelAttributeNames(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id
-              + ",'" + pName + "','" + ssd.getChannelAttributeDefaultValue(pName) + "','" + ssd.getChannelAttributeWordDescription(pName)
-              + "',3)";
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::addStructureStylesheetDescription(): " + sQuery);
-          stmt.executeUpdate(sQuery);
-        }
-        // Commit the transaction
-        con.commit();
-        return  new Integer(id);
-      } catch (Exception e) {
-        // Roll back the transaction
-        con.rollback();
-        throw  e;
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-  }
-
-  /**
-   * Registers a NEW theme stylesheet with the database.
-   * @param tsd Stylesheet description object
-   * @return an <code>Integer</code> id of the registered Theme Stylesheet if successful;
-   *                 <code>null</code> otherwise.
-   */
-  public Integer addThemeStylesheetDescription (ThemeStylesheetDescription tsd) throws Exception {
-    Connection con = this.dataSource.getConnection();
-    try {
-      // Set autocommit false for the connection
-      con.setAutoCommit(false);
-      Statement stmt = con.createStatement();
-      try {
-        // we assume that this is a new stylesheet.
-        int id = counterStore.getIncrementIntegerId("UP_SS_THEME");
-        tsd.setId(id);
-        String sQuery = "INSERT INTO UP_SS_THEME (SS_ID,SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_URI,SAMPLE_ICON_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS) VALUES ("
-            + id + ",'" + tsd.getStylesheetName() + "','" + tsd.getStylesheetURI() + "','" + tsd.getStylesheetDescriptionURI()
-            + "','" + tsd.getStylesheetWordDescription() + "'," + tsd.getStructureStylesheetId() + ",'" + tsd.getSamplePictureURI()
-            + "','" + tsd.getSampleIconURI() + "','" + tsd.getMimeType() + "','" + tsd.getDeviceType() + "','" + tsd.getSerializerName()
-            + "','" + tsd.getCustomUserPreferencesManagerClass() + "')";
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
-        stmt.executeUpdate(sQuery);
-        // insert all stylesheet params
-        for (Enumeration e = tsd.getStylesheetParameterNames(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          sQuery = "INSERT INTO UP_SS_THEME_PARM (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +
-              ",'" + pName + "','" + tsd.getStylesheetParameterDefaultValue(pName) + "','" + tsd.getStylesheetParameterWordDescription(pName)
-              + "',1)";
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
-          stmt.executeUpdate(sQuery);
-        }
-        // insert all channel attributes
-        for (Enumeration e = tsd.getChannelAttributeNames(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          sQuery = "INSERT INTO UP_SS_THEME_PARM (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + id +
-              ",'" + pName + "','" + tsd.getChannelAttributeDefaultValue(pName) + "','" + tsd.getChannelAttributeWordDescription(pName)
-              + "',3)";
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription(): " + sQuery);
-          stmt.executeUpdate(sQuery);
-        }
-        // Commit the transaction
-        con.commit();
-        return  new Integer(id);
-      } catch (Exception e) {
-        // Roll back the transaction
-        con.rollback();
-        throw  e;
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-  }
-
-  /**
-   * Update the theme stylesheet description.
-   * @param stylesheetDescriptionURI
-   * @param stylesheetURI
-   * @param stylesheetId
-   * @return true if update succeeded, otherwise false
-   */
-  public boolean updateThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
-    try {
-      Document stylesheetDescriptionXML = getDOM(stylesheetDescriptionURI);
-      String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
-      // should thrown an exception
-      if (ssName == null)
-        return  false;
-      // determine id of the parent structure stylesheet
-      Integer ssId = getStructureStylesheetId(ssName);
-      // stylesheet not found, should thrown an exception here
-      if (ssId == null)
-        return  false;
-      ThemeStylesheetDescription sssd = new ThemeStylesheetDescription();
-      sssd.setId(stylesheetId);
-      sssd.setStructureStylesheetId(ssId.intValue());
-      String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
-      String xmlStylesheetDescriptionText = this.getDescription(stylesheetDescriptionXML);
-      sssd.setStylesheetName(xmlStylesheetName);
-      sssd.setStylesheetURI(stylesheetURI);
-      sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
-      sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
-      sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML, "mimeType"));
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : setting mimetype=\""
-          + sssd.getMimeType() + "\"");
-      sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML, "serializer"));
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : setting serializerName=\""
-          + sssd.getSerializerName() + "\"");
-      sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML, "userPreferencesModuleClass"));
-      sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML, "samplePictureURI"));
-      sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML, "sampleIconURI"));
-      sssd.setDeviceType(this.getRootElementTextValue(stylesheetDescriptionXML, "deviceType"));
-      // populate parameter and attriute tables
-      this.populateParameterTable(stylesheetDescriptionXML, sssd);
-      this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
-      updateThemeStylesheetDescription(sssd);
-    } catch (Exception e) {
-        if (log.isDebugEnabled())
-            log.debug("Exception updating theme stylesheet description=" +
-                    "[" + stylesheetDescriptionURI + "] stylesheetUri=["+ stylesheetURI +
-                    "] stylesheetId=["+ stylesheetId + "]", e);
-      return  false;
-    }
-    return  true;
-  }
-
-  /**
-   * Update the structure stylesheet description
-   * @param stylesheetDescriptionURI
-   * @param stylesheetURI
-   * @param stylesheetId
-   * @return true if update succeeded, otherwise false
-   */
-  public boolean updateStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI, int stylesheetId) {
-    try {
-      Document stylesheetDescriptionXML = getDOM(stylesheetDescriptionURI);
-      StructureStylesheetDescription fssd = new StructureStylesheetDescription();
-      String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
-      String xmlStylesheetDescriptionText = this.getDescription(stylesheetDescriptionXML);
-      fssd.setId(stylesheetId);
-      fssd.setStylesheetName(xmlStylesheetName);
-      fssd.setStylesheetURI(stylesheetURI);
-      fssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
-      fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
-
-      // populate parameter and attriute tables
-      this.populateParameterTable(stylesheetDescriptionXML, fssd);
-      this.populateFolderAttributeTable(stylesheetDescriptionXML, fssd);
-      this.populateChannelAttributeTable(stylesheetDescriptionXML, fssd);
-
-      // now write out the database record
-      updateStructureStylesheetDescription(fssd);
-
-    } catch (Exception e) {
-        if (log.isDebugEnabled())
-            log.debug("Exception updating structure stylesheet description " +
-                    "stylesheetDescriptionUri=[" + stylesheetDescriptionURI + "]" +
-                    " stylesheetUri=[" + stylesheetURI +
-                    "] stylesheetId=" + stylesheetId , e);
-      return  false;
-    }
-    return  true;
-  }
-
-  /**
-   * Add a structure stylesheet description
-   * @param stylesheetDescriptionURI
-   * @param stylesheetURI
-   * @return an <code>Integer</code> id of the registered Structure Stylesheet description object if successful;
-   *                      <code>null</code> otherwise.
-   */
-  public Integer addStructureStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) {
-    // need to read in the description file to obtain information such as name, word description and media list
-    try {
-      Document stylesheetDescriptionXML = getDOM(stylesheetDescriptionURI);
-      StructureStylesheetDescription fssd = new StructureStylesheetDescription();
-      String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
-      String xmlStylesheetDescriptionText = this.getDescription(stylesheetDescriptionXML);
-      fssd.setStylesheetName(xmlStylesheetName);
-      fssd.setStylesheetURI(stylesheetURI);
-      fssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
-      fssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
-
-      // populate parameter and attriute tables
-      this.populateParameterTable(stylesheetDescriptionXML, fssd);
-      this.populateFolderAttributeTable(stylesheetDescriptionXML, fssd);
-      this.populateChannelAttributeTable(stylesheetDescriptionXML, fssd);
-
-      // now write out the database record
-      // first the basic record
-      //UserLayoutStoreFactory.getUserLayoutStoreImpl().addStructureStylesheetDescription(xmlStylesheetName, stylesheetURI, stylesheetDescriptionURI, xmlStylesheetDescriptionText);
-      return  addStructureStylesheetDescription(fssd);
-
-    } catch (Exception e) {
-        if (log.isDebugEnabled())
-            log.debug("Error adding stylesheet: " +
-                    "description Uri=[" + stylesheetDescriptionURI + "] " +
-                    "stylesheetUri=[" + stylesheetURI + "]", e);
-    }
-    return  null;
-  }
-
-  /**
-   * Add theme stylesheet description
-   * @param stylesheetDescriptionURI
-   * @param stylesheetURI
-   * @return an <code>Integer</code> id of the registered Theme Stylesheet if successful;
-   *                 <code>null</code> otherwise.
-   */
-  public Integer addThemeStylesheetDescription (String stylesheetDescriptionURI, String stylesheetURI) {
-    // need to read iN the description file to obtain information such as name, word description and mime type list
-    try {
-      Document stylesheetDescriptionXML = getDOM(stylesheetDescriptionURI);
-      if (log.isDebugEnabled()){
-          log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : stylesheet name = " + this.getName(stylesheetDescriptionXML));
-          log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : stylesheet description = " + this.getDescription(stylesheetDescriptionXML));
-      }
-      String ssName = this.getRootElementTextValue(stylesheetDescriptionXML, "parentStructureStylesheet");
-      // should thrown an exception
-      if (ssName == null)
-        return  null;
-      // determine id of the parent structure stylesheet
-      Integer ssId = getStructureStylesheetId(ssName);
-      // stylesheet not found, should thrown an exception here
-      if (ssId == null)
-        return  null;
-      ThemeStylesheetDescription sssd = new ThemeStylesheetDescription();
-      sssd.setStructureStylesheetId(ssId.intValue());
-      String xmlStylesheetName = this.getName(stylesheetDescriptionXML);
-      String xmlStylesheetDescriptionText = this.getDescription(stylesheetDescriptionXML);
-      sssd.setStylesheetName(xmlStylesheetName);
-      sssd.setStylesheetURI(stylesheetURI);
-      sssd.setStylesheetDescriptionURI(stylesheetDescriptionURI);
-      sssd.setStylesheetWordDescription(xmlStylesheetDescriptionText);
-      sssd.setMimeType(this.getRootElementTextValue(stylesheetDescriptionXML, "mimeType"));
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : setting mimetype=\""
-          + sssd.getMimeType() + "\"");
-      sssd.setSerializerName(this.getRootElementTextValue(stylesheetDescriptionXML, "serializer"));
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::addThemeStylesheetDescription() : setting serializerName=\""
-                  + sssd.getSerializerName() + "\"");
-      sssd.setCustomUserPreferencesManagerClass(this.getRootElementTextValue(stylesheetDescriptionXML, "userPreferencesModuleClass"));
-      sssd.setSamplePictureURI(this.getRootElementTextValue(stylesheetDescriptionXML, "samplePictureURI"));
-      sssd.setSampleIconURI(this.getRootElementTextValue(stylesheetDescriptionXML, "sampleIconURI"));
-      sssd.setDeviceType(this.getRootElementTextValue(stylesheetDescriptionXML, "deviceType"));
-
-      // populate parameter and attriute tables
-      this.populateParameterTable(stylesheetDescriptionXML, sssd);
-      this.populateChannelAttributeTable(stylesheetDescriptionXML, sssd);
-
-      return  addThemeStylesheetDescription(sssd);
-
-    } catch (Exception e) {
-        if (log.isDebugEnabled())
-                log.debug("Exception adding theme stylesheet description " +
-                        "description uri=[" + stylesheetDescriptionURI + "] " +
-                        "stylesheet uri=[" + stylesheetURI + "]", e);
-    }
-    return  null;
-  }
-
-  /**
    * Add a user profile
    * @param person
    * @param profile
    * @return userProfile
    * @exception Exception
    */
-  public UserProfile addUserProfile (IPerson person, UserProfile profile) throws Exception {
+  public UserProfile addUserProfile (IPerson person, IUserProfile profile) {
     int userId = person.getID();
     UserProfile newProfile = null;
     // generate an id for this profile
-    Connection con = this.dataSource.getConnection();
+    Connection con = null;
+    String sQuery = null;
     try {
+      con = this.dataSource.getConnection();
       PreparedStatement pstmt = con.prepareStatement("INSERT INTO UP_USER_PROFILE " +
       		"(USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID," +
       		"DESCRIPTION, LAYOUT_ID) VALUES (?,?,?,?,?,?,?,?)");
@@ -524,7 +208,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       pstmt.setInt(6, profile.getThemeStylesheetId());
       pstmt.setString(7, profile.getProfileDescription());
       pstmt.setInt(8, profile.getLayoutId());
-      String sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
+      sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
           + userId + ",'" + profileId + ",'" + profile.getProfileFname() + "','" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
           + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "', "+profile.getLayoutId()+")";
       if (log.isDebugEnabled())
@@ -546,13 +230,15 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         pstmt.close();
       }
+    } catch (SQLException e) {
+        throw this.exceptionTranslator.translate("addUserProfile", sQuery, e);
     } finally {
       JdbcUtils.closeConnection(con);
     }
     return newProfile;
   }
 
-  private int getNextKey() throws java.lang.Exception
+  private int getNextKey()
   {
       return SequenceGenerator.instance().getNextInt(PROFILE_TABLE);
   }
@@ -576,11 +262,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
    * @exception java.sql.SQLException
    */
    protected final void createLayout (HashMap layoutStructure, Document doc,
-        Element root, int structId) throws java.sql.SQLException, Exception {
+        Element root, int structId) throws java.sql.SQLException {
       while (structId != 0) {
-        if (DEBUG>1) {
-          System.err.println("CreateLayout(" + structId + ")");
-        }
         LayoutStructure ls = (LayoutStructure) layoutStructure.get(new Integer(structId));
         // replaced with call to method in containing class to allow overriding
         // by subclasses of RDBMUserLayoutStore.
@@ -607,33 +290,34 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       return (value != null && value.equals("true") ? true : false);
   }
 
-  public void deleteUserProfile(IPerson person, int profileId) throws Exception {
+  public void deleteUserProfile(IPerson person, int profileId) {
     int userId = person.getID();
     deleteUserProfile(userId,profileId);
   }
 
-  private Document getDOM(String uri) throws Exception {
-    DOMResult result = new DOMResult();
-    SAXSource source = new SAXSource(new InputSource(
-      ResourceLoader.getResourceAsStream(this.getClass(), uri)));
-    TransformerFactory tFactory = TransformerFactory.newInstance();
-    Transformer emptytr = tFactory.newTransformer();
-    emptytr.transform(source, result);
+//  private Document getDOM(String uri) {
+//    DOMResult result = new DOMResult();
+//    SAXSource source = new SAXSource(new InputSource(
+//      ResourceLoader.getResourceAsStream(this.getClass(), uri)));
+//    TransformerFactory tFactory = TransformerFactory.newInstance();
+//    Transformer emptytr = tFactory.newTransformer();
+//    emptytr.transform(source, result);
+//
+//    // need to return a Document
+//    Node node = result.getNode();
+//    if (node instanceof Document) {
+//      return (Document)node;
+//    }
+//
+//    Document dom = DocumentFactory.getNewDocument();
+//    dom.appendChild(dom.importNode(node, true));
+//    return dom;
+//  }
 
-    // need to return a Document
-    Node node = result.getNode();
-    if (node instanceof Document) {
-      return (Document)node;
-    }
-
-    Document dom = DocumentFactory.getNewDocument();
-    dom.appendChild(dom.importNode(node, true));
-    return dom;
-  }
-
-  private void deleteUserProfile(int userId, int profileId) throws Exception {
-    Connection con = this.dataSource.getConnection();
+  private void deleteUserProfile(int userId, int profileId) {
+    Connection con = null;
     try {
+      con = this.dataSource.getConnection();
       Statement stmt = con.createStatement();
       try {
         String sQuery = "DELETE FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
@@ -661,6 +345,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         stmt.close();
       }
+    } catch (SQLException e) {
+        throw this.exceptionTranslator.translate("deleteUserProfile", null, e);
     } finally {
       JdbcUtils.closeConnection(con);
     }
@@ -699,42 +385,11 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
   }
 
   /**
-   *
-   * CoreStyleSheet
-   *
-   */
-  public Hashtable getMimeTypeList () throws Exception {
-    Connection con = this.dataSource.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT A.MIME_TYPE, A.MIME_TYPE_DESCRIPTION FROM UP_MIME_TYPE A, UP_SS_MAP B WHERE B.MIME_TYPE=A.MIME_TYPE";
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::getMimeTypeList() : " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          Hashtable list = new Hashtable();
-          while (rs.next()) {
-            list.put(rs.getString("MIME_TYPE"), rs.getString("MIME_TYPE_DESCRIPTION"));
-          }
-          return list;
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-  }
-
-  /**
    * Return the next available channel structure id for a user
    * @param person
    * @return the next available channel structure id
    */
-  public String generateNewChannelSubscribeId (IPerson person) throws Exception {
+  public String generateNewChannelSubscribeId (IPerson person) {
     return  getNextStructId(person, channelPrefix);
   }
 
@@ -744,7 +399,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
    * @return a <code>String</code> that is the next free structure ID
    * @exception Exception
    */
-  public String generateNewFolderId (IPerson person) throws Exception {
+  public String generateNewFolderId (IPerson person) {
     return  getNextStructId(person, folderPrefix);
   }
 
@@ -755,10 +410,11 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
    * @return next free structure ID
    * @exception Exception
    */
-  protected synchronized String getNextStructId (IPerson person, String prefix) throws Exception {
+  protected synchronized String getNextStructId (IPerson person, String prefix) {
     int userId = person.getID();
-    Connection con = this.dataSource.getConnection();
+    Connection con = null;
     try {
+      con = this.dataSource.getConnection();
       con.setAutoCommit(false);
       Statement stmt = con.createStatement();
       try {
@@ -789,16 +445,24 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
           } catch (SQLException sqle) {
             con.rollback();
             // Assume a concurrent update. Try again after some random amount of milliseconds.
-            Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
+            // Retry in up to 3 seconds
+            try {
+                Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000));
+            }
+            catch (InterruptedException e) {
+                //ignore
+            } 
           }
         }
       } finally {
         stmt.close();
       }
+    } catch (SQLException e) {
+        throw this.exceptionTranslator.translate("getNextStructId", null, e);
     } finally {
       JdbcUtils.closeConnection(con);
     }
-    throw new SQLException("Unable to generate a new structure id for user " + userId);
+    throw new RuntimeException("Unable to generate a new structure id for user " + userId);
   }
 
   /**
@@ -814,379 +478,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       return channelPrefix + structId;
     }
   }
-
-  /**
-   * Obtain structure stylesheet description object for a given structure stylesheet id.
-   * @param stylesheetId the id of the structure stylesheet
-   * @return structure stylesheet description
-   */
-  public StructureStylesheetDescription getStructureStylesheetDescription (int stylesheetId) throws Exception {
-    StructureStylesheetDescription ssd = null;
-    Connection con = null;
-    try {
-      con = this.dataSource.getConnection();
-      Statement stmt = con.createStatement();
-      int dbOffset = 0;
-      String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT";
-      if (this.databaseMetadata.supportsOuterJoins()) {
-        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM " + this.databaseMetadata.getJoinQuery().getQuery("ss_struct");
-        dbOffset = 4;
-      } else {
-        sQuery += " FROM UP_SS_STRUCT USS WHERE";
-      }
-      sQuery += " USS.SS_ID=" + stylesheetId;
-
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      try {
-        if (rs.next()) {
-          ssd = new StructureStylesheetDescription();
-          ssd.setId(stylesheetId);
-          ssd.setStylesheetName(rs.getString(1));
-          ssd.setStylesheetURI(rs.getString(2));
-          ssd.setStylesheetDescriptionURI(rs.getString(3));
-          ssd.setStylesheetWordDescription(rs.getString(4));
-        }
-
-        if (!this.databaseMetadata.supportsOuterJoins()) {
-          rs.close();
-          // retrieve stylesheet params and attributes
-          sQuery = "SELECT TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId;
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
-          rs = stmt.executeQuery(sQuery);
-        }
-
-        while (true) {
-          if (!this.databaseMetadata.supportsOuterJoins() && !rs.next()) {
-            break;
-          }
-
-          int type = rs.getInt(dbOffset + 1);
-          if (rs.wasNull()){
-            break;
-          }
-          if (type == 1) {
-            // param
-            ssd.addStylesheetParameter(rs.getString(dbOffset + 2), rs.getString(dbOffset + 3), rs.getString(dbOffset + 4));
-          }
-          else if (type == 2) {
-            // folder attribute
-            ssd.addFolderAttribute(rs.getString(dbOffset + 2), rs.getString(dbOffset + 3), rs.getString(dbOffset + 4));
-          }
-          else if (type == 3) {
-            // channel attribute
-            ssd.addChannelAttribute(rs.getString(dbOffset + 2), rs.getString(dbOffset + 3), rs.getString(dbOffset + 4));
-          }
-          else {
-              if (log.isDebugEnabled())
-                  log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
-                          + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
-          }
-          if (this.databaseMetadata.supportsOuterJoins() && !rs.next()) {
-            break;
-          }
-        }
-      } finally {
-        try { rs.close(); } catch (Exception e) {}
-        try { stmt.close(); } catch (Exception e) {}
-      }
-    } catch (Exception e) {
-        String msg = "Unable to fetch StructureStylesheetDescription for stylesheetId:  " + stylesheetId;
-        throw new RuntimeException(msg, e);
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-    return  ssd;
-  }
-
-  /**
-   * Obtain ID for known structure stylesheet name
-   * @param ssName name of the structure stylesheet
-   * @return id or null if no stylesheet matches the name given.
-   */
-  public Integer getStructureStylesheetId (String ssName) throws Exception {
-    Connection con = null;
-    Statement stmt = null;
-    ResultSet rs = null;
-
-    try {
-      con = this.dataSource.getConnection();
-      con.setAutoCommit(false);
-      stmt = con.createStatement();
-      String sQuery = "SELECT SS_ID FROM UP_SS_STRUCT WHERE SS_NAME='" + ssName + "'";
-      rs = stmt.executeQuery(sQuery);
-      if (rs.next()) {
-        int id = rs.getInt("SS_ID");
-        if (rs.wasNull()) {
-          id = 0;
-        }
-        return new Integer(id);
-      }
-    } finally {
-      JdbcUtils.closeResultSet(rs);
-      JdbcUtils.closeStatement(stmt);
-      JdbcUtils.closeConnection(con);
-    }
-    return null;
-  }
-
-  /**
-   * Obtain a list of structure stylesheet descriptions that have stylesheets for a given
-   * mime type.
-   * @param mimeType
-   * @return a mapping from stylesheet names to structure stylesheet description objects
-   */
-  public Hashtable getStructureStylesheetList (String mimeType) throws Exception {
-    Connection con = this.dataSource.getConnection();
-    Hashtable list = new Hashtable();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT A.SS_ID FROM UP_SS_STRUCT A, UP_SS_THEME B WHERE B.MIME_TYPE='" + mimeType + "' AND B.STRUCT_SS_ID=A.SS_ID";
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          while (rs.next()) {
-            StructureStylesheetDescription ssd = getStructureStylesheetDescription(rs.getInt("SS_ID"));
-            if (ssd != null)
-              list.put(new Integer(ssd.getId()), ssd);
-          }
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-    return  list;
-  }
-
-  /**
-   * Obtain a list of strcture stylesheet descriptions registered on the system
-   * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link StructureStylesheetDescription} objects
-   * @exception Exception
-   */
-  public Hashtable getStructureStylesheetList() throws Exception {
-      Connection con = this.dataSource.getConnection();
-      Hashtable list = new Hashtable();
-      try {
-          Statement stmt = con.createStatement();
-          try {
-              String sQuery = "SELECT SS_ID FROM UP_SS_STRUCT";
-              if (log.isDebugEnabled())
-                  log.debug("RDBMUserLayoutStore::getStructureStylesheetList() : " + sQuery);
-              ResultSet rs = stmt.executeQuery(sQuery);
-              try {
-                  while (rs.next()) {
-                      StructureStylesheetDescription ssd = getStructureStylesheetDescription(rs.getInt("SS_ID"));
-                      if (ssd != null)
-                          list.put(new Integer(ssd.getId()), ssd);
-                  }
-              } finally {
-                  rs.close();
-              }
-          } finally {
-              stmt.close();
-          }
-      } finally {
-          JdbcUtils.closeConnection(con);
-      }
-      return  list;
-  }
-
-
-  public abstract StructureStylesheetUserPreferences getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception;
-
-  /**
-   * Obtain theme stylesheet description object for a given theme stylesheet id.
-   * @param stylesheetId the id of the theme stylesheet
-   * @return theme stylesheet description
-   */
-  public ThemeStylesheetDescription getThemeStylesheetDescription (int stylesheetId) throws Exception {
-    ThemeStylesheetDescription tsd = null;
-    Connection con = null;
-    try {
-      con = this.dataSource.getConnection();
-      Statement stmt = con.createStatement();
-      int dbOffset = 0;
-      String sQuery = "SELECT SS_NAME,SS_URI,SS_DESCRIPTION_URI,SS_DESCRIPTION_TEXT,STRUCT_SS_ID,SAMPLE_ICON_URI,SAMPLE_URI,MIME_TYPE,DEVICE_TYPE,SERIALIZER_NAME,UP_MODULE_CLASS";
-      if (this.databaseMetadata.supportsOuterJoins()) {
-        sQuery += ",TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM " + this.databaseMetadata.getJoinQuery().getQuery("ss_theme");
-        dbOffset = 11;
-      } else {
-        sQuery += " FROM UP_SS_THEME UTS WHERE";
-      }
-      sQuery += " UTS.SS_ID=" + stylesheetId;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
-      ResultSet rs = stmt.executeQuery(sQuery);
-      try {
-        if (rs.next()) {
-          tsd = new ThemeStylesheetDescription();
-          tsd.setId(stylesheetId);
-          tsd.setStylesheetName(rs.getString(1));
-          tsd.setStylesheetURI(rs.getString(2));
-          tsd.setStylesheetDescriptionURI(rs.getString(3));
-          tsd.setStylesheetWordDescription(rs.getString(4));
-          int ssId = rs.getInt(5);
-          if (rs.wasNull()) {
-            ssId = 0;
-          }
-          tsd.setStructureStylesheetId(ssId);
-          tsd.setSampleIconURI(rs.getString(6));
-          tsd.setSamplePictureURI(rs.getString(7));
-          tsd.setMimeType(rs.getString(8));
-          tsd.setDeviceType(rs.getString(9));
-          tsd.setSerializerName(rs.getString(10));
-          tsd.setCustomUserPreferencesManagerClass(rs.getString(11));
-        }
-
-        if (!this.databaseMetadata.supportsOuterJoins()) {
-          rs.close();
-          // retrieve stylesheet params and attributes
-          sQuery = "SELECT TYPE,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId;
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::getThemeStylesheetDescription(): " + sQuery);
-          rs = stmt.executeQuery(sQuery);
-        }
-        while (true) {
-          if (!this.databaseMetadata.supportsOuterJoins() && !rs.next()) {
-            break;
-          }
-          int type = rs.getInt(dbOffset + 1);
-          if (rs.wasNull()) {
-            break;
-          }
-          if (type == 1) {
-            // param
-            tsd.addStylesheetParameter(rs.getString(dbOffset + 2), rs.getString(dbOffset + 3), rs.getString(dbOffset + 4));
-          }
-          else if (type == 3) {
-            // channel attribute
-            tsd.addChannelAttribute(rs.getString(dbOffset + 2), rs.getString(dbOffset + 3), rs.getString(dbOffset + 4));
-          }
-          else if (type == 2) {
-            // folder attributes are not allowed here
-            log.error( "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! Corrupted DB entry. (stylesheetId="
-                + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
-          }
-          else {
-            log.error( "RDBMUserLayoutStore::getThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
-                + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
-          }
-          if (this.databaseMetadata.supportsOuterJoins() && !rs.next()) {
-            break;
-          }
-        }
-      } finally {
-        try { rs.close(); } catch (Exception e) {}
-        try { stmt.close(); } catch (Exception e) {}
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-    return  tsd;
-  }
-
-  /**
-   * Obtain ID for known theme stylesheet name
-   * @param tsName name of the theme stylesheet
-   * @return id or null if no theme matches the name given.
-   */
-  public Integer getThemeStylesheetId (String tsName) throws Exception {
-    Integer id = null;
-    Connection con = null;
-    Statement stmt = null;
-    ResultSet rs = null;
-    try {
-      con = this.dataSource.getConnection();
-      stmt = con.createStatement();
-      String sQuery = "SELECT SS_ID FROM UP_SS_THEME WHERE SS_NAME='" + tsName + "'";
-      rs = stmt.executeQuery(sQuery);
-      if (rs.next()) {
-        id = new Integer(rs.getInt("SS_ID"));
-      }
-    } finally {
-      JdbcUtils.closeResultSet(rs);
-      JdbcUtils.closeStatement(stmt);
-      JdbcUtils.closeConnection(con);
-    }
-    return  id;
-  }
-
-  /**
-   * Obtain a list of theme stylesheet descriptions for a given structure stylesheet
-   * @param structureStylesheetId
-   * @return a map of stylesheet names to  theme stylesheet description objects
-   * @exception Exception
-   */
-  public Hashtable getThemeStylesheetList (int structureStylesheetId) throws Exception {
-    Connection con = this.dataSource.getConnection();
-    Hashtable list = new Hashtable();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT SS_ID FROM UP_SS_THEME WHERE STRUCT_SS_ID=" + structureStylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::getThemeStylesheetList() : " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          while (rs.next()) {
-            ThemeStylesheetDescription tsd = getThemeStylesheetDescription(rs.getInt("SS_ID"));
-            if (tsd != null)
-              list.put(new Integer(tsd.getId()), tsd);
-          }
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-    return  list;
-  }
-
-  /**
-   * Obtain a list of theme stylesheet descriptions registered on the system
-   * @return a <code>Hashtable</code> mapping stylesheet id (<code>Integer</code> objects) to {@link ThemeStylesheetDescription} objects
-   * @exception Exception
-   */
-  public Hashtable getThemeStylesheetList() throws Exception {
-    Connection con = this.dataSource.getConnection();
-    Hashtable list = new Hashtable();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT SS_ID FROM UP_SS_THEME";
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::getThemeStylesheetList() : " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          while (rs.next()) {
-            ThemeStylesheetDescription tsd = getThemeStylesheetDescription(rs.getInt("SS_ID"));
-            if (tsd != null)
-              list.put(new Integer(tsd.getId()), tsd);
-          }
-        } finally {
-          rs.close();
-        }
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-    return  list;
-  }
-
-  public abstract ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception;
 
   // private helper modules that retreive information from the DOM structure of the description files
   private String getName (Document descr) {
@@ -1250,130 +541,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     }
   }
 
-  private void populateParameterTable (Document descr, CoreStylesheetDescription csd) {
-    NodeList parametersNodes = descr.getElementsByTagName("parameters");
-    Node parametersNode = null;
-    for (int i = parametersNodes.getLength() - 1; i >= 0; i--) {
-      parametersNode = parametersNodes.item(i);
-      if (parametersNode.getParentNode().getNodeName().equals("stylesheetdescription"))
-        break;
-      else
-        parametersNode = null;
-    }
-    if (parametersNode != null) {
-      NodeList children = parametersNode.getChildNodes();
-      for (int i = children.getLength() - 1; i >= 0; i--) {
-        Node child = children.item(i);
-        if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals("parameter")) {
-          Element parameter = (Element)children.item(i);
-          // process a <parameter> node
-          String name = parameter.getAttribute("name");
-          String description = null;
-          String defaultvalue = null;
-          NodeList pchildren = parameter.getChildNodes();
-          for (int j = pchildren.getLength() - 1; j >= 0; j--) {
-            Node pchild = pchildren.item(j);
-            if (pchild.getNodeType() == Node.ELEMENT_NODE) {
-              if (pchild.getNodeName().equals("defaultvalue")) {
-                defaultvalue = this.getTextChildNodeValue(pchild);
-              }
-              else if (pchild.getNodeName().equals("description")) {
-                description = this.getTextChildNodeValue(pchild);
-              }
-            }
-          }
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::populateParameterTable() : adding a stylesheet parameter : (\""
-                      + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
-          csd.addStylesheetParameter(name, defaultvalue, description);
-        }
-      }
-    }
-  }
-
-  private void populateFolderAttributeTable (Document descr, StructureStylesheetDescription cxsd) {
-    NodeList parametersNodes = descr.getElementsByTagName("parameters");
-    NodeList folderattributesNodes = descr.getElementsByTagName("folderattributes");
-    Node folderattributesNode = null;
-    for (int i = folderattributesNodes.getLength() - 1; i >= 0; i--) {
-      folderattributesNode = folderattributesNodes.item(i);
-      if (folderattributesNode.getParentNode().getNodeName().equals("stylesheetdescription"))
-        break;
-      else
-        folderattributesNode = null;
-    }
-    if (folderattributesNode != null) {
-      NodeList children = folderattributesNode.getChildNodes();
-      for (int i = children.getLength() - 1; i >= 0; i--) {
-        Node child = children.item(i);
-        if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals("attribute")) {
-          Element attribute = (Element)children.item(i);
-          // process a <attribute> node
-          String name = attribute.getAttribute("name");
-          String description = null;
-          String defaultvalue = null;
-          NodeList pchildren = attribute.getChildNodes();
-          for (int j = pchildren.getLength() - 1; j >= 0; j--) {
-            Node pchild = pchildren.item(j);
-            if (pchild.getNodeType() == Node.ELEMENT_NODE) {
-              if (pchild.getNodeName().equals("defaultvalue")) {
-                defaultvalue = this.getTextChildNodeValue(pchild);
-              }
-              else if (pchild.getNodeName().equals("description")) {
-                description = this.getTextChildNodeValue(pchild);
-              }
-            }
-          }
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::populateFolderAttributeTable() : adding a stylesheet folder attribute : (\""
-                      + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
-          cxsd.addFolderAttribute(name, defaultvalue, description);
-        }
-      }
-    }
-  }
-
-  private void populateChannelAttributeTable (Document descr, CoreXSLTStylesheetDescription cxsd) {
-    NodeList channelattributesNodes = descr.getElementsByTagName("channelattributes");
-    Node channelattributesNode = null;
-    for (int i = channelattributesNodes.getLength() - 1; i >= 0; i--) {
-      channelattributesNode = channelattributesNodes.item(i);
-      if (channelattributesNode.getParentNode().getNodeName().equals("stylesheetdescription"))
-        break;
-      else
-        channelattributesNode = null;
-    }
-    if (channelattributesNode != null) {
-      NodeList children = channelattributesNode.getChildNodes();
-      for (int i = children.getLength() - 1; i >= 0; i--) {
-        Node child = children.item(i);
-        if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals("attribute")) {
-          Element attribute = (Element)children.item(i);
-          // process a <attribute> node
-          String name = attribute.getAttribute("name");
-          String description = null;
-          String defaultvalue = null;
-          NodeList pchildren = attribute.getChildNodes();
-          for (int j = pchildren.getLength() - 1; j >= 0; j--) {
-            Node pchild = pchildren.item(j);
-            if (pchild.getNodeType() == Node.ELEMENT_NODE) {
-              if (pchild.getNodeName().equals("defaultvalue")) {
-                defaultvalue = this.getTextChildNodeValue(pchild);
-              }
-              else if (pchild.getNodeName().equals("description")) {
-                description = this.getTextChildNodeValue(pchild);
-              }
-            }
-          }
-          if (log.isDebugEnabled())
-              log.debug("RDBMUserLayoutStore::populateChannelAttributeTable() : adding a stylesheet channel attribute : (\""
-                      + name + "\",\"" + defaultvalue + "\",\"" + description + "\")");
-          cxsd.addChannelAttribute(name, defaultvalue, description);
-        }
-      }
-    }
-  }
-
   private Vector getVectorOfSimpleTextElementValues (Document descr, String elementName) {
     Vector v = new Vector();
     // find "stylesheetdescription" node, take the first one
@@ -1404,15 +571,16 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
   /**
    *   UserPreferences
    */
-  private String getUserBrowserMapping (IPerson person, String userAgent) throws Exception {
+  private String getUserBrowserMapping (IPerson person, String userAgent) {
     if (userAgent.length() > 255){
         userAgent = userAgent.substring(0,254);
         log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgent);
     }
     int userId = person.getID();
     String profileFname = null;
-    Connection con = this.dataSource.getConnection();
+    Connection con = null;
     try {
+      con = this.dataSource.getConnection();
       String sQuery =
         "SELECT PROFILE_FNAME " +
         "FROM UP_USER_UA_MAP LEFT JOIN UP_USER_PROFILE ON " + 
@@ -1437,20 +605,23 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         pstmt.close();
       }
+    } catch (SQLException e) {
+        throw this.exceptionTranslator.translate("getUserBrowserMapping", null, e);
     } finally {
       JdbcUtils.closeConnection(con);
     }
     return  profileFname;
   }
 
-  public Document getUserLayout (IPerson person, UserProfile profile) throws Exception {
+  protected Document getPersonalUserLayout (IPerson person, IUserProfile profile) {
     int userId = person.getID();
     int realUserId = userId;
     ResultSet rs;
-    Connection con = this.dataSource.getConnection();
+    Connection con = null;
     LocaleManager localeManager = profile.getLocaleManager();
 
     try {
+      con = this.dataSource.getConnection();
       Document doc = DocumentFactory.getNewDocument();
       Element root = doc.createElement("layout");
       Statement stmt = con.createStatement();
@@ -1518,7 +689,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     
               con.commit(); // Make sure it appears in the store
           }
-          catch (Exception e) {
+          catch (SQLException e) {
               con.rollback();
               throw e;
           }
@@ -1547,7 +718,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               if (rs.next()) {
                 firstStructId = rs.getInt(1);
               } else {
-                throw new Exception("RDBMUserLayoutStore::getUserLayout(): No INIT_STRUCT_ID in UP_USER_LAYOUT for USER_ID: " + userId + " and LAYOUT_ID: " + layoutId);
+                throw new RuntimeException("RDBMUserLayoutStore::getUserLayout(): No INIT_STRUCT_ID in UP_USER_LAYOUT for USER_ID: " + userId + " and LAYOUT_ID: " + layoutId);
               }
             } finally {
               rs.close();
@@ -1614,7 +785,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               structId = 0;
             }
             readLayout: while (true) {
-              if (DEBUG > 1) System.err.println("Found layout structureID " + structId);
 
               int nextId = rs.getInt(2);
               if (rs.wasNull()) {
@@ -1743,27 +913,24 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
           }
 
           doc.appendChild(root);
-
-          if (DEBUG > 1) {
-            System.err.println("--> created document");
-            dumpDoc(doc, "");
-            System.err.println("<--");
-          }
         }
       } finally {
         stmt.close();
         insertStmt.close();
       }
       return  doc;
+    } catch (SQLException e) {
+        throw this.exceptionTranslator.translate("getUserLayout", null, e);
     } finally {
       JdbcUtils.closeConnection(con);
     }
   }
 
-  public UserProfile getUserProfileById (IPerson person, int profileId) throws Exception {
+  public IUserProfile getUserProfileById (IPerson person, int profileId) {
     int userId = person.getID();
-    Connection con = this.dataSource.getConnection();
+    Connection con = null;
     try {
+      con = this.dataSource.getConnection();
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE USER_ID="
@@ -1800,12 +967,12 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                     throw new IllegalStateException(msg);
                 }
             }
-            UserProfile userProfile = new UserProfile(profileId, temp2, temp3,temp4, layoutId, structSsId, themeSsId);
+            IUserProfile userProfile = new UserProfile(profileId, temp2, temp3,temp4, layoutId, structSsId, themeSsId);
             userProfile.setLocaleManager(new LocaleManager(person));
             return userProfile;
           }
           else {
-            throw new Exception("Unable to find User Profile for user " + userId + " and profile " + profileId);
+            throw new RuntimeException("Unable to find User Profile for user " + userId + " and profile " + profileId);
           }
         } finally {
           rs.close();
@@ -1813,16 +980,19 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         stmt.close();
       }
+    } catch (SQLException e) {
+        throw this.exceptionTranslator.translate("getUserProfileById", null, e);
     } finally {
       JdbcUtils.closeConnection(con);
     }
   }
 
-  public UserProfile getUserProfileByFname (IPerson person, String profileFname) throws Exception {
+  public UserProfile getUserProfileByFname (IPerson person, String profileFname) {
 	log.debug("Getting profile " + profileFname + " for user " + person.getID());
     int userId = person.getID();
-    Connection con = this.dataSource.getConnection();
+    Connection con = null;
     try {
+      con = this.dataSource.getConnection();
       String query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, " +
       		"LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE " +
       		"USER_ID=? AND PROFILE_FNAME=?";
@@ -1882,17 +1052,17 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         		if(defaultProfilePerson.getID() != person.getID()) {
         			UserProfile templateProfile = getUserProfileByFname(defaultProfilePerson,profileFname);
         			if(templateProfile != null) {
-        			    final UserProfile newUserProfile = new UserProfile(templateProfile);
+        			    final IUserProfile newUserProfile = new UserProfile(templateProfile);
         			    newUserProfile.setLayoutId(0);
         				return addUserProfile(person,newUserProfile);
         			} else {
-                        throw new Exception("Unable to find template profile for " + userId + " and profile " + profileFname);
+                        throw new RuntimeException("Unable to find template profile for " + userId + " and profile " + profileFname);
         			}
         		} else {
-                    throw new Exception("Unable to find User Profile for userId " + userId + " and profile " + profileFname);
+                    throw new RuntimeException("Unable to find User Profile for userId " + userId + " and profile " + profileFname);
         		}
         	} else {
-              throw new Exception("Unable to find User Profile for userId " + userId + " and profile " + profileFname);
+              throw new RuntimeException("Unable to find User Profile for userId " + userId + " and profile " + profileFname);
         	}
           }
         } finally {
@@ -1901,17 +1071,20 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         pstmt.close();
       }
+    } catch (SQLException e) {
+        throw this.exceptionTranslator.translate("getUserProfileByFname", null, e);
     } finally {
       JdbcUtils.closeConnection(con);
     }
   }
 
-  public Hashtable getUserProfileList (IPerson person) throws Exception {
+  public Hashtable getUserProfileList (IPerson person) {
     int userId = person.getID();
 
     Hashtable<Integer,UserProfile> pv = new Hashtable<Integer,UserProfile>();
-    Connection con = this.dataSource.getConnection();
+    Connection con = null;
     try {
+      con = this.dataSource.getConnection();
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE USER_ID="
@@ -1944,246 +1117,27 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         stmt.close();
       }
+    } catch (SQLException e) {
+        throw this.exceptionTranslator.translate("getUserProfileList", null, e);
     } finally {
       JdbcUtils.closeConnection(con);
     }
     return  pv;
   }
 
-  /**
-   * Remove (with cleanup) a structure stylesheet channel attribute
-   * @param stylesheetId id of the structure stylesheet
-   * @param pName name of the attribute
-   * @param con active database connection
-   */
-  private void removeStructureChannelAttribute (int stylesheetId, String pName, Connection con) throws java.sql.SQLException {
-    Statement stmt = con.createStatement();
+  protected abstract Element getStructure(Document doc, LayoutStructure ls);
 
-    try {
-      String sQuery = "DELETE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId + " AND TYPE=3 AND PARAM_NAME='" + pName
-          + "'";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
-      stmt.execute(sQuery);
-      // clean up user preference tables
-      sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=3 AND PARAM_NAME='"
-          + pName + "'";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::removeStructureChannelAttribute() : " + sQuery);
-      stmt.execute(sQuery);
-    } finally {
-      stmt.close();
-    }
-  }
+  protected abstract int saveStructure (Node node, PreparedStatement structStmt, PreparedStatement parmStmt) throws SQLException;
 
-  /**
-   * Remove (with cleanup) a structure stylesheet folder attribute
-   * @param stylesheetId id of the structure stylesheet
-   * @param pName name of the attribute
-   * @param con active database connection
-   */
-  private void removeStructureFolderAttribute (int stylesheetId, String pName, Connection con) throws java.sql.SQLException {
-    Statement stmt = con.createStatement();
-    try {
-      String sQuery = "DELETE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId + " AND TYPE=2 AND PARAM_NAME='" + pName
-          + "'";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
-      stmt.execute(sQuery);
-      // clean up user preference tables
-      sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=2 AND PARAM_NAME='"
-          + pName + "'";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::removeStructureFolderAttribute() : " + sQuery);
-      stmt.execute(sQuery);
-    } finally {
-      stmt.close();
-    }
-  }
-
-  public void removeStructureStylesheetDescription (int stylesheetId) throws Exception {
-    Connection con = this.dataSource.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        // detele all associated theme stylesheets
-        String sQuery = "SELECT SS_ID FROM UP_SS_THEME WHERE STRUCT_SS_ID=" + stylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-          while (rs.next()) {
-            removeThemeStylesheetDescription(rs.getInt("SS_ID"));
-          }
-        } finally {
-          rs.close();
-        }
-        sQuery = "DELETE FROM UP_SS_STRUCT WHERE SS_ID=" + stylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
-        stmt.executeUpdate(sQuery);
-        // delete params
-        sQuery = "DELETE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::removeStructureStylesheetDescription() : " + sQuery);
-        stmt.executeUpdate(sQuery);
-        con.commit();
-      } catch (Exception e) {
-        // Roll back the transaction
-        con.rollback();
-        throw  e;
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-  }
-
-  /**
-   * Remove (with cleanup) a structure stylesheet param
-   * @param stylesheetId id of the structure stylesheet
-   * @param pName name of the parameter
-   * @param con active database connection
-   */
-  private void removeStructureStylesheetParam (int stylesheetId, String pName, Connection con) throws java.sql.SQLException {
-    Statement stmt = con.createStatement();
-    try {
-      String sQuery = "DELETE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId + " AND TYPE=1 AND PARAM_NAME='" + pName
-          + "'";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
-      stmt.execute(sQuery);
-      // clean up user preference tables
-      sQuery = "DELETE FROM UP_SS_USER_PARM WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=1 AND PARAM_TYPE=1 AND PARAM_NAME='"
-          + pName + "'";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::removeStructureStylesheetParam() : " + sQuery);
-      stmt.execute(sQuery);
-    } finally {
-      stmt.close();
-    }
-  }
-
-  /**
-   * Remove (with cleanup) a theme stylesheet channel attribute
-   * @param stylesheetId id of the theme stylesheet
-   * @param pName name of the attribute
-   * @param con active database connection
-   */
-  private void removeThemeChannelAttribute (int stylesheetId, String pName, Connection con) throws java.sql.SQLException {
-    Statement stmt = con.createStatement();
-    try {
-      String sQuery = "DELETE FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId + " AND TYPE=3 AND PARAM_NAME='" + pName
-          + "'";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::removeThemeChannelAttribute() : " + sQuery);
-      stmt.execute(sQuery);
-      // clean up user preference tables
-      sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_TYPE=3 AND PARAM_NAME='"
-          + pName + "'";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
-      stmt.execute(sQuery);
-    } finally {
-      stmt.close();
-    }
-  }
-
-  public void removeThemeStylesheetDescription (int stylesheetId) throws Exception {
-    Connection con = this.dataSource.getConnection();
-    try {
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "DELETE FROM UP_SS_THEME WHERE SS_ID=" + stylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
-        stmt.executeUpdate(sQuery);
-        // delete params
-        sQuery = "DELETE FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
-        stmt.executeUpdate(sQuery);
-
-        // nuke all of the profiles that use it
-        sQuery = "SELECT USER_ID,PROFILE_ID FROM UP_USER_PROFILE WHERE THEME_SS_ID="+stylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
-        ResultSet rs = stmt.executeQuery(sQuery);
-        try {
-            while (rs.next()) {
-              deleteUserProfile(rs.getInt("USER_ID"),rs.getInt("PROFILE_ID"));
-          }
-        } finally {
-            rs.close();
-        }
-
-        // clean up user preferences - directly ( in case of loose params )
-        sQuery = "DELETE FROM UP_SS_USER_PARM WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
-        stmt.executeUpdate(sQuery);
-        sQuery = "DELETE FROM UP_SS_USER_ATTS WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2";
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::removeThemeStylesheetDescription() : " + sQuery);
-        stmt.executeUpdate(sQuery);
-
-
-        con.commit();
-      } catch (Exception e) {
-        // Roll back the transaction
-        con.rollback();
-        throw  e;
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-  }
-
-  /**
-   * Remove (with cleanup) a theme stylesheet param
-   * @param stylesheetId id of the theme stylesheet
-   * @param pName name of the parameter
-   * @param con active database connection
-   */
-  private void removeThemeStylesheetParam (int stylesheetId, String pName, Connection con) throws java.sql.SQLException {
-    Statement stmt = con.createStatement();
-    try {
-      String sQuery = "DELETE FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId + " AND TYPE=1 AND PARAM_NAME='" + pName
-          + "'";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
-      stmt.execute(sQuery);
-      // clean up user preference tables
-      sQuery = "DELETE FROM UP_SS_USER_PARM WHERE SS_ID=" + stylesheetId + " AND SS_TYPE=2 AND PARAM_TYPE=1 AND PARAM_NAME='"
-          + pName + "'";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::removeThemeStylesheetParam() : " + sQuery);
-      stmt.execute(sQuery);
-    } finally {
-      stmt.close();
-    }
-  }
-
-  protected abstract Element getStructure(Document doc, LayoutStructure ls) throws Exception;
-
-  protected abstract int saveStructure (Node node, PreparedStatement structStmt, PreparedStatement parmStmt) throws Exception;
-
-  public abstract void setStructureStylesheetUserPreferences (IPerson person, int profileId, StructureStylesheetUserPreferences ssup) throws Exception;
-
-  public abstract void setThemeStylesheetUserPreferences (IPerson person, int profileId, ThemeStylesheetUserPreferences tsup) throws Exception;
-
-
-  public void setUserBrowserMapping (IPerson person, String userAgent, int profileId) throws Exception {
+  public void setUserBrowserMapping (IPerson person, String userAgent, int profileId) {
 	  if (userAgent.length() > 255){
 		  userAgent = userAgent.substring(0,254);
 		  log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgent);
 	  }
 	  int userId = person.getID();
-	  Connection con = this.dataSource.getConnection();
+	  Connection con = null;
 	  try {
+	      con = this.dataSource.getConnection();
 		  // Set autocommit false for the connection
 		  con.setAutoCommit(false);
 		  // remove the old mapping and add the new one
@@ -2222,6 +1176,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 			  con.rollback();
 			  throw new PortalException("userId: "+userId+", userAgent: "+userAgent+", profileId: "+profileId, e);
 		  }
+      } catch (SQLException e) {
+          throw this.exceptionTranslator.translate("getUserProfileList", null, e);
 	  } finally {
 		  JdbcUtils.closeConnection(con);
 	  }
@@ -2234,14 +1190,15 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
    * @param layoutXML
    * @throws Exception
    */
-  public void setUserLayout(IPerson person, UserProfile profile, Document layoutXML, boolean channelsAdded) throws Exception {
+  public void setUserLayout(IPerson person, IUserProfile profile, Document layoutXML, boolean channelsAdded) {
       long startTime = System.currentTimeMillis();
       int userId = person.getID();
       int profileId = profile.getProfileId();
       int layoutId = 0;
       ResultSet rs;
-      Connection con = this.dataSource.getConnection();
+      Connection con = null;
       try {
+          con = this.dataSource.getConnection();
           con.setAutoCommit(false); // Need an atomic update here
 
           // Eventually we want to be able to just get layoutId from the
@@ -2452,44 +1409,16 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               } finally {
                   pstmt.close();
               }
-
-              // Insert row(s) into up_ss_user_parm
-              sql = "SELECT USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL FROM UP_SS_USER_PARM WHERE USER_ID=?";
-              pstmt = con.prepareStatement(sql);
-              try {
-                  pstmt.clearParameters();
-                  pstmt.setInt(1, defaultUserId);
-                  log.debug(sql);
-                  rs = pstmt.executeQuery();
-                  try {
-                      while (rs.next()) {
-                          sql = "INSERT INTO UP_SS_USER_PARM (USER_ID, PROFILE_ID, SS_ID, SS_TYPE, PARAM_NAME, PARAM_VAL) VALUES(?,?,?,?,?,?)";
-                          PreparedStatement pstmt2 = con.prepareStatement(sql);
-                          try {
-                              pstmt2.clearParameters();
-                              pstmt2.setInt(1, userId);
-                              pstmt2.setInt(2, rs.getInt("PROFILE_ID"));
-                              pstmt2.setInt(3, rs.getInt("SS_ID"));
-                              pstmt2.setInt(4, rs.getInt("SS_TYPE"));
-                              pstmt2.setString(5, rs.getString("PARAM_NAME"));
-                              pstmt2.setString(6, rs.getString("PARAM_VAL"));
-                              log.debug(sql);
-                              pstmt2.executeUpdate();
-                          } finally {
-                              pstmt2.close();
-                          }
-                      }
-                  } finally {
-                      rs.close();
-                  }
-              } finally {
-                  pstmt.close();
-              }
           }
           con.commit();
-      } catch (Exception e) {
-          con.rollback();
-          throw e;
+      } catch (SQLException e) {
+          try {
+            con.rollback();
+        }
+        catch (SQLException e1) {
+            log.warn("Exception rolling back commit", e);
+        }
+      throw this.exceptionTranslator.translate("getUserLayout", null, e);
       } finally {
           JdbcUtils.closeConnection(con);
       }
@@ -2499,278 +1428,11 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       }
      }
 
-  /**
-   * Updates an existing structure stylesheet description with a new one. Old stylesheet
-   * description is found based on the Id provided in the parameter structure.
-   * @param ssd new stylesheet description
-   */
-  public void updateStructureStylesheetDescription (StructureStylesheetDescription ssd) throws Exception {
-    Connection con = this.dataSource.getConnection();
-    try {
-      // Set autocommit false for the connection
-      con.setAutoCommit(false);
-      Statement stmt = con.createStatement();
-      try {
-        int stylesheetId = ssd.getId();
-        String sQuery = "UPDATE UP_SS_STRUCT SET SS_NAME='" + ssd.getStylesheetName() + "',SS_URI='" + ssd.getStylesheetURI()
-            + "',SS_DESCRIPTION_URI='" + ssd.getStylesheetDescriptionURI() + "',SS_DESCRIPTION_TEXT='" + ssd.getStylesheetWordDescription()
-            + "' WHERE SS_ID=" + stylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
-        stmt.executeUpdate(sQuery);
-        // first, see what was there before
-        HashSet oparams = new HashSet();
-        HashSet ofattrs = new HashSet();
-        HashSet ocattrs = new HashSet();
-        sQuery = "SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_SS_STRUCT_PAR WHERE SS_ID=" + stylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
-        Statement stmtOld = con.createStatement();
-        ResultSet rsOld = stmtOld.executeQuery(sQuery);
-        try {
-          while (rsOld.next()) {
-            int type = rsOld.getInt("TYPE");
-            if (type == 1) {
-              // stylesheet param
-              String pName = rsOld.getString("PARAM_NAME");
-              oparams.add(pName);
-              if (!ssd.containsParameterName(pName)) {
-                // delete param
-                removeStructureStylesheetParam(stylesheetId, pName, con);
-              }
-              else {
-                // update param
-                sQuery = "UPDATE UP_SS_STRUCT_PAR SET PARAM_DEFAULT_VAL='" + ssd.getStylesheetParameterDefaultValue(pName)
-                    + "',PARAM_DESCRIPT='" + ssd.getStylesheetParameterWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
-                    + " AND PARAM_NAME='" + pName + "' AND TYPE=1";
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
-                stmt.executeUpdate(sQuery);
-              }
-            }
-            else if (type == 2) {
-              // folder attribute
-              String pName = rsOld.getString("PARAM_NAME");
-              ofattrs.add(pName);
-              if (!ssd.containsFolderAttribute(pName)) {
-                // delete folder attribute
-                removeStructureFolderAttribute(stylesheetId, pName, con);
-              }
-              else {
-                // update folder attribute
-                sQuery = "UPDATE UP_SS_STRUCT_PAR SET PARAM_DEFAULT_VAL='" + ssd.getFolderAttributeDefaultValue(pName) +
-                    "',PARAM_DESCRIPT='" + ssd.getFolderAttributeWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
-                    + " AND PARAM_NAME='" + pName + "'AND TYPE=2";
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
-                stmt.executeUpdate(sQuery);
-              }
-            }
-            else if (type == 3) {
-              // channel attribute
-              String pName = rsOld.getString("PARAM_NAME");
-              ocattrs.add(pName);
-              if (!ssd.containsChannelAttribute(pName)) {
-                // delete channel attribute
-                removeStructureChannelAttribute(stylesheetId, pName, con);
-              }
-              else {
-                // update channel attribute
-                sQuery = "UPDATE UP_SS_STRUCT_PAR SET PARAM_DEFAULT_VAL='" + ssd.getChannelAttributeDefaultValue(pName) +
-                    "',PARAM_DESCRIPT='" + ssd.getChannelAttributeWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
-                    + " AND PARAM_NAME='" + pName + "' AND TYPE=3";
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : " + sQuery);
-                stmt.executeUpdate(sQuery);
-              }
-            }
-            else {
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
-                            + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + type +
-                        ").");
-            }
-          }
-        } finally {
-          rsOld.close();
-          stmtOld.close();
-        }
-        // look for new attributes/parameters
-        // insert all stylesheet params
-        for (Enumeration e = ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          if (!oparams.contains(pName)) {
-            sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
-                stylesheetId + ",'" + pName + "','" + ssd.getStylesheetParameterDefaultValue(pName) + "','" + ssd.getStylesheetParameterWordDescription(pName)
-                + "',1)";
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription(): " + sQuery);
-            stmt.executeUpdate(sQuery);
-          }
-        }
-        // insert all folder attributes
-        for (Enumeration e = ssd.getFolderAttributeNames(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          if (!ofattrs.contains(pName)) {
-            sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
-                stylesheetId + ",'" + pName + "','" + ssd.getFolderAttributeDefaultValue(pName) + "','" + ssd.getFolderAttributeWordDescription(pName)
-                + "',2)";
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription(): " + sQuery);
-            stmt.executeUpdate(sQuery);
-          }
-        }
-        // insert all channel attributes
-        for (Enumeration e = ssd.getChannelAttributeNames(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          if (!ocattrs.contains(pName)) {
-            sQuery = "INSERT INTO UP_SS_STRUCT_PAR (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" +
-                stylesheetId + ",'" + pName + "','" + ssd.getChannelAttributeDefaultValue(pName) + "','" + ssd.getChannelAttributeWordDescription(pName)
-                + "',3)";
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::updateStructureStylesheetDescription(): " + sQuery);
-            stmt.executeUpdate(sQuery);
-          }
-        }
-        // Commit the transaction
-        con.commit();
-      } catch (Exception e) {
-        // Roll back the transaction
-        con.rollback();
-        throw  e;
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-  }
-
-  /**
-   * Updates an existing structure stylesheet description with a new one. Old stylesheet
-   * description is found based on the Id provided in the parameter structure.
-   * @param tsd new theme stylesheet description
-   */
-  public void updateThemeStylesheetDescription (ThemeStylesheetDescription tsd) throws Exception {
-    Connection con = this.dataSource.getConnection();
-    try {
-      // Set autocommit false for the connection
-      con.setAutoCommit(false);
-      Statement stmt = con.createStatement();
-      try {
-        int stylesheetId = tsd.getId();
-
-        String sQuery = "UPDATE UP_SS_THEME SET SS_NAME='" + tsd.getStylesheetName() + "',SS_URI='" + tsd.getStylesheetURI()+ "',SS_DESCRIPTION_URI='" + tsd.getStylesheetDescriptionURI() + "',SS_DESCRIPTION_TEXT='" + tsd.getStylesheetWordDescription() + "',SAMPLE_ICON_URI='"+tsd.getSampleIconURI()+"',SAMPLE_URI='"+tsd.getSamplePictureURI()+"',MIME_TYPE='"+tsd.getMimeType()+"',DEVICE_TYPE='"+tsd.getDeviceType()+"',SERIALIZER_NAME='"+tsd.getSerializerName()+"',UP_MODULE_CLASS='"+tsd.getCustomUserPreferencesManagerClass()+"' WHERE SS_ID=" + stylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
-        stmt.executeUpdate(sQuery);
-        // first, see what was there before
-        HashSet oparams = new HashSet();
-        HashSet ocattrs = new HashSet();
-        sQuery = "SELECT PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE FROM UP_SS_THEME_PARM WHERE SS_ID=" + stylesheetId;
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
-        Statement stmtOld = con.createStatement();
-        ResultSet rsOld = stmtOld.executeQuery(sQuery);
-        try {
-          while (rsOld.next()) {
-            int type = rsOld.getInt("TYPE");
-            if (type == 1) {
-              // stylesheet param
-              String pName = rsOld.getString("PARAM_NAME");
-              oparams.add(pName);
-              if (!tsd.containsParameterName(pName)) {
-                // delete param
-                removeThemeStylesheetParam(stylesheetId, pName, con);
-              }
-              else {
-                // update param
-                sQuery = "UPDATE UP_SS_THEME_PARM SET PARAM_DEFAULT_VAL='" + tsd.getStylesheetParameterDefaultValue(pName)
-                    + "',PARAM_DESCRIPT='" + tsd.getStylesheetParameterWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
-                    + " AND PARAM_NAME='" + pName + "' AND TYPE=1";
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
-                stmt.executeUpdate(sQuery);
-              }
-            }
-            else if (type == 2) {
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : encountered a folder attribute specified for a theme stylesheet ! DB is corrupt. (stylesheetId="
-                            + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + type +
-                            ").");
-            }
-            else if (type == 3) {
-              // channel attribute
-              String pName = rsOld.getString("PARAM_NAME");
-              ocattrs.add(pName);
-              if (!tsd.containsChannelAttribute(pName)) {
-                // delete channel attribute
-                removeThemeChannelAttribute(stylesheetId, pName, con);
-              }
-              else {
-                // update channel attribute
-                sQuery = "UPDATE UP_SS_THEME_PARM SET PARAM_DEFAULT_VAL='" + tsd.getChannelAttributeDefaultValue(pName) +
-                    "',PARAM_DESCRIPT='" + tsd.getChannelAttributeWordDescription(pName) + "' WHERE SS_ID=" + stylesheetId
-                    + " AND PARAM_NAME='" + pName + "' AND TYPE=3";
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : " + sQuery);
-                stmt.executeUpdate(sQuery);
-              }
-            }
-            else {
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription() : encountered param of unknown type! (stylesheetId="
-                            + stylesheetId + " param_name=\"" + rsOld.getString("PARAM_NAME") + "\" type=" + type +
-                            ").");
-            }
-          }
-        } finally {
-          rsOld.close();
-          stmtOld.close();
-        }
-        // look for new attributes/parameters
-        // insert all stylesheet params
-        for (Enumeration e = tsd.getStylesheetParameterNames(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          if (!oparams.contains(pName)) {
-            sQuery = "INSERT INTO UP_SS_THEME_PARM (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId
-                + ",'" + pName + "','" + tsd.getStylesheetParameterDefaultValue(pName) + "','" + tsd.getStylesheetParameterWordDescription(pName)
-                + "',1)";
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription(): " + sQuery);
-            stmt.executeUpdate(sQuery);
-          }
-        }
-        // insert all channel attributes
-        for (Enumeration e = tsd.getChannelAttributeNames(); e.hasMoreElements();) {
-          String pName = (String)e.nextElement();
-          if (!ocattrs.contains(pName)) {
-            sQuery = "INSERT INTO UP_SS_THEME_PARM (SS_ID,PARAM_NAME,PARAM_DEFAULT_VAL,PARAM_DESCRIPT,TYPE) VALUES (" + stylesheetId
-                + ",'" + pName + "','" + tsd.getChannelAttributeDefaultValue(pName) + "','" + tsd.getChannelAttributeWordDescription(pName)
-                + "',3)";
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::updateThemeStylesheetDescription(): " + sQuery);
-            stmt.executeUpdate(sQuery);
-          }
-        }
-        // Commit the transaction
-        con.commit();
-      } catch (Exception e) {
-        // Roll back the transaction
-        con.rollback();
-        throw  e;
-      } finally {
-        stmt.close();
-      }
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-  }
-
-  public void updateUserProfile (IPerson person, UserProfile profile) throws Exception {
+  public void updateUserProfile (IPerson person, IUserProfile profile) {
     int userId = person.getID();
-    Connection con = this.dataSource.getConnection();
+    Connection con = null;
     try {
+      con = this.dataSource.getConnection();
       String query = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=?,THEME_SS_ID=?,STRUCTURE_SS_ID=?," +
       		"DESCRIPTION=?,PROFILE_NAME=?, PROFILE_FNAME=? WHERE USER_ID=? AND PROFILE_ID=?";
       PreparedStatement pstmt = con.prepareStatement(query);
@@ -2793,65 +1455,67 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         pstmt.close();
       }
+    } catch (SQLException e) {
+        throw this.exceptionTranslator.translate("updateUserProfile", null, e);
     } finally {
       JdbcUtils.closeConnection(con);
     }
   }
 
-  public void setSystemBrowserMapping (String userAgent, int profileId) throws Exception {
+  public void setSystemBrowserMapping (String userAgent, int profileId) {
     this.setUserBrowserMapping(this.getSystemUser(), userAgent, profileId);
   }
 
-  private String getSystemBrowserMapping (String userAgent) throws Exception {
+  private String getSystemBrowserMapping (String userAgent) {
     return  getUserBrowserMapping(this.getSystemUser(), userAgent);
   }
 
-  public UserProfile getUserProfile (IPerson person, String userAgent) throws Exception {
+  public IUserProfile getUserProfile (IPerson person, String userAgent) {
     String profileFname = getUserBrowserMapping(person, userAgent);
     if (profileFname == null)
       return  null;
     return  this.getUserProfileByFname(person, profileFname);
   }
 
-  public UserProfile getSystemProfile (String userAgent) throws Exception {
+  public IUserProfile getSystemProfile (String userAgent) {
     String profileFname = getSystemBrowserMapping(userAgent);
     if (profileFname == null)
       return  null;
-    UserProfile up = this.getUserProfileByFname(this.getSystemUser(), profileFname);
+    IUserProfile up = this.getUserProfileByFname(this.getSystemUser(), profileFname);
     up.setSystemProfile(true);
     return  up;
   }
 
-  public UserProfile getSystemProfileById (int profileId) throws Exception {
-    UserProfile up = this.getUserProfileById(this.getSystemUser(), profileId);
+  public IUserProfile getSystemProfileById (int profileId) {
+    IUserProfile up = this.getUserProfileById(this.getSystemUser(), profileId);
     up.setSystemProfile(true);
     return  up;
   }
 
-  public UserProfile getSystemProfileByFname (String profileFname) throws Exception {
-	    UserProfile up = this.getUserProfileByFname(this.getSystemUser(), profileFname);
+  public IUserProfile getSystemProfileByFname (String profileFname) {
+	    IUserProfile up = this.getUserProfileByFname(this.getSystemUser(), profileFname);
 	    up.setSystemProfile(true);
 	    return  up;
 	  }
 
-  public Hashtable getSystemProfileList () throws Exception {
+  public Hashtable getSystemProfileList () {
     Hashtable pl = this.getUserProfileList(this.getSystemUser());
     for (Enumeration e = pl.elements(); e.hasMoreElements();) {
-      UserProfile up = (UserProfile)e.nextElement();
+      IUserProfile up = (IUserProfile)e.nextElement();
       up.setSystemProfile(true);
     }
     return  pl;
   }
 
-  public void updateSystemProfile (UserProfile profile) throws Exception {
+  public void updateSystemProfile (IUserProfile profile) {
     this.updateUserProfile(this.getSystemUser(), profile);
   }
 
-  public UserProfile addSystemProfile (UserProfile profile) throws Exception {
+  public IUserProfile addSystemProfile (IUserProfile profile) {
     return  addUserProfile(this.getSystemUser(), profile);
   }
 
-  public void deleteSystemProfile (int profileId) throws Exception {
+  public void deleteSystemProfile (int profileId) {
     this.deleteUserProfile(this.getSystemUser(), profileId);
   }
 
@@ -2931,31 +1595,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             return null;
         }
     }
-
-  public UserPreferences getUserPreferences (IPerson person, String profileFname) throws Exception {
-    UserPreferences up = null;
-    UserProfile profile = this.getUserProfileByFname(person, profileFname);
-    if (profile != null) {
-      up = getUserPreferences(person, profile);
-    }
-    return  (up);
-  }
-
-  public UserPreferences getUserPreferences (IPerson person, UserProfile profile) throws Exception {
-    int profileId = profile.getProfileId();
-    UserPreferences up = new UserPreferences(profile);
-    up.setStructureStylesheetUserPreferences(getStructureStylesheetUserPreferences(person, profileId, profile.getStructureStylesheetId()));
-    up.setThemeStylesheetUserPreferences(getThemeStylesheetUserPreferences(person, profileId, profile.getThemeStylesheetId()));
-    return  up;
-  }
-
-  public void putUserPreferences (IPerson person, UserPreferences up) throws Exception {
-    // store profile
-    UserProfile profile = up.getProfile();
-    this.updateUserProfile(person, profile);
-    this.setStructureStylesheetUserPreferences(person, profile.getProfileId(), up.getStructureStylesheetUserPreferences());
-    this.setThemeStylesheetUserPreferences(person, profile.getProfileId(), up.getThemeStylesheetUserPreferences());
-  }
 
   /**
    * Returns the current layout ID for the user and profile. If the profile doesn't exist or the
@@ -3065,5 +1704,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
       return layoutId;
   }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.layout.IUserLayoutStore#importLayout(org.dom4j.Element)
+     */
+    public abstract void importLayout(org.dom4j.Element layout);
 
 }

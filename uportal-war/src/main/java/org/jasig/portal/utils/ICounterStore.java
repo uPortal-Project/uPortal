@@ -33,7 +33,7 @@ public interface ICounterStore {
      * @param counterName a name for the new counter
      * @exception Exception if an error occurs
      */
-    public void createCounter(String counterName) throws Exception;
+    public void createCounter(String counterName);
 
     /**
      * Reset a value of a counter.
@@ -42,7 +42,7 @@ public interface ICounterStore {
      * @param value a new counter value
      * @exception Exception if an error occurs
      */
-    public void setCounter(String counterName, int value) throws Exception;
+    public void setCounter(String counterName, int value);
 
     /**
      * Obtain current coutner value and increment it.
@@ -51,6 +51,6 @@ public interface ICounterStore {
      * @return an <code>int</code> value
      * @exception Exception if an error occurs
      */
-    public int getIncrementIntegerId(String counterName) throws Exception;
+    public int getIncrementIntegerId(String counterName);
 
 }

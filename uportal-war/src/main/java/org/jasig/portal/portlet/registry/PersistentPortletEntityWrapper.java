@@ -19,6 +19,8 @@
 
 package org.jasig.portal.portlet.registry;
 
+import javax.portlet.WindowState;
+
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -67,6 +69,14 @@ class PersistentPortletEntityWrapper implements IPortletEntity {
     @Override
     public int getUserId() {
         return this.persistentEntity.getUserId();
+    }
+    @Override
+    public WindowState getWindowState() {
+        return this.persistentEntity.getWindowState();
+    }
+    @Override
+    public void setWindowState(WindowState state) {
+        this.persistentEntity.setWindowState(state);
     }
     @Override
     public IPortletPreferences getPortletPreferences() {

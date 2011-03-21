@@ -28,6 +28,35 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <!-- 
+     | JAXB marshaller for entity objects
+     +-->
+    <bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <qualifier value="entityUnmarshaller"/>
+        <property name="contextPaths">
+            <list>
+                <value>org.jasig.portal.io.xml.portlet</value>
+                <value>org.jasig.portal.io.xml.ssd</value>
+            </list>
+        </property>
+        <property name="schemas">
+            <list>
+                <value>classpath:/xsd/io/portlet-definition/portlet-definition-4.0.xsd</value>
+                <value>classpath:/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd</value>
+            </list>
+        </property>
+        <property name="marshallerProperties">
+            <map>
+                <entry key="jaxb.encoding" value="UTF-8" />
+                <entry key="jaxb.formatted.output" value="true" />
+                <!-- TODO how to deal with this when there are multiple schemas?
+                        Should everything be listed under a single portal-io.xsd?
+                    <entry key="jaxb.schemaLocation" value="?" />
+                -->
+            </map>
+        </property>
+    </bean>
+    
+    <!-- 
      | Import Tasks
      +-->
 
@@ -59,8 +88,8 @@
     <entry key="classpath://org/jasig/portal/io/import-channel_v3-2.crn">
       <ref bean="import-channel_v3-2" />
     </entry>
-    <entry key="classpath://org/jasig/portal/io/import-portlet_v3-3.crn">
-      <ref bean="import-portlet_v3-3" />
+    <entry key="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn">
+      <ref bean="jaxb-import_v4-0" />
     </entry>
     <entry key="classpath://org/jasig/portal/io/import-structure_v2-6.crn">
       <ref bean="import-structure_v2-6" />
@@ -242,19 +271,9 @@
     </property>
   </bean>
     
-  <bean id="import-portlet_v3-3" class="org.danann.cernunnos.runtime.PojoTask">
+  <bean id="jaxb-import_v4-0" class="org.danann.cernunnos.runtime.PojoTask">
     <property name="location">
-      <value>classpath://org/jasig/portal/io/import-portlet_v3-3.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
+      <value>classpath://org/jasig/portal/io/jaxb-import_v4-0.crn</value>
     </property>
   </bean>
     

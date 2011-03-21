@@ -47,7 +47,7 @@ public class PositionManager
     public static final String RCS_ID = "@(#) $Header$";
     private static Log LOG = LogFactory.getLog(PositionManager.class);
 
-    private static RDBMDistributedLayoutStore dls = null;
+    private static IUserLayoutStore dls = null;
     /**
      * Hands back the single instance of RDBMDistributedLayoutStore. There is
      * already a method
@@ -56,13 +56,9 @@ public class PositionManager
      * This method is solely for convenience so that we don't have to keep
      * calling UserLayoutStoreFactory and casting the resulting class.
      */
-    private static RDBMDistributedLayoutStore getDLS()
-    {
-        if ( dls == null )
-        {
-            IUserLayoutStore uls = null;
-            uls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
-            dls = (RDBMDistributedLayoutStore) uls;
+    private static IUserLayoutStore getDLS() {
+        if (dls == null) {
+            dls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
         }
         return dls;
     }

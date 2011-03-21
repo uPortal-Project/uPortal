@@ -19,11 +19,13 @@
 
 package org.jasig.portal.layout.om;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Map;
 
 import javax.xml.transform.Transformer;
 
 import org.jasig.portal.dao.usertype.FunctionalNameType;
+import org.jasig.portal.io.xml.IPortalData;
 
 /**
  * Describes a XSL Stylesheet used in the rendering pipeline
@@ -31,7 +33,7 @@ import org.jasig.portal.dao.usertype.FunctionalNameType;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IStylesheetDescriptor {
+public interface IStylesheetDescriptor extends IPortalData {
     
     /**
      * @return Unique ID of the descriptor
@@ -69,32 +71,59 @@ public interface IStylesheetDescriptor {
     public String getStylesheetResource();
 
     /**
-     * Set of output properties to use on the {@link Transformer} for the stylesheet this defines
+     * Output properties to use on the {@link Transformer} for the stylesheet this defines
+     * The returned Map is read-only
      */
-    public Set<IOutputPropertyDescriptor> getOutputProperties();
+    public Collection<IOutputPropertyDescriptor> getOutputPropertyDescriptors();
+    public void setOutputPropertyDescriptors(Collection<IOutputPropertyDescriptor> outputPropertyDescriptors);
     /**
-     * Set of output properties to use on the {@link Transformer} for the stylesheet this defines
+     * @see Map#get(Object)
      */
-    public void setOutputProperties(Set<IOutputPropertyDescriptor> outputProperties);
+    public IOutputPropertyDescriptor getOutputPropertyDescriptor(String name);
+    /**
+     * @see Map#put(Object, Object)
+     */
+    public IOutputPropertyDescriptor setOutputPropertyDescriptor(IOutputPropertyDescriptor outputPropertyDescriptor);
+    /**
+     * @see Map#remove(Object)
+     */
+    public IOutputPropertyDescriptor removeOutputPropertyDescriptor(String name);
     
     /**
-     * Set of parameters to use on the {@link Transformer} for the stylesheet this defines 
+     * Parameters to use on the {@link Transformer} for the stylesheet this defines
+     * The returned Map is read-only 
      */
-    public Set<IStylesheetParameterDescriptor> getStylesheetParameters();
+    public Collection<IStylesheetParameterDescriptor> getStylesheetParameterDescriptors();
+    public void setStylesheetParameterDescriptors(Collection<IStylesheetParameterDescriptor> stylesheetParameterDescriptors);
     /**
-     * Set of parameters to use on the {@link Transformer} for the stylesheet this defines
+     * @see Map#get(Object)
      */
-    public void setStylesheetParameters(Set<IStylesheetParameterDescriptor> stylesheetParameters);
+    public IStylesheetParameterDescriptor getStylesheetParameterDescriptor(String name);
+    /**
+     * @see Map#put(Object, Object)
+     */
+    public IStylesheetParameterDescriptor setStylesheetParameterDescriptor(IStylesheetParameterDescriptor stylesheetParameterDescriptor);
+    /**
+     * @see Map#remove(Object)
+     */
+    public IStylesheetParameterDescriptor removeStylesheetParameterDescriptor(String name);
     
-    
     /**
-     * Set of attributes to be added to layout elements prior to transformation by the stylesheet
-     * this defines
+     * Attributes to be added to layout elements prior to transformation by the stylesheet this defines
+     * The returned Map is read-only
      */
-    public Set<ILayoutAttributeDescriptor> getLayoutAttributes();
+    public Collection<ILayoutAttributeDescriptor> getLayoutAttributeDescriptors();
+    public void setLayoutAttributeDescriptors(Collection<ILayoutAttributeDescriptor> layoutAttributeDescriptors);
     /**
-     * Set of attributes to be added to layout elements prior to transformation by the stylesheet
-     * this defines
+     * @see Map#get(Object)
      */
-    public void setLayoutAttributes(Set<ILayoutAttributeDescriptor> layoutAttributes);
+    public ILayoutAttributeDescriptor getLayoutAttributeDescriptor(String name);
+    /**
+     * @see Map#put(Object, Object)
+     */
+    public ILayoutAttributeDescriptor setLayoutAttributeDescriptor(ILayoutAttributeDescriptor layoutAttributeDescriptor);
+    /**
+     * @see Map#remove(Object)
+     */
+    public ILayoutAttributeDescriptor removeLayoutAttributeDescriptor(String name);
 }

@@ -27,6 +27,7 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -98,7 +99,8 @@ public class UserLocaleHelper {
 	    final HttpServletRequest originalPortalRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
 		IUserInstance ui = userInstanceManager.getUserInstance(originalPortalRequest);
 		IUserPreferencesManager upm = ui.getPreferencesManager();
-        LocaleManager localeManager = upm.getUserPreferences().getProfile().getLocaleManager();
+		final IUserProfile userProfile = upm.getUserProfile();
+        LocaleManager localeManager = userProfile.getLocaleManager();
         
         // first check the session locales
         Locale[] sessionLocales = localeManager.getSessionLocales();
@@ -130,7 +132,9 @@ public class UserLocaleHelper {
 
 		IUserInstance ui = userInstanceManager.getUserInstance(request);
 		IUserPreferencesManager upm = ui.getPreferencesManager();
-        LocaleManager localeManager = upm.getUserPreferences().getProfile().getLocaleManager();
+        final IUserProfile userProfile = upm.getUserProfile();
+        LocaleManager localeManager = userProfile.getLocaleManager();
+
 
         if (localeString != null) {
         	

@@ -50,6 +50,8 @@
     </node-iterator>
     
     <node-iterator xpath="child::structure-attribute">
+        
+    
         <with-attribute key="STRUCT_ATTR_TYPE" value="${valueOf(@type)}">
             <with-attribute key="STRUCT_ATTR_TYPE" value="${crn(determine-structure_attribute-type.crn)}">
                 <sql-statement sql="INSERT INTO UP_SS_USER_ATTS(USER_ID, PROFILE_ID, SS_ID, SS_TYPE, STRUCT_ID, PARAM_NAME, PARAM_TYPE, PARAM_VAL) 

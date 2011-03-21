@@ -26,9 +26,13 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -42,30 +46,51 @@ import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
  */
 @Entity
 @Table(
-        name = "UP_SS_LAYOUT_ATTR_DESC"
+        name = "UP_SS_DESC_LAY_ATTR"
+    )
+@SequenceGenerator(
+        name="UP_SS_DESC_LAY_ATTR_GEN",
+        sequenceName="UP_SS_DESC_LAY_ATTR_SEQ",
+        allocationSize=5
+    )
+@TableGenerator(
+        name="UP_SS_DESC_LAY_ATTR_GEN",
+        pkColumnValue="UP_SS_DESC_LAY_ATTR",
+        allocationSize=5
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class LayoutAttributeDescriptorImpl extends AbstractStylesheetDataImpl implements ILayoutAttributeDescriptor {
-    
-    //Required by hibernate for reflective creation
-    @SuppressWarnings("unused")
-    private LayoutAttributeDescriptorImpl() {
-    }
-
-    public LayoutAttributeDescriptorImpl(String name, Scope scope) {
-        super(name, scope);
-    }
+    @Id
+    @GeneratedValue(generator = "UP_SS_DESC_LAY_ATTR_GEN")
+    @Column(name="SS_DESC_LAYOUT_ATTR_ID")
+    private final long id;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "UP_SS_LAYOUT_ATTR_ELEMENTS",
+        name = "UP_SS_DESC_LAY_ATTR_ELMS",
         joinColumns = @JoinColumn(name = "ATTR_ID")
     )
     @Column(name = "ELEMENT")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private Set<String> targetElementNames;
+    
+    //Required by hibernate for reflective creation
+    @SuppressWarnings("unused")
+    private LayoutAttributeDescriptorImpl() {
+        this.id = -1;
+    }
+
+    public LayoutAttributeDescriptorImpl(String name, Scope scope) {
+        super(name, scope);
+        this.id = -1;
+    }
+    
+    @Override
+    public long getId() {
+        return this.id;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.om.ILayoutAttributeDescriptor#getTargetElementNames()

@@ -25,37 +25,6 @@
  |
  | Returns the default theme name if force is true or the passed THEME_STYLESHEET_NAME is null
  +-->
-<with-attribute key="THEME_STYLESHEET_NAME" value="${crn(determine-ss_theme_name.crn)}">
-    <cache key="THEME_STYLESHEET_ID" cache-key="${jexl('THEME_STYLESHEET_ID.' + THEME_STYLESHEET_NAME)}">
-        <factory>
-            <sql-query>
-                <sql>
-                    SELECT ss_id as THEME_STYLESHEET_ID
-                    FROM up_ss_theme 
-                    WHERE ss_name = ?
-                </sql>
-                <parameter value="${THEME_STYLESHEET_NAME}" />
-                <subtasks>
-                    <return value="${THEME_STYLESHEET_ID}" />
-                </subtasks>
-                <empty-result>
-                    <!-- No theme stylsheet by that name, try the default name from the properties -->
-                    <sql-query>
-                        <sql>
-                            SELECT ss_id as THEME_STYLESHEET_ID
-                            FROM up_ss_theme 
-                            WHERE ss_name = ?
-                        </sql>
-                        <parameter value="${user_profile_theme_name_default}" />
-                        <subtasks>
-                            <return value="${THEME_STYLESHEET_ID}" />
-                        </subtasks>
-                    </sql-query>
-                </empty-result>
-            </sql-query>
-        </factory>
-        <subtasks>
-            <return value="${THEME_STYLESHEET_ID}" />
-        </subtasks>
-    </cache>
+<with-attribute key="STYLESHEET_NAME" value="${crn(determine-ss_theme_name.crn)}">
+    <return value="${crn(lookup-stylesheet_descriptor_id.crn)}"/>
 </with-attribute>

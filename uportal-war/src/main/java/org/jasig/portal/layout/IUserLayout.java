@@ -20,11 +20,13 @@
 package org.jasig.portal.layout;
 
 import java.util.Enumeration;
+import java.util.Set;
 
 import javax.xml.xpath.XPathExpression;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.w3c.dom.Document;
 
 /**
@@ -172,5 +174,18 @@ public interface IUserLayout {
      */
     public String getRootId();
 
+    /**
+     * @return The names of all of the fragments incorporated into the layout
+     */
+    public Set<String> getFragmentNames();
 
+    /**
+     * @return The composite {@link IStylesheetUserPreferences} based on the preferences from the incorporated fragments
+     */
+    public IStylesheetUserPreferences getDistributedStructureStylesheetUserPreferences();
+
+    /**
+     * @return The composite {@link IStylesheetUserPreferences} based on the preferences from the incorporated fragments
+     */
+    public IStylesheetUserPreferences getDistributedThemeStylesheetUserPreferences();
 }

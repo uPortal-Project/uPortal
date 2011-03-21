@@ -19,9 +19,8 @@
 
 package org.jasig.portal.layout.dlm;
 
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.security.IPerson;
-import org.w3c.dom.Document;
 
 /**
  * Base API for layout caching service. The implementation should handle appropriately expiring layouts
@@ -32,10 +31,10 @@ import org.w3c.dom.Document;
  */
 public interface ILayoutCachingService {
 
-    public void cacheLayout(IPerson owner, UserProfile profile, Document layout);
+    public void cacheLayout(IPerson owner, IUserProfile profile, DistributedUserLayout layout);
     
-    public void removeCachedLayout(IPerson owner, UserProfile profile);
+    public void removeCachedLayout(IPerson owner, IUserProfile profile);
 
-    public Document getCachedLayout(IPerson owner, UserProfile profile);
+    public DistributedUserLayout getCachedLayout(IPerson owner, IUserProfile profile);
 
 }

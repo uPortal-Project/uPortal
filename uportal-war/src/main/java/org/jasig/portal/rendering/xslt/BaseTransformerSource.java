@@ -27,8 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 
-import org.jasig.portal.CoreStylesheetDescription;
 import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.cache.CacheKey;
@@ -50,7 +51,13 @@ public abstract class BaseTransformerSource implements TransformerSource, Resour
     private IUserInstanceManager userInstanceManager;
     private XmlUtilities xmlUtilities;
     private ResourceLoader resourceLoader;
+    private IStylesheetDescriptorDao stylesheetDescriptorDao;
     
+    @Autowired
+    public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
+        this.stylesheetDescriptorDao = stylesheetDescriptorDao;
+    }
+
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
@@ -107,13 +114,14 @@ public abstract class BaseTransformerSource implements TransformerSource, Resour
     /**
      * Get the stylesheet description from the user preferences
      */
-    protected abstract CoreStylesheetDescription getStylesheetDescription(IUserPreferencesManager preferencesManager);
+    protected abstract long getStylesheetDescriptorId(IUserPreferencesManager preferencesManager);
 
     private Resource getStylesheetResource(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final CoreStylesheetDescription stylesheetDescription = this.getStylesheetDescription(preferencesManager);
-        final String stylesheetURI = stylesheetDescription.getStylesheetURI();
-        return this.resourceLoader.getResource("classpath:" + stylesheetURI);
+        final long stylesheetDescriptorId = this.getStylesheetDescriptorId(preferencesManager);
+        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
+        final String stylesheetResource = stylesheetDescriptor.getStylesheetResource();
+        return this.resourceLoader.getResource(stylesheetResource);
     }
 }

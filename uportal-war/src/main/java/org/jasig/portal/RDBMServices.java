@@ -312,7 +312,7 @@ public class RDBMServices {
      * rollback unwanted changes to the database
      * @param connection
      */
-    public static final void rollback(final Connection connection) throws SQLException {
+    public static final void rollback(final Connection connection) {
         try {
             connection.rollback();
         }

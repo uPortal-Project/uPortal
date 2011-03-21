@@ -23,11 +23,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.jasig.portal.GuestUserInstance;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.ProblemsTable;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.UserInstance;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.utils.MovingAverageSample;
 
@@ -89,17 +87,6 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
             al.add(pe.getMessage());
         }
         return al.toArray(new String[al.size()]);
-    }
-
-    /*
-     * sessions
-     */
-    public long getUserSessionCount() {
-        return UserInstance.getUserSessions();
-    }
-
-    public long getGuestSessionCount() {
-        return GuestUserInstance.getGuestSessions();
     }
 
     /*

@@ -36,10 +36,10 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.dlm.ConfigurationLoader;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
-import org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.AdminEvaluator;
@@ -77,7 +77,7 @@ public class FragmentListController {
     
     private ConfigurationLoader dlmConfig;
     private IPersonManager personManager;    
-    private RDBMDistributedLayoutStore userLayoutStore;
+    private IUserLayoutStore userLayoutStore;
     private XPathExpression expr;
     private IPortletDefinitionRegistry portletRegistry;
     private final Log log = LogFactory.getLog(getClass());
@@ -104,7 +104,7 @@ public class FragmentListController {
     }
 
     @Autowired
-    public void setUserLayoutStore(RDBMDistributedLayoutStore userLayoutStore) {
+    public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
     }
 

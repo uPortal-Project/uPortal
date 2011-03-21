@@ -21,7 +21,7 @@ package org.jasig.portal.services.stats;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -181,7 +181,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordChannelAddedToLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+    public void recordChannelAddedToLayout(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
         if (this.flags.isRecordChannelAddedToLayout()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -191,7 +191,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+    public void recordChannelUpdatedInLayout(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
         if (this.flags.isRecordChannelUpdatedInLayout()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -201,7 +201,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordChannelMovedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+    public void recordChannelMovedInLayout(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
         if (this.flags.isRecordChannelMovedInLayout()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -211,7 +211,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+    public void recordChannelRemovedFromLayout(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
         if (this.flags.isRecordChannelRemovedFromLayout()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -221,7 +221,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordFolderAddedToLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
+    public void recordFolderAddedToLayout(IPerson person, IUserProfile profile, IUserLayoutFolderDescription folderDesc) {
         if (this.flags.isRecordFolderAddedToLayout()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -231,7 +231,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
+    public void recordFolderUpdatedInLayout(IPerson person, IUserProfile profile, IUserLayoutFolderDescription folderDesc) {
         if (this.flags.isRecordFolderUpdatedInLayout()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -241,7 +241,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordFolderMovedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
+    public void recordFolderMovedInLayout(IPerson person, IUserProfile profile, IUserLayoutFolderDescription folderDesc) {
         if (this.flags.isRecordFolderMovedInLayout()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -251,7 +251,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
+    public void recordFolderRemovedFromLayout(IPerson person, IUserProfile profile, IUserLayoutFolderDescription folderDesc) {
         if (this.flags.isRecordFolderRemovedFromLayout()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -261,7 +261,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordChannelInstantiated(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+    public void recordChannelInstantiated(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
         if (this.flags.isRecordChannelInstantiated()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -271,7 +271,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordChannelRendered(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+    public void recordChannelRendered(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
         if (this.flags.isRecordChannelRendered()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");
@@ -281,7 +281,7 @@ public final class ConditionalStatsRecorder
         }
     }
 
-    public void recordChannelTargeted(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+    public void recordChannelTargeted(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
         if (this.flags.isRecordChannelTargeted()) {
             if (this.targetStatsRecorder == null) {
                 log.error("targetStatsRecorder of ConditionalStatsRecorder illegally null");

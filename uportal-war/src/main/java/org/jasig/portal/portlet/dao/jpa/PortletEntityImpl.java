@@ -37,16 +37,16 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -91,6 +91,10 @@ class PortletEntityImpl implements IPortletEntity {
     @ManyToOne(targetEntity = PortletDefinitionImpl.class, cascade = {  CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "PORTLET_DEF_ID", nullable = false)
     private final IPortletDefinition portletDefinition;
+    
+    @Column(name = "WINDOW_STATE")
+    @Type(type = "windowState")
+    private WindowState windowState;
 
     @OneToOne(targetEntity = PortletPreferencesImpl.class, cascade = { CascadeType.ALL }, orphanRemoval=true)
     @JoinColumn(name = "PORTLET_PREFS_ID", nullable = false)
@@ -172,6 +176,16 @@ class PortletEntityImpl implements IPortletEntity {
     public int getUserId() {
         return this.userId;
     }
+    
+    @Override
+    public WindowState getWindowState() {
+        return this.windowState;
+    }
+
+    @Override
+    public void setWindowState(WindowState state) {
+        this.windowState = state;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletEntity#getPortletPreferences()
@@ -221,16 +235,9 @@ class PortletEntityImpl implements IPortletEntity {
             .toHashCode();
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("portletEntityId", this.portletEntityId)
-            .append("channelSubscribeId", this.channelSubscribeId)
-            .append("userId", this.userId)
-            .append("portletDefinitionId", this.getPortletDefinitionId())
-            .toString();
+        return "PortletEntityImpl [portletEntityId=" + this.portletEntityId + ", channelSubscribeId="
+                + this.channelSubscribeId + ", userId=" + this.userId + ", windowState=" + this.windowState + "]";
     }
 }

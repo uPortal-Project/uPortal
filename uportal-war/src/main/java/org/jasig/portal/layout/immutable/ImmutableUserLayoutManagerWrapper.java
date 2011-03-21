@@ -22,17 +22,14 @@ package org.jasig.portal.layout.immutable;
 import java.util.Enumeration;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLEventReader;
 
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UserPreferences;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 
 
@@ -210,14 +207,5 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
     }
     public boolean removeLayoutEventListener(LayoutEventListener l) {
         return false;
-    }
-
-    /**
-     * Ignores this call to prevent changes to the layout.
-     */
-    public void processLayoutParameters(IPerson person, 
-            UserPreferences userPrefs, 
-            HttpServletRequest req) throws PortalException
-    {
     }
 }

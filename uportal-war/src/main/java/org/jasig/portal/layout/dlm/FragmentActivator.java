@@ -19,10 +19,8 @@
 
 package org.jasig.portal.layout.dlm;
 
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
@@ -30,12 +28,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.UserIdentityStoreFactory;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -45,32 +47,42 @@ import org.w3c.dom.NodeList;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
+@Service
 public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
 {
     public static final String RCS_ID = "@(#) $Header$";
-    private static Log LOG = LogFactory.getLog(FragmentActivator.class);
+    private final static Log LOG = LogFactory.getLog(FragmentActivator.class);
 
-    private final List<FragmentDefinition> fragments;
-    private final IUserIdentityStore identityStore;
-    private final RDBMDistributedLayoutStore dls;
-    private final Map<String,UserView> userViews;
-
-    private static final int CHANNELS = 0;
-    private static final int FOLDERS = 1;
+    private final Map<String,UserView> userViews = new ConcurrentHashMap<String,UserView>();
+    private IUserIdentityStore identityStore;
+    private IUserLayoutStore userLayoutStore;
+    private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
+    private ConfigurationLoader configurationLoader;
     
     private static final String PROPERTY_ALLOW_EXPANDED_CONTENT = "allowExpandedContent";
-    private static final Pattern STANDARD_PATTERN = Pattern.compile("\\A[Rr][Ee][Gg][Uu][Ll][Aa][Rr]\\z");
+    private static final Pattern STANDARD_PATTERN = Pattern.compile("\\Aregular\\z", Pattern.CASE_INSENSITIVE);
     private static final Pattern EXPANDED_PATTERN = Pattern.compile(".*");
     
-    public FragmentActivator( RDBMDistributedLayoutStore dls,
-                              List<FragmentDefinition> fragments )
-    {
-        identityStore = UserIdentityStoreFactory.getUserIdentityStoreImpl();
-        this.dls = dls;
-        this.userViews = new ConcurrentHashMap<String,UserView>();
-        this.fragments = fragments;
+    @Autowired
+    public void setConfigurationLoader(ConfigurationLoader configurationLoader) {
+        this.configurationLoader = configurationLoader;
     }
 
+    @Autowired
+    public void setIdentityStore(IUserIdentityStore identityStore) {
+        this.identityStore = identityStore;
+    }
+
+    @Autowired
+    public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
+        this.userLayoutStore = userLayoutStore;
+    }
+
+    @Autowired
+    public void setStylesheetUserPreferencesDao(IStylesheetUserPreferencesDao stylesheetUserPreferencesDao) {
+        this.stylesheetUserPreferencesDao = stylesheetUserPreferencesDao;
+    }
+    
     /**
      * Activation will only be run once and will return immediately for every call once activation
      * is complete.
@@ -84,9 +96,11 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
      */
     @Override
     protected Boolean createSingleton(Object... args) {
+        final List<FragmentDefinition> fragments = this.configurationLoader.getFragments();
+        
         if (LOG.isDebugEnabled()) {
             LOG.debug("\n\n------ Distributed Layout ------\n" +
-              "properties loaded = " + dls.getPropertyCount() +
+              "properties loaded = " + this.configurationLoader.getPropertyCount() +
               "\nfragment definitions loaded = " +
               ( fragments == null ? 0 : fragments.size() ) +
               "\n\n------ Beginning Activation ------\n" );
@@ -100,7 +114,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         }
         else
         {
-            for (final FragmentDefinition fragmentDefinition : this.fragments) {
+            for (final FragmentDefinition fragmentDefinition : fragments) {
                 activateFragment(fragmentDefinition);
             }
         }
@@ -236,9 +250,9 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
      */
     private void saveLayout(UserView view, IPerson owner) throws Exception
     {
-        UserProfile profile = new UserProfile();
+        IUserProfile profile = new UserProfile();
         profile.setProfileId(view.profileId);
-        dls.setUserLayout(owner, profile, view.layout, true, false);
+        userLayoutStore.setUserLayout(owner, profile, view.layout, true, false);
     }
 
     private IPerson bindToOwner( FragmentDefinition fragment )
@@ -275,26 +289,31 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         String defaultUser = null;
         int userID = -1;
             
-        if ( fragment.defaultLayoutOwnerID != null )
+        if ( fragment.defaultLayoutOwnerID != null ) {
             defaultUser = fragment.defaultLayoutOwnerID;
-        else if ( dls.getProperty( "defaultLayoutOwner" ) != null )
-            defaultUser = dls.getProperty( "defaultLayoutOwner" );
-        else
-            try
-            {
-                defaultUser
-                = PropertiesManager.getProperty( RDBMDistributedLayoutStore.TEMPLATE_USER_NAME );
+        }
+        else {
+            final String defaultLayoutOwner = configurationLoader.getProperty( "defaultLayoutOwner" );
+            if ( defaultLayoutOwner != null ) {
+                defaultUser = defaultLayoutOwner;
             }
-            catch( RuntimeException re )
-            {
-                throw new RuntimeException(
-                        "\n\n WARNING: defaultLayoutOwner is not specified" +
-                        " in dlm.xml and no default user is configured for " +
-                        "the system. Owner '" + fragment.getOwnerId() + "' for " +
-                        "fragment '" + fragment.getName() + "' can not be " +
-                        "created. The fragment will not be available for " +
-                        "inclusion into user layouts.\n", re );
-            }
+            else
+                try
+                {
+                    defaultUser
+                    = PropertiesManager.getProperty( RDBMDistributedLayoutStore.TEMPLATE_USER_NAME );
+                }
+                catch( RuntimeException re )
+                {
+                    throw new RuntimeException(
+                            "\n\n WARNING: defaultLayoutOwner is not specified" +
+                            " in dlm.xml and no default user is configured for " +
+                            "the system. Owner '" + fragment.getOwnerId() + "' for " +
+                            "fragment '" + fragment.getName() + "' can not be " +
+                            "created. The fragment will not be available for " +
+                            "inclusion into user layouts.\n", re );
+                }
+        }
 
             if (LOG.isDebugEnabled())
                 LOG.debug("\n\nOwner '" + fragment.getOwnerId() +
@@ -341,21 +360,19 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         try
         {
             // fix hard coded 1 later for multiple profiles
-            UserProfile profile = dls.getUserProfileByFname(owner, "default");
+            IUserProfile profile = userLayoutStore.getUserProfileByFname(owner, "default");
             
             // see if we have structure & theme stylesheets for this user yet.
             // If not then fall back on system's selected stylesheets.
             if (profile.getStructureStylesheetId() == 0 ||
                     profile.getThemeStylesheetId() == 0)
-                profile = dls.getSystemProfileByFname(profile.getProfileFname());
+                profile = userLayoutStore.getSystemProfileByFname(profile.getProfileFname());
             
             view.profileId = profile.getProfileId();
             view.profileFname = profile.getProfileFname();
             view.layoutId = profile.getLayoutId();
-            view.structureStylesheetId = profile.getStructureStylesheetId();
-            view.themeStylesheetId = profile.getThemeStylesheetId();
             
-            layout = dls.getFragmentLayout( owner, profile ); 
+            layout = userLayoutStore.getFragmentLayout( owner, profile ); 
             Element root = layout.getDocumentElement();
             root.setAttribute( Constants.ATT_ID, 
                     Constants.FRAGMENT_ID_USER_PREFIX + view.getUserId() +
@@ -382,23 +399,6 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         IPerson p = new PersonImpl();
         p.setID( view.getUserId() );
         p.setAttribute( "username", fragment.getOwnerId() );
-
-        try
-        {
-            view.structUserPrefs = dls.getDistributedSSUP(p, view.profileId,
-                    view.structureStylesheetId);
-            view.themeUserPrefs = dls.getDistributedTSUP(p, view.profileId,
-                    view.themeStylesheetId);
-        }
-        catch( Exception e )
-        {
-            throw new RuntimeException(
-                  "Anomaly occurred while loading structure or theme " +
-                    "stylesheet user preferences for fragment '" +
-                  fragment.getName() +
-                  "'. The fragment will not be " +
-                  "available for inclusion into user layouts.", e );
-        }
     }
 
     /**
@@ -414,8 +414,8 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
     {
         Element root = view.layout.getDocumentElement();
         String labelBase = root.getAttribute( Constants.ATT_ID );
-        fragmentizeIds( labelBase, view.structUserPrefs, FOLDERS );
-        fragmentizeIds( labelBase, view.structUserPrefs, CHANNELS );
+//        fragmentizeIds( labelBase, view.structUserPrefs, FOLDERS );
+//        fragmentizeIds( labelBase, view.structUserPrefs, CHANNELS );
     }
 
     /**
@@ -430,44 +430,30 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
     {
         Element root = view.layout.getDocumentElement();
         String labelBase = root.getAttribute( Constants.ATT_ID );
-        fragmentizeIds( labelBase, view.themeUserPrefs, CHANNELS );
+//        fragmentizeIds( labelBase, view.themeUserPrefs, CHANNELS );
     }
 
-    /**
-     * Changes user preference ids of folders or channels from the uPortal
-     * default of sXX for
-     * folders and nXX for channels to a globally safe value containing the
-     * user id and layout id from which the node came.
-     */
-    private void fragmentizeIds( String labelBase,
-                                 DistributedUserPreferences up,
-                                 int which )
-    {
-        Enumeration elements = null;
-        if ( which == CHANNELS )
-            elements = up.getChannels();
-        else
-            elements = up.getFolders();
-        
-        // grab the list of elements that have user changed attributes
-        Vector list = new Vector();
-        while( elements.hasMoreElements() )
-            list.add( elements.nextElement() );
-        elements = list.elements();
-        
-        // now change their id's to the globally unique values
-        while( elements.hasMoreElements() )
-        {
-            String id = (String) elements.nextElement();
-            if ( ! id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // already converted don't change
-            {
-                if ( which == CHANNELS )
-                    up.changeChannelId( id, labelBase + id );
-                else
-                    up.changeFolderId( id, labelBase + id );
-            }
-        }
-    }
+    //EricD 3/14 - commented out in conversion to new format of IStylesheetUserPreferences as node ID conversion requirements are not clear
+    //This may be needed in the future.
+//    /**
+//     * Changes user preference ids of folders or channels from the uPortal
+//     * default of sXX for
+//     * folders and nXX for channels to a globally safe value containing the
+//     * user id and layout id from which the node came.
+//     */
+//    private void fragmentizeIds( String labelBase,
+//                                 IStylesheetUserPreferences up)
+//    {
+//        final Map<String, Map<String, String>> allLayoutAttributes = up.getAllLayoutAttributes();
+//        final Set<String> nodeIds = new LinkedHashSet<String>(allLayoutAttributes.keySet());
+//        
+//        for (final String nodeId : nodeIds) {
+//            if (!nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
+//                //If the node id isn't dlm relative update it to be
+//                up.changeChannelId(nodeId, labelBase + nodeId);
+//            }
+//        }
+//    }
 
     /**
      * Removes all top level folders that are hidden, header, or footer and
@@ -483,7 +469,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         
         // Choose what types of content to apply from the fragment
         Pattern contentPattern = STANDARD_PATTERN;  // default
-        boolean allowExpandedContent = Boolean.parseBoolean(dls.getProperty(PROPERTY_ALLOW_EXPANDED_CONTENT));
+        boolean allowExpandedContent = Boolean.parseBoolean(this.configurationLoader.getProperty(PROPERTY_ALLOW_EXPANDED_CONTENT));
         if (allowExpandedContent) {
             contentPattern = EXPANDED_PATTERN;
         }

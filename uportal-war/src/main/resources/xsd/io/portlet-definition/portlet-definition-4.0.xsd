@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition"
+    targetNamespace="https://source.jasig.org/schemas/uportal/io/portlet-definition"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:io="https://source.jasig.org/schemas/uportal/io"
+    elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+
+    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-types.xsd"/>
+
+    <xs:element name="portlet-definition" type="externalPortletDefinition">
+        <xs:unique name="unique-category">
+            <xs:selector xpath="category"/>
+            <xs:field xpath="."/>
+        </xs:unique>
+        <xs:unique name="unique-group">
+            <xs:selector xpath="group"/>
+            <xs:field xpath="."/>
+        </xs:unique>
+        <xs:unique name="unique-user">
+            <xs:selector xpath="user"/>
+            <xs:field xpath="."/>
+        </xs:unique>
+        <xs:unique name="unique-parameter">
+            <xs:selector xpath="parameter"/>
+            <xs:field xpath="name"/>
+        </xs:unique>
+        <xs:unique name="unique-preference">
+            <xs:selector xpath="portlet-preference"/>
+            <xs:field xpath="name"/>
+        </xs:unique>
+    </xs:element>
+
+    <xs:complexType name="externalPortletDefinition">
+        <xs:complexContent>
+            <xs:extension base="io:basePortalDataType">
+                <xs:sequence>
+                    <xs:element name="title" type="xs:string"/>
+                    <xs:element name="name" type="xs:string"/>
+                    <xs:element name="fname" type="io:fname-type"/>
+                    <xs:element name="desc" type="xs:string" minOccurs="0"/>
+                    <xs:element name="type" type="xs:string"/>
+                    <xs:element name="timeout" type="xs:positiveInteger"/>
+
+                    <xs:element name="portlet-descriptor" type="portlet-descriptor"/>
+
+                    <xs:element name="category" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="group" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="user" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="parameter" type="externalPortletParameter" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="portlet-preference" type="externalPortletPreference" minOccurs="0"
+                        maxOccurs="unbounded"/>
+                </xs:sequence>
+
+                <xs:attribute name="version" type="io:version40Type" use="required"/>
+
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="portlet-descriptor">
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="isFramework" type="xs:boolean" fixed="true" />
+                <xs:element name="webAppName" type="xs:string"/>
+            </xs:choice>
+            <xs:element name="portletName" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="externalPortletParameter">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="value" type="xs:string" minOccurs="0"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="externalPortletPreference">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="readOnly" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

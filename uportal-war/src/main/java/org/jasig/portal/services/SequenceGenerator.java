@@ -85,7 +85,7 @@ public class SequenceGenerator {
      * @param name String
      * @return int
      */
-    public int getNextInt(String name) throws Exception {
+    public int getNextInt(String name) {
         final ICounterStore counterStore = this.getCounterStore();
         return counterStore.getIncrementIntegerId(name);
     }
@@ -94,7 +94,7 @@ public class SequenceGenerator {
      * @param name java.lang.String
      * @param newValue int
      */
-    public void setCounter(String name, int newValue) throws Exception {
+    public void setCounter(String name, int newValue) {
         final ICounterStore counterStore = this.getCounterStore();
         counterStore.setCounter(name, newValue);
     }

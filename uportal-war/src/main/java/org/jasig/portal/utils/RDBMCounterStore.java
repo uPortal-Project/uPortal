@@ -49,7 +49,7 @@ public class RDBMCounterStore implements ICounterStore {
      * 
      * @see org.jasig.portal.utils.ICounterStore#createCounter(java.lang.String)
      */
-    public synchronized void createCounter (String counterName) throws Exception {
+    public synchronized void createCounter (String counterName) {
         Connection con = RDBMServices.getConnection();
         PreparedStatement createCounterPstmt = null;
         
@@ -104,7 +104,7 @@ public class RDBMCounterStore implements ICounterStore {
      * 
      * @see org.jasig.portal.utils.ICounterStore#setCounter(java.lang.String, int)
      */
-    public synchronized void setCounter (String counterName, int value) throws Exception {
+    public synchronized void setCounter (String counterName, int value) {
         Connection con = RDBMServices.getConnection();
         
         PreparedStatement setCounterPstmt = null;
@@ -160,7 +160,7 @@ public class RDBMCounterStore implements ICounterStore {
      * 
      * @see org.jasig.portal.utils.ICounterStore#getIncrementIntegerId(java.lang.String)
      */
-    public synchronized int getIncrementIntegerId (String counterName) throws Exception {
+    public synchronized int getIncrementIntegerId (String counterName) {
         Connection con = RDBMServices.getConnection();
         
         PreparedStatement getCounterPstmt = null;
@@ -223,7 +223,13 @@ public class RDBMCounterStore implements ICounterStore {
                 }
                 else {
                     // Assume concurrent update (from other server). Try again after some random amount of milliseconds. 
-                    Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000)); // Retry in up to 3 seconds
+                    try {
+                     // Retry in up to 3 seconds
+                        Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000));
+                    }
+                    catch (InterruptedException e) {
+                        //Ignore
+                    } 
                 }
             }          // end try 
         } 

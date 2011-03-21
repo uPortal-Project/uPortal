@@ -1,0 +1,53 @@
+
+<portlet-definition
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition ../../../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd"
+    script="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"
+    version="4.0"
+>
+
+  <title>Word of the Day</title>
+  <name>Word of the Day</name>
+  <fname>word-of-the-day</fname>
+  <desc>Word of the Day channel</desc>
+  <type>RSS</type>
+  <timeout>10000</timeout>
+  <portlet-descriptor>
+    <webAppName>/NewsReaderPortlet</webAppName>
+    <portletName>single-feed-news</portletName>
+  </portlet-descriptor>
+  
+  
+  
+  
+    <category>Entertainment</category>
+  
+  
+    <group>Everyone</group>
+  
+  
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/internet-news-reader.png</value>
+    </parameter>
+  
+  
+    <portlet-preference> 
+      <name>name</name>
+      <value>Word of the Day</value>
+    </portlet-preference>
+    <portlet-preference> 
+      <name>url</name>
+      <value>http://www.dictionary.com/wordoftheday/wotd.rss</value>
+    </portlet-preference>
+    <portlet-preference> 
+      <name>summaryView</name>
+      <value>full</value>
+    </portlet-preference>
+    <portlet-preference> 
+      <name>maxStories</name>
+      <value>1</value>
+    </portlet-preference>
+  
+</portlet-definition>

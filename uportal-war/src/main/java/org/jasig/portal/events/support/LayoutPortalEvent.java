@@ -19,7 +19,7 @@
 
 package org.jasig.portal.events.support;
 
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
@@ -34,10 +34,10 @@ import org.jasig.portal.security.IPerson;
  *
  */
 public abstract class LayoutPortalEvent extends PortalEvent {
-	private final UserProfile profile;
+	private final IUserProfile profile;
 	private final IUserLayoutFolderDescription folder;
 	
-	public LayoutPortalEvent(final Object source, final IPerson person, final UserProfile profile, 
+	public LayoutPortalEvent(final Object source, final IPerson person, final IUserProfile profile, 
 	        final IUserLayoutFolderDescription folder, final EventType eventType) {        
 
 		super(source, person, eventType);
@@ -46,7 +46,7 @@ public abstract class LayoutPortalEvent extends PortalEvent {
 		this.folder = folder;
 	}
 	
-	public final UserProfile getProfile() {
+	public final IUserProfile getProfile() {
 		return this.profile;
 	}
 	

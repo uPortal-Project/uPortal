@@ -19,7 +19,6 @@
 
 package org.jasig.portal.layout.dlm;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,15 +26,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,8 +43,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
-import net.sf.ehcache.Ehcache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,17 +56,15 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserIdentityStore;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.RDBMUserIdentityStore;
-import org.jasig.portal.StructureStylesheetDescription;
-import org.jasig.portal.StructureStylesheetUserPreferences;
-import org.jasig.portal.ThemeStylesheetDescription;
-import org.jasig.portal.ThemeStylesheetUserPreferences;
-import org.jasig.portal.UserPreferences;
-import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
+import org.jasig.portal.layout.StylesheetUserPreferencesImpl;
+import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -84,11 +79,9 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.support.JdbcUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -119,33 +112,14 @@ public class RDBMDistributedLayoutStore
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
     
-    // Cache for theme stylesheet descriptors
-    private Ehcache tsdCache;
-    // Cache for structure stylesheet descriptors
-    private Ehcache ssdCache;
     private ConfigurationLoader configurationLoader;
+    private FragmentActivator fragmentActivator;
 
     private final Map<String, FragmentNodeInfo> fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
-
-    // fragmentActivator
-    private FragmentActivator fragmentActivator;
-    private final SingletonDoubleCheckedCreator<FragmentActivator> fragmentActivatorCreator = new SingletonDoubleCheckedCreator<FragmentActivator>() {
-        protected FragmentActivator createSingleton(Object... args) {
-            // be sure we only do this once...
-
-            RDBMDistributedLayoutStore parent = (RDBMDistributedLayoutStore) args[0];
-            FragmentActivator rslt = new FragmentActivator(parent, configurationLoader.getFragments());
-            rslt.activateFragments();
-            return rslt;
-        }
-    };
     
     static final String TEMPLATE_USER_NAME
         = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
     
-    private static final int THEME = 0;
-    private static final int STRUCT = 1;
-
     final static String DELETE_FROM_UP_SS_USER_ATTS_SQL = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = ? AND PROFILE_ID = ? AND SS_ID = ? AND SS_TYPE = ?";
     final static String DELETE_FROM_UP_USER_PARM = "DELETE FROM UP_SS_USER_PARM WHERE USER_ID=?  AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=?";
     
@@ -155,8 +129,19 @@ public class RDBMDistributedLayoutStore
     private final DOMWriter writer = new DOMWriter();
     private Task lookupNoderefTask;
     private Task lookupPathrefTask;
-    private final IUserIdentityStore identityStore = new RDBMUserIdentityStore();
+    private IUserIdentityStore identityStore;
+    private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
     
+    @Autowired
+    public void setIdentityStore(IUserIdentityStore identityStore) {
+        this.identityStore = identityStore;
+    }
+
+    @Autowired
+    public void setStylesheetUserPreferencesDao(IStylesheetUserPreferencesDao stylesheetUserPreferencesDao) {
+        this.stylesheetUserPreferencesDao = stylesheetUserPreferencesDao;
+    }
+
     public void setLookupNoderefTask(Task k) {
         this.lookupNoderefTask = k;
     }
@@ -172,7 +157,7 @@ public class RDBMDistributedLayoutStore
      * @return Map
      */
     public Map<String, Document> getFragmentLayoutCopies()
-    throws Exception
+    
     {
 
         FragmentActivator activator = this.getFragmentActivator();
@@ -196,174 +181,15 @@ public class RDBMDistributedLayoutStore
     }
     
     @Autowired
-    public void setThemeStylesheetDescriptorCache(
-            @Qualifier("org.jasig.portal.layout.ThemeStylesheetDescriptor") Ehcache tsdCache) {
-        this.tsdCache = tsdCache;
-    }
-
-    @Autowired
-    public void setStructureStylesheetDescriptorCache(
-            @Qualifier("org.jasig.portal.layout.StructureStylesheetDescriptor") Ehcache ssdCache) {
-        this.ssdCache = ssdCache;
+    public void setFragmentActivator(FragmentActivator fragmentActivator) {
+        this.fragmentActivator = fragmentActivator;
     }
 
     private FragmentActivator getFragmentActivator() {
-        return this.fragmentActivatorCreator.get(this);
+        return this.fragmentActivator;
     }
 
-    /**
-     * Registers a NEW structure stylesheet with the database. This overloads
-     * the version in the parent to add caching of stylesheets.
-     * @param ssd Stylesheet description object
-     * @return Integer
-     */
     @Override
-    public Integer addStructureStylesheetDescription(StructureStylesheetDescription ssd)
-        throws Exception
-    {
-        Integer id = super.addStructureStylesheetDescription(ssd);
-        ssdCache.put(new net.sf.ehcache.Element(id, ssd));
-        return id;                // Put into TSD cache
-    }
-
-    /**
-     * Registers a NEW theme stylesheet with the database. This overloads
-     * the version in the parent to add caching of stylesheets.
-     * @param tsd Stylesheet description object
-     */
-    @Override
-    public Integer addThemeStylesheetDescription(ThemeStylesheetDescription tsd)
-        throws Exception
-    {
-        Integer id = super.addThemeStylesheetDescription(tsd);
-        tsdCache.put(new net.sf.ehcache.Element(id, tsd));
-        return id;
-    }
-
-    /**
-     * Obtain structure stylesheet description object for a given structure
-     * stylesheet id. Overloads parent version to add caching of stylesheets.
-     *
-     * @param stylesheetId id of the structure stylesheet
-     * @return structure stylesheet description
-     */
-    @Override
-    public StructureStylesheetDescription getStructureStylesheetDescription(
-            int stylesheetId) throws Exception
-    {
-        // See if it's in the cache
-        StructureStylesheetDescription ssd = null;
-        final net.sf.ehcache.Element element = ssdCache.get(stylesheetId);
-        ssd = (StructureStylesheetDescription) (element != null ? element.getObjectValue() : null);
-
-        if (ssd != null)
-            return ssd;
-        ssd = super.getStructureStylesheetDescription(stylesheetId);
-
-        // Put this value in the cache
-        ssdCache.put(new net.sf.ehcache.Element(stylesheetId, ssd));
-        return ssd;
-    }
-
-    /**
-     * Obtain theme stylesheet description object for a given theme stylesheet
-     * id. Overloads a parent version to add caching.
-     * @param stylesheetId id of the theme stylesheet
-     * @return theme stylesheet description
-     */
-    @Override
-    public ThemeStylesheetDescription getThemeStylesheetDescription(int stylesheetId)
-        throws Exception
-    {
-        ThemeStylesheetDescription tsd = null;
-
-        // Get it from the cache if it's there
-        final net.sf.ehcache.Element element = tsdCache.get(stylesheetId);
-        tsd = (ThemeStylesheetDescription) (element != null ? element.getObjectValue() : null);
-        if (tsd != null)
-        {
-            return tsd;
-        }
-        tsd = super.getThemeStylesheetDescription(stylesheetId);
-
-        // Put it in the cache.
-        tsdCache.put(new net.sf.ehcache.Element(stylesheetId, tsd));
-        return tsd;
-    }
-
-    /**
-     * Removes a structure stylesheet description object for a given structure
-     * stylesheet id. Overloads a parent version for cache handling.
-     * @param stylesheetId id of the structure stylesheet
-     */
-    @Override
-    public void removeStructureStylesheetDescription(int stylesheetId)
-            throws Exception
-    {
-        super.removeStructureStylesheetDescription(stylesheetId);
-
-        // Remove it from the cache
-        ssdCache.remove(new Integer(stylesheetId));
-    }
-
-    /**
-     * Removes a theme stylesheet description object for a given theme
-     * stylesheet id. Overloads a parent version for cache handling.
-     * @param stylesheetId id of the theme stylesheet
-     */
-    @Override
-    public void removeThemeStylesheetDescription(int stylesheetId)
-            throws Exception
-    {
-        super.removeThemeStylesheetDescription(stylesheetId);
-        // Remove it from the cache
-        tsdCache.remove(new Integer(stylesheetId));
-    }
-
-    /**
-     * Updates an existing structure stylesheet description with a new one. Old
-     * stylesheet description is found based on the Id provided in the parameter
-     * structure. Overloads version in parent to add cache support.
-     *
-     * @param ssd
-     *            new stylesheet description
-     */
-    @Override
-    public void updateStructureStylesheetDescription(StructureStylesheetDescription ssd)
-        throws Exception
-    {
-            super.updateStructureStylesheetDescription(ssd);
-
-            // Update the cached value
-            ssdCache.put(new net.sf.ehcache.Element(ssd.getId(), ssd));
-    }
-
-    /**
-     * Updates an existing structure stylesheet description with a new one. Old
-     * stylesheet description is found based on the Id provided in the parameter
-     * structure. Overloads version in parent to add cache support.
-     *
-     * @param tsd new stylesheet description
-     */
-    @Override
-    public void updateThemeStylesheetDescription(ThemeStylesheetDescription tsd)
-        throws Exception
-    {
-        super.updateThemeStylesheetDescription(tsd);
-
-        // Set the new one in the cache
-        tsdCache.put(new net.sf.ehcache.Element(tsd.getId(), tsd));
-    }
-
-    /**
-     * Cleans out the layout fragments. This is done so that changes made to
-     * the channels within a layout are visible to the users who have that layout
-     * incorporated into their own.
-     *
-     * The interval at which this thread runs is set in the dlm.xml file as
-     * 'org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh',
-     * specified in minutes.
-     */
     public void cleanFragments() {
         
         FragmentActivator activator = this.getFragmentActivator();
@@ -393,7 +219,7 @@ public class RDBMDistributedLayoutStore
             // respective layouts so users fragments will be cleared
             for (final Map.Entry<IPerson, FragmentDefinition> ownerEntry : owners.entrySet()) {
                 final IPerson person = ownerEntry.getKey();
-                final UserProfile profile;
+                final IUserProfile profile;
                 try {
                     profile = getUserProfileByFname(person, "default");
                 }
@@ -420,15 +246,80 @@ public class RDBMDistributedLayoutStore
         }
         fragmentInfoCache.clear();
     }
-
-    /**
-       Returns a double value indicating the precedence value declared for a
-       fragment in the dlm.xml. Precedence is actually based on two elements in
-       a fragment definition: the precedence and the index of the fragment
-       definition in the dlm.xml file. If two fragments are given equal
-       precedence then the index if relied upon to resolve conflicts with UI
-       elements.
-     */
+    
+    
+    protected IStylesheetUserPreferences loadDistributedStylesheetUserPreferences(IPerson person, IUserProfile profile, long stylesheetDescriptorId, Set<String> fragmentNames) {
+        if (this.isFragmentOwner(person)) {
+            return null;
+        }
+        
+        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, person, profile);
+        
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = new StylesheetUserPreferencesImpl(stylesheetDescriptorId);
+    
+        final FragmentActivator fragmentActivator = this.getFragmentActivator();
+        
+        for (final String fragmentOwnerId : fragmentNames) {
+            final FragmentDefinition fragmentDefinition = this.configurationLoader.getFragmentByName(fragmentOwnerId);
+        
+            //UserView may be missing if the fragment isn't defined correctly
+            final UserView userView = fragmentActivator.getUserView(fragmentDefinition);
+            if (userView == null) {
+                log.warn("No UserView is present for fragment " + fragmentDefinition.getName() + " it will be skipped when loading distributed stylesheet user preferences");
+                continue;
+            }
+            
+            //IStylesheetUserPreferences only exist if something was actually set
+            final IStylesheetUserPreferences fragmentStylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, userView.getUserId(), userView.profileId);
+            if (fragmentStylesheetUserPreferences == null) {
+                continue;
+            }
+            
+            //Get the info needed to DLMify node IDs
+            final Element root = userView.layout.getDocumentElement();
+            final String labelBase = root.getAttribute( Constants.ATT_ID );
+            
+            boolean modified = false;
+        
+            //Copy all of the fragment preferences into the distributed preferences
+            final Map<String, Map<String, String>> allLayoutAttributes = fragmentStylesheetUserPreferences.getAllLayoutAttributes();
+            for (final Map.Entry<String, Map<String, String>> layoutNodeAttributesEntry : allLayoutAttributes.entrySet()) {
+                String nodeId = layoutNodeAttributesEntry.getKey();
+                
+                if (!nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
+                    nodeId = labelBase + nodeId;
+                }
+                
+                final Map<String, String> layoutAttributes = layoutNodeAttributesEntry.getValue();
+                for (final Map.Entry<String, String> layoutAttributesEntry : layoutAttributes.entrySet()) {
+                    final String name = layoutAttributesEntry.getKey();
+                    final String value = layoutAttributesEntry.getValue();
+                    
+                    //Fragmentize the nodeId here
+                    distributedStylesheetUserPreferences.setLayoutAttribute(nodeId, name, value);
+                    
+                    //Clean out user preferences data that matches data from the fragment.
+                    if (stylesheetUserPreferences != null) {
+                        final String userValue = stylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+                        if (userValue != null && userValue.equals(value)) {
+                            stylesheetUserPreferences.removeLayoutAttribute(nodeId, name);
+                            EditManager.removePreferenceDirective(person, nodeId, name);
+                            modified = true;
+                        }
+                    }
+                }
+            }
+            
+            if (modified) {
+                this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+            }
+        }
+        
+        return distributedStylesheetUserPreferences;
+    }
+    
+    @Override
     public double getFragmentPrecedence( int index )
     {
         final List<FragmentDefinition> definitions = configurationLoader.getFragments();
@@ -458,12 +349,12 @@ public class RDBMDistributedLayoutStore
        allowed to changed.
      */
     @Override
-    public Document getUserLayout (IPerson person,
-                                   UserProfile profile)
-        throws Exception
+    public DistributedUserLayout getUserLayout (IPerson person,
+                                   IUserProfile profile)
+        
     {
 
-        Document layout = _getUserLayout( person, profile );
+        DistributedUserLayout layout = _getUserLayout( person, profile );
 
         return layout;
     }
@@ -482,19 +373,17 @@ public class RDBMDistributedLayoutStore
     }
     
     @SuppressWarnings("unchecked")
-    public org.dom4j.Element exportLayout(IPerson person, UserProfile profile) {
+    public org.dom4j.Element exportLayout(IPerson person, IUserProfile profile) {
         
         if (!layoutExistsForUser(person)) {
             return null;
         }
-
+        
         org.dom4j.Document layoutDoc = null;
-        UserPreferences up = null;
         try {
             Document layoutDom = _safeGetUserLayout(person, profile);
             person.setAttribute(Constants.PLF, layoutDom);
             layoutDoc = reader.read(layoutDom);
-            up = this.getUserPreferences(person, profile);
         } catch (Throwable t) {
             String msg = "Unable to obtain layout & profile for user '" 
                             + person.getUserName() + "', profileId " 
@@ -522,64 +411,19 @@ public class RDBMDistributedLayoutStore
          */
         
         // (1) Add structure & theme attributes...
-        StructureStylesheetUserPreferences ssup = up.getStructureStylesheetUserPreferences();
-        // The structure transform supports both 'folder' and 'channel' attributes...
-        List<String> structFolderAttrNames = Collections.list(ssup.getFolderAttributeNames());
-        for (Iterator<org.dom4j.Element> fldrs = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//folder").iterator(); fldrs.hasNext();) {
-            org.dom4j.Element fld = fldrs.next();
-            for (String attr : structFolderAttrNames) {
-                String val = ssup.getDefinedFolderAttributeValue(fld.valueOf("@ID"), attr);
-                if (val != null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Adding structure folder attribute:  name=" + attr + ", value=" + val);
-                    }
-                    org.dom4j.Element sa = fac.createElement("structure-attribute");
-                    org.dom4j.Element n = sa.addElement("name");
-                    n.setText(attr);
-                    org.dom4j.Element v = sa.addElement("value");
-                    v.setText(val);
-                    fld.elements().add(0, sa);
-                }
-            }
-        }
-        List<String> structChannelAttrNames = Collections.list(ssup.getChannelAttributeNames());
-        for (Iterator<org.dom4j.Element> chnls = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel").iterator(); chnls.hasNext();) {
-            org.dom4j.Element chnl = chnls.next();
-            for (String attr : structChannelAttrNames) {
-                String val = ssup.getDefinedChannelAttributeValue(chnl.valueOf("@ID"), attr);
-                if (val != null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Adding structure channel attribute:  name=" + attr + ", value=" + val);
-                    }
-                    org.dom4j.Element sa = fac.createElement("structure-attribute");
-                    org.dom4j.Element n = sa.addElement("name");
-                    n.setText(attr);
-                    org.dom4j.Element v = sa.addElement("value");
-                    v.setText(val);
-                    chnl.elements().add(0, sa);
-                }
-            }
-        }
-        // The theme transform supports only 'channel' attributes...
-        ThemeStylesheetUserPreferences tsup = up.getThemeStylesheetUserPreferences();
-        List<String> themeChannelAttrNames = Collections.list(tsup.getChannelAttributeNames());
-        for (Iterator<org.dom4j.Element> chnls = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel").iterator(); chnls.hasNext();) {
-            org.dom4j.Element chnl = chnls.next();
-            for (String attr : themeChannelAttrNames) {
-                String val = tsup.getDefinedChannelAttributeValue(chnl.valueOf("@ID"), attr);
-                if (val != null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Adding theme channel attribute:  name=" + attr + ", value=" + val);
-                    }
-                    org.dom4j.Element ta = fac.createElement("theme-attribute");
-                    org.dom4j.Element n = ta.addElement("name");
-                    n.setText(attr);
-                    org.dom4j.Element v = ta.addElement("value");
-                    v.setText(val);
-                    chnl.elements().add(0, ta);
-                }
-            }
-        }
+        final int structureStylesheetId = profile.getStructureStylesheetId();
+        addStylesheetUserPreferencesAttributes(person,
+                profile,
+                layoutDoc,
+                structureStylesheetId,
+                "structure");
+        
+        final int themeStylesheetId = profile.getThemeStylesheetId();
+        addStylesheetUserPreferencesAttributes(person,
+                profile,
+                layoutDoc,
+                themeStylesheetId,
+                "theme");
                 
         // (2) Remove locale info...
         Iterator<org.dom4j.Attribute> locale = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@locale").iterator();
@@ -700,13 +544,49 @@ public class RDBMDistributedLayoutStore
         return layoutDoc.getRootElement();
 
     }
+
+    protected void addStylesheetUserPreferencesAttributes(IPerson person, IUserProfile profile,
+            org.dom4j.Document layoutDoc, int stylesheetId, String attributeType) {
+        final IStylesheetDescriptor structureStylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
         
+        final IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(structureStylesheetDescriptor, person, profile);
+        
+        final Map<String, Map<String, String>> allLayoutAttributes = ssup.getAllLayoutAttributes();
+        for (final Entry<String, Map<String, String>> nodeEntry : allLayoutAttributes.entrySet()) {
+            final String nodeId = nodeEntry.getKey();
+            final Map<String, String> attributes = nodeEntry.getValue();
+            
+            final org.dom4j.Element element = layoutDoc.elementByID(nodeId);
+            if (element == null) {
+                this.log.warn("No layout node with id '" + nodeId + "' found attributes will be ignored: " + attributes);
+                continue;
+            }
+            
+            for (final Entry<String, String> attributeEntry : attributes.entrySet()) {
+                final String name = attributeEntry.getKey();
+                final String value = attributeEntry.getValue();
+                
+                if (log.isDebugEnabled()) {
+                    log.debug("Adding structure folder attribute:  name=" + name + ", value=" + value);
+                }
+                org.dom4j.Element structAttrElement = fac.createElement(attributeType + "-attribute");
+                org.dom4j.Element nameAttribute = structAttrElement.addElement("name");
+                nameAttribute.setText(name);
+                org.dom4j.Element valueAttribute = structAttrElement.addElement("value");
+                valueAttribute.setText(value);
+                element.elements().add(0, structAttrElement);
+            }
+        }
+    }
+        
+    @Override
     @SuppressWarnings("unchecked")
+    @Transactional
     public void importLayout(org.dom4j.Element layout) {
         
         String ownerUsername = layout.valueOf("@username");
         IPerson person = null;
-        UserProfile profile = null;
+        IUserProfile profile = null;
         try {
             person = new PersonImpl();
             person.setUserName(ownerUsername);
@@ -785,74 +665,22 @@ public class RDBMDistributedLayoutStore
         Document layoutDom = null;
         try {
 
-//            UserPreferences up = this.getUserPreferences(person, profile);
-            UserPreferences up = new UserPreferences(profile);
-            up.setStructureStylesheetUserPreferences(this.getDistributedSSUP(person, 
-                        profile.getProfileId(), profile.getStructureStylesheetId()));
-            up.setThemeStylesheetUserPreferences(this.getDistributedTSUP(person, 
-                        profile.getProfileId(), profile.getThemeStylesheetId()));
-            
             // Structure Attributes.
             boolean saSet = false;
-            StructureStylesheetUserPreferences ssup = up.getStructureStylesheetUserPreferences();
-            // ssup must be manually cleaned out.
-            for (Enumeration<String> names = (Enumeration<String>) ssup.getFolderAttributeNames(); names.hasMoreElements();) {
-                String n = names.nextElement();
-                for (Enumeration<String> fIds = (Enumeration<String>) ssup.getFolders(); fIds.hasMoreElements();) {
-                    String f = fIds.nextElement();
-                    if (ssup.getDefinedFolderAttributeValue(f, n) != null) {
-                        ssup.removeFolder(f);
-                    }
-                }
-            }
-            for (Enumeration<String> names = (Enumeration<String>) ssup.getChannelAttributeNames(); names.hasMoreElements();) {
-                String n = names.nextElement();
-                for (Enumeration<String> chds = (Enumeration<String>) ssup.getChannels(); chds.hasMoreElements();) {
-                    String c = chds.nextElement();
-                    if (ssup.getDefinedChannelAttributeValue(c, n) != null) {
-                        ssup.removeChannel(c);
-                    }
-                }
-            }
-            for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//structure-attribute").iterator(); it.hasNext();) {
-                org.dom4j.Element sa = (org.dom4j.Element) it.next();
-                String idAttr = sa.getParent().valueOf("@ID");
-                if (sa.getParent().getName().equals("folder")) {
-                    ssup.setFolderAttributeValue(idAttr, sa.valueOf("name"), sa.valueOf("value"));
-                    saSet = true;
-                } else if (sa.getParent().getName().equals("channel")) {
-                    ssup.setChannelAttributeValue(idAttr, sa.valueOf("name"), sa.valueOf("value"));
-                    saSet = true;
-                } else {
-                    String msg = "Unrecognized parent element for user preferences attribute:  " + sa.getParent().getName();
-                    throw new RuntimeException(msg);
-                }
-                // Remove these elements or else DLM will choke...
-                sa.getParent().remove(sa);
-            }
             
-            // Theme Attributes.
-            boolean taSet = false;
-            ThemeStylesheetUserPreferences tsup = up.getThemeStylesheetUserPreferences();
-            // tsup must be manually cleaned out.
-            for (Enumeration<String> names = (Enumeration<String>) tsup.getChannelAttributeNames(); names.hasMoreElements();) {
-                String n = names.nextElement();
-                for (Enumeration<String> chds = (Enumeration<String>) tsup.getChannels(); chds.hasMoreElements();) {
-                    String c = chds.nextElement();
-                    if (tsup.getDefinedChannelAttributeValue(c, n) != null) {
-                        tsup.removeChannel(c);
-                    }
-                }
-            }
-            for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//theme-attribute").iterator(); it.hasNext();) {
-                org.dom4j.Element ta = (org.dom4j.Element) it.next();
-                String idAttr = ta.getParent().valueOf("@ID");
-                // Theme attributes are channels only...
-                tsup.setChannelAttributeValue(idAttr, ta.valueOf("name"), ta.valueOf("value"));
-                taSet = true;
-                // Remove these elements or else DLM will choke...
-                ta.getParent().remove(ta);
-            }
+            final int structureStylesheetId = profile.getStructureStylesheetId();
+            loadStylesheetUserPreferencesAttributes(person,
+                    profile,
+                    layout,
+                    structureStylesheetId,
+                    "structure");
+            
+            final int themeStylesheetId = profile.getThemeStylesheetId();
+            loadStylesheetUserPreferencesAttributes(person,
+                    profile,
+                    layout,
+                    themeStylesheetId,
+                    "theme");
 
             // From this point forward we need the user's PLF set as DLM expects it...
             for (Iterator<org.dom4j.Text> it = (Iterator<org.dom4j.Text>) layout.selectNodes("descendant::text()").iterator(); it.hasNext();) {
@@ -868,13 +696,6 @@ public class RDBMDistributedLayoutStore
             doc.normalize();
             layoutDom = writer.write(doc);
             person.setAttribute(Constants.PLF, layoutDom);
-
-            if (saSet) {
-              this.setStructureStylesheetUserPreferences(person, profile.getProfileId(), ssup);
-            }
-            if (taSet) {
-                this.setThemeStylesheetUserPreferences(person, profile.getProfileId(), tsup);
-            }
             
         } catch (Throwable t) {
             log.error("Unable to set UserPreferences for user:  " + person.getUserName());
@@ -883,13 +704,49 @@ public class RDBMDistributedLayoutStore
         
         // Finally store the layout...
         try {
-        	System.out.println("STORING LAYOUT " + layoutDom);
             this.setUserLayout(person, profile, layoutDom, true, false);
         } catch (Throwable t) {
             String msg = "Unable to persist layout for user:  " + ownerUsername;
             throw new RuntimeException(msg, t);
         }
 
+    }
+
+    protected void loadStylesheetUserPreferencesAttributes(
+            IPerson person, IUserProfile profile, org.dom4j.Element layout,
+            final int structureStylesheetId, final String nodeType) {
+        
+        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(structureStylesheetId);
+        final List<org.dom4j.Element> structureAttributes = layout.selectNodes("//" + nodeType + "-attribute");
+        
+        IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, person, profile);
+        if (structureAttributes.isEmpty()) {
+            if (ssup != null) {
+                this.stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(ssup);
+            }
+        }
+        else {
+            if (ssup == null) {
+                ssup = this.stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, person, profile);
+            }
+            
+            ssup.clearAllLayoutAttributes();
+            
+            for (final org.dom4j.Element structureAttribute : structureAttributes) {
+                final org.dom4j.Element layoutElement = structureAttribute.getParent();
+                final String nodeId = layoutElement.valueOf("@ID");
+                
+                final String name = structureAttribute.valueOf("name");
+                final String value = structureAttribute.valueOf("value");
+                
+                ssup.setLayoutAttribute(nodeId, name, value);
+                
+                // Remove the layout attribute element or DLM fails
+                layoutElement.remove(structureAttribute);
+            }
+            
+            this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(ssup);
+        }
     }
     
     @SuppressWarnings("unchecked")
@@ -1061,12 +918,12 @@ public class RDBMDistributedLayoutStore
      * @param person
      * @param profile
      * @return
-     * @throws Exception
+     * @
      */
-    private Document _safeGetUserLayout(IPerson person, UserProfile profile)
-            throws Exception
+    private Document _safeGetUserLayout(IPerson person, IUserProfile profile)
+            
     {
-        Document layoutDoc = super.getUserLayout(person, profile);
+        Document layoutDoc = super.getPersonalUserLayout(person, profile);
         Element layout = layoutDoc.getDocumentElement();
         layout.setAttribute(Constants.NS_DECL, Constants.NS_URI);
         return layoutDoc;
@@ -1083,9 +940,9 @@ public class RDBMDistributedLayoutStore
      * that they own or incorporated elements that they have been
      * allowed to changed.
      **/
-    private Document _getUserLayout (IPerson person,
-                                     UserProfile profile)
-        throws Exception
+    private DistributedUserLayout _getUserLayout (IPerson person,
+                                     IUserProfile profile)
+        
     {
         String userName = (String) person.getAttribute( "username" );
         FragmentDefinition ownedFragment = getOwnedFragment( person );
@@ -1125,7 +982,7 @@ public class RDBMDistributedLayoutStore
             }
             // cache in person as PLF for storage later like normal users
             person.setAttribute( Constants.PLF, PLF );
-            return ILF;
+            return new DistributedUserLayout(ILF);
         }
 
         return getCompositeLayout( person, profile );
@@ -1135,24 +992,21 @@ public class RDBMDistributedLayoutStore
      * Convenience method for fragment activator to obtain raw layouts for
      * fragments during initialization.
      */
-    Document getFragmentLayout (IPerson person,
-                                UserProfile profile)
-        throws Exception
+    public Document getFragmentLayout (IPerson person,
+                                IUserProfile profile)
+        
     {
         return _safeGetUserLayout( person, profile );
     }
     
-//    void waitForActivation() {
-//        this.activator.activateFragments();
-//    }
-
     /**
      * Generates a new struct id for directive elements that dlm places in
      * the PLF version of the layout tree. These elements are atifacts of the
      * dlm storage model and used during merge but do not appear in the user's
      * composite view.
      */
-    public String getNextStructDirectiveId (IPerson person) throws Exception {
+    @Override
+    public String getNextStructDirectiveId (IPerson person)  {
         return  super.getNextStructId(person, Constants.DIRECTIVE_PREFIX );
     }
 
@@ -1161,7 +1015,7 @@ public class RDBMDistributedLayoutStore
        version. This is called when a fragment owner updates their layout.
      */
     private void updateCachedLayout( Document layout,
-                                     UserProfile profile,
+                                     IUserProfile profile,
                                      FragmentDefinition fragment )
     {
         // need to make a copy that we can fragmentize
@@ -1178,9 +1032,7 @@ public class RDBMDistributedLayoutStore
                            Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1" );
         UserView view = new UserView( userView.getUserId(),
                                       profile,
-                                      layout,
-                                      userView.structUserPrefs,
-                                      userView.themeUserPrefs );
+                                      layout);
         try
         {
             activator.fragmentizeLayout( view, fragment );
@@ -1235,16 +1087,13 @@ public class RDBMDistributedLayoutStore
         return false;
     }
 
-    /**
-     * Determines if a user is a fragment owner.
-     * @param person
-     * @return
-     */
+    @Override
     public boolean isFragmentOwner(IPerson person)
     {
         return getOwnedFragment(person) != null;
     }
     
+    @Override
     public boolean isFragmentOwner(String username) {
 
         boolean rslt = false;  // default
@@ -1296,11 +1145,12 @@ public class RDBMDistributedLayoutStore
     incorporated layouts fragment, and finally the user's PLF, personal layout
     fragment, is merged in and the composite layout returned.
     */
-    private Document getCompositeLayout( IPerson person,
-                                         UserProfile profile )
-        throws Exception
+    private DistributedUserLayout getCompositeLayout( IPerson person,
+                                         IUserProfile profile )
+        
     {
-        Vector<Document> applicables = new Vector<Document>();
+        final Set<String> fragmentNames = new LinkedHashSet<String>();
+        final List<Document> applicables = new LinkedList<Document>();
 
         final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         
@@ -1322,6 +1172,7 @@ public class RDBMDistributedLayoutStore
                 {
                     final UserView userView = activator.getUserView(fragmentDefinition);
                     applicables.add( userView.layout );
+                    fragmentNames.add(fragmentDefinition.getName());
                 }
             }
         }
@@ -1356,8 +1207,15 @@ public class RDBMDistributedLayoutStore
                     " due to changes during merge.");
             super.setUserLayout( person, profile, PLF, false );
         }
+        
+        final int structureStylesheetId = profile.getStructureStylesheetId();
+        final IStylesheetUserPreferences distributedStructureStylesheetUserPreferences = this.loadDistributedStylesheetUserPreferences(person, profile, structureStylesheetId, fragmentNames);
+        
+        final int themeStylesheetId = profile.getThemeStylesheetId();
+        final IStylesheetUserPreferences distributedThemeStylesheetUserPreferences = this.loadDistributedStylesheetUserPreferences(person, profile, themeStylesheetId, fragmentNames);
 
-        return ILF;
+
+        return new DistributedUserLayout(ILF, fragmentNames, distributedStructureStylesheetUserPreferences, distributedThemeStylesheetUserPreferences);
     }
 
     /**
@@ -1366,9 +1224,9 @@ public class RDBMDistributedLayoutStore
        or PLF. If this person is a layout owner then their changes are pushed
        into the appropriate layout fragment.
      */
-    public void setUserLayout (IPerson person, UserProfile profile,
+    public void setUserLayout (IPerson person, IUserProfile profile,
                                Document layoutXML, boolean channelsAdded)
-      throws Exception
+      
     {
         setUserLayout(person, profile, layoutXML, channelsAdded, true);
     }
@@ -1380,10 +1238,11 @@ public class RDBMDistributedLayoutStore
        this person is a layout owner and if so then their changes are pushed
        into the appropriate layout fragment.
      */
-    void setUserLayout (IPerson person, UserProfile profile,
+    @Override
+    public void setUserLayout (IPerson person, IUserProfile profile,
                         Document layoutXML, boolean channelsAdded,
                         boolean updateFragmentCache)
-      throws Exception
+      
     {
         Document plf = (Document) person.getAttribute( Constants.PLF );
         if (LOG.isDebugEnabled())
@@ -1416,16 +1275,8 @@ public class RDBMDistributedLayoutStore
         return configurationLoader.getProperty( name );
     }
 
-    /**
-     * Returns an object suitable for identifying channel attribute and
-     * parameter values in a user's layout that differ from the values on the
-     * same element in a fragment. This is used by the layout manager to know
-     * which ones must be persisted.
-     *
-     * @param sId
-     * @return FragmentChannelInfo if available or null if not found.
-     */
-    FragmentChannelInfo getFragmentChannelInfo(String sId)
+    @Override
+    public FragmentChannelInfo getFragmentChannelInfo(String sId)
     {
         FragmentNodeInfo node = getFragmentNodeInfo(sId);
 
@@ -1433,16 +1284,9 @@ public class RDBMDistributedLayoutStore
             return (FragmentChannelInfo) node;
         return null;
     }
-    /**
-     * Returns an object suitable for identifying attribute values for folder
-     * nodes and attribute and parameter values for channel nodes in a user's
-     * layout that differ from the values on the same element in a fragment.
-     * This is used by the layout manager to know which ones must be persisted.
-     *
-     * @param sId
-     * @return FragmentNodeInfo or null if folder not found.
-     */
-    FragmentNodeInfo getFragmentNodeInfo(String sId)
+
+    @Override
+    public FragmentNodeInfo getFragmentNodeInfo(String sId)
     {
         // grab local pointers to variables subject to change at any time
         Map<String, FragmentNodeInfo> infoCache = fragmentInfoCache;
@@ -1475,30 +1319,6 @@ public class RDBMDistributedLayoutStore
             }
         }
         return info;
-    }
-
-    //////// User Preferences handling methods. //////////
-
-    DistributedUserPreferences getDistributedSSUP( IPerson person,
-                                                   int profileId,
-                                                   int stylesheetId )
-      throws Exception
-    {
-        return new DistributedUserPreferences
-        ( /*super.*/_getStructureStylesheetUserPreferences( person,
-                                                           profileId,
-                                                           stylesheetId ) );
-    }
-
-    DistributedUserPreferences getDistributedTSUP( IPerson person,
-                                                   int profileId,
-                                                   int stylesheetId )
-        throws Exception
-    {
-        return new DistributedUserPreferences
-            ( /*super.*/_getThemeStylesheetUserPreferences( person,
-                                                       profileId,
-                                                       stylesheetId ) );
     }
     
     private Map<Integer, String> getOriginIds(Connection con, int userId, int profileId, int stylesheetType, int stylesheetId) throws SQLException {
@@ -1567,664 +1387,6 @@ public class RDBMDistributedLayoutStore
         return originIds;
     }
 
-    private StructureStylesheetUserPreferences _getStructureStylesheetUserPreferences (IPerson person, int profileId, int stylesheetId) throws Exception {
-        int userId = person.getID();
-        StructureStylesheetUserPreferences ssup;
-        
-        // get stylesheet description
-        StructureStylesheetDescription ssd = getStructureStylesheetDescription(stylesheetId);
-        
-        Connection con = this.dataSource.getConnection();
-        try {
-            int origId;
-            int origProfileId;
-            String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID = ?";
-            final PreparedStatement pstmt1 = con.prepareStatement(sQuery);
-            try {
-                // now look to see if this user has a layout or not. This is
-                // important because preference values are stored by layout
-                // element and if the user doesn't have a layout yet then the
-                // default user's preferences need to be loaded.
-                int layoutId = this.getLayoutID(userId, profileId);
-
-                // if no layout then get the default user id for this user
-
-                origId = userId;
-                origProfileId = profileId;
-                if (layoutId == 0) {
-                    
-                    pstmt1.setInt(1,userId);
-                    if (LOG.isDebugEnabled())
-                        LOG.debug(sQuery + " VALUE " + userId);
-                    final ResultSet rs = pstmt1.executeQuery();
-                    try {
-                        rs.next();
-                        userId = rs.getInt(1);
-                        
-                        // get the profile ID for the default user
-                        UserProfile profile = getUserProfileById(person, profileId);
-                		IPerson defaultProfilePerson = new PersonImpl();
-                		defaultProfilePerson.setID(userId);
-                        profileId = getUserProfileByFname(defaultProfilePerson, profile.getProfileFname()).getProfileId();
-
-                    } finally {
-                        close(rs);
-                    }
-                }
-            } finally {
-                close(pstmt1);
-            }
-
-            // create the stylesheet user prefs object then fill
-            // it with defaults from the stylesheet definition object
-
-            ssup = new StructureStylesheetUserPreferences();
-            ssup.setStylesheetId(stylesheetId);
-
-            // fill stylesheet description with defaults
-            for (Enumeration e = ssd.getStylesheetParameterNames(); e.hasMoreElements();) {
-                String pName = (String)e.nextElement();
-                ssup.putParameterValue(pName, ssd.getStylesheetParameterDefaultValue(pName));
-            }
-            for (Enumeration e = ssd.getChannelAttributeNames(); e.hasMoreElements();) {
-                String pName = (String)e.nextElement();
-                ssup.addChannelAttribute(pName, ssd.getChannelAttributeDefaultValue(pName));
-            }
-            for (Enumeration e = ssd.getFolderAttributeNames(); e.hasMoreElements();) {
-                String pName = (String)e.nextElement();
-                ssup.addFolderAttribute(pName, ssd.getFolderAttributeDefaultValue(pName));
-            }
-
-            // Now load in the stylesheet parameter preferences
-            // from the up_ss_user_param but only if they are defined
-            // parameters in the stylesheet's .sdf file.
-            //
-            // First, get the parameters for the effective user ID,
-            // then for the original user ID.  These will differ if
-            // the user has no layout in the database and is using
-            // the default user layout.  The params from the original
-            // user ID take precedence.
-
-            String pstmtQuery =
-                "SELECT PARAM_NAME, PARAM_VAL " +
-                "FROM UP_SS_USER_PARM " +
-                "WHERE USER_ID=?" +
-                " AND PROFILE_ID=?"+
-                " AND SS_ID=?" +
-                " AND SS_TYPE=1";
-
-            final PreparedStatement pstmt2 = con.prepareStatement(pstmtQuery);
-
-            try {
-                pstmt2.setInt(1, userId);
-                pstmt2.setInt(2,profileId);
-                pstmt2.setInt(3,stylesheetId);
-                final ResultSet rs1 = pstmt2.executeQuery();
-                try {
-                    while (rs1.next()) {
-                        String pName = rs1.getString(1);
-                        if (ssd.containsParameterName(pName))
-                            ssup.putParameterValue(pName, rs1.getString(2));
-                    }
-                }
-                finally {
-                    close(rs1);
-                }
-
-                if (userId != origId) {
-                    pstmt2.setInt(1, origId);
-                    pstmt2.setInt(2,origProfileId);
-                    final ResultSet rs2 = pstmt2.executeQuery();
-                    try {
-                        while (rs2.next()) {
-                            String pName = rs2.getString(1);
-                            if (ssd.containsParameterName(pName))
-                                ssup.putParameterValue(pName, rs2.getString(2));
-                        }
-                    }
-                    finally {
-                        close(rs2);
-                    }
-                }
-            }
-            finally {
-                close(pstmt2);
-            }
-
-            
-            Map<Integer, String> originIds = getOriginIds(con, userId, profileId, 1, stylesheetId);
-
-            /*
-             * now go get the overridden values and compare them against the
-             * map for their origin ids.
-             */
-                    sQuery = "SELECT PARAM_NAME, PARAM_VAL, PARAM_TYPE," +
-            " ULS.STRUCT_ID, CHAN_ID " +
-                            "FROM UP_LAYOUT_STRUCT ULS, " +
-            " UP_SS_USER_ATTS UUSA " +
-                            "WHERE UUSA.USER_ID=?"+
-                            " AND PROFILE_ID=?" +
-                            " AND SS_ID=?" +
-                            " AND SS_TYPE=1" +
-                            " AND UUSA.STRUCT_ID = ULS.STRUCT_ID" +
-                            " AND UUSA.USER_ID = ULS.USER_ID";
-
-            if (LOG.isDebugEnabled())
-                LOG.debug(sQuery + "VALUES ");
-
-            final PreparedStatement pstmt4 = con.prepareStatement(sQuery);
-            try {
-                pstmt4.setInt(1,userId);
-                pstmt4.setInt(2,profileId);
-                pstmt4.setInt(3,stylesheetId);
-                final ResultSet rs = pstmt4.executeQuery();
-                try {
-                    while (rs.next()) {
-                        // get the LONG column first so Oracle doesn't toss a
-                        // java.sql.SQLException: Stream has already been closed
-                        String param_val = rs.getString(2);
-                        int structId = rs.getInt(4);
-                        String originId = null;
-                        if (originIds != null)
-                            originId = originIds.get(new Integer(structId));
-
-                        int param_type = rs.getInt(3);
-                        if (rs.wasNull()) {
-                            structId = 0;
-                        }
-                        String pName = rs.getString(1);
-                        int chanId = rs.getInt(5);
-                        if (rs.wasNull()) {
-                            chanId = 0;
-                        }
-                        /*
-                         * ignore unexpected param_types since persisting
-                         * removes all entries in table and it will get resolved
-                         * without a log entry to point out the error.
-                         */
-                        if (param_type == 2) {
-                            // folder attribute
-                            String folderStructId = null;
-                            if ( originId != null )
-                                folderStructId = originId;
-                            else
-                                folderStructId = getStructId(structId,chanId);
-                            if (ssd.containsFolderAttribute(pName))
-                                ssup.setFolderAttributeValue(folderStructId, pName, param_val);
-                        }
-                        else if (param_type == 3) {
-                            // channel attribute
-                            String channelStructId = null;
-                            if ( originId != null )
-                                channelStructId = originId;
-                            else
-                                channelStructId = getStructId(structId,chanId);
-                            if (ssd.containsChannelAttribute(pName))
-                                ssup.setChannelAttributeValue(channelStructId, pName, param_val);
-                        }
-                    }
-                } finally {
-                    close(rs);
-                }
-            } finally {
-                close(pstmt4);
-            }
-        }
-        finally {
-            JdbcUtils.closeConnection(con);
-        }
-        return  ssup;
-    }
-
-    private ThemeStylesheetUserPreferences _getThemeStylesheetUserPreferences(
-            IPerson person, int profileId, int stylesheetId) throws Exception
-    {
-        int userId = person.getID();
-        ThemeStylesheetUserPreferences tsup;
-        Connection con = this.dataSource.getConnection();
-        try
-        {
-            // get stylesheet description
-            ThemeStylesheetDescription tsd = getThemeStylesheetDescription(stylesheetId);
-            // get user defined defaults
-
-            int layoutId = this.getLayoutID(userId, profileId);
-            
-            // if no layout then get the default user id for this user
-            int origId = userId;
-            int origProfileId = profileId;
-            if (layoutId == 0)
-            { // First time, grab the default layout for this user
-                String sQuery = "SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=?";
-                if (log.isDebugEnabled())
-                    log.debug(sQuery + " VALUE = " + userId);
-                final PreparedStatement pstmt1 = con.prepareStatement(sQuery);
-                try {
-                    pstmt1.setInt(1,userId);
-                    final ResultSet rs = pstmt1.executeQuery();
-                    try
-                    {
-                        rs.next();
-                        userId = rs.getInt(1);
-                        
-                        // get the profile ID for the default user
-                        UserProfile profile = getUserProfileById(person, profileId);
-                		IPerson defaultProfilePerson = new PersonImpl();
-                		defaultProfilePerson.setID(userId);
-                        profileId = getUserProfileByFname(defaultProfilePerson, profile.getProfileFname()).getProfileId();
-
-                    } finally
-                    {
-                        close(rs);
-                    }
-                }
-                finally {
-                    close(pstmt1);
-                }
-            }
-
-            // create the stylesheet user prefs object then fill
-            // it with defaults from the stylesheet definition object
-
-            tsup = new ThemeStylesheetUserPreferences();
-            tsup.setStylesheetId(stylesheetId);
-            // fill stylesheet description with defaults
-            for (Enumeration e = tsd.getStylesheetParameterNames(); e
-                    .hasMoreElements();)
-            {
-                String pName = (String) e.nextElement();
-                tsup.putParameterValue(pName, tsd
-                        .getStylesheetParameterDefaultValue(pName));
-            }
-            for (Enumeration e = tsd.getChannelAttributeNames(); e
-                    .hasMoreElements();)
-            {
-                String pName = (String) e.nextElement();
-                tsup.addChannelAttribute(pName, tsd
-                        .getChannelAttributeDefaultValue(pName));
-            }
-
-            // Now load in the stylesheet parameter preferences
-            // from the up_ss_user_param but only if they are defined
-            // parameters in the stylesheet's .sdf file.
-            // 
-            // First, get the parameters for the effective user ID,
-            // then for the original user ID.  These will differ if
-            // the user has no layout in the database and is using
-            // the default user layout.  The params from the original
-            // user ID take precedence.
-
-            String sQuery2 =
-                "SELECT PARAM_NAME, PARAM_VAL " +
-                "FROM UP_SS_USER_PARM " +
-                "WHERE USER_ID=?" +
-                " AND PROFILE_ID=?" +
-                " AND SS_ID=?" +
-                " AND SS_TYPE=2";
-
-            if (log.isDebugEnabled())
-                log.debug(sQuery2 + " VALUES " +  userId + "," + profileId + "," + stylesheetId);
-            
-            final PreparedStatement pstmt2 = con.prepareStatement(sQuery2);
-            try
-            {
-                pstmt2.setInt(1, userId);
-                pstmt2.setInt(2,profileId);
-                pstmt2.setInt(3,stylesheetId);
-                final ResultSet rs = pstmt2.executeQuery();
-                try {
-                    while (rs.next())
-                    {
-                        // stylesheet param
-                        String pName = rs.getString(1);
-                        if (tsd.containsParameterName(pName))
-                        	tsup.putParameterValue(pName, rs.getString(2));
-                    }
-                }
-                finally {
-                    close(rs);
-                }
-                
-                if (userId != origId) {
-                    pstmt2.setInt(1, origId);
-                    pstmt2.setInt(2, origProfileId);
-                    final ResultSet rs2 = pstmt2.executeQuery();
-                    try {
-                        while (rs2.next()) {
-                            String pName = rs2.getString(1);
-                            if (tsd.containsParameterName(pName))
-                            	tsup.putParameterValue(pName, rs2.getString(2));
-                        }
-                    }
-                    finally {
-                        close(rs2);
-                    }
-                }
-            } finally
-            {
-                close(pstmt2);
-            }
-            
-            Map<Integer, String> originIds = getOriginIds(con, userId, profileId, 2, stylesheetId);
-
-            // Now load in the channel attributes preferences from the
-            // up_ss_user_atts table
-
-            final String sQuery3 = "SELECT PARAM_TYPE, PARAM_NAME, PARAM_VAL, " +
-                    "ULS.STRUCT_ID, CHAN_ID " +
-                    "FROM UP_SS_USER_ATTS UUSA, UP_LAYOUT_STRUCT ULS " +
-                    "WHERE UUSA.USER_ID=?" +
-                    " AND PROFILE_ID=?"  +
-                    " AND SS_ID=?"  +
-                    " AND SS_TYPE=2" +
-                    " AND UUSA.STRUCT_ID = ULS.STRUCT_ID" +
-                    " AND UUSA.USER_ID = ULS.USER_ID";
-            if (log.isDebugEnabled())
-                log.debug("SQL to load theme channel attribute prefs: "
-                                + sQuery3 + " VALUES " + userId + "," + profileId + "," + stylesheetId);
-            final PreparedStatement pstmt3 = con.prepareStatement(sQuery3);
-            try {
-                pstmt3.setInt(1,userId);
-                pstmt3.setInt(2,profileId);
-                pstmt3.setInt(3,stylesheetId);
-                
-                final ResultSet rs = pstmt3.executeQuery();
-                try {
-                    while (rs.next())
-                    {
-                        int param_type = rs.getInt(1);
-                        if (rs.wasNull())
-                        {
-                            param_type = 0;
-                        }
-                        int structId = rs.getInt(4);
-                        String originId = null;
-                        if (originIds != null)
-                                originId = originIds.get(new Integer(structId));
-                        
-                        if (rs.wasNull())
-                        {
-                            structId = 0;
-                        }
-                        int chanId = rs.getInt(5);
-                        if (rs.wasNull())
-                        {
-                            chanId = 0;
-                        }
-                        // only use channel attributes ignoring any others.
-                        // we should never get any others in here unless there
-                        // is db corruption and since all are flushed when
-                        // writting back to the db it should be self correcting
-                        // if it ever does occur somehow.
-                        if (param_type == 3)
-                        {
-                            // channel attribute
-                            String channelStructId = null;
-                            if ( originId != null )
-                                channelStructId = originId;
-                            else
-                                channelStructId = getStructId(structId,chanId);
-                            tsup.setChannelAttributeValue(channelStructId, rs.getString(2), rs.getString(3));
-                        }
-                    }
-                } finally
-                {
-                    close(rs);
-                }
-            } finally
-            {
-                close(pstmt3);
-            }
-        } finally
-        {
-            JdbcUtils.closeConnection(con);
-        }
-        return tsup;
-    }
-
-
-
-    @Override
-    public StructureStylesheetUserPreferences getStructureStylesheetUserPreferences( IPerson person, int profileId, int stylesheetId)
-        throws Exception
-    {
-
-        DistributedUserPreferences ssup = getDistributedSSUP( person,
-                                                              profileId,
-                                                              stylesheetId );
-        // if the user is a fragment owner or if they are a template user
-        // from whom new users received a layout copy to own then don't
-        // incorporate any incorporated user preferences
-        FragmentDefinition ownedFragment = getOwnedFragment( person );
-        boolean isLayoutOwnerDefault = isLayoutOwnerDefault( person );
-
-        if ( ownedFragment != null || isLayoutOwnerDefault )
-            return ssup;
-
-        FragmentActivator activator = this.getFragmentActivator();
-
-        // regular user, find which layouts apply and include their set prefs
-        final List<FragmentDefinition> fragments = configurationLoader.getFragments();
-        if ( fragments != null )
-        {
-            for (final FragmentDefinition fragmentDefinition : fragments) {
-                if ( fragmentDefinition.isApplicable(person) ) {
-                    final UserView userView = activator.getUserView(fragmentDefinition);
-                    if (userView != null) {
-                        loadIncorporatedPreferences( person, STRUCT, ssup, userView.structUserPrefs );
-                    }
-                    else {
-                        log.warn("No UserView is present for fragment " + fragmentDefinition.getName() + " it will be skipped when loading structure preferences");
-                    }
-                }
-            }
-        }
-
-        if (LOG.isDebugEnabled())
-            LOG.debug("***** " + person.getAttribute( "username" )
-              + "'s StructureStylesheetUserPrefereneces\n" +
-              showFolderAttribs( ssup ) +
-              showChannelAttribs( ssup ) );
-
-        return ssup;
-    }
-
-    @Override
-    public ThemeStylesheetUserPreferences getThemeStylesheetUserPreferences( IPerson person, int profileId, int stylesheetId)
-        throws Exception
-    {
-
-        DistributedUserPreferences tsup = getDistributedTSUP( person,
-                                                              profileId,
-                                                              stylesheetId );
-        // if the user is a fragment owner or if they are a template user
-        // from whom new users received a layout copy to own then don't
-        // incorporate any incorporated user preferences
-        FragmentDefinition ownedFragment = getOwnedFragment( person );
-        boolean isLayoutOwnerDefault = isLayoutOwnerDefault( person );
-
-        if ( ownedFragment != null || isLayoutOwnerDefault )
-            return tsup;
-
-        FragmentActivator activator = this.getFragmentActivator();
-
-        // regular user, find which layouts apply and include their set prefs
-        final List<FragmentDefinition> fragments = configurationLoader.getFragments();
-        if ( fragments != null )
-        {
-            for (final FragmentDefinition fragmentDefinition : fragments) {
-                if ( fragmentDefinition.isApplicable(person) ) {
-                    final UserView userView = activator.getUserView(fragmentDefinition);
-                    if (userView != null) {
-                        loadIncorporatedPreferences( person, THEME, tsup, userView.themeUserPrefs);
-                    }
-                    else {
-                        log.warn("No UserView is present for fragment " + fragmentDefinition.getName() + " it will be skipped when loading theme preferences");
-                    }
-                }
-            }
-        }
-
-        if (LOG.isDebugEnabled())
-            LOG.debug("***** " + person.getAttribute( "username" )
-              + "'s ThemeStylesheetUserPrefereneces\n" +
-              showChannelAttribs( tsup ) );
-
-        return tsup;
-    }
-
-    private void loadIncorporatedPreferences( IPerson person,
-                                              int which,
-                                              DistributedUserPreferences userPrefs,
-                                              DistributedUserPreferences incdPrefs )
-    {
-        for ( Enumeration channels = incdPrefs.getChannels();
-              channels.hasMoreElements(); )
-        {
-            String channel = (String) channels.nextElement();
-            for ( Enumeration attribs = incdPrefs.getChannelAttributeNames();
-                  attribs.hasMoreElements(); )
-            {
-                String attrib = (String) attribs.nextElement();
-                String userValue = userPrefs
-                    .getDefinedChannelAttributeValue( channel, attrib );
-                String incdValue = incdPrefs
-                    .getDefinedChannelAttributeValue( channel, attrib );
-                if ( incdValue != null )
-                    userPrefs.setIncorporatedChannelAttributeValue( channel,
-                                                                    attrib,
-                                                                    incdValue );
-                // now see if user change is still pertinent or not
-                if ( incdValue != null &&
-                     userValue != null &&
-                     incdValue.equals( userValue ) )
-                {
-                    userPrefs.removeDefinedChannelAttributeValue( channel,
-                                                                  attrib );
-                    EditManager.removePreferenceDirective( person,
-                                                           channel, attrib );
-                }
-            }
-        }
-
-        // if theme stylesheet prefs don't do folders
-        if ( which == THEME )
-            return;
-
-        for ( Enumeration folders = incdPrefs.getFolders();
-              folders.hasMoreElements(); )
-        {
-            String folder = (String) folders.nextElement();
-            for ( Enumeration attribs = incdPrefs.getFolderAttributeNames();
-                  attribs.hasMoreElements(); )
-            {
-                String attrib = (String) attribs.nextElement();
-                String userValue = userPrefs
-                    .getDefinedFolderAttributeValue( folder, attrib );
-                String incdValue = incdPrefs
-                    .getDefinedFolderAttributeValue( folder, attrib );
-                if ( incdValue != null )
-                    userPrefs.setIncorporatedFolderAttributeValue( folder,
-                                                                   attrib,
-                                                                   incdValue );
-                // now see if user change is still pertinent or not
-                if ( incdValue != null &&
-                     userValue != null &&
-                     incdValue.equals( userValue ) )
-                {
-                    userPrefs.removeDefinedFolderAttributeValue( folder,
-                                                                 attrib );
-                    EditManager.removePreferenceDirective( person,
-                                                           folder, attrib );
-                }
-            }
-        }
-    }
-
-    private String showFolderAttribs( StructureStylesheetUserPreferences ssup )
-    {
-        StringWriter sw = new StringWriter ();
-        PrintWriter pw = new PrintWriter( sw );
-
-        pw.println( "\n*** Folder Attributes" );
-        for ( Enumeration folders = ssup.getFolders();
-              folders.hasMoreElements(); )
-        {
-            String folder = (String) folders.nextElement();
-            for ( Enumeration attribs = ssup.getFolderAttributeNames();
-                  attribs.hasMoreElements(); )
-            {
-                String attrib = (String) attribs.nextElement();
-                String val = ssup.getFolderAttributeValue( folder, attrib );
-                String defVal = ssup.getDefinedFolderAttributeValue( folder,
-                                                                     attrib );
-                pw.println( ( val != null ? "> " : "  " ) +
-                            folder + "." + attrib + " = (" + defVal + ") "+
-                            ( val != null ? val : "" ) );
-            }
-        }
-        pw.close();
-        return sw.toString();
-    }
-
-    private String showChannelAttribs( ThemeStylesheetUserPreferences tsup )
-    {
-        StringWriter sw = new StringWriter ();
-        PrintWriter pw = new PrintWriter( sw );
-
-        pw.println( "\n*** Channel Attributes" );
-        for ( Enumeration channels = tsup.getChannels();
-              channels.hasMoreElements(); )
-        {
-            String channel = (String) channels.nextElement();
-            for ( Enumeration attribs = tsup.getChannelAttributeNames();
-                  attribs.hasMoreElements(); )
-            {
-                String attrib = (String) attribs.nextElement();
-                String val = tsup.getChannelAttributeValue( channel, attrib );
-                String defVal = tsup.getDefinedChannelAttributeValue( channel,
-                                                                      attrib );
-                pw.println( ( val != null ? "> " : "  " ) +
-                            channel + "." + attrib + " = (" + defVal + ") "+
-                            ( val != null ? val : "" ) );
-            }
-        }
-        pw.close();
-        return sw.toString();
-    }
-
-    /**
-       If the passed in user represents a layout owner then replace the
-       cached structure stylesheet user preferences with the passed in one
-       after modifying it for incorporation.
-     */
-    private void updateFragmentSSUP( IPerson person,
-                                     DistributedUserPreferences ssup )
-    {
-        FragmentDefinition ownedFragment = getOwnedFragment( person );
-        if ( ownedFragment == null )
-            return;
-
-        FragmentActivator activator = this.getFragmentActivator();
-
-        // make a copy so the original is unchanged for the user
-        try
-        {
-            UserProfile profile = getUserProfileByFname(person, "default");
-            ssup = new DistributedUserPreferences(
-                    (StructureStylesheetUserPreferences) ssup);
-            final UserView userView = activator.getUserView(ownedFragment);
-            UserView view = new UserView(userView.getUserId(), profile, 
-                        userView.layout, ssup, userView.themeUserPrefs);
-            activator.fragmentizeSSUP(view, ownedFragment);
-            activator.setUserView(ownedFragment.getOwnerId(), view);
-        }
-        catch( Exception e)
-        {
-            LOG.error(" *** Error - DLM unable to update fragment prefs:  \n\n", e );
-        }
-    }
-
     /**
        When user preferences are stored in the database for changes made to
        an incorporated node the node id can not be used because it does not
@@ -2256,7 +1418,7 @@ public class RDBMDistributedLayoutStore
     }
 
     @Override
-    protected Element getStructure(Document doc, LayoutStructure ls) throws Exception {
+    protected Element getStructure(Document doc, LayoutStructure ls)  {
         Element structure = null;
 
         // handle migration of legacy namespace
@@ -2432,7 +1594,7 @@ public class RDBMDistributedLayoutStore
             Node node,
             PreparedStatement structStmt,
             PreparedStatement parmStmt)
-            throws Exception
+            throws SQLException
         {
             if (node == null)
             { // No more
@@ -2442,6 +1604,10 @@ public class RDBMDistributedLayoutStore
                 //parameter, skip it and go on to the next node
                 return saveStructure(node.getNextSibling(), structStmt, parmStmt);
             }
+            if (!(node instanceof Element)) {
+                return 0;
+            }
+                    
             Element structure = (Element) node;
 
             if (LOG.isDebugEnabled())
@@ -2454,11 +1620,13 @@ public class RDBMDistributedLayoutStore
             int saveStructId = -1;
             String plfID = structure.getAttribute(Constants.ATT_PLF_ID);
 
-            if (!plfID.equals(""))
+            if (!plfID.equals("")) {
                 saveStructId = Integer.parseInt(plfID.substring(1));
-            else
-                saveStructId =
-                    Integer.parseInt(structure.getAttribute("ID").substring(1));
+            }
+            else {
+                final String id = structure.getAttribute("ID");
+                saveStructId = Integer.parseInt(id.substring(1));
+            }
 
             int nextStructId = 0;
             int childStructId = 0;
@@ -2589,252 +1757,6 @@ public class RDBMDistributedLayoutStore
         catch ( Exception ex )
         {
             throw new PortalException( ex );
-        }
-    }
-
-    @Override
-    public void setStructureStylesheetUserPreferences( IPerson person,
-                                                       int profileId,
-                                                       StructureStylesheetUserPreferences ssup )
-        throws Exception
-    {
-        DistributedUserPreferences dssup = (DistributedUserPreferences) ssup;
-        int userId = person.getID();
-        Document PLF = (Document) person.getAttribute( Constants.PLF );
-        if ( PLF == null )
-            throw new Exception( "Unable to obtain user's PLF to translate" +
-                                 " incorporated ids to plfIds." );
-        int stylesheetId = ssup.getStylesheetId();
-        StructureStylesheetDescription ssDesc =
-            getStructureStylesheetDescription(stylesheetId);
-
-        Connection con = this.dataSource.getConnection();
-        try
-        {
-            // Set autocommit false for the connection
-            con.setAutoCommit(false);
-            try
-            {
-                // before writing out params clean out old values
-                deleteFromUpSsUserParm(con, userId, profileId, stylesheetId,1);
-
-                // write out params only if specified in stylesheet's .sdf file
-                for (Enumeration e = ssup.getParameterValues().keys(); e.hasMoreElements();) {
-                    String pName = (String)e.nextElement();
-                    if (ssDesc.containsParameterName(pName) &&
-                        ! ssDesc.getStylesheetParameterDefaultValue(pName)
-                            .equals(ssup.getParameterValue(pName)))
-                    {
-                        //String pNameEscaped = RDBMServices.sqlEscape(pName);
-                        String sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (?,?,?,1,?,?)";
-                        final PreparedStatement pstmt2 = con.prepareStatement(sQuery);
-                        try {
-                            pstmt2.setInt(1,userId);
-                            pstmt2.setInt(2,profileId);
-                            pstmt2.setInt(3,stylesheetId);
-                            pstmt2.setString(4,pName);
-                            pstmt2.setString(5,ssup.getParameterValue(pName));
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery);
-                            pstmt2.executeUpdate();
-                        }
-                        finally {
-                            close(pstmt2);
-                        }
-                    }
-                }
-
-              
-                // now before writing out folders and channels clean out old values
-                deleteFromUpSsUserAtts(con, userId, profileId, stylesheetId,1);
-
-                // write out folder attributes
-                for (Enumeration e = ssup.getFolders(); e.hasMoreElements();) {
-                    String folderId = (String)e.nextElement();
-                    String plfId = folderId;
-
-                    if ( folderId.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // icorporated node
-                        plfId = getPlfId( PLF, folderId );
-                    if ( plfId == null ) {
-                        //couldn't translate, skip
-                        log.warn("Unable to translate the specified folderId " +
-                        		    "to a folder on the PLF:  " + folderId);
-                        continue;
-                    }
-
-                    for (Enumeration attre = ssup.getFolderAttributeNames(); attre.hasMoreElements();) {
-                        String pName = (String)attre.nextElement();
-                        String pValue = ssup.getDefinedFolderAttributeValue(folderId, pName);
-
-                        /*
-                         * Persist folder attributes defined in the stylesheet
-                         * description only if the user value is non null and
-                         * there is no default or the user value
-                         * differs from the default.
-                         */
-                        if (ssDesc.containsFolderAttribute(pName))
-                        {
-                            String deflt = dssup
-                            .getDefaultFolderAttributeValue(folderId, pName);
-                            if(pValue != null && (deflt == null ||
-                                    ! pValue.equals(deflt)))
-                                insertIntoUpSsUserAtts(con, userId,
-                                        profileId, stylesheetId, 1,
-                                        plfId, 2, pName, pValue);
-                        }
-                    }
-                }
-                // write out channel attributes
-                for (Enumeration e = ssup.getChannels(); e.hasMoreElements();) {
-                    String channelId = (String)e.nextElement();
-                    String plfId = channelId;
-
-                    if ( plfId.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // icorporated node
-                        plfId = getPlfId( PLF, channelId );
-                    if ( plfId == null ) //couldn't translate, skip
-                        continue;
-
-                    for (Enumeration attre = ssup.getChannelAttributeNames(); attre.hasMoreElements();) {
-                        String pName = (String)attre.nextElement();
-                        String pValue = ssup.getDefinedChannelAttributeValue(channelId, pName);
-
-                        /*
-                         * Persist channel attributes defined in the stylesheet
-                         * description only if the user value is non null and
-                         * there is no default or the user value
-                         * differs from the default.
-                         */
-                        if (ssDesc.containsChannelAttribute(pName))
-                        {
-                            String deflt = dssup
-                            .getDefaultChannelAttributeValue(channelId, pName);
-                            if(pValue != null && (deflt == null ||
-                                    ! pValue.equals(deflt)))
-                                insertIntoUpSsUserAtts(con, userId,
-                                        profileId, stylesheetId, 1,
-                                        plfId, 3, pName, pValue);
-                        }
-                    }
-                }
-                // Commit the transaction
-                con.commit();
-                if (this.fragmentActivatorCreator.isCreated()) {
-                    // We want to update cached fragment SSUPs, but not at 
-                    // the cost of triggering fragment activation;  if we 
-                    // activate fragments while fragment layouts are being 
-                    // imported we'll choke...
-                    updateFragmentSSUP( person, (DistributedUserPreferences) ssup);
-                }
-            } catch (Exception e) {
-                if (LOG.isDebugEnabled())
-                    LOG.debug("Problem occurred ", e);
-                // Roll back the transaction
-                con.rollback();
-                throw new Exception("Exception setting Structure Sylesheet " +
-                        "User Preferences",e);
-            }
-        } finally {
-            JdbcUtils.closeConnection(con);
-        }
-    }
-
-    @Override
-    public void setThemeStylesheetUserPreferences (IPerson person,
-            int profileId, ThemeStylesheetUserPreferences tsup)
-    throws Exception {
-        DistributedUserPreferences dtsup = (DistributedUserPreferences) tsup;
-        int userId = person.getID();
-        Document PLF = (Document) person.getAttribute( Constants.PLF );
-        if ( PLF == null )
-            throw new Exception( "Unable to obtain user's PLF to translate" +
-                                 " incorporated ids to plfIds." );
-        int stylesheetId = tsup.getStylesheetId();
-        ThemeStylesheetDescription tsDesc =
-            getThemeStylesheetDescription(stylesheetId);
-        Connection con = this.dataSource.getConnection();
-        try {
-            // Set autocommit false for the connection
-            con.setAutoCommit(false);
-            //Statement pstmt = null;
-            try {
-                // before writing out params clean out old values
-                deleteFromUpSsUserParm(con, userId, profileId, stylesheetId,2);
-
-                // write out params only if defined in stylesheet's .sdf file
-                // and user's value differs from default
-                for (Enumeration e = tsup.getParameterValues().keys(); e.hasMoreElements();) {
-                    String pName = (String)e.nextElement();
-                    if (tsDesc.containsParameterName(pName) &&
-                        ! tsDesc.getStylesheetParameterDefaultValue(pName)
-                            .equals(tsup.getParameterValue(pName)))
-                    {
-                        //String pNameEscaped = RDBMServices.sqlEscape(pName);
-                        String sQuery = "INSERT INTO UP_SS_USER_PARM (USER_ID,PROFILE_ID,SS_ID,SS_TYPE,PARAM_NAME,PARAM_VAL) VALUES (?,?,?,2,?,?)";
-                        final PreparedStatement pstmt2 = con.prepareStatement(sQuery);
-                        try {
-                            pstmt2.setInt(1,userId);
-                            pstmt2.setInt(2,profileId);
-                            pstmt2.setInt(3,stylesheetId);
-                            pstmt2.setString(4, pName);
-                            pstmt2.setString(5,tsup.getParameterValue(pName));
-                            if (LOG.isDebugEnabled())
-                                LOG.debug(sQuery + "VALUE " + userId + "," + profileId + "," + stylesheetId + "," + pName + "," + tsup.getParameterValue(pName));
-                            pstmt2.executeUpdate();
-                        }
-                        finally {
-                            close(pstmt2);
-                        }
-                    }
-                }
-                // now before writing out channel atts clean out old values
-                deleteFromUpSsUserAtts(con, userId, profileId, stylesheetId,2);
-
-                // write out channel attributes
-                for (Enumeration e = tsup.getChannels(); e.hasMoreElements();) {
-                    String channelId = (String)e.nextElement();
-                    String plfChannelId = channelId;
-
-                    if ( plfChannelId.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // icorporated node
-                        plfChannelId = getPlfId( PLF, channelId );
-                    if ( plfChannelId == null ) //couldn't translate, skip
-                        continue;
-
-                    for (Enumeration attre = tsup.getChannelAttributeNames(); attre.hasMoreElements();) {
-                        String pName = (String)attre.nextElement();
-                        String pValue = tsup.getDefinedChannelAttributeValue(channelId, pName);
-
-                        /*
-                         * Persist channel attributes defined in the stylesheet
-                         * description only if the user value is non null and
-                         * there is no default or the user value
-                         * differs from the default.
-                         */
-                        if (tsDesc.containsChannelAttribute(pName))
-                        {
-                            String deflt = dtsup
-                            .getDefaultChannelAttributeValue(channelId, pName);
-                            if(pValue != null && (deflt == null ||
-                                    ! pValue.equals(deflt)))
-                                insertIntoUpSsUserAtts(con, userId,
-                                        profileId, stylesheetId, 2,
-                                        plfChannelId, 3, pName, pValue);
-                        }
-                    }
-                }
-                // Commit the transaction
-                con.commit();
-                // add a method nearly identical to updateFragmentSSUP() if
-                // we want to push things like minimized state of a channel in
-                // a fragment. (TBD: mboyd if needed)
-                // updateFragmentTSUP();
-            } catch (Exception e) {
-                // Roll back the transaction
-                con.rollback();
-                throw new Exception("Exception setting Theme Sylesheet " +
-                        "User Preferences",e);
-            }
-        } finally {
-            JdbcUtils.closeConnection(con);
         }
     }
 
@@ -3025,9 +1947,9 @@ public class RDBMDistributedLayoutStore
         // chanClassArg is so named to highlight that we are using the argument
         // to the method rather than the instance variable chanClass
         channel.setAttribute("typeID", String.valueOf(def.getType().getId()));
-        channel.setAttribute("editable", Boolean.toString(def.isEditable()));
-        channel.setAttribute("hasHelp", Boolean.toString(def.hasHelp()));
-        channel.setAttribute("hasAbout", Boolean.toString(def.hasAbout()));
+//        channel.setAttribute("editable", Boolean.toString(def.isEditable()));
+//        channel.setAttribute("hasHelp", Boolean.toString(def.hasHelp()));
+//        channel.setAttribute("hasAbout", Boolean.toString(def.hasAbout()));
 
         return channel;
 
@@ -3055,7 +1977,18 @@ public class RDBMDistributedLayoutStore
             return "DLMStaticMissingChannel";
         }
         
-        
+        @Override
+        public String getDataId() {
+            return null;
+        }
+        @Override
+        public String getDataTitle() {
+            return this.getName();
+        }
+        @Override
+        public String getDataDescription() {
+            return this.getDescription();
+        }
         public void addLocalizedDescription(String locale, String chanDesc) {
         }
         public void addLocalizedName(String locale, String chanName) {

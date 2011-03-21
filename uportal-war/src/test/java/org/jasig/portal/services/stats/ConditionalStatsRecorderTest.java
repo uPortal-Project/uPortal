@@ -22,6 +22,7 @@ package org.jasig.portal.services.stats;
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
@@ -45,7 +46,7 @@ public class ConditionalStatsRecorderTest extends TestCase {
 	private StatsRecorderFlagsImpl statsRecorderFlags;
 	
 	private IPerson dummyPerson = new PersonImpl();
-	private UserProfile dummyProfile = new UserProfile();
+	private IUserProfile dummyProfile = new UserProfile();
 	
 	private IUserLayoutChannelDescription dummyChannelDescription = new UserLayoutChannelDescription();
 	

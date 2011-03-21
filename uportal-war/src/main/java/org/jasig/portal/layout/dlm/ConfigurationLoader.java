@@ -34,6 +34,11 @@ public interface ConfigurationLoader {
     public List<FragmentDefinition> getFragments();
     
     /**
+     * @return A {@link FragmentDefinition} for the specified owner.
+     */
+    public FragmentDefinition getFragmentByName(String ownerId);
+    
+    /**
      * @return The DLM configuration property
      */
     public String getProperty(String propertyName);

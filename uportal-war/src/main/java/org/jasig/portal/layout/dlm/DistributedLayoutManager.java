@@ -47,12 +47,13 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserIdentityStoreFactory;
-import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEvent;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutEventListenerAdapter;
@@ -72,7 +73,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
-import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.xml.XmlUtilities;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,10 +96,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
 
     private XmlUtilities xmlUtilities;
     private ILayoutCachingService layoutCachingService;
-    private RDBMDistributedLayoutStore distributedLayoutStore;
+    private IUserLayoutStore distributedLayoutStore;
     
     protected final IPerson owner;
-    protected final UserProfile profile;
+    protected final IUserProfile profile;
     protected Set<LayoutEventListener> listeners=new HashSet<LayoutEventListener>();
 
     /**
@@ -115,7 +115,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     private boolean channelsAdded = false;
     private boolean isFragmentOwner = false;
 
-    public DistributedLayoutManager(IPerson owner, UserProfile profile) throws PortalException
+    public DistributedLayoutManager(IPerson owner, IUserProfile profile) throws PortalException
     {
         if (owner == null)
         {
@@ -134,7 +134,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         
         // cache the relatively lightwieght userprofile for use in 
         // in layout PLF loading
-        owner.setAttribute(UserProfile.USER_PROFILE, profile);
+        owner.setAttribute(IUserProfile.USER_PROFILE, profile);
         
         this.owner = owner;
         this.profile = profile;
@@ -151,7 +151,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     }
 
     @Autowired
-    public void setDistributedLayoutStore(RDBMDistributedLayoutStore distributedLayoutStore) {
+    public void setDistributedLayoutStore(IUserLayoutStore distributedLayoutStore) {
         this.distributedLayoutStore = distributedLayoutStore;
     }
 
@@ -184,95 +184,86 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         });
     }
 
-    private void setUserLayoutDOM(Document doc) {
+    private void setUserLayoutDOM(DistributedUserLayout userLayout) {
 
-        this.layoutCachingService.cacheLayout(owner, profile, doc);
+        this.layoutCachingService.cacheLayout(owner, profile, userLayout);
         this.updateCacheKey();
 
         // determine if this is a layout fragment by looking at the root node
         // for a cp:fragment attribute.
-        Element layout = (Element) doc.getDocumentElement();
+        Element layout = userLayout.getLayout().getDocumentElement();
         Node attr = layout.getAttributeNodeNS( Constants.NS_URI,
                                                Constants.LCL_FRAGMENT_NAME );
         this.isFragmentOwner = attr != null;
     }
-    private int domRequests = 0;
 
-    /**
-     * @deprecated
-     * @return
-     * @throws PortalException
-     */
+    @SuppressWarnings("deprecation")
     @Deprecated
+    @Override
     public Document getUserLayoutDOM()
-        throws PortalException
     {
-        try
+        final DistributedUserLayout userLayout = getDistributedUserLayout();
+        return userLayout.getLayout();
+    }
+
+    protected DistributedUserLayout getDistributedUserLayout() {
+        DistributedUserLayout userLayout = this.layoutCachingService.getCachedLayout(owner, profile);
+        if ( null == userLayout )
         {
             if (LOG.isDebugEnabled())
             {
-                LOG.debug("domRequest: " + (domRequests++));
+                LOG.debug("Load from store for " +
+                    owner.getAttribute(IPerson.USERNAME));
             }
-            Document userLayoutDocument = this.layoutCachingService.getCachedLayout(owner, profile);
-            if ( null == userLayoutDocument )
-            {
-                if (LOG.isDebugEnabled())
-                {
-                    LOG.debug("Load from store for " +
-                        owner.getAttribute(IPerson.USERNAME));
-                }
-                userLayoutDocument = this.distributedLayoutStore.getUserLayout(this.owner,this.profile);
+            userLayout = this.distributedLayoutStore.getUserLayout(this.owner,this.profile);
+            
+            final Document userLayoutDocument = userLayout.getLayout();
 
-                // DistributedLayoutManager shall gracefully remove channels 
-                // that the user isn't authorized to render from folders of type 
-                // 'header' and 'footer'.
-                IAuthorizationService authServ = AuthorizationImpl.singleton();
-                IAuthorizationPrincipal principal = authServ.newPrincipal(owner.getUserName(), IPerson.class);
-                NodeList nodes = userLayoutDocument.getElementsByTagName("folder");
-                for (int i=0; i < nodes.getLength(); i++) {
-              	  Element fd = (Element) nodes.item(i);
-              	  String type = fd.getAttribute("type");
-              	  if (type != null && (type.equals("header") || type.equals("footer"))) {
-              		  // Here's where we do the work...
-              		  if (LOG.isDebugEnabled()) {
-              			  LOG.debug("RDBMUserLayoutStore examining the '" 
-      							  	+ type 
-      							  	+ "' folder of user '" 
-      							  	+ owner.getUserName() 
-      							  	+ "' for non-authorized channels.");
-              		  }
-              		  NodeList channels = fd.getElementsByTagName("channel");
-              		  for (int j=0; j < channels.getLength(); j++) {
-              			  Element ch = (Element) channels.item(j);
-              			  try {
-              				  String chanId = ch.getAttribute("chanID");
-              				  if (!principal.canRender(chanId)) {
-              					  fd.removeChild(ch);
-              					  if (LOG.isDebugEnabled()) {
-              						  LOG.debug("RDBMUserLayoutStore removing channel '" 
-                							  	+ ch.getAttribute("fname") 
-                							  	+ "' from the header or footer of user '" 
-                							  	+ owner.getUserName() 
-                							  	+ "' because he/she isn't authorized to render it.");
-              					  }
-              				  }
-              			  } catch (Throwable t) {
-              				  // Log this...
-              				  LOG.warn("RDBMUserLayoutStore was unable to analyze channel element with Id=" 
-              						  									+ch.getAttribute("chanID"), t);
-              			  }
-              		  }
-              	  }
-                }
-                
-                setUserLayoutDOM( userLayoutDocument );
+            // DistributedLayoutManager shall gracefully remove channels 
+            // that the user isn't authorized to render from folders of type 
+            // 'header' and 'footer'.
+            IAuthorizationService authServ = AuthorizationImpl.singleton();
+            IAuthorizationPrincipal principal = authServ.newPrincipal(owner.getUserName(), IPerson.class);
+            NodeList nodes = userLayoutDocument.getElementsByTagName("folder");
+            for (int i=0; i < nodes.getLength(); i++) {
+          	  Element fd = (Element) nodes.item(i);
+          	  String type = fd.getAttribute("type");
+          	  if (type != null && (type.equals("header") || type.equals("footer"))) {
+          		  // Here's where we do the work...
+          		  if (LOG.isDebugEnabled()) {
+          			  LOG.debug("RDBMUserLayoutStore examining the '" 
+        					  	+ type 
+        					  	+ "' folder of user '" 
+        					  	+ owner.getUserName() 
+        					  	+ "' for non-authorized channels.");
+          		  }
+          		  NodeList channels = fd.getElementsByTagName("channel");
+          		  for (int j=0; j < channels.getLength(); j++) {
+          			  Element ch = (Element) channels.item(j);
+          			  try {
+          				  String chanId = ch.getAttribute("chanID");
+          				  if (!principal.canRender(chanId)) {
+          					  fd.removeChild(ch);
+          					  if (LOG.isDebugEnabled()) {
+          						  LOG.debug("RDBMUserLayoutStore removing channel '" 
+            							  	+ ch.getAttribute("fname") 
+            							  	+ "' from the header or footer of user '" 
+            							  	+ owner.getUserName() 
+            							  	+ "' because he/she isn't authorized to render it.");
+          					  }
+          				  }
+          			  } catch (Throwable t) {
+          				  // Log this...
+          				  LOG.warn("RDBMUserLayoutStore was unable to analyze channel element with Id=" 
+          						  									+ch.getAttribute("chanID"), t);
+          			  }
+          		  }
+          	  }
             }
-            return userLayoutDocument;
+            
+            setUserLayoutDOM( userLayout );
         }
-        catch ( Exception ex )
-        {
-            throw new PortalException( ex );
-        }
+        return userLayout;
     }
     
     @Override
@@ -1378,23 +1369,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     {
         // Copied from SimpleLayoutManager since our layouts are regular
         // simple layouts, ie Documents.
-        return new SimpleLayout(String.valueOf(profile.getLayoutId()), this.getUserLayoutDOM());
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.IUserLayoutManager#setUserLayout(org.jasig.portal.layout.IUserLayout)
-     */
-    public void setUserLayout(IUserLayout userLayout) throws PortalException
-    {
-        // Temporary until we use IUserLayout for real
-        Document doc = DocumentFactory.getNewDocument();
-        try {
-            userLayout.writeTo(doc);
-        } catch (PortalException pe) {
-        }
-        //this.markedUserLayout=null;
-        this.updateCacheKey();
-        this.layoutCachingService.cacheLayout(owner, profile, doc);
+        return new SimpleLayout(this.getDistributedUserLayout(), String.valueOf(profile.getLayoutId()), this.cacheKey);
     }
 
     /* Returns the ID attribute of the root folder of the layout. This folder 

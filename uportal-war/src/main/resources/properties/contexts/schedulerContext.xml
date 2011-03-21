@@ -64,10 +64,8 @@
     <bean id="dlmFragmentCleanerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-                <property name="targetMethod" value="run" />
-                <property name="targetObject">
-                    <bean class="org.jasig.portal.layout.dlm.FragmentCleanerRunner" />
-                </property>
+                <property name="targetMethod" value="cleanFragments" />
+                <property name="targetObject" ref="userLayoutStore" />
             </bean>
         </property>
         <property name="startDelay" value="${org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh}" />

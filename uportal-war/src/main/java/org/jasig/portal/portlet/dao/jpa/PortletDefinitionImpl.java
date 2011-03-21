@@ -156,15 +156,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	@Column(name = "PORTLET_EXP_DT")
 	private Date expirationDate = null;
 
-	@Column(name = "PORTLET_EDITABLE", nullable = false)
-	private boolean editable = false;
-
-	@Column(name = "PORTLET_HAS_HELP", nullable = false)
-	private boolean hasHelp = false;
-
-	@Column(name = "PORTLET_HAS_ABOUT", nullable = false)
-	private boolean hasAbout = false;
-
 	@ElementCollection(fetch = FetchType.EAGER, targetClass = PortletDefinitionParameterImpl.class)
 	@JoinTable(name = "UP_PORTLET_PARAM", joinColumns = @JoinColumn(name = "PORTLET_ID"))
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -225,6 +216,22 @@ class PortletDefinitionImpl implements IPortletDefinition {
         this.portletDescriptorKey.setPortletName(portletName);
         this.portletDescriptorKey.setFrameworkPortlet(isFramework);
     }
+    
+    @Override
+    public String getDataId() {
+        return this.getFName();
+    }
+
+    @Override
+    public String getDataTitle() {
+        return this.getName();
+    }
+
+    @Override
+    public String getDataDescription() {
+        return this.getDescription();
+    }
+
 
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletDefinitionId()
@@ -370,34 +377,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	}
 
 	@Override
-    public boolean isEditable() {
-		return editable;
-	}
-
-	@Override
-    public void setEditable(boolean editable) {
-		this.editable = editable;
-	}
-
-	public boolean isHasHelp() {
-		return hasHelp;
-	}
-
-	@Override
-    public void setHasHelp(boolean hasHelp) {
-		this.hasHelp = hasHelp;
-	}
-
-	public boolean isHasAbout() {
-		return hasAbout;
-	}
-
-	@Override
-    public void setHasAbout(boolean hasAbout) {
-		this.hasAbout = hasAbout;
-	}
-
-	@Override
     public Set<IPortletDefinitionParameter> getParameters() {
 		return parameters;
 	}
@@ -459,18 +438,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	@Override
 	public IPortletType getType() {
 		return this.portletType;
-	}
-
-
-	@Override
-	public boolean hasHelp() {
-		return this.hasHelp;
-	}
-
-
-	@Override
-	public boolean hasAbout() {
-		return this.hasAbout;
 	}
 
 

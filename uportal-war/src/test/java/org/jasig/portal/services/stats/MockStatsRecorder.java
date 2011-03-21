@@ -19,7 +19,7 @@
 
 package org.jasig.portal.services.stats;
 
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -103,47 +103,47 @@ public class MockStatsRecorder
 		this.channelDefinitionRemoves++;
 	}
 
-	public void recordChannelAddedToLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+	public void recordChannelAddedToLayout(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
 		this.channelAddsToLayout++;
 	}
 
-	public void recordChannelUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+	public void recordChannelUpdatedInLayout(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
 		this.channelUpdatesInLayout++;
 	}
 
-	public void recordChannelMovedInLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+	public void recordChannelMovedInLayout(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
 		this.channelMovesInLayout++;
 	}
 
-	public void recordChannelRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+	public void recordChannelRemovedFromLayout(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
 		this.channelRemovesFromLayout++;
 	}
 
-	public void recordFolderAddedToLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
+	public void recordFolderAddedToLayout(IPerson person, IUserProfile profile, IUserLayoutFolderDescription folderDesc) {
 		this.folderAddsToLayout++;
 	}
 
-	public void recordFolderUpdatedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
+	public void recordFolderUpdatedInLayout(IPerson person, IUserProfile profile, IUserLayoutFolderDescription folderDesc) {
 		this.folderUpdatesInLayout++;
 	}
 
-	public void recordFolderMovedInLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
+	public void recordFolderMovedInLayout(IPerson person, IUserProfile profile, IUserLayoutFolderDescription folderDesc) {
 		this.folderMovesInLayout++;
 	}
 
-	public void recordFolderRemovedFromLayout(IPerson person, UserProfile profile, IUserLayoutFolderDescription folderDesc) {
+	public void recordFolderRemovedFromLayout(IPerson person, IUserProfile profile, IUserLayoutFolderDescription folderDesc) {
 		this.folderRemovesFromLayout++;
 	}
 
-	public void recordChannelInstantiated(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+	public void recordChannelInstantiated(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
 		this.channelInstantiates++;
 	}
 
-	public void recordChannelRendered(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+	public void recordChannelRendered(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
 		this.channelRenders++;	
 	}
 
-	public void recordChannelTargeted(IPerson person, UserProfile profile, IUserLayoutChannelDescription channelDesc) {
+	public void recordChannelTargeted(IPerson person, IUserProfile profile, IUserLayoutChannelDescription channelDesc) {
 		this.channelTargets++;
 	}
 

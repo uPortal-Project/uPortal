@@ -118,7 +118,6 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
     public ILocalAccountPerson getPerson(String username) {
         final TypedQuery<LocalAccountPersonImpl> query = this.createQuery(this.findAccountByNameQuery, FIND_ACCOUNT_BY_NAME_CACHE_REGION);
         query.setParameter(this.nameParameter, username);
-        query.setMaxResults(1);
         
         final List<LocalAccountPersonImpl> accounts = query.getResultList();
         return DataAccessUtils.uniqueResult(accounts);

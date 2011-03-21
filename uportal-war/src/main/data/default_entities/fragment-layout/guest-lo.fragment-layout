@@ -49,7 +49,7 @@
   </root>
   <profile name="HTML browser profile"> 
     <description>A sample profile for common web browsers</description>  
-    <structure name="DLM Tabs and columns"/>  
-    <theme name="DLM XHTML"/> 
+    <structure name="DLMTabsColumns"/>  
+    <theme name="DLMXHTML"/> 
   </profile>
 </layout>

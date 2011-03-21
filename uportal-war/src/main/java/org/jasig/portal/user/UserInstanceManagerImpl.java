@@ -20,28 +20,27 @@
 package org.jasig.portal.user;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.GuestUserInstance;
-import org.jasig.portal.GuestUserPreferencesManager;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserInstance;
+import org.jasig.portal.UserPreferencesManager;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IProfileMapper;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.layout.UserLayoutManagerFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.spring.web.context.support.HttpSessionDestroyedEvent;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
 /**
@@ -51,17 +50,21 @@ import org.springframework.stereotype.Service;
  * @version $Revision 1.1$
  */
 @Service("userInstanceManager")
-public class UserInstanceManagerImpl implements IUserInstanceManager, ApplicationListener {
+public class UserInstanceManagerImpl implements IUserInstanceManager {
     private static final String KEY = UserInstanceManagerImpl.class.getName() + ".USER_INSTANCE";
     
     protected final Log logger = LogFactory.getLog(UserInstanceManagerImpl.class);
     
-    private Map<Integer, GuestUserPreferencesManager> guestUserPreferencesManagers = new HashMap<Integer, GuestUserPreferencesManager>();
-    
+    private IUserLayoutStore userLayoutStore;
     private IPersonManager personManager;
     private IPortalRequestUtils portalRequestUtils;
     private IProfileMapper profileMapper;
     
+    @Autowired
+    public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
+        this.userLayoutStore = userLayoutStore;
+    }
+
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
@@ -82,6 +85,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
      * @param request Incoming HttpServletRequest
      * @return UserInstance object associated with the given request
      */
+    @Override
     public IUserInstance getUserInstance(HttpServletRequest request) throws PortalException {
         try {
             request = this.portalRequestUtils.getOriginalPortalRequest(request);
@@ -126,32 +130,19 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
         }
 
         // Create either a UserInstance or a GuestUserInstance
+        final LocaleManager localeManager = this.getLocaleManager(request, person);
+        final String userAgent = this.getUserAgent(request);
+        final IUserProfile userProfile = this.getUserProfile(request, person, localeManager, userAgent);
+
+        //Create the user layout manager and user instance object
+        IUserLayoutManager userLayoutManager = UserLayoutManagerFactory.getUserLayoutManager(person, userProfile);
         if (person.isGuest()) {
-            final Integer personId = person.getID();
-            
-            //Get or Create a shared GuestUserPreferencesManager for the Guest IPerson
-            //sync so multiple managers aren't created for a single guest
-            GuestUserPreferencesManager guestUserPreferencesManager;
-            synchronized (guestUserPreferencesManagers) {
-                guestUserPreferencesManager = guestUserPreferencesManagers.get(personId);
-                if (guestUserPreferencesManager == null) {
-                    guestUserPreferencesManager = new GuestUserPreferencesManager(person, this.profileMapper);
-                    guestUserPreferencesManagers.put(personId, guestUserPreferencesManager);
-                }
-            }
-            
-            userInstance = new GuestUserInstance(person, guestUserPreferencesManager, request);
+            userLayoutManager = UserLayoutManagerFactory.immutableUserLayoutManager(userLayoutManager);
         }
-        else {
-            final ISecurityContext securityContext = person.getSecurityContext();
-            if (securityContext.isAuthenticated()) {
-                userInstance = new UserInstance(person, request, this.profileMapper);
-            }
-            else {
-                // we can't allow for unauthenticated, non-guest user to come into the system
-                throw new PortalSecurityException("System does not allow for unauthenticated non-guest users.");
-            }
-        }
+        
+        final UserPreferencesManager userPreferencesManager = new UserPreferencesManager(person, userProfile, userLayoutManager);
+        userInstance = new UserInstance(person, userPreferencesManager, localeManager);
+        
 
         //Ensure the newly created UserInstance is cached in the session
         if (userInstanceHolder == null) {
@@ -164,24 +155,33 @@ public class UserInstanceManagerImpl implements IUserInstanceManager, Applicatio
         // Return the new UserInstance
         return userInstance;
     }
-    
-    /* (non-Javadoc)
-     * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
-     */
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof HttpSessionDestroyedEvent) {
-            final HttpSession session = ((HttpSessionDestroyedEvent)event).getSession();
 
-            final UserInstanceHolder userInstanceHolder = this.getUserInstanceHolder(session);
-            if (userInstanceHolder == null) {
-                return;
-            }
-            
-            final IUserInstance userInstance = userInstanceHolder.getUserInstance();
-            if (userInstance != null) {
-                userInstance.destroySession(session);
-            }
+    protected IUserProfile getUserProfile(HttpServletRequest request, IPerson person, LocaleManager localeManager, String userAgent) {
+        final String profileFname = profileMapper.getProfileFname(person, request);
+        IUserProfile userProfile = userLayoutStore.getUserProfileByFname(person, profileFname);
+
+        if (userProfile == null) {
+            userProfile = userLayoutStore.getSystemProfileByFname(profileFname);
         }
+        
+        if (localeManager != null && LocaleManager.isLocaleAware()) {
+            userProfile.setLocaleManager(localeManager);
+        }
+        
+        return userProfile;
+    }
+    
+    protected LocaleManager getLocaleManager(HttpServletRequest request, IPerson person) {
+        final String acceptLanguage = request.getHeader("Accept-Language");
+        return new LocaleManager(person, acceptLanguage);
+    }
+
+    protected String getUserAgent(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        if(StringUtils.isEmpty(userAgent)) {
+            userAgent="null";
+        }
+        return userAgent;
     }
 
     protected UserInstanceHolder getUserInstanceHolder(final HttpSession session) {

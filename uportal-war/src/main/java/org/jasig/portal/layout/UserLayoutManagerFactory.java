@@ -19,8 +19,8 @@
 
 package org.jasig.portal.layout;
 
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.immutable.ImmutableUserLayoutManagerWrapper;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
@@ -58,7 +58,7 @@ public class UserLayoutManagerFactory implements ApplicationContextAware {
      *
      * @return an <code>IUserLayoutManager</code> value
      */
-    public static IUserLayoutManager getUserLayoutManager(IPerson person, UserProfile profile) throws PortalException {
+    public static IUserLayoutManager getUserLayoutManager(IPerson person, IUserProfile profile) throws PortalException {
         final ApplicationContext applicationContext = getApplicationContext();
         final IUserLayoutManager userLayoutManager = (IUserLayoutManager)applicationContext.getBean(USER_LAYOUT_MANAGER_PROTOTYPE_BEAN_NAME, person, profile);
         return new TransientUserLayoutManagerWrapper(userLayoutManager);

@@ -184,16 +184,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
-      SQLDelete = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_SS_USER_PARM  WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
       SQLDelete = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);

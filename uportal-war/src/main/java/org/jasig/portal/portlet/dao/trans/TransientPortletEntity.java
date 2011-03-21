@@ -19,6 +19,8 @@
 
 package org.jasig.portal.portlet.dao.trans;
 
+import javax.portlet.WindowState;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -48,6 +50,7 @@ class TransientPortletEntity implements IPortletEntity {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletEntity#getChannelSubscribeId()
      */
+    @Override
     public String getChannelSubscribeId() {
         return this.transientSubscribeId;
     }
@@ -55,6 +58,7 @@ class TransientPortletEntity implements IPortletEntity {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletDefinitionId()
      */
+    @Override
     public IPortletDefinitionId getPortletDefinitionId() {
         return this.delegatePortletEntity.getPortletDefinitionId();
     }
@@ -62,13 +66,25 @@ class TransientPortletEntity implements IPortletEntity {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletEntityId()
      */
+    @Override
     public IPortletEntityId getPortletEntityId() {
         return this.delegatePortletEntity.getPortletEntityId();
+    }
+
+    @Override
+    public WindowState getWindowState() {
+        return this.delegatePortletEntity.getWindowState();
+    }
+
+    @Override
+    public void setWindowState(WindowState state) {
+        this.delegatePortletEntity.setWindowState(state);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletPreferences()
      */
+    @Override
     public IPortletPreferences getPortletPreferences() {
         return this.delegatePortletEntity.getPortletPreferences();
     }
@@ -76,6 +92,7 @@ class TransientPortletEntity implements IPortletEntity {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletEntity#getUserId()
      */
+    @Override
     public int getUserId() {
         return this.delegatePortletEntity.getUserId();
     }
@@ -83,6 +100,7 @@ class TransientPortletEntity implements IPortletEntity {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(org.jasig.portal.portlet.om.IPortletPreferences)
      */
+    @Override
     public void setPortletPreferences(IPortletPreferences portletPreferences) {
         this.delegatePortletEntity.setPortletPreferences(portletPreferences);
     }

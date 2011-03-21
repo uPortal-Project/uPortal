@@ -20,8 +20,13 @@
 package org.jasig.portal.layout.dao.jpa;
 
 import javax.persistence.Cacheable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -33,19 +38,39 @@ import org.jasig.portal.layout.om.IOutputPropertyDescriptor;
  */
 @Entity
 @Table(
-        name = "UP_SS_OUTPUT_PROP_DESC"
+        name = "UP_SS_DESC_OUTPUT_PROP"
+    )
+@SequenceGenerator(
+        name="UP_SS_DESC_OUTPUT_PROP_GEN",
+        sequenceName="UP_SS_DESC_OUTPUT_PROP_SEQ",
+        allocationSize=5
+    )
+@TableGenerator(
+        name="UP_SS_DESC_OUTPUT_PROP_GEN",
+        pkColumnValue="UP_SS_DESC_OUTPUT_PROP",
+        allocationSize=5
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class OutputPropertyDescriptorImpl extends AbstractStylesheetDataImpl implements IOutputPropertyDescriptor {
+    @Id
+    @GeneratedValue(generator = "UP_SS_DESC_OUTPUT_PROP_GEN")
+    @Column(name="SS_DESC_LAYOUT_ATTR_ID")
+    private final long id;
     
     //Required by hibernate for reflective creation
     @SuppressWarnings("unused")
     private OutputPropertyDescriptorImpl() {
+        this.id = -1;
     }
     
     public OutputPropertyDescriptorImpl(String name, Scope scope) {
         super(name, scope);
+        this.id = -1;
     }
 
+    @Override
+    public long getId() {
+        return this.id;
+    }
 }

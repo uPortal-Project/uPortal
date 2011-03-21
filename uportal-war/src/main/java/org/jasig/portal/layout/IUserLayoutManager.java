@@ -69,14 +69,6 @@ public interface IUserLayoutManager {
     public IUserLayout getUserLayout() throws PortalException;
 
     /**
-     * Sets a user layout (with appropriate markings).
-     *
-     * @param userLayout the user layout
-     * @exception PortalException if an error occurs
-     */
-    public void setUserLayout(IUserLayout userLayout) throws PortalException;
-
-    /**
      * @return An XMLEventReader for the user's layout structure
      */
     public XMLEventReader getUserLayoutReader();

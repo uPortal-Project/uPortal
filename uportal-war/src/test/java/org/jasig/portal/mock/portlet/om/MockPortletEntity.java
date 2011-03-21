@@ -19,6 +19,8 @@
 
 package org.jasig.portal.mock.portlet.om;
 
+import javax.portlet.WindowState;
+
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -34,6 +36,7 @@ public class MockPortletEntity implements IPortletEntity {
     private IPortletEntityId portletEntityId;
     private String channelSubscribeId;
     private int userId;
+    private WindowState windowState;
     private IPortletDefinitionId portletDefinitionId;
     private IPortletPreferences portletPreferences;
     
@@ -48,6 +51,7 @@ public class MockPortletEntity implements IPortletEntity {
     /**
      * @return the portletEntityId
      */
+    @Override
     public IPortletEntityId getPortletEntityId() {
         return this.portletEntityId;
     }
@@ -62,6 +66,7 @@ public class MockPortletEntity implements IPortletEntity {
     /**
      * @return the channelSubscribeId
      */
+    @Override
     public String getChannelSubscribeId() {
         return this.channelSubscribeId;
     }
@@ -76,6 +81,7 @@ public class MockPortletEntity implements IPortletEntity {
     /**
      * @return the userId
      */
+    @Override
     public int getUserId() {
         return this.userId;
     }
@@ -90,6 +96,7 @@ public class MockPortletEntity implements IPortletEntity {
     /**
      * @return the portletDefinitionId
      */
+    @Override
     public IPortletDefinitionId getPortletDefinitionId() {
         return this.portletDefinitionId;
     }
@@ -101,9 +108,20 @@ public class MockPortletEntity implements IPortletEntity {
         this.portletDefinitionId = portletDefinitionId;
     }
 
+    @Override
+    public WindowState getWindowState() {
+        return this.windowState;
+    }
+
+    @Override
+    public void setWindowState(WindowState state) {
+        this.windowState = state;
+    }
+
     /**
      * @return the portletPreferences
      */
+    @Override
     public IPortletPreferences getPortletPreferences() {
         return this.portletPreferences;
     }
@@ -111,6 +129,7 @@ public class MockPortletEntity implements IPortletEntity {
     /**
      * @param portletPreferences the portletPreferences to set
      */
+    @Override
     public void setPortletPreferences(IPortletPreferences portletPreferences) {
         this.portletPreferences = portletPreferences;
     }

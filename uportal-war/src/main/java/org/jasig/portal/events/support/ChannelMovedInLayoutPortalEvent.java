@@ -19,7 +19,7 @@
 
 package org.jasig.portal.events.support;
 
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -30,7 +30,7 @@ public final class ChannelMovedInLayoutPortalEvent extends ChannelLayoutPortalEv
     
     private final IUserLayoutNodeDescription newParentNode;
 
-	public ChannelMovedInLayoutPortalEvent(final Object source, final IPerson person, final UserProfile profile, 
+	public ChannelMovedInLayoutPortalEvent(final Object source, final IPerson person, final IUserProfile profile, 
             final IUserLayoutChannelDescription description, final IUserLayoutNodeDescription oldParentNode, 
             final IUserLayoutNodeDescription newParentNode) {
         super(source, person, profile, description, oldParentNode, EventType.getEventType("LAYOUT_CHANNEL_MOVED"));

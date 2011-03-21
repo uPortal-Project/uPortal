@@ -19,7 +19,7 @@
 
 package org.jasig.portal.events.support;
 
-import org.jasig.portal.UserProfile;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.events.EventType;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -30,7 +30,7 @@ public final class ChannelRenderedInLayoutPortalEvent extends TimedChannelLayout
     
     private final boolean renderedFromCache;
 
-	public ChannelRenderedInLayoutPortalEvent(final Object source, final IPerson person, final UserProfile profile, 
+	public ChannelRenderedInLayoutPortalEvent(final Object source, final IPerson person, final IUserProfile profile, 
             final IUserLayoutChannelDescription description, final IUserLayoutNodeDescription parentNode,
             final long renderTime, final boolean renderedFromCache) {
         super(source, person, profile, description, parentNode, renderTime, EventType.getEventType("CHANNEL_RENDERED"));

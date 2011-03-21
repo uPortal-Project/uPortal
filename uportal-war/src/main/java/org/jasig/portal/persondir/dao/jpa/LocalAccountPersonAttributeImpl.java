@@ -20,6 +20,7 @@
 package org.jasig.portal.persondir.dao.jpa;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Cacheable;
@@ -78,7 +79,7 @@ class LocalAccountPersonAttributeImpl implements Serializable {
     @Column(name = "ATTR_VALUE")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-    private List<String> values = null;
+    private final List<String> values = new ArrayList<String>(0);
 
     @SuppressWarnings("unused")
     private LocalAccountPersonAttributeImpl() { 
@@ -88,7 +89,7 @@ class LocalAccountPersonAttributeImpl implements Serializable {
     public LocalAccountPersonAttributeImpl(String name, List<String> values) {
         this.id = -1;
         this.name = name;
-        this.values = values;
+        this.setValues(values);
     }
     
     public List<String> getValues() {
@@ -96,7 +97,10 @@ class LocalAccountPersonAttributeImpl implements Serializable {
     }
 
     public void setValues(List<String> values) {
-        this.values = values;
+        this.values.clear();
+        if (values != null) {
+            this.values.addAll(values);
+        }
     }
 
     public String getName() {

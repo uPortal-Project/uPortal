@@ -103,7 +103,7 @@ public class RenderingPipelineIntegrationTest {
         this.xalanMessageHelper = xalanMessageHelper;
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void testRenderingPipeline() throws Exception {
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();

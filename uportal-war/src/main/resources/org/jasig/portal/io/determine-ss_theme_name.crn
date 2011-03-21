@@ -26,7 +26,7 @@
  | Returns the computed theme style sheet name based on the layout_theme_* properties
  +-->
 <choose>
-    <when test="${jexl(user_profile_theme_force == 'true' or THEME_STYLESHEET_NAME == null)}">
+    <when test="${jexl(user_profile_theme_force == 'true' or empty(THEME_STYLESHEET_NAME))}">
         <return value="${user_profile_theme_name_default}" />
     </when>
     <otherwise>
