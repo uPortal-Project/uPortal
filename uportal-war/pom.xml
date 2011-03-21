@@ -374,12 +374,12 @@
             <artifactId>woodstox-core-asl</artifactId>
         </dependency>
         
-        <!-- ===== Test Dependencies ========================================== 
+        <!-- ===== Test Dependencies ========================================== -->
         <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
-        </dependency>-->
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
