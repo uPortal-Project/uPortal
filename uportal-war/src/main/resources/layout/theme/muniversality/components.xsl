@@ -117,8 +117,8 @@
                 </xsl:variable>
                 <xsl:variable name="iconUrl">
                     <xsl:choose>
-                        <xsl:when test="@iconUrl != ''">
-                            <xsl:value-of select="@iconUrl"/>
+                        <xsl:when test="parameter[@name='iconUrl'] and parameter[@name='iconUrl']/@value != ''">
+                            <xsl:value-of select="parameter[@name='iconUrl']/@value"/>
                         </xsl:when>
                         <xsl:otherwise>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png</xsl:otherwise>
                     </xsl:choose>
