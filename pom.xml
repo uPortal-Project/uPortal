@@ -245,6 +245,10 @@
                         <groupId>net.sf.retrotranslator</groupId>
                         <artifactId>retrotranslator-runtime</artifactId>
                     </exclusion>
+                     <exclusion>
+                        <groupId>rhino</groupId>
+                        <artifactId>js</artifactId>
+                    </exclusion>
                     <exclusion>
                         <artifactId>xercesImpl</artifactId>
                         <groupId>xerces</groupId>
