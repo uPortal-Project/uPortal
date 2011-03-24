@@ -103,31 +103,34 @@
 | Template contents can be any valid XSL or XHTML.
 -->  
 <xsl:template name="mobile.navigation">
-    <xsl:for-each select="//group">
-        <xsl:if test="count(channel) > 0">
-            <ul data-role="listview" data-inset="true">
-                <li data-role="list-divider"><xsl:value-of select="navblock/@name"/></li>
-                <xsl:for-each select="channel">
-                    <li>
-                        <xsl:variable name="portletUrl">
-                            <xsl:call-template name="portletUrl">
-                                <xsl:with-param name="subscribeId" select="@ID" />
-                                <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
-                            </xsl:call-template>
-                        </xsl:variable>
-                        <a href="{$portletUrl}" title="To view {@name}">
-                            <!--img class="fl-icon" src="{@iconUrl}"/>-->
-                            <xsl:value-of select="@name" />
-                        </a>
-                        <xsl:variable name="newItemCountClasses">
-                            ui-li-count up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}
-                        </xsl:variable>
-                        <span class="{$newItemCountClasses}">{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</span>
-                    </li>
-                </xsl:for-each>
-            </ul>
-        </xsl:if>
-    </xsl:for-each>
+    <div class="portlet-navigation-list">
+        <xsl:for-each select="//channel">
+            <div class="portlet-navigation-item">
+                <xsl:variable name="portletUrl">
+                    <xsl:call-template name="portletUrl">
+                        <xsl:with-param name="subscribeId" select="@ID" />
+                        <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                    </xsl:call-template>
+                </xsl:variable>
+                <xsl:variable name="newItemCountClasses">
+                    ui-li-count up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}
+                </xsl:variable>
+                <xsl:variable name="iconUrl">
+                    <xsl:choose>
+                        <xsl:when test="@iconUrl != ''">
+                            <xsl:value-of select="@iconUrl"/>
+                        </xsl:when>
+                        <xsl:otherwise>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png</xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <a href="{$portletUrl}" title="To view {@name}">
+                    <span class="{$newItemCountClasses}">{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</span>
+                    <img class="portlet-icon" src="{$iconUrl}"/>
+                    <xsl:value-of select="@name" />
+                </a>
+            </div>
+        </xsl:for-each>
+    </div>
 </xsl:template>
 
 <!-- ======================================================================================================================================================== -->

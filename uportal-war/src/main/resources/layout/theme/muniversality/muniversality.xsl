@@ -265,40 +265,63 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template match="/">
-    <html>
-        <head>
-            <xsl:call-template name="page.title" />
-            <xsl:call-template name="page.meta" />
-            <xsl:call-template name="skinResources">
-              <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
-            </xsl:call-template>
+    <xsl:choose>
+        <xsl:when test="not(//focused) and $NATIVE = 'true'">
+            <json-layout>{ "layout": [
+                <xsl:for-each select="//channel">
+                    <xsl:variable name="portletUrl">
+                        <xsl:call-template name="portletUrl">
+                            <xsl:with-param name="subscribeId" select="@ID" />
+                            <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                        </xsl:call-template>
+                    </xsl:variable>
+                    {
+                        "title": "{up-portlet-title(<xsl:value-of select="@ID" />)}",
+                        "description": "<xsl:value-of select="@description"/>",
+                        "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}"
+                    }<xsl:if test="position() != last()">,</xsl:if>
+                    <xsl:copy-of select="." />
+                </xsl:for-each>
+            ] }</json-layout>
+            </xsl:when>
+        <xsl:otherwise>
+            <html>
+                <head>
+                    <xsl:call-template name="page.title" />
+                    <xsl:call-template name="page.meta" />
+                    <xsl:call-template name="skinResources">
+                      <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
+                    </xsl:call-template>
+        
+                    <xsl:call-template name="page.js" />
+                </head>
+                <body class="up {$FLUID_THEME_CLASS}">
+                    <div data-role="page" id="page">
+                        <xsl:choose>
+                            <xsl:when test="//focused">
+                                <xsl:call-template name="mobile.header.focused" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:call-template name="mobile.header" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <div data-role="content">
+                            <xsl:choose>
+                                <xsl:when test="//focused">
+                                    <xsl:call-template name="mobile.channel.content.focused" />
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:call-template name="mobile.navigation" />
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <xsl:call-template name="footer" />
+                        </div>
+                    </div>
+                </body>
+            </html>
+        </xsl:otherwise>
+    </xsl:choose>
 
-            <xsl:call-template name="page.js" />
-        </head>
-        <body class="up {$FLUID_THEME_CLASS}">
-            <div data-role="page" id="page">
-                <xsl:choose>
-                    <xsl:when test="//focused">
-                        <xsl:call-template name="mobile.header.focused" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:call-template name="mobile.header" />
-                    </xsl:otherwise>
-                </xsl:choose>
-                <div data-role="content">
-                    <xsl:choose>
-                        <xsl:when test="//focused">
-                            <xsl:call-template name="mobile.channel.content.focused" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:call-template name="mobile.navigation" />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                    <xsl:call-template name="footer" />
-                </div>
-            </div>
-        </body>
-    </html>
 </xsl:template>
 <!-- ========================================================================= -->
 
