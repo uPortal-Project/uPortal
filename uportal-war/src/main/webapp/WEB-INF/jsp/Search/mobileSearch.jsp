@@ -27,7 +27,16 @@
 <!-- Portlet Section -->
 <div id="${n}search">
 
-    <p class="search-back-div" style="${ empty engine ? 'display:none' : '' }"><a href="javascript:;" class="search-back-link">Back</a></p>
+    <div data-role="header" data-theme="b" class="search-back-div" style="${ empty engine ? 'display:none' : '' }">
+        <a data-role="button"  data-icon="back" data-inline="true" class="search-back-link" id="${n}gridViewLink" href="javascript:;">Back</a>
+        <h2 class="search-engine-name">
+            <c:choose>
+                <c:when test="${ engine == 'directory' }">Directory</c:when>
+                <c:when test="${ engine == 'campus-web' }">Campus Web</c:when>
+                <c:when test="${ engine == 'portal' }">Portal</c:when>
+            </c:choose>
+        </h2>
+    </div>
 
     <div class="search-engines" style="${ empty engine ? '' : 'display:none' }">
         <ul data-role="listview">
@@ -50,13 +59,6 @@
     </div>
 
     <div class="search-form" style="${ not empty engine ? '' : 'display:none' }">
-        <h2>
-            <c:choose>
-                <c:when test="${ engine == 'directory' }">Search the directory</c:when>
-                <c:when test="${ engine == 'campus-web' }">Search the campus web</c:when>
-                <c:when test="${ engine == 'portal' }">Search the portal</c:when>
-            </c:choose>
-        </h2>
         <div>
             <form action="${ formUrl }" method="POST">
                 <input type="hidden" name="engine" value="${ engine }"/>
@@ -140,7 +142,9 @@
 <rs:compressJs>up.jQuery(function() {
     var $ = up.jQuery;
     var fluid = up.fluid;
-    
+
+    $(document).ready(function() { 
+
     var showSearchForm =  function() {
         
         $("#${n}search .search-engines").hide();
@@ -158,19 +162,19 @@
     
         $("#${n}search .directory-search-link").click(function () {
             $("#${n}search .search-form input[name=engine]").val("directory");
-            $("#${n}search .search-form h2").text("Search the directory");
+            $("#${n}search .search-back-div h2").text("Directory");
             $("#${n}search .search-form input[name=query]").val("");
             showSearchForm();
         });
         $("#${n}search .campus-web-search-link").click(function () {
             $("#${n}search .search-form input[name=engine]").val("campus-web");
-            $("#${n}search .search-form h2").text("Search the campus web");
+            $("#${n}search .search-back-div h2").text("Campus Web");
             $("#${n}search .search-form input[name=query]").val("");
             showSearchForm();
         });
         $("#${n}search .portal-search-link").click(function () {
             $("#${n}search .search-form input[name=engine]").val("portal");
-            $("#${n}search .search-form h2").text("Search the portal");
+            $("#${n}search .search-back-div h2").text("Portal");
             $("#${n}search .search-form input[name=query]").val("");
             showSearchForm();
         });
@@ -263,6 +267,7 @@
                 }
             );
         </c:if>
+    });
         
  });
 </rs:compressJs></script>
