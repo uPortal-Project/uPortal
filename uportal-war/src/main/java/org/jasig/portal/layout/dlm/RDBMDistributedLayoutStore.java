@@ -1951,6 +1951,13 @@ public class RDBMDistributedLayoutStore
 //        channel.setAttribute("hasHelp", Boolean.toString(def.hasHelp()));
 //        channel.setAttribute("hasAbout", Boolean.toString(def.hasAbout()));
 
+        for (IPortletDefinitionParameter param : def.getParameters()) {
+            Element parameter = doc.createElement("parameter");
+            parameter.setAttribute("name", param.getName());
+            parameter.setAttribute("value", param.getValue());
+            channel.appendChild(parameter);
+        }
+
         return channel;
 
     }
