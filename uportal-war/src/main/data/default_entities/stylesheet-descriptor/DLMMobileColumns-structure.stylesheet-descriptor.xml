@@ -9,22 +9,14 @@
     <description>Presents the DLM layout in terms of tabs and columns.</description>
     <uri>classpath:/layout/structure/mobile-column/mobile-column.xsl</uri>
     <stylesheet-parameter>
-        <name>defaultTab</name>
-        <default-value>1</default-value>
-        <scope>PERSISTENT</scope>
-        <description>The number of the DLM tab that is initially active</description>
+        <name>userLayoutRoot</name>
+        <scope>REQUEST</scope>
+        <description>The id of the focused layout element</description>
     </stylesheet-parameter>
     <layout-attribute>
         <name>externalId</name>
         <scope>PERSISTENT</scope>
         <description>Identifier used to reference a tab externally, such as within a URL</description>
-        <targetElement>folder</targetElement>
-    </layout-attribute>
-    <layout-attribute>
-        <name>width</name>
-        <default-value>100%</default-value>
-        <scope>PERSISTENT</scope>
-        <description>Width of a DLM column</description>
         <targetElement>folder</targetElement>
     </layout-attribute>
 </stylesheet-descriptor>
