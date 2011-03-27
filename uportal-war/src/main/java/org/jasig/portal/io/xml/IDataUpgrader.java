@@ -19,24 +19,25 @@
 
 package org.jasig.portal.io.xml;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 
 /**
- * Describes a type of portal data that can be imported or exported via the {@link IDataImportExportService}
+ * Can upgrade an older portal data XML document to a newer format of the same data. Multiple data
+ * upgraders may be run in succession to translate very old data into the most recent format.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortalDataType {
+public interface IDataUpgrader {
     /**
-     * @return The unique name of this portal data type
+     * @return The portal xml data type this upgrader converts from
      */
-    public String getTypeId();
+    public PortalDataKey getSourceDataType();
+    
     /**
-     * @return The user readable title of the type
+     * Upgrade the external XML data format to a newer format
+     * @return true if the caller should handle the importing of the result, false if this class handled it internally.
      */
-    public String getTitle();
-    /**
-     * @return The user readable description of the type
-     */
-    public String getDescription();
+    public boolean upgradeData(Source source, Result result);
 }

@@ -169,11 +169,11 @@
         <crn location="export-memberships.crn"/>
     </when>
 
-    <!-- channel -->
-    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('channel'))}">
-        <with-attribute key="FNAME" value="${SYSID}">
-            <with-attribute key="SAFE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${FNAME})}">
-                <write-document node="${crn(${groovy(PORTAL_CONTEXT.getBean('export-channel'))})}" file="${EXPORT_DIR}/channel/${SAFE_FNAME}.channel"/>
+    <!-- portlet -->
+    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('portlet'))}">
+        <with-attribute key="DATA_TYPE" value="${groovy(org.jasig.portal.io.xml.portlet.PortletDefinitionPortalDataType.PORTLET_DEFINITION_NAME.getLocalPart())}">
+            <with-attribute key="SAFE_FNAME" value="${org.jasig.portal.io.SafeFileNamePhrase(${SYSID})}">
+                <write-document node="${crn(classpath:/org/jasig/portal/io/jaxb-export.crn)}" file="${EXPORT_DIR}/portlet/${SAFE_FNAME}.portlet.xml"/>
             </with-attribute>
         </with-attribute>
     </when>

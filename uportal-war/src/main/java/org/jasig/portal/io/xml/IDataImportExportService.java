@@ -21,7 +21,6 @@ package org.jasig.portal.io.xml;
 
 import java.util.Set;
 
-import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
@@ -36,7 +35,9 @@ import org.dom4j.Node;
 public interface IDataImportExportService {
     /**
      * Import data from the XML Node
+     * @deprecated use {@link #importData(Source)}
      */
+    @Deprecated
     public void importData(Node node);
 
     /**
@@ -52,15 +53,17 @@ public interface IDataImportExportService {
     /**
      * @return All portal data for a specific portal data type
      */
-    public Set<IPortalData> getPortalData(QName portalDataTypeName);
+    public Set<IPortalData> getPortalData(String typeId);
     
     /**
      * Export the portal data for the specified type and id as an XML Node
+     * @deprecated use {@link #exportData(String, String, Result)}
      */
-    public Node exportData(QName portalDataTypeName, String id);
+    @Deprecated
+    public Node exportData(String typeId, String dataId);
     
     /**
      * Export the portal data for the specified type and id writing it to the provided XML Transformer Result 
      */
-    public void exportData(QName portalDataTypeName, String id, Result result);
+    public void exportData(String typeId, String dataId, Result result);
 }

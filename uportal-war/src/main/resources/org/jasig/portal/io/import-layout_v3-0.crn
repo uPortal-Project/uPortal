@@ -33,6 +33,7 @@
  |
  +-->
 <xslt context="${Attributes.ORIGIN}" stylesheet="upgradeLayout_v3-2.xsl">
+    <sql-transaction>
     <with>
         <attribute key="USER_NAME">${valueOf(@username)}</attribute>
         <attribute key="profileElement">${singleNode(profile)}</attribute>
@@ -48,4 +49,5 @@
             <crn location="import-layout_v3-2.crn"/>
         </subtasks>
     </with>
+    </sql-transaction>
 </xslt>

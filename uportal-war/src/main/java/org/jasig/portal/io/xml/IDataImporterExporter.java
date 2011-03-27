@@ -21,13 +21,22 @@ package org.jasig.portal.io.xml;
 
 import java.util.Set;
 
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.Unmarshaller;
+
 /**
  * Defines a class that can import and export a specific type of portal data
+ * 
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface IDataImporterExporter<T> {
+    /**
+     * @return The data key the match on for importing with this class
+     */
+    public PortalDataKey getImportDataKey();
+    
     /**
      * @return The type descriptor for the 
      */
@@ -39,12 +48,22 @@ public interface IDataImporterExporter<T> {
     public Set<IPortalData> getPortalData();
     
     /**
-     * @param data The unmarshalled data to import
+     * @param data The data to import
      */
     public void importData(T data);
     
     /**
-     * Return marshallable portal data to export, if no data exists for the id null should be returned.
+     * Return portal data to export, if no data exists for the id null should be returned.
      */
     public T exportData(String id);
+    
+    /**
+     * @return The Unmarshaller to use to convert the data from XML to the required type T
+     */
+    public Unmarshaller getUnmarshaller();
+    
+    /**
+     * @return The Marshaller to use the convert the data to XML
+     */
+    public Marshaller getMarshaller();
 }

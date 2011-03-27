@@ -39,12 +39,15 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.io.xml.IDataImporterExporter;
+import org.jasig.portal.io.xml.AbstractJaxbIDataImporterExporter;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
+import org.jasig.portal.io.xml.ImportScriptType;
+import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
@@ -73,15 +76,16 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service("portletPublishingService")
-public class PortletDefinitionImporterExporter implements IDataImporterExporter<ExternalPortletDefinition>, IPortletPublishingService, ApplicationEventPublisherAware {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    
+public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporterExporter<ExternalPortletDefinition> implements IPortletPublishingService, ApplicationEventPublisherAware {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     private IPortletTypeRegistry portletTypeRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletCategoryRegistry portletCategoryRegistry;
     private ApplicationEventPublisher applicationEventPublisher;
     
+    
+
     @Autowired
     public void setPortletTypeRegistry(IPortletTypeRegistry portletTypeRegistry) {
         this.portletTypeRegistry = portletTypeRegistry;
@@ -103,11 +107,14 @@ public class PortletDefinitionImporterExporter implements IDataImporterExporter<
     }
     
     @Override
+    public PortalDataKey getImportDataKey() {
+        return PortletDefinitionPortalDataType.IMPORT_DATA_KEY;
+    }
+
+    @Override
     public IPortalDataType getPortalDataType() {
         return PortletDefinitionPortalDataType.INSTANCE;
     }
-    
-    
 
     @Override
     public Set<IPortalData> getPortalData() {
@@ -320,6 +327,10 @@ public class PortletDefinitionImporterExporter implements IDataImporterExporter<
         }
         
         ExternalPortletDefinition rep = new ExternalPortletDefinition();
+        
+        rep.setVersion("4.0");
+        rep.setScript(ImportScriptType.CLASSPATH_ORG_JASIG_PORTAL_IO_JAXB_IMPORT_V_4_0_CRN);
+        
         rep.setFname(def.getFName());
         rep.setDesc(def.getDescription());
         rep.setName(def.getName());
@@ -328,13 +339,24 @@ public class PortletDefinitionImporterExporter implements IDataImporterExporter<
         rep.setType(def.getType().getName());
         
         
+        final PortletDescriptor portletDescriptor = new PortletDescriptor();
+        final IPortletDescriptorKey portletDescriptorKey = def.getPortletDescriptorKey();
+        if (portletDescriptorKey.isFrameworkPortlet()) {
+            portletDescriptor.setIsFramework(true);
+        }
+        else {
+            portletDescriptor.setWebAppName(portletDescriptorKey.getWebAppName());
+        }
+        portletDescriptor.setPortletName(portletDescriptorKey.getPortletName());
+        rep.setPortletDescriptor(portletDescriptor);
+        
         
         final List<ExternalPortletParameter> parameterList = rep.getParameter();
         for (IPortletDefinitionParameter param : def.getParameters()) {
             final ExternalPortletParameter externalPortletParameter = new ExternalPortletParameter();
             externalPortletParameter.setName(param.getName());
             externalPortletParameter.setDescription(param.getDescription());
-            externalPortletParameter.setValue(externalPortletParameter.getValue());
+            externalPortletParameter.setValue(param.getValue());
             parameterList.add(externalPortletParameter);
         }
 

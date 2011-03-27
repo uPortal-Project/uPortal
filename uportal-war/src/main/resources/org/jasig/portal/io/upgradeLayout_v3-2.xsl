@@ -9,7 +9,6 @@
     
     <xsl:template match="root|header|footer|tab|column">
         <folder>
-            <xsl:apply-templates select="@*" />
             <xsl:attribute name="type">
                 <xsl:choose>
                     <xsl:when test="name() = 'tab' or name() = 'column'">
@@ -20,6 +19,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
+            <xsl:apply-templates select="@*" />
             <xsl:apply-templates select="param"/>
             <xsl:apply-templates />
         </folder>

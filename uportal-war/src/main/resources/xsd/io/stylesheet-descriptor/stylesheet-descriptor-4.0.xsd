@@ -6,7 +6,26 @@
 
     <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-types.xsd"/>
 
-    <xs:element name="stylesheet-descriptor" type="externalStylesheetDescriptor">
+    <xs:element name="stylesheet-descriptor">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="io:basePortalDataType">
+                    <xs:sequence>
+                        <xs:element name="name" type="io:fname-type"/>
+                        <xs:element name="description" type="xs:string" minOccurs="0"/>
+                        <xs:element name="uri" type="xs:string"/>
+                        <xs:element name="output-property" type="externalOutputPropertyDescriptor" minOccurs="0"
+                            maxOccurs="unbounded"/>
+                        <xs:element name="stylesheet-parameter" type="externalStylesheetParameterDescriptor" minOccurs="0"
+                            maxOccurs="unbounded"/>
+                        <xs:element name="layout-attribute" type="externalLayoutAttributeDescriptor" minOccurs="0"
+                            maxOccurs="unbounded"/>
+                    </xs:sequence>
+                    
+                    <xs:attribute name="version" type="io:version40Type" use="required"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
         <xs:unique name="unique-output-property">
             <xs:selector xpath="output-property"/>
             <xs:field xpath="name"/>
@@ -20,26 +39,6 @@
             <xs:field xpath="name"/>
         </xs:unique>
     </xs:element>
-
-    <xs:complexType name="externalStylesheetDescriptor">
-        <xs:complexContent>
-            <xs:extension base="io:basePortalDataType">
-                <xs:sequence>
-                    <xs:element name="name" type="io:fname-type"/>
-                    <xs:element name="description" type="xs:string" minOccurs="0"/>
-                    <xs:element name="uri" type="xs:string"/>
-                    <xs:element name="output-property" type="externalOutputPropertyDescriptor" minOccurs="0"
-                        maxOccurs="unbounded"/>
-                    <xs:element name="stylesheet-parameter" type="externalStylesheetParameterDescriptor" minOccurs="0"
-                        maxOccurs="unbounded"/>
-                    <xs:element name="layout-attribute" type="externalLayoutAttributeDescriptor" minOccurs="0"
-                        maxOccurs="unbounded"/>
-                </xs:sequence>
-
-                <xs:attribute name="version" type="io:version40Type" use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
 
     <xs:complexType name="externalOutputPropertyDescriptor">
         <xs:complexContent>

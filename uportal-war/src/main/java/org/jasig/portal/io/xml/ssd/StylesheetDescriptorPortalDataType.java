@@ -22,6 +22,8 @@ package org.jasig.portal.io.xml.ssd;
 import javax.xml.namespace.QName;
 
 import org.jasig.portal.io.xml.IPortalDataType;
+import org.jasig.portal.io.xml.ImportScriptType;
+import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 
 /**
@@ -35,16 +37,20 @@ import org.jasig.portal.layout.om.IStylesheetDescriptor;
 class StylesheetDescriptorPortalDataType implements IPortalDataType {
     public static final StylesheetDescriptorPortalDataType INSTANCE = new StylesheetDescriptorPortalDataType();
     
-    private static final QName PORTLET_DEFINITION_NAME = new QName("https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor", "stylesheet-descriptor");
-    
+    private static final QName STYLESHEET_DESCRIPTOR_NAME = new QName("https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor", "stylesheet-descriptor");
+    public static final PortalDataKey IMPORT_DATA_KEY = new PortalDataKey(
+            STYLESHEET_DESCRIPTOR_NAME, 
+            ImportScriptType.CLASSPATH_ORG_JASIG_PORTAL_IO_JAXB_IMPORT_V_4_0_CRN.value(),
+            "4.0");
+
     @Override
     public String getTitle() {
         return "Stylesheet Descriptor";
     }
 
     @Override
-    public QName getName() {
-        return PORTLET_DEFINITION_NAME;
+    public String getTypeId() {
+        return STYLESHEET_DESCRIPTOR_NAME.getLocalPart();
     }
 
     @Override

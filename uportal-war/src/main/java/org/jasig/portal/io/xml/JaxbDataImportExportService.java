@@ -27,18 +27,25 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stax.StAXSource;
 
 import org.dom4j.Node;
 import org.dom4j.io.DocumentResult;
 import org.dom4j.io.DocumentSource;
+import org.jasig.portal.xml.XmlUtilities;
+import org.jasig.portal.xml.stream.BufferedXMLEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
@@ -49,6 +56,8 @@ import org.springframework.stereotype.Service;
  * Uses {@link IDataImporterExporter} objects to list available data and read and write data from the portal
  * data stores.
  * 
+ * TODO better error handling, try to figure out what went wrong and provide a solution in the exception message
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -56,45 +65,62 @@ import org.springframework.stereotype.Service;
 public class JaxbDataImportExportService implements IDataImportExportService {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private Unmarshaller unmarshaller;
-    private Marshaller marshaller;
-    private Map<QName, IDataImporterExporter<Object>> portalDataHandlers = Collections.emptyMap();
+    private Map<PortalDataKey, IDataImporterExporter<Object>> portalDataImporters = Collections.emptyMap();
+    private Map<String, IDataImporterExporter<Object>> portalDataExporters = Collections.emptyMap();
+    private Map<PortalDataKey, IDataUpgrader> portalDataUpgraders = Collections.emptyMap();
     private Set<IPortalDataType> portalDataTypes = Collections.emptySet();
+    private XmlUtilities xmlUtilities;
 
     @Autowired
-    public void setMarshaller(Marshaller marshaller) {
-        this.marshaller = marshaller;
-    }
-
-    @Autowired
-    public void setUnmarshaller(@Qualifier("entityUnmarshaller") Unmarshaller unmarshaller) {
-        this.unmarshaller = unmarshaller;
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
     }
     
-    @Autowired
-    public void setEntityImporters(Collection<IDataImporterExporter<Object>> entityImporters) {
-        final Map<QName, IDataImporterExporter<Object>> entityImportersMap = new LinkedHashMap<QName, IDataImporterExporter<Object>>();
+    @Autowired(required=false)
+    public void setDataImporters(Collection<IDataImporterExporter<Object>> dataImporters) {
+        final Map<PortalDataKey, IDataImporterExporter<Object>> dataImportersMap = new LinkedHashMap<PortalDataKey, IDataImporterExporter<Object>>();
+        final Map<String, IDataImporterExporter<Object>> dataExportersMap = new LinkedHashMap<String, IDataImporterExporter<Object>>();
+        
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
         
-        for (final IDataImporterExporter<Object> entityImporter : entityImporters) {
-            final IPortalDataType portalDataType = entityImporter.getPortalDataType();
-            final QName name = portalDataType.getName();
-            this.logger.debug("Registering IDataImporterExporter for '{}' - {}", name, entityImporter);
-            entityImportersMap.put(name, entityImporter);
+        for (final IDataImporterExporter<Object> dataImporter : dataImporters) {
+            final IPortalDataType portalDataType = dataImporter.getPortalDataType();
+            final String typeId = portalDataType.getTypeId();
+            final PortalDataKey importDataKey = dataImporter.getImportDataKey();
+            
+            this.logger.debug("Registering IDataImporterExporter for '{}','{}' - {}", new Object[] {typeId, importDataKey, dataImporter});
+            
+            dataImportersMap.put(importDataKey, dataImporter);
+            dataExportersMap.put(typeId, dataImporter);
             portalDataTypes.add(portalDataType);
         }
         
-        this.portalDataHandlers = Collections.unmodifiableMap(entityImportersMap);
+        this.portalDataImporters = Collections.unmodifiableMap(dataImportersMap);
+        this.portalDataExporters = Collections.unmodifiableMap(dataExportersMap);
         this.portalDataTypes = Collections.unmodifiableSet(portalDataTypes);
+    }
+    
+    @Autowired(required=false)
+    public void setDataUpgraders(Collection<IDataUpgrader> dataUpgraders) {
+        final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap = new LinkedHashMap<PortalDataKey, IDataUpgrader>();
+        
+        for (final IDataUpgrader dataUpgrader : dataUpgraders) {
+            final PortalDataKey sourceDataType = dataUpgrader.getSourceDataType();
+            this.logger.debug("Registering IDataUpgrader for '{}' - {}", sourceDataType, dataUpgrader);
+            dataUpgraderMap.put(sourceDataType, dataUpgrader);
+        }
+        
+        this.portalDataUpgraders = Collections.unmodifiableMap(dataUpgraderMap);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.io.xml.IEntityImportService#importEntity(org.dom4j.Node)
      */
+    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
     public void importData(Node node) {
         final Source source = new DocumentSource(node);
-        
         importData(source);
     }
 
@@ -103,25 +129,86 @@ public class JaxbDataImportExportService implements IDataImportExportService {
      */
     @Override
     public void importData(final Source source) {
-        final JAXBElement<?> result;
+        //Get a StAX reader for the source to determine info about the data to import
+        final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(source);
+        final StartElement rootElement = getRootElement(bufferedXmlEventReader);
+        final PortalDataKey portalDataKey = new PortalDataKey(rootElement);
+        
+        //See if there is a registered importer for the data, if so import
+        final IDataImporterExporter<Object> dataImporterExporter = this.portalDataImporters.get(portalDataKey);
+        if (dataImporterExporter != null) {
+            this.logger.debug("Importing: {}", portalDataKey);
+            final Object data = unmarshallData(bufferedXmlEventReader, dataImporterExporter);
+            dataImporterExporter.importData(data);
+            return;
+        }
+        
+        //No importer, see if there is an upgrader, if so upgrade
+        final IDataUpgrader dataUpgrader = this.portalDataUpgraders.get(portalDataKey);
+        if (dataUpgrader != null) {
+            this.logger.debug("Upgrading: {}", portalDataKey);
+            final DOMResult result = new DOMResult();
+            final boolean doImport = dataUpgrader.upgradeData(source, result);
+            if (doImport) {
+                //If the upgrader didn't handle the import as well wrap the result DOM in a new Source and start the import process over again
+                final org.w3c.dom.Node node = result.getNode();
+                final DOMSource upgradedSource = new DOMSource(node);
+                this.importData(upgradedSource);
+            }
+            return;
+        }
+        
+        //No importer or upgrader found, fail
+        throw new IllegalArgumentException("Provided data " + portalDataKey + " has no registered importer or upgrader support.");
+    }
+
+    protected Object unmarshallData(final BufferedXMLEventReader bufferedXmlEventReader, final IDataImporterExporter<Object> dataImporterExporter) {
+        final Unmarshaller unmarshaller = dataImporterExporter.getUnmarshaller();
+        
         try {
-            result = (JAXBElement<?>)this.unmarshaller.unmarshal(source);
+            final StAXSource source = new StAXSource(bufferedXmlEventReader);
+            return unmarshaller.unmarshal(source);
         }
         catch (XmlMappingException e) {
-            //TODO better error handling, try to figure out what went wrong and provide a solution in the exception message
             throw new RuntimeException("Failed to map provided XML to portal data", e);
         }
         catch (IOException e) {
-            //TODO better error handling, try to figure out what went wrong and provide a solution in the exception message
             throw new RuntimeException("Failed to read the provided XML data", e);
         }
+        catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to create StAX Source to read XML data", e);
+        }
+    }
+
+    protected BufferedXMLEventReader createSourceXmlEventReader(final Source source) {
+        final XMLInputFactory xmlInputFactory = this.xmlUtilities.getXmlInputFactory();
+        final XMLEventReader xmlEventReader;
+        try {
+            xmlEventReader = xmlInputFactory.createXMLEventReader(source);
+        }
+        catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to create XML Event Reader for data Source", e);
+        }
+        return new BufferedXMLEventReader(xmlEventReader, -1);
+    }
+
+    protected StartElement getRootElement(final BufferedXMLEventReader bufferedXmlEventReader) {
+        XMLEvent rootElement;
+        try {
+            rootElement = bufferedXmlEventReader.nextTag();
+            while (rootElement.getEventType() != XMLEvent.START_ELEMENT && bufferedXmlEventReader.hasNext()) {
+                rootElement = bufferedXmlEventReader.nextTag();
+            }
+        }
+        catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to read root element from XML", e);
+        }
         
-        final QName entityName = result.getName();
-        this.logger.debug("Unmarshalled entity: {}", entityName);
-        
-        final IDataImporterExporter<Object> entityImporter = getDataImporterExporter(entityName);
-        
-        entityImporter.importData(result.getValue());
+        if (XMLEvent.START_ELEMENT != rootElement.getEventType()) {
+            throw new IllegalArgumentException("Bad XML document for import, no root element could be found");
+        }
+        bufferedXmlEventReader.reset();
+        return rootElement.asStartElement();
     }
 
     @Override
@@ -130,44 +217,44 @@ public class JaxbDataImportExportService implements IDataImportExportService {
     }
 
     @Override
-    public Set<IPortalData> getPortalData(QName portalDataTypeName) {
-        final IDataImporterExporter<Object> dataImporterExporter = getDataImporterExporter(portalDataTypeName);
-
+    public Set<IPortalData> getPortalData(String typeId) {
+        final IDataImporterExporter<Object> dataImporterExporter = getPortalDataExporter(typeId);
         return dataImporterExporter.getPortalData();
     }
 
+    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
-    public Node exportData(QName portalDataTypeName, String id) {
+    public Node exportData(String typeId, String dataId) {
         final DocumentResult result = new DocumentResult();
-        this.exportData(portalDataTypeName, id, result);
+        this.exportData(typeId, dataId, result);
         return result.getDocument();
     }
 
     @Override
-    public void exportData(QName portalDataTypeName, String id, Result result) {
-        final IDataImporterExporter<Object> dataImporterExporter = getDataImporterExporter(portalDataTypeName);
-        final Object data = dataImporterExporter.exportData(id);
+    public void exportData(String typeId, String dataId, Result result) {
+        final IDataImporterExporter<Object> portalDataExporter = this.getPortalDataExporter(typeId);
+        final Object data = portalDataExporter.exportData(dataId);
+        if (data == null) {
+            return;
+        }
+        
+        final Marshaller marshaller = portalDataExporter.getMarshaller();
         try {
-            this.marshaller.marshal(data, result);
+            marshaller.marshal(data, result);
         }
         catch (XmlMappingException e) {
-            //TODO better error handling, try to figure out what went wrong and provide a solution in the exception message
             throw new RuntimeException("Failed to map provided portal data to XML", e);
         }
         catch (IOException e) {
-            //TODO better error handling, try to figure out what went wrong and provide a solution in the exception message
             throw new RuntimeException("Failed to write the provided XML data", e);
         }
     }
 
-    /**
-     * Get the IDataImporterExporter for the QName, throws an exception if there is no IDataImporterExporter
-     * registered for the name. 
-     */
-    protected IDataImporterExporter<Object> getDataImporterExporter(QName portalDataTypeName) {
-        final IDataImporterExporter<Object> dataImporterExporter = this.portalDataHandlers.get(portalDataTypeName);
+    protected IDataImporterExporter<Object> getPortalDataExporter(String typeId) {
+        final IDataImporterExporter<Object> dataImporterExporter = this.portalDataExporters.get(typeId);
         if (dataImporterExporter == null) {
-            throw new IllegalArgumentException("No IDataImporterExporter exists for: " + portalDataTypeName);
+            throw new IllegalArgumentException("No IDataImporterExporter exists for: " + typeId);   
         }
         return dataImporterExporter;
     }

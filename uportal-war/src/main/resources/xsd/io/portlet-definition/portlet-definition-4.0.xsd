@@ -1,12 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<xs:schema xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition"
+<xs:schema
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition"
     targetNamespace="https://source.jasig.org/schemas/uportal/io/portlet-definition"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:io="https://source.jasig.org/schemas/uportal/io"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:io="https://source.jasig.org/schemas/uportal/io"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
 
     <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-types.xsd"/>
 
-    <xs:element name="portlet-definition" type="externalPortletDefinition">
+    <xs:element name="portlet-definition">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="io:basePortalDataType">
+                    <xs:sequence>
+                        <xs:element name="title" type="xs:string"/>
+                        <xs:element name="name" type="xs:string"/>
+                        <xs:element name="fname" type="io:fname-type"/>
+                        <xs:element name="desc" type="xs:string" minOccurs="0"/>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="timeout" type="xs:positiveInteger"/>
+                        
+                        <xs:element name="portlet-descriptor" type="portlet-descriptor"/>
+                        
+                        <xs:element name="category" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="group" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="user" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="parameter" type="externalPortletParameter" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="portlet-preference" type="externalPortletPreference" minOccurs="0"
+                            maxOccurs="unbounded"/>
+                    </xs:sequence>
+                    
+                    <xs:attribute name="version" type="io:version40Type" use="required"/>
+                    
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
         <xs:unique name="unique-category">
             <xs:selector xpath="category"/>
             <xs:field xpath="."/>
@@ -28,33 +57,6 @@
             <xs:field xpath="name"/>
         </xs:unique>
     </xs:element>
-
-    <xs:complexType name="externalPortletDefinition">
-        <xs:complexContent>
-            <xs:extension base="io:basePortalDataType">
-                <xs:sequence>
-                    <xs:element name="title" type="xs:string"/>
-                    <xs:element name="name" type="xs:string"/>
-                    <xs:element name="fname" type="io:fname-type"/>
-                    <xs:element name="desc" type="xs:string" minOccurs="0"/>
-                    <xs:element name="type" type="xs:string"/>
-                    <xs:element name="timeout" type="xs:positiveInteger"/>
-
-                    <xs:element name="portlet-descriptor" type="portlet-descriptor"/>
-
-                    <xs:element name="category" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="group" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="user" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="parameter" type="externalPortletParameter" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="portlet-preference" type="externalPortletPreference" minOccurs="0"
-                        maxOccurs="unbounded"/>
-                </xs:sequence>
-
-                <xs:attribute name="version" type="io:version40Type" use="required"/>
-
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
 
     <xs:complexType name="portlet-descriptor">
         <xs:sequence>

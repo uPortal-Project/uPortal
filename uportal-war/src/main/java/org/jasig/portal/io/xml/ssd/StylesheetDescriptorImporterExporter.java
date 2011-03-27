@@ -26,9 +26,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jasig.portal.io.xml.IDataImporterExporter;
+import org.jasig.portal.io.xml.AbstractJaxbIDataImporterExporter;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
+import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl;
 import org.jasig.portal.layout.dao.jpa.OutputPropertyDescriptorImpl;
@@ -47,13 +48,20 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
-public class StylesheetDescriptorImporterExporter implements IDataImporterExporter<ExternalStylesheetDescriptor> {
+public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImporterExporter<ExternalStylesheetDescriptor> {
     private IStylesheetDescriptorDao stylesheetDescriptorDao;
     
     @Autowired
     public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
         this.stylesheetDescriptorDao = stylesheetDescriptorDao;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.io.xml.IDataImporterExporter#getImportDataKey()
+     */
+    @Override
+    public PortalDataKey getImportDataKey() {
+        return StylesheetDescriptorPortalDataType.IMPORT_DATA_KEY;
     }
 
     /* (non-Javadoc)

@@ -28,32 +28,17 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <!-- 
-     | JAXB marshaller for entity objects
+     | Import/Export classes for portal entities
      +-->
-    <bean class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-        <qualifier value="entityUnmarshaller"/>
-        <property name="contextPaths">
-            <list>
-                <value>org.jasig.portal.io.xml.portlet</value>
-                <value>org.jasig.portal.io.xml.ssd</value>
-            </list>
-        </property>
-        <property name="schemas">
-            <list>
-                <value>classpath:/xsd/io/portlet-definition/portlet-definition-4.0.xsd</value>
-                <value>classpath:/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd</value>
-            </list>
-        </property>
-        <property name="marshallerProperties">
-            <map>
-                <entry key="jaxb.encoding" value="UTF-8" />
-                <entry key="jaxb.formatted.output" value="true" />
-                <!-- TODO how to deal with this when there are multiple schemas?
-                        Should everything be listed under a single portal-io.xsd?
-                    <entry key="jaxb.schemaLocation" value="?" />
-                -->
-            </map>
-        </property>
+    <bean class="org.jasig.portal.io.xml.portlet.PortletDefinitionImporterExporter">
+        <property name="contextPath" value="org.jasig.portal.io.xml.portlet" />
+        <property name="schema" value="classpath:/xsd/io/portlet-definition/portlet-definition-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" />
+    </bean>
+    <bean class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorImporterExporter">
+        <property name="contextPath" value="org.jasig.portal.io.xml.ssd" />
+        <property name="schema" value="classpath:/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" />
     </bean>
     
     <!-- 
