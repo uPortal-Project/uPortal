@@ -57,9 +57,8 @@
         <property name="handlers">
             <list>
                 <ref bean="loggingEventHandler"/>
-                <!-- UNCOMMENT FOR DATABASE STORAGE OF PORTAL STATS
+                <!-- SUPPORTS DATABASE STORAGE OF PORTAL STATS -->
                 <ref bean="queueingEventHandler"/>
-                 -->
             </list>
         </property>
     </bean>
@@ -91,25 +90,35 @@
             <set value-type="java.lang.Class">
                 <!-- Explicitly list channel events to exclude ChannelInstanciatedInLayoutPortalEvent -->
                 <value>org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent</value>
-                <value>org.jasig.portal.events.support.ChannelMovedInLayoutPortalEvent</value>
                 <value>org.jasig.portal.events.support.ChannelRemovedFromLayoutPortalEvent</value>
+                <!-- 
+                <value>org.jasig.portal.events.support.ChannelMovedInLayoutPortalEvent</value>
                 <value>org.jasig.portal.events.support.ChannelTargetedInLayoutPortalEvent</value>
                 <value>org.jasig.portal.events.support.ChannelUpdatedInLayoutPortalEvent</value>
+                -->
                 
                 <!-- All timed channel events events -->
+                <!-- 
                 <value>org.jasig.portal.events.support.TimedChannelLayoutPortalEvent</value>
+                -->
                 
                 <!-- All channel definition events -->
+                <!-- 
                 <value>org.jasig.portal.events.support.PortletPortalEvent</value>
+                -->
                 
                 <!-- All layout node related events -->
+                <!-- 
                 <value>org.jasig.portal.events.support.LayoutPortalEvent</value>
+                -->
                 
                 <!-- Explicitly list top level events -->
+                <!-- 
                 <value>org.jasig.portal.events.support.UserLoggedInPortalEvent</value>
                 <value>org.jasig.portal.events.support.UserLoggedOutPortalEvent</value>
                 <value>org.jasig.portal.events.support.UserSessionCreatedPortalEvent</value>
                 <value>org.jasig.portal.events.support.UserSessionDestroyedPortalEvent</value>
+                -->
             </set>
         </property>
     </bean>
@@ -163,5 +172,9 @@
     <bean name="statsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
         <property name="configuration" value="classpath:/properties/db/stats/hibernate.cfg.xml" />
         <property name="dataSource" ref="StatsDB" />
+    </bean>
+
+    <bean name="expiredEventsPurger" class="org.jasig.portal.events.handlers.db.ExpiredEventsPurger">
+        <property name="expirationThresholdDays" value="366" /><!-- Longest available reporting period, by default, is 1 year -->
     </bean>
 </beans>

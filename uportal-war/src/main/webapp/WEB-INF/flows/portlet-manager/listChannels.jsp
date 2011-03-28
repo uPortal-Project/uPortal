@@ -32,6 +32,10 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="createPortlet"/>
 </portlet:actionURL>
+<portlet:actionURL var="popularPortletsUrl">
+  <portlet:param name="execution" value="${flowExecutionKey}" />
+  <portlet:param name="_eventId" value="popularPortlets"/>
+</portlet:actionURL>
 <portlet:actionURL var="editPortletUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPortlet"/>
@@ -65,6 +69,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <div class="fl-col">
         <ul>
           <li><a class="button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span></a></li>
+          <li><a class="button" href="${ popularPortletsUrl }" title="<spring:message code="popular.portlets"/>"><span><spring:message code="popular.portlets"/></span></a></li>
         </ul>
       </div>
       <div class="fl-col fl-text-align-right portlet-search-view">

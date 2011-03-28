@@ -63,9 +63,36 @@
           <value>40%</value>
         </structure-attribute>
         <channel unremovable="" immutable="" hidden="" fname="RegisterPortal"/>
-        <channel unremovable="" immutable="" hidden="" fname="pbookmarks"/>
-        <channel unremovable="" immutable="" hidden="" fname="calendar"/>
         <channel unremovable="" immutable="" hidden="" fname="weather"/>
+      </column>
+    </tab>
+    <tab unremovable="N" immutable="N" hidden="N" name="Resources">
+      <param>
+        <name>cp:deleteAllowed</name>
+        <value>false</value>
+      </param>
+      <param>
+        <name>cp:editAllowed</name>
+        <value>false</value>
+      </param>
+      <param>
+        <name>cp:moveAllowed</name>
+        <value>false</value>
+      </param>
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>60%</value>
+        </structure-attribute>
+        <channel unremovable="" immutable="" hidden="" fname="popular-portlets"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>40%</value>
+        </structure-attribute>
+        <channel unremovable="" immutable="" hidden="" fname="calendar"/>
+        <channel unremovable="" immutable="" hidden="" fname="pbookmarks"/>
       </column>
     </tab>
   </root>

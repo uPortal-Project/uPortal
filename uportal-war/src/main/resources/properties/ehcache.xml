@@ -435,6 +435,14 @@
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
 
+    <!-- 
+     | Caches results of complex queries that show which portlets users have 
+     | added to their layouts and how often
+     +-->
+    <cache name="PortalStats.org.jasig.portal.rest.StatsLayoutModificationsController.portletsAdded"
+        eternal="false" maxElementsInMemory="25" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
     <!-- Portal javascript and css gzipping filter cache -->
 
     <cache name="org.jasig.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"
