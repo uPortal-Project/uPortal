@@ -62,4 +62,15 @@
         <property name="channelRegistryStore" ref="channelRegistryStore"/>
     </bean>
 
+    <!-- 
+     | Portlet subscribe/remove statistics
+     +-->
+    <bean name="/userLayoutModificationsCounts"
+        class="org.jasig.portal.rest.StatsLayoutModificationsController">
+        <property name="dataSource" ref="PortalDb"/>
+        <property name="maxDays" value="365"/>
+        <property name="personManager" ref="personManager"/>
+        <property name="cacheFactory" ref="cacheFactory"/>
+    </bean>
+
 </beans>

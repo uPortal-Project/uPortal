@@ -1,0 +1,35 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
+  <title>Most Popular Apps</title>
+  <name>Most Popular Apps</name>
+  <fname>popular-portlets</fname>
+  <desc>Shows which apps (portlets) have been added by users and how often</desc>
+  <type>Portlet</type>
+  <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+  <timeout>50000</timeout>
+  <hasedit>N</hasedit>
+  <hashelp>N</hashelp>
+  <hasabout>N</hasabout>
+  <secure>N</secure>
+  <locale>en_US</locale>
+  <categories>
+    <category>uPortal</category>
+  </categories>
+  <groups>
+    <group>Everyone</group>
+  </groups>
+  <parameters>
+    <parameter> 
+      <name>isFrameworkPortlet</name>  
+      <value>true</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+    <parameter> 
+      <name>portletName</name>  
+      <value>PopularPortlets</value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
+  </parameters>
+</channel-definition>

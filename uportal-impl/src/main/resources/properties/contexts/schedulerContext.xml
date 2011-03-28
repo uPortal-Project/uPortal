@@ -38,6 +38,7 @@
                 <ref bean="cacheMaintenanceTrigger" />
                 <ref bean="dlmFragmentCleanerTrigger" />
                 <ref bean="statsQueueFlushingTrigger" />
+                <ref bean="statsPurgeTrigger" />
             </list>
         </property>
     </bean>
@@ -93,5 +94,17 @@
         </property>
         <property name="startDelay" value="1000" />
         <property name="repeatInterval" value="1000" />
+    </bean>
+
+    <!-- Purge stats records from the database after they reach a certain age  -->
+    <bean id="statsPurgeTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetMethod" value="purge" />
+                <property name="targetObject" ref="expiredEventsPurger" />
+            </bean>
+        </property>
+        <property name="startDelay" value="300000" /><!-- Wait 5 minutes after startup -->
+        <property name="repeatInterval" value="86400000" /><!-- Perform the purge once a day 86400000 -->
     </bean>
 </beans>
