@@ -166,10 +166,9 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
         
         IPortletDefinition def = portletDefinitionRegistry
                 .getPortletDefinitionByFname(portletRep.getFname());
+        final PortletDescriptor portletDescriptor = portletRep.getPortletDescriptor();
+        final Boolean isFramework = portletDescriptor.isIsFramework();
         if (def == null) {
-            final PortletDescriptor portletDescriptor = portletRep.getPortletDescriptor();
-            
-            final Boolean isFramework = portletDescriptor.isIsFramework();
             def = portletDefinitionRegistry.createPortletDefinition(
                     portletType, 
                     portletRep.getFname(), 
@@ -178,6 +177,10 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
                     portletDescriptor.getWebAppName(), 
                     portletDescriptor.getPortletName(), 
                     isFramework != null ? isFramework : false);
+        } else {
+            def.getPortletDescriptorKey().setPortletName(portletDescriptor.getPortletName());
+            def.getPortletDescriptorKey().setWebAppName(portletDescriptor.getWebAppName());
+            def.getPortletDescriptorKey().setFrameworkPortlet(isFramework);
         }
         
         def.setName(portletRep.getName());
