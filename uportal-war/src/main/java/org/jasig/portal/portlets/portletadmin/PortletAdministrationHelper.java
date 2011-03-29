@@ -74,6 +74,7 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlets.Attribute;
+import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
@@ -393,12 +394,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		for (String key : form.getParameters().keySet()) {
 			String value = form.getParameters().get(key).getValue();
 			if (!StringUtils.isBlank(value)) {
-				boolean override = false;
-				if (key.startsWith("PORTLET.")) {
-					preferenceList.add(new PortletPreferenceImpl(key, !override, new String[]{value}));
-				} else {
-					portletDef.addParameter(key, value);
-				}
+			    portletDef.addParameter(key, value);
 			}
 		}
 		
@@ -406,8 +402,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			List<String> prefValues = form.getPortletPreferences().get(key).getValue();
 			if (prefValues != null && prefValues.size() > 0) {
 				String[] values = prefValues.toArray(new String[prefValues.size()]);
-				// fix read-only
-				preferenceList.add(new PortletPreferenceImpl(key, false, values));
+				BooleanAttribute readOnly = form.getPortletPreferenceReadOnly().get(key);
+				preferenceList.add(new PortletPreferenceImpl(key, readOnly.getValue(), values));
 			}
 		}
 		final IPortletPreferences portletPreferences = portletDef.getPortletPreferences();
@@ -446,13 +442,6 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			if (step.getPreferences() != null) {
 				for (CPDPreference pref : step.getPreferences()) {
 					currentPrefs.remove(pref.getName());
-				}
-			}
-			if (step.getParameters() != null) {
-				for (CPDParameter param : step.getParameters()) {
-					if (param.getName().startsWith("PORTLET.")) {
-						currentPrefs.remove(param.getName().replace("PORTLET.", ""));
-					}
 				}
 			}
 		}

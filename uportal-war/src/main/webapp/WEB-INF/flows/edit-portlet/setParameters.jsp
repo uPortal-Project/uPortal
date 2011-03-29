@@ -90,7 +90,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               </tr>
             </thead>
             <tbody>
-              <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
+              <c:forEach items="${ portletDescriptor.portletPreferences.portletPreferences }" var="pref">
                 <tr>
                   <td class="preference-name">${ fn:escapeXml(pref.name )}</td>
                   <td>
@@ -104,7 +104,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </tbody>
           </table>
         </div>
-      </div> <!-- end: porltet-section -->
+      </div> <!-- end: portlet-section -->
     </c:if>
 
     <!-- Step Loop -->
@@ -125,23 +125,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <tr>
                   <th><spring:message code="parameter"/></th>
                   <th><spring:message code="value"/></th>
-                  <th><spring:message code="user.editable"/></th>
                 </tr>
               </thead>
               <tbody>
                 <c:forEach items="${ step.parameters }" var="parameter">
-                  <c:if test="${ parameter.modify != 'subscribeOnly' }">
-                    <c:choose>
-                      <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
-                         <c:set var="paramName" value="${ fn:replace(parameter.name, 'PORTLET.', '') }"/>
-                         <c:set var="paramPath" value="portletPreferences['${ paramName }'].value"/>
-                         <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ paramName }'].value"/>
-                      </c:when>
-                      <c:otherwise>
-                      <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>
-                      <c:set var="overrideParamPath" value="parameterOverrides['${ parameter.name }'].value"/>
-                      </c:otherwise>
-                    </c:choose>
+                    <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>
+                    <c:set var="overrideParamPath" value="parameterOverrides['${ parameter.name }'].value"/>
                     <c:choose>
                       <c:when test="${ parameter.type.display == 'hidden' }">
                         <form:hidden path="${paramPath}"/>
@@ -162,15 +151,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                               </c:otherwise>
                             </c:choose>
                           </td>
-                          <td>
-                            <c:if test="${ parameter.modify != 'publish-only' }">
-                              <form:checkbox path="${overrideParamPath}" value="true"/>
-                            </c:if>
-                          </td>
                         </tr>
                       </c:otherwise>
                     </c:choose>
-                  </c:if>
                 </c:forEach>
               </tbody>
             </table>        
@@ -189,7 +172,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   </thead>
                   <tbody>
                     <c:forEach items="${ step.preferences }" var="parameter">
-                      <c:if test="${ parameter.modify != 'subscribeOnly' }">
                         <c:set var="paramPath" value="portletPreferences['${ parameter.name }'].value"/>
                         <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ parameter.name }'].value"/>
                         <c:choose>
@@ -213,7 +195,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             </tr>
                           </c:otherwise>
                         </c:choose>
-                      </c:if>
                     </c:forEach>
                   </tbody>
                 </table>

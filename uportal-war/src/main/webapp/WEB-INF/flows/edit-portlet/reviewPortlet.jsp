@@ -170,7 +170,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <tr>
               <th><spring:message code="configuration"/></th>
               <th><spring:message code="value"/></th>
-              <th><spring:message code="user.editable"/></th>
             </tr>
           </thead>
           <tfoot></tfoot>
@@ -182,23 +181,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <td class="fl-text-align-right"><c:out value="${ fn:escapeXml(parameter.label )}"/>:</td>
                     <td>
                         <a href="${ setParametersUrl }" class="pa-edit">
-                            <c:choose>
-	                            <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
-	                               <c:set var="values" value="${portlet.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value}"/>
-	                               <c:out value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}"/>
-	                            </c:when>
-	                            <c:otherwise>
-    	                            <c:out value="${ fn:escapeXml(portlet.parameters[parameter.name].value )}"/>
-	                            </c:otherwise>
-                            </c:choose>
+	                        ${ fn:escapeXml(portlet.parameters[parameter.name].value )}
                         </a>
-                    </td>
-                    <td>
-                        <!--<c:choose>
-                            <c:when test="${ fn:startsWith(parameter.name, 'PORTLET.') }">
-                                ${ fn:escapeXml(portlet.portletPreferencesOverrides[fn:replace(parameter.name, 'PORTLET.', '')].value ? 'X' : '' )}
-                            </c:when>
-                        </c:choose>-->
                     </td>
                   </tr>
                 </c:if>
@@ -210,7 +194,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                       <tr>
                         <td class="fl-text-align-right"><c:out value="${ fn:escapeXml(portletParam.key )}"/>:</td>
                         <td><a href="${ setParametersUrl }" class="pa-edit"><c:out value="${ fn:escapeXml(portletParam.value )}"/></a></td>
-                        <td>${ fn:escapeXml(portlet.parameterOverrides[parameter.name].value ? 'X' : '' )}</td>
                       </tr>
                     </c:if>
                   </c:forEach>
@@ -239,7 +222,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               </tr>
             </thead>
             <tbody>
-              <c:forEach items="${ portlet.portletPreferences.portletPreferences }" var="pref">
+              <c:forEach items="${ portletDescriptor.portletPreferences.portletPreferences }" var="pref">
                 <tr class="${ up:containsKey(portlet.portletPreferences, pref.name) ? 'override-preference' : '' }">
                   <td class="preference-name">${ fn:escapeXml(pref.name )}</td>
                   <td>
@@ -283,17 +266,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </thead>
             <tfoot></tfoot>
             <tbody>
-              <c:forEach items="${ arbitraryPreferenceNames }" var="name">
-                <c:set var="paramPath" value="portletPreferences['${ name }'].value"/>
-                <c:set var="overrideParamPath" value="portletPreferencesOverrides['${ name }'].value"/>
+              <c:forEach items="${ portlet.portletPreferences }" var="pref">
                   <tr>
-                    <td class="preference-name">${ fn:escapeXml(name )}</td>
+                    <td class="preference-name">${ fn:escapeXml(pref.key )}</td>
                     <td>
-                        <c:forEach items="${ portlet.portletPreferences[name].value }" var="val">
+                        <c:forEach items="${ pref.value.value }" var="val">
                          <div>${ fn:escapeXml(val )}</div>
                         </c:forEach>
                     </td>
-                    <td>${ fn:escapeXml(portlet.portletPreferencesOverrides[name].value )}</td>
+                    <td>${ !fn:escapeXml(portlet.portletPreferenceReadOnly[key].value )}</td>
                   </tr>
               </c:forEach>
             </tbody>

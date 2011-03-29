@@ -38,6 +38,8 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.AttributeFactory;
+import org.jasig.portal.portlets.BooleanAttribute;
+import org.jasig.portal.portlets.BooleanAttributeFactory;
 import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.portlets.StringListAttributeFactory;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDControl;
@@ -107,7 +109,11 @@ public class PortletDefinitionForm implements Serializable {
 	@SuppressWarnings("unchecked")
 	private Map<String, StringListAttribute> portletPreferences = LazyMap.decorate(
 			new HashMap<String, StringListAttribute>(), new StringListAttributeFactory());
-	
+
+    @SuppressWarnings("unchecked")
+    private Map<String, BooleanAttribute> portletPreferenceReadOnly = LazyMap
+            .decorate(new HashMap<String, BooleanAttribute>(), new BooleanAttributeFactory());
+
 	/**
 	 * Default constructor
 	 */
@@ -130,9 +136,15 @@ public class PortletDefinitionForm implements Serializable {
 		this.setApplicationId(def.getPortletDescriptorKey().getWebAppName());
 		this.setPortletName(def.getPortletDescriptorKey().getPortletName());
 		this.setFramework(def.getPortletDescriptorKey().isFrameworkPortlet());
-		this.setEditable(Boolean.parseBoolean(def.getParameter(IPortletDefinition.EDITABLE_PARAM).getValue()));
-		this.setHasHelp(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_HELP_PARAM).getValue()));
-		this.setHasAbout(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM).getValue()));
+		if (def.getParameter(IPortletDefinition.EDITABLE_PARAM) != null) {
+		    this.setEditable(Boolean.parseBoolean(def.getParameter(IPortletDefinition.EDITABLE_PARAM).getValue()));
+		}
+        if (def.getParameter(IPortletDefinition.HAS_HELP_PARAM) != null) {
+            this.setHasHelp(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_HELP_PARAM).getValue()));
+        }
+        if (def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM) != null) {
+    		this.setHasAbout(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM).getValue()));
+    	}
 		this.setLifecycleState(def.getLifecycleState());
 		
 		int order = this.getLifecycleState().getOrder();
@@ -161,6 +173,7 @@ public class PortletDefinitionForm implements Serializable {
 				attributes.add(new Attribute(value));
 			}
 			this.portletPreferences.put(pref.getName(), new StringListAttribute(pref.getValues()));
+            this.portletPreferenceReadOnly.put(pref.getName(), new BooleanAttribute(!pref.isReadOnly()));
 		}
             
 	}
@@ -405,6 +418,15 @@ public class PortletDefinitionForm implements Serializable {
 	public void setPortletPreferences(Map<String, StringListAttribute> portletParameters) {
 		this.portletPreferences = portletParameters;
 	}
+
+    public Map<String, BooleanAttribute> getPortletPreferenceReadOnly() {
+        return this.portletPreferenceReadOnly;
+    }
+
+    public void setPortletPreferenceReadOnly(
+            Map<String, BooleanAttribute> portletPreferenceReadOnly) {
+        this.portletPreferenceReadOnly = portletPreferenceReadOnly;
+    }
 
 	public List<JsonEntityBean> getGroups() {
 		return groups;
