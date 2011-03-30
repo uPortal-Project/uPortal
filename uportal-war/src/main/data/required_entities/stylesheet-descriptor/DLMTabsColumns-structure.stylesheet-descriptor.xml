@@ -1,5 +1,5 @@
 <stylesheet-descriptor xmlns="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor ../../../resources/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" script="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor ../../../resources/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd"
     version="4.0"
 >
     <name>DLMTabsColumns</name>

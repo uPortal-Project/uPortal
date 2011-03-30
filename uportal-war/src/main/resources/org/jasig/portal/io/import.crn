@@ -72,71 +72,7 @@
                             </file-iterator>
                         </thread-pool>
         
-                        <!-- structures -->
-                        <thread-pool threads="${req(THREAD_COUNT)}">
-                            <file-iterator dir="${$1}" includes="**/*.structure">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <concurrent>
-                                        <handle-error>
-                                            <try>
-                                                <echo-ln>Import Structure:  ${Attributes.LOCATION}</echo-ln>
-                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-	                                                <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
-	                                                    <choose>
-	                                                        <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
-                                                                <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
-	                                                        </when>
-	                                                        <otherwise>
-                                                              <echo-ln>WARNING: Should not be here.  Unsupported Structure version.</echo-ln>
-	                                                            <crn location="${importScriptUrl}"/>
-	                                                        </otherwise>
-	                                                    </choose>
-	                                                </with-attribute>
-                                                </with-attribute>
-                                            </try>
-                                            <catch>
-                                                <echo-ln>ERROR Failed to import Structure from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <throw/>
-                                            </catch>
-                                        </handle-error>
-                                    </concurrent>
-                                </if>
-                            </file-iterator>
-                        </thread-pool>
-                        
-                        <!-- themes -->
-                        <thread-pool threads="${req(THREAD_COUNT)}">
-                            <file-iterator dir="${$1}" includes="**/*.theme">
-                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
-                                    <concurrent>
-                                        <handle-error>
-                                            <try>
-                                                <echo-ln>Import Theme:  ${Attributes.LOCATION}</echo-ln>
-                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-	                                                <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
-	                                                    <choose>
-	                                                        <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
-                                                                <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
-	                                                        </when>
-	                                                        <otherwise>
-                                                              <echo-ln>WARNING: Should not be here.  Unsupported Theme version.</echo-ln>
-	                                                            <crn location="${importScriptUrl}"/>
-	                                                        </otherwise>
-	                                                    </choose>
-	                                                </with-attribute>
-                                                </with-attribute>
-                                            </try>
-                                            <catch>
-                                                <echo-ln>ERROR Failed to import Theme from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
-                                                <throw/>
-                                            </catch>
-                                        </handle-error>
-                                    </concurrent>
-                                </if>
-                            </file-iterator>
-                        </thread-pool>
-                        
-                        
+                        <!-- structures -->                        
                         <thread-pool threads="${req(THREAD_COUNT)}">
                             <file-iterator dir="${$1}" includes="**/*.stylesheet-descriptor.xml">
                                 <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
@@ -144,19 +80,7 @@
                                         <handle-error>
                                             <try>
                                                 <echo-ln>Import Stylesheet Descriptor:  ${Attributes.LOCATION}</echo-ln>
-                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-                                                  <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
-                                                      <choose>
-                                                          <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
-                                                              <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
-                                                          </when>
-                                                          <otherwise>
-                                                              <echo-ln>WARNING: Should not be here.  Unsupported Portlet version.</echo-ln>
-                                                              <crn location="${importScriptUrl}"/>
-                                                          </otherwise>
-                                                      </choose>
-                                                  </with-attribute>
-                                                </with-attribute>
+                                                <crn location="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"/>
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Stylesheet Descriptor from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -347,23 +271,7 @@
                                         <handle-error>
                                             <try>
                                                 <echo-ln>Import Portlet:  ${Attributes.LOCATION}</echo-ln>
-                                                <!--
-                                                    TODO eventually just pass Attributes.LOCATION to jaxb importer so it can use StAX to inspect
-                                                    the first element and determine how to upgrade/import the file before unmarhsalling
-                                                -->
-                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-                                                  <with-attribute key="importScriptUrl" value="${valueOf(@script)}">
-                                                      <choose>
-                                                          <when test="${groovy(importTasks.containsKey(importScriptUrl))}">
-                                                              <crn task="${groovy(importTasks.get(importScriptUrl))}"/>
-                                                          </when>
-                                                          <otherwise>
-                                                              <echo-ln>WARNING: Should not be here.  Unsupported Portlet version.</echo-ln>
-                                                              <crn location="${importScriptUrl}"/>
-                                                          </otherwise>
-                                                      </choose>
-                                                  </with-attribute>
-                                                </with-attribute>
+                                                <crn location="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"/>
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Portlet from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>

@@ -25,13 +25,13 @@
  | the number or nature of arguments expected.
  |
  | These are:
- |   - ${Attributes.NODE}=XML Element that defines the entity to import
+ |   - ${Attributes.LOCATION}=The file name of the XML data to import
  |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
  |
  +-->
 <groovy>
     <script>
         dataImportExportService = PORTAL_CONTEXT.getBean(org.jasig.portal.io.xml.IDataImportExportService.class);
-        dataImportExportService.importData(Attributes.NODE);
+        dataImportExportService.importData(Attributes.CONTEXT + Attributes.LOCATION);
     </script>
 </groovy>

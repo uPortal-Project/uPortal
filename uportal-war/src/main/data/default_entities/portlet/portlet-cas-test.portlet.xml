@@ -23,7 +23,7 @@
     xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition ../../../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd"
-    script="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"
+   
     version="4.0"
 >
 

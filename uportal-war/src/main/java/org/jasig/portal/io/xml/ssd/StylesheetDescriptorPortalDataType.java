@@ -22,7 +22,6 @@ package org.jasig.portal.io.xml.ssd;
 import javax.xml.namespace.QName;
 
 import org.jasig.portal.io.xml.IPortalDataType;
-import org.jasig.portal.io.xml.ImportScriptType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 
@@ -40,7 +39,7 @@ class StylesheetDescriptorPortalDataType implements IPortalDataType {
     private static final QName STYLESHEET_DESCRIPTOR_NAME = new QName("https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor", "stylesheet-descriptor");
     public static final PortalDataKey IMPORT_DATA_KEY = new PortalDataKey(
             STYLESHEET_DESCRIPTOR_NAME, 
-            ImportScriptType.CLASSPATH_ORG_JASIG_PORTAL_IO_JAXB_IMPORT_V_4_0_CRN.value(),
+            null,
             "4.0");
 
     @Override

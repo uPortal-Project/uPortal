@@ -7,7 +7,6 @@
     version="1.0">
     
     <xs:complexType name="basePortalDataType" abstract="true">
-        <xs:attribute name="script" type="importScriptType" use="required" />
     </xs:complexType>
     
     <xs:simpleType name="fname-type">
@@ -20,17 +19,6 @@
         </xs:annotation>
         <xs:restriction base="xs:string">
             <xs:pattern value="[\w-]+"/>
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="importScriptType">
-        <xs:annotation>
-            <xs:documentation>
-                The Cernunnos script all portal data that uses JAXB to import must specify.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"/>
         </xs:restriction>
     </xs:simpleType>
     

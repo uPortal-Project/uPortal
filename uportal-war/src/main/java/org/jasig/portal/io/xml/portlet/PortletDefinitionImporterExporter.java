@@ -42,7 +42,6 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.io.xml.AbstractJaxbIDataImporterExporter;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
-import org.jasig.portal.io.xml.ImportScriptType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -69,7 +68,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -332,7 +330,6 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
         ExternalPortletDefinition rep = new ExternalPortletDefinition();
         
         rep.setVersion("4.0");
-        rep.setScript(ImportScriptType.CLASSPATH_ORG_JASIG_PORTAL_IO_JAXB_IMPORT_V_4_0_CRN);
         
         rep.setFname(def.getFName());
         rep.setDesc(def.getDescription());

@@ -46,6 +46,11 @@ public interface IDataImportExportService {
     public void importData(Source source);
     
     /**
+     * Import data from the specified resource
+     */
+    public void importData(String resource);
+    
+    /**
      * @return All portal data types that can be exported
      */
     public Set<IPortalDataType> getPortalDataTypes();
@@ -66,4 +71,6 @@ public interface IDataImportExportService {
      * Export the portal data for the specified type and id writing it to the provided XML Transformer Result 
      */
     public void exportData(String typeId, String dataId, Result result);
+    
+//    public void exportData(String typeId, String dataId, String resultResource);
 }

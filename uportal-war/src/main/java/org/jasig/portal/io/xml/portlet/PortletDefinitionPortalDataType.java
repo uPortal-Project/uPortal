@@ -22,7 +22,6 @@ package org.jasig.portal.io.xml.portlet;
 import javax.xml.namespace.QName;
 
 import org.jasig.portal.io.xml.IPortalDataType;
-import org.jasig.portal.io.xml.ImportScriptType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 
@@ -38,7 +37,7 @@ public class PortletDefinitionPortalDataType implements IPortalDataType {
     public static final QName PORTLET_DEFINITION_NAME = new QName("https://source.jasig.org/schemas/uportal/io/portlet-definition", "portlet-definition");
     public static final PortalDataKey IMPORT_DATA_KEY = new PortalDataKey(
             PORTLET_DEFINITION_NAME, 
-            ImportScriptType.CLASSPATH_ORG_JASIG_PORTAL_IO_JAXB_IMPORT_V_4_0_CRN.value(),
+            null,
             "4.0");
     
     @Override

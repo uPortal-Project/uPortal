@@ -20,6 +20,7 @@
 package org.jasig.portal.io.xml;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -37,7 +38,9 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.IOUtils;
 import org.dom4j.Node;
 import org.dom4j.io.DocumentResult;
 import org.dom4j.io.DocumentSource;
@@ -46,6 +49,9 @@ import org.jasig.portal.xml.stream.BufferedXMLEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
@@ -62,7 +68,7 @@ import org.springframework.stereotype.Service;
  * @version $Revision$
  */
 @Service("dataImportExportService")
-public class JaxbDataImportExportService implements IDataImportExportService {
+public class JaxbDataImportExportService implements IDataImportExportService, ResourceLoaderAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private Map<PortalDataKey, IDataImporterExporter<Object>> portalDataImporters = Collections.emptyMap();
@@ -70,6 +76,7 @@ public class JaxbDataImportExportService implements IDataImportExportService {
     private Map<PortalDataKey, IDataUpgrader> portalDataUpgraders = Collections.emptyMap();
     private Set<IPortalDataType> portalDataTypes = Collections.emptySet();
     private XmlUtilities xmlUtilities;
+    private ResourceLoader resourceLoader;
 
     @Autowired
     public void setXmlUtilities(XmlUtilities xmlUtilities) {
@@ -113,6 +120,11 @@ public class JaxbDataImportExportService implements IDataImportExportService {
         this.portalDataUpgraders = Collections.unmodifiableMap(dataUpgraderMap);
     }
 
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.io.xml.IEntityImportService#importEntity(org.dom4j.Node)
      */
@@ -122,6 +134,28 @@ public class JaxbDataImportExportService implements IDataImportExportService {
     public void importData(Node node) {
         final Source source = new DocumentSource(node);
         importData(source);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.io.xml.IDataImportExportService#importData(java.lang.String)
+     */
+    @Override
+    public void importData(String resourceLocation) {
+        final Resource resource = this.resourceLoader.getResource(resourceLocation);
+        final InputStream resourceStream;
+        try {
+            resourceStream = resource.getInputStream();
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Could not load InputStream for resource: " + resourceLocation, e);
+        }
+        
+        try {
+            this.importData(new StreamSource(resourceStream));
+        }
+        finally {
+            IOUtils.closeQuietly(resourceStream);
+        }
     }
 
     /* (non-Javadoc)
