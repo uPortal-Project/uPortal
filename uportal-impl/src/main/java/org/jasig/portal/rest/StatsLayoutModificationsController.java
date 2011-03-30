@@ -207,7 +207,7 @@ public class StatsLayoutModificationsController extends AbstractController imple
         private final int id;
         private final String portletFName;
         private final String portletTitle;
-        private final String portletDescription;
+        private String portletDescription = "[no description available]";  // default
         private final int count;
         
         public CountingTuple(int id, String portletFName, String portletTitle, String portletDescription, int count) {
@@ -221,15 +221,14 @@ public class StatsLayoutModificationsController extends AbstractController imple
                 String msg = "Argument 'portletTitle' cannot be null";
                 throw new IllegalArgumentException(msg);
             }
-            if (portletDescription == null) {
-                String msg = "Argument 'portletDescription' cannot be null";
-                throw new IllegalArgumentException(msg);
-            }
+            // NB:  'portletDescription' actually can be null
 
             this.id = id;
             this.portletFName = portletFName;
             this.portletTitle = portletTitle;
-            this.portletDescription = portletDescription;
+            if (portletDescription != null) {
+                this.portletDescription = portletDescription;
+            }
             this.count = count;
         }
 
