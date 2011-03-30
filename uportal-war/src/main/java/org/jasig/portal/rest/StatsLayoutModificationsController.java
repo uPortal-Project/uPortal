@@ -211,7 +211,7 @@ public class StatsLayoutModificationsController implements InitializingBean {
         private final int id;
         private final String portletFName;
         private final String portletTitle;
-        private final String portletDescription;
+        private String portletDescription = "[no description available]";  // default
         private final int count;
         
         public CountingTuple(int id, String portletFName, String portletTitle, String portletDescription, int count) {
@@ -225,15 +225,14 @@ public class StatsLayoutModificationsController implements InitializingBean {
                 String msg = "Argument 'portletTitle' cannot be null";
                 throw new IllegalArgumentException(msg);
             }
-            if (portletDescription == null) {
-                String msg = "Argument 'portletDescription' cannot be null";
-                throw new IllegalArgumentException(msg);
-            }
+            // NB:  'portletDescription' actually can be null
 
             this.id = id;
             this.portletFName = portletFName;
             this.portletTitle = portletTitle;
-            this.portletDescription = portletDescription;
+            if (portletDescription != null) {
+                this.portletDescription = portletDescription;
+            }
             this.count = count;
         }
 
@@ -270,13 +269,12 @@ public class StatsLayoutModificationsController implements InitializingBean {
         private static final String ADDED_PORTLETS_SQL = 
             "SELECT uppd.portlet_def_id, uppd.portlet_fname, uppd.portlet_title, uppd.portlet_desc, (SELECT COUNT(*) " +
                 "FROM stats_event ste, stats_event_type stet, stats_channel stc " +
-                "WHERE ste.type_id = stet.id AND stet.type = 'LAYOUT_CHANNEL_ADDED' " +
+                "WHERE ste.type_id = stet.id " +
+                "AND stet.type = 'LAYOUT_CHANNEL_ADDED' " +
                 "AND ste.id = stc.event_id " +
                 "AND stc.definition_id = uppd.portlet_def_id " +
-                "AND ste.act_date >= ? AND ste.act_date <= ?) AS occurances " +
-            "FROM up_portlet_def uppd " +
-            "WHERE occurances > 0 " +
-            "ORDER BY occurances DESC";
+                "AND ste.act_date >= ? AND ste.act_date <= ?) " +
+            "FROM up_portlet_def uppd";
         private static final String PORTLETS_ADDED_CACHE_KEY = 
             "PortalStats.org.jasig.portal.rest.StatsLayoutModificationsController.portletsAdded";
 
@@ -321,6 +319,15 @@ public class StatsLayoutModificationsController implements InitializingBean {
                         ADDED_PORTLETS_SQL, 
                         rowMapper, 
                         dateOnOrAfter, dateOnOrBefore);
+            // Remove rows with zero count... not interested in those
+            int index = 0;
+            while (rslt.size() > index) {
+                if (rslt.get(index).getCount() == 0) {
+                    rslt.remove(index);
+                } else {
+                    index += 1;
+                }
+            }
             // We're interested in descending order 
             Collections.sort(rslt, Collections.reverseOrder());
 
@@ -335,11 +342,11 @@ public class StatsLayoutModificationsController implements InitializingBean {
         @Override
         public CountingTuple mapRow(ResultSet rs, int index) throws SQLException {
             return new CountingTuple(
-                    rs.getInt("chan_id"), 
-                    rs.getString("chan_fname"), 
-                    rs.getString("chan_title"), 
-                    rs.getString("chan_desc"), 
-                    rs.getInt("occurances"));
+                    rs.getInt("portlet_def_id"), 
+                    rs.getString("portlet_fname"), 
+                    rs.getString("portlet_title"), 
+                    rs.getString("portlet_desc"), 
+                    rs.getInt(5));
         }
         
     }
