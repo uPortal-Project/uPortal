@@ -266,13 +266,12 @@ public class StatsLayoutModificationsController extends AbstractController imple
         private static final String ADDED_PORTLETS_SQL = 
             "SELECT upc.chan_id, upc.chan_fname, upc.chan_title, upc.chan_desc, (SELECT COUNT(*) " +
                 "FROM stats_event ste, stats_event_type stet, stats_channel stc " +
-                "WHERE ste.type_id = stet.id AND stet.type = 'LAYOUT_CHANNEL_ADDED' " +
+                "WHERE ste.type_id = stet.id " +
+                "AND stet.type = 'LAYOUT_CHANNEL_ADDED' " +
                 "AND ste.id = stc.event_id " +
                 "AND stc.definition_id = upc.chan_id " +
-                "AND ste.act_date >= ? AND ste.act_date <= ?) AS occurances " +
-            "FROM up_channel upc " +
-            "WHERE occurances > 0 " +
-            "ORDER BY occurances DESC";
+                "AND ste.act_date >= ? AND ste.act_date <= ?) " +
+            "FROM up_channel upc";
         private static final String PORTLETS_ADDED_CACHE_KEY = 
             "PortalStats.org.jasig.portal.rest.StatsLayoutModificationsController.portletsAdded";
 
@@ -317,6 +316,15 @@ public class StatsLayoutModificationsController extends AbstractController imple
                         ADDED_PORTLETS_SQL, 
                         rowMapper, 
                         dateOnOrAfter, dateOnOrBefore);
+            // Remove rows with zero count... not interested in those
+            int index = 0;
+            while (rslt.size() > index) {
+                if (rslt.get(index).getCount() == 0) {
+                    rslt.remove(index);
+                } else {
+                    index += 1;
+                }
+            }
             // We're interested in descending order 
             Collections.sort(rslt, Collections.reverseOrder());
 
@@ -335,7 +343,7 @@ public class StatsLayoutModificationsController extends AbstractController imple
                     rs.getString("chan_fname"), 
                     rs.getString("chan_title"), 
                     rs.getString("chan_desc"), 
-                    rs.getInt("occurances"));
+                    rs.getInt(5));
         }
         
     }
