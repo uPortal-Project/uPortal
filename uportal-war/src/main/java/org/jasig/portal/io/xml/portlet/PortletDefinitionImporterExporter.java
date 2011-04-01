@@ -177,8 +177,11 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
                     isFramework != null ? isFramework : false);
         } else {
             def.getPortletDescriptorKey().setPortletName(portletDescriptor.getPortletName());
-            def.getPortletDescriptorKey().setWebAppName(portletDescriptor.getWebAppName());
-            def.getPortletDescriptorKey().setFrameworkPortlet(isFramework);
+            if (isFramework != null && isFramework) {
+                def.getPortletDescriptorKey().setFrameworkPortlet(isFramework);
+            } else {
+                def.getPortletDescriptorKey().setWebAppName(portletDescriptor.getWebAppName());
+            }
         }
         
         def.setName(portletRep.getName());
