@@ -36,17 +36,20 @@ import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.jasig.portal.portletpublishing.xml.MultiValuedPreferenceInputType;
+import org.jasig.portal.portletpublishing.xml.Parameter;
+import org.jasig.portal.portletpublishing.xml.ParameterInputType;
+import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
+import org.jasig.portal.portletpublishing.xml.Preference;
+import org.jasig.portal.portletpublishing.xml.PreferenceInputType;
+import org.jasig.portal.portletpublishing.xml.SingleValuedPreferenceInputType;
+import org.jasig.portal.portletpublishing.xml.Step;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.AttributeFactory;
 import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.BooleanAttributeFactory;
 import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.portlets.StringListAttributeFactory;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDControl;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
 
 public class PortletDefinitionForm implements Serializable {
 	
@@ -184,50 +187,28 @@ public class PortletDefinitionForm implements Serializable {
 	 * 
 	 * @param cpd
 	 */
-	public void setChannelPublishingDefinition(ChannelPublishingDefinition cpd) {
-
-		// set channel control defaults
-		for (CPDControl control : cpd.getControls()
-				.getControls()) {
-			if (control.getInclude().equals("true")) {
-				if (control.getType().equals("help")) {
-					this.hasHelp = true;
-				} else if (control.getType().equals("about")) {
-					this.hasAbout = true;
-				} else if (control.getType().equals("edit")) {
-					this.editable = true;
-				}
-			}
-		}
+	public void setChannelPublishingDefinition(PortletPublishingDefinition cpd) {
 
 		// set default values for all portlet parameters
-		for (CPDStep step : cpd.getParams().getSteps()) {
+		for (Step step : cpd.getSteps()) {
 			if (step.getParameters() != null) {
-				for (CPDParameter param : step.getParameters()) {
+				for (Parameter param : step.getParameters()) {
 					// if this parameter doesn't currently have a value, check
 					// for a default in the CPD
 					if (!this.parameters.containsKey(param.getName())
 							|| this.parameters.get(param.getName()).getValue().trim().equals("")) {
 						
 						// use the default value if one exists
-						if (param.getDefaultValue() != null) {
-							this.parameters.put(param.getName(), new Attribute(param
-									.getDefaultValue()));
-						}
-							
-						// otherwise look for a default in the type restriction	
-						else if (param.getType() != null
-								&& param.getType().getRestriction() != null
-								&& param.getType().getRestriction().getDefaultValue() != null) {
-							this.parameters.put(param.getName(), new Attribute(param
-									.getType().getRestriction().getDefaultValue()));
+					    ParameterInputType input = param.getParameterInput().getValue();
+						if (input != null) {
+							this.parameters.put(param.getName(), new Attribute(input.getDefault()));
 						}
 						
 					}
 				}
 			}
 			if (step.getPreferences() != null) {
-				for (CPDPreference pref : step.getPreferences()) {
+				for (Preference pref : step.getPreferences()) {
 					// if this parameter doesn't currently have a value, check
 					// for a default in the CPD
 					if (!this.portletPreferences.containsKey(pref.getName())
@@ -239,22 +220,19 @@ public class PortletDefinitionForm implements Serializable {
 						}
 						
 						// use the default value if one exists
-						if (pref.getDefaultValues() != null && pref.getDefaultValues().size() > 0) {
-							for (String value : pref.getDefaultValues()) {
-								this.portletPreferences.get(pref.getName()).getValue().add(value);
-							}
+						PreferenceInputType input = pref.getPreferenceInput().getValue();
+						if (input instanceof SingleValuedPreferenceInputType) {
+						    SingleValuedPreferenceInputType singleValued = (SingleValuedPreferenceInputType) input;
+						    if (singleValued.getDefault() != null) {
+						        this.portletPreferences.get(pref.getName()).getValue().add(singleValued.getDefault());
+						    }
+						} else if (input instanceof MultiValuedPreferenceInputType) {
+                            MultiValuedPreferenceInputType multiValued = (MultiValuedPreferenceInputType) input;
+                            if (multiValued.getDefault() != null) {
+                                this.portletPreferences.get(pref.getName()).getValue().addAll(multiValued.getDefault());
+                            }
 						}
-							
-						// otherwise look for a default in the type restriction	
-						else if (pref.getType() != null
-								&& pref.getType().getRestriction() != null
-								&& pref.getType().getRestriction().getDefaultValues() != null
-								&& pref.getType().getRestriction().getDefaultValues().size() > 0) {
-							for (String value : pref.getType().getRestriction().getDefaultValues()) {
-								this.portletPreferences.get(pref.getName()).getValue().add(value);
-							}
-						}
-						
+
 					}
 				}
 			}

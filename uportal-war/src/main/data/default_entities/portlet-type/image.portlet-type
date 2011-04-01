@@ -22,5 +22,5 @@
 <portlet-type script="classpath://org/jasig/portal/io/import-portlet-type_v3-3.crn">
   <name>Image</name>
   <desc>Displays an image with optional caption and subcaption</desc>
-  <uri>/org/jasig/portal/channels/CImage/CImage.cpd</uri>
+  <uri>/org/jasig/portal/portlets/image/Image.cpd.xml</uri>
 </portlet-type>

@@ -78,7 +78,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <tfoot></tfoot>
           <tbody>
             <c:forEach items="${ portletTypes }" var="chanTypeEntry">
-              <c:if test="${!chanTypeEntry.value.deprecated}">
                 <tr>
                   <td align="center">
                     <form:radiobutton path="typeId" value="${ chanTypeEntry.key.id  }" cssClass="portlet-form-input-field"/>
@@ -86,7 +85,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   <td><c:out value="${ fn:escapeXml(chanTypeEntry.key.name )}"/></td>
                   <td><c:out value="${ fn:escapeXml(chanTypeEntry.key.description )}"/></td>
                 </tr>
-              </c:if>
             </c:forEach>
           </tbody>
         </table>

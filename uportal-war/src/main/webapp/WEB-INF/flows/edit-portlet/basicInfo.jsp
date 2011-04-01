@@ -110,21 +110,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       
       	<fieldset>
           <legend><spring:message code="portlet.controls"/></legend>
-          <c:forEach items="${ cpd.controls.controls }" var="control">
-	          <c:choose>
-                <c:when test="${ control.type == 'help' }">
-                  <c:set var="controlPath" value="hasHelp"/>
-                </c:when>
-                <c:when test="${ control.type == 'edit' }">
-                  <c:set var="controlPath" value="editable"/>
-                </c:when>
-                <c:when test="${ control.type == 'about' }">
-                  <c:set var="controlPath" value="hasAbout"/>
-                </c:when>
-              </c:choose>
-              <form:checkbox path="${controlPath}" disabled="${ control.override != 'yes'}"/>
-              <label for="${ fn:escapeXml(control.type )}"><spring:message code="${ control.type }"/></label><br/>
-          </c:forEach>
+              <form:checkbox path="hasHelp"/>
+              <label for="hasHelp"><spring:message code="hasHelp"/></label><br/>
+
+              <form:checkbox path="editable"/>
+              <label for="editable"><spring:message code="editable"/></label><br/>
+
+              <form:checkbox path="hasAbout"/>
+              <label for="hasAbout"><spring:message code="hasAbout"/></label><br/>
+
         </fieldset>
         
       </div>

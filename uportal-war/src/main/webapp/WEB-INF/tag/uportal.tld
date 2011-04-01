@@ -102,4 +102,13 @@
         <function-class>org.jasig.portal.utils.jsp.Util</function-class>
         <function-signature>boolean containsValue(java.util.Map, java.lang.Object)</function-signature>
     </function>
+    <function>
+        <description> Tests if an object is an isntance of a class. </description>
+        <name>instanceOf</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>boolean instanceOf(java.lang.Object, java.lang.String)</function-signature>
+        <example>
+            &lt;c:if test="${up:instanceOf(obj, 'java.lang.Object')}">
+        </example>
+    </function>
 </taglib>

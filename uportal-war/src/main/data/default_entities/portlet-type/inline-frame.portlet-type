@@ -22,5 +22,5 @@
 <portlet-type script="classpath://org/jasig/portal/io/import-portlet-type_v3-3.crn">
   <name>Inline Frame</name>
   <desc>Renders an HTML page within a frame. Not supported in browsers older than Internet Explorer 5 and Netscape 6.</desc>
-  <uri>/org/jasig/portal/channels/CInlineFrame/CInlineFrame.cpd</uri>
+  <uri>/org/jasig/portal/portlets/iframe/IFrame.cpd.xml</uri>
 </portlet-type>

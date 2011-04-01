@@ -1,5 +1,5 @@
 <portlet-type script="classpath://org/jasig/portal/io/import-portlet-type_v3-3.crn">
   <name>Advanced CMS</name>
   <desc>Displays configured HTML content.</desc>
-  <uri>/org/jasig/portal/portlets/CMS/AdvancedCMSPortlet.cpd</uri>
+  <uri>/org/jasig/portal/portlets/CMS/AdvancedCMSPortlet.cpd.xml</uri>
 </portlet-type>

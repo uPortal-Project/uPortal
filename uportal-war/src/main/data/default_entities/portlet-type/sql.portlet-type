@@ -22,5 +22,5 @@
 <portlet-type script="classpath://org/jasig/portal/io/import-portlet-type_v3-3.crn">
   <name>SQL</name>
   <desc>Executes a SQL query against a selected DataSource.</desc>
-  <uri>/org/jasig/portal/channels/sqlquery/CSqlQuery/CSqlQuery.cpd</uri>
+  <uri>/org/jasig/portal/portlets/sqlquery/SqlQuery.cpd.xml</uri>
 </portlet-type>

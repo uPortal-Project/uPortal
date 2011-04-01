@@ -24,10 +24,9 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameterTypeRestriction;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
+import org.jasig.portal.portletpublishing.xml.Parameter;
+import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
+import org.jasig.portal.portletpublishing.xml.Step;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
@@ -93,10 +92,10 @@ public class PortletDefinitionFormValidator {
 	}
 	
 	public void validateSetParameters(PortletDefinitionForm def, MessageContext context) {
-		ChannelPublishingDefinition cpd = channelPublishingDefinitionDao.getChannelPublishingDefinition(def.getTypeId());
-		for (CPDStep step : cpd.getParams().getSteps()) {
+		PortletPublishingDefinition cpd = channelPublishingDefinitionDao.getChannelPublishingDefinition(def.getTypeId());
+		for (Step step : cpd.getSteps()) {
 			if (step.getParameters() != null) {
-				for (CPDParameter param : step.getParameters()) {
+				for (Parameter param : step.getParameters()) {
 					
 					// if the user has entered a value for this parameter, 
 					// check it against the CPD
@@ -108,42 +107,42 @@ public class PortletDefinitionFormValidator {
 						
 						// if this parameter is intended to be a number, ensure
 						// that it is
-						String base = param.getType().getBase();
-						if ("integer".equals(base)) {
-							try {
-								Integer.parseInt(paramValue);
-							} catch (NumberFormatException e) {
-								context.addMessage(new MessageBuilder().error().source(paramPath)
-										.code("value.must.be.int").build());
-							}
-						} else if ("float".equals(base)) {
-							try {
-								Float.parseFloat(paramValue);
-							} catch (NumberFormatException e) {
-								context.addMessage(new MessageBuilder().error().source(paramPath)
-										.code("value.must.be.num").build());
-							}
-						}
+//						String base = param.getType().getBase();
+//						if ("integer".equals(base)) {
+//							try {
+//								Integer.parseInt(paramValue);
+//							} catch (NumberFormatException e) {
+//								context.addMessage(new MessageBuilder().error().source(paramPath)
+//										.code("value.must.be.int").build());
+//							}
+//						} else if ("float".equals(base)) {
+//							try {
+//								Float.parseFloat(paramValue);
+//							} catch (NumberFormatException e) {
+//								context.addMessage(new MessageBuilder().error().source(paramPath)
+//										.code("value.must.be.num").build());
+//							}
+//						}
 						
 						// if this parameter has a restriction in the CPD, 
 						// check it against the restriction
-						if (param.getType().getRestriction() != null 
-								&& def.getParameters().containsKey(param.getName())) {
-							
-							CPDParameterTypeRestriction restriction = param.getType().getRestriction();
-							if ("range".equals(restriction.getType())) {
-								// For now, lets just not do anything.  It doesn't 
-								// look like the existing portlet manager logic 
-								// actually uses this restriction for validation
-							} else if ("enumeration".equals(restriction.getType())) {
-								// if this restriction is an enumeration of allowed values, check to
-								// make sure the entered value is in the enumerated list
-								if (!restriction.getValues().contains(paramValue)) {
-									context.addMessage(new MessageBuilder().error().source(paramPath)
-											.code("invalid.selection").build());
-								}
-							}
-						}
+//						if (param.getType().getRestriction() != null 
+//								&& def.getParameters().containsKey(param.getName())) {
+//							
+//							Restriction restriction = param.getType().getRestriction();
+//							if ("range".equals(restriction.getType())) {
+//								// For now, lets just not do anything.  It doesn't 
+//								// look like the existing portlet manager logic 
+//								// actually uses this restriction for validation
+//							} else if ("enumeration".equals(restriction.getType())) {
+//								// if this restriction is an enumeration of allowed values, check to
+//								// make sure the entered value is in the enumerated list
+//								if (!restriction.getValue().contains(paramValue)) {
+//									context.addMessage(new MessageBuilder().error().source(paramPath)
+//											.code("invalid.selection").build());
+//								}
+//							}
+//						}
 						
 					}
 					

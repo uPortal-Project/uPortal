@@ -22,6 +22,7 @@ package org.jasig.portal.portlets.portletadmin.xmlsupport;
 import java.util.Map;
 
 import org.jasig.portal.portlet.om.IPortletType;
+import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 
 
 /**
@@ -29,7 +30,7 @@ import org.jasig.portal.portlet.om.IPortletType;
  * @version $Revision$
  */
 public interface IChannelPublishingDefinitionDao {
-    public ChannelPublishingDefinition getChannelPublishingDefinition(int channelTypeId);
+    public PortletPublishingDefinition getChannelPublishingDefinition(int channelTypeId);
 
-    public Map<IPortletType, ChannelPublishingDefinition> getChannelPublishingDefinitions();
+    public Map<IPortletType, PortletPublishingDefinition> getChannelPublishingDefinitions();
 }

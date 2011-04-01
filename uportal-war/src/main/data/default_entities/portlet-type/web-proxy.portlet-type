@@ -22,5 +22,5 @@
 <portlet-type script="classpath://org/jasig/portal/io/import-portlet-type_v3-3.crn">
   <name>Web Proxy Portlet</name>
   <desc>Web Proxy Portlet</desc>
-  <uri>/edu/wisc/my/portlets/webproxy/WebProxyPortlet.cpd</uri>
+  <uri>/org/jasig/portal/portlets/webproxy/WebProxyPortlet.cpd.xml</uri>
 </portlet-type>

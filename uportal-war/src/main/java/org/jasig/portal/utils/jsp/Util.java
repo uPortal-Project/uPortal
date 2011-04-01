@@ -41,5 +41,12 @@ public class Util {
     public static boolean containsValue(Map<?, ?> map, Object o) {
         return map != null && map.containsValue(o);
     }
+    
+    public static boolean instanceOf(Object obj, String className) throws ClassNotFoundException {
+        final ClassLoader cl = obj.getClass().getClassLoader();
+        final Class<?> clazz = Class.forName(className, true, cl);
+        final boolean isInstanceOf = obj.getClass().isAssignableFrom(clazz);
+        return isInstanceOf;
+    }
 
 }

@@ -174,30 +174,19 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </thead>
           <tfoot></tfoot>
           <tbody>
-            <c:forEach items="${ cpd.params.steps }" var="step">
+            <c:forEach items="${ cpd.steps }" var="step">
               <c:forEach items="${ step.parameters }" var="parameter">
-                <c:if test="${ (parameter.modify != 'subscribeOnly' && parameter.type.display != 'hidden') && ((portlet.parameters[parameter.name].value != null && portlet.parameters[parameter.name].value != '') || (fn:startsWith(parameter.name, 'PORTLET.') && portlet.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value != null && portlet.portletPreferences[fn:replace(parameter.name, 'PORTLET.', '')].value != '')) }">
+                <c:if test="${ parameter.parameterInput.value.display != 'HIDDEN' && (portlet.parameters[parameter.name].value != null && portlet.parameters[parameter.name].value != '') }">
                   <tr>
                     <td class="fl-text-align-right"><c:out value="${ fn:escapeXml(parameter.label )}"/>:</td>
                     <td>
+                    ${ parameter.parameterInput.value.display }
                         <a href="${ setParametersUrl }" class="pa-edit">
 	                        ${ fn:escapeXml(portlet.parameters[parameter.name].value )}
                         </a>
                     </td>
                   </tr>
                 </c:if>
-              </c:forEach>
-              <c:forEach items="${ step.arbitraryParameters }" var="arbitraryParam">
-                <c:forEach items="${ arbitraryParam.paramNamePrefixes }" var="prefix">
-                  <c:forEach items="${ portlet.parameters }" var="portletParam">
-                    <c:if test="${ fn:startsWith(portletParam.key, prefix) }">
-                      <tr>
-                        <td class="fl-text-align-right"><c:out value="${ fn:escapeXml(portletParam.key )}"/>:</td>
-                        <td><a href="${ setParametersUrl }" class="pa-edit"><c:out value="${ fn:escapeXml(portletParam.value )}"/></a></td>
-                      </tr>
-                    </c:if>
-                  </c:forEach>
-                </c:forEach>
               </c:forEach>
             </c:forEach>
           </tbody>

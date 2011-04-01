@@ -26,11 +26,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
+import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
+import org.jasig.portal.portletpublishing.xml.Step;
 import org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +45,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-import com.thoughtworks.xstream.XStream;
-
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -48,27 +52,28 @@ import com.thoughtworks.xstream.XStream;
 @Service("channelPublishingDefinitionDao")
 public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefinitionDao, ResourceLoaderAware, InitializingBean {
     private static final String CUSTOM_CPD_PATH = "/org/jasig/portal/portlets/portletadmin/CustomChannel.cpd";
-    private static final String SHARED_PARAMETERS_PATH = "/org/jasig/portal/channels/SharedParameters.cpd";
+    private static final String SHARED_PARAMETERS_PATH = "/org/jasig/portal/portlets/SharedParameters.cpd.xml";
 
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private final XStream channelPublishingDefinitionParser = new XStream();
+    private Unmarshaller unmarshaller;
     
-    private MapCachingDoubleCheckedCreator<Integer, ChannelPublishingDefinition> cpdCreator;
-    private CPDParameterList sharedParameters;
+    private MapCachingDoubleCheckedCreator<Integer, PortletPublishingDefinition> cpdCreator;
+    private List<Step> sharedParameters;
 
     
-    private Map<Integer, ChannelPublishingDefinition> cpdCache;
+    private Map<Integer, PortletPublishingDefinition> cpdCache;
     private IPortletTypeRegistry portletTypeRegistry;
     private ResourceLoader resourceLoader;
     
     
-    public XmlChannelPublishingDefinitionDao() {
-        this.channelPublishingDefinitionParser.processAnnotations(new Class[] { ChannelPublishingDefinition.class, CPDParameterList.class });
+    public XmlChannelPublishingDefinitionDao() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(PortletPublishingDefinition.class);
+        unmarshaller = context.createUnmarshaller();
     }
     
     @javax.annotation.Resource(name="cpdCache")
-    public void setCpdCache(Map<Integer, ChannelPublishingDefinition> cpdCache) {
+    public void setCpdCache(Map<Integer, PortletPublishingDefinition> cpdCache) {
         this.cpdCache = cpdCache;
     }
     
@@ -92,7 +97,7 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
      * @see org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao#getChannelPublishingDefinition(int)
      */
     @Override
-    public ChannelPublishingDefinition getChannelPublishingDefinition(int channelTypeId)  {
+    public PortletPublishingDefinition getChannelPublishingDefinition(int channelTypeId)  {
         return this.cpdCreator.get(channelTypeId);
     }
     
@@ -100,20 +105,20 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
      * @see org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao#getChannelPublishingDefinitions()
      */
     @Override
-    public Map<IPortletType, ChannelPublishingDefinition> getChannelPublishingDefinitions() {
+    public Map<IPortletType, PortletPublishingDefinition> getChannelPublishingDefinitions() {
         final List<IPortletType> channelTypes = this.portletTypeRegistry.getPortletTypes();
         
-        final Map<IPortletType, ChannelPublishingDefinition> cpds = new LinkedHashMap<IPortletType, ChannelPublishingDefinition>(channelTypes.size());
+        final Map<IPortletType, PortletPublishingDefinition> cpds = new LinkedHashMap<IPortletType, PortletPublishingDefinition>(channelTypes.size());
         
         for (final IPortletType channelType : channelTypes) {
-            final ChannelPublishingDefinition cpd = this.getChannelPublishingDefinition(channelType.getId());
+            final PortletPublishingDefinition cpd = this.getChannelPublishingDefinition(channelType.getId());
             cpds.put(channelType, cpd);
         }
         
         return cpds;
     }
     
-    private ChannelPublishingDefinition loadChannelPublishingDefinition(int channelTypeId)  {
+    private PortletPublishingDefinition loadChannelPublishingDefinition(int channelTypeId)  {
         // if the CPD is not already in the cache, determine the CPD URI
         final String cpdUri;
         if (channelTypeId >= 0) {
@@ -128,7 +133,7 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
         }
         
         // read and parse the CPD
-        final ChannelPublishingDefinition def;
+        final PortletPublishingDefinition def;
         final Resource cpdResource = this.resourceLoader.getResource("classpath:" + cpdUri);
         if (!cpdResource.exists()) {
             throw new MissingResourceException("Failed to find CPD '" + cpdUri + "' for channel type " + channelTypeId, this.getClass().getName(), cpdUri);
@@ -143,32 +148,24 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
         }
         
         try {
-            def = (ChannelPublishingDefinition) this.channelPublishingDefinitionParser.fromXML(cpdStream);
+            def = (PortletPublishingDefinition) this.unmarshaller.unmarshal(cpdStream);
+            final List<Step> sharedParameters = this.getSharedParameters();
+            def.getSteps().addAll(sharedParameters);
+            // add the CPD to the cache and return it
+            this.cpdCache.put(channelTypeId, def);
+            
+            return def;
+        } catch (JAXBException e) {
         }
         finally {
             IOUtils.closeQuietly(cpdStream);
         }
         
+        return null;
         
-        final CPDParameterList sharedParameters = this.getSharedParameters();
-        
-        final CPDParameterList params = def.getParams();
-        final List<CPDStep> steps = params.getSteps();
-        int stepId = steps.size();
-        for (CPDStep step : sharedParameters.getSteps()) {
-            stepId = stepId++;
-            step.setId(String.valueOf(stepId));
-        }
-        
-        steps.addAll(sharedParameters.getSteps());
-        
-        // add the CPD to the cache and return it
-        this.cpdCache.put(channelTypeId, def);
-        
-        return def;
     }
 
-    private CPDParameterList getSharedParameters() {
+    private List<Step> getSharedParameters() {
         if (this.sharedParameters != null) {
             return this.sharedParameters;
         }
@@ -189,7 +186,9 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
         
         // parse the shared CPD and add its steps to the end of the type-specific
         try {
-            this.sharedParameters = (CPDParameterList) this.channelPublishingDefinitionParser.fromXML(paramStream);
+            PortletPublishingDefinition config = (PortletPublishingDefinition) unmarshaller.unmarshal(paramStream);
+            this.sharedParameters = config.getSteps();
+        } catch (JAXBException e) {
         }
         finally {
             IOUtils.closeQuietly(paramStream);
@@ -197,13 +196,13 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
         return this.sharedParameters;
     }
     
-    private class CpdCreator extends MapCachingDoubleCheckedCreator<Integer, ChannelPublishingDefinition> {
-        public CpdCreator(Map<Integer, ChannelPublishingDefinition> cache) {
+    private class CpdCreator extends MapCachingDoubleCheckedCreator<Integer, PortletPublishingDefinition> {
+        public CpdCreator(Map<Integer, PortletPublishingDefinition> cache) {
             super(cache);
         }
 
         @Override
-        protected ChannelPublishingDefinition createInternal(Integer key, Object... args) {
+        protected PortletPublishingDefinition createInternal(Integer key, Object... args) {
             return loadChannelPublishingDefinition(key);
         }
 

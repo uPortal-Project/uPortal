@@ -73,13 +73,12 @@ import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
+import org.jasig.portal.portletpublishing.xml.Preference;
+import org.jasig.portal.portletpublishing.xml.Step;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDParameter;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDPreference;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.CPDStep;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.ChannelPublishingDefinition;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
@@ -435,12 +434,12 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 */
 	public Set<String> getArbitraryPortletPreferenceNames(PortletDefinitionForm form) {
 		// set default values for all portlet parameters
-		ChannelPublishingDefinition cpd = this.portletPublishingDefinitionDao.getChannelPublishingDefinition(form.getTypeId());
+		PortletPublishingDefinition cpd = this.portletPublishingDefinitionDao.getChannelPublishingDefinition(form.getTypeId());
 		Set<String> currentPrefs = new HashSet<String>();
 		currentPrefs.addAll(form.getPortletPreferences().keySet());
-		for (CPDStep step : cpd.getParams().getSteps()) {
+		for (Step step : cpd.getSteps()) {
 			if (step.getPreferences() != null) {
-				for (CPDPreference pref : step.getPreferences()) {
+				for (Preference pref : step.getPreferences()) {
 					currentPrefs.remove(pref.getName());
 				}
 			}
