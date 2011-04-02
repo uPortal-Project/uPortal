@@ -53,8 +53,8 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.header">
-    <div data-role="header" data-backbtn="false" data-position="inline">
-        <h1>uMobile</h1>
+    <div class="titlebar portlet-wrapper-titlebar" data-role="header" data-backbtn="false" data-position="inline">
+        <h1 class="title">uMobile</h1>
         <xsl:call-template name="mobile.auth.link"/>
     </div>
 </xsl:template>
@@ -103,9 +103,9 @@
 | Template contents can be any valid XSL or XHTML.
 -->  
 <xsl:template name="mobile.navigation">
-    <div class="portlet-navigation-list">
+    <div class="portal-nav">
         <xsl:for-each select="//channel">
-            <div class="portlet-navigation-item">
+            <div class="portlet">
                 <xsl:variable name="portletUrl">
                     <xsl:call-template name="portletUrl">
                         <xsl:with-param name="subscribeId" select="@ID" />
@@ -120,13 +120,13 @@
                         <xsl:when test="parameter[@name='iconUrl'] and parameter[@name='iconUrl']/@value != ''">
                             <xsl:value-of select="parameter[@name='iconUrl']/@value"/>
                         </xsl:when>
-                        <xsl:otherwise>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png</xsl:otherwise>
+                        <xsl:otherwise>/uPortal/media/skins/muniversality/common/images/placeholder.png</xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
                 <a href="{$portletUrl}" title="To view {@name}">
                     <span class="{$newItemCountClasses}">{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</span>
-                    <img class="portlet-icon" src="{$iconUrl}"/>
-                    <xsl:value-of select="@name" />
+                    <span class="icon"><img class="portlet-icon" src="{$iconUrl}"/></span>
+                    <span class="title"><xsl:value-of select="@name" /></span>
                 </a>
             </div>
         </xsl:for-each>
@@ -154,11 +154,11 @@
         </xsl:call-template>
     </xsl:variable>
     <xsl:if test="$NATIVE != 'true'">
-        <div data-role="header" data-position="inline">
+        <div class="titlebar portlet-wrapper-titlebar" data-role="header" data-position="inline">
             <a href="{$basePortalUrl}" data-icon="home" data-direction="reverse">
                 <xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/>
             </a>
-            <h1><xsl:value-of select="//content/focused/channel/@name" /></h1>
+            <h1 class="title"><xsl:value-of select="//content/focused/channel/@name" /></h1>
         </div>
     </xsl:if>
 </xsl:template>
@@ -173,7 +173,7 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.channel.content.focused">
-    <div class="portlet-content-container">
+    <div class="portlet-wrapper-content">
         <xsl:copy-of select="//content/focused/channel" />
     </div>
 </xsl:template>

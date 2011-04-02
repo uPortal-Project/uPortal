@@ -1,0 +1,35 @@
+/*====================================*/
+/* NAVIGATION */
+/*====================================*/
+/* 
+ * Styles specific to navigation.
+ */
+
+
+/* Portlet Navigation */
+.up {
+	
+	.portal-nav {
+		.portlet {
+			display: block;
+			float: left;
+			width: 70px;
+			height: 80px;
+			overflow: hidden;
+			margin: 0.5em;
+			
+			.icon, .title {
+				display: block;
+				text-align: center;
+			}
+			.icon{
+				height: 60px;
+				width: 60px;
+				margin-bottom: 3px;
+			}
+			.title {
+				
+			}
+		}
+	}
+}

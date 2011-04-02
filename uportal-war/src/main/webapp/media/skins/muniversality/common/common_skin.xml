@@ -27,14 +27,20 @@
   <!--css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css-->
   
-  <css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3-default.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3-default.min.css</css>
+  <!--<css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3-default.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3-default.min.css</css-->
   
   <!--css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/valencia/jquery.mobile.theme.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/valencia/jquery.mobile.theme.min.css</css-->
   
-  <!-- Visual style for portlet content. An extension of the uportal3 skin. -->
-  <css>../../universality/uportal3/portlet.css</css>
+  <!-- Modified jQuery Mobile theme for uMobile. Decided not to use the jQuery Mobile's A,B,C,D,E color scheme setup. -->
+  <css>jquerymobile/jqm.theme.css</css>
+  
+  <!-- Visual style for the mobile portal. -->
+  <css>portal.css</css>
+  
+  <!-- Visual style for portlet content.
+  <css>portlet.css</css> -->
 
   <js included="plain">/ResourceServingWebapp/rs/jquery/1.5/jquery-1.5.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.5/jquery-1.5.min.js</js>

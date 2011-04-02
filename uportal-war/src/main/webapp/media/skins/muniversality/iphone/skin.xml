@@ -35,8 +35,6 @@
   <!-- Support for legacy uPortal css classes. -->
   <!--css>legacy.css</css-->
 
-  <css>portal.css</css>
-
   <js import="true">../common/common_skin.xml</js>
   
 </resources>

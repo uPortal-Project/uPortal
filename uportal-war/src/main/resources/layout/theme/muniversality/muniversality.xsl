@@ -147,6 +147,12 @@
         <xsl:otherwise>fl-theme-uportal</xsl:otherwise>
     </xsl:choose>
 </xsl:variable>
+<xsl:variable name="FOCUSED_CLASS">
+    <xsl:choose>
+        <xsl:when test="//content/focused">focused</xsl:when>
+        <xsl:otherwise>dashboard</xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
 <!-- ======================================== -->
 
 
@@ -256,6 +262,22 @@
 
 
 <!-- ========================================================================= -->
+<!-- ========== TEMPLATE: LOGO =============================================== -->
+<!-- ========================================================================= -->
+<!-- 
+| GREEN
+| A place to put a logo on the dashboard view.
+| Template contents can be any valid XSL or XHTML.
+-->
+<xsl:template name="logo">
+    <div class="logo">
+    	<img src="/uPortal/media/skins/muniversality/common/images/umobile_logo.png" alt="uMobile" />
+    </div>
+</xsl:template>
+<!-- ========================================================================= -->
+
+
+<!-- ========================================================================= -->
 <!-- ========== TEMPLATE: ROOT =============================================== -->
 <!-- ========================================================================= -->
 <!-- 
@@ -296,7 +318,7 @@
                     <xsl:call-template name="page.js" />
                 </head>
                 <body class="up {$FLUID_THEME_CLASS}">
-                    <div data-role="page" id="page">
+                    <div class="portal {$FOCUSED_CLASS}" data-role="page" id="page">
                         <xsl:choose>
                             <xsl:when test="//focused">
                                 <xsl:call-template name="mobile.header.focused" />
@@ -305,13 +327,14 @@
                                 <xsl:call-template name="mobile.header" />
                             </xsl:otherwise>
                         </xsl:choose>
-                        <div data-role="content">
+                        <div class="portal-content" data-role="content">
                             <xsl:choose>
                                 <xsl:when test="//focused">
                                     <xsl:call-template name="mobile.channel.content.focused" />
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:call-template name="mobile.navigation" />
+                                    <xsl:call-template name="logo" />
                                 </xsl:otherwise>
                             </xsl:choose>
                             <xsl:call-template name="footer" />
