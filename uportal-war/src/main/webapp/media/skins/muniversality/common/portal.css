@@ -318,7 +318,7 @@ body, select, input, textarea {
 /* Headers (h1, h2, etc) have no default font-size or margin; define those yourself */
 h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
-  margin-bottom: 0.5em;
+  margin: 1em 0;
 }
 
 h1 {
@@ -368,6 +368,7 @@ a:hover {
   visibility: hidden;
 }
 .up .logo {
+  margin-top: 10px;
   text-align: center;
 }
 
@@ -378,13 +379,28 @@ a:hover {
  * Styles specific to navigation.
  */
 /* Portlet Navigation */
+.up .portal-nav {
+  width: 300px;
+  margin: 0 auto;
+  text-align: center;
+  zoom: 1;
+}
+.up .portal-nav:before, .up .portal-nav:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.up .portal-nav:after {
+  clear: both;
+}
 .up .portal-nav .portlet {
   display: block;
   float: left;
   width: 70px;
-  height: 80px;
+  height: 84px;
   overflow: hidden;
-  margin: 0.5em;
+  margin: 10px;
 }
 .up .portal-nav .portlet .icon, .up .portal-nav .portlet .title {
   display: block;
@@ -424,12 +440,13 @@ a:hover {
 /* RGBA values include transparency and are easier than hexidecimal to use in 
 mathematical calculations. */
 /* Grayscale */
+/* Background color */
 /* Primary color, c1 */
 /* Secondary color, c2 */
 /* Tertiary color, c3 */
 /* Highlight color, c4 */
 .up {
-  background-color: #38678f;
+  background-color: #3366cc;
 }
 .up .ui-btn {
   font-family: Helvetica, Arial, sans-serif;
@@ -438,8 +455,7 @@ mathematical calculations. */
   border: 1px solid #38678f;
   color: white;
   text-shadow: 0 1px 0 black;
-  background: #4682b4 url("images/bg_320x480_flat.png") 0 25px no-repeat;
-  /*@include gradient($c1light, $c1dark);*/
+  background: #3366cc url("images/bg_320x480_flat.png") 0 25px no-repeat;
 }
 .up .dashboard .ui-link-inherit {
   color: white;
@@ -560,6 +576,45 @@ mathematical calculations. */
   text-decoration: none;
   background-image: -moz-linear-gradient(top, #294d6b, #4682b4);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #294d6b), color-stop(1, #4682b4));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+}
+.up .portlet-wrapper-content .ui-btn {
+  border: 1px solid #a9a9a9;
+  background: #f5f5f5;
+  font-weight: bold;
+  color: #444444;
+  cursor: pointer;
+  text-shadow: 0 1px 1px white;
+  text-decoration: none;
+  background-image: -moz-linear-gradient(top, #f5f5f5, #dcdcdc);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f5f5f5), color-stop(1, #dcdcdc));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+}
+.up .portlet-wrapper-content .ui-btn a.ui-link-inherit {
+  color: #5c5c5c;
+}
+.up .portlet-wrapper-content .ui-btn-hover-a, .up .portlet-wrapper-content .ui-btn-hover-b, .up .portlet-wrapper-content .ui-btn-hover-c, .up .portlet-wrapper-content .ui-btn-hover-d, .up .portlet-wrapper-content .ui-btn-hover-e {
+  border: 1px solid #8f8f8f;
+  background: #c3c3c3;
+  font-weight: bold;
+  color: black;
+  cursor: pointer;
+  text-shadow: 0 1px 1px white;
+  text-decoration: none;
+  background-image: -moz-linear-gradient(top, #dcdcdc, #c3c3c3);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #dcdcdc), color-stop(1, #c3c3c3));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+}
+.up .portlet-wrapper-content .ui-btn-down-a, .up .portlet-wrapper-content .ui-btn-down-b, .up .portlet-wrapper-content .ui-btn-down-c, .up .portlet-wrapper-content .ui-btn-down-d, .up .portlet-wrapper-content .ui-btn-down-e {
+  border: 1px solid #294d6b;
+  background: #4682b4;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  text-shadow: 0 -1px 1px black;
+  text-decoration: none;
+  background-image: -moz-linear-gradient(top, #c3c3c3, #f5f5f5);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #c3c3c3), color-stop(1, #f5f5f5));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
 }
 .up .portal-nav .portlet .icon {

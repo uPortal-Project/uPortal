@@ -271,7 +271,7 @@
 -->
 <xsl:template name="logo">
     <div class="logo">
-    	<img src="/uPortal/media/skins/muniversality/common/images/umobile_logo.png" alt="uMobile" />
+    	<img src="/uPortal/media/skins/muniversality/common/images/umobile_logo_flat.png" alt="uMobile" />
     </div>
 </xsl:template>
 <!-- ========================================================================= -->

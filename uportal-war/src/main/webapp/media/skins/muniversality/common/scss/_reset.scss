@@ -168,7 +168,7 @@ body, select, input, textarea {
 }
 
 /* Headers (h1, h2, etc) have no default font-size or margin; define those yourself */
-h1, h2, h3, h4, h5, h6 { font-weight: bold; margin-bottom:0.5em; }
+h1, h2, h3, h4, h5, h6 { font-weight: bold; margin: 1em 0; }
 h1 { font-size:200%; }
 h2 { font-size:170%; }
 h3 { font-size:150%; }

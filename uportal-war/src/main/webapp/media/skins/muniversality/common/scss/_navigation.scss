@@ -10,13 +10,18 @@
 .up {
 	
 	.portal-nav {
+		width: 300px;
+		margin: 0 auto;
+		text-align: center;
+		@include clearfix();
+		
 		.portlet {
 			display: block;
 			float: left;
 			width: 70px;
-			height: 80px;
+			height: 84px;
 			overflow: hidden;
-			margin: 0.5em;
+			margin: 10px;
 			
 			.icon, .title {
 				display: block;

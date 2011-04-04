@@ -38,6 +38,9 @@ $graylight: lighten($gray, 10%);
 $graylighter: lighten($gray, 20%);
 $graylightest: lighten($gray, 30%);
 
+/* Background color */
+$bgc: rgba(51, 102, 204, 1);
+
 /* Primary color, c1 */
 $c1: rgba(70, 130, 180, 1);
 $c1dark: darken($c1, 10%);
@@ -76,7 +79,7 @@ $c4lightest: lighten($c4, 30%);
 
 
 .up {
-	background-color:$c1dark;
+	background-color:$bgc;
 	
 	.ui-btn { font-family: Helvetica, Arial, sans-serif; }
 	
@@ -84,8 +87,7 @@ $c4lightest: lighten($c4, 30%);
 		border: 1px solid $c1dark;
 		color: $white;
 		text-shadow: 0 1px 0 $black;
-		background: $c1 url("images/bg_320x480_flat.png") 0 25px no-repeat;
-		/*@include gradient($c1light, $c1dark);*/
+		background: $bgc url("images/bg_320x480_flat.png") 0 25px no-repeat;
 		
 		.ui-link-inherit { color: $white; }
 		.ui-link { 
@@ -196,6 +198,41 @@ $c4lightest: lighten($c4, 30%);
 				text-decoration: none;
 				@include gradient($c1darker, $c1);
 			}
+		}
+		
+		.ui-btn {
+			border: 1px solid $gray;
+			background: $graylightest;
+			font-weight: bold;
+			color: $text;
+			cursor: pointer;
+			text-shadow: 0 1px 1px $white;
+			text-decoration: none;
+			@include gradient($graylightest, $graylighter);
+			
+			a.ui-link-inherit { color: $graydarkest;}
+		}
+		
+		.ui-btn-hover-a, .ui-btn-hover-b, .ui-btn-hover-c, .ui-btn-hover-d, .ui-btn-hover-e, {
+			border: 1px solid $graydark;
+			background: $graylight;
+			font-weight: bold;
+			color: $black;
+			cursor: pointer;
+			text-shadow: 0 1px 1px $white;
+			text-decoration: none;
+			@include gradient($graylighter, $graylight);
+		}
+		
+		.ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-down-d, .ui-btn-down-e, {
+			border: 1px solid $c1darker;
+			background: $c1;
+			font-weight: bold;
+			color: $white;
+			cursor: pointer;
+			text-shadow: 0 -1px 1px $black;
+			text-decoration: none;
+			@include gradient($graylight, $graylightest);
 		}
 	}
 	
