@@ -274,11 +274,6 @@
         <filter-name>createPortletCookieFilter</filter-name>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
     </filter-mapping>
-    <servlet>
-        <servlet-name>Login</servlet-name>
-        <servlet-class>org.jasig.portal.LoginServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
 
     <servlet>
         <servlet-name>Logout</servlet-name>
@@ -320,6 +315,16 @@
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>classpath:properties/contexts/servlet/mvcServletContext.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>AuthenticationDispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:properties/contexts/servlet/authenticationServletContext.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
@@ -372,11 +377,6 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>Login</servlet-name>
-        <url-pattern>/Login</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>Logout</servlet-name>
         <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
@@ -404,6 +404,11 @@
     <servlet-mapping>
         <servlet-name>MVCDispatcherServlet</servlet-name>
         <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AuthenticationDispatcherServlet</servlet-name>
+        <url-pattern>/Login</url-pattern>
     </servlet-mapping>
 
     <mime-mapping>

@@ -37,6 +37,7 @@ import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PersonManagerFactory;
+import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.utils.ResourceLoader;
 
 /**
@@ -119,7 +120,7 @@ public class LogoutServlet extends HttpServlet {
                     "associated with request " + request, e);
         }
         
-        final String originalUid = (String)session.getAttribute(LoginServlet.SWAP_ORIGINAL_UID);
+        final String originalUid = (String)session.getAttribute(LoginController.SWAP_ORIGINAL_UID);
         //Logging out from a swapped user, just redirect to the Login servlet
         if (originalUid != null) {
             redirect = request.getContextPath() + "/Login";

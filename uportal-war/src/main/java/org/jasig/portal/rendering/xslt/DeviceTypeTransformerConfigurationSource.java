@@ -19,8 +19,8 @@ public class DeviceTypeTransformerConfigurationSource extends TransformerConfigu
     @Override
     public Map<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
         
-        final String userAgent = request.getHeader("user-agent");
-        return Collections.singletonMap("NATIVE", (Object) userAgent.contains("Simulator"));
+        final boolean isNative = Boolean.valueOf((String) request.getSession(false).getAttribute("isNativeDevice"));
+        return Collections.singletonMap("NATIVE", (Object) isNative);
     }
 
     /* (non-Javadoc)

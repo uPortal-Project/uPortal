@@ -22,7 +22,7 @@ package org.jasig.portal.portlets.swapper;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
-import org.jasig.portal.LoginServlet;
+import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.webflow.context.ExternalContext;
 
@@ -40,6 +40,6 @@ public class IdentitySwapperHelperImpl implements IIdentitySwapperHelper {
     public void swapAttributes(ExternalContext externalContext, IPersonAttributes person) {
         final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
         final PortletSession portletSession = portletRequest.getPortletSession();
-        portletSession.setAttribute(LoginServlet.SWAP_TARGET_UID, person.getName(), PortletSession.APPLICATION_SCOPE);
+        portletSession.setAttribute(LoginController.SWAP_TARGET_UID, person.getName(), PortletSession.APPLICATION_SCOPE);
     }
 }

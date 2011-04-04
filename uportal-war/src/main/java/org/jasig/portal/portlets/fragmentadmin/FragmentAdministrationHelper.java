@@ -34,6 +34,7 @@ import org.jasig.portal.layout.dlm.LegacyConfigurationLoader;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,7 +92,7 @@ public class FragmentAdministrationHelper {
 		if(principal.hasPermission(UP_USERS, IMPERSONATE, targetFragmentOwner)) {
 			PortletRequest portletRequest = (PortletRequest) requestContext.getExternalContext().getNativeRequest();
 			PortletSession session = portletRequest.getPortletSession();
-			session.setAttribute(org.jasig.portal.LoginServlet.SWAP_TARGET_UID, targetFragmentOwner, javax.portlet.PortletSession.APPLICATION_SCOPE);
+			session.setAttribute(LoginController.SWAP_TARGET_UID, targetFragmentOwner, javax.portlet.PortletSession.APPLICATION_SCOPE);
 			return "yes";
 		}
 		return "no";

@@ -17,30 +17,35 @@
  * under the License.
  */
 
-package  org.jasig.portal;
+package  org.jasig.portal.security.mvc;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.PortalException;
 import org.jasig.portal.portlets.swapper.IdentitySwapperPrincipal;
 import org.jasig.portal.portlets.swapper.IdentitySwapperSecurityContext;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.utils.ResourceLoader;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * Receives the username and password and tries to authenticate the user.
@@ -52,55 +57,60 @@ import org.jasig.portal.utils.ResourceLoader;
  * Added properties in the security properties file that hold the tokens used to
  * represent the principal and credential for each security context.
  */
-public class LoginServlet extends HttpServlet {
-    public static final String SWAP_TARGET_UID = LoginServlet.class.getName() + ".SWAP_TARGET_UID";
-    public static final String SWAP_ORIGINAL_UID = LoginServlet.class.getName() + ".SWAP_ORIGINAL_UID";
+@Controller
+@RequestMapping("/Login")
+public class LoginController implements InitializingBean {
     
-    private static final Log log = LogFactory.getLog(LoginServlet.class);
-    private static final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
-  private static HashMap credentialTokens;
-  private static HashMap principalTokens;
-  protected Authentication m_authenticationService = null;
+    public static final String SWAP_TARGET_UID = LoginController.class.getName() + ".SWAP_TARGET_UID";
+    public static final String SWAP_ORIGINAL_UID = LoginController.class.getName() + ".SWAP_ORIGINAL_UID";
+    
+    protected final Log log = LogFactory.getLog(getClass());
+    protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
+    
+    protected HashMap<String, String> credentialTokens;
+    protected HashMap<String, String> principalTokens;
+    protected Authentication authenticationService = null;
+    
+    private IPersonManager personManager;
 
-    static {
-      HashMap cHash = new HashMap(1);
-      HashMap pHash = new HashMap(1);
-      try {
-         String key;
-         // We retrieve the tokens representing the credential and principal
-         // parameters from the security properties file.
-         Properties props = ResourceLoader.getResourceAsProperties(LoginServlet.class, "/properties/security.properties");
-         Enumeration propNames = props.propertyNames();
-         while (propNames.hasMoreElements()) {
-            String propName = (String)propNames.nextElement();
-            String propValue = props.getProperty(propName);
-            if (propName.startsWith("credentialToken.")) {
-               key = propName.substring(16);
-               cHash.put(key, propValue);
-            }
-            if (propName.startsWith("principalToken.")) {
-               key = propName.substring(15);
-               pHash.put(key, propValue);
-            }
-         }
-      } catch(PortalException pe) {
-          log.error("LoginServlet::static ", pe);
-      } catch(IOException ioe) {
-          log.error("LoginServlet::static ", ioe);
-      }
-      credentialTokens=cHash;
-      principalTokens=pHash;
+    @Autowired(required = true)
+    public void setPersonManager(IPersonManager personManager) {
+        this.personManager = personManager;
     }
+    
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        
+        // initialize the authentication service
+        this.authenticationService = new Authentication();
 
-  /**
-   * Initializes the servlet
-   * @exception ServletException
-   */
-  public void init () throws ServletException {
-    m_authenticationService = new Authentication();
-
-  }
-
+        this.credentialTokens = new HashMap<String,String>(1);
+        this.principalTokens = new HashMap<String,String>(1);
+        
+        try {
+           String key;
+           // We retrieve the tokens representing the credential and principal
+           // parameters from the security properties file.
+           Properties props = ResourceLoader.getResourceAsProperties(getClass(), "/properties/security.properties");
+           Enumeration propNames = props.propertyNames();
+           while (propNames.hasMoreElements()) {
+              String propName = (String)propNames.nextElement();
+              String propValue = props.getProperty(propName);
+              if (propName.startsWith("credentialToken.")) {
+                 key = propName.substring(16);
+                 this.credentialTokens.put(key, propValue);
+              }
+              if (propName.startsWith("principalToken.")) {
+                 key = propName.substring(15);
+                 this.principalTokens.put(key, propValue);
+              }
+           }
+        } catch(PortalException pe) {
+            log.error("LoginServlet::static ", pe);
+        } catch(IOException ioe) {
+            log.error("LoginServlet::static ", ioe);
+        }
+    }
 
   /**
    * Process the incoming HttpServletRequest
@@ -109,6 +119,7 @@ public class LoginServlet extends HttpServlet {
    * @exception ServletException
    * @exception IOException
    */
+  @RequestMapping
   public void service (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
       response.setHeader("Pragma","no-cache");
       response.setHeader("Cache-Control","no-cache");
@@ -121,8 +132,6 @@ public class LoginServlet extends HttpServlet {
         log.error("Unable to set UTF-8 character encoding!", uee);
     }
 
-    final IPersonManager personManager = PersonManagerFactory.getPersonManagerInstance();
-    
     // Clear out the existing session for the user if they have one
     String targetUid = null;
     String originalUid = null;
@@ -163,8 +172,8 @@ public class LoginServlet extends HttpServlet {
     
   	IPerson person = null;
     try {
-        final HashMap principals;
-        final HashMap credentials;
+        final HashMap<String,String> principals;
+        final HashMap<String,String> credentials;
         
         // Get the person object associated with the request
         person = personManager.getPerson(request);
@@ -191,8 +200,8 @@ public class LoginServlet extends HttpServlet {
             final IdentitySwapperSecurityContext identitySwapperSecurityContext = new IdentitySwapperSecurityContext(identitySwapperPrincipal);
             person.setSecurityContext(identitySwapperSecurityContext);
             
-            principals = new HashMap();
-            credentials = new HashMap();
+            principals = new HashMap<String,String>();
+            credentials = new HashMap<String,String>();
         }
         //Norm authN path
         else {
@@ -203,7 +212,7 @@ public class LoginServlet extends HttpServlet {
         }
 
       // Attempt to authenticate using the incoming request
-      m_authenticationService.authenticate(principals, credentials, person);
+      authenticationService.authenticate(principals, credentials, person);
     } catch (Exception e) {
       // Log the exception
       log.error("Exception authenticating the request", e);
@@ -234,32 +243,32 @@ public class LoginServlet extends HttpServlet {
          * Also any arguments for the target
          * We will pass them  along after authentication.
          */
-        /*
         String targetFname = request.getParameter("uP_fname");
         
     	if (targetFname == null){
-    		redirectTarget = request.getContextPath() + "/" + redirectString;
+    	    redirectTarget = request.getContextPath() + "/";
     	} else {
     		StringBuilder sb = new StringBuilder();
     		sb.append(request.getContextPath());
-    		sb.append("/tag.idempotent.");
-    		sb.append(redirectString);
+    		sb.append("/p/");
     		sb.append("?uP_fname=");
     		sb.append(URLEncoder.encode(targetFname, "UTF-8"));
-    		Enumeration<String> e = request.getParameterNames();
+    		
+    		char separator = '?';
+    		@SuppressWarnings("unchecked")
+            Enumeration<String> e = request.getParameterNames();
     		while(e.hasMoreElements()){
     			String paramName = e.nextElement();
     			if(!paramName.equals("uP_fname")){
-    				sb.append('&');
+    				sb.append(separator);
     				sb.append(paramName);
     				sb.append('=');
     				sb.append(URLEncoder.encode(request.getParameter(paramName),"UTF-8"));
     			}
+    			separator = '&';
     		}		
     		redirectTarget = sb.toString();
     	}
-    	*/
-        redirectTarget = request.getContextPath() + "/";
     }
 
 	if (person == null || !person.getSecurityContext().isAuthenticated()) {
@@ -269,6 +278,10 @@ public class LoginServlet extends HttpServlet {
      String attemptedUserName = request.getParameter("userName");
      if (attemptedUserName != null)
      	request.getSession(false).setAttribute("up_attemptedUserName", request.getParameter("userName"));		
+	}
+	
+	if ("true".equals(request.getParameter("isNativeDevice"))) {
+	    request.getSession(false).setAttribute("isNativeDevice", "true");
 	}
 
 	final String encodedRedirectURL = response.encodeRedirectURL(redirectTarget);
@@ -283,14 +296,14 @@ public class LoginServlet extends HttpServlet {
    * @param request
    * @return HashMap of properties
    */
-  private HashMap getPropertyFromRequest (HashMap tokens, HttpServletRequest request) {
+  private HashMap<String,String> getPropertyFromRequest (HashMap<String,String> tokens, HttpServletRequest request) {
    // Iterate through all of the other property keys looking for the first property
    // named like propname that has a value in the request
-    HashMap retHash = new HashMap(1);
-    Iterator tokenItr = tokens.keySet().iterator();
-    while (tokenItr.hasNext()) {
-      String ctxName = (String)tokenItr.next();
-      String parmName = (String)tokens.get(ctxName);
+    HashMap<String,String> retHash = new HashMap<String,String>(1);
+    
+    for (Map.Entry<String, String> entry : tokens.entrySet()) {
+      String contextName = entry.getKey();
+      String parmName = entry.getValue();
       String parmValue = null;
       if (request.getAttribute(parmName) != null) {
     	  // Upstream components (like servlet filters) may supply information 
@@ -321,9 +334,11 @@ public class LoginServlet extends HttpServlet {
       // The keys are either "root" or the subcontext name that follows "root.". As
       // as example, the contexts ["root", "root.simple", "root.cas"] are represented
       // as ["root", "simple", "cas"].
-      String key = (ctxName.startsWith("root.") ? ctxName.substring(5) : ctxName);
+      String key = (contextName.startsWith("root.") ? contextName.substring(5) : contextName);
       retHash.put(key, parmValue);
     }
     return (retHash);
   }
+
+
 }
