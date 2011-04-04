@@ -297,12 +297,21 @@
                             <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
                         </xsl:call-template>
                     </xsl:variable>
+                    <xsl:variable name="iconUrl">
+                        <xsl:choose>
+                            <xsl:when test="parameter[@name='iconUrl'] and parameter[@name='iconUrl']/@value != ''">
+                                <xsl:value-of select="parameter[@name='iconUrl']/@value"/>
+                            </xsl:when>
+                            <xsl:otherwise>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png</xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
                     {
                         "title": "{up-portlet-title(<xsl:value-of select="@ID" />)}",
+                        "url": "<xsl:value-of select="$portletUrl"/>",
                         "description": "<xsl:value-of select="@description"/>",
-                        "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}"
+                        "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}",
+                        "iconUrl": "<xsl:value-of select="$iconUrl"/>"
                     }<xsl:if test="position() != last()">,</xsl:if>
-                    <xsl:copy-of select="." />
                 </xsl:for-each>
             ] }</json-layout>
             </xsl:when>
