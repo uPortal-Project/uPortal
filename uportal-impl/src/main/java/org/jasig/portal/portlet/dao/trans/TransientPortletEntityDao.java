@@ -190,8 +190,12 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
             final String fname = channelDefinition.getFName();
             
             final IUserLayoutManager userLayoutManager = this.getUserLayoutManager();
+            if (userLayoutManager == null) {
+                this.logger.warn("Could not find IUserLayoutManager when trying to wrap transient portlet entity: " + portletEntity);
+                return portletEntity;
+            }
+
             final String subscribeId = userLayoutManager.getSubscribeId(fname);
-            
             return new TransientPortletEntity(portletEntity, subscribeId);
         }
         
@@ -235,7 +239,14 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     }
 
     protected IUserLayoutManager getUserLayoutManager() {
-        final HttpServletRequest portalRequest = this.portalRequestUtils.getCurrentPortalRequest();
+        final HttpServletRequest portalRequest;
+        try {
+            portalRequest = this.portalRequestUtils.getCurrentPortalRequest();
+        }
+        catch (IllegalStateException ise) {
+            //Assuming that we are running from the command line for something like data export
+            return null;
+        }
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(portalRequest);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         return preferencesManager.getUserLayoutManager();
