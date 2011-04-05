@@ -372,9 +372,6 @@
         <entry key="profile">
             <ref bean="export-profile"/>
         </entry>
-        <entry key="channel">
-            <ref bean="export-channel"/>
-        </entry>
         <entry key="structure">
             <ref bean="export-structure"/>
         </entry>
@@ -498,22 +495,6 @@
                 </entry>
                 <entry key="SqlAttributes.TRANSACTION_MANAGER">
                     <ref bean="transactionManager"/>
-                </entry>
-            </util:map>
-        </property>
-    </bean>
-
-    <bean id="export-channel" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/export-channel.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="portletDefinitionRegistry">
-                    <ref bean="portletDefinitionRegistry"/>
-                </entry>
-                <entry key="isUserIncluded">
-                    <ref bean="is-user-included"/>
                 </entry>
             </util:map>
         </property>
