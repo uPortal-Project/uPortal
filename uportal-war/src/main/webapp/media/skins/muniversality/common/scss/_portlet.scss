@@ -4,3 +4,34 @@
 /* 
  * Styles for portlets.
  */
+ 
+/* Courses portlet */
+.up {
+	.view-courses {
+		.utilities {
+			margin-top: 2em;
+		}
+	}
+	
+	.course-details {
+		.titlebar {
+			position: relative;
+			padding-right: 4em;
+			
+			.grade {
+				position: absolute;
+				top: 0;
+				right: 0;
+				padding: 0.1em 10px;
+				background: $c4;
+				color: $white;
+				border: 1px solid $c4dark;
+				font-size: 150%;
+				line-height: 150%;
+				font-weight: bold;
+				text-shadow: 0 -1px 1px $c4darkest;
+				@include rounded(5px);
+			}
+		}
+	}
+}

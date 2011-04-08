@@ -33,17 +33,9 @@
 /* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
    j.mp/bestclearfix */
 /* Fix clearfix: blueprintcss.lighthouseapp.com/projects/15318/tickets/5-extra-margin-padding-bottom-of-page */
-.clearfix:before, .clearfix:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
-}
-
-.clearfix:after {
-  clear: both;
-}
-
+/* Easy 2-color, linear gradient stack. Pass in the colors. */
+/* Easy way to add rounded corners. Pass in the desired size of the corner radius. */
+/* More flexible way to add rounded corners only to specific sides. */
 /*====================================*/
 /* RESET */
 /*====================================*/
@@ -358,10 +350,10 @@ a:hover {
   /* Temporarily hiding the new item count, as uMobile portlets don't support it */
 }
 .up .ui-content .ui-header {
-  margin-top: -15px;
+  /*margin-top: -15px;
   margin-left: -15px;
   margin-bottom: 15px;
-  width: 320px;
+   width:320px;*/
 }
 .up .up-new-item-count-0 {
   display: none;
@@ -413,12 +405,6 @@ a:hover {
 }
 
 /*====================================*/
-/* PORTLET */
-/*====================================*/
-/* 
- * Styles for portlets.
- */
-/*====================================*/
 /* CAS */
 /*====================================*/
 /* 
@@ -432,9 +418,6 @@ a:hover {
  * uMobile CSS is built with SASS:
  * http://sass-lang.com/
  */
-/* Gradient Mixin
---------------------------------------*/
-/* Set this once and pass in the color variables. */
 /* Color Palette
 --------------------------------------*/
 /* RGBA values include transparency and are easier than hexidecimal to use in 
@@ -445,10 +428,36 @@ mathematical calculations. */
 /* Secondary color, c2 */
 /* Tertiary color, c3 */
 /* Highlight color, c4 */
-.up {
-  background-color: #3366cc;
-}
+/* jQuery Mobile based button styles. Flattens out their color classes (A,B,C,D,E)
+ * With SASS, truly separates the presentation from the content: 
+ * no color classes needed in the markup.
+ * Pass in the 
+ */
+/* Use variables to store multiple jQM selectors. */
+/* Apply baseline button styling once to every kind of button. */
 .up .ui-btn {
+  border-width: 1px;
+  border-style: solid;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  text-decoration: none;
+  text-shadow: 0 1px 1px white;
+  cursor: pointer;
+}
+
+/* Specific styling for button Up state. Styling is contextual, by the type passed in. */
+/* Specific styling for button Hover state. Styling is contextual, by the type passed in. */
+/* Specific styling for button Down state. Styling is contextual, by the type passed in. */
+/* Button mixin. Calls in the Up, Hover, and Down states.
+ * Passes the context type to those mixins.
+ * If no type is specified, default will be used, which will take the @else styles. */
+.up .ui-bar, .up .ui-li-divider {
+  border-width: 1px;
+  border-style: solid;
+  font-weight: bold;
+  text-shadow: 0 -1px 1px black;
+}
+.up .ui-bar input, .up .ui-bar select, .up .ui-bar textarea, .up .ui-bar button, .up .ui-li-divider input, .up .ui-li-divider select, .up .ui-li-divider textarea, .up .ui-li-divider button {
   font-family: Helvetica, Arial, sans-serif;
 }
 .up .dashboard {
@@ -475,255 +484,219 @@ mathematical calculations. */
   background: #dcdcdc;
   background-image: -moz-linear-gradient(top, #f5f5f5, #dcdcdc);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f5f5f5), color-stop(1, #dcdcdc));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#f5f5f5', EndColorStr='#dcdcdc')";
 }
 .up .portlet-wrapper-titlebar {
-  border: 1px solid #121416;
+  border-color: #121416;
   background: #282d33;
   color: white;
-  font-weight: bold;
-  text-shadow: 0 -1px 1px black;
   background-image: -moz-linear-gradient(top, #3e4650, #121416);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #3e4650), color-stop(1, #121416));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
-}
-.up .portlet-wrapper-titlebar input, .up .portlet-wrapper-titlebar select, .up .portlet-wrapper-titlebar textarea, .up .portlet-wrapper-titlebar button {
-  font-family: Helvetica, Arial, sans-serif;
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#3e4650', EndColorStr='#121416')";
 }
 .up .portlet-wrapper-titlebar .ui-btn-up-a, .up .portlet-wrapper-titlebar .ui-btn-up-b, .up .portlet-wrapper-titlebar .ui-btn-up-c, .up .portlet-wrapper-titlebar .ui-btn-up-d, .up .portlet-wrapper-titlebar .ui-btn-up-e {
-  border: 1px solid #08180f;
+  border-color: #08180f;
   background: #21653f;
-  font-weight: bold;
   color: white;
-  cursor: pointer;
   text-shadow: 0 -1px 1px black;
-  text-decoration: none;
   background-image: -moz-linear-gradient(top, #21653f, #08180f);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #21653f), color-stop(1, #08180f));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#21653f', EndColorStr='#08180f')";
 }
 .up .portlet-wrapper-titlebar .ui-btn-up-a a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-up-b a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-up-c a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-up-d a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-up-e a.ui-link-inherit {
   color: white;
 }
 .up .portlet-wrapper-titlebar .ui-btn-hover-a, .up .portlet-wrapper-titlebar .ui-btn-hover-b, .up .portlet-wrapper-titlebar .ui-btn-hover-c, .up .portlet-wrapper-titlebar .ui-btn-hover-d, .up .portlet-wrapper-titlebar .ui-btn-hover-e {
-  border: 1px solid #08180f;
+  border-color: #08180f;
   background: #2e8b57;
-  font-weight: bold;
   color: white;
-  cursor: pointer;
   text-shadow: 0 -1px 1px black;
-  text-decoration: none;
   background-image: -moz-linear-gradient(top, #2e8b57, #143f27);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #2e8b57), color-stop(1, #143f27));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#2e8b57', EndColorStr='#143f27')";
+}
+.up .portlet-wrapper-titlebar .ui-btn-hover-a a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-hover-b a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-hover-c a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-hover-d a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-hover-e a.ui-link-inherit {
+  color: white;
 }
 .up .portlet-wrapper-titlebar .ui-btn-down-a, .up .portlet-wrapper-titlebar .ui-btn-down-b, .up .portlet-wrapper-titlebar .ui-btn-down-c, .up .portlet-wrapper-titlebar .ui-btn-down-d, .up .portlet-wrapper-titlebar .ui-btn-down-e {
-  border: 1px solid #08180f;
+  border-color: #08180f;
   background: #21653f;
-  font-weight: bold;
   color: white;
-  cursor: pointer;
   text-shadow: 0 -1px 1px black;
-  text-decoration: none;
   background-image: -moz-linear-gradient(top, #143f27, #2e8b57);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #143f27), color-stop(1, #2e8b57));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#143f27', EndColorStr='#2e8b57')";
 }
-.up .portlet-wrapper-content .ui-header {
-  border: 1px solid #294d6b;
+.up .portlet-wrapper-titlebar .ui-btn-down-a a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-down-b a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-down-c a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-down-d a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-down-e a.ui-link-inherit {
+  color: white;
+}
+.up .portlet-titlebar {
+  border-color: #294d6b;
   background: #38678f;
   color: white;
-  font-weight: bold;
-  text-shadow: 0 -1px 1px black;
   background-image: -moz-linear-gradient(top, #4682b4, #294d6b);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #294d6b));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#294d6b')";
 }
-.up .portlet-wrapper-content .ui-header .ui-btn {
-  border: 1px solid #294d6b;
+.up .portlet-titlebar .ui-btn-up-a, .up .portlet-titlebar .ui-btn-up-b, .up .portlet-titlebar .ui-btn-up-c, .up .portlet-titlebar .ui-btn-up-d, .up .portlet-titlebar .ui-btn-up-e {
+  border-color: #294d6b;
   background: #4682b4;
-  font-weight: bold;
   color: white;
-  cursor: pointer;
   text-shadow: 0 -1px 1px black;
-  text-decoration: none;
   background-image: -moz-linear-gradient(top, #4682b4, #294d6b);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #294d6b));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#294d6b')";
 }
-.up .portlet-wrapper-content .ui-header .ui-btn a.ui-link-inherit {
+.up .portlet-titlebar .ui-btn-up-a a.ui-link-inherit, .up .portlet-titlebar .ui-btn-up-b a.ui-link-inherit, .up .portlet-titlebar .ui-btn-up-c a.ui-link-inherit, .up .portlet-titlebar .ui-btn-up-d a.ui-link-inherit, .up .portlet-titlebar .ui-btn-up-e a.ui-link-inherit {
   color: white;
 }
-.up .portlet-wrapper-content .ui-header .ui-btn-hover-a, .up .portlet-wrapper-content .ui-header .ui-btn-hover-b, .up .portlet-wrapper-content .ui-header .ui-btn-hover-c, .up .portlet-wrapper-content .ui-header .ui-btn-hover-d, .up .portlet-wrapper-content .ui-header .ui-btn-hover-e {
-  border: 1px solid #08180f;
+.up .portlet-titlebar .ui-btn-hover-a, .up .portlet-titlebar .ui-btn-hover-b, .up .portlet-titlebar .ui-btn-hover-c, .up .portlet-titlebar .ui-btn-hover-d, .up .portlet-titlebar .ui-btn-hover-e {
+  border-color: #08180f;
   background: #699bc4;
-  font-weight: bold;
   color: white;
-  cursor: pointer;
   text-shadow: 0 -1px 1px black;
-  text-decoration: none;
   background-image: -moz-linear-gradient(top, #8db3d3, #294d6b);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #8db3d3), color-stop(1, #294d6b));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#8db3d3', EndColorStr='#294d6b')";
 }
-.up .portlet-wrapper-content .ui-header .ui-btn-down-a, .up .portlet-wrapper-content .ui-header .ui-btn-down-b, .up .portlet-wrapper-content .ui-header .ui-btn-down-c, .up .portlet-wrapper-content .ui-header .ui-btn-down-d, .up .portlet-wrapper-content .ui-header .ui-btn-down-e {
-  border: 1px solid #294d6b;
-  background: #4682b4;
-  font-weight: bold;
+.up .portlet-titlebar .ui-btn-hover-a a.ui-link-inherit, .up .portlet-titlebar .ui-btn-hover-b a.ui-link-inherit, .up .portlet-titlebar .ui-btn-hover-c a.ui-link-inherit, .up .portlet-titlebar .ui-btn-hover-d a.ui-link-inherit, .up .portlet-titlebar .ui-btn-hover-e a.ui-link-inherit {
   color: white;
-  cursor: pointer;
+}
+.up .portlet-titlebar .ui-btn-down-a, .up .portlet-titlebar .ui-btn-down-b, .up .portlet-titlebar .ui-btn-down-c, .up .portlet-titlebar .ui-btn-down-d, .up .portlet-titlebar .ui-btn-down-e {
+  border-color: #294d6b;
+  background: #4682b4;
+  color: white;
   text-shadow: 0 -1px 1px black;
-  text-decoration: none;
   background-image: -moz-linear-gradient(top, #294d6b, #4682b4);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #294d6b), color-stop(1, #4682b4));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#294d6b', EndColorStr='#4682b4')";
 }
-.up .portlet-wrapper-content .ui-btn {
-  border: 1px solid #a9a9a9;
+.up .portlet-titlebar .ui-btn-down-a a.ui-link-inherit, .up .portlet-titlebar .ui-btn-down-b a.ui-link-inherit, .up .portlet-titlebar .ui-btn-down-c a.ui-link-inherit, .up .portlet-titlebar .ui-btn-down-d a.ui-link-inherit, .up .portlet-titlebar .ui-btn-down-e a.ui-link-inherit {
+  color: white;
+}
+.up .portlet-content .titlebar .title, .up .portlet-content .titlebar .subtitle {
+  margin: 0;
+}
+.up .portlet-content .titlebar .subtitle {
+  font-size: 100%;
+  color: #767676;
+}
+.up .portlet-content .ui-btn-up-a, .up .portlet-content .ui-btn-up-b, .up .portlet-content .ui-btn-up-c, .up .portlet-content .ui-btn-up-d, .up .portlet-content .ui-btn-up-e {
+  border-color: #c3c3c3;
   background: #f5f5f5;
-  font-weight: bold;
   color: #444444;
-  cursor: pointer;
-  text-shadow: 0 1px 1px white;
-  text-decoration: none;
-  background-image: -moz-linear-gradient(top, #f5f5f5, #dcdcdc);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f5f5f5), color-stop(1, #dcdcdc));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  background-image: -moz-linear-gradient(top, white, #f5f5f5);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, white), color-stop(1, #f5f5f5));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='white', EndColorStr='#f5f5f5')";
 }
-.up .portlet-wrapper-content .ui-btn a.ui-link-inherit {
+.up .portlet-content .ui-btn-up-a a.ui-link-inherit, .up .portlet-content .ui-btn-up-b a.ui-link-inherit, .up .portlet-content .ui-btn-up-c a.ui-link-inherit, .up .portlet-content .ui-btn-up-d a.ui-link-inherit, .up .portlet-content .ui-btn-up-e a.ui-link-inherit {
   color: #5c5c5c;
 }
-.up .portlet-wrapper-content .ui-btn-hover-a, .up .portlet-wrapper-content .ui-btn-hover-b, .up .portlet-wrapper-content .ui-btn-hover-c, .up .portlet-wrapper-content .ui-btn-hover-d, .up .portlet-wrapper-content .ui-btn-hover-e {
-  border: 1px solid #8f8f8f;
-  background: #c3c3c3;
-  font-weight: bold;
+.up .portlet-content .ui-btn-hover-a, .up .portlet-content .ui-btn-hover-b, .up .portlet-content .ui-btn-hover-c, .up .portlet-content .ui-btn-hover-d, .up .portlet-content .ui-btn-hover-e {
+  border-color: #8f8f8f;
+  background: #dcdcdc;
   color: black;
-  cursor: pointer;
-  text-shadow: 0 1px 1px white;
-  text-decoration: none;
-  background-image: -moz-linear-gradient(top, #dcdcdc, #c3c3c3);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #dcdcdc), color-stop(1, #c3c3c3));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  background-image: -moz-linear-gradient(top, #f5f5f5, #dcdcdc);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f5f5f5), color-stop(1, #dcdcdc));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#f5f5f5', EndColorStr='#dcdcdc')";
 }
-.up .portlet-wrapper-content .ui-btn-down-a, .up .portlet-wrapper-content .ui-btn-down-b, .up .portlet-wrapper-content .ui-btn-down-c, .up .portlet-wrapper-content .ui-btn-down-d, .up .portlet-wrapper-content .ui-btn-down-e {
-  border: 1px solid #294d6b;
+.up .portlet-content .ui-btn-hover-a a.ui-link-inherit, .up .portlet-content .ui-btn-hover-b a.ui-link-inherit, .up .portlet-content .ui-btn-hover-c a.ui-link-inherit, .up .portlet-content .ui-btn-hover-d a.ui-link-inherit, .up .portlet-content .ui-btn-hover-e a.ui-link-inherit {
+  color: #5c5c5c;
+}
+.up .portlet-content .ui-btn-down-a, .up .portlet-content .ui-btn-down-b, .up .portlet-content .ui-btn-down-c, .up .portlet-content .ui-btn-down-d, .up .portlet-content .ui-btn-down-e {
+  border-color: #294d6b;
+  background: #dcdcdc;
+  color: #444444;
+  text-shadow: 0 -1px 1px white;
+  background-image: -moz-linear-gradient(top, #dcdcdc, white);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #dcdcdc), color-stop(1, white));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#dcdcdc', EndColorStr='white')";
+}
+.up .portlet-content .ui-btn-down-a a.ui-link-inherit, .up .portlet-content .ui-btn-down-b a.ui-link-inherit, .up .portlet-content .ui-btn-down-c a.ui-link-inherit, .up .portlet-content .ui-btn-down-d a.ui-link-inherit, .up .portlet-content .ui-btn-down-e a.ui-link-inherit {
+  color: #5c5c5c;
+}
+.up .portlet-content .ui-li-divider {
+  border-color: #38678f;
   background: #4682b4;
-  font-weight: bold;
   color: white;
-  cursor: pointer;
+  background-image: -moz-linear-gradient(top, #699bc4, #38678f);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #699bc4), color-stop(1, #38678f));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#699bc4', EndColorStr='#38678f')";
+}
+.up .portlet-content .utilities .ui-btn-up-a, .up .portlet-content .utilities .ui-btn-up-b, .up .portlet-content .utilities .ui-btn-up-c, .up .portlet-content .utilities .ui-btn-up-d, .up .portlet-content .utilities .ui-btn-up-e {
+  border-color: #143f27;
+  background: #21653f;
+  color: white;
   text-shadow: 0 -1px 1px black;
-  text-decoration: none;
-  background-image: -moz-linear-gradient(top, #c3c3c3, #f5f5f5);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #c3c3c3), color-stop(1, #f5f5f5));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  background-image: -moz-linear-gradient(top, #2e8b57, #143f27);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #2e8b57), color-stop(1, #143f27));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#2e8b57', EndColorStr='#143f27')";
+}
+.up .portlet-content .utilities .ui-btn-up-a a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-up-b a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-up-c a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-up-d a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-up-e a.ui-link-inherit {
+  color: white;
+}
+.up .portlet-content .utilities .ui-btn-hover-a, .up .portlet-content .utilities .ui-btn-hover-b, .up .portlet-content .utilities .ui-btn-hover-c, .up .portlet-content .utilities .ui-btn-hover-d, .up .portlet-content .utilities .ui-btn-hover-e {
+  border-color: #143f27;
+  background: #2e8b57;
+  color: white;
+  text-shadow: 0 -1px 1px black;
+  background-image: -moz-linear-gradient(top, #3ab26f, #143f27);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #3ab26f), color-stop(1, #143f27));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#3ab26f', EndColorStr='#143f27')";
+}
+.up .portlet-content .utilities .ui-btn-hover-a a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-hover-b a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-hover-c a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-hover-d a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-hover-e a.ui-link-inherit {
+  color: white;
+}
+.up .portlet-content .utilities .ui-btn-down-a, .up .portlet-content .utilities .ui-btn-down-b, .up .portlet-content .utilities .ui-btn-down-c, .up .portlet-content .utilities .ui-btn-down-d, .up .portlet-content .utilities .ui-btn-down-e {
+  border-color: #08180f;
+  background: #21653f;
+  color: white;
+  text-shadow: 0 -1px 1px black;
+  background-image: -moz-linear-gradient(top, #143f27, #2e8b57);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #143f27), color-stop(1, #2e8b57));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#143f27', EndColorStr='#2e8b57')";
+}
+.up .portlet-content .utilities .ui-btn-down-a a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-down-b a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-down-c a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-down-d a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-down-e a.ui-link-inherit {
+  color: white;
 }
 .up .portal-nav .portlet .icon {
   border: 1px solid #1b3246;
   background: #4682b4;
   background-image: -moz-linear-gradient(top, #4682b4, #38678f);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #38678f));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='$color1', EndColorStr='$color2')";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#38678f')";
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
 }
 
-.gray {
-  background-color: #a9a9a9;
+/*====================================*/
+/* PORTLET */
+/*====================================*/
+/* 
+ * Styles for portlets.
+ */
+/* Courses portlet */
+.up .view-courses .utilities {
+  margin-top: 2em;
 }
-
-.gray-dark {
-  background-color: #8f8f8f;
+.up .course-details .titlebar {
+  position: relative;
+  padding-right: 4em;
 }
-
-.gray-darker {
-  background-color: #767676;
-}
-
-.gray-light {
-  background-color: #c3c3c3;
-}
-
-.gray-lighter {
-  background-color: #dcdcdc;
-}
-
-.c1 {
-  background-color: #4682b4;
-}
-
-.c1-dark {
-  background-color: #38678f;
-}
-
-.c1-darker {
-  background-color: #294d6b;
-}
-
-.c1-light {
-  background-color: #699bc4;
-}
-
-.c1-lighter {
-  background-color: #8db3d3;
-}
-
-.c2 {
-  background-color: #282d33;
-}
-
-.c2-dark {
-  background-color: #121416;
-}
-
-.c2-darker {
-  background-color: black;
-}
-
-.c2-light {
-  background-color: #3e4650;
-}
-
-.c2-lighter {
-  background-color: #555f6c;
-}
-
-.c3 {
-  background-color: #21653f;
-}
-
-.c3-dark {
-  background-color: #143f27;
-}
-
-.c3-darker {
-  background-color: #08180f;
-}
-
-.c3-light {
-  background-color: #2e8b57;
-}
-
-.c3-lighter {
-  background-color: #3ab26f;
-}
-
-.c4 {
-  background-color: #bbaa33;
-}
-
-.c4-dark {
-  background-color: #938628;
-}
-
-.c4-darker {
-  background-color: #6b611d;
-}
-
-.c4-light {
-  background-color: #d0c051;
-}
-
-.c4-lighter {
-  background-color: #dbce79;
+.up .course-details .titlebar .grade {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.1em 10px;
+  background: #bbaa33;
+  color: white;
+  border: 1px solid #938628;
+  font-size: 150%;
+  line-height: 150%;
+  font-weight: bold;
+  text-shadow: 0 -1px 1px #433d12;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }

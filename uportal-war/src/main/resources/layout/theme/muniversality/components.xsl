@@ -173,9 +173,7 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.channel.content.focused">
-    <div class="portlet-wrapper-content">
-        <xsl:copy-of select="//content/focused/channel" />
-    </div>
+      <xsl:copy-of select="//content/focused/channel" />
 </xsl:template>
 <!-- ========================================================================= -->
 

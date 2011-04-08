@@ -336,18 +336,17 @@
                                 <xsl:call-template name="mobile.header" />
                             </xsl:otherwise>
                         </xsl:choose>
-                        <div class="portal-content" data-role="content">
-                            <xsl:choose>
-                                <xsl:when test="//focused">
-                                    <xsl:call-template name="mobile.channel.content.focused" />
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:call-template name="mobile.navigation" />
-                                    <xsl:call-template name="logo" />
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            <xsl:call-template name="footer" />
-                        </div>
+                        
+                        <xsl:choose>
+                            <xsl:when test="//focused">
+                                <xsl:call-template name="mobile.channel.content.focused" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:call-template name="mobile.navigation" />
+                                <xsl:call-template name="logo" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:call-template name="footer" />
                     </div>
                 </body>
             </html>
