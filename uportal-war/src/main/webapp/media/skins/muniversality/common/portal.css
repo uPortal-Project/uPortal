@@ -676,15 +676,18 @@ mathematical calculations. */
 /* 
  * Styles for portlets.
  */
-/* Courses portlet */
-.up .view-courses .utilities {
+.up {
+  /* Courses portlet */
+  /* NewsReader portlet */
+}
+.up .ptl-courses .view-courses .utilities {
   margin-top: 2em;
 }
-.up .course-details .titlebar {
+.up .ptl-courses .course-details .titlebar {
   position: relative;
   padding-right: 4em;
 }
-.up .course-details .titlebar .grade {
+.up .ptl-courses .course-details .titlebar .grade {
   position: absolute;
   top: 0;
   right: 0;
@@ -699,4 +702,37 @@ mathematical calculations. */
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
+}
+.up .ptl-newsreader .feed .ui-btn-inner {
+  padding: 0.7em 15px;
+}
+.up .ptl-newsreader .feed .ui-li-has-thumb .ui-btn-inner {
+  padding: 0.7em 100px 0.7em 15px;
+}
+.up .ptl-newsreader .feed .ui-icon {
+  display: none;
+}
+.up .ptl-newsreader .feed .ui-li-thumb {
+  left: auto;
+  right: 1px;
+  float: right;
+  margin-right: 0;
+  margin-left: 10px;
+  border: 1px solid #767676;
+}
+.up .ptl-newsreader .feed .title {
+  margin: 0 0 0.7em 0;
+  font-size: 13px;
+  max-height: 35px;
+}
+.up .ptl-newsreader .feed p {
+  font-size: 11px;
+  color: #8f8f8f;
+  max-height: 40px;
+}
+.up .ptl-newsreader .feed .ui-btn-inner, .up .ptl-newsreader .feed .ui-li-heading, .up .ptl-newsreader .feed .ui-btn-text, .up .ptl-newsreader .feed .ui-li-desc {
+  white-space: normal;
+}
+.up .ptl-newsreader .feed .title, .up .ptl-newsreader .feed p {
+  text-overflow: ellipsis;
 }

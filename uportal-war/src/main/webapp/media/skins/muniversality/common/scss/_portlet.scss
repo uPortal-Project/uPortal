@@ -5,33 +5,77 @@
  * Styles for portlets.
  */
  
-/* Courses portlet */
+
 .up {
-	.view-courses {
-		.utilities {
-			margin-top: 2em;
+	/* Courses portlet */
+	.ptl-courses{
+		.view-courses {
+			.utilities {
+				margin-top: 2em;
+			}
 		}
+		
+		.course-details {
+			.titlebar {
+				position: relative;
+				padding-right: 4em;
+				
+				.grade {
+					position: absolute;
+					top: 0;
+					right: 0;
+					padding: 0.1em 10px;
+					background: $c4;
+					color: $white;
+					border: 1px solid $c4dark;
+					font-size: 150%;
+					line-height: 150%;
+					font-weight: bold;
+					text-shadow: 0 -1px 1px $c4darkest;
+					@include rounded(5px);
+				}
+			}
+		}	
 	}
 	
-	.course-details {
-		.titlebar {
-			position: relative;
-			padding-right: 4em;
-			
-			.grade {
-				position: absolute;
-				top: 0;
-				right: 0;
-				padding: 0.1em 10px;
-				background: $c4;
-				color: $white;
-				border: 1px solid $c4dark;
-				font-size: 150%;
-				line-height: 150%;
-				font-weight: bold;
-				text-shadow: 0 -1px 1px $c4darkest;
-				@include rounded(5px);
+	
+	/* NewsReader portlet */
+	.ptl-newsreader {
+		.feed {
+			.ui-btn-inner {
+				padding: 0.7em 15px;
+			}
+			.ui-li-has-thumb .ui-btn-inner {
+				padding: 0.7em 100px 0.7em 15px;
+			}
+			.ui-icon {
+				display: none;
+			}
+			.ui-li-thumb {
+				left: auto;
+				right: 1px;
+				float: right;
+				margin-right: 0;
+				margin-left: 10px;
+				border: 1px solid $graydarker;
+			}
+			.title {
+				margin: 0 0 0.7em 0;
+				font-size: 13px;
+				max-height: 35px;
+			}
+			p {
+				font-size: 11px;
+				color: $graydark;
+				max-height: 40px;
+			}
+			.ui-btn-inner, .ui-li-heading, .ui-btn-text, .ui-li-desc {
+				white-space: normal;
+			}
+			.title, p {
+				text-overflow: ellipsis;
 			}
 		}
 	}
 }
+
