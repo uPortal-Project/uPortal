@@ -57,7 +57,7 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.url.IPortletPortalUrl;
+import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.utils.web.AttributeScopingHttpServletRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -338,7 +338,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
         portletWindow.setPortletMode(PortletMode.VIEW);
-        portletWindow.setPreviousPrivateRenderParameters(null);
+        portletWindow.setRenderParameters(null);
         portletWindow.setExpirationCache(null);
         
         final StringWriter responseOutput = new StringWriter();
@@ -377,7 +377,8 @@ public class PortletRendererImpl implements IPortletRenderer {
         return portletHttpServletRequestWrapper;
     }
 
-    protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, IPortletPortalUrl portletUrl) {
+    protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, IPortletUrlBuilder portletUrl) {
+        //TODO review this to see if IPortletUrlBuilder is actually what is needed
         final PortletMode portletMode = portletUrl.getPortletMode();
         if (portletMode != null) {
             if (IPortletRenderer.CONFIG.equals(portletMode)) {

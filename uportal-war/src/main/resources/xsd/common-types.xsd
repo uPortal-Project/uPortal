@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="https://source.jasig.org/schemas/uportal"
+    targetNamespace="https://source.jasig.org/schemas/uportal"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    version="1.0">
+    
+    <xs:simpleType name="fname-type">
+        <xs:annotation>
+            <xs:appinfo>org.jasig.portal.dao.usertype.FunctionalNameType.VALID_FNAME_PATTERN</xs:appinfo>
+            <xs:documentation>
+                Constrains an XML element with the same constraint defined by the FunctionalNameType.VALID_FNAME_PATTERN
+                regular expression.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[\w-]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+</xs:schema>

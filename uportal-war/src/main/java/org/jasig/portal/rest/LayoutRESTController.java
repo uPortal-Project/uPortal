@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.IUserLayoutStore;
@@ -17,11 +16,14 @@ import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.rest.layout.LayoutPortlet;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletPortalUrl;
+import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.UrlType;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,9 +108,13 @@ public class LayoutRESTController {
                     }
                     
                     // get the maximized URL for this portlet
-                    IPortletPortalUrl url = urlProvider.getPortletUrlByNodeId(TYPE.RENDER, request, attributes.getNamedItem("ID").getNodeValue());
-                    url.setWindowState(WindowState.MAXIMIZED);
-                    portlet.setUrl(url.getUrlString());
+                    final IPortalUrlBuilder portalUrlBuilder = urlProvider.getPortalUrlBuilderByLayoutNode(request, attributes.getNamedItem("ID").getNodeValue(), UrlType.RENDER);
+                    final IPortletWindowId targetPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
+                    if (targetPortletWindowId != null) {
+                        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(targetPortletWindowId);
+                        portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
+                    }
+                    portlet.setUrl(portalUrlBuilder.getUrlString());
                     portlets.add(portlet);
 
                 } catch (Exception e) {

@@ -19,6 +19,8 @@
 
 package org.jasig.portal.rendering;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
@@ -33,14 +35,17 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.OutputKeys;
 
+import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.xslt.IXalanMessageHelper;
+import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.UrlType;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.XMLStreamConstantsUtils;
 import org.jasig.resource.aggr.util.ResourcesElementsProvider;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -68,6 +73,7 @@ public class RenderingPipelineIntegrationTest {
     //Mocked Beans
     private IPortalUrlProvider portalUrlProvider;
     private IPortletWindowRegistry portletWindowRegistry;
+    private IPortletEntityRegistry portletEntityRegistry;
     private ResourcesElementsProvider resourcesElementsProvider;
     private IUserInstanceManager userInstanceManager;
     private IXalanMessageHelper xalanMessageHelper;
@@ -86,6 +92,11 @@ public class RenderingPipelineIntegrationTest {
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
+    }
+    
+    @Autowired
+    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
+        this.portletEntityRegistry = portletEntityRegistry;
     }
 
     @Autowired
@@ -114,6 +125,11 @@ public class RenderingPipelineIntegrationTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
+        final IPortalUrlBuilder portalUrlBuilder = createNiceMock(IPortalUrlBuilder.class);
+        final IPortletUrlBuilder portletUrlBuilder = createNiceMock(IPortletUrlBuilder.class);
+        
+        expect(portalUrlBuilder.getUrlString()).andReturn("URL_PLACEHOLDER").anyTimes();
+        expect(portalUrlBuilder.getTargetedPortletUrlBuilder()).andReturn(portletUrlBuilder).anyTimes();
         
         expect(this.resourcesElementsProvider
                 .getResourcesXmlFragment(isA(HttpServletRequest.class), eq("/media/skins/universality/uportal3/skin.xml")))
@@ -121,9 +137,12 @@ public class RenderingPipelineIntegrationTest {
         expect(this.resourcesElementsProvider
                 .getResourcesParameter(isA(HttpServletRequest.class), eq("/media/skins/universality/uportal3/skin.xml"), eq("fss-theme")))
                 .andReturn(".fl-mist").anyTimes();
+        expect(this.portalUrlProvider.getDefaultUrl(anyObject(HttpServletRequest.class))).andReturn(portalUrlBuilder).anyTimes();
+        expect(this.portalUrlProvider.getPortalUrlBuilderByLayoutNode(anyObject(HttpServletRequest.class), anyObject(String.class), anyObject(UrlType.class))).andReturn(portalUrlBuilder).anyTimes();
+        expect(this.portalUrlProvider.getPortalUrlBuilderByPortletFName(anyObject(HttpServletRequest.class), anyObject(String.class), anyObject(UrlType.class))).andReturn(portalUrlBuilder).anyTimes();
         
         
-        replay(this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager, this.xalanMessageHelper);
+        replay(portalUrlBuilder, this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.portletEntityRegistry, this.userInstanceManager, this.xalanMessageHelper);
         
         final PipelineEventReader<?, ?> eventReader = this.component.getEventReader(request, response);
         
@@ -131,7 +150,7 @@ public class RenderingPipelineIntegrationTest {
             logger.debug(toString(event));
         }
         
-        verify(this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.userInstanceManager, this.xalanMessageHelper);
+        verify(portalUrlBuilder, this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.portletEntityRegistry, this.userInstanceManager, this.xalanMessageHelper);
         
         final String mediaType = eventReader.getOutputProperty(OutputKeys.MEDIA_TYPE);
         assertEquals("text/html", mediaType);

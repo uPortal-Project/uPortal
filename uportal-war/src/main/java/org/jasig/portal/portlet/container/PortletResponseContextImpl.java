@@ -35,6 +35,7 @@ import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.ResourceUrlProviderImpl;
 import org.springframework.util.Assert;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -122,7 +123,7 @@ public class PortletResponseContextImpl extends AbstractPortletContextImpl imple
      */
     @Override
     public ResourceURLProvider getResourceURLProvider() {
-        return this.portalUrlProvider.getPortletResourceUrl(this.containerRequest, this.portletWindow.getPortletWindowId());
+        return new ResourceUrlProviderImpl(portletWindow, containerRequest);
     }
 
     /* (non-Javadoc)

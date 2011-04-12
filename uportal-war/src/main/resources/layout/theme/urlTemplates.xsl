@@ -20,104 +20,53 @@
 
 -->
 
-<xsl:stylesheet version="1.0" 
+<xsl:stylesheet version="1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:exslt="http://exslt.org/common"
     xmlns:xalan="http://xml.apache.org/xalan"
     xmlns:java="http://xml.apache.org/xalan/java" 
-    xmlns:url="http://xml.apache.org/xalan/java/org.jasig.portal.url.xml.XsltPortalUrlProvider"
-    exclude-result-prefixes="java url exslt">
+    xmlns:urlGen="http://xml.apache.org/xalan/java/org.jasig.portal.url.xml.XsltPortalUrlProvider"
+    xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
+    xsi:schemaLocation="
+            https://source.jasig.org/schemas/uportal/layout/portal-url ../../xsd/layout/portal-url-4.0.xsd"
+    exclude-result-prefixes="java url urlGen exslt">
     
     <xsl:param name="XSLT_PORTAL_URL_PROVIDER" />
     <xsl:param name="CURRENT_REQUEST" />
     
     <xsl:template name="portalUrl">
-        <xsl:param name="parameters" />
+        <xsl:param name="url" />
         
-        <xsl:variable name="urlProvider" select="url:getUrlProvider($XSLT_PORTAL_URL_PROVIDER)" />
-        <xsl:variable name="request" select="url:getHttpServletRequest($CURRENT_REQUEST)" />
-    
-        <xsl:variable name="url" select="java:getDefaultUrl($urlProvider, $request)" />
-
-        <xsl:if test="exslt:object-type($parameters) = 'RTF'">
-            <xsl:variable name="parametersNodeSet" select="exslt:node-set($parameters)" />
-            <xsl:for-each select="$parametersNodeSet/portal-param">
-                <xsl:value-of select="java:addPortalParameter($url, @name, @value)"/>
-            </xsl:for-each>
-        </xsl:if>
+        <!-- Convert the generic Objects into strongly typed variables for use below -->
+        <xsl:variable name="urlProvider" select="urlGen:getUrlProvider($XSLT_PORTAL_URL_PROVIDER)" />
+        <xsl:variable name="request" select="urlGen:getHttpServletRequest($CURRENT_REQUEST)" />
         
-        <xsl:value-of select="java:getUrlString($url)" />
-    </xsl:template>
-
-    <xsl:template name="portletUrl">
-        <xsl:param name="fname" />
-        <xsl:param name="subscribeId" />
-        <xsl:param name="windowId" />
-        <xsl:param name="type" />
-        <xsl:param name="parameters" />
-        <xsl:param name="state" />
-        <xsl:param name="mode" />
-
-        <xsl:variable name="urlProvider" select="url:getUrlProvider($XSLT_PORTAL_URL_PROVIDER)" />
-        <xsl:variable name="request" select="url:getHttpServletRequest($CURRENT_REQUEST)" />
-        
-        <xsl:variable name="url" select="java:getPortletUrl($urlProvider, $request, $type)" />
         <xsl:choose>
-            <xsl:when test="$fname">
-                <xsl:value-of select="java:setTargetFname($url, $fname)" />
-            </xsl:when>
-            <xsl:when test="$subscribeId">
-                <xsl:value-of select="java:setTargetSubscribeId($url, $subscribeId)" />
-            </xsl:when>
-            <xsl:when test="$windowId">
-                <xsl:value-of select="java:setTargetWindowId($url, $windowId)" />
+            <xsl:when test="exslt:object-type($url) = 'RTF'">
+                <xsl:for-each select="exslt:node-set($url)/url:portal-url">
+                    <xsl:variable name="portalUrlBuilder" select="java:getPortalUrlBuilder($urlProvider, $request, url:fname, url:layoutId, @type)" />
+                    
+                    <xsl:for-each select="url:param">
+                        <xsl:value-of select="urlGen:addParameter($portalUrlBuilder, @name, @value)" />
+                    </xsl:for-each>
+                    
+                    <xsl:for-each select="url:portlet-url">
+                        <xsl:variable name="portletUrlBuilder" select="java:getPortletUrlBuilder($urlProvider, $request, $portalUrlBuilder, url:fname, url:layoutId, @state, @mode)" />
+                        
+                        <xsl:for-each select="url:param">
+                            <xsl:value-of select="urlGen:addParameter($portletUrlBuilder, @name, @value)" />
+                        </xsl:for-each>
+                    </xsl:for-each>
+                    
+                    <xsl:value-of select="java:getUrlString($portalUrlBuilder)" />
+                </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:message terminate="yes">Either 'fname', 'subscribeId', or 'windowId' parameter must be passed to the portletUrl template</xsl:message>
+                <xsl:variable name="portalUrlBuilder" select="java:getPortalUrlBuilder($urlProvider, $request, '', '', '')" />
+                <xsl:value-of select="java:getUrlString($portalUrlBuilder)" />
             </xsl:otherwise>
         </xsl:choose>
-        
-        <xsl:value-of select="java:setWindowState($url, $state)" />
-        <xsl:value-of select="java:setPortletMode($url, $mode)" />
 
-        <xsl:if test="exslt:object-type($parameters) = 'RTF'">
-            <xsl:variable name="parametersNodeSet" select="exslt:node-set($parameters)" />
-            <xsl:for-each select="$parametersNodeSet/portal-param">
-                <xsl:value-of select="java:addPortalParameter($url, @name, @value)"/>
-            </xsl:for-each>
-        
-            <xsl:for-each select="$parametersNodeSet/portlet-param">
-                <xsl:value-of select="java:addPortletParameter($url, @name, @value)"/>
-            </xsl:for-each>
-        </xsl:if>
-        
-        <xsl:value-of select="java:getUrlString($url)" />
-    </xsl:template>
-
-    <xsl:template name="layoutUrl">
-        <xsl:param name="folderId" />
-        <xsl:param name="parameters" />
-        <xsl:param name="action" />
-
-        <xsl:variable name="urlProvider" select="url:getUrlProvider($XSLT_PORTAL_URL_PROVIDER)" />
-        <xsl:variable name="request" select="url:getHttpServletRequest($CURRENT_REQUEST)" />
-        
-        <xsl:variable name="url" select="java:getFolderUrlByNodeId($urlProvider, $request, $folderId)" />
-
-        <xsl:value-of select="java:setAction($url, $action)" />
-
-        <xsl:if test="exslt:object-type($parameters) = 'RTF'">
-            <xsl:variable name="parametersNodeSet" select="xalan:nodeset($parameters)" />
-
-            <xsl:for-each select="$parametersNodeSet/layout-param">
-                <xsl:value-of select="java:addLayoutParameter($url, @name, @value)"/>
-            </xsl:for-each> 
-
-            <xsl:for-each select="$parametersNodeSet/portal-param">
-                <xsl:value-of select="java:addPortalParameter($url, @name, @value)"/>
-            </xsl:for-each>
-        </xsl:if>
-
-        <xsl:value-of select="java:getUrlString($url)" />
     </xsl:template>
 </xsl:stylesheet>

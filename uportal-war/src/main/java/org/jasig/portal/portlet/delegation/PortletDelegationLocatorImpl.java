@@ -38,8 +38,8 @@ import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletPortalUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -160,33 +160,34 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
     }
 
     @Override
-    public void setParentPortletUrl(HttpServletRequest request, IPortletPortalUrl parentPortletUrl) {
-        final IPortletWindowId parentPortletWindowId = parentPortletUrl.getTargetWindowId();
+    public void setParentPortletUrl(HttpServletRequest request, IPortalUrlBuilder parentPortletUrl) {
+        //TODO this doesn't work so well if a parent wants to delegate to multiple portlets in a single request
+        final IPortletWindowId parentPortletWindowId = parentPortletUrl.getTargetPortletWindowId();
         request.setAttribute(DELEGATE_PARENT_PORTLET_URL_PREFIX + parentPortletWindowId.getStringId(), parentPortletUrl);
     }
 
     @Override
-    public IPortletPortalUrl getParentPortletUrl(HttpServletRequest request, IPortletWindowId parentPortletWindowId) {
-        return (IPortletPortalUrl)request.getAttribute(DELEGATE_PARENT_PORTLET_URL_PREFIX + parentPortletWindowId.getStringId());
+    public IPortalUrlBuilder getParentPortletUrl(HttpServletRequest request, IPortletWindowId parentPortletWindowId) {
+        return (IPortalUrlBuilder)request.getAttribute(DELEGATE_PARENT_PORTLET_URL_PREFIX + parentPortletWindowId.getStringId());
     }
 
     @Override
-    public void setDelegatePortletActionRedirectUrl(HttpServletRequest request, IPortletPortalUrl portletUrl) {
+    public void setDelegatePortletActionRedirectUrl(HttpServletRequest request, IPortalUrlBuilder portletUrl) {
 //        final HttpServletRequest portletAdaptorParentRequest = this.portalRequestUtils.getPortletAdaptorParentRequest(request);
 //        portletAdaptorParentRequest.setAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL, portletUrl);
     }
 
     @Override
-    public IPortletPortalUrl getDelegatePortletActionRedirectUrl(HttpServletRequest request) {
+    public IPortalUrlBuilder getDelegatePortletActionRedirectUrl(HttpServletRequest request) {
 //        request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
-//        return (IPortletPortalUrl)request.getAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL);
+//        return (IPortalUrlBuilder)request.getAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL);
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public IPortletPortalUrl getDelegatePortletActionRedirectUrl(PortletRequest portletRequest) {
+    public IPortalUrlBuilder getDelegatePortletActionRedirectUrl(PortletRequest portletRequest) {
 //        final HttpServletRequest request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-//        return (IPortletPortalUrl)request.getAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL);
+//        return (IPortalUrlBuilder)request.getAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL);
         throw new UnsupportedOperationException();
     }
 }

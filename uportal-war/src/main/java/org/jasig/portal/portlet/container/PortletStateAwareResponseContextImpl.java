@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.container;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +33,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.pluto.container.EventProvider;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletStateAwareResponseContext;
-import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.apache.pluto.container.driver.PortletContextService;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletPortalUrl;
+import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.UrlType;
 
 /**
  * @author Eric Dalquist
@@ -46,7 +49,8 @@ import org.jasig.portal.url.IPortletPortalUrl;
  */
 public class PortletStateAwareResponseContextImpl extends PortletResponseContextImpl implements PortletStateAwareResponseContext {
     private final List<Event> events = new LinkedList<Event>();
-    protected final IPortletPortalUrl portletUrl;
+    protected final IPortalUrlBuilder portalUrlBuilder;
+    protected final IPortletUrlBuilder portletUrlBuilder;
     protected final PortletContextService portletContextService;
 
     public PortletStateAwareResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
@@ -57,7 +61,9 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
         super(portletContainer, portletWindow, containerRequest, containerResponse,
                 requestPropertiesManager, portalUrlProvider, portletCookieService);
         
-        this.portletUrl = this.portalUrlProvider.getPortletUrl(TYPE.RENDER, containerRequest, this.portletWindow.getPortletWindowId());
+        final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
+        this.portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(containerRequest, portletWindowId, UrlType.RENDER);
+        this.portletUrlBuilder = this.portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
         this.portletContextService = portletContextService;
     }
 
@@ -83,7 +89,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
     @Override
     public PortletMode getPortletMode() {
         this.checkContextStatus();
-        return this.portletUrl.getPortletMode();
+        return this.portletUrlBuilder.getPortletMode();
     }
 
     /* (non-Javadoc)
@@ -92,7 +98,8 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
     @Override
     public Map<String, String[]> getPublicRenderParameters() {
         this.checkContextStatus();
-        return this.portletUrl.getPublicRenderParameters();
+//TODO        return this.portletUrlBuilder.getPublicRenderParameters();
+        return Collections.emptyMap();
     }
 
     /* (non-Javadoc)
@@ -101,7 +108,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
     @Override
     public Map<String, String[]> getRenderParameters() {
         this.checkContextStatus();
-        return this.portletUrl.getRenderParameters();
+        return this.portletUrlBuilder.getParameters();
     }
 
     /* (non-Javadoc)
@@ -110,7 +117,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
     @Override
     public WindowState getWindowState() {
         this.checkContextStatus();
-        return this.portletUrl.getWindowState();
+        return this.portletUrlBuilder.getWindowState();
     }
 
     /* (non-Javadoc)
@@ -119,7 +126,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
     @Override
     public void setPortletMode(PortletMode portletMode) {
         this.checkContextStatus();
-        this.portletUrl.setPortletMode(portletMode);
+        this.portletUrlBuilder.setPortletMode(portletMode);
     }
 
     /* (non-Javadoc)
@@ -128,6 +135,6 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
     @Override
     public void setWindowState(WindowState windowState) {
         this.checkContextStatus();
-        this.portletUrl.setWindowState(windowState);
+        this.portletUrlBuilder.setWindowState(windowState);
     }
 }

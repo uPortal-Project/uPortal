@@ -40,12 +40,16 @@
  | used by the theme
 -->
 <xsl:stylesheet 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:dlm="http://www.uportal.org/layout/dlm"
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
-    exclude-result-prefixes="upAuth upGroup upMsg" 
+    xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
+    xsi:schemaLocation="
+            https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
+    exclude-result-prefixes="url upAuth upGroup upMsg" 
     version="1.0">
       
   <!-- ========== TEMPLATE: PORTLET ========== -->
@@ -119,9 +123,13 @@
             <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar"> <!-- Portlet toolbar. -->
               <h2> <!-- Portlet title. -->
                 <xsl:variable name="portletMaxUrl">
-                  <xsl:call-template name="portletUrl">
-                    <xsl:with-param name="subscribeId" select="@ID" />
-                    <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                  <xsl:call-template name="portalUrl">
+                    <xsl:with-param name="url">
+                        <url:portal-url>
+                            <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                            <url:portlet-url state="MAXIMIZED" />
+                        </url:portal-url>
+                    </xsl:with-param>
                   </xsl:call-template>
                 </xsl:variable>
                 <a name="{@ID}" id="{@ID}" href="{$portletMaxUrl}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
@@ -173,9 +181,13 @@
     <div class="up-portlet-controls">
       <xsl:if test="not(@hasHelp='false')"> <!-- Help. -->
         <xsl:variable name="portletHelpUrl">
-          <xsl:call-template name="portletUrl">
-            <xsl:with-param name="subscribeId" select="@ID" />
-            <xsl:with-param name="mode">HELP</xsl:with-param>
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+                <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                    <url:portlet-url mode="HELP" />
+                </url:portal-url>
+            </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
         <a href="{$portletHelpUrl}#{@ID}" title="{upMsg:getMessage('view.help.for.portlet', $USER_LANG)}" class="up-portlet-control help">
@@ -184,9 +196,13 @@
       </xsl:if>
       <xsl:if test="not(@hasAbout='false')"> <!-- About. -->
         <xsl:variable name="portletAboutUrl">
-          <xsl:call-template name="portletUrl">
-            <xsl:with-param name="subscribeId" select="@ID" />
-            <xsl:with-param name="mode">ABOUT</xsl:with-param>
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+                <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                    <url:portlet-url mode="ABOUT" />
+                </url:portal-url>
+            </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
       	<a href="{$portletAboutUrl}#{@ID}" title="{upMsg:getMessage('view.information.about.portlet', $USER_LANG)}" class="up-portlet-control about">
@@ -195,9 +211,13 @@
       </xsl:if>
       <xsl:if test="not(@editable='false')"> <!-- Edit. -->
         <xsl:variable name="portletEditUrl">
-          <xsl:call-template name="portletUrl">
-            <xsl:with-param name="subscribeId" select="@ID" />
-            <xsl:with-param name="mode">EDIT</xsl:with-param>
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+                <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                    <url:portlet-url mode="EDIT" />
+                </url:portal-url>
+            </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
         <a href="{$portletEditUrl}#{@ID}" title="{upMsg:getMessage('edit.portlet', $USER_LANG)}" class="up-portlet-control edit">
@@ -206,9 +226,13 @@
       </xsl:if>
       <xsl:if test="@printable='true'"> <!-- Print. -->
         <xsl:variable name="portletPrintUrl">
-          <xsl:call-template name="portletUrl">
-            <xsl:with-param name="subscribeId" select="@ID" />
-            <xsl:with-param name="mode">PRINT</xsl:with-param>
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+                <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                    <url:portlet-url mode="PRINT" />
+                </url:portal-url>
+            </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
         <a href="{$portletPrintUrl}#{@ID}" title="{upMsg:getMessage('print.portlet', $USER_LANG)}" class="up-portlet-control print">
@@ -218,9 +242,13 @@
       <xsl:if test="not(//focused) and @minimized='false'"> <!-- Focus. -->
         <!-- UNCOMMENT FOR MINIMIZE CONTROL
         <xsl:variable name="portletMinUrl">
-          <xsl:call-template name="portletUrl">
-            <xsl:with-param name="subscribeId" select="@ID" />
-            <xsl:with-param name="state">MINIMIZED</xsl:with-param>
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+                <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                    <url:portlet-url state="MINIMIZED" />
+                </url:portal-url>
+            </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
         <a href="{$portletMinUrl}" title="{upMsg:getMessage('enter.minimized.mode.for.this.portlet', $USER_LANG)}" class="up-portlet-control minimize">
@@ -228,9 +256,13 @@
         </a>
         -->
         <xsl:variable name="portletMaxUrl">
-          <xsl:call-template name="portletUrl">
-            <xsl:with-param name="subscribeId" select="@ID" />
-            <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+                <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                    <url:portlet-url state="MAXIMIZED" />
+                </url:portal-url>
+            </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
         <a href="{$portletMaxUrl}" title="{upMsg:getMessage('enter.maximized.mode.for.this.portlet', $USER_LANG)}" class="up-portlet-control focus">
@@ -240,9 +272,13 @@
       <xsl:if test="@minimized='true'"> <!-- Return from Minimized. -->
         <!-- UNCOMMENT FOR UNMINIMIZE CONTROL
         <xsl:variable name="portletReturnUrl">
-          <xsl:call-template name="portletUrl">
-            <xsl:with-param name="subscribeId" select="@ID" />
-            <xsl:with-param name="state">NORMAL</xsl:with-param>
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+                <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                    <url:portlet-url state="NORMAL" />
+                </url:portal-url>
+            </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
         <a href="{$portletMinUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return">
@@ -252,11 +288,12 @@
       </xsl:if>
       <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
         <xsl:variable name="removePortletUrl">
-          <xsl:call-template name="layoutUrl">
-            <xsl:with-param name="folderId" select="@ID" />
-            <xsl:with-param name="action">true</xsl:with-param>
-            <xsl:with-param name="parameters">
-                <layout-param name="remove_target" value="test"/>
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+                <url:portal-url type="action">
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                    <url:param name="remove_target" value="{@ID}"/>
+                </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
@@ -266,9 +303,13 @@
       </xsl:if>
       <xsl:if test="//focused"> <!-- Return from Focused. -->
         <xsl:variable name="portletReturnUrl">
-          <xsl:call-template name="portletUrl">
-            <xsl:with-param name="subscribeId" select="@ID" />
-            <xsl:with-param name="state">NORMAL</xsl:with-param>
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+                <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                    <url:portlet-url state="NORMAL" />
+                </url:portal-url>
+            </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
         <a href="{$portletReturnUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return">

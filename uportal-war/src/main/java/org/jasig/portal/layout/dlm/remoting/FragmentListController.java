@@ -27,11 +27,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +41,7 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.AdminEvaluator;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,19 +75,13 @@ public class FragmentListController {
     private ConfigurationLoader dlmConfig;
     private IPersonManager personManager;    
     private IUserLayoutStore userLayoutStore;
-    private XPathExpression expr;
     private IPortletDefinitionRegistry portletRegistry;
+    private XPathOperations xpathOperations;
     private final Log log = LogFactory.getLog(getClass());
-     
-    public FragmentListController() {
-        XPath xpath = XPathFactory.newInstance().newXPath();
-        try {
-            expr = xpath.compile(CHANNEL_FNAME_XPATH);
-        } catch (XPathExpressionException e) {
-            String msg = "Failed to bootstrap an XPathExpression";
-            log.error(msg, e);
-            throw new RuntimeException(msg, e);
-        }
+    
+    @Autowired
+    public void setXpathOperations(XPathOperations xpathOperations) {
+        this.xpathOperations = xpathOperations;
     }
 
     @Autowired
@@ -143,17 +134,11 @@ public class FragmentListController {
             List<String> portlets = null;
             if (layout != null) {
                 portlets = new ArrayList<String>();
-                try {
-                    NodeList channelFNames = (NodeList) expr.evaluate(layout, XPathConstants.NODESET);
-                    for (int i=0; i < channelFNames.getLength(); i++) {
-                        String fname = channelFNames.item(i).getTextContent();
-                        IPortletDefinition pDef = portletRegistry.getPortletDefinitionByFname(fname);
-                        portlets.add(pDef.getTitle());
-                    }
-                } catch (XPathExpressionException e) {
-                    String msg = "Failed to search layout documents for channels";
-                    log.error(msg, e);
-                    throw new ServletException(msg, e);
+                NodeList channelFNames = this.xpathOperations.evaluate(CHANNEL_FNAME_XPATH, layout, XPathConstants.NODESET);
+                for (int i=0; i < channelFNames.getLength(); i++) {
+                    String fname = channelFNames.item(i).getTextContent();
+                    IPortletDefinition pDef = portletRegistry.getPortletDefinitionByFname(fname);
+                    portlets.add(pDef.getTitle());
                 }
             }
             

@@ -60,6 +60,7 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
+import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.delegation.jsp.RenderPortletTag;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -477,7 +478,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
         for (final Supports support : supports) {
             final List<String> portletModes = support.getPortletModes();
             for (final String portletMode : portletModes) {
-                if (IPortletRenderer.CONFIG.equals(new PortletMode(portletMode))) {
+                if (IPortletRenderer.CONFIG.equals(PortletUtils.getPortletMode(portletMode))) {
                     return true;
                 }
             }

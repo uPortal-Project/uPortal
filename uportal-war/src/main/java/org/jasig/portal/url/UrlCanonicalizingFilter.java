@@ -45,13 +45,14 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private IPortalUrlProvider portalUrlProvider;
+    private IUrlSyntaxProvider urlSyntaxProvider;
     private IUserInstanceManager userInstanceManager;
     private int maximumRedirects = 5;
     
+
     @Autowired
-    public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
-        this.portalUrlProvider = portalUrlProvider;
+    public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
+        this.urlSyntaxProvider = urlSyntaxProvider;
     }
     @Autowired    
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
@@ -66,10 +67,8 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
     
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(request);
-        final UrlType urlType = portalRequestInfo.getUrlType();
         if ("GET".equals(request.getMethod())) {
-            final String canonicalUrl = portalRequestInfo.getCanonicalUrl();
+            final String canonicalUrl = this.urlSyntaxProvider.getCanonicalUrl(request);
             
             final String canonicalUri;
             final int queryStringIndex = canonicalUrl.indexOf("?");
@@ -101,8 +100,10 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
             }
         }
         
-        final PortalHttpServletResponseWrapper httpServletResponseWrapper = 
-            new PortalHttpServletResponseWrapper(response);
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        final UrlType urlType = portalRequestInfo.getUrlType();
+        
+        final PortalHttpServletResponseWrapper httpServletResponseWrapper = new PortalHttpServletResponseWrapper(response);
         
         final PortalHttpServletRequestWrapper httpServletRequestWrapper = 
             new PortalHttpServletRequestWrapper(request, httpServletResponseWrapper, this.userInstanceManager);

@@ -37,8 +37,8 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestInfo;
-import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletRequestInfo;
+import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.url.UrlState;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -58,7 +58,7 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
     protected final Log logger = LogFactory.getLog(getClass());
     
     private IUserInstanceManager userInstanceManager;
-    private IPortalUrlProvider portalUrlProvider;
+    private IUrlSyntaxProvider urlSyntaxProvider;
     private IPortletWindowRegistry portletWindowRegistry;
     private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
     
@@ -73,8 +73,8 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
     }
     
     @Autowired
-    public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
-        this.portalUrlProvider = portalUrlProvider;
+    public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
+        this.urlSyntaxProvider = urlSyntaxProvider;
     }
 
     @Autowired
@@ -84,24 +84,22 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
 
     @Override
     public boolean processParameters(HttpServletRequest request, HttpServletResponse response) {
-        final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(request);
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         
-        final IPerson person = userInstance.getPerson();
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
 
         
         
-        portalRequestInfo.getTargetedLayoutNodeId();
         final UrlState urlState = portalRequestInfo.getUrlState();
         switch (urlState) {
             case MAX:
-                final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
+                final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
                 
                 if (portletRequestInfo != null) {
-                    final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
+                    final IPortletWindowId targetWindowId = portletRequestInfo.getPortletWindowId();
                     final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, targetWindowId);
                     
                     final String channelSubscribeId = portletEntity.getChannelSubscribeId();

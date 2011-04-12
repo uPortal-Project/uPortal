@@ -41,7 +41,7 @@ import org.apache.commons.lang.Validate;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class UrlBuilder implements Serializable, Cloneable {
+public class UrlStringBuilder implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
 
     private final String encoding;
@@ -56,7 +56,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * 
      * @param encoding The encoding to use for parameters
      */
-    public UrlBuilder(String encoding) {
+    public UrlStringBuilder(String encoding) {
         Validate.notNull(encoding, "encoding can not be null");
         this.checkEncoding(encoding);
 
@@ -73,7 +73,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * @param protocol The protocol for the URL, ex: http
      * @param host The host for the URL
      */
-    public UrlBuilder(String encoding, String protocol, String host) {
+    public UrlStringBuilder(String encoding, String protocol, String host) {
         this(encoding, protocol, host, null);
     }
 
@@ -85,7 +85,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * @param host The host for the URL
      * @param port The port to use for the URL
      */
-    public UrlBuilder(String encoding, String protocol, String host, Integer port) {
+    public UrlStringBuilder(String encoding, String protocol, String host, Integer port) {
         Validate.notNull(encoding, "encoding can not be null");
         Validate.notNull(protocol, "protocol can not be null");
         Validate.notNull(host, "host can not be null");
@@ -100,7 +100,7 @@ public class UrlBuilder implements Serializable, Cloneable {
     /**
      * Copy constructor
      */
-    public UrlBuilder(UrlBuilder urlBuilder) {
+    public UrlStringBuilder(UrlStringBuilder urlBuilder) {
         Validate.notNull(urlBuilder, "urlBuilder can not be null");
 
         this.encoding = urlBuilder.encoding;
@@ -151,7 +151,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * @param values Values for the parameter, null is valid
      * @return this
      */
-    public UrlBuilder setParameter(String name, String... values) {
+    public UrlStringBuilder setParameter(String name, String... values) {
         this.setParameter(name, values != null ? Arrays.asList(values) : null);
         return this;
     }
@@ -159,7 +159,7 @@ public class UrlBuilder implements Serializable, Cloneable {
     /**
      * @see #setParameter(String, String...)
      */
-    public UrlBuilder setParameter(String name, List<String> values) {
+    public UrlStringBuilder setParameter(String name, List<String> values) {
         Validate.notNull(name, "parameter name cannot be null");
         
         this.parameters.put(name, this.copy(values));
@@ -174,7 +174,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * @param values Values for the parameter, null is valid
      * @return this
      */
-    public UrlBuilder addParameter(String name, String... values) {
+    public UrlStringBuilder addParameter(String name, String... values) {
         this.addParameter(name, values != null ? Arrays.asList(values) : null);
         return this;
     }
@@ -182,7 +182,7 @@ public class UrlBuilder implements Serializable, Cloneable {
     /**
      * @see #addParameter(String, List)
      */
-    public UrlBuilder addParameter(String name, List<String> values) {
+    public UrlStringBuilder addParameter(String name, List<String> values) {
         Validate.notNull(name, "parameter name cannot be null");
         
         List<String> existingValues = this.parameters.get(name);
@@ -200,7 +200,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * Calls {@link #setParameters(String, Map)} with "" for the namespace
      * @see #setParameters(String, Map)
      */
-    public UrlBuilder setParameters(Map<String, List<String>> parameters) {
+    public UrlStringBuilder setParameters(Map<String, List<String>> parameters) {
         this.setParameters("", parameters);
         return this;
     }
@@ -213,7 +213,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * @param parameters Map of parameters to set
      * @return this
      */
-    public UrlBuilder setParameters(String namespace, Map<String, List<String>> parameters) {
+    public UrlStringBuilder setParameters(String namespace, Map<String, List<String>> parameters) {
         for (final String name : parameters.keySet()) {
             Validate.notNull(name, "parameter map cannot contain any null keys");
         }
@@ -227,7 +227,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * Calls {@link #addParameters(String, Map)} with "" for the namespace
      * @see #addParameters(String, Map)
      */
-    public UrlBuilder addParameters(Map<String, List<String>> parameters) {
+    public UrlStringBuilder addParameters(Map<String, List<String>> parameters) {
         this.addParameters("", parameters);
         return this;
     }
@@ -240,7 +240,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * @param parameters Map of parameters to set
      * @return this
      */
-    public UrlBuilder addParameters(String namespace, Map<String, List<String>> parameters) {
+    public UrlStringBuilder addParameters(String namespace, Map<String, List<String>> parameters) {
         for (final String name : parameters.keySet()) {
             Validate.notNull(name, "parameter map cannot contain any null keys");
         }
@@ -262,7 +262,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * @param parameters Map of parameters to set
      * @return this
      */
-    public UrlBuilder addParametersArray(String namespace, Map<String, String[]> parameters) {
+    public UrlStringBuilder addParametersArray(String namespace, Map<String, String[]> parameters) {
         for (final String name : parameters.keySet()) {
             Validate.notNull(name, "parameter map cannot contain any null keys");
         }
@@ -282,7 +282,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * @param elements Path elements to set
      * @return this
      */
-    public UrlBuilder setPath(String... elements) {
+    public UrlStringBuilder setPath(String... elements) {
         Validate.noNullElements(elements, "elements cannot be null");
         
         this.path.clear();
@@ -296,7 +296,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * @param element The element to add
      * @return this
      */
-    public UrlBuilder addPath(String element) {
+    public UrlStringBuilder addPath(String element) {
         Validate.notNull(element, "element cannot be null");
         this.path.add(element);
         return this;
@@ -308,7 +308,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      * @param elements Path elements to add
      * @return this
      */
-    public UrlBuilder addPath(String... elements) {
+    public UrlStringBuilder addPath(String... elements) {
         Validate.noNullElements(elements, "elements cannot be null");
         
         for (final String element : elements) {
@@ -322,7 +322,7 @@ public class UrlBuilder implements Serializable, Cloneable {
      */
     @Override
     public Object clone() {
-        return new UrlBuilder(this);
+        return new UrlStringBuilder(this);
     }
 
     /* (non-Javadoc)

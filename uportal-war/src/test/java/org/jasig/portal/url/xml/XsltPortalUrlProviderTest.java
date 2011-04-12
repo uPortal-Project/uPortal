@@ -19,53 +19,73 @@
 
 package org.jasig.portal.url.xml;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import static org.junit.Assert.assertTrue;
 
 import java.io.StringWriter;
 
-import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.LogFactory;
-import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.easymock.EasyMock;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
+import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.url.IBasePortalUrl;
-import org.jasig.portal.url.ILayoutPortalUrl;
+import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletPortalUrl;
+import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.UrlType;
 import org.jasig.portal.xml.ResourceLoaderURIResolver;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassRelativeResourceLoader;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.xml.SimpleTransformErrorListener;
+import org.springframework.util.xml.StaxUtils;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@RunWith(MockitoJUnitRunner.class)
 public class XsltPortalUrlProviderTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
+    @InjectMocks private XsltPortalUrlProvider xsltPortalUrlProvider = new XsltPortalUrlProvider();
+    @Mock private IPortletWindowRegistry portletWindowRegistry;
+    @Mock private IPortalUrlProvider portalUrlProvider;
+    @Mock private IPortalUrlBuilder portalUrlBuilder;
+    @Mock private IPortletUrlBuilder portletUrlBuilder;
+    @Mock private IPortletWindow portletWindow;
+
+    
     private TransformerFactory tFactory;
-    private StreamSource xmlSource;
+    private Source xmlSource;
+    private Templates xslTemplate;
+    private String expected;
     
     @Before
     public void setup() throws Exception {
@@ -75,185 +95,161 @@ public class XsltPortalUrlProviderTest {
         this.tFactory.setURIResolver(resolver);
         this.tFactory.setErrorListener(new SimpleTransformErrorListener(LogFactory.getLog(getClass())));
         
-        xmlSource = new StreamSource(XsltPortalUrlProviderTest.class.getResourceAsStream("test.xml"));
+        //Load the XML document so it reads the same way the rendering pipeline reads XML
+        final XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
+        final XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(this.getClass().getResourceAsStream("test.xml"));
+        final XMLStreamReader streamReader= StaxUtils.createEventStreamReader(eventReader);
+        xmlSource = new StAXSource(streamReader);
+        
+        xslTemplate = tFactory.newTemplates(new StreamSource(this.getClass().getResourceAsStream("test.xsl")));
+        
+        expected = IOUtils.toString(this.getClass().getResourceAsStream("result.xml"));
     }
     
-    
     @Test
-    public void testLayoutUrl() throws Exception {
+    public void testDefaultUrl() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
-        final ILayoutPortalUrl layoutPortalUrl = EasyMock.createMock(ILayoutPortalUrl.class);
-        layoutPortalUrl.addLayoutParameter("remove_target", "foo");
-        layoutPortalUrl.setAction(true);
-        EasyMock.expectLastCall(); //works for all previous void calls
+        when(portalUrlProvider.getDefaultUrl(request)).thenReturn(portalUrlBuilder);
+        when(portalUrlBuilder.getUrlString()).thenReturn("/uPortal/home/normal/render.uP?layoutUrl");
         
-        EasyMock.expect(layoutPortalUrl.getUrlString()).andReturn("/uPortal/home/normal/render.uP?layoutUrl").times(2);
-
-        
-        final IPortalUrlProvider portalUrlProvider = EasyMock.createMock(IPortalUrlProvider.class);
-        
-        EasyMock.expect(portalUrlProvider.getFolderUrlByNodeId(request, "foo")).andReturn(layoutPortalUrl).times(2);
-        
-        
-        EasyMock.replay(portalUrlProvider, layoutPortalUrl);
-        
-        
-        
-        final Transformer transformer = tFactory.newTransformer(new StreamSource(this.getClass().getResourceAsStream("layoutUrlTest.xsl")));
-        
-        //Setup the transformer parameters
-        final XsltPortalUrlProvider xsltPortalUrlProvider = new XsltPortalUrlProvider();
-        xsltPortalUrlProvider.setUrlProvider(portalUrlProvider);
+        final Transformer transformer = xslTemplate.newTransformer();
         transformer.setParameter(XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xsltPortalUrlProvider);
         transformer.setParameter("CURRENT_REQUEST", request);
+        transformer.setParameter("TEST", "defaultUrl"); //xsl template mode to use
         
 
         // set up configuration in the transformer impl
         final StringWriter resultWriter = new StringWriter();
         transformer.transform(xmlSource, new StreamResult(resultWriter));
         
-        EasyMock.verify(portalUrlProvider, layoutPortalUrl);
-
+        verify(portalUrlBuilder).getUrlString();
+        verifyNoMoreInteractions(portalUrlBuilder);
+        
         final String result = resultWriter.getBuffer().toString();
         logger.debug(result);
-        final String expected = IOUtils.toString(this.getClass().getResourceAsStream("layoutUrlResult.xml"));
 
         XMLUnit.setIgnoreWhitespace(true);
         Diff d = new Diff(expected, result);
         assertTrue("Transformation result differs from what's expected" + d, d.similar());
-        
     }
     
-    
     @Test
-    public void testPortletUrl() throws Exception {
+    public void testLayoutUrlById() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
-        final IBasePortalUrl basePortalUrl = EasyMock.createMock(IBasePortalUrl.class);
-        basePortalUrl.addPortalParameter("foo", "bar");
-        basePortalUrl.addPortalParameter("foo", "bor");
-        basePortalUrl.addPortalParameter("page", "42");
-        basePortalUrl.addPortalParameter("node", "element");
-        basePortalUrl.addPortalParameter("empty", "");
-        EasyMock.expectLastCall(); //works for all previous void calls
+        when(portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, "foo", UrlType.ACTION)).thenReturn(portalUrlBuilder);
+        when(portalUrlBuilder.getUrlString()).thenReturn("/uPortal/home/normal/render.uP?layoutUrl");
         
-        EasyMock.expect(basePortalUrl.getUrlString()).andReturn("/uPortal/home/normal/render.uP").times(2);
-
-        
-        final IPortalUrlProvider portalUrlProvider = EasyMock.createMock(IPortalUrlProvider.class);
-        
-        EasyMock.expect(portalUrlProvider.getDefaultUrl(request)).andReturn(basePortalUrl).times(2);
-        
-        
-        EasyMock.replay(portalUrlProvider, basePortalUrl);
-        
-        
-        
-        final Transformer transformer = tFactory.newTransformer(new StreamSource(this.getClass().getResourceAsStream("portalUrlTest.xsl")));
-        
-        //Setup the transformer parameters
-        final XsltPortalUrlProvider xsltPortalUrlProvider = new XsltPortalUrlProvider();
-        xsltPortalUrlProvider.setUrlProvider(portalUrlProvider);
+        final Transformer transformer = xslTemplate.newTransformer();
         transformer.setParameter(XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xsltPortalUrlProvider);
         transformer.setParameter("CURRENT_REQUEST", request);
+        transformer.setParameter("TEST", "layoutUrlById"); //xsl template mode to use
         
 
         // set up configuration in the transformer impl
         final StringWriter resultWriter = new StringWriter();
         transformer.transform(xmlSource, new StreamResult(resultWriter));
         
+        verify(portalUrlBuilder).addParameter("remove_target", "foo");
+        verify(portalUrlBuilder).addParameter("save", "42");
+        verify(portalUrlBuilder).getUrlString();
+        verifyNoMoreInteractions(portalUrlBuilder);
+        
         final String result = resultWriter.getBuffer().toString();
         logger.debug(result);
-        final String expected = IOUtils.toString(this.getClass().getResourceAsStream("portalUrlResult.xml"));
 
         XMLUnit.setIgnoreWhitespace(true);
         Diff d = new Diff(expected, result);
         assertTrue("Transformation result differs from what's expected" + d, d.similar());
-        
-        EasyMock.verify(portalUrlProvider, basePortalUrl);
     }
 
     @Test
-    public void testPortalUrl() throws Exception {
+    public void testPortletUrlById() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        final IPortletWindowId portletWindowId = new MockPortletWindowId("w1");
         
+        when(portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, "foo", UrlType.RENDER)).thenReturn(portalUrlBuilder);
+        when(portalUrlBuilder.getPortletUrlBuilder(portletWindowId)).thenReturn(portletUrlBuilder);
+        when(portalUrlBuilder.getUrlString()).thenReturn("/uPortal/home/normal/render.uP?layoutUrl");
+        when(portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, "foo")).thenReturn(portletWindow);
+        when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         
-        final IPortletWindowRegistry portletWindowRegistry = createMock(IPortletWindowRegistry.class);
-        final IPortalUrlProvider portalUrlProvider = createMock(IPortalUrlProvider.class);
-        
-       
-        final IPortletPortalUrl portletFnameUrl = createMock(IPortletPortalUrl.class);
-        portletFnameUrl.addPortletParameter("foo", "bar");
-        portletFnameUrl.addPortletParameter("foo", "bor");
-        portletFnameUrl.addPortletParameter("page", "42");
-        portletFnameUrl.addPortletParameter("node", "element");
-        portletFnameUrl.addPortletParameter("empty", "");
-        portletFnameUrl.addPortalParameter("something", "for the portal");
-        expectLastCall(); //works for all previous void calls
-        expect(portletFnameUrl.getUrlString()).andReturn("/uPortal/home/normal/bookmarks.1/render.uP");
-        
-        expect(portalUrlProvider.getPortletUrlByFName(TYPE.RENDER, request, "bookmarks")).andReturn(portletFnameUrl);
-        
-        
-        final IPortletPortalUrl portletSubscribeUrl = createMock(IPortletPortalUrl.class);
-        portletSubscribeUrl.addPortletParameter("foo", "bar");
-        portletSubscribeUrl.addPortletParameter("foo", "bor");
-        portletSubscribeUrl.addPortletParameter("page", "42");
-        portletSubscribeUrl.addPortletParameter("node", "element");
-        portletSubscribeUrl.addPortletParameter("empty", "");
-        portletSubscribeUrl.addPortalParameter("something", "for the portal");
-        expectLastCall(); //works for all previous void calls
-        expect(portletSubscribeUrl.getUrlString()).andReturn("/uPortal/home/normal/bookmarks.n1/render.uP");
-        
-        expect(portalUrlProvider.getPortletUrlByNodeId(TYPE.RENDER, request, "n1")).andReturn(portletSubscribeUrl);
-        
-        
-        final MockPortletWindowId windowId = new MockPortletWindowId("123.321");
-        expect(portletWindowRegistry.getPortletWindowId("123.321")).andReturn(windowId);
-        
-        final IPortletPortalUrl portletWindowIdUrl = createMock(IPortletPortalUrl.class);
-        portletWindowIdUrl.addPortletParameter("foo", "bar");
-        portletWindowIdUrl.addPortletParameter("foo", "bor");
-        portletWindowIdUrl.addPortletParameter("page", "42");
-        portletWindowIdUrl.addPortletParameter("node", "element");
-        portletWindowIdUrl.addPortletParameter("empty", "");
-        portletWindowIdUrl.addPortalParameter("something", "for the portal");
-        portletWindowIdUrl.setWindowState(WindowState.MAXIMIZED);
-        portletWindowIdUrl.setPortletMode(PortletMode.EDIT);
-        expectLastCall(); //works for all previous void calls
-        expect(portletWindowIdUrl.getUrlString()).andReturn("/uPortal/home/normal/bookmarks.n1/render.uP");
-        
-        expect(portalUrlProvider.getPortletUrl(TYPE.ACTION, request, windowId)).andReturn(portletWindowIdUrl);
-        
-        
-        replay(portalUrlProvider, portletWindowRegistry, portletFnameUrl, portletSubscribeUrl, portletWindowIdUrl);
-        
-        
-        
-        final Transformer transformer = tFactory.newTransformer(new StreamSource(this.getClass().getResourceAsStream("portletUrlTest.xsl")));
-        
-        //Setup the transformer parameters
-        final XsltPortalUrlProvider xsltPortalUrlProvider = new XsltPortalUrlProvider();
-        xsltPortalUrlProvider.setPortletWindowRegistry(portletWindowRegistry);
-        xsltPortalUrlProvider.setUrlProvider(portalUrlProvider);
+        final Transformer transformer = xslTemplate.newTransformer();
         transformer.setParameter(XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xsltPortalUrlProvider);
         transformer.setParameter("CURRENT_REQUEST", request);
+        transformer.setParameter("TEST", "portletUrlById"); //xsl template mode to use
         
 
         // set up configuration in the transformer impl
         final StringWriter resultWriter = new StringWriter();
         transformer.transform(xmlSource, new StreamResult(resultWriter));
         
-        verify(portalUrlProvider, portletWindowRegistry, portletFnameUrl, portletSubscribeUrl, portletWindowIdUrl);
+        verify(portalUrlBuilder).addParameter("pageNum", "42");
+        verify(portalUrlBuilder).getPortletUrlBuilder(portletWindowId);
+        verify(portalUrlBuilder).getUrlString();
+        verifyNoMoreInteractions(portalUrlBuilder);
+        
+        verify(portletUrlBuilder).setWindowState(new WindowState("maximized"));
+        verify(portletUrlBuilder).addParameter("tmp", "blah");
+        verifyNoMoreInteractions(portletUrlBuilder);
         
         final String result = resultWriter.getBuffer().toString();
         logger.debug(result);
-        final String expected = IOUtils.toString(this.getClass().getResourceAsStream("portletUrlResult.xml"));
 
         XMLUnit.setIgnoreWhitespace(true);
         Diff d = new Diff(expected, result);
         assertTrue("Transformation result differs from what's expected" + d, d.similar());
-        
     }
+
+    @Test
+    public void testMultiPortletUrlById() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final IPortletWindowId portletWindowId = new MockPortletWindowId("w1");
+        
+        final IPortletWindow portletWindow2 = mock(IPortletWindow.class);
+        final IPortletWindowId portletWindowId2 = new MockPortletWindowId("w2");
+        final IPortletUrlBuilder portletUrlBuilder2 = mock(IPortletUrlBuilder.class);
+        
+        when(portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, "foo", UrlType.RENDER)).thenReturn(portalUrlBuilder);
+        when(portalUrlBuilder.getPortletUrlBuilder(portletWindowId)).thenReturn(portletUrlBuilder);
+        when(portalUrlBuilder.getUrlString()).thenReturn("/uPortal/home/normal/render.uP?layoutUrl");
+        when(portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, "foo")).thenReturn(portletWindow);
+        when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
+        
+        when(portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, "my-portlet")).thenReturn(portletWindow2);
+        when(portletWindow2.getPortletWindowId()).thenReturn(portletWindowId2);
+        when(portalUrlBuilder.getPortletUrlBuilder(portletWindowId2)).thenReturn(portletUrlBuilder2);
+        
+        final Transformer transformer = xslTemplate.newTransformer();
+        transformer.setParameter(XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER, xsltPortalUrlProvider);
+        transformer.setParameter("CURRENT_REQUEST", request);
+        transformer.setParameter("TEST", "multiPortletUrlById"); //xsl template mode to use
+        
+
+        // set up configuration in the transformer impl
+        final StringWriter resultWriter = new StringWriter();
+        transformer.transform(xmlSource, new StreamResult(resultWriter));
+        
+        verify(portalUrlBuilder).addParameter("pageNum", "42");
+        verify(portalUrlBuilder).getPortletUrlBuilder(portletWindowId);
+        verify(portalUrlBuilder).getPortletUrlBuilder(portletWindowId2);
+        verify(portalUrlBuilder).getUrlString();
+        verifyNoMoreInteractions(portalUrlBuilder);
+        
+        verify(portletUrlBuilder).addParameter("tmp", "blah");
+        verifyNoMoreInteractions(portletUrlBuilder);
+        
+        verify(portletUrlBuilder2).setWindowState(new WindowState("minimized"));
+        verify(portletUrlBuilder2).addParameter("event", "param");
+        verifyNoMoreInteractions(portletUrlBuilder2);
+        
+        final String result = resultWriter.getBuffer().toString();
+        logger.debug(result);
+
+        XMLUnit.setIgnoreWhitespace(true);
+        Diff d = new Diff(expected, result);
+        assertTrue("Transformation result differs from what's expected" + d, d.similar());
+    }
+    
 }

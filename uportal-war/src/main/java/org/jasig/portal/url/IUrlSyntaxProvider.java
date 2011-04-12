@@ -22,25 +22,33 @@ package org.jasig.portal.url;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Generates URLs for the current request based on the portal or portlet URL objects and target ids.
+ * Generates a URL string from a {@link IPortalUrlBuilder} or parses a request URL into
+ * {@link IPortalRequestInfo}
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IUrlGenerator {
+public interface IUrlSyntaxProvider {
     /**
-     * @param request The current request
-     * @param layoutPortalUrl The URL object to create a URL string from
-     * @param targetFolderId The targeted folder id from the user's layout
-     * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
+     * Get the portal request information for the specified request.
+     * 
+     * @param request The current portal request
+     * @return Information about the current request
      */
-    public String generateLayoutUrl(HttpServletRequest request, ILayoutPortalUrl layoutPortalUrl);
+    public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request);
+    
+    /**
+     * Get the canonical url for this portal request.
+     * 
+     * @param request The current portal request
+     * @return The canonical URL for the request
+     */
+    public String getCanonicalUrl(HttpServletRequest request);
     
     /**
      * @param request The current request
-     * @param portalPortletUrl The URL object to create a URL string from
-     * @param portletWindowId The targeted portlet window ID
+     * @param portalUrlBuilder The URL object to create a URL string from
      * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
      */
-    public String generatePortletUrl(HttpServletRequest request, IPortletPortalUrl portalPortletUrl);
+    public String generateUrl(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder);
 }

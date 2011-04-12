@@ -54,7 +54,12 @@ public enum UrlType {
         return this.lowercase;
     }
     public TYPE getPortletUrlType() {
-        switch (this) {
+        return UrlType.getPortletUrlType(this);
+    }
+    
+
+    public static TYPE getPortletUrlType(UrlType t) {
+        switch (t) {
             case ACTION: {
                 return TYPE.ACTION;
             }
@@ -62,13 +67,27 @@ public enum UrlType {
                 return TYPE.RENDER;
             }
             case RESOURCE: {
-            	return TYPE.RESOURCE;
+                return TYPE.RESOURCE;
             }
         }
         
-        throw new IllegalStateException("Unknown UrlType: " + this);
+        throw new IllegalStateException("Unknown UrlType: " + t);
     }
-    
+    public static UrlType fromPortletUrlType(TYPE t) {
+        switch (t) {
+            case ACTION: {
+                return ACTION;
+            }
+            case RENDER: {
+                return RENDER;
+            }
+            case RESOURCE: {
+                return RESOURCE;
+            }
+        }
+        
+        throw new IllegalStateException("Unknown TYPE: " + t);
+    }
     public static UrlType valueOfIngoreCase(String name) {
         return UrlType.valueOf(name.toUpperCase());
     }

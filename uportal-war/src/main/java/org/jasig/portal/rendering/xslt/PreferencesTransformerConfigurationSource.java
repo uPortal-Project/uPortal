@@ -27,6 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
@@ -43,7 +46,13 @@ public abstract class PreferencesTransformerConfigurationSource extends Transfor
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     protected IStylesheetUserPreferencesService stylesheetUserPreferencesService;
-    
+    private IStylesheetDescriptorDao stylesheetDescriptorDao;
+
+    @Autowired
+    public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
+        this.stylesheetDescriptorDao = stylesheetDescriptorDao;
+    }
+
     @Autowired
     public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
         this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
@@ -65,11 +74,27 @@ public abstract class PreferencesTransformerConfigurationSource extends Transfor
     @Override
     public final LinkedHashMap<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
         final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request);
+        
+        final long stylesheetDescriptorId = stylesheetUserPreferences.getStylesheetDescriptorId();
+        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
+        
+        //Add default values
+        final LinkedHashMap<String, Object> compositeStylesheetParameters = new LinkedHashMap<String, Object>();
+        for (final IStylesheetParameterDescriptor stylesheetParameterDescriptor : stylesheetDescriptor.getStylesheetParameterDescriptors()) {
+            final String defaultValue = stylesheetParameterDescriptor.getDefaultValue();
+            if (defaultValue != null) {
+                final String name = stylesheetParameterDescriptor.getName();
+                compositeStylesheetParameters.put(name, defaultValue);
+            }
+        }
+        
+        //Add user overrides
         final Map<String, String> stylesheetParameters = stylesheetUserPreferences.getStylesheetParameters();
+        compositeStylesheetParameters.putAll(stylesheetParameters);
         
-        this.logger.debug("Setting transformer parameters: {}", stylesheetParameters);
+        this.logger.debug("Setting transformer parameters: {}", compositeStylesheetParameters);
         
-        return new LinkedHashMap<String, Object>(stylesheetParameters);
+        return compositeStylesheetParameters;
     }
     
     @Override

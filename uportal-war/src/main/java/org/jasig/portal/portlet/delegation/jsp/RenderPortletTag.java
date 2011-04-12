@@ -41,6 +41,7 @@ import org.jasig.portal.api.portlet.DelegateState;
 import org.jasig.portal.api.portlet.DelegationRequest;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
+import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
@@ -138,8 +139,8 @@ public class RenderPortletTag extends TagSupport {
             portletWindowId = portletDelegationDispatcher.getPortletWindowId();
             portletSession.setAttribute(sessionKey, portletWindowId);
 
-            final PortletMode portletMode = this.portletMode == null ? null : new PortletMode(this.portletMode);
-            final WindowState windowState = this.windowState == null ? null : new WindowState(this.windowState);
+            final PortletMode portletMode = PortletUtils.getPortletMode(this.portletMode);
+            final WindowState windowState = PortletUtils.getWindowState(this.windowState);
             
             delegateState = new DelegateState(portletMode, windowState);
         }

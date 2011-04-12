@@ -58,12 +58,16 @@
  | used by the theme
 -->
 <xsl:stylesheet 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:dlm="http://www.uportal.org/layout/dlm"
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
-    exclude-result-prefixes="upAuth upGroup upMsg" 
+    xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
+    xsi:schemaLocation="
+            https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
+    exclude-result-prefixes="url upAuth upGroup upMsg" 
     version="1.0">
       
   <!-- ============================= -->

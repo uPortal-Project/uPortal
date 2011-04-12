@@ -21,67 +21,57 @@ package org.jasig.portal.url;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
- * Provides source for portal and portlet URL objects.
+ * Provides portal URL builders 
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface IPortalUrlProvider {
-    
     /**
-     * Get the portal request information for the specified request.
+     * Gets the default portal URL, this is equivalent to the first URL rendered by the portal when a user logs in. Always
+     * a {@link UrlType#RENDER} 
      * 
      * @param request The current portal request
-     * @return Information about the current request
+     * @return Default {@link IPortalUrlBuilder}
      */
-    public IPortalRequestInfo getPortalRequestInfo(HttpServletRequest request) throws InvalidPortalRequestException;
+    public IPortalUrlBuilder getDefaultUrl(HttpServletRequest request);
     
-//  Not implemented until all folders have fnames?
-//  public IBasePortalUrl getFolderUrlByFName(String folderFName);
-
     /**
-     * Gets the default portal URL, this is equivalent to the first URL rendered by the portal when a user logs in. 
+     * Get a portal URL builder that targets the specified layout node.
      * 
      * @param request The current portal request
-     * @return Default {@link IBasePortalUrl}
-     */
-    public IBasePortalUrl getDefaultUrl(HttpServletRequest request);
-    
-    /**
-     * @param request The current portal request
-     * @param folderNodeId ID of the folder in the user's layout that should be targeted by the URL.
-     * @return Folder targeted {@link IBasePortalUrl}
+     * @param layoutNodeId ID of the node in the user's layout that should be targeted by the URL.
+     * @param urlType The type of the portal url to create
+     * @return {@link IPortalUrlBuilder} targeting the specified node in the user's layout
      * @throws IllegalArgumentException If the specified ID doesn't exist for a folder in the users layout.
      */
-    public ILayoutPortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId);
+    public IPortalUrlBuilder getPortalUrlBuilderByLayoutNode(HttpServletRequest request, String layoutNodeId, UrlType urlType);
     
+//  Not implemented until all folders have fnames?
+//  public IPortalUrlBuilder getPortalUrlBuilderByLayoutFName(HttpServletRequest request, String folderFname, UrlType urlType);
+
     /**
+     * Get a portal URL builder that targets the specified portlet window.
+     * 
      * @param request The current portal request
      * @param portletWindowId ID of the portlet window that should be targeted by the URL.
-     * @return Portlet targeted {@link IBasePortalUrl}
-     * @throws IllegalArgumentException If the specified ID doesn't exist for a channel in the users layout.
+     * @param urlType The type of the portal url to create
+     * @return {@link IPortalUrlBuilder} targeting the specified node in the user's layout
+     * @throws IllegalArgumentException If the specified ID doesn't exist for a folder in the users layout.
      */
-    public IPortletPortalUrl getPortletUrl(TYPE type, HttpServletRequest request, IPortletWindowId portletWindowId);
-    
-    public IPortletResourcePortalUrl getPortletResourceUrl(HttpServletRequest request, IPortletWindowId portletWindowId);
+    public IPortalUrlBuilder getPortalUrlBuilderByPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId, UrlType urlType);
     
     /**
-     * @param request The current portal request
-     * @param portletNodeId ID of the channel in the user's layout that should be targeted by the URL.
-     * @return Portlet targeted {@link IBasePortalUrl}
-     * @throws IllegalArgumentException If the specified ID doesn't exist for a channel in the users layout.
-     */
-    public IPortletPortalUrl getPortletUrlByNodeId(TYPE type, HttpServletRequest request, String portletNodeId);
-    
-    /**
+     * Get a portal URL builder that targets the specified portlet window.
+     * 
      * @param request The current portal request
      * @param portletFName The fname of the portlet that should be targeted by the URL
-     * @return Portlet targeted {@link IBasePortalUrl}
-     * @throws IllegalArgumentException If the specified fname does not exist.
+     * @param urlType The type of the portal url to create
+     * @return {@link IPortalUrlBuilder} targeting the specified node in the user's layout
+     * @throws IllegalArgumentException If the specified ID doesn't exist for a folder in the users layout.
      */
-    public IPortletPortalUrl getPortletUrlByFName(TYPE type, HttpServletRequest request, String portletFName);
+    public IPortalUrlBuilder getPortalUrlBuilderByPortletFName(HttpServletRequest request, String portletFName, UrlType urlType);
 }

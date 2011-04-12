@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <xs:schema xmlns="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor"
     targetNamespace="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:io="https://source.jasig.org/schemas/uportal/io"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:up="https://source.jasig.org/schemas/uportal"
+    xmlns:io="https://source.jasig.org/schemas/uportal/io"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
 
-    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-types.xsd"/>
+    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="../../common-types.xsd"/>
+    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-io-types.xsd"/>
 
     <xs:element name="stylesheet-descriptor">
         <xs:complexType>
             <xs:complexContent>
                 <xs:extension base="io:basePortalDataType">
                     <xs:sequence>
-                        <xs:element name="name" type="io:fname-type"/>
+                        <xs:element name="name" type="up:fname-type"/>
                         <xs:element name="description" type="xs:string" minOccurs="0"/>
                         <xs:element name="uri" type="xs:string"/>
                         <xs:element name="output-property" type="externalOutputPropertyDescriptor" minOccurs="0"

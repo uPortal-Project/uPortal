@@ -110,7 +110,9 @@ public class XSLTComponent extends StAXPipelineComponentWrapper implements BeanN
                 for (final Map.Entry<String, Object> transformerParametersEntry : transformerParameters.entrySet()) {
                     final String name = transformerParametersEntry.getKey();
                     final Object value = transformerParametersEntry.getValue();
-                    transformer.setParameter(name, value);
+                    if (value != null) {
+                        transformer.setParameter(name, value);
+                    }
                 }
             }
             

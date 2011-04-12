@@ -46,6 +46,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +59,7 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
     private IPortletWindowRegistry portletWindowRegistry;
     private IRequestPropertiesManager requestPropertiesManager;
     private IPortalUrlProvider portalUrlProvider;
+    private IUrlSyntaxProvider urlSyntaxProvider;
     private PortletContextService portletContextService;
     private IPortletCookieService portletCookieService;
 
@@ -85,6 +87,11 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
     public void setPortletCookieService(IPortletCookieService portletCookieService) {
         this.portletCookieService = portletCookieService;
     }
+    
+    @Autowired
+    public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
+        this.urlSyntaxProvider = urlSyntaxProvider;
+    }
 
     /* (non-Javadoc)
 	 * @see org.apache.pluto.container.PortletRequestContextService#getPortletActionRequestContext(org.apache.pluto.container.PortletContainer, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apache.pluto.container.PortletWindow)
@@ -95,7 +102,7 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
 			HttpServletResponse containerResponse, PortletWindow window) {
 	    
 	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
-	    final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(containerRequest);
+	    final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(containerRequest);
 	    return new PortletRequestContextImpl(container, portletWindow, containerRequest, containerResponse, this.requestPropertiesManager, portalRequestInfo, portletCookieService);
 	}
 
@@ -106,7 +113,7 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
 	public PortletActionResponseContext getPortletActionResponseContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-	    
+//	    
 	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
         return new PortletActionResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, this.portalUrlProvider, this.portletContextService, this.portletCookieService);
 	}
@@ -120,7 +127,7 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
 			HttpServletResponse containerResponse, PortletWindow window) {
 	    
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
-        final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(containerRequest);
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(containerRequest);
         return new PortletRequestContextImpl(container, portletWindow, containerRequest, containerResponse, this.requestPropertiesManager, portalRequestInfo, portletCookieService);
 	}
 
@@ -145,7 +152,7 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
 			HttpServletResponse containerResponse, PortletWindow window) {
 
 	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
-	    final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(containerRequest);
+	    final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(containerRequest);
         return new PortletRequestContextImpl(container, portletWindow, containerRequest, containerResponse, this.requestPropertiesManager, portalRequestInfo, portletCookieService);
 	}
 
@@ -169,7 +176,7 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
 	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
-	    final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(containerRequest);
+	    final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(containerRequest);
         return new PortletResourceRequestContextImpl(container, portletWindow, containerRequest, containerResponse, this.requestPropertiesManager, portalRequestInfo, this.portletCookieService);
 	}
 

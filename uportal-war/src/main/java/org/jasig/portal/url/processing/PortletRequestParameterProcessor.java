@@ -34,8 +34,8 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.IPortalRequestInfo;
-import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletRequestInfo;
+import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.url.UrlState;
 import org.jasig.portal.url.UrlType;
@@ -54,84 +54,75 @@ import org.springframework.stereotype.Service;
 public class PortletRequestParameterProcessor implements IRequestParameterProcessor {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
-    private IPortalUrlProvider portalUrlProvider;
+    private IUrlSyntaxProvider urlSyntaxProvider;
     private IPortletWindowRegistry portletWindowRegistry;
     
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
+    
     @Autowired
-    public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
-        this.portalUrlProvider = portalUrlProvider;
+    public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
+        this.urlSyntaxProvider = urlSyntaxProvider;
     }
-
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.processing.IRequestParameterProcessor#processParameters(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public boolean processParameters(HttpServletRequest request, HttpServletResponse response) {
-        final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(request);
-
-        final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
-        if(portletRequestInfo == null) {
-    		return true;
-        }
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         
-        this.handlePortletRequestInfo(request, portalRequestInfo, portletRequestInfo);
+        final IPortletWindowId targetedPortletWindowId = portalRequestInfo.getTargetedPortletWindowId();
         
-        return true;
-    }
-    private void handlePortletRequestInfo(HttpServletRequest request, IPortalRequestInfo portalRequestInfo, IPortletRequestInfo portletRequestInfo) {
-        final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, targetWindowId);
-        if (portletWindow == null) {
-            this.logger.warn("No IPortletWindow exists for IPortletWindowId='" + targetWindowId
-                    + "'. Request info for this IPortletWindowId will be ignored: "
-                    + portletRequestInfo);
+        for (final IPortletRequestInfo portletRequestInfo : portalRequestInfo.getPortletRequestInfoMap().values()) {
+            final IPortletWindowId portletWindowId = portletRequestInfo.getPortletWindowId();
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, targetedPortletWindowId);
             
-            return;
-        }
-        
-        
-        final PortletMode portletMode = portletRequestInfo.getPortletMode();
-        if (portletMode != null) {
-            portletWindow.setPortletMode(portletMode);
-        }
-        
-        final UrlState urlState = portalRequestInfo.getUrlState();
-        switch (urlState) {
-            case MAX: {
-                portletWindow.setWindowState(WindowState.MAXIMIZED);
-            } break;
-            case DETACHED: {
-                portletWindow.setWindowState(IPortletRenderer.DETACHED);
-            } break;
-            case EXCLUSIVE: {
-                portletWindow.setWindowState(IPortletRenderer.EXCLUSIVE);
-            } break;
-            default: {
-                final WindowState windowState = portletRequestInfo.getWindowState();
-                if (windowState != null) {
-                    portletWindow.setWindowState(windowState);
+            final UrlType urlType = portalRequestInfo.getUrlType();
+            switch (urlType) {
+                case RENDER: {
+                    final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
+                    portletWindow.setRenderParameters(ParameterMap.convertListMap(portletParameters));
+                    
+                    //fall through, render uses state/mode info
+                }
+                case ACTION: {
+                    final WindowState windowState = portletRequestInfo.getWindowState();
+                    if (windowState != null) {
+                        portletWindow.setWindowState(windowState);
+                    }
+                    
+                    final PortletMode portletMode = portletRequestInfo.getPortletMode();
+                    if (portletMode != null) {
+                        portletWindow.setPortletMode(portletMode);
+                    }
+                    
+                    break;
+                }
+            }
+            
+            //Override the window state of the targeted portlet window based on the url state
+            if (portletWindowId.equals(targetedPortletWindowId)) {
+                final UrlState urlState = portalRequestInfo.getUrlState();
+                switch (urlState) {
+                    case MAX: {
+                        portletWindow.setWindowState(WindowState.MAXIMIZED);
+                        break;
+                    } 
+                    case DETACHED: {
+                        portletWindow.setWindowState(IPortletRenderer.DETACHED);
+                        break;
+                    } 
+                    case EXCLUSIVE: {
+                        portletWindow.setWindowState(IPortletRenderer.EXCLUSIVE);
+                        break;
+                    }
                 }
             }
         }
         
-        //If a render URL cache the parameters in the window
-        if (UrlType.RENDER == portalRequestInfo.getUrlType()) {
-            final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
-            portletWindow.setPreviousPrivateRenderParameters(ParameterMap.convertListMap(portletParameters));
-        
-            final Map<String, List<String>> publicPortletParameters = portletRequestInfo.getPublicPortletParameters();
-            portletWindow.setPreviousPublicRenderParameters(ParameterMap.convertListMap(publicPortletParameters));
-        }
-        
-        final IPortletRequestInfo delegatePortletRequestInfo = portletRequestInfo.getDelegatePortletRequestInfo();
-        if (delegatePortletRequestInfo != null) {
-            //TODO actually handle delegation better?
-            this.handlePortletRequestInfo(request, null, delegatePortletRequestInfo);
-        }
+        return true;
     }
 }

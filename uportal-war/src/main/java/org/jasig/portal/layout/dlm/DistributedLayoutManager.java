@@ -74,6 +74,7 @@ import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.jasig.portal.xml.XmlUtilities;
+import org.jasig.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
@@ -97,6 +98,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     private XmlUtilities xmlUtilities;
     private ILayoutCachingService layoutCachingService;
     private IUserLayoutStore distributedLayoutStore;
+    private XPathOperations xpathOperations;
     
     protected final IPerson owner;
     protected final IUserProfile profile;
@@ -140,6 +142,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         this.profile = profile;
     }
     
+    @Autowired
+    public void setXpathOperations(XPathOperations xpathOperations) {
+        this.xpathOperations = xpathOperations;
+    }
+
     @Autowired
     public void setXmlUtilities(XmlUtilities xmlUtilities) {
         this.xmlUtilities = xmlUtilities;
@@ -1380,25 +1387,17 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
      */
     public String getRootFolderId()
     {
-        if (rootNodeId == null)
-        {
+        if (rootNodeId == null) {
             Document layout = getUserLayoutDOM();
-            Element rootNode = RootLocator.getRootElement(layout);
-            if (rootNode == null
-                    || !rootNode.getAttribute(Constants.ATT_TYPE).equals(
-                            Constants.ROOT_FOLDER_ID))
-            {
-                LOG.error("Unable to locate root node in layout of "
-                        + owner.getAttribute(IPerson.USERNAME) 
-                        + ". Resetting corrupted layout.");
+            
+            Element rootNode = this.xpathOperations.evaluate("//layout/folder", layout, XPathConstants.NODE);
+            if (rootNode == null || !rootNode.getAttribute(Constants.ATT_TYPE).equals(Constants.ROOT_FOLDER_ID)) {
+                LOG.error("Unable to locate root node in layout of " + owner.getAttribute(IPerson.USERNAME) + ". Resetting corrupted layout.");
                 resetLayout((String) null);
-                rootNode = RootLocator.getRootElement(getUserLayoutDOM());
-                if (rootNode == null
-                        || !rootNode.getAttribute(Constants.ATT_TYPE).equals(
-                                Constants.ROOT_FOLDER_ID))
-                {
-                    throw new PortalException("Corrupted layout detected for " 
-                            + owner.getAttribute(IPerson.USERNAME) 
+                
+                rootNode = this.xpathOperations.evaluate("//layout/folder", layout, XPathConstants.NODE);
+                if (rootNode == null || !rootNode.getAttribute(Constants.ATT_TYPE).equals(Constants.ROOT_FOLDER_ID)) {
+                    throw new PortalException("Corrupted layout detected for " + owner.getAttribute(IPerson.USERNAME)
                             + " and resetting layout failed.");
                 }
             }

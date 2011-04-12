@@ -46,6 +46,7 @@ import org.jasig.portal.url.AbstractHttpServletRequestWrapper;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.ParameterMap;
+import org.jasig.portal.url.UrlType;
 import org.springframework.util.Assert;
 
 /**
@@ -59,6 +60,7 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
     
     protected final IRequestPropertiesManager requestPropertiesManager;
     protected final IPortalRequestInfo portalRequestInfo;
+    protected final IPortletRequestInfo portletRequestInfo;
     
     //Objects provided by the PortletServlet via the init method
     //The servlet objects are from the scope of the cross-context dispatch
@@ -78,6 +80,10 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
 
         this.requestPropertiesManager = requestPropertiesManager;
         this.portalRequestInfo = portalRequestInfo;
+        
+        final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
+        final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = this.portalRequestInfo.getPortletRequestInfoMap();
+        this.portletRequestInfo = portletRequestInfoMap.get(portletWindowId);
     }
 
     /**
@@ -181,12 +187,17 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      */
     @Override
     public Map<String, String[]> getPrivateParameterMap() {
-        final IPortletRequestInfo portletRequestInfo = this.portalRequestInfo.getPortletRequestInfo();
-        if (portletRequestInfo != null && this.portletWindow.getPortletWindowId().equals(portletRequestInfo.getTargetWindowId())) {
-            final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
+        if (this.portletRequestInfo != null) {
+            final Map<String, List<String>> portletParameters = this.portletRequestInfo.getPortletParameters();
             return ParameterMap.convertListMap(portletParameters);
         }
-        return this.portletWindow.getPreviousPrivateRenderParameters();
+        
+        //Only re-use render parameters on a render request
+        if (this.portalRequestInfo.getUrlType() == UrlType.RENDER) {
+            return this.portletWindow.getRenderParameters();
+        }
+        
+        return Collections.emptyMap();
     }
 
     /* (non-Javadoc)
@@ -202,12 +213,16 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      */
     @Override
     public Map<String, String[]> getPublicParameterMap() {
-        final IPortletRequestInfo portletRequestInfo = this.portalRequestInfo.getPortletRequestInfo();
-        if (portletRequestInfo != null) {
-            final Map<String, List<String>> portletParameters = portletRequestInfo.getPublicPortletParameters();
-            return ParameterMap.convertListMap(portletParameters);
+        //TODO
+//        final Map<String, List<String>> portletParameters = this.portalRequestInfo.getPublicPortletParameters();
+//        return ParameterMap.convertListMap(portletParameters);
+        
+        //Only re-use render parameters on a render request
+        if (this.portalRequestInfo.getUrlType() == UrlType.RENDER) {
+            return this.portletWindow.getPublicRenderParameters();
         }
-        return this.portletWindow.getPreviousPublicRenderParameters();
+        
+        return Collections.emptyMap();
     }
 
 	@Override

@@ -25,14 +25,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.PortletExecutionManager;
-import org.jasig.portal.url.IBasePortalUrl;
 import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletPortalUrl;
 import org.jasig.portal.url.IPortletRequestInfo;
+import org.jasig.portal.url.IUrlSyntaxProvider;
+import org.jasig.portal.url.UrlType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +51,7 @@ public class RenderingController {
     private IPortalRenderingPipeline portalRenderingPipeline;
     private PortletExecutionManager portletExecutionManager;
     private IPortalUrlProvider portalUrlProvider;
+    private IUrlSyntaxProvider urlSyntaxProvider;
     
     @Autowired
     public void setPortalRenderingPipeline(IPortalRenderingPipeline portalRenderingPipeline) {
@@ -64,6 +65,10 @@ public class RenderingController {
     public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
         this.portalUrlProvider = portalUrlProvider;
     }
+    @Autowired
+    public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
+        this.urlSyntaxProvider = urlSyntaxProvider;
+    }
     
     
     @RequestMapping(headers="org.jasig.portal.url.UrlType=RENDER")
@@ -73,28 +78,28 @@ public class RenderingController {
     
     @RequestMapping(headers="org.jasig.portal.url.UrlType=ACTION")
     public void actionRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(request);
-        final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
         if (portletRequestInfo != null) {
-            final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
+            final IPortletWindowId targetWindowId = portletRequestInfo.getPortletWindowId();
             try {
                 this.portletExecutionManager.doPortletAction(targetWindowId, request, response);
             }
             catch (RuntimeException e) {
                 this.logger.error("Exception thrown while executing portlet action for: " + portletRequestInfo, e);
                 
-                final IPortletPortalUrl portletUrl = this.portalUrlProvider.getPortletUrl(TYPE.RENDER, request, targetWindowId);
-                portletUrl.setPortalParameter("portletActionError", targetWindowId.toString());
+                final IPortalUrlBuilder portalUrl = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(request, targetWindowId, UrlType.RENDER);
+                portalUrl.setParameter("portletActionError", targetWindowId.toString());
                 
-                sendRedirect(portletUrl, response);
+                sendRedirect(portalUrl, response);
             }
         }
         else {
             final String targetedLayoutNodeId = portalRequestInfo.getTargetedLayoutNodeId();
             
-            final IBasePortalUrl portalUrl;
+            final IPortalUrlBuilder portalUrl;
             if (targetedLayoutNodeId != null) {
-                portalUrl = this.portalUrlProvider.getFolderUrlByNodeId(request, targetedLayoutNodeId);
+                portalUrl = this.portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, targetedLayoutNodeId, UrlType.RENDER);
             }
             else {
                 portalUrl = this.portalUrlProvider.getDefaultUrl(request);
@@ -112,17 +117,17 @@ public class RenderingController {
      */
     @RequestMapping(headers="org.jasig.portal.url.UrlType=RESOURCE")
     public void resourceRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    	final IPortalRequestInfo portalRequestInfo = this.portalUrlProvider.getPortalRequestInfo(request);
-        final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo();
+    	final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
         if (portletRequestInfo != null) {
-            final IPortletWindowId targetWindowId = portletRequestInfo.getTargetWindowId();
+            final IPortletWindowId targetWindowId = portletRequestInfo.getPortletWindowId();
             this.portletExecutionManager.doPortletServeResource(targetWindowId, request, response);
         } else {
         	this.logger.error("portletRequestInfo was null for resourceRequest");
         }
     }
     
-    private void sendRedirect(final IBasePortalUrl portalUurl, HttpServletResponse response) throws IOException {
+    private void sendRedirect(final IPortalUrlBuilder portalUurl, HttpServletResponse response) throws IOException {
         final String url = portalUurl.getUrlString();
         final String encodedUrl = response.encodeRedirectURL(url);
         response.sendRedirect(encodedUrl);

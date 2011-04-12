@@ -4,10 +4,12 @@
     targetNamespace="https://source.jasig.org/schemas/uportal/io/portlet-definition"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:up="https://source.jasig.org/schemas/uportal"
     xmlns:io="https://source.jasig.org/schemas/uportal/io"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
 
-    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-types.xsd"/>
+    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="../../common-types.xsd"/>
+    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-io-types.xsd"/>
 
     <xs:element name="portlet-definition">
         <xs:complexType>
@@ -16,7 +18,7 @@
                     <xs:sequence>
                         <xs:element name="title" type="xs:string"/>
                         <xs:element name="name" type="xs:string"/>
-                        <xs:element name="fname" type="io:fname-type"/>
+                        <xs:element name="fname" type="up:fname-type"/>
                         <xs:element name="desc" type="xs:string" minOccurs="0"/>
                         <xs:element name="type" type="xs:string"/>
                         <xs:element name="timeout" type="xs:positiveInteger"/>

@@ -21,7 +21,7 @@ package org.jasig.portal.spring.properties;
 
 import java.beans.PropertyEditorSupport;
 
-import javax.portlet.PortletMode;
+import org.jasig.portal.portlet.PortletUtils;
 
 /**
  * @author Eric Dalquist
@@ -33,6 +33,6 @@ public class PortletModeEditor extends PropertyEditorSupport {
      */
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
-        this.setValue(new PortletMode(text));
+        this.setValue(PortletUtils.getPortletMode(text));
     }
 }

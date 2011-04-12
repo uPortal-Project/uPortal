@@ -19,7 +19,6 @@
 
 package org.jasig.portal.url;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -56,30 +55,22 @@ public interface IPortalRequestInfo {
     public String getTargetedLayoutNodeId();
     
     /**
-     * @return Parameters targeting the layout management system
+     * @return The portlet window id targeted by the request. If the request isn't targeting a particular portlet null is returned.
      */
-    public Map<String, List<String>> getLayoutParameters();
+    public IPortletWindowId getTargetedPortletWindowId();
     
     /**
-     * @return Information for a request targeting a portlet. If the request doesn't target a portlet null is returned.
+     * @return The {@link IPortletRequestInfo} for the targeted portlet. If the request isn't targeting a particular portlet null is returned.
      */
-    public IPortletRequestInfo getPortletRequestInfo();
+    public IPortletRequestInfo getTargetedPortletRequestInfo();
     
     /**
-     * @return The canonical URL for this request information. The URL will be valid for use in markup or as a redirect
-     * and will be absolute (starting with a / or a protocol)
+     * @return Information for each of the portlets that has data on the request. The returned map is read only and will never be null.
      */
-    public String getCanonicalUrl();
+    public Map<IPortletWindowId, ? extends IPortletRequestInfo> getPortletRequestInfoMap();
     
-    /**
-     * 
-     * @return a never null, but possibly empty, {@link List} of additional {@link IPortletRequestInfo}s embedded in this portalrequestinfo
-     */
-    public Collection<IPortletRequestInfo> getAdditionalPortletRequestInfos();
-    /**
-     * 
-     * @param portletWindowId
-     * @return additional {@link IPortletRequestInfo} embbeded in this portalrequestinfo with the specified window id
-     */
-    public IPortletRequestInfo getAdditionalPortletRequestInfo(IPortletWindowId portletWindowId);
+//    /**
+//     * @return The public portlet parameters for the request
+//     */
+//    public Map<String, List<String>> getPublicPortletParameters();
 }

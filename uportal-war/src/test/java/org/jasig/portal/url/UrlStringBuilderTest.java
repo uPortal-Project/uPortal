@@ -31,12 +31,12 @@ import org.junit.Test;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class UrlBuilderTest {
+public class UrlStringBuilderTest {
 
     @Test
     public void testInvalidEncoding() {
         try {
-            new UrlBuilder("NOT VALID");
+            new UrlStringBuilder("NOT VALID");
             Assert.fail("Encoding 'NOT VALID' should throw an exception");
         }
         catch (RuntimeException re) {
@@ -46,28 +46,28 @@ public class UrlBuilderTest {
 
     @Test
     public void testEmptyBuilder() {
-        final UrlBuilder builder = new UrlBuilder("UTF-8");
+        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8");
         final String url = builder.toString();
         Assert.assertEquals("/", url);
     }
 
     @Test
     public void testEmptyProtocolHostBuilder() {
-        final UrlBuilder builder = new UrlBuilder("UTF-8", "http", "www.example.com");
+        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8", "http", "www.example.com");
         final String url = builder.toString();
         Assert.assertEquals("http://www.example.com", url);
     }
 
     @Test
     public void testEmptyProtocolHostPortBuilder() {
-        final UrlBuilder builder = new UrlBuilder("UTF-8", "http", "www.example.com", 8080);
+        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8", "http", "www.example.com", 8080);
         final String url = builder.toString();
         Assert.assertEquals("http://www.example.com:8080", url);
     }
 
     @Test
     public void testParameterEmptyBuilder() {
-        final UrlBuilder builder = new UrlBuilder("UTF-8");
+        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8");
         
         builder.addParameter("p1", "v1", null, "v2");
         
@@ -81,7 +81,7 @@ public class UrlBuilderTest {
 
     @Test
     public void testParameterProtocolHostPortBuilder() {
-        final UrlBuilder builder = new UrlBuilder("UTF-8", "http", "www.example.com", 8080);
+        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8", "http", "www.example.com", 8080);
         
         builder.addParameter("p1", "v1", null, "v2");
         
@@ -96,7 +96,7 @@ public class UrlBuilderTest {
 
     @Test
     public void testParametersBuilder() {
-        final UrlBuilder builder = new UrlBuilder("UTF-8");
+        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8");
         
         final Map<String, List<String>> p0 = new LinkedHashMap<String, List<String>>();
         p0.put("notSeen", Arrays.asList("b", "c"));
@@ -119,7 +119,7 @@ public class UrlBuilderTest {
 
     @Test
     public void testPathEmptyBuilder() {
-        final UrlBuilder builder = new UrlBuilder("UTF-8");
+        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8");
         
         builder.addPath("portal");
         builder.addPath("home");
@@ -131,7 +131,7 @@ public class UrlBuilderTest {
 
     @Test
     public void testParameterPathEmptyBuilder() {
-        final UrlBuilder builder = new UrlBuilder("UTF-8");
+        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8");
         
         builder.addParameter("p1", "v1", null, "v2");
         
@@ -150,7 +150,7 @@ public class UrlBuilderTest {
 
     @Test
     public void testCloneParameterPathEmptyBuilder() {
-        final UrlBuilder builder = new UrlBuilder("UTF-8");
+        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8");
         
         builder.addParameter("p1", "v1", null, "v2");
         
@@ -164,7 +164,7 @@ public class UrlBuilderTest {
         builder.addPath("normal", "render.uP");
         
         
-        final UrlBuilder builder2 = (UrlBuilder)builder.clone();
+        final UrlStringBuilder builder2 = (UrlStringBuilder)builder.clone();
         Assert.assertEquals(builder, builder2);
         Assert.assertEquals(builder.hashCode(), builder2.hashCode());
         

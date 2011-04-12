@@ -61,7 +61,7 @@ public class PortletActionResponseContextImpl extends PortletStateAwareResponseC
                     try {
                         return this.redirectLocation + "?" + 
                             URLEncoder.encode(renderURLParamName, "UTF-8") + "=" + 
-                            URLEncoder.encode(this.portletUrl.toURL(), "UTF-8");
+                            URLEncoder.encode(this.portalUrlBuilder.getUrlString(), "UTF-8");
                     }
                     catch (UnsupportedEncodingException e) {
                         // Cannot happen: UTF-8 is a built-in/required encoder
@@ -69,7 +69,7 @@ public class PortletActionResponseContextImpl extends PortletStateAwareResponseC
                     }
                 }
 
-                return portletUrl.toURL();
+                return portalUrlBuilder.getUrlString();
             }
 
             return this.redirectLocation;
@@ -78,14 +78,17 @@ public class PortletActionResponseContextImpl extends PortletStateAwareResponseC
         return null;
     }
 
+    @Override
     public boolean isRedirect() {
         return redirect;
     }
 
+    @Override
     public void setRedirect(String location) {
         setRedirect(location, null);
     }
 
+    @Override
     public void setRedirect(String location, String renderURLParamName) {
         this.checkContextStatus();
         

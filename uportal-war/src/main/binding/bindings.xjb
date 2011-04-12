@@ -12,9 +12,16 @@
             <jaxb:serializable/>
         </jaxb:globalBindings>
     </jaxb:bindings>
+    
+    <!-- Generic uPortal Schemas -->
+    <jaxb:bindings schemaLocation="../resources/xsd/common-types.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.xml" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
       
     <!-- Import/Export Schemas  -->
-    <jaxb:bindings schemaLocation="../resources/xsd/io/common-types.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/io/common-io-types.xsd">
         <jaxb:schemaBindings>
             <jaxb:package name="org.jasig.portal.io.xml" />
         </jaxb:schemaBindings>

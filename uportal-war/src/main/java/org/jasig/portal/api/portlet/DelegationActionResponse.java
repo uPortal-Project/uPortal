@@ -25,7 +25,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.jasig.portal.url.IPortletPortalUrl;
+import org.jasig.portal.url.IPortalUrlBuilder;
 
 /**
  * The resulting state of the delegation action request
@@ -35,7 +35,7 @@ import org.jasig.portal.url.IPortletPortalUrl;
  */
 public class DelegationActionResponse extends DelegationResponse {
     private final String redirectUrl;
-    private final IPortletPortalUrl renderUrl;
+    private final IPortalUrlBuilder renderUrl;
 
     public DelegationActionResponse(DelegateState delegateState, String redirectUrl) {
         super(delegateState);
@@ -43,7 +43,7 @@ public class DelegationActionResponse extends DelegationResponse {
         this.renderUrl = null;
     }
 
-    public DelegationActionResponse(DelegateState delegateState, IPortletPortalUrl renderUrl) {
+    public DelegationActionResponse(DelegateState delegateState, IPortalUrlBuilder renderUrl) {
         super(delegateState);
         this.redirectUrl = null;
         this.renderUrl = renderUrl;
@@ -59,7 +59,7 @@ public class DelegationActionResponse extends DelegationResponse {
     /**
      * @return The render PortletUrl resulting from the delegate action completing, null if a redirect was sent
      */
-    public IPortletPortalUrl getRenderUrl() {
+    public IPortalUrlBuilder getRenderUrl() {
         return this.renderUrl;
     }
 

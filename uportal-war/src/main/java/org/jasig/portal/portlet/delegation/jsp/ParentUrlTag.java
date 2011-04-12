@@ -29,6 +29,8 @@ import javax.portlet.WindowState;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.jasig.portal.portlet.PortletUtils;
+
 /**
  * Simple wrapper tag for setting up the basis of URLs for portlet delegation
  * 
@@ -75,12 +77,12 @@ public class ParentUrlTag extends TagSupport implements ParameterizableTag {
         final RenderPortletTag renderPortletTag = (RenderPortletTag)findAncestorWithClass(this, RenderPortletTag.class);
         
         if (this.windowState != null) {
-            final WindowState state = new WindowState(this.windowState);
+            final WindowState state = PortletUtils.getWindowState(this.windowState);
             renderPortletTag.setParentUrlState(state);
         }
         
         if (this.portletMode != null) {
-            final PortletMode mode = new PortletMode(this.portletMode);
+            final PortletMode mode = PortletUtils.getPortletMode(this.portletMode);
             renderPortletTag.setParentUrlMode(mode);
         }
         

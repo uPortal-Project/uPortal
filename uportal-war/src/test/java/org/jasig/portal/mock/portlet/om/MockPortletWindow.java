@@ -186,7 +186,7 @@ public class MockPortletWindow implements IPortletWindow {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
      */
-    public void setPreviousPrivateRenderParameters(Map<String, String[]> requestParameters) {
+    public void setRenderParameters(Map<String, String[]> requestParameters) {
         if (requestParameters == null) {
             this.previousPrivateRenderParameters = null;
         }
@@ -197,12 +197,12 @@ public class MockPortletWindow implements IPortletWindow {
     
     
     @Override
-    public Map<String, String[]> getPreviousPublicRenderParameters() {
+    public Map<String, String[]> getPublicRenderParameters() {
         return this.previousPublicRenderParameters;
     }
 
     @Override
-    public void setPreviousPublicRenderParameters(Map<String, String[]> requestParameters) {
+    public void setPublicRenderParameters(Map<String, String[]> requestParameters) {
         if (requestParameters == null) {
             this.previousPublicRenderParameters = null;
         }
@@ -228,7 +228,7 @@ public class MockPortletWindow implements IPortletWindow {
     /**
      * @return the requestParameters
      */
-    public Map<String, String[]> getPreviousPrivateRenderParameters() {
+    public Map<String, String[]> getRenderParameters() {
         return previousPrivateRenderParameters;
     }
 
@@ -332,8 +332,8 @@ public class MockPortletWindow implements IPortletWindow {
             .append(this.windowState, rhs.getWindowState())
             .append(this.portletMode, rhs.getPortletMode())
             .append(this.expirationCache, rhs.getExpirationCache())
-            .append(this.previousPrivateRenderParameters, rhs.getPreviousPrivateRenderParameters())
-            .append(this.previousPublicRenderParameters, rhs.getPreviousPublicRenderParameters())
+            .append(this.previousPrivateRenderParameters, rhs.getRenderParameters())
+            .append(this.previousPublicRenderParameters, rhs.getPublicRenderParameters())
             .append(this.delegationParent, rhs.getDelegationParent())
             .isEquals();
     }

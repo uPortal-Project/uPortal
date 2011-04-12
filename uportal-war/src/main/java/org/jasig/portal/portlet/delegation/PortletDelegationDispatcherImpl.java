@@ -43,8 +43,8 @@ import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletPortalUrl;
 
 /**
  * @author Eric Dalquist
@@ -137,7 +137,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
             return new DelegationActionResponse(this.getDelegateState(), redirectLocation);
         }
         
-        final IPortletPortalUrl portletUrl = this.portletDelegationManager.getDelegatePortletActionRedirectUrl(actionRequest);
+        final IPortalUrlBuilder portletUrl = this.portletDelegationManager.getDelegatePortletActionRedirectUrl(actionRequest);
         return new DelegationActionResponse(this.getDelegateState(), portletUrl);
     }
 

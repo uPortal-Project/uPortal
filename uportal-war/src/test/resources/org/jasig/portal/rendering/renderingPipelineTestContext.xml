@@ -204,6 +204,10 @@
         <constructor-arg value="org.jasig.portal.portlet.registry.IPortletWindowRegistry" />
     </bean>
     
+    <bean id="portletEntityRegistry" class="org.jasig.portal.spring.EasyMockFactoryBean">
+        <constructor-arg value="org.jasig.portal.portlet.registry.IPortletEntityRegistry" />
+    </bean>
+    
     <bean id="resourcesElementsProvider" class="org.jasig.portal.spring.EasyMockFactoryBean">
         <constructor-arg value="org.jasig.resource.aggr.util.ResourcesElementsProvider" />
     </bean>

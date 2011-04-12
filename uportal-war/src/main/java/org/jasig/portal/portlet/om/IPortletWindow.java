@@ -63,29 +63,25 @@ public interface IPortletWindow extends PortletWindow, Serializable {
      * @param requestParameters The most recent set of private request parameters used for rendering the portlet
      * @throws IllegalArgumentException if parameters is null.
      */
-    public void setPreviousPrivateRenderParameters(Map<String, String[]> requestParameters);
-    
-    /**
-     * The most recent set of public request parameters used for rendering the portlet
-     * @return The current request parameters for the portlet
-     */
-    public Map<String, String[]> getPreviousPublicRenderParameters();
-    
-    /**
-     * @param requestParameters The most recent set of public request parameters used for rendering the portlet
-     * @throws IllegalArgumentException if parameters is null.
-     */
-    public void setPreviousPublicRenderParameters(Map<String, String[]> requestParameters);
+    public void setRenderParameters(Map<String, String[]> requestParameters);
     
     /**
      * The most recent set of private request parameters used for rendering the portlet
      * @return The current request parameters for the portlet
      */
-    public Map<String, String[]> getPreviousPrivateRenderParameters();
+    public Map<String, String[]> getRenderParameters();
     
-    /*
-     * track private parameters here
+    /**
+     * The most recent set of public request parameters used for rendering the portlet
+     * @return The current request parameters for the portlet
      */
+    public Map<String, String[]> getPublicRenderParameters();
+    
+    /**
+     * @param requestParameters The most recent set of public request parameters used for rendering the portlet
+     * @throws IllegalArgumentException if parameters is null.
+     */
+    public void setPublicRenderParameters(Map<String, String[]> requestParameters);
     
     /**
      * Sets the expiration timeout for the portlet rendering cache. If null is set

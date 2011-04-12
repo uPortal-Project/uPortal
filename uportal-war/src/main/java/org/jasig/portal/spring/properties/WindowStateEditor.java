@@ -21,7 +21,7 @@ package org.jasig.portal.spring.properties;
 
 import java.beans.PropertyEditorSupport;
 
-import javax.portlet.WindowState;
+import org.jasig.portal.portlet.PortletUtils;
 
 /**
  * @author Eric Dalquist
@@ -33,6 +33,6 @@ public class WindowStateEditor extends PropertyEditorSupport {
      */
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
-        this.setValue(new WindowState(text));
+        this.setValue(PortletUtils.getWindowState(text));
     }
 }

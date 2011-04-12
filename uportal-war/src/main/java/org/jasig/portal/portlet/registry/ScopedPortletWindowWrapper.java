@@ -31,6 +31,7 @@ import javax.portlet.WindowState;
 import org.apache.commons.lang.Validate;
 import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -51,6 +52,7 @@ public class ScopedPortletWindowWrapper implements IPortletWindow {
     
     private transient PortletMode portletMode;
     private transient WindowState windowState;
+    
     
     public ScopedPortletWindowWrapper(IPortletWindow portletWindow) {
         Validate.notNull(portletWindow, "portletWindow should not be null");
@@ -88,23 +90,23 @@ public class ScopedPortletWindowWrapper implements IPortletWindow {
     
 
     @Override
-    public Map<String, String[]> getPreviousPrivateRenderParameters() {
-        return this.portletWindow.getPreviousPrivateRenderParameters();
+    public Map<String, String[]> getRenderParameters() {
+        return this.portletWindow.getRenderParameters();
     }
 
     @Override
-    public void setPreviousPrivateRenderParameters(Map<String, String[]> requestParameters) {
-        this.portletWindow.setPreviousPrivateRenderParameters(requestParameters);
+    public void setRenderParameters(Map<String, String[]> requestParameters) {
+        this.portletWindow.setRenderParameters(requestParameters);
     }
 
     @Override
-    public Map<String, String[]> getPreviousPublicRenderParameters() {
-        return this.portletWindow.getPreviousPublicRenderParameters();
+    public Map<String, String[]> getPublicRenderParameters() {
+        return this.portletWindow.getPublicRenderParameters();
     }
 
     @Override
-    public void setPreviousPublicRenderParameters(Map<String, String[]> requestParameters) {
-        this.portletWindow.setPreviousPublicRenderParameters(requestParameters);
+    public void setPublicRenderParameters(Map<String, String[]> requestParameters) {
+        this.portletWindow.setPublicRenderParameters(requestParameters);
     }
 
     @Override
@@ -160,12 +162,12 @@ public class ScopedPortletWindowWrapper implements IPortletWindow {
         if (portletModeStr == null) {
             throw new InvalidObjectException("portletMode can not be null");
         }
-        this.portletMode = new PortletMode(portletModeStr);
+        this.portletMode = PortletUtils.getPortletMode(portletModeStr);
         
         final String windowStateStr = (String)ois.readObject();
         if (windowStateStr == null) {
             throw new InvalidObjectException("windowState can not be null");
         }
-        this.windowState = new WindowState(windowStateStr);
+        this.windowState = PortletUtils.getWindowState(windowStateStr);
     }
 }

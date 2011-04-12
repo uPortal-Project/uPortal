@@ -66,12 +66,16 @@
  | This statement defines this document as XSL.
 -->
 <xsl:stylesheet 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:dlm="http://www.uportal.org/layout/dlm"
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
-    exclude-result-prefixes="upAuth upGroup upMsg" 
+    xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
+    xsi:schemaLocation="
+            https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
+    exclude-result-prefixes="url upAuth upGroup upMsg" 
     version="1.0">
 
 <!-- ========================================================================= -->
@@ -292,9 +296,13 @@
             <json-layout>{ "layout": [
                 <xsl:for-each select="//channel">
                     <xsl:variable name="portletUrl">
-                        <xsl:call-template name="portletUrl">
-                            <xsl:with-param name="subscribeId" select="@ID" />
-                            <xsl:with-param name="state">MAXIMIZED</xsl:with-param>
+                        <xsl:call-template name="portalUrl">
+                            <xsl:with-param name="url">
+                                <url:portal-url>
+                                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                                    <url:portlet-url state="MAXIMIZED" />
+                                </url:portal-url>
+                            </xsl:with-param>
                         </xsl:call-template>
                     </xsl:variable>
                     <xsl:variable name="iconUrl">

@@ -19,8 +19,11 @@
 
 package org.jasig.portal.url;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.portlet.PortletMode;
 import javax.portlet.ResourceURL;
@@ -28,280 +31,140 @@ import javax.portlet.WindowState;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
+import com.google.common.base.Preconditions;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
 class PortletRequestInfoImpl implements IPortletRequestInfo {
+    private final Object readOnlySync = new Object();
+    
     private final IPortletWindowId targetWindowId;
-    private Map<String, List<String>> portletParameters;
-    private Map<String, List<String>> publicPortletParameters;
-    private Map<String, List<String>> resourceParameters;
+    private final IPortalRequestInfo portalRequestInfo;
+    
+    private volatile boolean readOnly = false;
+    private Map<String, List<String>> portletParameters = new LinkedHashMap<String, List<String>>();
     private WindowState windowState;
     private PortletMode portletMode;
     private String resourceId;
     private String cacheability = ResourceURL.PAGE;
-    private IPortletRequestInfo delegatePortletRequestInfo;
     
-    public PortletRequestInfoImpl(IPortletWindowId targetWindowId) {
+    public PortletRequestInfoImpl(IPortletWindowId targetWindowId, IPortalRequestInfo portalRequestInfo) {
         this.targetWindowId = targetWindowId;
+        this.portalRequestInfo = portalRequestInfo;
+    }
+    
+    public void makeReadOnly() {
+        synchronized (readOnlySync) {
+            if (readOnly) {
+                return;
+            }
+            
+            for (final Entry<String, List<String>> paramEntry : this.portletParameters.entrySet()) {
+                paramEntry.setValue(Collections.unmodifiableList(paramEntry.getValue()));
+            }
+            
+            this.portletParameters = Collections.unmodifiableMap(this.portletParameters);
+            
+            readOnly = true;
+        }
+    }
+    
+    private void checkReadOnly() {
+        if (readOnly) {
+            throw new UnsupportedOperationException("makeReadOnly has been called, this object is in read-only mode");
+        }
     }
 
+    @Override
     public Map<String, List<String>> getPortletParameters() {
         return this.portletParameters;
     }
 
-    public void setPortletParameters(Map<String, List<String>> portletParameters) {
-        this.portletParameters = portletParameters;
-    }
-
-    public Map<String, List<String>> getPublicPortletParameters() {
-        return this.publicPortletParameters;
-    }
-
-    public void setPublicPortletParameters(Map<String, List<String>> publicPortletParameters) {
-        this.publicPortletParameters = publicPortletParameters;
-    }
-
-    /**
-	 * @return the resourceUrl parameters
-	 */
-	public Map<String, List<String>> getResourceParameters() {
-		return resourceParameters;
-	}
-
-	/**
-	 * @param resourceParameters the resourceUrl parameters to set
-	 */
-	public void setResourceParameters(Map<String, List<String>> resourceParameters) {
-		this.resourceParameters = resourceParameters;
-	}
-
-	public WindowState getWindowState() {
+	@Override
+    public WindowState getWindowState() {
+	    final UrlType urlType = this.portalRequestInfo.getUrlType();
+        Preconditions.checkArgument(urlType != UrlType.RESOURCE, "UrlType must not be %s but was", urlType);
         return this.windowState;
     }
 
     public void setWindowState(WindowState windowState) {
+        this.checkReadOnly();
         this.windowState = windowState;
     }
 
+    @Override
     public PortletMode getPortletMode() {
+        final UrlType urlType = this.portalRequestInfo.getUrlType();
+        Preconditions.checkArgument(urlType != UrlType.RESOURCE, "UrlType must not be %s but was", urlType);
         return this.portletMode;
     }
 
     public void setPortletMode(PortletMode portletMode) {
+        this.checkReadOnly();
         this.portletMode = portletMode;
     }
     
-
-    /**
-	 * @return the resourceId
-	 */
-	public String getResourceId() {
+	@Override
+    public String getResourceId() {
+	    final UrlType urlType = this.portalRequestInfo.getUrlType();
+	    Preconditions.checkArgument(urlType == UrlType.RESOURCE, "UrlType must be %s but was %s", UrlType.RESOURCE, urlType);
 		return resourceId;
 	}
 
-	/**
-	 * @param resourceId the resourceId to set
-	 */
 	public void setResourceId(String resourceId) {
+	    this.checkReadOnly();
 		this.resourceId = resourceId;
 	}
 
-	/**
-	 * @return the cacheability
-	 */
-	public String getCacheability() {
-		return cacheability;
+	@Override
+    public String getCacheability() {
+	    final UrlType urlType = this.portalRequestInfo.getUrlType();
+        Preconditions.checkArgument(urlType == UrlType.RESOURCE, "UrlType must be %s but was %s", UrlType.RESOURCE, urlType);
+        return cacheability;
 	}
 
-	/**
-	 * @param cacheability the cacheability to set
-	 */
 	public void setCacheability(String cacheability) {
+	    this.checkReadOnly();
 		this.cacheability = cacheability;
 	}
 
-	public IPortletRequestInfo getDelegatePortletRequestInfo() {
-        return this.delegatePortletRequestInfo;
-    }
-
-    public void setDelegatePortletRequestInfo(IPortletRequestInfo delegatePortletRequestInfo) {
-        this.delegatePortletRequestInfo = delegatePortletRequestInfo;
-    }
-
-    public IPortletWindowId getTargetWindowId() {
+    @Override
+    public IPortletWindowId getPortletWindowId() {
         return this.targetWindowId;
     }
 
-	/**
-	 * This method constructs a clone of this instance, only replacing the targetWindowId and portletParameters
-	 * with the arguments.
-	 * 
-	 * @param targetWindowId
-	 * @param portletParameters
-	 * @return
-	 */
-	public IPortletRequestInfo constructChildClone(IPortletWindowId targetWindowId, Map<String, List<String>> portletParameters) {
-		PortletRequestInfoImpl clone = new PortletRequestInfoImpl(targetWindowId);
-		clone.setCacheability(this.cacheability);
-		clone.setDelegatePortletRequestInfo(this.delegatePortletRequestInfo);
-		clone.setPortletMode(this.portletMode);
-		clone.setPortletParameters(portletParameters);
-		clone.setPublicPortletParameters(this.publicPortletParameters);
-		clone.setResourceId(this.resourceId);
-		clone.setResourceParameters(this.resourceParameters);
-		clone.setWindowState(this.windowState);
-		
-		return clone;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.targetWindowId == null) ? 0 : this.targetWindowId.hashCode());
+        return result;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((cacheability == null) ? 0 : cacheability.hashCode());
-		result = prime
-				* result
-				+ ((delegatePortletRequestInfo == null) ? 0
-						: delegatePortletRequestInfo.hashCode());
-		result = prime * result
-				+ ((portletMode == null) ? 0 : portletMode.hashCode());
-		result = prime
-				* result
-				+ ((portletParameters == null) ? 0 : portletParameters
-						.hashCode());
-		result = prime
-				* result
-				+ ((publicPortletParameters == null) ? 0
-						: publicPortletParameters.hashCode());
-		result = prime * result
-				+ ((resourceId == null) ? 0 : resourceId.hashCode());
-		result = prime
-				* result
-				+ ((resourceParameters == null) ? 0 : resourceParameters
-						.hashCode());
-		result = prime * result
-				+ ((targetWindowId == null) ? 0 : targetWindowId.hashCode());
-		result = prime * result
-				+ ((windowState == null) ? 0 : windowState.hashCode());
-		return result;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PortletRequestInfoImpl other = (PortletRequestInfoImpl) obj;
+        if (this.targetWindowId == null) {
+            if (other.targetWindowId != null)
+                return false;
+        }
+        else if (!this.targetWindowId.equals(other.targetWindowId))
+            return false;
+        return true;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof PortletRequestInfoImpl)) {
-			return false;
-		}
-		PortletRequestInfoImpl other = (PortletRequestInfoImpl) obj;
-		if (cacheability == null) {
-			if (other.cacheability != null) {
-				return false;
-			}
-		} else if (!cacheability.equals(other.cacheability)) {
-			return false;
-		}
-		if (delegatePortletRequestInfo == null) {
-			if (other.delegatePortletRequestInfo != null) {
-				return false;
-			}
-		} else if (!delegatePortletRequestInfo
-				.equals(other.delegatePortletRequestInfo)) {
-			return false;
-		}
-		if (portletMode == null) {
-			if (other.portletMode != null) {
-				return false;
-			}
-		} else if (!portletMode.equals(other.portletMode)) {
-			return false;
-		}
-		if (portletParameters == null) {
-			if (other.portletParameters != null) {
-				return false;
-			}
-		} else if (!portletParameters.equals(other.portletParameters)) {
-			return false;
-		}
-		if (publicPortletParameters == null) {
-			if (other.publicPortletParameters != null) {
-				return false;
-			}
-		} else if (!publicPortletParameters
-				.equals(other.publicPortletParameters)) {
-			return false;
-		}
-		if (resourceId == null) {
-			if (other.resourceId != null) {
-				return false;
-			}
-		} else if (!resourceId.equals(other.resourceId)) {
-			return false;
-		}
-		if (resourceParameters == null) {
-			if (other.resourceParameters != null) {
-				return false;
-			}
-		} else if (!resourceParameters.equals(other.resourceParameters)) {
-			return false;
-		}
-		if (targetWindowId == null) {
-			if (other.targetWindowId != null) {
-				return false;
-			}
-		} else if (!targetWindowId.equals(other.targetWindowId)) {
-			return false;
-		}
-		if (windowState == null) {
-			if (other.windowState != null) {
-				return false;
-			}
-		} else if (!windowState.equals(other.windowState)) {
-			return false;
-		}
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("PortletRequestInfoImpl [cacheability=");
-		builder.append(cacheability);
-		builder.append(", delegatePortletRequestInfo=");
-		builder.append(delegatePortletRequestInfo);
-		builder.append(", portletMode=");
-		builder.append(portletMode);
-		builder.append(", portletParameters=");
-		builder.append(portletParameters);
-		builder.append(", publicPortletParameters=");
-		builder.append(publicPortletParameters);
-		builder.append(", resourceId=");
-		builder.append(resourceId);
-		builder.append(", resourceParameters=");
-		builder.append(resourceParameters);
-		builder.append(", targetWindowId=");
-		builder.append(targetWindowId);
-		builder.append(", windowState=");
-		builder.append(windowState);
-		builder.append("]");
-		return builder.toString();
-	}
-	
-    
+    @Override
+    public String toString() {
+        return "PortletRequestInfoImpl [targetWindowId=" + this.targetWindowId + ", portletParameters="
+                + this.portletParameters + ", windowState=" + this.windowState + ", portletMode=" + this.portletMode
+                + ", resourceId=" + this.resourceId + ", cacheability=" + this.cacheability + "]";
+    }
 }

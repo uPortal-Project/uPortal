@@ -36,8 +36,13 @@ import org.apache.pluto.container.util.PrintWriterServletOutputStream;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.portlet.url.PortletURLProviderImpl;
+import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.UrlType;
 
 /**
  * @author Eric Dalquist
@@ -150,7 +155,11 @@ public class PortletMimeResponseContextImpl extends PortletResponseContextImpl i
      */
     @Override
     public PortletURLProvider getPortletURLProvider(TYPE type) {
-        return this.portalUrlProvider.getPortletUrl(type, this.containerRequest, this.portletWindow.getPortletWindowId());
+        final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
+        final UrlType urlType = UrlType.fromPortletUrlType(type);
+        final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(containerRequest, portletWindowId, urlType);
+        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
+        return new PortletURLProviderImpl(portletUrlBuilder);
     }
 
     /* (non-Javadoc)

@@ -21,11 +21,16 @@ package org.jasig.portal.url.xml;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.pluto.container.PortletURLProvider.TYPE;
+import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.portlet.PortletUtils;
+import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.url.IBasePortalUrl;
-import org.jasig.portal.url.ILayoutPortalUrl;
+import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.IUrlBuilder;
+import org.jasig.portal.url.UrlType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +57,20 @@ public class XsltPortalUrlProvider {
         return (HttpServletRequest)request;
     }
     
-    private IPortalUrlProvider urlProvider;
+    /**
+     * Needed due to compile-time type checking limitations of the XSLTC compiler
+     */
+    public static void addParameter(IUrlBuilder urlBuilder, String name, String value) {
+        urlBuilder.addParameter(name, value);
+    }
+    
+    private IPortalUrlProvider portalUrlProvider;
     private IPortletWindowRegistry portletWindowRegistry;
     
 
     @Autowired
-    public void setUrlProvider(IPortalUrlProvider urlProvider) {
-        this.urlProvider = urlProvider;
+    public void setPortalUrlProvider(IPortalUrlProvider urlProvider) {
+        this.portalUrlProvider = urlProvider;
     }
 
     @Autowired
@@ -67,37 +79,67 @@ public class XsltPortalUrlProvider {
     }
 
     /**
-     * @see IPortalUrlProvider#getDefaultUrl(HttpServletRequest)
+     * Create a portal URL builder for the specified fname or layoutId (fname takes precedence)
      */
-    public XsltBasePortalUrl getDefaultUrl(HttpServletRequest request) {
-        final IBasePortalUrl defaultUrl = this.urlProvider.getDefaultUrl(request);
-        return new XsltBasePortalUrl(defaultUrl);
-    }
-
-    /**
-     * @see IPortalUrlProvider#getFolderUrlByNodeId(HttpServletRequest, String)
-     */
-    public XsltLayoutPortalUrl getFolderUrlByNodeId(HttpServletRequest request, String folderNodeId) {
-        final ILayoutPortalUrl folderUrl = this.urlProvider.getFolderUrlByNodeId(request, folderNodeId);
-        return new XsltLayoutPortalUrl(folderUrl);
+    public IPortalUrlBuilder getPortalUrlBuilder(HttpServletRequest request, String fname, String layoutId, String type) {
+        try {
+            final UrlType urlType;
+            if (StringUtils.isEmpty(type)) {
+                urlType = UrlType.RENDER;
+            }
+            else {
+                urlType = UrlType.valueOfIngoreCase(type);
+            }
+            
+            if (StringUtils.isNotEmpty(fname)) {
+                final IPortalUrlBuilder portalUrlBuilderByPortletFName = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(request, fname, urlType);
+                return portalUrlBuilderByPortletFName;
+            }
+            
+            if (StringUtils.isNotEmpty(layoutId)) {
+                final IPortalUrlBuilder portalUrlBuilderByLayoutNode = this.portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, layoutId, urlType);
+                return portalUrlBuilderByLayoutNode;
+            }
+            
+            return this.portalUrlProvider.getDefaultUrl(request);
+        }
+        catch (Exception e) {
+            this.logger.error("Faild to create IPortalUrlBuilder for fname='" + fname + "', layoutId='" + layoutId + "', type='" + type +"'. # will be returned instead.", e);
+            return new FailSafePortalUrlBuilder();
+        }
     }
     
     /**
-     * @see IPortalUrlProvider#getPortletUrl(TYPE, HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
-     * @see IPortalUrlProvider#getPortletUrlByFName(TYPE, HttpServletRequest, String)
-     * @see IPortalUrlProvider#getPortletUrlByNodeId(TYPE, HttpServletRequest, String)
+     * Get the portlet URL builder for the specified fname or layoutId (fname takes precedence)
      */
-    public XsltPortletPortalUrl getPortletUrl(HttpServletRequest request, String type) {
-        TYPE urlType = TYPE.RENDER;
-        if (type != null && (type = type.trim()).length() > 0) {
-            try {
-                urlType = TYPE.valueOf(type.toUpperCase());
-            }
-            catch (IllegalArgumentException e) {
-                this.logger.warn("Invalid PortletURLProvider.TYPE specified '{}', defaulting to RENDER", type);
+    public IPortletUrlBuilder getPortletUrlBuilder(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder, String fname, String layoutId, String state, String mode) {
+        final IPortletUrlBuilder portletUrlBuilder;
+        if (StringUtils.isNotEmpty(fname)) {
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, fname);
+            final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+            portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
+        }
+        else if (StringUtils.isNotEmpty(layoutId)) {
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, layoutId);
+            final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+            portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
+        }
+        else {
+            portletUrlBuilder = portalUrlBuilder.getTargetedPortletUrlBuilder();
+            if (portletUrlBuilder == null) {
+                this.logger.warn("Can only target the default portlet if the root portal-url targets a portlet.", new Throwable());
+                return new FailSafePortletUrlBuilder(null, portalUrlBuilder);
             }
         }
         
-        return new XsltPortletPortalUrl(request, urlProvider, portletWindowRegistry, urlType);
+        if (StringUtils.isNotEmpty(state)) {
+            portletUrlBuilder.setWindowState(PortletUtils.getWindowState(state));
+        }
+        
+        if (StringUtils.isNotEmpty(mode)) {
+            portletUrlBuilder.setPortletMode(PortletUtils.getPortletMode(mode));
+        }
+        
+        return portletUrlBuilder;
     }
 }

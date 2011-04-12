@@ -31,24 +31,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.web.PortalWebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
@@ -66,7 +71,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     public static final String TRANSIENT_PORTLET_WINDOW_MAP_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".TRANSIENT_PORTLET_WINDOW_MAP";
     public static final String PORTLET_WINDOW_MAP_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW_MAP";
 
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -127,6 +132,63 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         }
         
         return portletWindow;
+    }
+    
+    @Override
+    public IPortletWindow getOrCreateDefaultPortletWindowByFname(HttpServletRequest request, String fname) {
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+        if (portletDefinition == null) {
+            throw new IllegalArgumentException("No portlet defintion found for fname '" + fname + "'.");
+        }
+        
+        return this.getOrCreateDefaultPortletWindow(request, portletDefinition);
+    }
+    
+    @Override
+    public IPortletWindow getOrCreateDefaultPortletWindowBySubscribeId(HttpServletRequest request, String subscribeId) {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        final IUserLayoutNodeDescription node = userLayoutManager.getNode(subscribeId);
+        if (node == null) {
+            logger.debug("No layout node found for id {}", subscribeId);
+            return null;
+        }
+        if (node.getType() != IUserLayoutChannelDescription.CHANNEL) {
+            logger.debug("Layout node for id {} is not a portlet, it is a: {} ", subscribeId, node.getType());
+            return null;
+        }
+        
+        logger.trace("Found layout node {} for id {}", node, subscribeId);
+        final IUserLayoutChannelDescription portletNode = (IUserLayoutChannelDescription)node;
+        final String channelPublishId = portletNode.getChannelPublishId();
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
+        final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletDefinition);
+        logger.trace("Found portlet window {} for layout node {}", portletWindow, portletNode);
+        
+        return portletWindow;
+    }
+    
+    @Override
+    public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletDefinition portletDefinition) {
+        //Determine the appropriate portlet window ID for the definition
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        
+        //Determine the subscribe ID
+        final String portletFName = portletDefinition.getFName();
+        final String portletNodeId = userLayoutManager.getSubscribeId(portletFName);
+        if (portletNodeId == null) {
+            throw new IllegalArgumentException("No channel subscribe ID found for fname '" + portletFName + "'.");
+        }
+        
+        final IPerson person = userInstance.getPerson();
+        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+        final int personId = person.getID();
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinitionId, portletNodeId, personId);
+        final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+        return this.getOrCreateDefaultPortletWindow(request, portletEntityId);
     }
     
     

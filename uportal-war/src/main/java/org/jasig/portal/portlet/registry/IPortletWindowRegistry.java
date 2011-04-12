@@ -24,6 +24,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.container.PortletWindow;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -113,6 +115,29 @@ public interface IPortletWindowRegistry {
      * @throws IllegalArgumentException If request, windowInstanceId or portletEntityId are null
      */
     public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId);
+    
+    /**
+     * Combines {@link IPortletDefinitionRegistry#getPortletDefinitionByFname(String)},
+     * {@link IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, String, int)}, and
+     * {@link #getOrCreateDefaultPortletWindow(HttpServletRequest, IPortletEntityId)} 
+     */
+    public IPortletWindow getOrCreateDefaultPortletWindowByFname(HttpServletRequest request, String fname);
+    
+    /**
+     * Combines {@link IUserLayoutManager#getNode(String)},
+     * {@link IPortletDefinitionRegistry#getPortletDefinition(String)},
+     * {@link IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, String, int)}, and
+     * {@link #getOrCreateDefaultPortletWindow(HttpServletRequest, IPortletEntityId)}
+     * 
+     * If the specified layout node does not exist or is not a portlet null is returned.
+     */
+    public IPortletWindow getOrCreateDefaultPortletWindowBySubscribeId(HttpServletRequest request, String subscribeId);
+    
+    /**
+     * Combines {@link IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, String, int)}, and
+     * {@link #getOrCreateDefaultPortletWindow(HttpServletRequest, IPortletEntityId)} 
+     */
+    public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletDefinition portletDefinition);
     
     /**
      * Creates a delegating portlet window

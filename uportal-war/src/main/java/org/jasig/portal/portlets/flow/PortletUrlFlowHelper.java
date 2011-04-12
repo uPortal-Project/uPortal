@@ -25,6 +25,7 @@ import javax.portlet.PortletModeException;
 import javax.portlet.WindowState;
 import javax.portlet.WindowStateException;
 
+import org.jasig.portal.portlet.PortletUtils;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
@@ -44,7 +45,7 @@ public class PortletUrlFlowHelper {
         }
         
         try {
-            actionResponse.setWindowState(new WindowState(windowState));
+            actionResponse.setWindowState(PortletUtils.getWindowState(windowState));
         }
         catch (WindowStateException e) {
             throw new IllegalArgumentException("The specified WindowState '" + windowState + "' is not valid", e);
@@ -61,7 +62,7 @@ public class PortletUrlFlowHelper {
         }
         
         try {
-            actionResponse.setPortletMode(new PortletMode(portletMode));
+            actionResponse.setPortletMode(PortletUtils.getPortletMode(portletMode));
         }
         catch (PortletModeException e) {
             throw new IllegalArgumentException("The specified PortletMode '" + portletMode + "' is not valid", e);
