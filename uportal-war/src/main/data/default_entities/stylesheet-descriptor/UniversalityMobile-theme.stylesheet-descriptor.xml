@@ -10,7 +10,7 @@
     <uri>classpath:/layout/theme/muniversality/muniversality.xsl</uri>
     <stylesheet-parameter>
       <name>skin</name>
-      <default-value>uportal3</default-value>
+      <default-value>iphone</default-value>
       <scope>PERSISTENT</scope>
       <description>Skin name</description>
     </stylesheet-parameter>
