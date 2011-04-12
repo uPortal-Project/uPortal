@@ -157,7 +157,13 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         final long stylesheetDescriptorId = structureStylesheetUserPreferences.getStylesheetDescriptorId();
         final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
         final IStylesheetParameterDescriptor defaultTabParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(defaultTabParameter);
-        return defaultTabParameterDescriptor.getDefaultValue();
+
+        // TODO: temporary fix to support our mobile theme
+        if (defaultTabParameterDescriptor != null) {
+            return defaultTabParameterDescriptor.getDefaultValue();
+        } else {
+            return "1";
+        }
     }
 
     /* (non-Javadoc)
