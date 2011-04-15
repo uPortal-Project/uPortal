@@ -31,6 +31,8 @@ import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.events.CharacterDataEvent;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.character.stream.events.CharacterEventTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Top level class that initiates rendering via a {@link CharacterPipelineComponent}
@@ -40,6 +42,9 @@ import org.jasig.portal.character.stream.events.CharacterEventTypes;
  */
 public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
     public static final String CHARACTER_SET = "UTF-8";
+    public static final String DEFAULT_MEDIA_TYPE = "text/html";
+    
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private CharacterPipelineComponent pipeline;
 
@@ -59,7 +64,7 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
         res.setDateHeader("Expires", 0);
 
         final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader = this.pipeline.getEventReader(req, res);
-        final String mediaType = pipelineEventReader.getOutputProperty(OutputKeys.MEDIA_TYPE);
+        final String mediaType = getMediaType(pipelineEventReader);
 
         // set the response mime type
         res.setContentType(mediaType + "; charset=" + CHARACTER_SET);
@@ -76,5 +81,17 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
             writer.flush();
             res.flushBuffer();
         }
+    }
+
+    /**
+     */
+    protected String getMediaType(final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader) {
+        final String mediaType = pipelineEventReader.getOutputProperty(OutputKeys.MEDIA_TYPE);
+        if (mediaType != null) {
+            return mediaType;
+        }
+
+        this.logger.warn("No mediaType was specified in the pipeline output properties, defaulting to " + DEFAULT_MEDIA_TYPE);
+        return DEFAULT_MEDIA_TYPE;
     }
 }
