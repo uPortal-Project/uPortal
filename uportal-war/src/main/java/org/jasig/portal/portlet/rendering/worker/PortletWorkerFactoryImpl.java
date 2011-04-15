@@ -88,8 +88,8 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
         this.portletRenderer = portletRenderer;
     }
     
-    @Autowired
-    public void setExecutionInterceptors(@Qualifier("portletExecutionInterceptors") List<IPortletExecutionInterceptor> executionInterceptors) {
+    @javax.annotation.Resource(name="portletExecutionInterceptors")
+    public void setExecutionInterceptors(List<IPortletExecutionInterceptor> executionInterceptors) {
         this.executionInterceptors = executionInterceptors;
     }
 
