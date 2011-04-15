@@ -161,12 +161,7 @@
 <xsl:template name="mobile.header.focused">
     <xsl:variable name="basePortalUrl">
         <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url">
-                <url:portal-url>
-                    <url:fname><xsl:value-of select="//content/focused/channel/@fname"/></url:fname>
-                    <url:portlet-url state="MAXIMIZED" />
-                </url:portal-url>
-            </xsl:with-param>
+            <xsl:with-param name="url"/>
         </xsl:call-template>
     </xsl:variable>
     <xsl:if test="$NATIVE != 'true'">

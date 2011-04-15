@@ -26,6 +26,8 @@ import javax.xml.transform.Transformer;
 
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.io.xml.IPortalData;
+import org.jasig.portal.url.IUrlNodeSyntaxHelper;
+import org.jasig.portal.url.IUrlNodeSyntaxHelperRegistry;
 
 /**
  * Describes a XSL Stylesheet used in the rendering pipeline
@@ -69,6 +71,17 @@ public interface IStylesheetDescriptor extends IPortalData {
      * Resource string used to locate the XSLT Stylesheet
      */
     public String getStylesheetResource();
+    
+    /**
+     * The name of the {@link IUrlNodeSyntaxHelper} as it is registered in the {@link IUrlNodeSyntaxHelperRegistry}, can 
+     * be null if no {@link IUrlNodeSyntaxHelper} is associated with this stylesheet.
+     */
+    public void setUrlNodeSyntaxHelperName(String urlNodeSyntaxHelperName);
+    /**
+     * @return The name of the {@link IUrlNodeSyntaxHelper} as it is registered in the {@link IUrlNodeSyntaxHelperRegistry}, can 
+     * be null if no {@link IUrlNodeSyntaxHelper} is associated with this stylesheet.
+     */
+    public String getUrlNodeSyntaxHelperName();
 
     /**
      * Output properties to use on the {@link Transformer} for the stylesheet this defines

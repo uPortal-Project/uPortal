@@ -8,6 +8,7 @@
     <name>DLMMobileColumns</name>
     <description>Presents the DLM layout in terms of tabs and columns.</description>
     <uri>classpath:/layout/structure/mobile-column/mobile-column.xsl</uri>
+    <url-syntax-helper>MobileUrlNodeSyntaxHelper</url-syntax-helper>
     <stylesheet-parameter>
         <name>userLayoutRoot</name>
         <scope>REQUEST</scope>

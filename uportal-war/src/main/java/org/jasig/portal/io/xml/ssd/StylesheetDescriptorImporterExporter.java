@@ -41,7 +41,6 @@ import org.jasig.portal.layout.om.IStylesheetData.Scope;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -99,6 +98,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
             stylesheetDescriptor.setStylesheetResource(uri);
         }
         
+        stylesheetDescriptor.setUrlNodeSyntaxHelperName(data.getUrlSyntaxHelper());
         stylesheetDescriptor.setDescription(data.getDescription());
         
         final List<ExternalOutputPropertyDescriptor> extOutputProperties = data.getOutputProperty();
@@ -159,6 +159,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
         final ExternalStylesheetDescriptor externalStylesheetDescriptor = new ExternalStylesheetDescriptor();
         
         externalStylesheetDescriptor.setName(stylesheetDescriptor.getName());
+        externalStylesheetDescriptor.setUrlSyntaxHelper(stylesheetDescriptor.getUrlNodeSyntaxHelperName());
         externalStylesheetDescriptor.setDescription(stylesheetDescriptor.getDescription());
         externalStylesheetDescriptor.setUri(stylesheetDescriptor.getStylesheetResource());
         

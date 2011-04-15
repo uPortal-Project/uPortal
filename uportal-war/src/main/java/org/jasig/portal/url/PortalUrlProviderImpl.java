@@ -47,7 +47,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
     
     private IUrlSyntaxProvider urlSyntaxProvider;
     private IUserInstanceManager userInstanceManager;
-    private IUrlNodeSyntaxHelper urlProviderLayoutHelper;
+    private IUrlNodeSyntaxHelperRegistry urlNodeSyntaxHelperRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
     
     @Autowired
@@ -61,8 +61,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
     }
 
     @Autowired
-    public void setUrlProviderLayoutHelper(IUrlNodeSyntaxHelper urlProviderLayoutHelper) {
-        this.urlProviderLayoutHelper = urlProviderLayoutHelper;
+    public void setUrlNodeSyntaxHelperRegistry(IUrlNodeSyntaxHelperRegistry urlNodeSyntaxHelperRegistry) {
+        this.urlNodeSyntaxHelperRegistry = urlNodeSyntaxHelperRegistry;
     }
 
     @Autowired
@@ -76,7 +76,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
      */
     @Override
     public IPortalUrlBuilder getDefaultUrl(HttpServletRequest request) {
-        final String defaultLayoutNodeId = this.urlProviderLayoutHelper.getDefaultLayoutNodeId(request);
+        final IUrlNodeSyntaxHelper urlNodeSyntaxHelper = this.urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request);
+        final String defaultLayoutNodeId = urlNodeSyntaxHelper.getDefaultLayoutNodeId(request);
         return this.getPortalUrlBuilderByLayoutNode(request, defaultLayoutNodeId, UrlType.RENDER);
     }
 
@@ -85,15 +86,20 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
      */
     @Override
     public IPortalUrlBuilder getPortalUrlBuilderByLayoutNode(HttpServletRequest request, String layoutNodeId, UrlType urlType) {
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, layoutNodeId);
         final IPortletWindowId portletWindowId;
-        if (portletWindow == null) {
-            //No window so make sure the node is even in the layout
-            this.verifyLayoutNodeId(request, layoutNodeId);
-            portletWindowId = null;
+        if (layoutNodeId != null) {
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, layoutNodeId);
+            if (portletWindow == null) {
+                //No window so make sure the node is even in the layout
+                this.verifyLayoutNodeId(request, layoutNodeId);
+                portletWindowId = null;
+            }
+            else {
+                portletWindowId = portletWindow.getPortletWindowId();
+            }
         }
         else {
-            portletWindowId = portletWindow.getPortletWindowId();
+            portletWindowId = null;
         }
         
         return new PortalUrlBuilder(this.urlSyntaxProvider, request, layoutNodeId, portletWindowId, urlType);

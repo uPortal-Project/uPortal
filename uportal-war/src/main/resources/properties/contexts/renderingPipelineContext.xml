@@ -39,7 +39,7 @@
     <bean id="postUserLayoutStoreLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="userLayoutStoreComponent" />
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_LAYOUT" />
-        <property name="logEvents" value="false" />
+        <property name="logEvents" value="false" /> 
         <property name="logFullDocument" value="true" />
     </bean>
     

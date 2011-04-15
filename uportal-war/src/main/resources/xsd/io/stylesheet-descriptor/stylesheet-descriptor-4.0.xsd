@@ -17,6 +17,7 @@
                         <xs:element name="name" type="up:fname-type"/>
                         <xs:element name="description" type="xs:string" minOccurs="0"/>
                         <xs:element name="uri" type="xs:string"/>
+                        <xs:element name="url-syntax-helper" type="up:fname-type" minOccurs="0"/>
                         <xs:element name="output-property" type="externalOutputPropertyDescriptor" minOccurs="0"
                             maxOccurs="unbounded"/>
                         <xs:element name="stylesheet-parameter" type="externalStylesheetParameterDescriptor" minOccurs="0"

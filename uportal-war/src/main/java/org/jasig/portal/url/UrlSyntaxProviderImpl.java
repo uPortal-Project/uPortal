@@ -105,7 +105,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
-    private IUrlNodeSyntaxHelper urlProviderLayoutHelper;
+    private IUrlNodeSyntaxHelperRegistry urlNodeSyntaxHelperRegistry;
     private IPortalUrlProvider portalUrlProvider;
     
     @Autowired
@@ -146,10 +146,10 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     }
     
     @Autowired
-    public void setUrlProviderLayoutHelper(IUrlNodeSyntaxHelper urlProviderLayoutHelper) {
-        this.urlProviderLayoutHelper = urlProviderLayoutHelper;
+    public void setUrlNodeSyntaxHelperRegistry(IUrlNodeSyntaxHelperRegistry urlNodeSyntaxHelperRegistry) {
+        this.urlNodeSyntaxHelperRegistry = urlNodeSyntaxHelperRegistry;
     }
-    
+
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortalRequestInfo(javax.servlet.http.HttpServletRequest)
      */
@@ -176,6 +176,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         
         
         try {
+            final IUrlNodeSyntaxHelper urlNodeSyntaxHelper = this.urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request);
+            
             final PortalRequestInfoImpl portalRequestInfo = new PortalRequestInfoImpl();
             PortletRequestInfoImpl targetedPortletRequestInfo = null;
             
@@ -228,7 +230,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                             }
                             
                             if (folders.size() > 0) {
-                                final String targetedLayoutNodeId = this.urlProviderLayoutHelper.getLayoutNodeForFolderNames(request, folders);
+                                final String targetedLayoutNodeId = urlNodeSyntaxHelper.getLayoutNodeForFolderNames(request, folders);
                                 portalRequestInfo.setTargetedLayoutNodeId(targetedLayoutNodeId);
                             }
                             break;
@@ -241,7 +243,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                             if (++pathPartIndex < requestPathParts.length) {
                                 pathPart = requestPathParts[pathPartIndex];
 
-                                final IPortletWindowId targetedPortletWindowId = this.urlProviderLayoutHelper.getPortletForFolderName(request, pathPart);
+                                final IPortletWindowId targetedPortletWindowId = urlNodeSyntaxHelper.getPortletForFolderName(request, pathPart);
                                 targetedPortletRequestInfo = portalRequestInfo.getPortletRequestInfo(targetedPortletWindowId);
                                 portalRequestInfo.setTargetedPortletWindowId(targetedPortletWindowId);
                             }
@@ -253,7 +255,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         final String[] targetedPortletIds = parameterMap.remove(PARAM_TARGET_PORTLET);
                         if (targetedPortletIds != null && targetedPortletIds.length > 0) {
                             final String targetedPortletString = targetedPortletIds[0];
-                            final IPortletWindowId targetedPortletWindowId = this.urlProviderLayoutHelper.getPortletForFolderName(request, targetedPortletString);
+                            final IPortletWindowId targetedPortletWindowId = urlNodeSyntaxHelper.getPortletForFolderName(request, targetedPortletString);
                             targetedPortletRequestInfo = portalRequestInfo.getPortletRequestInfo(targetedPortletWindowId);
                             portalRequestInfo.setTargetedPortletWindowId(targetedPortletWindowId);
                         }
@@ -573,6 +575,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         //Convert the callback request to the portal request
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         
+        final IUrlNodeSyntaxHelper urlNodeSyntaxHelper = this.urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request);
+        
         //Get the encoding and create a new URL string builder
         final String encoding = this.getEncoding(request);
         final UrlStringBuilder url = new UrlStringBuilder(encoding);
@@ -594,8 +598,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             
             //Add folder information if available: /f/tabId
             final String channelSubscribeId = portletEntity.getChannelSubscribeId();
-            final List<String> folderNames = this.urlProviderLayoutHelper.getFolderNamesForLayoutNode(request, channelSubscribeId);
-            if (folderNames != null && !folderNames.isEmpty()) {
+            final List<String> folderNames = urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, channelSubscribeId);
+            if (!folderNames.isEmpty()) {
                 url.addPath(FOLDER_PATH_PREFIX);
                 for (final String folderName : folderNames) {
                     url.addPath(folderName);
@@ -607,7 +611,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             //Resource requests will never have a requested window state
             urlState = this.determineUrlState(urlType, portletWindow, targetedPortletUrlBuilder);
             
-            final String targetedPortletString = this.urlProviderLayoutHelper.getFolderNameForPortlet(request, targetedPortletWindowId);
+            final String targetedPortletString = urlNodeSyntaxHelper.getFolderNameForPortlet(request, targetedPortletWindowId);
             
             //If a non-normal render url or an action/resource url stick the portlet info in the path 
             if ((urlType == UrlType.RENDER && urlState != UrlState.NORMAL) || urlType == UrlType.ACTION || urlType == UrlType.RESOURCE) {
@@ -621,7 +625,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         }
         else {
             final String targetFolderId = portalUrlBuilder.getTargetFolderId();
-            final List<String> folderNames = this.urlProviderLayoutHelper.getFolderNamesForLayoutNode(request, targetFolderId);
+            final List<String> folderNames = urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, targetFolderId);
             if (folderNames != null && !folderNames.isEmpty()) {
                 url.addPath(FOLDER_PATH_PREFIX);
                 for (final String folderName : folderNames) {

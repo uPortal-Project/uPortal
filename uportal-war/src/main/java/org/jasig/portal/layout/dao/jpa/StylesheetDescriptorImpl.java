@@ -91,6 +91,9 @@ class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @Type(type = "fname")
     private String name;
     
+    @Column(name = "URL_SYNTAX_HELPER_NAME", length=100)
+    private String urlNodeSyntaxHelperName;
+    
     @Column(name = "DESCRIPTION", length=2000)
     private String description;
     
@@ -205,6 +208,15 @@ class StylesheetDescriptorImpl implements IStylesheetDescriptor {
         return this.stylesheetResource;
     }
 
+    @Override
+    public void setUrlNodeSyntaxHelperName(String urlNodeSyntaxHelperName) {
+        this.urlNodeSyntaxHelperName = urlNodeSyntaxHelperName;
+    }
+
+    @Override
+    public String getUrlNodeSyntaxHelperName() {
+        return this.urlNodeSyntaxHelperName;
+    }
 
     @Override
     public Collection<IOutputPropertyDescriptor> getOutputPropertyDescriptors() {

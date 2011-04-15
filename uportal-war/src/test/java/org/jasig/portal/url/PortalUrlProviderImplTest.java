@@ -19,10 +19,11 @@
 
 package org.jasig.portal.url;
 
-import static org.mockito.Mockito.when;
+import static junit.framework.Assert.assertNull;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -35,6 +36,7 @@ import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -46,14 +48,16 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class PortalUrlProviderImplTest {
     private MockHttpServletRequest request;
     
+    @InjectMocks private PortalUrlProviderImpl portalUrlProvider = new PortalUrlProviderImpl();
     @Mock private IUrlNodeSyntaxHelper urlProviderLayoutHelper;
     @Mock private IUserInstanceManager userInstanceManager;
     @Mock private IUserInstance userInstance;
     @Mock private IUserPreferencesManager preferencesManager;
     @Mock private IUserLayoutManager userLayoutManager;
     @Mock private IUserLayoutChannelDescription node;
+    @Mock private IUrlNodeSyntaxHelperRegistry urlNodeSyntaxHelperRegistry;
+    @Mock private IUrlNodeSyntaxHelper urlNodeSyntaxHelper;
     @Mock private IUrlSyntaxProvider urlSyntaxProvider;
-    @Mock private PortalUrlProviderImpl portalUrlProvider;
     @Mock private IPortletWindowRegistry portletWindowRegistry;
     @Mock private IPortletWindow portletWindow;
     @Mock private IPortletEntity portletEntity;
@@ -69,13 +73,26 @@ public class PortalUrlProviderImplTest {
         request = new MockHttpServletRequest();
         
         MockitoAnnotations.initMocks(this);
+    }
+    
+    @Test
+    public void testGetDefaultUrlNoTargets() {
+        //Setup mock objects
+        when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
+        when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
+        when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
+        when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
+        when(userLayoutManager.getNode(folderNodeId)).thenReturn(node);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
         
-        //Setup portalUrlProvider
-        portalUrlProvider = new PortalUrlProviderImpl();
-        portalUrlProvider.setUrlProviderLayoutHelper(urlProviderLayoutHelper);
-        portalUrlProvider.setUserInstanceManager(userInstanceManager);
-        portalUrlProvider.setUrlSyntaxProvider(urlSyntaxProvider);
-        portalUrlProvider.setPortletWindowRegistry(portletWindowRegistry);
+        //Run the test
+        final IPortalUrlBuilder urlBuilder = portalUrlProvider.getDefaultUrl(request);
+        
+        assertNotNull(urlBuilder);
+
+        assertNull(urlBuilder.getTargetFolderId());
+        assertNull(urlBuilder.getTargetPortletWindowId());
+        assertEquals(UrlType.RENDER, urlBuilder.getUrlType());
     }
     
     @Test
@@ -86,6 +103,8 @@ public class PortalUrlProviderImplTest {
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         when(userLayoutManager.getNode(folderNodeId)).thenReturn(node);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         
         //Run the test
         final IPortalUrlBuilder urlBuilder = portalUrlProvider.getDefaultUrl(request);
@@ -105,6 +124,8 @@ public class PortalUrlProviderImplTest {
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         when(userLayoutManager.getNode(folderNodeId)).thenReturn(null);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         
         //Run the test
         portalUrlProvider.getDefaultUrl(request);

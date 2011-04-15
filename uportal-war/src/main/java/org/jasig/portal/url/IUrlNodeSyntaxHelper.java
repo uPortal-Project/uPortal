@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
@@ -33,12 +34,17 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  */
 public interface IUrlNodeSyntaxHelper {
     /**
-     * Get the default layout nodeId for the current request.
+     * @return The unique name of this url node syntax helper. Must be a valid {@link FunctionalNameType#VALID_FNAME_PATTERN}
+     */
+    public String getName();
+    
+    /**
+     * Get the default layout nodeId for the current request, may return null IFF the default url shouldn't target any node.
      */
     public String getDefaultLayoutNodeId(HttpServletRequest httpServletRequest);
     
     /**
-     * Get one or more path folder names to include in the generated url for the target layout node
+     * Get one or more path folder names to include in the generated url for the target layout node, will never be null.
      */
     public List<String> getFolderNamesForLayoutNode(HttpServletRequest request, String layoutNodeId);
     

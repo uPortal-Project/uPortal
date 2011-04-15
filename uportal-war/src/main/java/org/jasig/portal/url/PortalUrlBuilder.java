@@ -52,9 +52,6 @@ class PortalUrlBuilder extends AbstractUrlBuilder implements IPortalUrlBuilder {
         Preconditions.checkNotNull(urlSyntaxProvider, "IUrlSyntaxProvider can not be null");
         Preconditions.checkNotNull(httpServletRequest, "HttpServletRequest can not be null");
         Preconditions.checkNotNull(urlType, "UrlType can not be null");
-        if (targetFolderId == null && targetPortletWindowId == null) {
-            throw new NullPointerException("Both targetFolderId and targetPortletWindowId can not be null");
-        }
         
         this.urlGenerator = urlSyntaxProvider;
         this.httpServletRequest = httpServletRequest;

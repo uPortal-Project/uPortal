@@ -22,13 +22,13 @@
  */
 package org.jasig.portal.url;
 
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,12 +63,29 @@ import com.google.common.collect.ImmutableSet;
 public class UrlSyntaxProviderImplTest {
     @InjectMocks private UrlSyntaxProviderImpl urlSyntaxProvider = new UrlSyntaxProviderImpl(); 
     @Mock private IPortalRequestUtils portalRequestUtils;
-    @Mock private IUrlNodeSyntaxHelper urlProviderLayoutHelper;
+    @Mock private IUrlNodeSyntaxHelperRegistry urlNodeSyntaxHelperRegistry;
+    @Mock private IUrlNodeSyntaxHelper urlNodeSyntaxHelper;
     @Mock private IPortletEntityRegistry portletEntityRegistry;
     @Mock private IPortletWindowRegistry portletWindowRegistry;
     @Mock private IPortletEntity portletEntity;
     @Mock private IPortletWindow portletWindow;
 
+    
+    @Test
+    public void testNonTargetedGeneration() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        
+        when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, null)).thenReturn(Collections.EMPTY_LIST);
+        
+        final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, null, null, UrlType.RENDER);
+        
+        final String url = portalUrlBuilder.getUrlString();
+        
+        assertEquals("/uPortal/normal/render.uP", url);
+    }
     
     @Test
     public void testSingleFolderUrlWithStateTypeGeneration() throws Exception {
@@ -78,7 +95,8 @@ public class UrlSyntaxProviderImplTest {
         request.setContextPath("/uPortal");
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
-        when(urlProviderLayoutHelper.getFolderNamesForLayoutNode(request, layoutNodeId)).thenReturn(Arrays.asList(layoutNodeId));
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, layoutNodeId)).thenReturn(Arrays.asList(layoutNodeId));
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, null, UrlType.RENDER);
         
@@ -100,8 +118,9 @@ public class UrlSyntaxProviderImplTest {
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("pe1");
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
-        when(urlProviderLayoutHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
-        when(urlProviderLayoutHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
+        when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
         
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
         when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
@@ -128,8 +147,9 @@ public class UrlSyntaxProviderImplTest {
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("pe1");
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
-        when(urlProviderLayoutHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
-        when(urlProviderLayoutHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
+        when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
         
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
         when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
@@ -158,8 +178,9 @@ public class UrlSyntaxProviderImplTest {
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("pe1");
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
-        when(urlProviderLayoutHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
-        when(urlProviderLayoutHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
+        when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
         
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
         when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
@@ -190,8 +211,9 @@ public class UrlSyntaxProviderImplTest {
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("pe1");
 
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
-        when(urlProviderLayoutHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
-        when(urlProviderLayoutHelper.getFolderNameForPortlet(request, portletWindowId1)).thenReturn(fname + "." + subscribeId);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
+        when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId1)).thenReturn(fname + "." + subscribeId);
         
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId1)).thenReturn(portletWindow);
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId2)).thenReturn(portletWindow);
@@ -232,8 +254,9 @@ public class UrlSyntaxProviderImplTest {
         final MockPortletWindowId portletWindowId2 = new MockPortletWindowId("pw2");
         
         when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
-        when(this.urlProviderLayoutHelper.getLayoutNodeForFolderNames(request, Arrays.asList("n2"))).thenReturn("n2");
-        when(this.urlProviderLayoutHelper.getPortletForFolderName(request, "fname.s3")).thenReturn(portletWindowId);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(this.urlNodeSyntaxHelper.getLayoutNodeForFolderNames(request, Arrays.asList("n2"))).thenReturn("n2");
+        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "fname.s3")).thenReturn(portletWindowId);
         when(this.portletWindowRegistry.getPortletWindowId("pw2")).thenReturn(portletWindowId2);
         
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);

@@ -106,6 +106,11 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
         this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
     }
+    
+    @Override
+    public String getName() {
+        return this.getClass().getSimpleName();
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getDefaultLayoutNodeId(javax.servlet.http.HttpServletRequest)
@@ -120,10 +125,11 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         
         //This logic is specific to tab/column layouts
         final String defaultTabIndex = this.getDefaultTabIndex(httpServletRequest);
-        
-        final String defaultTabId = this.getTabId(userLayout, defaultTabIndex);
-        if (StringUtils.isNotEmpty(defaultTabId)) {
-            return defaultTabId;
+        if (defaultTabIndex != null) {
+            final String defaultTabId = this.getTabId(userLayout, defaultTabIndex);
+            if (StringUtils.isNotEmpty(defaultTabId)) {
+                return defaultTabId;
+            }
         }
     
         if (this.logger.isWarnEnabled()) {
@@ -157,13 +163,11 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         final long stylesheetDescriptorId = structureStylesheetUserPreferences.getStylesheetDescriptorId();
         final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
         final IStylesheetParameterDescriptor defaultTabParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(defaultTabParameter);
-
-        // TODO: temporary fix to support our mobile theme
-        if (defaultTabParameterDescriptor != null) {
-            return defaultTabParameterDescriptor.getDefaultValue();
-        } else {
-            return "1";
+        if (defaultTabParameterDescriptor == null) {
+            return null;
         }
+
+        return defaultTabParameterDescriptor.getDefaultValue();
     }
 
     /* (non-Javadoc)
