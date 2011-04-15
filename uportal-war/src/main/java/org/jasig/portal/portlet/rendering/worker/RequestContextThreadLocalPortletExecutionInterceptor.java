@@ -34,7 +34,7 @@ import org.springframework.web.context.request.RequestContextHolder;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
+@Service("RequestContextThreadLocalPortletExecutionInterceptor")
 public class RequestContextThreadLocalPortletExecutionInterceptor extends ThreadLocalPortletExecutionInterceptor<RequestAttributes> {
 
     @Override

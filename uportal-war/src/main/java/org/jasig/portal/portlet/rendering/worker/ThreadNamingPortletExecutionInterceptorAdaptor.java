@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
+@Service("ThreadNamingPortletExecutionInterceptorAdaptor")
 public class ThreadNamingPortletExecutionInterceptorAdaptor extends PortletExecutionInterceptorAdaptor {
     private static final String THREAD_NAME = ThreadNamingPortletExecutionInterceptorAdaptor.class.getName() + ".THREAD_NAME";
     

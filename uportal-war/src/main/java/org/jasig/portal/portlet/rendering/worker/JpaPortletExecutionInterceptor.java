@@ -39,7 +39,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
+@Service("JpaPortletExecutionInterceptor")
 public class JpaPortletExecutionInterceptor extends PortletExecutionInterceptorAdaptor {
     private static final String ENTITY_MANAGER_FACTORY = JpaPortletExecutionInterceptor.class.getName() + ".ENTITY_MANAGER_FACTORY";
     private static final String PARTICIPATE = JpaPortletExecutionInterceptor.class.getName() + ".PARTICIPATE";

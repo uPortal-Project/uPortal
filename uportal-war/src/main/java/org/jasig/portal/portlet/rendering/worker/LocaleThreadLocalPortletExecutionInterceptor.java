@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
+@Service("LocaleThreadLocalPortletExecutionInterceptor")
 public class LocaleThreadLocalPortletExecutionInterceptor extends ThreadLocalPortletExecutionInterceptor<LocaleContext> {
 
     @Override

@@ -21,10 +21,12 @@
 -->
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-    
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+   
     <bean id="portletThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
         <property name="corePoolSize" value="${org.jasig.portal.ChannelManager.threadPool_initialThreads}" />
         <property name="maxPoolSize" value="${org.jasig.portal.ChannelManager.threadPool_maxThreads}" />
@@ -36,6 +38,14 @@
         <property name="allowCoreThreadTimeOut" value="true" />
     </bean>
     
+    <util:list id="portletExecutionInterceptors" value-type="org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor">
+        <ref bean="JpaPortletExecutionInterceptor"/>
+        <ref bean="LocaleThreadLocalPortletExecutionInterceptor"/>
+        <ref bean="RequestContextThreadLocalPortletExecutionInterceptor"/>
+        <ref bean="TrackingThreadLocalPortletExecutionInterceptor"/>
+        <ref bean="ThreadNamingPortletExecutionInterceptorAdaptor"/>
+    </util:list>
+    
     <bean id="portletContainer" class="org.apache.pluto.container.impl.PortletContainerImpl" destroy-method="destroy" init-method="init">
         <constructor-arg value="#{servletContext.contextPath + '-PlutoPortletContainer'}" />
         <constructor-arg>
@@ -44,7 +54,6 @@
                 <constructor-arg ref="portalDriverServices" />
             </bean>
         </constructor-arg>
-         
     </bean>
     
     <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">

@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
+@Service("TrackingThreadLocalPortletExecutionInterceptor")
 public class TrackingThreadLocalPortletExecutionInterceptor extends ThreadLocalPortletExecutionInterceptor<Map<TrackingThreadLocal<Object>, Object>> {
 
     @Override

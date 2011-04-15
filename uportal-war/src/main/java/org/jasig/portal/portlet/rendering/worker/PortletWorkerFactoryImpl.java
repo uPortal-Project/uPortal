@@ -89,7 +89,7 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
     }
     
     @Autowired
-    public void setExecutionInterceptors(List<IPortletExecutionInterceptor> executionInterceptors) {
+    public void setExecutionInterceptors(@Qualifier("portletExecutionInterceptors") List<IPortletExecutionInterceptor> executionInterceptors) {
         this.executionInterceptors = executionInterceptors;
     }
 
