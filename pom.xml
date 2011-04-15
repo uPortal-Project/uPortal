@@ -136,7 +136,7 @@
         <cas-clearpass.version>1.0.5.GA</cas-clearpass.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
         <FunctionalTestsPortlet.version>1.0.3</FunctionalTestsPortlet.version>
-        <jasig-widget-portlets.version>1.0.0-RC2</jasig-widget-portlets.version>
+        <jasig-widget-portlets.version>1.0.0-RC3-SNAPSHOT</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
         <NewsReaderPortlet.version>2.0.0-RC2-SNAPSHOT</NewsReaderPortlet.version>
         <SimpleContentPortlet.version>0.1</SimpleContentPortlet.version>
@@ -245,7 +245,7 @@
                         <groupId>net.sf.retrotranslator</groupId>
                         <artifactId>retrotranslator-runtime</artifactId>
                     </exclusion>
-                     <exclusion>
+                    <exclusion>
                         <groupId>rhino</groupId>
                         <artifactId>js</artifactId>
                     </exclusion>
