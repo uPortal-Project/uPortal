@@ -28,7 +28,14 @@
                         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-                        
+
+<!--                         
+    <bean id="portletDefinitionImporterExporter" class="org.jasig.portal.io.xml.portlet.PortletDefinitionImporterExporter">
+        <property name="contextPath" value="org.jasig.portal.io.xml.portlet" />
+        <property name="schema" value="classpath:/xsd/io/portlet-definition/portlet-definition-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" />
+    </bean>
+ -->
     <bean id="stylesheetDescriptorImporterExporter" class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.ssd" />
         <property name="schema" value="classpath:/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" />

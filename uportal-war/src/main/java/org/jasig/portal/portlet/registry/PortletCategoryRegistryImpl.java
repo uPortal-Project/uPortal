@@ -33,7 +33,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#addCategoryToCategory(org.jasig.portal.portlet.om.PortletCategory, org.jasig.portal.portlet.om.PortletCategory)
 	 */
-	public void addCategoryToCategory(PortletCategory child, PortletCategory parent) {
+	@Override
+    public void addCategoryToCategory(PortletCategory child, PortletCategory parent) {
         String childKey = String.valueOf(child.getId());
         IEntityGroup childGroup = GroupService.findGroup(childKey);
         String parentKey = String.valueOf(parent.getId());
@@ -45,7 +46,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#deletePortletCategory(org.jasig.portal.portlet.om.PortletCategory)
 	 */
-	public void deletePortletCategory(PortletCategory category) {
+	@Override
+    public void deletePortletCategory(PortletCategory category) {
         String key = String.valueOf(category.getId());
         ILockableEntityGroup categoryGroup = GroupService.findLockableGroup(key,"UP_PORTLET_PUBLISH");
         categoryGroup.delete();
@@ -54,7 +56,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getAllChildCategories(org.jasig.portal.portlet.om.PortletCategory)
 	 */
-	public Set<PortletCategory> getAllChildCategories(PortletCategory parent) {
+	@Override
+    public Set<PortletCategory> getAllChildCategories(PortletCategory parent) {
         Set<PortletCategory> rslt = new HashSet<PortletCategory>();
 
         for (PortletCategory child : getChildCategories(parent)) {
@@ -69,7 +72,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getAllChildChannels(org.jasig.portal.portlet.om.PortletCategory)
 	 */
-	public Set<IPortletDefinition> getAllChildPortlets(PortletCategory parent) {
+	@Override
+    public Set<IPortletDefinition> getAllChildPortlets(PortletCategory parent) {
         
         Set<IPortletDefinition> rslt = new HashSet<IPortletDefinition>();
         
@@ -97,7 +101,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getPortletCategory(java.lang.String)
 	 */
-	public PortletCategory getPortletCategory(String portletCategoryId) {
+	@Override
+    public PortletCategory getPortletCategory(String portletCategoryId) {
         IEntityGroup categoryGroup = GroupService.findGroup(portletCategoryId);
         PortletCategory category = new PortletCategory(portletCategoryId);
         category.setName(categoryGroup.getName());
@@ -109,6 +114,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getChildCategories(org.jasig.portal.portlet.om.PortletCategory)
 	 */
+    @Override
     public Set<PortletCategory> getChildCategories(PortletCategory parent) {
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
@@ -128,6 +134,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getChildChannels(org.jasig.portal.portlet.om.PortletCategory)
 	 */
+    @Override
     public Set<IPortletDefinition> getChildPortlets(PortletCategory parent) {
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
@@ -135,7 +142,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     	@SuppressWarnings("unchecked")
         Iterator<IGroupMember> iter = parentGroup.getMembers();
         while (iter.hasNext()) {
-            IGroupMember gm = (IGroupMember)iter.next();
+            IGroupMember gm = iter.next();
             if (gm.isEntity()) {
             	IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(gm.getKey());
             	if(portletDefinition != null) {
@@ -151,7 +158,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getParentCategories(org.jasig.portal.portlet.om.PortletCategory)
 	 */
-	public Set<PortletCategory> getParentCategories(PortletCategory child) {
+	@Override
+    public Set<PortletCategory> getParentCategories(PortletCategory child) {
         String childKey = String.valueOf(child.getId());
         IEntityGroup childGroup = GroupService.findGroup(childKey);
         Set<PortletCategory> parents = new HashSet<PortletCategory>();
@@ -171,7 +179,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getParentCategories(org.jasig.portal.portlet.om.IPortletDefinition)
 	 */
-	public Set<PortletCategory> getParentCategories(IPortletDefinition child) {
+	@Override
+    public Set<PortletCategory> getParentCategories(IPortletDefinition child) {
         String childKey = child.getPortletDefinitionId().getStringId();
         IEntity childEntity = GroupService.getEntity(childKey, IPortletDefinition.class);
         Set<PortletCategory> parents = new HashSet<PortletCategory>();
@@ -191,7 +200,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getTopLevelPortletCategory()
 	 */
-	public PortletCategory getTopLevelPortletCategory() {
+	@Override
+    public PortletCategory getTopLevelPortletCategory() {
         IEntityGroup categoryGroup = GroupService.getDistinguishedGroup(IGroupConstants.PORTLET_CATEGORIES);
         return getPortletCategory(categoryGroup.getKey());
     }
@@ -199,7 +209,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#createPortletCategory(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public PortletCategory createPortletCategory( String name,
+	@Override
+    public PortletCategory createPortletCategory( String name,
             String description, String creatorId ) {
         IEntityGroup categoryGroup = GroupService.newGroup(IPortletDefinition.class);
         categoryGroup.setName( name ); // name cannot be null
@@ -217,7 +228,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#removeCategoryFromCategory(org.jasig.portal.portlet.om.PortletCategory, org.jasig.portal.portlet.om.PortletCategory)
 	 */
-	public void removeCategoryFromCategory(PortletCategory child, PortletCategory parent) {
+	@Override
+    public void removeCategoryFromCategory(PortletCategory child, PortletCategory parent) {
         String childKey = String.valueOf(child.getId());
         IEntityGroup childGroup = GroupService.findGroup(childKey);
         String parentKey = String.valueOf(parent.getId());
@@ -229,7 +241,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#updatePortletCategory(org.jasig.portal.portlet.om.PortletCategory)
 	 */
-	public void updatePortletCategory(PortletCategory category) {
+	@Override
+    public void updatePortletCategory(PortletCategory category) {
         IEntityGroup categoryGroup = GroupService.findGroup(category.getId());
         categoryGroup.setName(category.getName());
         categoryGroup.setDescription(category.getDescription());

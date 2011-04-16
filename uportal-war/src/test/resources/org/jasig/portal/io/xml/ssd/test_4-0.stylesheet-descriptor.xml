@@ -12,6 +12,7 @@
     <url-syntax-helper>MultiTabSyntaxHelper</url-syntax-helper>
     <output-property>
         <name>mime-type</name>
+        <default-value>text/html</default-value>
         <scope>PERSISTENT</scope>
         <description>The mime type the stylesheet outputs</description>
     </output-property>
@@ -27,5 +28,6 @@
         <scope>PERSISTENT</scope>
         <description>Flag determining if the channel is minimized or not</description>
         <targetElement>channel</targetElement>
+        <targetElement>portlet</targetElement>
     </layout-attribute>
 </stylesheet-descriptor>

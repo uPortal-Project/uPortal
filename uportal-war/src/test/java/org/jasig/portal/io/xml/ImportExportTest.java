@@ -22,15 +22,17 @@ package org.jasig.portal.io.xml;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.jasig.portal.io.xml.portlet.ExternalPortletDefinition;
 import org.jasig.portal.io.xml.ssd.ExternalStylesheetDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,13 +53,9 @@ import com.google.common.base.Function;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportTestContext.xml")
 public class ImportExportTest {
-    private IDataImporterExporter<ExternalStylesheetDescriptor> stylesheetDescriptorImporterExporter;
+    @Autowired private IDataImporterExporter<ExternalStylesheetDescriptor> stylesheetDescriptorImporterExporter;
+    @Autowired private IDataImporterExporter<ExternalPortletDefinition> portletImporterExporter;
 
-    @Autowired
-    public void setStylesheetDescriptorImporterExporter(
-            IDataImporterExporter<ExternalStylesheetDescriptor> stylesheetDescriptorImporterExporter) {
-        this.stylesheetDescriptorImporterExporter = stylesheetDescriptorImporterExporter;
-    }
     
     @Test
     public void testStylesheetDescriptor40ImportExpot() throws Exception {
@@ -75,13 +73,39 @@ public class ImportExportTest {
                 });
     }
     
+//    @Test
+//    public void testPortlet40ImportExpot() throws Exception {
+//        final ClassPathResource portletResource = new ClassPathResource("/org/jasig/portal/io/xml/portlet/test_4-0.portlet.xml");
+//        
+//        this.testIdentityImportExport(
+//                this.portletImporterExporter,
+//                portletResource,
+//                new Function<ExternalPortletDefinition, String>() {
+//
+//                    @Override
+//                    public String apply(ExternalPortletDefinition input) {
+//                        return input.getName();
+//                    }
+//                });
+//    }
+    
     
     private <T> void testIdentityImportExport(IDataImporterExporter<T> dataImporterExporter, Resource resource, Function<T, String> getName) throws Exception {
         final ClassPathResource stylesheetDescriptorResource = new ClassPathResource("/org/jasig/portal/io/xml/ssd/test_4-0.stylesheet-descriptor.xml");
         
+        final String importData;
+        final InputStream inputStream = stylesheetDescriptorResource.getInputStream();
+        try {
+            importData = IOUtils.toString(inputStream);
+        }
+        finally {
+            IOUtils.closeQuietly(inputStream);
+        }
+        
         //Unmarshall from XML
         final Unmarshaller unmarshaller = dataImporterExporter.getUnmarshaller();
-        final T dataImport = (T)unmarshaller.unmarshal(new StreamSource(stylesheetDescriptorResource.getInputStream()));
+        @SuppressWarnings("unchecked")
+        final T dataImport = (T)unmarshaller.unmarshal(new StreamSource(new StringReader(importData)));
         
         //Make sure the data was unmarshalled
         assertNotNull(dataImport);
@@ -101,7 +125,7 @@ public class ImportExportTest {
 
         //Compare the exported XML data with the imported XML data, they should match
         XMLUnit.setIgnoreWhitespace(true);
-        Diff d = new Diff(new InputStreamReader(stylesheetDescriptorResource.getInputStream()), new StringReader(result.toString()));
+        Diff d = new Diff(new StringReader(importData), new StringReader(result.toString()));
         assertTrue("Export result differs from import" + d, d.similar());
     }
 }

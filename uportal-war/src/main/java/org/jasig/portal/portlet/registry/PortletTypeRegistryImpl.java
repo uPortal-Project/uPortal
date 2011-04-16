@@ -21,26 +21,32 @@ public class PortletTypeRegistryImpl implements IPortletTypeRegistry {
     	this.portletTypeDao = portletTypeDao;
     }
 
+    @Override
     public IPortletType createPortletType(String name, String cpdUri) {
     	return this.portletTypeDao.createPortletType(name, cpdUri);
     }
     
+    @Override
     public IPortletType getPortletType(int channelTypeId) {
     	return portletTypeDao.getPortletType(channelTypeId);
     }
 
+    @Override
     public IPortletType getPortletType(String name) {
         return portletTypeDao.getPortletType(name);
     }
 
+    @Override
     public List<IPortletType> getPortletTypes() {
         return portletTypeDao.getPortletTypes();
     }
     
+    @Override
     public IPortletType savePortletType(IPortletType chanType) {
         return portletTypeDao.updatePortletType(chanType);
     }
     
+    @Override
     public void deleteChannelType(IPortletType chanType) {
     	portletTypeDao.deletePortletType(chanType);
     }
