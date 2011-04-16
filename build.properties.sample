@@ -85,9 +85,17 @@ prodPrompt=false
 ## EXAMPLES ##
 
 ## Database Connection Settings (Uncomment the Maven Filters section in rdbm.properties)
-#environment.build.hibernate.connection.driver_class=org.hsqldb.jdbcDriver
-#environment.build.hibernate.connection.url=jdbc:hsqldb:hsql://localhost:8887
-#environment.build.hibernate.connection.username=sa
-#environment.build.hibernate.connection.password=
-#environment.build.hibernate.dialect=org.hibernate.dialect.HSQLDialect
+environment.build.hibernate.connection.driver_class=org.hsqldb.jdbcDriver
+environment.build.hibernate.connection.url=jdbc:hsqldb:hsql://localhost:8887
+environment.build.hibernate.connection.username=sa
+environment.build.hibernate.connection.password=
+environment.build.hibernate.dialect=org.hibernate.dialect.HSQLDialect
  
+# uPortal server configuration properties
+environment.build.uportal.server=localhost:8080
+environment.build.uportal.protocol=http
+environment.build.uportal.context=/uPortal
+
+# CAS server configuration properties
+environment.build.cas.server=localhost:8080
+environment.build.cas.protocol=http
