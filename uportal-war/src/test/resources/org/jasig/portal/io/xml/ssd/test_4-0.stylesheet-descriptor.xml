@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<stylesheet-descriptor
+    xmlns="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor"
+    xmlns:ns2="https://source.jasig.org/schemas/uportal/io/portlet-definition"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0"
+    xsi:schemaLocation="
+        https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd"
+>
+    <name>DLMXHTML</name>
+    <description>Renders DLMTabsColumns as xhtml</description>
+    <uri>classpath:/layout/theme/universality/universality.xsl</uri>
+    <url-syntax-helper>MultiTabSyntaxHelper</url-syntax-helper>
+    <output-property>
+        <name>mime-type</name>
+        <scope>PERSISTENT</scope>
+        <description>The mime type the stylesheet outputs</description>
+    </output-property>
+    <stylesheet-parameter>
+        <name>skin</name>
+        <default-value>uportal3</default-value>
+        <scope>PERSISTENT</scope>
+        <description>Skin name</description>
+    </stylesheet-parameter>
+    <layout-attribute>
+        <name>minimized</name>
+        <default-value>false</default-value>
+        <scope>PERSISTENT</scope>
+        <description>Flag determining if the channel is minimized or not</description>
+        <targetElement>channel</targetElement>
+    </layout-attribute>
+</stylesheet-descriptor>

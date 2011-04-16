@@ -51,8 +51,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaStylesheetDaoTestContext.xml")
-public class JpaStylesheetDaoTest extends BaseJpaDaoTest {
+@ContextConfiguration(locations = "classpath:jpaStylesheetDescriptorDaoTestContext.xml")
+public class JpaStylesheetDescriptorDaoTest extends BaseJpaDaoTest {
     private IStylesheetDescriptorDao stylesheetDescriptorDao;
     private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
 
