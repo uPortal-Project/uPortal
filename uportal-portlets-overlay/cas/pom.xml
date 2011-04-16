@@ -164,7 +164,9 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
                     <filters>
+                        <filter>${basedir}/../../${filters.file}</filter>
                         <filter>${basedir}/../../uportal-war/target/classes/properties/rdbm.properties</filter>
                     </filters>
 

@@ -25,6 +25,16 @@
     </dependencies>
 
     <build>
+	    <filters>
+            <filter>${basedir}/../../${filters.file}</filter>
+        </filters>
+	    <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    
         <plugins>
            <plugin>
                 <groupId>org.apache.portals.pluto</groupId>

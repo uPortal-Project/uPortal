@@ -432,6 +432,7 @@
                 <includes>
                     <include>properties/portal.properties</include>
                     <include>properties/rdbm.properties</include>
+                    <include>properties/security.properties</include>
                 </includes>
             </resource>
             <!-- 
@@ -443,6 +444,7 @@
                 <excludes>
                     <exclude>properties/portal.properties</exclude>
                     <exclude>properties/rdbm.properties</exclude>
+                    <exclude>properties/security.properties</exclude>
                 </excludes>
             </resource>
         </resources>
@@ -571,6 +573,10 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                    <filters>
+                        <filter>${basedir}/../${filters.file}</filter>
+                    </filters>
                     <attachClasses>true</attachClasses>
                     <webXml>${war-plugin-webxml-source}</webXml>
                 </configuration>
