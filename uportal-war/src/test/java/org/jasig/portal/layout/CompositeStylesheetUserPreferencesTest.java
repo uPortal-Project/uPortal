@@ -93,7 +93,7 @@ public class CompositeStylesheetUserPreferencesTest {
         assertNull(value);
         
         value = stylesheetUserPreferences.getOutputProperty("sess");
-        assertNull(value);
+        assertEquals("true", value);
         
         value = stylesheetUserPreferences.setOutputProperty("req", "bar");
         assertNull(value);

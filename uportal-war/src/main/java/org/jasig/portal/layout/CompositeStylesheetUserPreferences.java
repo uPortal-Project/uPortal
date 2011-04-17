@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -106,10 +107,13 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
         final Scope scope = outputPropertyDescriptor.getScope();
         final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(scope, false);
         if (stylesheetUserPreferences != null) {
-            return stylesheetUserPreferences.getOutputProperty(name);
+            final String outputProperty = stylesheetUserPreferences.getOutputProperty(name);
+            if (outputProperty != null) {
+                return outputProperty;
+            }
         }
         
-        return null;
+        return outputPropertyDescriptor.getDefaultValue();
     }
 
     /* (non-Javadoc)
@@ -171,7 +175,8 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
                 public Properties getPreferences(IStylesheetUserPreferences preferences) {
                     return preferences.getOutputProperties();
                 }
-            });
+            },
+            stylesheetDescriptor.getOutputPropertyDescriptors());
     }
 
     @Override
@@ -196,10 +201,13 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
         final Scope scope = stylesheetParameterDescriptor.getScope();
         final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(scope, false);
         if (stylesheetUserPreferences != null) {
-            return stylesheetUserPreferences.getStylesheetParameter(name);
+            final String stylesheetParameter = stylesheetUserPreferences.getStylesheetParameter(name);
+            if (stylesheetParameter != null) {
+                return stylesheetParameter;
+            }
         }
         
-        return null;
+        return stylesheetParameterDescriptor.getDefaultValue();
     }
 
     /* (non-Javadoc)
@@ -261,7 +269,8 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
                 public Map<String, String> getPreferences(IStylesheetUserPreferences preferences) {
                     return preferences.getStylesheetParameters();
                 }
-            });
+            },
+            stylesheetDescriptor.getStylesheetParameterDescriptors());
     }
 
     @Override
@@ -293,10 +302,13 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
         }
         
         if (this.distributedStylesheetUserPreferences != null) {
-            return this.distributedStylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+            final String layoutAttribute = this.distributedStylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+            if (layoutAttribute != null) {
+                return layoutAttribute;
+            }
         }
         
-        return null;
+        return layoutAttributeDescriptor.getDefaultValue();
     }
 
     /* (non-Javadoc)
@@ -351,17 +363,15 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#getLayoutAttributes(java.lang.String)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Map<String, String> getLayoutAttributes(final String nodeId) {
+        final Map<String, String> distributedLayoutAttributes = distributedStylesheetUserPreferences.getLayoutAttributes(nodeId);
+        
         return this.buildCompositeMap(
             new Function<Object, Map<String, String>>() {
                 @Override
                 public Map<String, String> apply(Object input) {
-                    if (distributedStylesheetUserPreferences != null) {
-                        final Map<String, String> layoutAttributes = distributedStylesheetUserPreferences.getLayoutAttributes(nodeId);
-                        return new LinkedHashMap<String, String>(layoutAttributes);
-                    }
-                    
                     return new LinkedHashMap<String, String>();
                 }
             },
@@ -370,39 +380,50 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
                 public Map<String, String> getPreferences(IStylesheetUserPreferences preferences) {
                     return preferences.getLayoutAttributes(nodeId);
                 }
-            });
+            },
+            stylesheetDescriptor.getLayoutAttributeDescriptors(),
+            distributedLayoutAttributes);
     }
     
+    /* (non-Javadoc)
+     * 
+     * Not the most efficient impl, but reduces duplicate code.
+     * 
+     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#getAllLayoutAttributes()
+     */
     @Override
     public Map<String, Map<String, String>> getAllLayoutAttributes() {
         final LinkedHashMap<String, Map<String, String>> compositeMap = new LinkedHashMap<String, Map<String, String>>();
         
-        //TODO write a deep-copy tool for nested maps
-        
-        if (this.distributedStylesheetUserPreferences != null) {
-            final Map<String, Map<String, String>> allLayoutAttributes = this.distributedStylesheetUserPreferences.getAllLayoutAttributes();
-            for (final Entry<String, Map<String, String>> layoutNodeAttributesEntry : allLayoutAttributes.entrySet()) {
-                final String node = layoutNodeAttributesEntry.getKey();
-                final Map<String, String> attributes = layoutNodeAttributesEntry.getValue();
-                
-                compositeMap.put(node, new LinkedHashMap<String, String>(attributes));
-            }
-        }
+        this.addLayoutAttributes(compositeMap, distributedStylesheetUserPreferences);
         
         for (final Scope scope : Scope.values()) {
             final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(scope, false);
-            if (stylesheetUserPreferences != null) {
-                final Map<String, Map<String, String>> allLayoutAttributes = stylesheetUserPreferences.getAllLayoutAttributes();
-                for (final Entry<String, Map<String, String>> layoutNodeAttributesEntry : allLayoutAttributes.entrySet()) {
-                    final String node = layoutNodeAttributesEntry.getKey();
-                    final Map<String, String> attributes = layoutNodeAttributesEntry.getValue();
-                    
-                    compositeMap.put(node, new LinkedHashMap<String, String>(attributes));
-                }
-            }
+            this.addLayoutAttributes(compositeMap, stylesheetUserPreferences);
         }
         
         return compositeMap;
+    }
+
+    /**
+     * Adds all layout attributes from the specified preferences into the composite map (as long as they don't already exist).
+     * Uses {@link #getLayoutAttributes(String)}
+     */
+    protected void addLayoutAttributes(final Map<String, Map<String, String>> compositeMap, final IStylesheetUserPreferences stylesheetUserPreferences) {
+        if (stylesheetUserPreferences == null) {
+            return;
+        }
+        
+        final Map<String, Map<String, String>> allLayoutAttributes = stylesheetUserPreferences.getAllLayoutAttributes();
+        
+        for (final String nodeId : allLayoutAttributes.keySet()) {
+            if (compositeMap.containsKey(nodeId)) {
+                continue;
+            }
+            
+            final Map<String, String> layoutAttributes = this.getLayoutAttributes(nodeId);
+            compositeMap.put(nodeId, layoutAttributes);
+        }
     }
 
     @Override
@@ -414,8 +435,6 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
                 return null;
             }
         });
-        
-        //TODO do I need to clear out this.distributedStylesheetUserPreferences here?
     }
 
     @Override
@@ -427,8 +446,6 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
                 return null;
             }
         });
-        
-        //TODO do I need to clear out this.distributedStylesheetUserPreferences here?
     }
 
     /**
@@ -456,9 +473,22 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
 
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected <M extends Map, V, F> M buildCompositeMap(Function<F, M> createMap, PreferenceValueFunction<M> preferenceValueFunction) {
-        final M compositeMap = createMap.apply(null);
+    protected <M extends Map, F> M buildCompositeMap(Function<F, M> mapMaker, PreferenceValueFunction<M> preferenceValueFunction, Collection<? extends IStylesheetData> defaults, M... extraDataMaps) {
+        final M compositeMap = mapMaker.apply(null);
         
+        //Add data from the stylesheet descriptor
+        for (final IStylesheetData defaultData : defaults) {
+            final String defaultValue = defaultData.getDefaultValue();
+            final String name = defaultData.getName();
+            compositeMap.put(name, defaultValue);
+        }
+        
+        //Add any pre-existing data to the composite map
+        for (final M existingValue : extraDataMaps) {
+            compositeMap.putAll(existingValue);
+        }
+        
+        //Iterate through scopes adding data from each stylesheet user prefs objects
         for (final Scope scope : Scope.values()) {
             final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(scope, false);
             if (stylesheetUserPreferences != null) {

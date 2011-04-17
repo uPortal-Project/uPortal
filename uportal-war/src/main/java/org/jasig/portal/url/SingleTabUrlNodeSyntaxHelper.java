@@ -33,10 +33,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -73,7 +70,6 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     private IUserInstanceManager userInstanceManager;
     private XPathOperations xpathOperations;
     private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
-    private IStylesheetDescriptorDao stylesheetDescriptorDao;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     
@@ -85,11 +81,6 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
-    }
-
-    @Autowired
-    public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
-        this.stylesheetDescriptorDao = stylesheetDescriptorDao;
     }
 
     @Autowired
@@ -155,19 +146,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
      */
     protected String getDefaultTabIndex(HttpServletRequest httpServletRequest) {
         final IStylesheetUserPreferences structureStylesheetUserPreferences = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(httpServletRequest);
-        final String defaultTab = structureStylesheetUserPreferences.getStylesheetParameter(defaultTabParameter);
-        if (defaultTab != null) {
-            return defaultTab;
-        }
-        
-        final long stylesheetDescriptorId = structureStylesheetUserPreferences.getStylesheetDescriptorId();
-        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
-        final IStylesheetParameterDescriptor defaultTabParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(defaultTabParameter);
-        if (defaultTabParameterDescriptor == null) {
-            return null;
-        }
-
-        return defaultTabParameterDescriptor.getDefaultValue();
+        return structureStylesheetUserPreferences.getStylesheetParameter(defaultTabParameter);
     }
 
     /* (non-Javadoc)
