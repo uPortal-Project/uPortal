@@ -124,7 +124,7 @@
                         ID: "personAttribute:",
                         children: [
                             { ID: "personAttributeName", value: attribute.displayName },
-                            { ID: "personAttributeValue", value: person.attributes[attribute.key][0] }
+                            { ID: "personAttributeValue", value: person.attributes[attribute.key] ? person.attributes[attribute.key][0] : '' }
                         ]
                     });
                 });
