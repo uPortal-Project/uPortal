@@ -20,6 +20,7 @@
 package org.jasig.portal.layout;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -366,7 +367,13 @@ class CompositeStylesheetUserPreferences implements IStylesheetUserPreferences {
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, String> getLayoutAttributes(final String nodeId) {
-        final Map<String, String> distributedLayoutAttributes = distributedStylesheetUserPreferences.getLayoutAttributes(nodeId);
+        final Map<String, String> distributedLayoutAttributes;
+        if (distributedStylesheetUserPreferences != null) {
+            distributedLayoutAttributes = distributedStylesheetUserPreferences.getLayoutAttributes(nodeId);
+        }
+        else {
+            distributedLayoutAttributes = Collections.emptyMap();
+        }
         
         return this.buildCompositeMap(
             new Function<Object, Map<String, String>>() {
