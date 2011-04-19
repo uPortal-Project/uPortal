@@ -244,9 +244,9 @@
     </action-state>
     
     <view-state id="configMode">
-        <on-entry>
+        <on-render>
             <set name="flashScope.PORTLET_FNAME" value="portlet.getFname()"/>
-        </on-entry>
+        </on-render>
         <transition on="configModeAction" to="configModeAction" />
     </view-state>
 
