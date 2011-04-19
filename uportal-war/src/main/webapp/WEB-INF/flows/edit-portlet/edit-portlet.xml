@@ -244,9 +244,9 @@
     </action-state>
     
     <view-state id="configMode">
-        <on-entry>
+        <on-render>
             <set name="flashScope.CHANNEL_FNAME" value="channel.getFname()"/>
-        </on-entry>
+        </on-render>
         <transition on="configModeAction" to="configModeAction" />
     </view-state>
 
