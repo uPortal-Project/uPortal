@@ -278,13 +278,46 @@
 		// Portlet editing persistence functions
 		var addPortlet = function(chanId) {
 		    var options = { action: 'addChannel', channelID: $("#addChannelId").attr("value") };
-		    var firstChannel = $("div[id*=portlet_]:not(.locked)");
-		    if (firstChannel.size() == 0) {
+		    
+		    // If no columns are currently on the page, this is probably a brand
+		    // new fragment or something.  Add the portlet to the tab itself and
+		    // let the backend code automatically create a new column.
+		    if ($("div[id*=column_]").size() == 0) {
 		        options['elementID'] = settings.tabId;
-		    } else {
-		        options['elementID'] = firstChannel.attr("id").split("_")[1];
-		        options['position'] = 'insertBefore';
+		    } 
+		    
+		    else {
+
+		        // If there are columns on the page, but none of them allow
+		        // adding children, just give up and tell the user we can't do it.
+		        var openColumns = $("div[id*=column_].canAddChildren");
+		        if (openColumns.size() == 0) {
+		            alert("Cannot add content because all columns are locked.");
+		            return;
+		        }
+		        
+		        else {
+		            
+		            // Attempt to find the first unlocked portlet in the first
+		            // open column
+		            var firstChannel = openColumns.find($("div[id*=portlet_]:not(.locked)"));
+		            
+		            // If the first open column contains no unlocked portlet, add
+		            // the portlet to the bottom of the column
+		            if (firstChannel.size() == 0) {
+		                options['elementID'] = openColumns.get(0).id.split("_")[1];
+		            } 
+
+		            // Otherwise add the portlet before the first unlocked portlet
+		            else {
+		                options['elementID'] = firstChannel.attr("id").split("_")[1];
+		                options['position'] = 'insertBefore';
+		            }
+		            
+		        }
+
 		    }
+		    
 			$.post(settings.preferencesUrl, options,
 			   function(xml) {
 			      if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
