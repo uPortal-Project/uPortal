@@ -129,10 +129,10 @@
                 </xsl:variable>
                 <xsl:variable name="iconUrl">
                     <xsl:choose>
-                        <xsl:when test="parameter[@name='iconUrl'] and parameter[@name='iconUrl']/@value != ''">
-                            <xsl:value-of select="parameter[@name='iconUrl']/@value"/>
+                        <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
+                            <xsl:value-of select="parameter[@name='mobileIconUrl']/@value"/>
                         </xsl:when>
-                        <xsl:otherwise>/uPortal/media/skins/muniversality/common/images/placeholder.png</xsl:otherwise>
+                        <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/mobile/default.png</xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
                 <a href="{$portletUrl}" title="To view {@name}">

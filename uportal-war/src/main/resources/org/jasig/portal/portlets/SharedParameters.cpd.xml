@@ -27,6 +27,12 @@
         </parameter>
     
         <parameter>
+            <name>mobileIconUrl</name>
+            <label>display.mobile.icon.url</label>
+            <single-text-parameter-input display="text"/>
+        </parameter>
+    
+        <parameter>
             <name>showChrome</name>
             <label>show.portlet.window.chrome</label>
             <single-choice-parameter-input display="select">
