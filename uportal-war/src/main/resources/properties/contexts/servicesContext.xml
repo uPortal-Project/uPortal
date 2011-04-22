@@ -107,5 +107,13 @@
             </map>
         </property>
     </bean>    
-     
+    
+    <util:map id="directoryDisplayAttributes">
+        <entry key="title" value="GENERIC"/>
+        <entry key="department" value="GENERIC"/>
+        <entry key="mail" value="EMAIL"/>
+        <entry key="telephoneNumber" value="PHONE"/>
+        <entry key="postalAddress" value="MAP"/>
+    </util:map>
+
 </beans>
