@@ -56,50 +56,69 @@
                 
                 <div class="content">
                     <div id="${n}searchResults">
-                        <ul>
-                            <li><a href="#${n}_directory"><span><spring:message code="directory"/></span></a></li>
-                            <li><a href="#${n}_campus"><span><spring:message code="campus.web"/></span></a></li>
-                            <li><a href="#${n}_portal"><span><spring:message code="portal"/></span></a></li>
+                        <ul ${ engineCount == 1 ? 'style=\"display:none\"' : '' }>
+                            <c:forEach items="${ searchEngines }" var="engine">
+                                <c:choose>
+                                    <c:when test="${ engine == 'directory' }">
+                                        <c:set var="directoryEnabled" value="${ true }"/>
+                                        <li><a href="#${n}_directory"><span><spring:message code="directory"/></span></a></li>
+                                    </c:when>
+                                    <c:when test="${ engine == 'campus-web' }">
+                                        <c:set var="campusWebEnabled" value="${ true }"/>
+                                        <li><a href="#${n}_campus"><span><spring:message code="campus.web"/></span></a></li>
+                                    </c:when>
+                                    <c:when test="${ engine == 'portal' }">
+                                        <c:set var="portalEnabled" value="${ true }"/>
+                                        <li><a href="#${n}_portal"><span><spring:message code="portal"/></span></a></li>
+                                    </c:when>
+                                </c:choose>
+                            </c:forEach>
                         </ul>
                         
-                        <div id="${n}_directory">
-                            <c:if test="${ fn:length(people) == 0 }">
-                                <spring:message code="no.results"/>
-                            </c:if>
-                            <c:forEach items="${ people }" var="person">
-                                <div class="person-search-result">
-                                    <h3><a class="person-link" href="javascript:;">${fn:escapeXml(person.attributes.displayName[0])}</a></h3>
-                                    <table>
-                                        <c:forEach items="${ attributeNames }" var="attributeName">
-                                            <c:if test="${ fn:length(person.attributes[attributeName]) > 0 }">
-                                                <tr>
-                                                    <td>${fn:escapeXml(attributeName)}</td>
-                                                    <td>${fn:escapeXml(person.attributes[attributeName][0])}</td>
-                                            </tr>
-                                            </c:if>
-                                        </c:forEach>
-                                    </table>
-                                </div>
-                            </c:forEach>
-                        </div>
+                        <c:if test="${ directoryEnabled }">
+                            <div id="${n}_directory">
+                                <c:if test="${ fn:length(people) == 0 }">
+                                    <spring:message code="no.results"/>
+                                </c:if>
+                                <c:forEach items="${ people }" var="person">
+                                    <div class="person-search-result">
+                                        <h3><a class="person-link" href="javascript:;">${fn:escapeXml(person.attributes.displayName[0])}</a></h3>
+                                        <table>
+                                            <c:forEach items="${ attributeNames }" var="attribute">
+                                                <c:if test="${ fn:length(person.attributes[attribute.key]) > 0 }">
+                                                    <tr>
+                                                        <td><spring:message code="attribute.displayName.${ attribute.key }"/></td>
+                                                        <td>${fn:escapeXml(person.attributes[attribute.key][0])}</td>
+                                                </tr>
+                                                </c:if>
+                                            </c:forEach>
+                                        </table>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:if>
                         
-                        <div id="${n}_campus">
-                            <c:forEach items="${ gsaResults.searchResults }" var="result">
-                                <div>
-                                    <a href="${ result.link }">${ fn:escapeXml(result.title )}</a>
-                                </div>
-                                <p>${ fn:escapeXml(result.snippet )}</p>
-                            </c:forEach>
-                        </div>
-                        
-                        <div id="${n}_portal">
-                            <div class="portlet-search-results">
-                                <div class="portlet-match">
-                                    <a class="portlet-match-link"></a>
-                                    <p class="portlet-match-description"></p>
+                        <c:if test="${ campusWebEnabled }">
+                            <div id="${n}_campus">
+                                <c:forEach items="${ gsaResults.searchResults }" var="result">
+                                    <div>
+                                        <a href="${ result.link }">${ fn:escapeXml(result.title )}</a>
+                                    </div>
+                                    <p>${ fn:escapeXml(result.snippet )}</p>
+                                </c:forEach>
+                            </div>
+                        </c:if>
+                            
+                        <c:if test="${ portalEnabled }">
+                            <div id="${n}_portal">
+                                <div class="portlet-search-results">
+                                    <div class="portlet-match">
+                                        <a class="portlet-match-link"></a>
+                                        <p class="portlet-match-description"></p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </c:if>
                     </div>
                 </div>
             </div>
@@ -113,7 +132,7 @@
 
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript"><rs:compressJs>
  up.jQuery(function() {
     var $ = up.jQuery;
     var fluid = up.fluid;
@@ -121,9 +140,11 @@
 
     up.jQuery(document).ready(function() {
         
-        <c:if test="${not empty query}">
+        <c:if test="${not empty query and engineCount > 1}">
             up.jQuery("#${n}searchResults").tabs();
+        </c:if>
 
+        <c:if test="${ not empty query and portalEnabled }">
             var registry = up.PortletRegistry(
                 "#${n}_portal", 
                 { 
@@ -175,4 +196,4 @@
         
     });
  });
-</script>
+</rs:compressJs></script>

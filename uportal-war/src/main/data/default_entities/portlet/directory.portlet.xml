@@ -28,10 +28,10 @@
     version="4.0"
 >
 
-  <title>Search</title>
-  <name>Search</name>
-  <fname>search</fname>
-  <desc>Search portlet</desc>
+  <title>Directory</title>
+  <name>Directory</name>
+  <fname>directory</fname>
+  <desc>Directory of users and contact information</desc>
   <type>Portlet</type>
   <timeout>30000</timeout>
   <portlet-descriptor>
@@ -46,24 +46,14 @@
     </parameter>
 	<parameter>
       <name>iconUrl</name>
-      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/system-search.png</value>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/x-office-address-book.png</value>
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/search.png</value>
+        <value>/uPortal/media/skins/icons/mobile/directory.png</value>
     </parameter>
     <portlet-preference>
         <name>searchEngines</name>
         <value>directory</value>
-        <value>campus-web</value>
-        <value>portal</value>
-    </portlet-preference>
-    <portlet-preference>
-      <name>gsaBaseUrl</name>
-      <value>http://google.yale.edu/search</value>
-    </portlet-preference>
-    <portlet-preference>
-      <name>gsaSite</name>
-      <value>Yale_University</value>
     </portlet-preference>
 </portlet-definition>
