@@ -293,7 +293,9 @@
 <xsl:template match="/">
     <xsl:choose>
         <xsl:when test="not(//focused) and $NATIVE = 'true'">
-            <json-layout>{ "layout": [
+            <json-layout>{
+                "user": "<xsl:value-of select="$USER_ID"/>", 
+                "layout": [
                 <xsl:for-each select="//channel">
                     <xsl:variable name="portletUrl">
                         <xsl:call-template name="portalUrl">
