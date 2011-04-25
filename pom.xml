@@ -194,7 +194,7 @@
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
         <resource-aggregator.version>1.0.4</resource-aggregator.version>
-        <resource-server.version>1.0.15</resource-server.version>
+        <resource-server.version>1.0.16-SNAPSHOT</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
         <slf4j.version>1.6.1</slf4j.version>
         <spring-framework.version>3.0.5.RELEASE</spring-framework.version>
