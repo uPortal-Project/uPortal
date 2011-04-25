@@ -533,6 +533,23 @@ public class RDBMDistributedLayoutStore
             return null;
         }
 
+        /*
+         * drew [2011/04/25] UP-2717:  There is data "in the wild" that contains 
+         * nulls for both STRUCTURE_SS_ID and THEME_SS_ID in the profile 
+         * records;  this data causes errors down-stream.  Other components 
+         * (e.g. FragmentActivator) seem to handle the same issue by detecting 
+         * it and replacing the user's profile with the system profile, so we'll 
+         * follow suit, trusting that the result will be the same behavior and 
+         * (therefore) desirable.
+         */
+        if (profile.getStructureStylesheetId() == 0 || profile.getThemeStylesheetId() == 0) {
+            try {
+                profile = this.getSystemProfileById(profile.getProfileId());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         org.dom4j.Document layoutDoc = null;
         UserPreferences up = null;
         try {
