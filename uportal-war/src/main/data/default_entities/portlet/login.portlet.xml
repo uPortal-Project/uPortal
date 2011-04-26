@@ -1,0 +1,19 @@
+
+<portlet-definition
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition ../../../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd"
+    version="4.0">
+
+    <title>Log In</title>
+    <name>Log In</name>
+    <fname>login</fname>
+    <desc>Login form for local portal authentication</desc>
+    <type>Portlet</type>
+    <timeout>30000</timeout>
+    <portlet-descriptor>
+        <isFramework>true</isFramework>
+        <portletName>Login</portletName>
+    </portlet-descriptor>
+    <group>Everyone</group>
+</portlet-definition>

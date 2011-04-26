@@ -82,7 +82,7 @@
                                 <xsl:call-template name="portalUrl">
                                     <xsl:with-param name="url">
                                         <url:portal-url>
-                                            <url:fname>portal_login_general</url:fname>
+                                            <url:fname>login</url:fname>
                                             <url:portlet-url state="MAXIMIZED" />
                                         </url:portal-url>
                                     </xsl:with-param>

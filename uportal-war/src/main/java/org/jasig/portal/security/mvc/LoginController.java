@@ -64,6 +64,10 @@ public class LoginController implements InitializingBean {
     public static final String SWAP_TARGET_UID = LoginController.class.getName() + ".SWAP_TARGET_UID";
     public static final String SWAP_ORIGINAL_UID = LoginController.class.getName() + ".SWAP_ORIGINAL_UID";
     
+    public static final String AUTH_ATTEMPTED_KEY = "up_authenticationAttempted";
+    public static final String AUTH_ERROR_KEY = "up_authenticationError";
+    public static final String ATTEMPTED_USERNAME_KEY = "up_attemptedUserName";
+    
     protected final Log log = LogFactory.getLog(getClass());
     protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
     
@@ -250,11 +254,10 @@ public class LoginController implements InitializingBean {
     	} else {
     		StringBuilder sb = new StringBuilder();
     		sb.append(request.getContextPath());
-    		sb.append("/p/");
     		sb.append("?uP_fname=");
     		sb.append(URLEncoder.encode(targetFname, "UTF-8"));
     		
-    		char separator = '?';
+    		char separator = '&';
     		@SuppressWarnings("unchecked")
             Enumeration<String> e = request.getParameterNames();
     		while(e.hasMoreElements()){
@@ -265,7 +268,6 @@ public class LoginController implements InitializingBean {
     				sb.append('=');
     				sb.append(URLEncoder.encode(request.getParameter(paramName),"UTF-8"));
     			}
-    			separator = '&';
     		}		
     		redirectTarget = sb.toString();
     	}

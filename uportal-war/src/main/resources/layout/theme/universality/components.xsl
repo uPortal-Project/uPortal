@@ -314,7 +314,7 @@
    | This template renders the CLogin channel.
   -->
   <xsl:template name="local.login">
-    <xsl:copy-of select="//channel[@name='Login']"/>
+    <xsl:copy-of select="//channel[@fname='login']"/>
   </xsl:template>
   <!-- ============================================= -->
   
