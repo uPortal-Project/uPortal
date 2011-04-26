@@ -125,7 +125,7 @@
                     </xsl:call-template>
                 </xsl:variable>
                 <xsl:variable name="newItemCountClasses">
-                    ui-li-count up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}
+                    badge new-item up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}
                 </xsl:variable>
                 <xsl:variable name="iconUrl">
                     <xsl:choose>
