@@ -60,7 +60,7 @@
                 <input name="${fn:escapeXml(path)}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}" />
             </c:when>
             <c:otherwise>
-                <form:input path="${path}" size="${ input.length != '' ? input.length : defaultLength }" />
+                <form:input path="${path}"/>
             </c:otherwise>
         </c:choose>
       </c:otherwise>
