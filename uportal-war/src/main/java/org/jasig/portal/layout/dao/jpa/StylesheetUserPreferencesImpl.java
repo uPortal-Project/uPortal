@@ -363,7 +363,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     public Map<String, String> getLayoutAttributes(String nodeId) {
         final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, false);
         if (layoutAttribute == null) {
-            return Collections.unmodifiableMap(null);
+            return Collections.emptyMap();
         }
         synchronized (layoutAttribute) {
             final Map<String, String> attributes = layoutAttribute.getAttributes();
