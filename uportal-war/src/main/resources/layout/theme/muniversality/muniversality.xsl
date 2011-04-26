@@ -316,6 +316,7 @@
                         </xsl:choose>
                     </xsl:variable>
                     {
+                        "fname": "<xsl:value-of select="@fname"/>",
                         "title": "{up-portlet-title(<xsl:value-of select="@ID" />)}",
                         "url": "<xsl:value-of select="$portletUrl"/>",
                         "description": "<xsl:value-of select="@description"/>",
