@@ -1,7 +1,7 @@
 /* jQuery Mobile based button styles. Flattens out their color classes (A,B,C,D,E)
  * With SASS, truly separates the presentation from the content: 
  * no color classes needed in the markup.
- * Pass in the 
+ * Pass in the desired type of button based on the context.
  */
 
 /* Use variables to store multiple jQM selectors. */
@@ -17,7 +17,7 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		font-family: Helvetica, Arial, sans-serif;
 		font-weight: bold;
 		text-decoration: none;
-		text-shadow: 0 1px 1px $white;
+		@include text-shadow(dark);
 		cursor: pointer;
 	}
 }
@@ -29,7 +29,6 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $c3darker;
 		background		: $c3;
 		color			: $white;
-		text-shadow		: 0 -1px 1px $black;
 		@include gradient($c3, $c3darker);
 		a.ui-link-inherit {
 			color		: $white;
@@ -38,7 +37,6 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $c1darker;
 		background		: $c1;
 		color			: $white;
-		text-shadow		: 0 -1px 1px $black;
 		@include gradient($c1, $c1darker);
 		a.ui-link-inherit {
 			color		: $white;
@@ -47,7 +45,7 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $c3dark;
 		background		: $c3;
 		color			: $white;
-		text-shadow		: 0 -1px 1px $black;
+		@include text-shadow(dark);
 		@include gradient($c3light, $c3dark);
 		a.ui-link-inherit {
 			color		: $white;
@@ -56,6 +54,7 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $graylight;
 		background		: $graylightest;
 		color			: $text;
+		@include text-shadow(light);
 		@include gradient($white, $graylightest);
 		a.ui-link-inherit {
 			color		: $graydarkest;
@@ -70,7 +69,6 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $c3darker;
 		background		: $c3light;
 		color			: $white;
-		text-shadow		: 0 -1px 1px $black;
 		@include gradient($c3light, $c3dark);
 		a.ui-link-inherit { 
 			color		: $white;
@@ -79,7 +77,6 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $c3darker;
 		background		: $c1light;
 		color			: $white;
-		text-shadow		: 0 -1px 1px $black;
 		@include gradient($c1lighter, $c1darker);
 		a.ui-link-inherit {
 			color		: $white;
@@ -88,7 +85,7 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $c3dark;
 		background		: $c3light;
 		color			: $white;
-		text-shadow		: 0 -1px 1px $black;
+		@include text-shadow(dark);
 		@include gradient($c3lighter, $c3dark);
 		a.ui-link-inherit { 
 			color		: $white;
@@ -96,7 +93,7 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 	} @else {
 		border-color	: $graydark;
 		background		: $graylighter;
-		color			: $black;
+		@include text-shadow(light);
 		@include gradient($graylightest, $graylighter);
 		a.ui-link-inherit {
 			color		: $graydarkest;
@@ -111,7 +108,6 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $c3darker;
 		background		: $c3;
 		color			: $white;
-		text-shadow		: 0 -1px 1px $black;
 		@include gradient($c3dark, $c3light);
 		a.ui-link-inherit {
 			color		: $white;
@@ -120,7 +116,6 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $c1darker;
 		background		: $c1;
 		color			: $white;
-		text-shadow		: 0 -1px 1px $black;
 		@include gradient($c1darker, $c1);
 		a.ui-link-inherit {
 			color		: $white;
@@ -129,7 +124,7 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $c3darker;
 		background		: $c3;
 		color			: $white;
-		text-shadow		: 0 -1px 1px $black;
+		@include text-shadow(dark);
 		@include gradient($c3dark, $c3light);
 		a.ui-link-inherit {
 			color		: $white;
@@ -138,7 +133,7 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 		border-color	: $c1darker;
 		background		: $graylighter;
 		color			: $text;
-		text-shadow		: 0 -1px 1px $white;
+		@include text-shadow(light);
 		@include gradient($graylighter, $white);
 		a.ui-link-inherit {
 			color		: $graydarkest;

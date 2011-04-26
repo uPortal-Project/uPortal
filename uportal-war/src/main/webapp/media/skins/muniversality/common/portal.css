@@ -36,6 +36,9 @@
 /* Easy 2-color, linear gradient stack. Pass in the colors. */
 /* Easy way to add rounded corners. Pass in the desired size of the corner radius. */
 /* More flexible way to add rounded corners only to specific sides. */
+/* Easy way to add a box-shadow stack. Pass in any of the desired values. */
+/* Easy way to add a basic text-shadow. Will default to a bottom shadow. 
+ * Pass in "light" to get a top bevel on dark text./backgrounds. */
 /*====================================*/
 /* RESET */
 /*====================================*/
@@ -363,6 +366,9 @@ a:hover {
   margin-top: 10px;
   text-align: center;
 }
+.up .utilities {
+  margin-top: 2em;
+}
 
 /*====================================*/
 /* NAVIGATION */
@@ -372,6 +378,7 @@ a:hover {
  */
 /* Portlet Navigation */
 .up .portal-nav {
+  /* Main menu grid of apps and web views. */
   width: 300px;
   margin: 0 auto;
   text-align: center;
@@ -387,12 +394,15 @@ a:hover {
   clear: both;
 }
 .up .portal-nav .portlet {
+  /* Menu grid items. */
   display: block;
   float: left;
   width: 70px;
-  height: 84px;
+  height: 82px;
   overflow: hidden;
   margin: 10px;
+  position: relative;
+  /* To contain new item badges. */
 }
 .up .portal-nav .portlet .icon, .up .portal-nav .portlet .title {
   display: block;
@@ -402,6 +412,11 @@ a:hover {
   height: 60px;
   width: 60px;
   margin-bottom: 3px;
+}
+.up .portal-nav .portlet .badge {
+  position: absolute;
+  top: 0em;
+  right: 0em;
 }
 
 /*====================================*/
@@ -418,6 +433,7 @@ a:hover {
  * uMobile CSS is built with SASS:
  * http://sass-lang.com/
  */
+/* Additional theme files boxed off for human use. */
 /* Color Palette
 --------------------------------------*/
 /* RGBA values include transparency and are easier than hexidecimal to use in 
@@ -428,10 +444,11 @@ mathematical calculations. */
 /* Secondary color, c2 */
 /* Tertiary color, c3 */
 /* Highlight color, c4 */
+/* Secondary Highlight color, c5 */
 /* jQuery Mobile based button styles. Flattens out their color classes (A,B,C,D,E)
  * With SASS, truly separates the presentation from the content: 
  * no color classes needed in the markup.
- * Pass in the 
+ * Pass in the desired type of button based on the context.
  */
 /* Use variables to store multiple jQM selectors. */
 /* Apply baseline button styling once to every kind of button. */
@@ -441,7 +458,7 @@ mathematical calculations. */
   font-family: Helvetica, Arial, sans-serif;
   font-weight: bold;
   text-decoration: none;
-  text-shadow: 0 1px 1px white;
+  text-shadow: 0 -1px 1px black;
   cursor: pointer;
 }
 
@@ -451,6 +468,56 @@ mathematical calculations. */
 /* Button mixin. Calls in the Up, Hover, and Down states.
  * Passes the context type to those mixins.
  * If no type is specified, default will be used, which will take the @else styles. */
+/* Badge styles.
+ * If needed, override badge style based on the context.
+ */
+.up .badge {
+  padding: 0.2em 6px;
+  font-size: 11px;
+  font-weight: bold;
+  border-width: 2px;
+  border-style: solid;
+  text-shadow: 0 -1px 1px black;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  border-radius: 1em;
+  border-color: #c3c3c3;
+  background: #cc0000;
+  text-shadow: 0 1px 1px white;
+  background-image: -moz-linear-gradient(top, white, #f5f5f5);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, white), color-stop(1, #f5f5f5));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='white', EndColorStr='#f5f5f5')";
+}
+.up .badge.new-item {
+  border-color: white;
+  background: #cc0000;
+  color: white;
+  text-shadow: 0 -1px 1px black;
+  background-image: -moz-linear-gradient(top, red, #990000);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, red), color-stop(1, #990000));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='red', EndColorStr='#990000')";
+}
+.up .badge.unread-item,
+.up .portlet-content .ui-listview .ui-li-count {
+  background: #4682b4;
+  color: white;
+  text-shadow: 0 -1px 1px black;
+  background-image: -moz-linear-gradient(top, #699bc4, #38678f);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #699bc4), color-stop(1, #38678f));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#699bc4', EndColorStr='#38678f')";
+}
+.up .badge.read-item {
+  /* Uses default badge style. */
+}
+.up .portal-nav .badge.new-item {
+  -moz-box-shadow: 0px 2px 2px black;
+  -webkit-box-shadow: 0px 2px 2px black;
+  box-shadow: 0px 2px 2px black;
+}
+.up .portlet-content .ui-listview .ui-li-count {
+  padding: 0.2em 10px;
+}
+
 .up .ui-bar, .up .ui-li-divider {
   border-width: 1px;
   border-style: solid;
@@ -490,6 +557,7 @@ mathematical calculations. */
   border-color: #121416;
   background: #282d33;
   color: white;
+  text-shadow: 0 -1px 1px black;
   background-image: -moz-linear-gradient(top, #3e4650, #121416);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #3e4650), color-stop(1, #121416));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#3e4650', EndColorStr='#121416')";
@@ -498,7 +566,6 @@ mathematical calculations. */
   border-color: #08180f;
   background: #21653f;
   color: white;
-  text-shadow: 0 -1px 1px black;
   background-image: -moz-linear-gradient(top, #21653f, #08180f);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #21653f), color-stop(1, #08180f));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#21653f', EndColorStr='#08180f')";
@@ -510,7 +577,6 @@ mathematical calculations. */
   border-color: #08180f;
   background: #2e8b57;
   color: white;
-  text-shadow: 0 -1px 1px black;
   background-image: -moz-linear-gradient(top, #2e8b57, #143f27);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #2e8b57), color-stop(1, #143f27));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#2e8b57', EndColorStr='#143f27')";
@@ -522,7 +588,6 @@ mathematical calculations. */
   border-color: #08180f;
   background: #21653f;
   color: white;
-  text-shadow: 0 -1px 1px black;
   background-image: -moz-linear-gradient(top, #143f27, #2e8b57);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #143f27), color-stop(1, #2e8b57));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#143f27', EndColorStr='#2e8b57')";
@@ -534,6 +599,7 @@ mathematical calculations. */
   border-color: #294d6b;
   background: #38678f;
   color: white;
+  text-shadow: 0 -1px 1px black;
   background-image: -moz-linear-gradient(top, #4682b4, #294d6b);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #294d6b));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#294d6b')";
@@ -542,7 +608,6 @@ mathematical calculations. */
   border-color: #294d6b;
   background: #4682b4;
   color: white;
-  text-shadow: 0 -1px 1px black;
   background-image: -moz-linear-gradient(top, #4682b4, #294d6b);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #294d6b));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#294d6b')";
@@ -554,7 +619,6 @@ mathematical calculations. */
   border-color: #08180f;
   background: #699bc4;
   color: white;
-  text-shadow: 0 -1px 1px black;
   background-image: -moz-linear-gradient(top, #8db3d3, #294d6b);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #8db3d3), color-stop(1, #294d6b));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#8db3d3', EndColorStr='#294d6b')";
@@ -566,7 +630,6 @@ mathematical calculations. */
   border-color: #294d6b;
   background: #4682b4;
   color: white;
-  text-shadow: 0 -1px 1px black;
   background-image: -moz-linear-gradient(top, #294d6b, #4682b4);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #294d6b), color-stop(1, #4682b4));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#294d6b', EndColorStr='#4682b4')";
@@ -585,6 +648,7 @@ mathematical calculations. */
   border-color: #c3c3c3;
   background: #f5f5f5;
   color: #444444;
+  text-shadow: 0 1px 1px white;
   background-image: -moz-linear-gradient(top, white, #f5f5f5);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, white), color-stop(1, #f5f5f5));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='white', EndColorStr='#f5f5f5')";
@@ -595,7 +659,7 @@ mathematical calculations. */
 .up .portlet-content .ui-btn-hover-a, .up .portlet-content .ui-btn-hover-b, .up .portlet-content .ui-btn-hover-c, .up .portlet-content .ui-btn-hover-d, .up .portlet-content .ui-btn-hover-e {
   border-color: #8f8f8f;
   background: #dcdcdc;
-  color: black;
+  text-shadow: 0 1px 1px white;
   background-image: -moz-linear-gradient(top, #f5f5f5, #dcdcdc);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f5f5f5), color-stop(1, #dcdcdc));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#f5f5f5', EndColorStr='#dcdcdc')";
@@ -607,7 +671,7 @@ mathematical calculations. */
   border-color: #294d6b;
   background: #dcdcdc;
   color: #444444;
-  text-shadow: 0 -1px 1px white;
+  text-shadow: 0 1px 1px white;
   background-image: -moz-linear-gradient(top, #dcdcdc, white);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #dcdcdc), color-stop(1, white));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#dcdcdc', EndColorStr='white')";
@@ -660,14 +724,10 @@ mathematical calculations. */
   color: white;
 }
 .up .portal-nav .portlet .icon {
-  border: 1px solid #1b3246;
-  background: #4682b4;
-  background-image: -moz-linear-gradient(top, #4682b4, #38678f);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #38678f));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#38678f')";
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+  /*border: 1px solid $c1darkest;
+  background: $c1;
+  @include gradient($c1, $c1dark);
+  @include rounded(5px);*/
 }
 
 /*====================================*/
@@ -678,7 +738,7 @@ mathematical calculations. */
  */
 .up {
   /* Courses portlet */
-  /* NewsReader portlet */
+  /* Feeds */
 }
 .up .ptl-courses .view-courses .utilities {
   margin-top: 2em;
@@ -703,16 +763,16 @@ mathematical calculations. */
   -webkit-border-radius: 5px;
   border-radius: 5px;
 }
-.up .ptl-newsreader .feed .ui-btn-inner {
+.up .feed .ui-btn-inner {
   padding: 0.7em 15px;
 }
-.up .ptl-newsreader .feed .ui-li-has-thumb .ui-btn-inner {
+.up .feed .ui-li-has-thumb .ui-btn-inner {
   padding: 0.7em 100px 0.7em 15px;
 }
-.up .ptl-newsreader .feed .ui-icon {
+.up .feed .ui-icon {
   display: none;
 }
-.up .ptl-newsreader .feed .ui-li-thumb {
+.up .feed .ui-li-thumb {
   left: auto;
   right: 1px;
   float: right;
@@ -720,19 +780,19 @@ mathematical calculations. */
   margin-left: 10px;
   border: 1px solid #767676;
 }
-.up .ptl-newsreader .feed .title {
+.up .feed .title {
   margin: 0 0 0.7em 0;
   font-size: 13px;
   max-height: 35px;
 }
-.up .ptl-newsreader .feed p {
+.up .feed p {
   font-size: 11px;
   color: #8f8f8f;
   max-height: 40px;
 }
-.up .ptl-newsreader .feed .ui-btn-inner, .up .ptl-newsreader .feed .ui-li-heading, .up .ptl-newsreader .feed .ui-btn-text, .up .ptl-newsreader .feed .ui-li-desc {
+.up .feed .ui-btn-inner, .up .feed .ui-li-heading, .up .feed .ui-btn-text, .up .feed .ui-li-desc {
   white-space: normal;
 }
-.up .ptl-newsreader .feed .title, .up .ptl-newsreader .feed p {
+.up .feed .title, .up .feed p {
   text-overflow: ellipsis;
 }

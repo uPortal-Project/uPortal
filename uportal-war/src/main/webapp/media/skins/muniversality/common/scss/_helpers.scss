@@ -67,3 +67,20 @@
 	border-radius: $topleft $topright $bottomright $bottomleft;
 }
 
+/* Easy way to add a box-shadow stack. Pass in any of the desired values. */
+@mixin box-shadow($xpos: 2px, $ypos: 2px, $blur: 2px, $color: $black) {
+	-moz-box-shadow		: $xpos $ypos $blur $color;
+	-webkit-box-shadow	: $xpos $ypos $blur $color;
+	box-shadow			: $xpos $ypos $blur $color;
+}
+
+/* Easy way to add a basic text-shadow. Will default to a bottom shadow. 
+ * Pass in "light" to get a top bevel on dark text./backgrounds. */
+@mixin text-shadow($type: dark) {
+	@if($type == 'light') {
+		text-shadow	: 0 1px 1px $white;	
+	} @else {
+		text-shadow	: 0 -1px 1px $black;	
+	}
+	
+}

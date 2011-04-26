@@ -10,18 +10,21 @@
 .up {
 	
 	.portal-nav {
+		/* Main menu grid of apps and web views. */
 		width: 300px;
 		margin: 0 auto;
 		text-align: center;
 		@include clearfix();
 		
 		.portlet {
+			/* Menu grid items. */
 			display: block;
 			float: left;
 			width: 70px;
-			height: 84px;
+			height: 82px;
 			overflow: hidden;
 			margin: 10px;
+			position: relative; /* To contain new item badges. */
 			
 			.icon, .title {
 				display: block;
@@ -34,6 +37,11 @@
 			}
 			.title {
 				
+			}
+			.badge {
+				position: absolute;
+				top: 0em;
+				right: 0em;
 			}
 		}
 	}

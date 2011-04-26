@@ -6,8 +6,10 @@
  * http://sass-lang.com/
  */
 
+/* Additional theme files boxed off for human use. */
 @import "colors";
 @import "buttons";
+@import "badges";
 
 .up {
 	
@@ -49,6 +51,7 @@
 		border-color	: $c2dark;
 		background		: $c2;
 		color			: $white;
+		@include text-shadow();
 		@include gradient($c2light, $c2dark);
 		
 		@include button(portal-nav);
@@ -58,6 +61,7 @@
 		border-color	: $c1darker;
 		background		: $c1dark;
 		color			: $white;
+		@include text-shadow();
 		@include gradient($c1, $c1darker);
 		
 		@include button(portlet-nav);
@@ -93,10 +97,10 @@
 	.portal-nav {
 		.portlet {
 			.icon {
-				border: 1px solid $c1darkest;
+				/*border: 1px solid $c1darkest;
 				background: $c1;
 				@include gradient($c1, $c1dark);
-				@include rounded(5px);
+				@include rounded(5px);*/
 			}
 		}
 	}

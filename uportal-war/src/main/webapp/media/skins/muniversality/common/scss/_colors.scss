@@ -53,3 +53,12 @@ $c4darkest		: darken($c4, 30%);
 $c4light		: lighten($c4, 10%);
 $c4lighter		: lighten($c4, 20%);
 $c4lightest		: lighten($c4, 30%);
+
+/* Secondary Highlight color, c5 */
+$c5				: rgba(204, 0, 0, 1);
+$c5dark			: darken($c5, 10%);
+$c5darker		: darken($c5, 20%);
+$c5darkest		: darken($c5, 30%);
+$c5light		: lighten($c5, 10%);
+$c5lighter		: lighten($c5, 20%);
+$c5lightest		: lighten($c5, 30%);
