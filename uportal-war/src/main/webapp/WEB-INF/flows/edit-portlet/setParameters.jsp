@@ -214,7 +214,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
     <div style="display:none">
         <c:forEach items="${ cpd.steps }" var="step" varStatus="status">
-            <c:if test="${ step.arbitraryPreferences }">
+            <c:if test="${ not empty step.arbitraryPreferences }">
                 <div id="${n}addParameterDialog-${status.index}-prefs" class="parameter-adding-dialog jqueryui" title="<spring:message code="add.preference"/>">
                     <form action="javascript:;">
                         <p><spring:message code="preference.name"/>: <input name="name"/></p>

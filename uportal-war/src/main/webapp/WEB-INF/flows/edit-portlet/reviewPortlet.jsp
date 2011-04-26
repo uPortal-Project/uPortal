@@ -180,7 +180,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   <tr>
                     <td class="fl-text-align-right"><c:out value="${ fn:escapeXml(parameter.label )}"/>:</td>
                     <td>
-                    ${ parameter.parameterInput.value.display }
                         <a href="${ setParametersUrl }" class="pa-edit">
 	                        ${ fn:escapeXml(portlet.parameters[parameter.name].value )}
                         </a>
