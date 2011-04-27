@@ -296,7 +296,7 @@
             <json-layout>{
                 "user": "<xsl:value-of select="$USER_ID"/>", 
                 "layout": [
-                <xsl:for-each select="//channel">
+                <xsl:for-each select="//navigation/channel">
                     <xsl:variable name="portletUrl">
                         <xsl:call-template name="portalUrl">
                             <xsl:with-param name="url">

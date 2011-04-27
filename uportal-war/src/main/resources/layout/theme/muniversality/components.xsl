@@ -112,7 +112,7 @@
 -->  
 <xsl:template name="mobile.navigation">
     <div class="portal-nav">
-        <xsl:for-each select="//channel">
+        <xsl:for-each select="//navigation/channel">
             <div class="portlet">
                 <xsl:variable name="portletUrl">
                     <xsl:call-template name="portalUrl">
