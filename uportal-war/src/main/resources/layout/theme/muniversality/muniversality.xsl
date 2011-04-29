@@ -274,9 +274,9 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="logo">
-    <div class="logo">
+    <!--div class="logo">
     	<img src="/uPortal/media/skins/muniversality/common/images/umobile_logo_flat.png" alt="uMobile" />
-    </div>
+    </div-->
 </xsl:template>
 <!-- ========================================================================= -->
 
