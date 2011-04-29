@@ -33,6 +33,9 @@
   <!--css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/valencia/jquery.mobile.theme.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/valencia/jquery.mobile.theme.min.css</css-->
   
+  <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css>
+  
   <!-- Modified jQuery Mobile theme for uMobile. Decided not to use the jQuery Mobile's A,B,C,D,E color scheme setup. -->
   <css>jquerymobile/jqm.theme.css</css>
   

@@ -397,8 +397,8 @@ a:hover {
   /* Menu grid items. */
   display: block;
   float: left;
-  width: 70px;
-  height: 82px;
+  width: 72px;
+  height: 92px;
   overflow: hidden;
   margin: 10px;
   position: relative;
@@ -409,8 +409,8 @@ a:hover {
   text-align: center;
 }
 .up .portal-nav .portlet .icon {
-  height: 60px;
-  width: 60px;
+  height: 72px;
+  width: 72px;
   margin-bottom: 3px;
 }
 .up .portal-nav .portlet .badge {
@@ -445,6 +445,7 @@ mathematical calculations. */
 /* Tertiary color, c3 */
 /* Highlight color, c4 */
 /* Secondary Highlight color, c5 */
+/* Calendar colors */
 /* jQuery Mobile based button styles. Flattens out their color classes (A,B,C,D,E)
  * With SASS, truly separates the presentation from the content: 
  * no color classes needed in the markup.
@@ -739,6 +740,7 @@ mathematical calculations. */
 .up {
   /* Courses portlet */
   /* Feeds */
+  /* Calendar */
 }
 .up .ptl-courses .view-courses .utilities {
   margin-top: 2em;
@@ -795,4 +797,115 @@ mathematical calculations. */
 }
 .up .feed .title, .up .feed p {
   text-overflow: ellipsis;
+}
+.up .ui-datepicker {
+  /* jQuery UI widget override to get the calendar widget as wide as possible. */
+  width: 19em;
+}
+.up .ui-datepicker td span, .up .ui-datepicker td a {
+  /* jQuery UI widget override to increase the hit area of the days. */
+  padding: 0.5em;
+}
+.up .ptl-calendar .upcal-hide-on-calendar {
+  display: none;
+}
+.up .ptl-calendar .dayName {
+  font-size: 16px;
+  margin: 0.7em 0 0.3em 0;
+}
+.up .ptl-calendar .upcal-event-list {
+  border-bottom: 1px solid #a9a9a9;
+}
+.up .ptl-calendar .upcal-event {
+  border-top: 1px solid #a9a9a9;
+  background: white;
+  padding: 5px;
+  zoom: 1;
+}
+.up .ptl-calendar .upcal-event:before, .up .ptl-calendar .upcal-event:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.up .ptl-calendar .upcal-event:after {
+  clear: both;
+}
+.up .ptl-calendar .upcal-event .upcal-event-time {
+  float: left;
+  width: 30%;
+  padding: 0.5em 0;
+  text-align: center;
+  font-size: 13px;
+  color: #a9a9a9;
+}
+.up .ptl-calendar .upcal-event .upcal-event-time span {
+  font-size: 16px;
+  font-weight: bold;
+  color: #444444;
+}
+.up .ptl-calendar .upcal-event .upcal-event-link {
+  display: block;
+  margin-left: 30%;
+  padding: 0.5em;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #8f8f8f;
+  background: #dcdcdc;
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+.up .ptl-calendar .upcal-color-0 .upcal-event-link {
+  background: rgba(16, 98, 165, 0.25);
+  border-color: #1062a5;
+  color: #0b4677;
+}
+.up .ptl-calendar .upcal-color-1 .upcal-event-link {
+  background: rgba(71, 115, 0, 0.25);
+  border-color: #477300;
+  color: #284000;
+}
+.up .ptl-calendar .upcal-color-2 .upcal-event-link {
+  background: rgba(153, 0, 0, 0.25);
+  border-color: #990000;
+  color: #660000;
+}
+.up .ptl-calendar .upcal-color-3 .upcal-event-link {
+  background: rgba(104, 48, 153, 0.25);
+  border-color: #683099;
+  color: #4e2472;
+}
+.up .ptl-calendar .upcal-color-4 .upcal-event-link {
+  background: rgba(139, 69, 0, 0.25);
+  border-color: #8b4500;
+  color: #582c00;
+}
+.up .ptl-calendar .upcal-color-5 .upcal-event-link {
+  background: rgba(0, 139, 120, 0.25);
+  border-color: #008b78;
+  color: #00584c;
+}
+.up .ptl-calendar .upcal-color-6 .upcal-event-link {
+  background: rgba(182, 33, 98, 0.25);
+  border-color: #b62162;
+  color: #8b194b;
+}
+.up .ptl-calendar .upcal-color-7 .upcal-event-link {
+  background: rgba(187, 91, 29, 0.25);
+  border-color: #bb5b1d;
+  color: #8f4616;
+}
+.up .ptl-calendar .upcal-color-8 .upcal-event-link {
+  background: rgba(123, 123, 123, 0.25);
+  border-color: #7b7b7b;
+  color: #626262;
+}
+.up .ptl-calendar .upcal-color-9 .upcal-event-link {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: black;
+  color: black;
 }

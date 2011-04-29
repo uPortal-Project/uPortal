@@ -75,5 +75,90 @@
 			text-overflow: ellipsis;
 		}
 	}
-}
+	
+	/* Calendar */
+	.ui-datepicker {
+		/* jQuery UI widget override to get the calendar widget as wide as possible. */
+		width: 19em;
+	}
+	.ui-datepicker td span, .ui-datepicker td a {
+		/* jQuery UI widget override to increase the hit area of the days. */
+		padding: 0.5em;
+	}
+	.ptl-calendar {
+		.upcal-hide-on-calendar {
+			display:none;
+		}
+		.dayName {
+			font-size: 16px;
+			margin: 0.7em 0 0.3em 0;
+		}
+		.upcal-event-list {
+			border-bottom: 1px solid $gray;
+		}
+		.upcal-event {
+			border-top: 1px solid $gray;
+			background: $white;
+			padding: 5px;
+			@include clearfix();
 
+			.upcal-event-time {
+				float: left;
+				width: 30%;
+				padding: 0.5em 0;
+				text-align: center;
+				font-size: 13px;
+				color: $gray;
+				
+				span {
+					font-size: 16px;
+					font-weight: bold;
+					color: $text;
+				}
+			}
+			.upcal-event-link {
+				display: block;
+				margin-left: 30%;
+				padding: 0.5em;
+				border-width: 1px;
+				border-style: solid;
+				border-color: $graydark;
+				background: $graylighter;
+				font-size: 14px;
+				font-weight: bold;
+				text-decoration: none;
+				@include rounded(5px);
+			}
+		}
+		.upcal-color-0 .upcal-event-link {
+			@include color-box($cal0);
+		}
+		.upcal-color-1 .upcal-event-link {
+			@include color-box($cal1);
+		}
+		.upcal-color-2 .upcal-event-link {
+			@include color-box($cal2);
+		}
+		.upcal-color-3 .upcal-event-link {
+			@include color-box($cal3);
+		}
+		.upcal-color-4 .upcal-event-link {
+			@include color-box($cal4);
+		}
+		.upcal-color-5 .upcal-event-link {
+			@include color-box($cal5);
+		}
+		.upcal-color-6 .upcal-event-link {
+			@include color-box($cal6);
+		}
+		.upcal-color-7 .upcal-event-link {
+			@include color-box($cal7);
+		}
+		.upcal-color-8 .upcal-event-link {
+			@include color-box($cal8);
+		}
+		.upcal-color-9 .upcal-event-link {
+			@include color-box($cal9);
+		}
+	}
+}

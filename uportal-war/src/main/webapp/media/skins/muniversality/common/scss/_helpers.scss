@@ -84,3 +84,9 @@
 	}
 	
 }
+
+@mixin color-box($color) {
+	background: transparentize($color, 0.75);
+	border-color: $color;
+	color: darken($color, 10%);
+}
