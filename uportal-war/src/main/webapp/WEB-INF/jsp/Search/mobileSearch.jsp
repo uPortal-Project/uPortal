@@ -145,8 +145,10 @@
                     <ul data-role="listview">
                         <c:forEach items="${ gsaResults.searchResults }" var="result">
                             <li>
-                                <h3><a href="${ result.link }">${ result.title }</a></h3>
-                                <p>${ result.snippet }</p>
+                                <a href="${ result.link }">
+                                    <h3>${ result.title }</h3>
+                                    <p>${ result.snippet }</p>
+                                </a>
                             </li>
                         </c:forEach>
                     </ul>
@@ -155,9 +157,11 @@
                     <h2>Portal Search Results</h2>
                     <ul data-role="listview" class="portlet-search-results feed">
                         <li class="portlet-match">
-                            <img class="portlet-match-icon"/>
-                            <h3><a class="portlet-match-link"></a></h3>
-                            <p class="portlet-match-description"></p>
+                            <a class="portlet-match-link">
+                                <img class="portlet-match-icon"/>
+                                <h3 class="portlet-match-title"></h3>
+                                <p class="portlet-match-description"></p>
+                            </a>
                         </li>
                     </ul>
                 </c:when>
@@ -267,6 +271,7 @@
                             cutpoints = [
                                  { id: "portlet:", selector: ".portlet-match" },
                                  { id: "portletLink", selector: ".portlet-match-link" },
+                                 { id: "portletTitle", selector: ".portlet-match-title" },
                                  { id: "portletIcon", selector: ".portlet-match-icon" },
                                  { id: "portletDescription", selector: ".portlet-match-description" }
                              ];
@@ -290,7 +295,10 @@
                                     ID: "portlet:",
                                     children: [
                                        { 
-                                           ID: "portletLink", target: "/uPortal/p/" + portlet.fname, linktext: portlet.title
+                                           ID: "portletLink", target: "/uPortal/p/" + portlet.fname
+                                       },
+                                       { 
+                                           ID: "portletTitle", value: portlet.title
                                        },
                                        {
                                            ID: "portletIcon",
