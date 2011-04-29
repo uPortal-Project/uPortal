@@ -28,8 +28,8 @@
     version="4.0"
 >
  
-  <title>My Weather</title>
-  <name>My Weather</name>
+  <title>Weather</title>
+  <name>Weather</name>
   <fname>weather</fname>
   <desc>The Weather Module allows you to access the latest weather conditions and 5-day forecasts for the cities you select.</desc>  
   <type>Portlet</type>
@@ -55,6 +55,10 @@
 	<parameter>
       <name>iconUrl</name>
       <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/status/weather-few-clouds.png</value>
+    </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/weather.png</value>
     </parameter>
   
   
