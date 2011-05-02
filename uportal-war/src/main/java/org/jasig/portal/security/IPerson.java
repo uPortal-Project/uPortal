@@ -127,6 +127,8 @@ public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity,
    */
   public Enumeration<List<Object>> getAttributes ();
 
+  public Map<String,List<Object>> getAttributeMap();
+  
   /**
    * Returns the names of all of the attributes stored for the user
    * @return names of all of the attributes stored for the user

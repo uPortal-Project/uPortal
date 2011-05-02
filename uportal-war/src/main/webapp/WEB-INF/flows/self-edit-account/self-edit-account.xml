@@ -23,33 +23,35 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <!--  get local account -->
+    <on-start>
+        <set name="flashScope.servletRequest" 
+            value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+        <set name="flowScope.person" value="personManager.getPerson(servletRequest)"/>
+        <set name="flowScope.canEditAccount" value="userAccountHelper.canEditUser(person, person.name)"/>
+        <set name="flowScope.attributeNames" value="directoryDisplayAttributes"/>
+        <set name="flowScope.editAttributes" value="userAccountHelper.getEditableUserAttributes(person)"/>
+    </on-start>
     
-    <decision-state id="isLocalAccount">
-        <on-entry>
-            <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
-            <set name="flashScope.user"
-                value="personManager.getPerson(servletRequest)"/>
-            <set name="flowScope.account" value="localAccountDao.getPerson(user.name)"/>
-        </on-entry>
-        <if then="nonLocalAccount" test="account == null" else="enterPassword"/>
-    </decision-state>
-    
-    <view-state id="enterPassword" model="accountPasswordForm">
-        <on-entry>
-            <set name="flowScope.accountPasswordForm" value="new org.jasig.portal.portlets.account.selfedit.AccountPasswordForm()"/>
-            <set name="accountPasswordForm.userId" value="account.id"/>
-        </on-entry>
-        <transition on="save" to="success">
-            <set name="flowScope.account" value="localAccountDao.getPerson(accountPasswordForm.userId)"/>
-            <set name="flashScope.encrypted" value="portalPasswordService.encryptPassword(accountPasswordForm.newPassword)"/>
-            <evaluate expression="account.setPassword(encrypted)"/>
-            <evaluate expression="localAccountDao.updateAccount(account)"/>
-        </transition>
+    <!-- show account summary -->
+    <view-state id="viewAccountDetails">
+        <transition on="editAccount" to="editLocalAccount"/>
     </view-state>
     
+    <!-- if allowed, show edit form, then save and forward back to summary -->
+    
+    <view-state id="editLocalAccount" model="accountForm">
+        <on-entry>
+            <set name="flowScope.account" value="localAccountDao.getPerson(person.name)"/>
+            <set name="flowScope.accountForm" value="userAccountHelper.getForm(person.name)"/>
+        </on-entry>
+        <transition on="save" to="success">
+            <evaluate expression="userAccountHelper.updateAccount(accountForm)"/>
+        </transition>
+    </view-state>
+
     <view-state id="success">
-        <transition on="finish" to="finish"/>
     </view-state>
     
     <end-state id="finish"/>

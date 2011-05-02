@@ -1555,6 +1555,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         public Object[] getAttributeValues(String key) {
             return null;
         }
+        
+        public Map<String,List<Object>> getAttributeMap() {
+            return null;
+        }
 
         public void setAttribute(String key, Object value) {
         }

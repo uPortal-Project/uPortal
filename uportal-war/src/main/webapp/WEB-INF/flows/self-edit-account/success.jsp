@@ -31,7 +31,7 @@
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading"><spring:message code="update.my.password"/></h2>
+        <h2 class="title" role="heading"><spring:message code="account.updated"/></h2>
     </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Body -->
@@ -41,7 +41,9 @@
             <div class="portlet-section" role="region">
                 <div class="content">
                 
-                    <p>Your password has been successfully updated.</p>
+                    <p>
+                        <spring:message code="your.account.has.been.successfully.updated.your.changes.will.be.visible.upon.your.next.login"/>
+                    </p>
 
                 </div>
             </div>

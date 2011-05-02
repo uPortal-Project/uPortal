@@ -110,6 +110,11 @@ public class PersonImpl implements IPerson {
         final Collection<List<Object>> values = this.userAttributes.values();
         return Collections.enumeration(values);
     }
+    
+    public Map<String,List<Object>> getAttributeMap() {
+        final Map<String,List<Object>> attrMap = this.userAttributes;
+        return attrMap;
+    }
 
     /**
      * Returns an enumeration of all of the attribute names associated with the user
