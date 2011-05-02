@@ -62,6 +62,20 @@
         </property>
     </bean>
 
+    <util:list id="directoryQueryAttributes">
+        <value>given</value>
+        <value>sn</value>
+    </util:list>
+
+    <util:map id="directoryDisplayAttributes">
+        <entry key="title" value="GENERIC"/>
+        <entry key="department" value="GENERIC"/>
+        <entry key="organization" value="GENERIC"/>
+        <entry key="mail" value="EMAIL"/>
+        <entry key="telephoneNumber" value="PHONE"/>
+        <entry key="postalAddress" value="MAP"/>
+    </util:map>
+
     <util:list id="accountEditAttributes">
         <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
                 p:name="title" p:label="attribute.displayName.title">

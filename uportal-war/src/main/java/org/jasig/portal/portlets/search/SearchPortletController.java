@@ -91,7 +91,14 @@ public class SearchPortletController {
     public void setDirectoryDisplayAttributes(Map<String, DirectoryAttributeType> attributes) {
         this.displayAttributes = attributes;
     }
-    
+
+    private List<String> directoryQueryAttributes;
+
+    @Resource(name="directoryQueryAttributes")
+    public void setDirectoryQueryAttributes(List<String> attributes) {
+        this.directoryQueryAttributes = attributes;
+    }
+
 
     /**
      * Display a search form and show the results of a search query, if supplied.
@@ -143,7 +150,9 @@ public class SearchPortletController {
 
             // TODO: allow configuration of search query displayAttributes
             final Map<String, Object> queryAttributes = new HashMap<String, Object>();
-            queryAttributes.put("cn", query);
+            for (String attr : directoryQueryAttributes) {
+                queryAttributes.put(attr, query);
+            }
 
             final List<IPersonAttributes> people;
 

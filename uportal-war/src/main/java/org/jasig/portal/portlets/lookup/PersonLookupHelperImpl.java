@@ -281,7 +281,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
             final IPersonAttributes person, final Set<String> permittedAttributes) {
 
         // first check to see if the principal has permission to view this user
-        if (principal.hasPermission(USERS_OWNER, VIEW_USER_PERMISSION, person.getName())) {
+        if (person.getName() != null && principal.hasPermission(USERS_OWNER, VIEW_USER_PERMISSION, person.getName())) {
             
             // if the user has permission, filter the person attributes according
             // to the specified permitted attributes
