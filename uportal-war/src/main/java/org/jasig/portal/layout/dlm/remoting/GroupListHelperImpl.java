@@ -129,9 +129,10 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		 * in the future.
 		 */
 		
-		if (EntityEnum.GROUP.equals(groupType)) {
+		EntityEnum type = EntityEnum.getEntityEnum(groupType);
+		if (EntityEnum.GROUP.equals(type)) {
 			set.add(EntityEnum.PERSON.toString());
-		} else if (EntityEnum.CATEGORY.equals(groupType)) {
+		} else if (EntityEnum.CATEGORY.equals(type)) {
 			set.add(EntityEnum.PORTLET.toString());
 		} else {
 			throw new IllegalArgumentException("Unable to determine a root entity for group type '" + groupType + "'");
