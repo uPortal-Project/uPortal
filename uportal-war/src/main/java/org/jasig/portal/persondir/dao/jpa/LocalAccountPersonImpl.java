@@ -239,6 +239,10 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         
         attributes.add(new LocalAccountPersonAttributeImpl(name, Collections.singletonList(value)));
     }
+    
+    public boolean removeAttribute(String name) {
+        return attributes.remove(name);
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#setAttributes(java.util.Map)

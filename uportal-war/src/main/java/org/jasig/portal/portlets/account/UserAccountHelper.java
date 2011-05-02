@@ -19,26 +19,49 @@
 
 package org.jasig.portal.portlets.account;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
+import javax.servlet.http.HttpServletRequest;
+
+import org.antlr.stringtemplate.StringTemplate;
+import org.antlr.stringtemplate.StringTemplateGroup;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.jasig.portal.portletpublishing.xml.Preference;
 import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.IPortalPasswordService;
 import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.url.IPortalUrlBuilder;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.UrlType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.mail.MailException;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 @Component("userAccountHelper")
@@ -59,6 +82,52 @@ public class UserAccountHelper {
     public void setPortalPasswordService(IPortalPasswordService passwordService) {
         this.passwordService = passwordService;
     }
+    
+    private List<Preference> accountEditAttributes;
+    
+    @Resource(name="accountEditAttributes")
+    public void setAccountEditAttributes(List<Preference> accountEditAttributes) {
+        this.accountEditAttributes = accountEditAttributes;
+    }
+    
+    private JavaMailSenderImpl mailSender;
+    
+    @Autowired(required = true)
+    public void setMailSender(JavaMailSenderImpl mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    private IPortalUrlProvider urlProvider;
+    
+    @Autowired(required = true)
+    public void setPortalUrlProvider(IPortalUrlProvider urlProvider) {
+        this.urlProvider = urlProvider;
+    }
+
+    private MessageSource messageSource;
+
+    @Autowired
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
+    private String portalEmailAddress;
+    
+    @Resource(name="portalEmailAddress")
+    public void setPortalEmailAddress(String portalEmailAddress) {
+        this.portalEmailAddress = portalEmailAddress;
+    }
+    
+    @Autowired
+    private IPersonManager personManager;
+    
+    public void setPersonManager(IPersonManager personManager) {
+        this.personManager = personManager;
+    }
+
+    private String passwordResetTemplate  = "properties/templates/passwordReset";
+    
+    private StringTemplateGroup stringTemplateGroup = new StringTemplateGroup("email");
     
     public PersonForm getNewAccountForm() {
         
@@ -119,8 +188,36 @@ public class UserAccountHelper {
         
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        // TODO create new user editing permission
-        return (ap.hasPermission("UP_USERS", "EDIT_USER", target));
+        
+        // if the target represents the current user, determine if they can
+        // edit their own account
+        if (currentUser.getName().equals(target) && ap.hasPermission("UP_USERS", "EDIT_USER", "SELF")) {
+            return true;
+        } 
+        
+        // otherwise determine if the user has permission to edit the account
+        else if (ap.hasPermission("UP_USERS", "EDIT_USER", target)) {
+            return true;
+        } 
+        
+        else {
+            return false;
+        }
+
+    }
+    
+    public List<Preference> getEditableUserAttributes(IPerson currentUser) {
+        
+        EntityIdentifier ei = currentUser.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        
+        List<Preference> allowedAttributes = new ArrayList<Preference>();
+        for (Preference attr : accountEditAttributes) {
+            if (ap.hasPermission("UP_USERS", "EDIT_USER_ATTRIBUTE", attr.getName())) {
+                allowedAttributes.add(attr);
+            }
+        }
+        return allowedAttributes;
     }
     
     public boolean canDeleteUser(IPerson currentUser, String target) {
@@ -150,7 +247,7 @@ public class UserAccountHelper {
         
     }
     
-    public void updateAccount(IPerson currentUser, PersonForm form) {
+    public void updateAccount(PersonForm form) {
         
         ILocalAccountPerson account;
         
@@ -181,10 +278,81 @@ public class UserAccountHelper {
         if (StringUtils.isNotBlank(form.getPassword())) {
             account.setPassword(passwordService.encryptPassword(form.getPassword()));
             account.setLastPasswordChange(new Date());
+            account.removeAttribute("loginToken");
         }
         
         accountDao.updateAccount(account);
         log.info("Account " + account.getName() + " successfully updated");
+    }
+    
+    public String getRandomToken() {
+        String token = RandomStringUtils.randomAlphanumeric(20);
+        return token;
+    }
+    
+    public boolean validateLoginToken(String username, String password) {
+        ILocalAccountPerson person = accountDao.getPerson(username);
+        if (person != null) {
+            Object recordedToken = person.getAttributeValue("loginToken");
+            if (recordedToken != null && recordedToken.equals(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void sendLoginToken(HttpServletRequest request, ILocalAccountPerson account) {
+        
+        IPerson person = personManager.getPerson(request);
+        LocaleManager localeManager = new LocaleManager(person);
+        Locale locale = localeManager.getLocales()[0];
+        
+        IPortalUrlBuilder builder = urlProvider.getPortalUrlBuilderByPortletFName(request, "reset-password", UrlType.RENDER);
+        IPortletUrlBuilder portletUrlBuilder = builder.getTargetedPortletUrlBuilder();
+        portletUrlBuilder.addParameter("username", account.getName());
+        portletUrlBuilder.addParameter("loginToken", (String) account.getAttributeValue("loginToken"));
+        portletUrlBuilder.setPortletMode(PortletMode.VIEW);
+        portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
+
+        StringBuffer url = new StringBuffer(); 
+        url.append(request.getScheme());
+        url.append("://").append(request.getServerName());
+        int port = request.getServerPort();
+        if (port != 80 && port != 443) {
+            url.append(":").append(port);
+        }
+        url.append(builder.getUrlString());
+        
+        log.debug("Sending password reset instructions to user with url " + url.toString());
+
+        String emailAddress = (String) account.getAttributeValue("mail");
+        
+        StringTemplate template = stringTemplateGroup
+            .getInstanceOf(passwordResetTemplate);
+        template.setAttribute("displayName", account.getAttributeValue("given") + " " + account.getAttributeValue("sn"));
+        template.setAttribute("url", url.toString());
+
+        MimeMessage message = mailSender.createMimeMessage();
+
+        try {
+            
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(emailAddress);
+            helper.setText(template.toString(), true);
+            helper.setSubject(messageSource.getMessage("reset.your.password", new Object[]{}, locale));
+            helper.setFrom(portalEmailAddress, messageSource.getMessage("portal.name", new Object[]{}, locale));
+
+            log.debug("Sending message to " + emailAddress + " from " + 
+                      message.getFrom() +  " subject " + message.getSubject());
+            this.mailSender.send(message);
+            
+        } catch(MailException e) {
+            log.error("Unable to send password reset email ", e);
+        } catch (MessagingException e) {
+            log.error("Unable to send password reset email ", e);
+        } catch (UnsupportedEncodingException e) {
+            log.error("Unable to send password reset email ", e);
+        }
     }
     
 }
