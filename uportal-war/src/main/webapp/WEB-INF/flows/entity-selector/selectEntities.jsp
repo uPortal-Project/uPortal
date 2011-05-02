@@ -116,6 +116,12 @@
                                                     <ul class="member-list"></ul>
                                                 </div>
                                             </c:when>
+                                            <c:when test="${type == 'portlet'}">
+                                                <div class="portlet">
+                                                    <h6 class="title"><spring:message code="portlets"/></h6>
+                                                    <ul class="member-list"></ul>
+                                                </div>
+                                            </c:when>
                                         </c:choose>
                                     </c:forEach>
                                     </div><!--end: content-->
@@ -237,6 +243,12 @@
                                             <c:when test="${type == 'category'}">
                                                 <div class="category">
                                                     <h6 class="title"><spring:message code="categories"/></h6>
+                                                    <ul class="member-list"></ul>
+                                                </div>
+                                            </c:when>
+                                            <c:when test="${type == 'portlet'}">
+                                                <div class="portlet">
+                                                    <h6 class="title"><spring:message code="portlets"/></h6>
                                                     <ul class="member-list"></ul>
                                                 </div>
                                             </c:when>
