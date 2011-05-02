@@ -38,7 +38,7 @@
             <set name="flashScope.user"
                 value="personManager.getPerson(servletRequest)"/>
         </on-entry>
-        <evaluate expression="userAccountHelper.updateAccount(user, person)"/>
+        <evaluate expression="userAccountHelper.updateAccount(person)"/>
         <transition to="finish"/>
     </action-state>
     
