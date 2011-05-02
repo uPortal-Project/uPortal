@@ -25,7 +25,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <c:url var="loginUrl" value="/Login"/>
-<portlet:renderURL var="forgotPasswordUrl">
+<portlet:renderURL var="forgotPasswordUrl" windowState="maximized">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="forgotPassword"/>
 </portlet:renderURL>
