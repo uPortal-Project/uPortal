@@ -179,7 +179,19 @@
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
     <div class="up-portlet-controls">
-      <xsl:if test="not(@hasHelp='false')"> <!-- Help. -->
+      <xsl:variable name="hasHelp">
+          <xsl:if test="parameter[@name='hasHelp'] and parameter[@name='hasHelp']/@value = 'true'">true</xsl:if>
+      </xsl:variable>
+      <xsl:variable name="hasAbout">
+          <xsl:if test="parameter[@name='hasAbout'] and parameter[@name='hasAbout']/@value = 'true'">true</xsl:if>
+      </xsl:variable>
+      <xsl:variable name="editable">
+          <xsl:if test="parameter[@name='editable'] and parameter[@name='editable']/@value = 'true'">true</xsl:if>
+      </xsl:variable>
+      <xsl:variable name="printable">
+          <xsl:if test="parameter[@name='printable'] and parameter[@name='printable']/@value = 'true'">true</xsl:if>
+      </xsl:variable>
+      <xsl:if test="$hasHelp='true'"> <!-- Help. -->
         <xsl:variable name="portletHelpUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
@@ -194,7 +206,7 @@
       	  <span><xsl:value-of select="upMsg:getMessage('help', $USER_LANG)"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="not(@hasAbout='false')"> <!-- About. -->
+      <xsl:if test="$hasAbout='true'"> <!-- About. -->
         <xsl:variable name="portletAboutUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
@@ -209,7 +221,7 @@
       	  <span><xsl:value-of select="upMsg:getMessage('view.information.about.portlet', $USER_LANG)"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="not(@editable='false')"> <!-- Edit. -->
+      <xsl:if test="$editable='true'"> <!-- Edit. -->
         <xsl:variable name="portletEditUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
@@ -224,7 +236,7 @@
       	  <span><xsl:value-of select="upMsg:getMessage('edit', $USER_LANG)"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="@printable='true'"> <!-- Print. -->
+      <xsl:if test="$printable='true'"> <!-- Print. -->
         <xsl:variable name="portletPrintUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
