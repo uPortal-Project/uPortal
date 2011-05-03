@@ -144,11 +144,6 @@
     </filter>
     
     <filter>
-        <filter-name>maxInactiveFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-    
-    <filter>
         <filter-name>requestAttributeSourceFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
@@ -222,11 +217,6 @@
 
     <filter-mapping>
         <filter-name>CAS Assertion ThreadLocal Filter</filter-name>
-        <url-pattern>/Login</url-pattern>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>maxInactiveFilter</filter-name>
         <url-pattern>/Login</url-pattern>
     </filter-mapping>
     
