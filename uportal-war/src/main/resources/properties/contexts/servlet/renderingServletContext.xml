@@ -36,6 +36,7 @@
                     <property name="unauthenticatedUserSessionTimeout" value="${org.jasig.portal.PortalSessionManager.unauthenticatedUserSessionTimeout}" />
                      -->
                 </bean>
+                <bean class="org.jasig.portal.url.MaxInactiveInterceptor"/>
                 <ref bean="requestParameterProcessorInterceptor"/>
             </list>
         </property>

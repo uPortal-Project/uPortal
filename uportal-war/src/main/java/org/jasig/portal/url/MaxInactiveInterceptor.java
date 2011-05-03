@@ -1,84 +1,41 @@
-/**
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+package org.jasig.portal.url;
 
-package org.jasig.portal.security;
-
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-/**
- * This <code>Filter</code> sets the HttpSession MaxInactiveInterval based on 
- * permissions, if applicable.
- * 
- * @author awills
- */
-public class MaxInactiveFilter implements Filter {
-    // Instance Members.
+public class MaxInactiveInterceptor extends HandlerInterceptorAdapter {
+    private IPersonManager personManager;
     protected final Log log = LogFactory.getLog(getClass());
     
-    private IPersonManager personManager;
-    
-    /*
-     * Public API.
-     */
-
-    /**
-     * @return the personManager
-     */
-    public IPersonManager getPersonManager() {
-        return personManager;
-    }
-    /**
-     * @param personManager the personManager to set
-     */
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-
-    public void init(FilterConfig filterConfig) { /* Nothing to do...*/ }
     
-    public void destroy() { /* Nothing to do...*/ }
-    
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {
-        
-        // First perform the login...
-        chain.doFilter(req, res);
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            return true;
+        }
         
         // Now see if authentication was successful...
-        final IPerson person = this.personManager.getPerson((HttpServletRequest) req);
+        final IPerson person = this.personManager.getPerson((HttpServletRequest) request);
         if (person == null) {
-            return;
+            return true;
         }
         
         final ISecurityContext securityContext = person.getSecurityContext();
@@ -155,7 +112,6 @@ public class MaxInactiveFilter implements Filter {
                     }
                 }
                 // Apply the specified setting...
-                HttpSession session = ((HttpServletRequest) req).getSession();
                 session.setMaxInactiveInterval(maxInactive);
                 if (log.isInfoEnabled()) {
                     log.info("Setting maxInactive to '" + maxInactive 
@@ -165,7 +121,7 @@ public class MaxInactiveFilter implements Filter {
             }
             
         }
-
+        
+        return true;
     }
-    
 }
