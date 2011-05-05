@@ -139,6 +139,17 @@
             </fileset>
         </copy>
     </target>
+    
+    <target name="live-nightly" depends="prepare-ln, prepare-ln-tomcat, prepare-ln-uportal" description="Generates the quick start distribution">
+        <copy todir="${live-nightly.dir}" overwrite="true">
+            <filterset>
+                <filter token="tomcat.name" value="${dl.tomcat.finalName}" />
+                <filter token="uportal.name" value="${uportal.finalName}" />
+            </filterset>
+
+            <fileset dir="${basedir}/live-nightly" />
+        </copy>
+    </target>
             
     <target name="qs-package" depends="prepare-qs">
         <property name="quickstart.file_base" value="${target.dir}/${quickstart.name}${qs-file-ext}" />
@@ -284,5 +295,62 @@
         <property name="quickstart.dir" value="${target.dir}/${quickstart.name}" />
 
         <mkdir dir="${quickstart.dir}" />
+    </target>
+
+    <target name="prepare-ln-tomcat" depends="prepare-ln">
+        <download-extract download.name="tomcat" download.dir="${download.dir}" extract.dir="${live-nightly.dir}" />
+
+        <!--
+         | Update server.xml
+         | - ORDER OF THE FILTERS IS VERY IMPORTANT
+         +-->
+        <replace file="${dl.tomcat.dir}/conf/server.xml" summary="true">
+            <replacefilter token="${tomcat.disable_http_prefix.token}" value="${tomcat.disable_http_prefix.replacement}" />
+            <replacefilter token="${tomcat.disable_http_suffix.token}" value="${tomcat.disable_http_suffix.replacement}" />
+            <replacefilter token="${tomcat.ajp_port.token}" value="${tomcat.ajp_port.replacement}" />
+            <replacefilter token="${tomcat.conf.token}" value="${tomcat.conf.replacement}" />
+            <replacefilter token="${tomcat.shutdown.token}" value="${tomcat.shutdown.replacement}" />
+        </replace>
+        
+        <!-- update catalina.properties tp emable shared/lib classloader -->
+        <replace file="${dl.tomcat.dir}/conf/catalina.properties" token="${tomcat.shared-lib.token}" value="${tomcat.shared-lib.replacement}" summary="true" />
+    </target>
+    
+    <target name="prepare-ln-uportal" depends="prepare-ln">
+        <property name="uportal.dir" value="${live-nightly.dir}/${uportal.finalName}" />
+
+        <!-- copy uPortal source export into quickstart folder -->
+        <mkdir dir="${uportal.dir}" />
+        <copy todir="${uportal.dir}" preservelastmodified="true">
+            <fileset refid="sourceFilesSvn" />
+        </copy>
+
+        <!-- create uPortal build.properties pointing to quickstart tomcat -->
+        <copy file="${uportal.dir}/assembly/live-nightly/uportal-build.properties" tofile="${uportal.dir}/build.properties" overwrite="true">
+            <filterset>
+                <filter token="server.home" value="$${basedir}/../${dl.tomcat.finalName}" />
+            </filterset>
+        </copy>
+        
+        <!-- Ensure a HSQL isntance isn't already running -->
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+            
+        <!-- start live-nightly hsql isntance -->
+        <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+            <property name="spawn" value="true" />
+        </ant>
+
+        <!-- run initportal to setup tomcat & database -->
+        <ant target="initportal" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+
+        <!-- shutdown hsql nicely -->
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+    </target>
+
+    <target name="prepare-ln" depends="prepare">
+        <property name="live-nightly.name" value="${uportal.name}-live-nightly" />
+        <property name="live-nightly.dir" value="${target.dir}/${live-nightly.name}" />
+
+        <mkdir dir="${live-nightly.dir}" />
     </target>
 </project>

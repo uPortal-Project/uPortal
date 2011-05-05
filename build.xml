@@ -554,10 +554,10 @@
             <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
                 <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
             </artifact:dependencies>
-    
-            <property name="database" value="${basedir}/data/uP3_uPortal" />
-            <property name="port" value="8887" />
-    
+
+            <property name="database" value="${basedir}/data/${environment.build.hsql.database}" />
+            <property name="port" value="${environment.build.hsql.port}" />
+
             <echo message="Starting HSQL" />
             <echo message="Using: ${database}" />
             <java fork="true" spawn="${spawn}"  maxmemory="16M" dir="${basedir}" classname="org.hsqldb.Server" failonerror="${failonerror}">
@@ -565,6 +565,8 @@
     
                 <arg value="-database" />
                 <arg value="${database}" />
+                <arg value="-host" />
+                <arg value="localhost" />
                 <arg value="-port" />
                 <arg value="${port}" />
             </java>
@@ -576,7 +578,13 @@
             <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
                 <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
             </artifact:dependencies>
-    
+
+            <copy file="${bootstrap.dir}/hsqldb.sqltool.rc.sample" tofile="${bootstrap.dir}/hsqldb.sqltool.rc" overwrite="true">
+                <filterset>
+                    <filter token="environment.build.hibernate.connection.url" value="${environment.build.hibernate.connection.url}" />
+                </filterset>
+            </copy>
+
             <echo message="Stopping HSQL" />
             <trycatch reference="hsql-shutdown.exceptionId">
                 <try>
@@ -597,7 +605,7 @@
                             <echo>HSQL is not running</echo>
                         </then>
                         <else>
-                            <echo>${jvm.err.out}</echo>
+                            <echo>${hsql-shutdown.err.out}</echo>
                             <throw refid="hsql-shutdown.exceptionId" />
                         </else>
                     </if>
