@@ -150,6 +150,19 @@
             <fileset dir="${basedir}/live-nightly" />
         </copy>
     </target>
+    
+    <target name="live-nightly-stop" depends="prepare-ln">
+        <if>
+            <available file="${live-nightly.dir}/build.xml" />
+            <then>
+                <ant antfile="${live-nightly.dir}/build.xml" dir="${live-nightly.dir}" inheritall="false" target="stop" />
+            </then>
+        </if>
+    </target>
+    
+    <target name="live-nightly-start" depends="prepare-ln">
+        <ant antfile="${live-nightly.dir}/build.xml" dir="${live-nightly.dir}" inheritall="false" target="stop" />
+    </target>
             
     <target name="qs-package" depends="prepare-qs">
         <property name="quickstart.file_base" value="${target.dir}/${quickstart.name}${qs-file-ext}" />
