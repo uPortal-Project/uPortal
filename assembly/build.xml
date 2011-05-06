@@ -161,7 +161,7 @@
     </target>
     
     <target name="live-nightly-start" depends="prepare-ln">
-        <ant antfile="${live-nightly.dir}/build.xml" dir="${live-nightly.dir}" inheritall="false" target="stop" />
+        <ant antfile="${live-nightly.dir}/build.xml" dir="${live-nightly.dir}" inheritall="false" target="start" />
     </target>
             
     <target name="qs-package" depends="prepare-qs">

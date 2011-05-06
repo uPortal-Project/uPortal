@@ -555,7 +555,7 @@
                 <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
             </artifact:dependencies>
 
-            <property name="database" value="${basedir}/data/${environment.build.hsql.database}" />
+            <property name="database" value="${basedir}/data/uPortal" />
             <property name="port" value="${environment.build.hsql.port}" />
 
             <echo message="Starting HSQL" />
