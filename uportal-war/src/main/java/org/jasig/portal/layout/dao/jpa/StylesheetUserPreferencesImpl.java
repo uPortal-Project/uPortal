@@ -46,6 +46,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -82,6 +83,10 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @GeneratedValue(generator = "UP_SS_USER_PREF_GEN")
     @Column(name = "SS_USER_PREF_ID")
     private final long id;
+    
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
     
     @ManyToOne(targetEntity = StylesheetDescriptorImpl.class, optional = false)
     @JoinColumn(name = "UP_SS_DESCRIPTOR_ID", nullable = false)
@@ -130,6 +135,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @SuppressWarnings("unused")
     private StylesheetUserPreferencesImpl() {
         this.id = -1;
+        this.entityVersion = -1;
         this.stylesheetDescriptor = null;
         this.userId = -1;
         this.profileId = -1;
@@ -137,6 +143,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     
     StylesheetUserPreferencesImpl(IStylesheetDescriptor stylesheetDescriptor, int userId, int profileId) {
         this.id = -1;
+        this.entityVersion = -1;
         this.stylesheetDescriptor = stylesheetDescriptor;
         this.userId = userId;
         this.profileId = profileId;
@@ -400,8 +407,9 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
 
     @Override
     public String toString() {
-        return "StylesheetUserPreferencesImpl [id=" + this.id + ", stylesheetDescriptor=" + this.stylesheetDescriptor
-                + ", userId=" + this.userId + ", profileId=" + this.profileId + "]";
+        return "StylesheetUserPreferencesImpl [id=" + this.id + ", entityVersion=" + this.entityVersion
+                + ", stylesheetDescriptor=" + this.stylesheetDescriptor + ", userId=" + this.userId + ", profileId="
+                + this.profileId + "]";
     }
 
     @Override

@@ -36,6 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -78,6 +79,10 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
    @Column(name = "USER_FRAGMENT_SUBSCRIPTION_ID")
    private final long userFragmentInfoId;
    
+   @Version
+   @Column(name = "ENTITY_VERSION")
+   private final long entityVersion;
+   
    @Column(name = "USER_ID", updatable = false, nullable = false)
    @Index(name = "IDX_USER_FRAG__USER", columnNames = "USER_ID")
    private final int userId;
@@ -100,7 +105,7 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
    private Calendar lastUpdatedDate; 
    
    @Transient
-   private EntityIdentifier m_eid = new EntityIdentifier(null, IUserFragmentSubscription.class);
+   private EntityIdentifier entityIdentifier = new EntityIdentifier(null, IUserFragmentSubscription.class);
   
    /**
     * Used by the ORM layer to create instances of the object.
@@ -108,6 +113,7 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
    @SuppressWarnings("unused")
    private UserFragmentSubscriptionImpl() {
        this.userFragmentInfoId = -1;
+       this.entityVersion = -1;
        this.active = false;
        this.userId = -1;
        this.fragmentOwner = "";
@@ -117,9 +123,10 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
    
    public UserFragmentSubscriptionImpl(IPerson person, IPerson fragmentOwner) {
        this.userFragmentInfoId = -1;
+       this.entityVersion = -1;
        this.active = true;
        this.fragmentOwner = fragmentOwner.getUserName();
-       this.m_eid = new EntityIdentifier(String.valueOf(this.fragmentOwner), IUserFragmentSubscription.class);
+       this.entityIdentifier = new EntityIdentifier(String.valueOf(this.fragmentOwner), IUserFragmentSubscription.class);
        this.userId = person.getID();
        this.createdBy = person.getUserName();
    }
@@ -191,7 +198,7 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
      */
     @Override
     public EntityIdentifier getEntityIdentifier() {
-        return m_eid;
+        return entityIdentifier;
     }
 
 	/* (non-Javadoc)
@@ -232,8 +239,13 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
 			return false;
 		return true;
 	}
+
+    @Override
+    public String toString() {
+        return "UserFragmentSubscriptionImpl [userFragmentInfoId=" + this.userFragmentInfoId + ", entityVersion="
+                + this.entityVersion + ", userId=" + this.userId + ", fragmentOwner=" + this.fragmentOwner
+                + ", active=" + this.active + ", createdBy=" + this.createdBy + ", creationDate=" + this.creationDate
+                + ", lastUpdatedDate=" + this.lastUpdatedDate + ", entityIdentifier=" + this.entityIdentifier + "]";
+    }
 	   
-
-       
-
 }

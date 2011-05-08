@@ -57,7 +57,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.orm.hibernate3.HibernateJdbcException;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
@@ -257,7 +256,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                     try {
                         this.portletEntityDao.updatePortletEntity(persistentEntity);
                     }
-                    catch (HibernateJdbcException e) {
+                    catch (HibernateOptimisticLockingFailureException e) {
                         //Check if this exception is from the entity being deleted from under us.
                         final boolean exists = this.portletEntityDao.portletEntityExists(persistentEntity.getPortletEntityId());
                         if (!exists) {
@@ -589,11 +588,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     protected PortletEntityCache<IPortletEntity> getPortletEntityMap(HttpServletRequest request) {
-        request = portalRequestUtils.getOriginalPortalRequest(request);
+        request = portalRequestUtils.getOriginalPortletOrPortalRequest(request);
         final Object mutex = PortalWebUtils.getRequestAttributeMutex(request);
+        final String entityMapAttribute = PORTLET_ENTITY_ATTRIBUTE + Thread.currentThread().getId();
         synchronized (mutex) {
             @SuppressWarnings("unchecked")
-            PortletEntityCache<IPortletEntity> cache = (PortletEntityCache<IPortletEntity>)request.getAttribute(PORTLET_ENTITY_ATTRIBUTE);
+            PortletEntityCache<IPortletEntity> cache = (PortletEntityCache<IPortletEntity>)request.getAttribute(entityMapAttribute);
             if (cache == null) {
                 cache = new PortletEntityCache<IPortletEntity>();
                 request.setAttribute(PORTLET_ENTITY_ATTRIBUTE, cache);

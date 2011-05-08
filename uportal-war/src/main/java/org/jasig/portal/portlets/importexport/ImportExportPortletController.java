@@ -120,7 +120,7 @@ public class ImportExportPortletController {
     protected List<String> getAllowedTypes(PortletRequest request, String activityName) {
 
     	// get the authorization principal representing the current user
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
 		final IPerson person = personManager.getPerson(httpServletRequest);
 		final EntityIdentifier ei = person.getEntityIdentifier();
 	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());

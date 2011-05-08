@@ -82,7 +82,7 @@ public class SitemapPortletController {
         Map<String, Object> model = new HashMap<String, Object>();
         
         // retrieve the user layout manager for the current user
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
         IUserInstance ui = userInstanceManager.getUserInstance(httpServletRequest);
         UserPreferencesManager preferencesManager = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager layoutManager = preferencesManager.getUserLayoutManager();

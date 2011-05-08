@@ -35,15 +35,25 @@ import org.jasig.portal.url.AbstractHttpServletRequestWrapper;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class AttributeScopingHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
+public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
+    /**
+     * {@link javax.servlet.http.HttpServletRequest} attribute that this {@link HttpServletRequest} object
+     * will be available.
+     */
+    public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortletHttpServletRequestWrapper.class.getName() + ".PORTLET_HTTP_SERVLET_REQUEST";
+    
     private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
     
-    public AttributeScopingHttpServletRequestWrapper(HttpServletRequest httpServletRequest) {
+    public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest) {
         super(httpServletRequest);
     }
 
     @Override
     public Object getAttribute(String name) {
+        if (ATTRIBUTE__HTTP_SERVLET_REQUEST.equals(name)) {
+            return this;
+        }
+        
         final Object attribute = this.attributes.get(name);
         if (attribute != null) {
             return attribute;

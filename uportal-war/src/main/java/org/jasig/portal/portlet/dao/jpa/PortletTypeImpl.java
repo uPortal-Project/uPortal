@@ -33,11 +33,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -72,6 +71,10 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 	@Column(name = "TYPE_ID")
 	private final int internalId;
     
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     //Hidden reference to the child portlet definitions, used to allow cascading deletes where when a portlet type is deleted all associated definitions are also deleted
     //MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance will be TERRIBLE
     @SuppressWarnings("unused")
@@ -94,12 +97,14 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 	@SuppressWarnings("unused")
     private PortletTypeImpl() {
 	    this.internalId = -1;
+	    this.entityVersion = -1;
         this.name = null;
 	}
 	
 
     public PortletTypeImpl(String name, String cpdUri) {
         this.internalId = -1;
+        this.entityVersion = -1;
         this.name = name;
         this.cpdUri = cpdUri;
     }
@@ -197,18 +202,10 @@ public class PortletTypeImpl implements Serializable, IPortletType {
     }
 
 
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("internalId", this.internalId)
-            .append("name", this.name)
-            .append("cpdUri", this.cpdUri)
-            .append("descr", this.descr)
-            .toString();
+        return "PortletTypeImpl [internalId=" + this.internalId + ", entityVersion=" + this.entityVersion + ", name="
+                + this.name + ", descr=" + this.descr + ", cpdUri=" + this.cpdUri + "]";
     }
-	
 	
 }

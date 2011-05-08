@@ -157,7 +157,7 @@ public class SearchPortletController {
             final List<IPersonAttributes> people;
 
             // get an authorization principal for the current requesting user
-            HttpServletRequest servletRequest = portalRequestUtils.getOriginalPortalRequest(request);
+            HttpServletRequest servletRequest = portalRequestUtils.getPortletHttpRequest(request);
             IPerson currentUser = personManager.getPerson(servletRequest);
 
             // get the set of people matching the search query

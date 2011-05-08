@@ -109,33 +109,18 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(request, "request can not be null");
         Validate.notNull(plutoPortletWindow, "portletWindow can not be null");
         
-        //Try a direct cast to IPortletWindow
-        if (plutoPortletWindow instanceof IPortletWindow) {
-            logger.trace("Casting Pluto PortletWindow to uPortal IPortletWindow {}", plutoPortletWindow.getId());
-            return (IPortletWindow)plutoPortletWindow;
-        }
-        
-        //Try converting the Pluto ID to a uPortal ID
-        final PortletWindowID plutoPortletWindowId = plutoPortletWindow.getId();
+        //Conver the pluto portlet window ID into a uPortal portlet window ID
+        final PortletWindowID plutoWindowId = plutoPortletWindow.getId();
         final IPortletWindowId portletWindowId;
-        if (plutoPortletWindowId instanceof IPortletWindowId) {
-            portletWindowId = (IPortletWindowId)plutoPortletWindowId;
+        if (plutoWindowId instanceof IPortletWindowId) {
+            portletWindowId = (IPortletWindowId)plutoWindowId;
         }
         else {
-            portletWindowId = this.getPortletWindowId(request, plutoPortletWindowId.getStringId());
+            portletWindowId = this.getPortletWindowId(request, plutoWindowId.getStringId());
         }
         
-        logger.trace("Pluto PortletWindow does not implmenet uPortal IPortletWindow, looking it up by id {}", portletWindowId);
-        
-        //Use the converted ID to see if a IPortletWindow exists for it
-        final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
-        
-        //If null no window exists, throw an exception since somehow Pluto has a PortletWindow object that this container doesn't know about
-        if (portletWindow == null) {
-            throw new IllegalArgumentException("Could not cast Pluto PortletWindow to uPortal IPortletWindow and no IPortletWindow exists with the id: " + plutoPortletWindow.getId());
-        }
-        
-        return portletWindow;
+        //Do a new get to make sure the referenced data gets updated correctly
+        return this.getPortletWindow(request, portletWindowId);
     }
     
     @Override
@@ -267,11 +252,11 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         
         final String entityIdStr;
         final String instanceId;
-        if (portletWindowIdParts.length == 0) {
+        if (portletWindowIdParts.length == 1) {
             entityIdStr = portletWindowIdParts[0];
             instanceId = null;
         }
-        else if (portletWindowIdParts.length == 1) {
+        else if (portletWindowIdParts.length == 2) {
             entityIdStr = portletWindowIdParts[0];
             instanceId = portletWindowIdParts[1];
         }
@@ -434,8 +419,8 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
 
     protected ConcurrentMap<IPortletWindowId, IPortletWindow> getPortletWindowMap(HttpServletRequest request) {
-        request = portalRequestUtils.getOriginalPortalRequest(request);
-        return PortalWebUtils.getMapRequestAttribute(request, PORTLET_WINDOW_ATTRIBUTE);
+        request = portalRequestUtils.getOriginalPortletOrPortalRequest(request);
+        return PortalWebUtils.getMapRequestAttribute(request, PORTLET_WINDOW_ATTRIBUTE + Thread.currentThread().getId());
     }
 
     protected ConcurrentMap<IPortletWindowId, PortletWindowData> getPortletWindowDataMap(HttpServletRequest request) {

@@ -34,7 +34,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.rendering.PortletRenderResult;
 import org.jasig.portal.portlets.error.PortletErrorController;
-import org.jasig.portal.utils.web.AttributeScopingHttpServletRequestWrapper;
+import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
 
 /**
  * Worker used to execute render requests on the error portlet. Does not use
@@ -131,7 +131,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
         }
         
         //Wrap the request to scope the attributes to just this execution
-        final AttributeScopingHttpServletRequestWrapper wrappedRequest = new AttributeScopingHttpServletRequestWrapper(request);
+        final PortletHttpServletRequestWrapper wrappedRequest = new PortletHttpServletRequestWrapper(request);
         wrappedRequest.setAttribute(PortletErrorController.REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID, failedPortletWindowId);
         wrappedRequest.setAttribute(PortletErrorController.REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE, cause);
         

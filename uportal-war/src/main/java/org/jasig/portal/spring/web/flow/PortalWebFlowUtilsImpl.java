@@ -80,7 +80,7 @@ public class PortalWebFlowUtilsImpl implements IPortalWebFlowUtils {
         Object request = externalContext.getNativeRequest();
         
         if (request instanceof PortletRequest) {
-            return portalRequestUtils.getOriginalPortalRequest((PortletRequest) externalContext.getNativeRequest());
+            return portalRequestUtils.getPortletHttpRequest((PortletRequest) externalContext.getNativeRequest());
         } 
         
         else if (request instanceof HttpServletRequest) {

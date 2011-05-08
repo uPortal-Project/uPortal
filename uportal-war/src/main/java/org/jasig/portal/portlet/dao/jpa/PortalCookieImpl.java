@@ -34,6 +34,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -70,7 +71,11 @@ class PortalCookieImpl implements IPortalCookie {
     @Column(name = "PORTAL_COOKIE_ID")
     private final long internalPortalCookieId;
 	
-	@Column(name = "CREATED", nullable = false, updatable = false)
+	@Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
+    @Column(name = "CREATED", nullable = false, updatable = false)
 	private final Date created;
 	@Column(name = "EXPIRES", nullable = false, updatable = true)
 	private Date expires;
@@ -89,6 +94,7 @@ class PortalCookieImpl implements IPortalCookie {
 	@SuppressWarnings("unused")
 	private PortalCookieImpl() {
 		this.internalPortalCookieId = -1;
+		this.entityVersion = -1;
 		this.created = new Date();
 		this.expires = null;
 		this.value = null;
@@ -101,6 +107,7 @@ class PortalCookieImpl implements IPortalCookie {
 	 */
 	PortalCookieImpl(String value, Date expiration) {
 		this.internalPortalCookieId = -1;
+		this.entityVersion = -1;
 		
 		this.value = value;
 		
@@ -156,25 +163,12 @@ class PortalCookieImpl implements IPortalCookie {
 		this.expires = expires;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("PortalCookieImpl [created=");
-		builder.append(created);
-		builder.append(", expires=");
-		builder.append(expires);
-		builder.append(", internalPortalCookieId=");
-		builder.append(internalPortalCookieId);
-		builder.append(", portletCookies=");
-		builder.append(portletCookies);
-		builder.append(", value=");
-		builder.append(value);
-		builder.append("]");
-		return builder.toString();
-	}
+    @Override
+    public String toString() {
+        return "PortalCookieImpl [internalPortalCookieId=" + this.internalPortalCookieId + ", entityVersion="
+                + this.entityVersion + ", created=" + this.created + ", expires=" + this.expires + ", value="
+                + this.value + "]";
+    }
 
     @Override
     public int hashCode() {

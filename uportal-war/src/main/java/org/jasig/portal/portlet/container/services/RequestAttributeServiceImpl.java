@@ -87,7 +87,7 @@ public class RequestAttributeServiceImpl  {
     
     public Object getAttribute(PortletRequest portletRequest, HttpServletRequest httpServletRequest, PortletWindow plutoPortletWindow, String name) {
         if (IPortletRenderer.MULTIVALUED_USERINFO_MAP_ATTRIBUTE.equals(name)) {
-            httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+            httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
             
             //Get the list of user attributes the portal knows about the user
             final String remoteUser = portletRequest.getRemoteUser();

@@ -143,6 +143,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(portalRequestUtils.getOriginalPortletOrPortalRequest(request)).thenReturn(request);
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -256,7 +257,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
                 final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
                 final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
-                assertEquals(1, preferences.size());
+                assertEquals(2, preferences.size());
                 
                 return null;
             }
@@ -273,6 +274,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(portalRequestUtils.getOriginalPortletOrPortalRequest(request)).thenReturn(request);
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -394,6 +396,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(portalRequestUtils.getOriginalPortletOrPortalRequest(request)).thenReturn(request);
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -484,6 +487,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(portalRequestUtils.getOriginalPortletOrPortalRequest(request)).thenReturn(request);
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -565,7 +569,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
                 final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
                 final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
-                assertEquals(2, preferences.size());
+                assertEquals(1, preferences.size());
                 
                 return null;
             }
@@ -582,6 +586,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(portalRequestUtils.getOriginalPortletOrPortalRequest(request)).thenReturn(request);
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -667,6 +672,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(portalRequestUtils.getOriginalPortletOrPortalRequest(request)).thenReturn(request);
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -752,6 +758,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(portalRequestUtils.getOriginalPortletOrPortalRequest(request)).thenReturn(request);
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
@@ -809,6 +816,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(portalRequestUtils.getOriginalPortletOrPortalRequest(request)).thenReturn(request);
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);

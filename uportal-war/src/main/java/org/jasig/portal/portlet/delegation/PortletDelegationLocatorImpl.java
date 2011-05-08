@@ -107,7 +107,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
      */
     @Override
     public PortletDelegationDispatcher createRequestDispatcher(PortletRequest portletRequest, IPortletDefinitionId portletDefinitionId) {
-        final HttpServletRequest request = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpServletRequest request = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         final HttpServletResponse response = this.portalRequestUtils.getOriginalPortalResponse(portletRequest);
         final IPerson person = this.personManager.getPerson(request);
         
@@ -143,7 +143,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
      */
     @Override
     public PortletDelegationDispatcher getRequestDispatcher(PortletRequest portletRequest, IPortletWindowId portletWindowId) {
-        final HttpServletRequest request = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpServletRequest request = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         final IPerson person = this.personManager.getPerson(request);
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);

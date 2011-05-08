@@ -23,7 +23,7 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.utils.web.AttributeScopingHttpServletRequestWrapper;
+import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
@@ -34,7 +34,7 @@ import org.springframework.web.portlet.context.PortletRequestAttributes;
 
 /**
  * Provides access to the original portal and portlet requests using the {@link PortalHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST}
- * and {@link AttributeScopingHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST}
+ * and {@link PortletHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST}
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -46,13 +46,13 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
      * @see org.jasig.portal.url.IPortalRequestUtils#getOriginalPortalRequest(javax.portlet.PortletRequest)
      */
     @Override
-    public HttpServletRequest getOriginalPortalRequest(PortletRequest portletRequest) {
-        final HttpServletRequest portalRequest = (HttpServletRequest)portletRequest.getAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
+    public HttpServletRequest getPortletHttpRequest(PortletRequest portletRequest) {
+        final HttpServletRequest portalRequest = (HttpServletRequest)portletRequest.getAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
         if (portalRequest != null) {
             return portalRequest;
         }
         
-        throw new IllegalArgumentException("The orginal portal HttpServletRequest is not available from the PortletRequest using attribute '" + PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
+        throw new IllegalArgumentException("The orginal portlet HttpServletRequest is not available from the PortletRequest using attribute '" + PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
     }
 
     /* (non-Javadoc)
@@ -68,6 +68,15 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         return portletRequest;
     }
     
+    @Override
+    public HttpServletRequest getOriginalPortletOrPortalRequest(HttpServletRequest request) {
+        final HttpServletRequest portletRequest = (HttpServletRequest)request.getAttribute(PortletHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
+        if (portletRequest != null) {
+            return portletRequest;
+        }
+        
+        return this.getOriginalPortalRequest(request);
+    }
 
     @Override
     public HttpServletRequest getOriginalPortalRequest(WebRequest request) {
@@ -126,7 +135,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
         }
         else if (requestAttributes instanceof PortletRequestAttributes) {
             final PortletRequest request = ((PortletRequestAttributes)requestAttributes).getRequest();
-            return this.getOriginalPortalRequest(request);
+            return this.getPortletHttpRequest(request);
         }
         else {
             throw new IllegalStateException("No ServletRequestAttributes or PortletRequestAttributes available from the RequestContextHolder. " + (requestAttributes == null ? null : requestAttributes.getClass().getName()));

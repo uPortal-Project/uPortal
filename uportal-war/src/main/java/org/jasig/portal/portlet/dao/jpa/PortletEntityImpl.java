@@ -37,6 +37,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
@@ -79,6 +80,10 @@ class PortletEntityImpl implements IPortletEntity {
     @Column(name = "PORTLET_ENT_ID")
     private final long internalPortletEntityId;
     
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @Column(name = "LAYOUT_NODE_ID", nullable = false, updatable = false)
     private final String layoutNodeId;
 
@@ -120,6 +125,7 @@ class PortletEntityImpl implements IPortletEntity {
     @SuppressWarnings("unused")
     private PortletEntityImpl() {
         this.internalPortletEntityId = -1;
+        this.entityVersion = -1;
         this.portletDefinition = null;
         this.layoutNodeId = null;
         this.userId = -1;
@@ -131,6 +137,7 @@ class PortletEntityImpl implements IPortletEntity {
         Validate.notNull(channelSubscribeId, "layoutNodeId can not be null");
         
         this.internalPortletEntityId = -1;
+        this.entityVersion = -1;
         this.portletDefinition = portletDefinition;
         this.layoutNodeId = channelSubscribeId;
         this.userId = userId;
@@ -236,7 +243,9 @@ class PortletEntityImpl implements IPortletEntity {
 
     @Override
     public String toString() {
-        return "PortletEntityImpl [portletEntityId=" + this.portletEntityId + ", layoutNodeId="
-                + this.layoutNodeId + ", userId=" + this.userId + ", windowState=" + this.windowState + "]";
+        return "PortletEntityImpl [internalPortletEntityId=" + this.internalPortletEntityId + ", entityVersion="
+                + this.entityVersion + ", layoutNodeId=" + this.layoutNodeId + ", userId=" + this.userId
+                + ", portletDefinition=" + this.portletDefinition + ", windowState=" + this.windowState
+                + ", portletEntityId=" + this.portletEntityId + "]";
     }
 }

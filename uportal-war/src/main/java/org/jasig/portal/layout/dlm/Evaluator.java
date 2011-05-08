@@ -30,6 +30,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.dom4j.Element;
 import org.hibernate.annotations.Cache;
@@ -68,8 +69,14 @@ public abstract class Evaluator {
     @Column(name = "EVALUATOR_ID")
     private final long evaluatorId;
         
+    @SuppressWarnings("unused")
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     public Evaluator() {
         evaluatorId = -1L;
+        entityVersion = -1;
     }
 
     public abstract boolean isApplicable( IPerson person );

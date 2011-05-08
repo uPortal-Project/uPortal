@@ -182,7 +182,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 		// check to see if a CAS proxy ticket is expected by this portlet
 		if (isPasswordRequested(request, portletWindow)) {
 
-	        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
+	        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
 	        final IUserInstance userInstance = userInstanceManager.getUserInstance(httpServletRequest);
 	        final IPerson person = userInstance.getPerson();
 			final ISecurityContext context = person.getSecurityContext();
@@ -213,7 +213,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 	public boolean isPasswordRequested(PortletRequest request, PortletWindow plutoPortletWindow) throws PortletContainerException {
 
     	// get the list of requested user attributes
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = portletWindow.getPortletEntity();
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();

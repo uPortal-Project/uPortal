@@ -32,6 +32,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 import javax.servlet.http.Cookie;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -78,7 +79,11 @@ class PortletCookieImpl implements IPortletCookie {
     @Column(name = "PORTLET_COOKIE_ID")
     private final long internalPortletCookieId;
 	
-	@Column(name = "NAME", length=500, nullable = false, updatable = false)
+	@Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
+    @Column(name = "NAME", length=500, nullable = false, updatable = false)
 	private final String name;
 	
 	@Column(name = "COOKIE_COMMENT", length=1000, nullable = true, updatable = true)
@@ -103,6 +108,7 @@ class PortletCookieImpl implements IPortletCookie {
 	@SuppressWarnings("unused")
 	private PortletCookieImpl() {
 		this.internalPortletCookieId = -1;
+		this.entityVersion = -1;
 		this.name = null;
 	}
 	/**
@@ -111,6 +117,7 @@ class PortletCookieImpl implements IPortletCookie {
 	 */
 	PortletCookieImpl(Cookie cookie) {
 		this.internalPortletCookieId = -1;
+		this.entityVersion = -1;
 		this.name = cookie.getName();
 		this.updateFromCookie(cookie);
 	}
@@ -259,33 +266,13 @@ class PortletCookieImpl implements IPortletCookie {
 		cookie.setVersion(this.version);
 		return cookie;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("PortletCookieImpl [comment=");
-		builder.append(comment);
-		builder.append(", domain=");
-		builder.append(domain);
-		builder.append(", internalPortletCookieId=");
-		builder.append(internalPortletCookieId);
-		builder.append(", expires=");
-		builder.append(expires);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append(", path=");
-		builder.append(path);
-		builder.append(", secure=");
-		builder.append(secure);
-		builder.append(", value=");
-		builder.append(value);
-		builder.append(", version=");
-		builder.append(version);
-		builder.append("]");
-		return builder.toString();
-	}
+    @Override
+    public String toString() {
+        return "PortletCookieImpl [internalPortletCookieId=" + this.internalPortletCookieId + ", entityVersion="
+                + this.entityVersion + ", name=" + this.name + ", comment=" + this.comment + ", domain=" + this.domain
+                + ", expires=" + this.expires + ", path=" + this.path + ", value=" + this.value + ", version="
+                + this.version + ", secure=" + this.secure + "]";
+    }
     @Override
     public int hashCode() {
         final int prime = 31;

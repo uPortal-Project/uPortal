@@ -57,7 +57,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortletUrlBuilder;
-import org.jasig.portal.utils.web.AttributeScopingHttpServletRequestWrapper;
+import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -365,7 +365,7 @@ public class PortletRendererImpl implements IPortletRenderer {
     }
 
     protected HttpServletRequest setupPortletRequest(HttpServletRequest httpServletRequest) {
-        final AttributeScopingHttpServletRequestWrapper portletHttpServletRequestWrapper = new AttributeScopingHttpServletRequestWrapper(httpServletRequest);
+        final PortletHttpServletRequestWrapper portletHttpServletRequestWrapper = new PortletHttpServletRequestWrapper(httpServletRequest);
         portletHttpServletRequestWrapper.setAttribute(PortletDelegationLocator.PORTLET_DELECATION_LOCATOR_ATTR, this.portletDelegationLocator);
         
         return portletHttpServletRequestWrapper;

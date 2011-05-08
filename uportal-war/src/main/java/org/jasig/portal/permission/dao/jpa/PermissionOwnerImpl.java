@@ -35,10 +35,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -77,6 +76,10 @@ class PermissionOwnerImpl implements IPermissionOwner, Serializable {
     @Column(name = "OWNER_ID")
 	private final Long id;
 	
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @Column(name = "OWNER_FNAME", length = 128, nullable = false, unique = true)
     private String fname;
     
@@ -96,10 +99,12 @@ class PermissionOwnerImpl implements IPermissionOwner, Serializable {
     @SuppressWarnings("unused")
     private PermissionOwnerImpl() {
         this.id = -1l;
+        this.entityVersion = -1;
     }
     
     public PermissionOwnerImpl(String name, String fname) {
         this.id = -1l;
+        this.entityVersion = -1;
         this.fname = fname;
         this.name = name;
     }
@@ -184,17 +189,9 @@ class PermissionOwnerImpl implements IPermissionOwner, Serializable {
                 .toHashCode();
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("id", this.id)
-                .append("fname", this.fname)
-                .append("name", this.name)
-                .append("description", this.description)
-                .toString();
+        return "PermissionOwnerImpl [id=" + this.id + ", entityVersion=" + this.entityVersion + ", fname=" + this.fname
+                + ", name=" + this.name + ", description=" + this.description + "]";
     }
-
 }

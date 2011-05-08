@@ -36,12 +36,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -74,6 +73,10 @@ public class PortletPreferencesImpl implements IPortletPreferences {
     @Column(name = "PORTLET_PREFS_ID")
     private final long portletPreferencesId;
     
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @OneToMany(cascade = CascadeType.ALL, targetEntity = PortletPreferenceImpl.class, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "PORTLET_PREFS_ID")
     @IndexColumn(name = "PREF_ORDER")
@@ -83,6 +86,7 @@ public class PortletPreferencesImpl implements IPortletPreferences {
    
     public PortletPreferencesImpl() {
         this.portletPreferencesId = -1;
+        this.entityVersion = -1;
     }
     
     /* (non-Javadoc)
@@ -161,14 +165,9 @@ public class PortletPreferencesImpl implements IPortletPreferences {
             .toHashCode();
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("portletPreferencesId", this.portletPreferencesId)
-            .append("portletPreferences", this.portletPreferences)
-            .toString();
+        return "PortletPreferencesImpl [portletPreferencesId=" + this.portletPreferencesId + ", entityVersion="
+                + this.entityVersion + "]";
     }
 }

@@ -96,7 +96,7 @@ public class UserLocaleHelper {
 	 * @return
 	 */
 	public Locale getCurrentUserLocale(PortletRequest request) {
-	    final HttpServletRequest originalPortalRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
+	    final HttpServletRequest originalPortalRequest = this.portalRequestUtils.getPortletHttpRequest(request);
 		IUserInstance ui = userInstanceManager.getUserInstance(originalPortalRequest);
 		IUserPreferencesManager upm = ui.getPreferencesManager();
 		final IUserProfile userProfile = upm.getUserProfile();

@@ -29,10 +29,9 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.permission.IPermissionActivity;
@@ -68,6 +67,10 @@ class PermissionActivityImpl implements IPermissionActivity, Serializable {
     @Column(name = "ACTIVITY_ID")
     private final long id;
     
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @Column(name = "ACTIVITY_FNAME", length = 128, nullable = false, unique = true)
     private String fname;
     
@@ -86,10 +89,12 @@ class PermissionActivityImpl implements IPermissionActivity, Serializable {
     @SuppressWarnings("unused")
     private PermissionActivityImpl() {
         this.id = -1;
+        this.entityVersion = -1;
     }
 
     public PermissionActivityImpl(String name, String fname, String targetProviderKey) {
         this.id = -1;
+        this.entityVersion = -1;
         this.name = name;
         this.fname = fname;
         this.targetProviderKey = targetProviderKey;
@@ -135,6 +140,7 @@ class PermissionActivityImpl implements IPermissionActivity, Serializable {
         this.targetProviderKey = targetProviderKey;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -164,18 +170,10 @@ class PermissionActivityImpl implements IPermissionActivity, Serializable {
                 .toHashCode();
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-                .append("id", this.id)
-                .append("fname", this.fname)
-                .append("name", this.name)
-                .append("description", this.description)
-                .append("targetProviderKey", this.targetProviderKey)
-                .toString();
+        return "PermissionActivityImpl [id=" + this.id + ", entityVersion=" + this.entityVersion + ", fname="
+                + this.fname + ", name=" + this.name + ", description=" + this.description + ", targetProviderKey="
+                + this.targetProviderKey + "]";
     }
-
 }

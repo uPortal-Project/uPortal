@@ -192,7 +192,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
 	public boolean isCasProxyTicketRequested(PortletRequest request, PortletWindow plutoPortletWindow) throws PortletContainerException {
 
     	// get the list of requested user attributes
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = portletWindow.getPortletEntity();
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
@@ -219,7 +219,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
 	 */
 	private String getProxyTicket(PortletRequest request) {
 
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
 
         // try to determine the URL for our portlet
 		String targetService = null;

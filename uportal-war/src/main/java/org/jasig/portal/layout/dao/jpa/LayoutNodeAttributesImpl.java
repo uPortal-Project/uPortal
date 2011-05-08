@@ -35,6 +35,7 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -68,6 +69,10 @@ class LayoutNodeAttributesImpl {
     @Column(name = "UP_SS_USER_PREF_LAY_ATTR_ID")
     private final long id;
     
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @Column(name = "NODE_ID", nullable = false, length = 200)
     private final String nodeId;
     
@@ -85,11 +90,13 @@ class LayoutNodeAttributesImpl {
     @SuppressWarnings("unused")
     private LayoutNodeAttributesImpl() {
         this.id = -1;
+        this.entityVersion = -1;
         this.nodeId = null;
     }
     
     public LayoutNodeAttributesImpl(String nodeId) {
         this.id = -1;
+        this.entityVersion = -1;
         this.nodeId = nodeId;
     }
 
@@ -133,6 +140,7 @@ class LayoutNodeAttributesImpl {
 
     @Override
     public String toString() {
-        return "LayoutNodeAttributesImpl [id=" + this.id + ", nodeId=" + this.nodeId + "]";
+        return "LayoutNodeAttributesImpl [id=" + this.id + ", entityVersion=" + this.entityVersion + ", nodeId="
+                + this.nodeId + "]";
     }
 }

@@ -38,6 +38,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
@@ -80,6 +81,10 @@ class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @GeneratedValue(generator = "UP_SS_DESC_GEN")
     @Column(name = "SS_DESC_ID")
     private final long id;
+    
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
     
     //Hidden reference to the child stylesheet user preferences, used to allow cascading deletes where when a stylesheet descriptor is deleted all associated preferences are also deleted
     //MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance will be TERRIBLE
@@ -126,10 +131,12 @@ class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @SuppressWarnings("unused")
     private StylesheetDescriptorImpl() {
         this.id = -1;
+        this.entityVersion = -1;
     }
     
     public StylesheetDescriptorImpl(String name, String stylesheetResource) {
         this.id = -1;
+        this.entityVersion = -1;
         this.setName(name);
         this.setStylesheetResource(stylesheetResource);
     }
@@ -329,7 +336,8 @@ class StylesheetDescriptorImpl implements IStylesheetDescriptor {
 
     @Override
     public String toString() {
-        return "StylesheetDescriptorImpl [id=" + this.id + ", name=" + this.name + ", description=" + this.description
-                + ", stylesheetResource=" + this.stylesheetResource + "]";
+        return "StylesheetDescriptorImpl [id=" + this.id + ", entityVersion=" + this.entityVersion + ", name="
+                + this.name + ", urlNodeSyntaxHelperName=" + this.urlNodeSyntaxHelperName + ", description="
+                + this.description + ", stylesheetResource=" + this.stylesheetResource + "]";
     }
 }

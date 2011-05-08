@@ -86,7 +86,7 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
             return;
         }
 
-        final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpServletRequest portalRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         final HttpSession portalSession = portalRequest.getSession();
         
         if (portalSession != null) {

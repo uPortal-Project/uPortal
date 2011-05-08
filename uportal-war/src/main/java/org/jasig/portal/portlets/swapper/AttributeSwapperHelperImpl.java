@@ -233,7 +233,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         this.overwritingPersonAttributeDao.setUserAttributeOverride(uid, attributes);
 
         //Update the IPerson, setting the overridden attributes
-        final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpServletRequest portalRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         
         final IPerson person = this.personManager.getPerson(portalRequest);
         final Map<String, List<Object>> multivaluedAttributes = MultivaluedPersonAttributeUtils.toMultivaluedMap(attributes);
@@ -256,7 +256,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
         //Remove the IPerson attribute override, bit of a hack as we really just remove all overrides
         //then re-add all attributes from person directory
         final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
-        final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpServletRequest portalRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         
         final IPerson person = this.personManager.getPerson(portalRequest);
 

@@ -23,6 +23,7 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Type;
@@ -34,6 +35,10 @@ import org.jasig.portal.layout.om.IStylesheetData;
  */
 @MappedSuperclass
 abstract class AbstractStylesheetDataImpl implements IStylesheetData {
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @Column(name = "NAME", length=100, nullable = false, updatable = false)
     private final String name;
     
@@ -49,10 +54,12 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     private String description;
     
     AbstractStylesheetDataImpl() {
+        this.entityVersion = -1;
         this.name = null;
     }
     
     public AbstractStylesheetDataImpl(String name, Scope scope) {
+        this.entityVersion = -1;
         this.name = name;
         this.scope = scope;
     }
@@ -142,7 +149,8 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
 
     @Override
     public String toString() {
-        return "AbstractStylesheetDataImpl [name=" + this.name + ", defaultValue=" + this.defaultValue
-                + ", scope=" + this.scope + ", description=" + this.description + "]";
+        return "AbstractStylesheetDataImpl [entityVersion=" + this.entityVersion + ", name=" + this.name
+                + ", defaultValue=" + this.defaultValue + ", scope=" + this.scope + ", description=" + this.description
+                + "]";
     }
 }

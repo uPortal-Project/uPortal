@@ -42,9 +42,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -73,6 +72,10 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     @Column(name = "USER_DIR_ID")
     private final long id;
     
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @Column(name = "USER_NAME", length = 35, nullable = false, unique = true)
     private String name;
     
@@ -91,10 +94,12 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     @SuppressWarnings("unused")
     private LocalAccountPersonImpl() {
         this.id = -1;
+        this.entityVersion = -1;
     }
     
     public LocalAccountPersonImpl(String name) {
         this.id = -1;
+        this.entityVersion = -1;
         this.name = name;
     }
     
@@ -240,6 +245,7 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         attributes.add(new LocalAccountPersonAttributeImpl(name, Collections.singletonList(value)));
     }
     
+    @Override
     public boolean removeAttribute(String name) {
         return attributes.remove(name);
     }
@@ -346,11 +352,7 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-        .append("id", this.id)
-        .append("name", this.name)
-        .append("attributes", this.attributes)
-        .toString();
+        return "LocalAccountPersonImpl [id=" + this.id + ", entityVersion=" + this.entityVersion + ", name="
+                + this.name + ", lastPasswordChange=" + this.lastPasswordChange + "]";
     }
-
 }

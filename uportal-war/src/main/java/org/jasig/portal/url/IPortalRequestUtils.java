@@ -32,21 +32,24 @@ import org.springframework.web.context.request.WebRequest;
 public interface IPortalRequestUtils {
     
     /**
+     * Gets the HttpServletRequest passed into Pluto to initiate this portlet request 
+     * 
+     * @param portletRequest The request targeted to the portlet
+     * @return The portlet's request, scoped to the portlet.
+     */
+    public HttpServletRequest getPortletHttpRequest(PortletRequest portletRequest);
+    
+    /**
      * Useful for container service callbacks and service portlets that are provided with
      * the portlet's request but need access to the portal's HttpServletRequest. 
      * 
-     * @param portletRequest The request targeted to the portlet
+     * @param request The request targeted to the portlet
      * @return The portal's request, not scoped to a particular portlet
      */
-    public HttpServletRequest getOriginalPortalRequest(PortletRequest portletRequest);
+    public HttpServletRequest getOriginalPortalRequest(HttpServletRequest request);
     
     /**
-     * @see #getOriginalPortalRequest(PortletRequest)
-     */
-    public HttpServletRequest getOriginalPortalRequest(HttpServletRequest portletRequest);
-    
-    /**
-     * @see #getOriginalPortalRequest(PortletRequest)
+     * @see #getPortletHttpRequest(PortletRequest)
      */
     public HttpServletRequest getOriginalPortalRequest(WebRequest request);
     
@@ -69,4 +72,10 @@ public interface IPortalRequestUtils {
      * portal HttpServletRequest 
      */
     public HttpServletRequest getCurrentPortalRequest();
+    
+    /**
+     * Useful for container service callbacks and service portlets that are provided with a {@link HttpServletRequest}
+     * but need either the root portlet request or the root portal request (depending on where processing is happening at that point)
+     */
+    public HttpServletRequest getOriginalPortletOrPortalRequest(HttpServletRequest portletRequest);
 }

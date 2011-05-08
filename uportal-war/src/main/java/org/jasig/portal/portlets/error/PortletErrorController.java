@@ -92,7 +92,7 @@ public class PortletErrorController extends AbstractController {
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request,
 			RenderResponse response) throws Exception {
 		Map<String, Object> model = new HashMap<String, Object>();
-		HttpServletRequest httpRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
+		HttpServletRequest httpRequest = this.portalRequestUtils.getPortletHttpRequest(request);
 		IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpRequest);
 		if(canSeeErrorDetails(userInstance)) {
 			IPortletWindowId currentFailedPortletWindowId = (IPortletWindowId) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID);

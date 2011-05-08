@@ -52,6 +52,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -98,6 +99,10 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @GeneratedValue(generator = "UP_PORTLET_DEF_GEN")
     @Column(name = "PORTLET_DEF_ID")
     private final long internalPortletDefinitionId;
+    
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
     
     //Hidden reference to the child portlet entities, used to allow cascading deletes where when a portlet definition is deleted all associated entities are also deleted
     //MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance will be TERRIBLE
@@ -191,6 +196,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @SuppressWarnings("unused")
     private PortletDefinitionImpl() {
         this.internalPortletDefinitionId = -1;
+        this.entityVersion = -1;
         this.portletPreferences = null;
     }
     
@@ -205,6 +211,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
         Validate.notNull(portletName);
         
         this.internalPortletDefinitionId = -1;
+        this.entityVersion = -1;
         this.portletPreferences = new PortletPreferencesImpl();
         this.portletType = portletType;
         this.name = name;

@@ -223,7 +223,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
 	public Map<String, PortletPreference> getDefaultPreferences(PortletWindow plutoPortletWindow, PortletRequest portletRequest)
 			throws PortletContainerException {
         
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = portletWindow.getPortletEntity();
@@ -262,7 +262,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      */
 	@Override
     public Map<String,PortletPreference> getStoredPreferences(PortletWindow plutoPortletWindow, PortletRequest portletRequest) throws PortletContainerException {
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
         final IPortletEntity portletEntity = portletWindow.getPortletEntity();
@@ -300,7 +300,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      */
 	@Override
     public void store(PortletWindow plutoPortletWindow, PortletRequest portletRequest, Map<String,PortletPreference> newPreferences) throws PortletContainerException {
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         
         //Determine if the user is a guest
         final boolean isGuest = isGuestUser(portletRequest);
@@ -446,7 +446,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * Determine if the user for the specified request is a guest as it pertains to shared portlet preferences.
      */
     protected boolean isGuestUser(PortletRequest portletRequest) {
-        final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
+        final HttpServletRequest portalRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         final IPerson person = this.personManager.getPerson(portalRequest);
         return person.isGuest();
     }

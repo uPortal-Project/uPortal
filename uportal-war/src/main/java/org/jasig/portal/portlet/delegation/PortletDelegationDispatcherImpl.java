@@ -97,7 +97,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
 
     @Override
     public DelegationActionResponse doAction(ActionRequest actionRequest, ActionResponse actionResponse, DelegationRequest delegationRequest) throws IOException {
-        final HttpServletRequest request = this.portalRequestUtils.getOriginalPortalRequest(actionRequest);
+        final HttpServletRequest request = this.portalRequestUtils.getPortletHttpRequest(actionRequest);
         final HttpServletResponse response = this.portalRequestUtils.getOriginalPortalResponse(actionRequest);
 
         //Sanity check that the dispatch is being called by the same user it was created for
@@ -158,7 +158,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
 
     @Override
     public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse, DelegationRequest delegationRequest, Writer writer) throws IOException {
-        final HttpServletRequest request = this.portalRequestUtils.getOriginalPortalRequest(renderRequest);
+        final HttpServletRequest request = this.portalRequestUtils.getPortletHttpRequest(renderRequest);
         final HttpServletResponse response = this.portalRequestUtils.getOriginalPortalResponse(renderRequest);
 
         //Sanity check that the dispatch is being called by the same user it was created for

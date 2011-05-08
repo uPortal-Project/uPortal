@@ -35,9 +35,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -66,6 +65,10 @@ class LocalAccountPersonAttributeImpl implements Serializable {
     @GeneratedValue(generator = "UP_PERSON_ATTR_GEN")
     private final int id;
     
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @Column(name = "ATTR_NAME", nullable = false)
     private String name;
     
@@ -84,10 +87,12 @@ class LocalAccountPersonAttributeImpl implements Serializable {
     @SuppressWarnings("unused")
     private LocalAccountPersonAttributeImpl() { 
         this.id = -1;
+        this.entityVersion = -1;
     }
     
     public LocalAccountPersonAttributeImpl(String name, List<String> values) {
         this.id = -1;
+        this.entityVersion = -1;
         this.name = name;
         this.setValues(values);
     }
@@ -153,11 +158,7 @@ class LocalAccountPersonAttributeImpl implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-        .append("id", this.id)
-        .append("name", this.name)
-        .append("values", this.values)
-        .toString();
+        return "LocalAccountPersonAttributeImpl [id=" + this.id + ", entityVersion=" + this.entityVersion + ", name="
+                + this.name + "]";
     }
-
 }

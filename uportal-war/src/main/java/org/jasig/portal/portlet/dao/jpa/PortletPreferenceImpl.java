@@ -35,6 +35,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -75,6 +76,10 @@ public class PortletPreferenceImpl implements IPortletPreference {
     @Column(name = "PORTLET_PREF_ID")
     private final long portletPreferenceId;
     
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @Column(name = "NAME")//, nullable = false)
     @Type(type = "materialized_clob")
     private String name = null;
@@ -97,10 +102,12 @@ public class PortletPreferenceImpl implements IPortletPreference {
     
     public PortletPreferenceImpl() {
         this.portletPreferenceId = -1;
+        this.entityVersion = -1;
     }
     
     public PortletPreferenceImpl(PortletPreferenceImpl portletPreference) {
         this.portletPreferenceId = -1;
+        this.entityVersion = -1;
         this.name = portletPreference.getName();
         this.readOnly = portletPreference.isReadOnly();
         this.setValues(portletPreference.getValues());
@@ -108,6 +115,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
     
     public PortletPreferenceImpl(PortletPreference portletPreference) {
         this.portletPreferenceId = -1;
+        this.entityVersion = -1;
         this.name = portletPreference.getName();
         this.readOnly = portletPreference.isReadOnly();
 
@@ -116,6 +124,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
     }
     public PortletPreferenceImpl(Preference preference) {
     	this.portletPreferenceId = -1;
+    	this.entityVersion = -1;
     	this.name = preference.getName();
     	this.readOnly = preference.isReadOnly();
     	
@@ -124,6 +133,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
     
     public PortletPreferenceImpl(String name, boolean readOnly, String... values) {
         this.portletPreferenceId = -1;
+        this.entityVersion = -1;
         this.name = name;
         this.readOnly = readOnly;
         this.setValues(values);
@@ -224,16 +234,9 @@ public class PortletPreferenceImpl implements IPortletPreference {
             .toHashCode();
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("portletPreferenceId", this.portletPreferenceId)
-            .append("name", this.name)
-            .append("readOnly", this.readOnly)
-            .append("values", this.values)
-            .toString();
+        return "PortletPreferenceImpl [portletPreferenceId=" + this.portletPreferenceId + ", entityVersion="
+                + this.entityVersion + ", name=" + this.name + ", readOnly=" + this.readOnly + "]";
     }
 }

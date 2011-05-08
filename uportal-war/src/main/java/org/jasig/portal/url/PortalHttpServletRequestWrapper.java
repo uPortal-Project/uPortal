@@ -249,6 +249,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
     /* (non-Javadoc)
      * @see org.jasig.portal.url.AbstractHttpServletRequestWrapper#getLocales()
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Enumeration<Locale> getLocales() {
         if (super.getSession(false) == null) {
