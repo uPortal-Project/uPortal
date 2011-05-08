@@ -21,9 +21,10 @@ package org.jasig.portal.url;
 
 import static junit.framework.Assert.assertNull;
 
+import static org.mockito.Mockito.when;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -189,14 +190,15 @@ public class PortalUrlProviderImplTest {
     public void testGetPortalUrlBuilderByPortletWindowId() {
         //Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
-        when(portletWindowRegistry.getParentPortletEntity(request, portletWindowId)).thenReturn(portletEntity);
-        when(portletEntity.getChannelSubscribeId()).thenReturn(folderNodeId);
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getLayoutNodeId()).thenReturn(folderNodeId);
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         when(userLayoutManager.getNode(folderNodeId)).thenReturn(node);
         when(portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, folderNodeId)).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
         when(node.getId()).thenReturn(folderNodeId);
         
         //Run the test
@@ -213,8 +215,8 @@ public class PortalUrlProviderImplTest {
     public void testGetPortalUrlBuilderByPortletFname() {
         //Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
-        when(portletWindowRegistry.getParentPortletEntity(request, portletWindowId)).thenReturn(portletEntity);
-        when(portletEntity.getChannelSubscribeId()).thenReturn(folderNodeId);
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getLayoutNodeId()).thenReturn(folderNodeId);
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
@@ -222,6 +224,7 @@ public class PortalUrlProviderImplTest {
         when(this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, portletDefinitionFname)).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         when(userLayoutManager.getNode(folderNodeId)).thenReturn(node);
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
         when(node.getId()).thenReturn(folderNodeId);
         
         //Run the test

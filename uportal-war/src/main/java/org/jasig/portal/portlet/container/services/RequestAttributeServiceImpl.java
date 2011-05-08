@@ -147,8 +147,8 @@ public class RequestAttributeServiceImpl  {
      * @throws PortletContainerException If expected attributes cannot be determined
      */
     protected List<? extends UserAttribute> getExpectedUserAttributes(HttpServletRequest request, final IPortletWindow portletWindow) {
-        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindow.getPortletWindowId());
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         final PortletApplicationDefinition portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
         
         return portletApplicationDescriptor.getUserAttributes();

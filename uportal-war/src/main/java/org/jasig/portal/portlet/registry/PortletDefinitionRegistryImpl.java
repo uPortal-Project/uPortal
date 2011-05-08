@@ -89,6 +89,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /* (non-Javadoc)
      * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
      */
+    @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
@@ -96,38 +97,45 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getPortletDefinition(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
+    @Override
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId) {
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
         
         return this.portletDefinitionDao.getPortletDefinition(portletDefinitionId);
     }
     
+    @Override
     public IPortletDefinition getPortletDefinition(String portletDefinitionIdString) {
         Validate.notNull(portletDefinitionIdString, "portletDefinitionId can not be null");
         
         return this.portletDefinitionDao.getPortletDefinition(portletDefinitionIdString);
 	}
     
+    @Override
     public IPortletDefinition getPortletDefinitionByFname(String fname) {
         Validate.notNull(fname, "portletFname can not be null");
         
         return this.portletDefinitionDao.getPortletDefinitionByFname(fname);
 	}
     
+    @Override
     public IPortletDefinition getPortletDefinitionByName(String name) {
         Validate.notNull(name, "portletFname can not be null");
         
         return this.portletDefinitionDao.getPortletDefinitionByName(name);
 	}
 
+    @Override
     public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial) {
     	return this.portletDefinitionDao.searchForPortlets(term, allowPartial);
     }
 
+    @Override
     public List<IPortletDefinition> getAllPortletDefinitions() {
     	return this.portletDefinitionDao.getPortletDefinitions();
     }
 
+    @Override
     public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title, String applicationId, String portletName, boolean isFramework) {
         return this.portletDefinitionDao.createPortletDefinition(portletType, fname, name, title, applicationId, portletName, isFramework);
     }
@@ -135,11 +143,13 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
 	/* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#savePortletDefinition(org.jasig.portal.portlet.om.IPortletDefinition)
      */
+    @Override
     public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition) {
         Validate.notNull(portletDefinition, "portletDefinition can not be null");
         return this.portletDefinitionDao.updatePortletDefinition(portletDefinition);
     }
     
+    @Override
     public void deletePortletDefinition(IPortletDefinition portletDefinition) {
         Validate.notNull(portletDefinition, "portletDefinition can not be null");
         this.portletDefinitionDao.deletePortletDefinition(portletDefinition);
@@ -148,6 +158,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletApplicationDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
+    @Override
     public PortletApplicationDefinition getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) {
         final IPortletDefinition portletDefinition = this.getPortletDefinition(portletDefinitionId);
         if (portletDefinition == null) {
@@ -168,6 +179,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
+    @Override
     public PortletDefinition getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) {
         final IPortletDefinition portletDefinition = this.getPortletDefinition(portletDefinitionId);
         if (portletDefinition == null) {
@@ -189,6 +201,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
      * Get the portletApplicationId and portletName for the specified channel definition id. The portletApplicationId
      * will be {@link Tuple#first} and the portletName will be {@link Tuple#second}
      */
+    @Override
     public Tuple<String, String> getPortletDescriptorKeys(IPortletDefinition portletDefinition) {
         
         final String portletApplicationId;

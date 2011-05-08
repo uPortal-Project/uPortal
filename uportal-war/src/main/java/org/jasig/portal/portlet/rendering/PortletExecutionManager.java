@@ -30,7 +30,6 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
@@ -307,7 +306,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 	 */
 	protected boolean doesPortletNeedHeaderWorker(IPortletWindowId portletWindowId, HttpServletRequest request) {
 		IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-		PortletDefinition portletDefinition = portletWindow.getPortletDefinition();
+		PortletDefinition portletDefinition = portletWindow.getPlutoPortletWindow().getPortletDefinition();
 		ContainerRuntimeOption renderHeaderOption = portletDefinition.getContainerRuntimeOption(PORTLET_RENDER_HEADERS_OPTION);
 		boolean result = false;
 		if(renderHeaderOption != null) {
@@ -551,9 +550,10 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
      */
     @Override
     public String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
-        final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
-        final IPortletDefinitionParameter disableDynamicTitle = parentPortletDefinition.getParameter("disableDynamicTitle");
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final IPortletDefinitionParameter disableDynamicTitle = portletDefinition.getParameter("disableDynamicTitle");
         
         if (disableDynamicTitle == null || !Boolean.parseBoolean(disableDynamicTitle.getValue())) {
             final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
@@ -574,7 +574,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         }
         
 		// return portlet title from channel definition
-        return parentPortletDefinition.getTitle();
+        return portletDefinition.getTitle();
     }
 
     public int getPortletNewItemCount(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
@@ -613,7 +613,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     protected IPortletWindow getDefaultPortletWindow(String subscribeId, HttpServletRequest request) {
         try {
             final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, subscribeId);
+            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, subscribeId);
             final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
             return portletWindow;
         }
@@ -623,11 +623,10 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     }
     
     protected int getPortletRenderTimeout(IPortletWindowId portletWindowId, HttpServletRequest request) {
-        final IPortletEntity parentPortletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
-        final IPortletDefinition parentPortletDefinition = this.portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
-//        return parentPortletDefinition.getChannelDefinition().getTimeout();
-        //TODO just for debugging
-        return (int)TimeUnit.MINUTES.toMillis(5);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        final IPortletEntity parentPortletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = parentPortletEntity.getPortletDefinition();
+        return portletDefinition.getTimeout();
     }
 
     protected IPortletRenderExecutionWorker getRenderedPortletHeader(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {

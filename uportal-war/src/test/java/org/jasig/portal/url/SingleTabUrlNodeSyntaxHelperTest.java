@@ -63,7 +63,7 @@ public class SingleTabUrlNodeSyntaxHelperTest {
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("wid");
         
         when(this.userInstanceManager.getUserInstance(request)).thenReturn(this.userInstance);
-        when(this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, "fname", "id")).thenReturn(portletEntity);
+        when(this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, "fname", "id")).thenReturn(portletEntity);
         when(this.portletEntity.getPortletEntityId()).thenReturn(portletEntityId);
         when(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId)).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
@@ -82,7 +82,7 @@ public class SingleTabUrlNodeSyntaxHelperTest {
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("wid");
         
         when(this.userInstanceManager.getUserInstance(request)).thenReturn(this.userInstance);
-        when(this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, "fname")).thenReturn(portletEntity);
+        when(this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, "fname")).thenReturn(portletEntity);
         when(this.portletEntity.getPortletEntityId()).thenReturn(portletEntityId);
         when(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId)).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);

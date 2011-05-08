@@ -47,6 +47,10 @@ public interface IPortletDefinitionRegistry {
 
     public IPortletDefinition getPortletDefinition(String portletDefinitionIdString);
 
+    /**
+     * @param fname The functional name of the portlet definition
+     * @return The definition or null of none exists for the specified fname
+     */
     public IPortletDefinition getPortletDefinitionByFname(String fname);
 
     public IPortletDefinition getPortletDefinitionByName(String name);

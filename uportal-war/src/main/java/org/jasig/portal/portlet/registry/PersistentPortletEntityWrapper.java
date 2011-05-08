@@ -21,6 +21,7 @@ package org.jasig.portal.portlet.registry;
 
 import javax.portlet.WindowState;
 
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -35,36 +36,37 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
 class PersistentPortletEntityWrapper implements IPortletEntity {
     private final IPortletEntity persistentEntity;
     private final IPortletEntityId standardEntityId;
-    /**
-     * @param persistentEntity
-     */
-    public PersistentPortletEntityWrapper(IPortletEntity persistentEntity) {
-        this.persistentEntity = persistentEntity;
-        
-        this.standardEntityId = new PortletEntityIdImpl(
-                this.persistentEntity.getPortletDefinitionId(), 
-                this.persistentEntity.getChannelSubscribeId(),
-                this.persistentEntity.getUserId());
-    }
     
+    public PersistentPortletEntityWrapper(IPortletEntity persistentEntity, IPortletEntityId standardEntityId) {
+        this.persistentEntity = persistentEntity;
+        this.standardEntityId = standardEntityId;
+    }
+
     /**
      * @return The wrapped entity
      */
     public IPortletEntity getPersistentEntity() {
         return this.persistentEntity;
     }
+    
+    @Override
+    public IPortletDefinitionId getPortletDefinitionId() {
+        return this.persistentEntity.getPortletDefinitionId();
+    }
 
     @Override
     public IPortletEntityId getPortletEntityId() {
         return this.standardEntityId;
     }
+
     @Override
-    public IPortletDefinitionId getPortletDefinitionId() {
-        return this.persistentEntity.getPortletDefinitionId();
+    public IPortletDefinition getPortletDefinition() {
+        return this.persistentEntity.getPortletDefinition();
     }
+
     @Override
-    public String getChannelSubscribeId() {
-        return this.persistentEntity.getChannelSubscribeId();
+    public String getLayoutNodeId() {
+        return this.persistentEntity.getLayoutNodeId();
     }
     @Override
     public int getUserId() {

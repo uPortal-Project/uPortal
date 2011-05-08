@@ -177,15 +177,15 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
         
         //Check each subscription to see what events it is registered to see
         for (final String channelSubscribeId : allSubscribedChannels) {
-            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, channelSubscribeId);
-            final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
+            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, channelSubscribeId);
+            final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+            final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
             
             final PortletDefinition portletDescriptor;
             try {
                 portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
             }
             catch (DataRetrievalFailureException e) {
-                final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
                 this.logger.warn("Failed to retrieve portlet descriptor for: " + portletDefinition.getFName() + " Event handling for this portlet will be skipped." , e);
                 continue;
             }
@@ -228,7 +228,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
         // now test if object is jaxb
         final EventDefinition eventDefinitionDD = getEventDefintion(portletWindow, event.getQName()); 
         
-        final PortletDefinition portletDefinition = portletWindow.getPortletDefinition();
+        final PortletDefinition portletDefinition = portletWindow.getPlutoPortletWindow().getPortletDefinition();
         final PortletApplicationDefinition application = portletDefinition.getApplication();
         final String portletApplicationName = application.getName();
         
@@ -265,7 +265,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
 
     //TODO cache this resolution
     protected EventDefinition getEventDefintion(IPortletWindow portletWindow, QName name) {
-        PortletApplicationDefinition appDD = portletWindow.getPortletDefinition().getApplication();
+        PortletApplicationDefinition appDD = portletWindow.getPlutoPortletWindow().getPortletDefinition().getApplication();
         for (EventDefinition def : appDD.getEventDefinitions()) {
             if (def.getQName() != null) {
                 if (def.getQName().equals(name))

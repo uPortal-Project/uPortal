@@ -226,8 +226,8 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
-        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
 
         
@@ -265,7 +265,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
-        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
         
         //Linked hash map used to add preferences in order loaded from the descriptor, definition and entity
         final Map<String, PortletPreference> preferencesMap = new LinkedHashMap<String, PortletPreference>();
@@ -311,9 +311,9 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         }
 
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
-        IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
+        IPortletEntity portletEntity = portletWindow.getPortletEntity();
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
 
         //Is this CONFIG mode
@@ -335,7 +335,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             prefLock = NoopLock.INSTANCE;
         }
         else {
-            prefLock = this.portletEntityRegistry.getPortletEntityLock(portletEntityId);
+            prefLock = this.portletEntityRegistry.getPortletEntityLock(httpServletRequest, portletEntityId);
         }
 
         //Do a tryLock firsrt so that we can warn about concurrent preference modification if it fails
@@ -351,7 +351,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
                 
                 //Refresh the portlet entity that may have been changed by the thread we were blocked by
                 if (!configMode) {
-                    portletEntity = this.portletEntityRegistry.getPortletEntity(portletEntityId);
+                    portletEntity = this.portletEntityRegistry.getPortletEntity(httpServletRequest, portletEntityId);
                 }
             }
             
@@ -393,7 +393,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
                 //Update the portlet entity with the new preferences
                 final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
                 entityPreferences.setPortletPreferences(preferencesList);
-                this.portletEntityRegistry.storePortletEntity(portletEntity);
+                this.portletEntityRegistry.storePortletEntity(httpServletRequest, portletEntity);
             }
             //Must be a guest and share must be off so store the prefs on the session
             else {

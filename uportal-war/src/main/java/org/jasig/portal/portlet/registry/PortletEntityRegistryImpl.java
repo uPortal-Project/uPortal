@@ -19,30 +19,26 @@
 
 package org.jasig.portal.portlet.registry;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.regex.Pattern;
 
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -54,13 +50,19 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.utils.threading.NoopLock;
+import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.jasig.portal.utils.web.PortalWebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.orm.hibernate3.HibernateJdbcException;
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
+
+import com.google.common.base.Function;
 
 /**
  * Provides access to IPortletEntity objects and convenience methods for creating
@@ -73,147 +75,96 @@ import org.springframework.web.util.WebUtils;
  */
 @Service
 public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
-    public static final String INTERIM_PORTLET_ENTITY_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".INTERIM_PORTLET_ENTITY_MAP";
-    public static final String PORTLET_ENTITY_ID_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_ID_MAP";
-    public static final String PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE";
+    static final char ID_PART_SEPERATOR = '_';
+    static final Pattern ID_PART_SEPERATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPERATOR)));
     
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    static final String PORTLET_ENTITY_DATA_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_DATA";
+    static final String PORTLET_ENTITY_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY";
+    static final String PORTLET_ENTITY_ID_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_ID_MAP";
+    static final String PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE";
     
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
+    private IUserInstanceManager userInstanceManager;
     private IPortletEntityDao portletEntityDao;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
-    
-    
-    /**
-     * @return the portletEntityDao
-     */
-    public IPortletEntityDao getPortletEntityDao() {
-        return portletEntityDao;
-    }
-    /**
-     * @param portletEntityDao the portletEntityDao to set
-     */
+    private Ehcache entityIdParseCache;
+
     @Autowired
-    public void setPortletEntityDao(@Qualifier("main") IPortletEntityDao portletEntityDao) {
+    public void setEntityIdParseCache(@Qualifier("org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.idParseCache") Ehcache entityIdParseCache) {
+        this.entityIdParseCache = entityIdParseCache;
+    }
+    @Autowired
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        this.userInstanceManager = userInstanceManager;
+    }
+    @Autowired
+    public void setPortletEntityDao(@Qualifier("transient") IPortletEntityDao portletEntityDao) {
         this.portletEntityDao = portletEntityDao;
     }
-
-    /**
-     * @return the portletDefinitionRegistry
-     */
-    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
-        return portletDefinitionRegistry;
-    }
-    /**
-     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
-     */
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-    
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#createPortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
-     */
-    @Override
-    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId) {
-        Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
-        Validate.notNull(channelSubscribeId, "channelSubscribeId can not be null");
-        
-        final InterimPortletEntityImpl interimPortletEntity = new InterimPortletEntityImpl(portletDefinitionId, channelSubscribeId, userId);
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace("Created InterimPortletEntity " + interimPortletEntity.getPortletEntityId() + " for def=" + portletDefinitionId + ", sub=" + channelSubscribeId + ", usr=" + userId);
-        }
-        
-        this.storeInterimPortletEntity(interimPortletEntity);
-        return interimPortletEntity;
-    }
-    
-    /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(org.jasig.portal.portlet.om.IPortletEntityId)
      */
     @Override
-    public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId) {
+    public IPortletEntity getPortletEntity(HttpServletRequest request, IPortletEntityId portletEntityId) {
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
-        final InterimPortletEntityImpl interimPortletEntity = this.getInterimPortletEntity(portletEntityId);
-        if (interimPortletEntity != null) {
-            return interimPortletEntity;
-        }
         
-        //Need to find a mapped persistent entity ID to do a DB lookup
-        final IPortletEntityId persistentEntityId = this.getPersistentId(portletEntityId);
-        if (persistentEntityId == null) {
-            return null;
-        }
+        //Sync on the request map to make sure duplicate IPortletEntitys aren't ever created
+        final PortletEntityCache<IPortletEntity> portletEntityCache = this.getPortletEntityMap(request);
         
-        final IPortletEntity persistentPortletEntity = this.portletEntityDao.getPortletEntity(persistentEntityId);
-        if (persistentPortletEntity == null) {
-            return null;
-        }
-        
-        return new PersistentPortletEntityWrapper(persistentPortletEntity);
+        return this.getPortletEntity(request, portletEntityCache, portletEntityId, null, -1);
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(java.lang.String)
      */
     @Override
-    public IPortletEntity getPortletEntity(String portletEntityIdString) {
-        Validate.notNull(portletEntityIdString, "portletEntityId can not be null");
-        return this.getPortletEntity(new PortletEntityIdImpl(portletEntityIdString));
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(java.lang.String, int)
-     */
-    @Override
-    public IPortletEntity getPortletEntity(String channelSubscribeId, int userId) {
-        Validate.notNull(channelSubscribeId, "channelSubscribeId can not be null");
-        final InterimPortletEntityImpl interimPortletEntity = this.getInterimPortletEntity(channelSubscribeId, userId);
-        if (interimPortletEntity != null) {
-            return interimPortletEntity;
-        }
-        
-        final IPortletEntity persistentPortletEntity = this.portletEntityDao.getPortletEntity(channelSubscribeId, userId);
-        if (persistentPortletEntity == null) {
-            return null;
-        }
-        
-        final PersistentPortletEntityWrapper wrappedPortletEntity = new PersistentPortletEntityWrapper(persistentPortletEntity);
-        this.setPersistentIdMapping(wrappedPortletEntity.getPortletEntityId(), persistentPortletEntity.getPortletEntityId());
-        
-        return wrappedPortletEntity;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntitiesForUser(int)
-     */
-    @Override
-    public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
-        final Set<IPortletEntity> persistentPortletEntities = this.portletEntityDao.getPortletEntitiesForUser(userId);
-        
-        final Set<IPortletEntity> wrappedPortletEntities = new LinkedHashSet<IPortletEntity>();
-        for (final IPortletEntity persistentPortletEntity : persistentPortletEntities) {
-            final PersistentPortletEntityWrapper wrappedPortletEntity = new PersistentPortletEntityWrapper(persistentPortletEntity);
-            this.setPersistentIdMapping(wrappedPortletEntity.getPortletEntityId(), persistentPortletEntity.getPortletEntityId());
-            wrappedPortletEntities.add(wrappedPortletEntity);
-        }
-        
-        final Set<InterimPortletEntityImpl> interimPortletEntities = this.getInterimPortletEntities(userId);
-        if (interimPortletEntities != null) {
-            wrappedPortletEntities.addAll(interimPortletEntities);
-        }
-        
-        return wrappedPortletEntities;
+    public IPortletEntity getPortletEntity(HttpServletRequest request, String portletEntityIdString) {
+        final IPortletEntityId portletEntityId = this.parseConsistentPortletEntityId(request, portletEntityIdString);
+        return this.getPortletEntity(request, portletEntityId);
     }
     
     @Override
-    public IPortletEntity getOrCreatePortletEntity(IUserInstance userInstance, String channelSubscribeId) {
+    public IPortletEntity getOrCreateDefaultPortletEntity(HttpServletRequest request, IPortletDefinitionId portletDefinitionId) {
+        Validate.notNull(request, "HttpServletRequest cannot be null");
+        Validate.notNull(portletDefinitionId, "portletDefinitionId cannot be null");
+        
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+        if (portletDefinition == null) {
+            throw new IllegalArgumentException("No portlet definition found for id '" + portletDefinitionId + "'.");
+        }
+        
+        //Determine the appropriate portlet window ID for the definition
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        
+        //Determine the subscribe ID
+        final String portletFName = portletDefinition.getFName();
+        final String layoutNodeId = userLayoutManager.getSubscribeId(portletFName);
+        if (layoutNodeId == null) {
+            throw new IllegalArgumentException("No layout node ID found for fname '" + portletFName + "'.");
+        }
+        
+        this.logger.trace("Found layout node {} for portlet definition {}", layoutNodeId, portletFName);
+        
+        final IPerson person = userInstance.getPerson();
+        final int personId = person.getID();
+        return this.getOrCreatePortletEntity(request, portletDefinitionId, layoutNodeId, personId);
+    }
+    
+    @Override
+    public IPortletEntity getOrCreatePortletEntity(HttpServletRequest request, IUserInstance userInstance, String channelSubscribeId) {
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         
@@ -224,509 +175,457 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
         
         final IPerson person = userInstance.getPerson();
-        return this.getOrCreatePortletEntity(portletDefinition.getPortletDefinitionId(), channelSubscribeId, person.getID());
+        return this.getOrCreatePortletEntity(request, portletDefinition.getPortletDefinitionId(), channelSubscribeId, person.getID());
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
      */
     @Override
-    public IPortletEntity getOrCreatePortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId) {
-        final IPortletEntity portletEntity = this.getPortletEntity(channelSubscribeId, userId);
+    public IPortletEntity getOrCreatePortletEntity(HttpServletRequest request, IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
+        final PortletEntityCache<IPortletEntity> portletEntityCache = getPortletEntityMap(request);
+        
+        //Try just getting an existing entity first
+        IPortletEntity portletEntity = this.getPortletEntity(request, portletEntityCache, null, layoutNodeId, userId);
+        
+        //Found an existing entity!
         if (portletEntity != null) {
-            if (!portletDefinitionId.equals(portletEntity.getPortletDefinitionId())) {
-                this.logger.warn("Found portlet entity '" + portletEntity + "' is not the correct entity for portlet definition id: " + portletDefinitionId + ". The entity will be deleted and a new one created.");
-                this.deletePortletEntity(portletEntity);
-            }
-            else {
+            //Verify the definition IDs match, this is a MUST in the case where the subscribed portlet changes
+            final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+            if (portletDefinitionId.equals(portletDefinition.getPortletDefinitionId())) {
                 return portletEntity;
             }
+            
+            //Remove the entity if the definition IDs don't match
+            this.logger.warn("Found portlet entity '{}' is not the correct entity for portlet definition id: {}. The entity will be deleted and a new one created.", portletEntity, portletDefinitionId);
+            this.deletePortletEntity(request, portletEntity, false);
         }
         
-        return this.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
+        
+        //Create the entity data object and store it in the session map (if not already there)
+        final PortletEntityCache<PortletEntityData> portletEntityDataMap = this.getPortletEntityDataMap(request);
+        
+        final IPortletEntityId portletEntityId = this.createConsistentPortletEntityId(portletDefinitionId, layoutNodeId, userId);
+        PortletEntityData portletEntityData = new PortletEntityData(portletEntityId, portletDefinitionId, layoutNodeId, userId);
+        portletEntityData = portletEntityDataMap.storeIfAbsentEntity(portletEntityData);
+        
+        portletEntity = wrapPortletEntityData(portletEntityData);
+
+        //Stick the wrapper in the request map
+        portletEntity = portletEntityCache.storeIfAbsentEntity(portletEntity);
+        
+        return portletEntity;
     }
     
     @Override
-    public IPortletEntity getOrCreatePortletEntityByFname(IUserInstance userInstance, String fname) {
+    public IPortletEntity getOrCreatePortletEntityByFname(HttpServletRequest request, IUserInstance userInstance, String fname) {
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         final String subscribeId = userLayoutManager.getSubscribeId(fname);
-        return this.getOrCreatePortletEntity(userInstance, subscribeId);
+        return this.getOrCreatePortletEntity(request, userInstance, subscribeId);
     }
     
     @Override
-    public IPortletEntity getOrCreatePortletEntityByFname(IUserInstance userInstance, String fname,
-            String preferredChannelSubscribeId) {
-
+    public IPortletEntity getOrCreatePortletEntityByFname(HttpServletRequest request, IUserInstance userInstance, String fname, String preferredChannelSubscribeId) {
         try {
-            return this.getOrCreatePortletEntity(userInstance, preferredChannelSubscribeId);
+            return this.getOrCreatePortletEntity(request, userInstance, preferredChannelSubscribeId);
         }
         catch (PortalException pe) {
-            return this.getOrCreatePortletEntityByFname(userInstance, fname);
+            return this.getOrCreatePortletEntityByFname(request, userInstance, fname);
         }
     }
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#storePortletEntity(org.jasig.portal.portlet.om.IPortletEntity)
      */
     @Override
-    public void storePortletEntity(IPortletEntity portletEntity) {
+    public void storePortletEntity(HttpServletRequest request, final IPortletEntity portletEntity) {
         Validate.notNull(portletEntity, "portletEntity can not be null");
         
         final IPortletEntityId wrapperPortletEntityId = portletEntity.getPortletEntityId();
-        final Lock portletEntityLock = this.getPortletEntityLock(wrapperPortletEntityId);
+        final Lock portletEntityLock = this.getPortletEntityLock(request, wrapperPortletEntityId);
         portletEntityLock.lock();
         try {
-            
-            final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-            final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
-            
             final boolean shouldBePersisted = this.shouldBePersisted(portletEntity);
             
             if (portletEntity instanceof PersistentPortletEntityWrapper) {
                 //Unwrap the persistent entity
-                portletEntity = ((PersistentPortletEntityWrapper)portletEntity).getPersistentEntity();
+                final IPortletEntity persistentEntity = ((PersistentPortletEntityWrapper)portletEntity).getPersistentEntity();
                 
                 //Already persistent entity that still has prefs 
                 if (shouldBePersisted) {
                     try {
-                        this.portletEntityDao.updatePortletEntity(portletEntity);
+                        this.portletEntityDao.updatePortletEntity(persistentEntity);
                     }
                     catch (HibernateJdbcException e) {
                         //Check if this exception is from the entity being deleted from under us.
-                        final boolean exists = this.portletEntityDao.portletEntityExists(portletEntity.getPortletEntityId());
+                        final boolean exists = this.portletEntityDao.portletEntityExists(persistentEntity.getPortletEntityId());
                         if (!exists) {
-                            this.logger.warn("The persistent portlet has already been deleted: " + portletEntity + ". The passed entity has preferences so a new persistent entity will be created");
-                            this.createPersistentEntity(portletEntity, wrapperPortletEntityId, preferences);
+                            this.logger.warn("The persistent portlet has already been deleted: " + persistentEntity + ". The passed entity should be persistent so a new persistent entity will be created");
+                            this.deletePortletEntity(request, portletEntity, true);
+                            this.createPersistentEntity(persistentEntity, wrapperPortletEntityId);
                         }
                         else {
                             throw e;
                         }
                     }
                 }
-                //Already persistent entity with no preferences, DELETE!
+                //Already persistent entity that should not be, DELETE!
                 else {
-                    this.deletePersistentEntity(portletEntity, wrapperPortletEntityId);
+                    //Capture identifiers needed to recreate the entity as session persistent
+                    final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
+                    final String layoutNodeId = portletEntity.getLayoutNodeId();
+                    final int userId = portletEntity.getUserId();
+                    
+                    //Delete the persistent entity
+                    this.deletePortletEntity(request, portletEntity, false);
+
+                    //Create a new entity and stick it in the cache
+                    this.getOrCreatePortletEntity(request, portletDefinitionId, layoutNodeId, userId);
+                }
+            }
+            else if (portletEntity instanceof SessionPortletEntityImpl) {
+                //There are preferences on the interim entity, create an store it
+                if (shouldBePersisted) {
+                    //Remove the session scoped entity from the request and session caches
+                    this.deletePortletEntity(request, portletEntity, false);
+                    
+                    final IPortletEntity persistentEntity = createPersistentEntity(portletEntity, wrapperPortletEntityId);
+                    
+                    if (this.logger.isTraceEnabled()) {
+                        this.logger.trace("Session scoped entity " + wrapperPortletEntityId + " should now be persistent. Deleted it from session cache and created persistent portlet entity " + persistentEntity.getPortletEntityId());
+                    }
+                }
+                //Session scoped entity that is still session scoped,
+                else {
+                    //Look for a persistent entity and delete it
+                    final String channelSubscribeId = portletEntity.getLayoutNodeId();
+                    final int userId = portletEntity.getUserId();
+                    IPortletEntity existingPersistentEntity = this.portletEntityDao.getPortletEntity(channelSubscribeId, userId);
+                    if (existingPersistentEntity != null) {
+                        final IPortletEntityId consistentPortletEntityId = this.createConsistentPortletEntityId(existingPersistentEntity);
+                        existingPersistentEntity = new PersistentPortletEntityWrapper(existingPersistentEntity, consistentPortletEntityId);
+                        
+                        this.logger.warn("A persistent portlet entity already exists: " + existingPersistentEntity + ". The passed entity has no preferences so the persistent version will be deleted");
+                        this.deletePortletEntity(request, existingPersistentEntity, false);
+                        
+                        //Add to request cache
+                        final PortletEntityCache<IPortletEntity> portletEntityMap = this.getPortletEntityMap(request);
+                        portletEntityMap.storeIfAbsentEntity(portletEntity);
+
+                        //Add to session cache
+                        final PortletEntityCache<PortletEntityData> portletEntityDataMap = this.getPortletEntityDataMap(request);
+                        portletEntityDataMap.storeIfAbsentEntity(((SessionPortletEntityImpl)portletEntity).getPortletEntityData());
+                    }
                 }
             }
             else {
-                //There are preferences on the interim entity, create an store it
-                if (shouldBePersisted) {
-                    final IPortletEntity persistentEntity = createPersistentEntity(portletEntity, wrapperPortletEntityId, preferences);
-                    
-                    if (this.logger.isTraceEnabled()) {
-                        this.logger.trace("InterimPortletEntity " + wrapperPortletEntityId + " now has preferences. Deleted it and created persistent portlet entity " + persistentEntity.getPortletEntityId());
-                    }
-                }
-                else {
-                    final String channelSubscribeId = portletEntity.getChannelSubscribeId();
-                    final int userId = portletEntity.getUserId();
-                    final IPortletEntity persistentEntity = this.portletEntityDao.getPortletEntity(channelSubscribeId, userId);
-                    if (persistentEntity != null) {
-                        this.logger.warn("A persistent portlet entity already exists: " + persistentEntity + ". The passed entity has no preferences so the persistent version will be deleted");
-                        this.deletePersistentEntity(persistentEntity, wrapperPortletEntityId);
-                    }
-                }
+                throw new IllegalArgumentException("Invalid portlet entity implementation passed: " + portletEntity.getClass());
             }
         }
         finally {
             portletEntityLock.unlock();
         }
     }
+
+    @Override
+    public Lock getPortletEntityLock(HttpServletRequest request, IPortletEntityId portletEntityId) {
+        final ConcurrentMap<IPortletEntityId, Lock> lockMap = getPortletEntityLockMap(request);
+        
+        //See if the lock already exist, return if it does
+        Lock lock = lockMap.get(portletEntityId);
+        if (lock != null) {
+            return lock;
+        }
+
+        //Create a new lock and do a putIfAbsent to avoid synchronizing but still get a single lock instance for the session. 
+        lock = createPortletEntityLock();
+        return ConcurrentMapUtils.putIfAbsent(lockMap, portletEntityId, lock);
+    }
+    
+    protected IPortletEntity createPersistentEntity(final IPortletEntity portletEntity, final IPortletEntityId wrapperPortletEntityId) {
+        final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
+        final String layoutNodeId = portletEntity.getLayoutNodeId();
+        final int userId = portletEntity.getUserId();
+        
+        IPortletEntity persistentEntity = this.portletEntityDao.getPortletEntity(layoutNodeId, userId);
+        if (persistentEntity != null) {
+            this.logger.warn("A persistent portlet entity already exists: " + persistentEntity + ". The data from the passed in entity will be copied to the persistent entity: " + portletEntity);
+        }
+        else {
+            persistentEntity = this.portletEntityDao.createPortletEntity(portletDefinitionId, layoutNodeId, userId);
+        }
+        
+        //Copy over preferences to avoid modifying any part of the interim entity by reference
+        final IPortletPreferences existingPortletPreferences = portletEntity.getPortletPreferences();
+        final List<IPortletPreference> existingPreferences = existingPortletPreferences.getPortletPreferences();
+        
+        final IPortletPreferences persistentPortletPreferences = persistentEntity.getPortletPreferences();
+        final List<IPortletPreference> persistentPreferences = persistentPortletPreferences.getPortletPreferences();
+        
+        //Only do the copy if the List objects are not the same instance
+        if (persistentPreferences != existingPreferences) {
+            persistentPreferences.clear();
+            for (final IPortletPreference preference : existingPreferences) {
+                persistentPreferences.add(new PortletPreferenceImpl(preference));
+            }
+        }
+        
+        //Copy over WindowState
+        persistentEntity.setWindowState(portletEntity.getWindowState());
+        
+        this.portletEntityDao.updatePortletEntity(persistentEntity);
+        
+        return persistentEntity;
+    }
+    
+    /**
+     * Delete a portlet entity, removes it from the request, session and persistent stores
+     */
+    protected void deletePortletEntity(HttpServletRequest request, IPortletEntity portletEntity, boolean cacheOnly) {
+        final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+        
+        //Remove from request cache
+        final PortletEntityCache<IPortletEntity> portletEntityMap = this.getPortletEntityMap(request);
+        portletEntityMap.removeEntity(portletEntityId);
+        
+        //Remove from session cache
+        final PortletEntityCache<PortletEntityData> portletEntityDataMap = this.getPortletEntityDataMap(request);
+        portletEntityDataMap.removeEntity(portletEntityId);
+        
+        if (!cacheOnly && portletEntity instanceof PersistentPortletEntityWrapper) {
+            final IPortletEntity persistentEntity = ((PersistentPortletEntityWrapper)portletEntity).getPersistentEntity();
+            
+            try {
+                this.portletEntityDao.deletePortletEntity(persistentEntity);
+            }
+            catch (HibernateOptimisticLockingFailureException e) {
+                this.logger.warn("This persistent portlet has already been deleted: " + persistentEntity + ", trying to find and delete by layout node and user.");
+                final IPortletEntity existingPersistentEntity = this.portletEntityDao.getPortletEntity(persistentEntity.getLayoutNodeId(), persistentEntity.getUserId());
+                if (existingPersistentEntity != null) {
+                    this.portletEntityDao.deletePortletEntity(existingPersistentEntity);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Lookup the portlet entity by layoutNodeId and userId
+     */
+    protected IPortletEntity getPortletEntity(
+            HttpServletRequest request,
+            PortletEntityCache<IPortletEntity> portletEntityCache, 
+            IPortletEntityId portletEntityId, String layoutNodeId, int userId) {
+        
+        IPortletEntity portletEntity;
+    
+        //First look in the request map
+        if (portletEntityId != null) {
+            portletEntity = portletEntityCache.getEntity(portletEntityId);
+        }
+        else {
+            portletEntity = portletEntityCache.getEntity(layoutNodeId, userId);
+        }
+        
+        if (portletEntity != null) {
+            logger.trace("Found IPortletEntity {} in request cache", portletEntity.getPortletEntityId());
+            return portletEntity;
+        }
+        
+        //Didn't find it, next look in the session map
+        final PortletEntityCache<PortletEntityData> portletEntityDataMap = this.getPortletEntityDataMap(request);
+        final PortletEntityData portletEntityData;
+        if (portletEntityId != null) {
+            portletEntityData = portletEntityDataMap.getEntity(portletEntityId);
+        }
+        else {
+            portletEntityData = portletEntityDataMap.getEntity(layoutNodeId, userId);
+        }
+        
+        if (portletEntityData != null) {
+            
+            //Stick the entity wrapper in the request map (if it wasn't already added by another thread)
+            portletEntity = portletEntityCache.storeIfAbsentEntity(portletEntityData.getPortletEntityId(), new Function<Object, IPortletEntity>() {
+                @Override
+                public IPortletEntity apply(Object input) {
+                    //Found a session stored entity, wrap it to make it a real IPortletEntity
+                    logger.trace("Found PortletEntityData {} in session cache, caching wrapper in the request", portletEntityData.getPortletEntityId());
+                    
+                    return wrapPortletEntityData(portletEntityData);
+                }
+            });
+            
+            return portletEntity;
+        }
+        
+        //Still didn't find it, look in the persistent store
+        if (portletEntityId != null) {
+            if (portletEntityId instanceof PortletEntityIdImpl) {
+                final PortletEntityIdImpl consistentPortletEntityId = (PortletEntityIdImpl)portletEntityId;
+                final String localLayoutNodeId = consistentPortletEntityId.getLayoutNodeId();
+                final int localUserId = consistentPortletEntityId.getUserId();
+                
+                portletEntity = this.portletEntityDao.getPortletEntity(localLayoutNodeId, localUserId);
+            }
+            else {
+                portletEntity = this.portletEntityDao.getPortletEntity(portletEntityId);
+            }
+        }
+        else {
+            portletEntity = this.portletEntityDao.getPortletEntity(layoutNodeId, userId);
+        }
+        
+        //Found a persistent entity, wrap it to make the id consistent between the persistent and session stored entities 
+        if (portletEntity != null) {
+            final IPortletEntityId consistentPortletEntityId = this.createConsistentPortletEntityId(portletEntity);
+            
+            final IPortletEntity anonPortletEntity = portletEntity;
+            
+            //Stick the entity wrapper in the request map (if it wasn't already added by another thread)
+            portletEntity = portletEntityCache.storeIfAbsentEntity(consistentPortletEntityId, new Function<Object, IPortletEntity>() {
+                @Override
+                public IPortletEntity apply(Object input) {
+                    logger.trace("Found persistent IPortletEntity {}, mapped id to {}, caching the wrapper in the request", anonPortletEntity.getPortletEntityId(), consistentPortletEntityId);
+                    return new PersistentPortletEntityWrapper(anonPortletEntity, consistentPortletEntityId);
+                }
+            });
+            
+            return portletEntity;
+        }
+        
+        //Didn't find an entity, just return null
+        return null;
+    }
+
+    protected IPortletEntityId createConsistentPortletEntityId(IPortletEntity portletEntity) {
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+        final String layoutNodeId = portletEntity.getLayoutNodeId();
+        final int userId = portletEntity.getUserId();
+        return this.createConsistentPortletEntityId(portletDefinitionId, layoutNodeId, userId);
+    }
+
+    protected IPortletEntityId createConsistentPortletEntityId(PortletEntityData portletEntityData) {
+        final IPortletDefinitionId portletDefinitionId = portletEntityData.getPortletDefinitionId();
+        final String layoutNodeId = portletEntityData.getLayoutNodeId();
+        final int userId = portletEntityData.getUserId();
+        return this.createConsistentPortletEntityId(portletDefinitionId, layoutNodeId, userId);
+    }
+
+    protected IPortletEntityId createConsistentPortletEntityId(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
+        final String compositeId = portletDefinitionId.getStringId() + ID_PART_SEPERATOR + layoutNodeId + ID_PART_SEPERATOR + userId;
+        return new PortletEntityIdImpl(portletDefinitionId, layoutNodeId, userId, compositeId);
+    }
+
+    protected IPortletEntityId parseConsistentPortletEntityId(HttpServletRequest request, String consistentEntityIdString) {
+        Validate.notNull(consistentEntityIdString, "consistentEntityIdString can not be null");
+        
+        //Check in the cache first
+        final Element element = this.entityIdParseCache.get(consistentEntityIdString);
+        if (element != null) {
+            final Object value = element.getObjectValue();
+            if (value != null) {
+                return (IPortletEntityId)value;
+            }
+        }
+        
+        final String[] idParts = ID_PART_SEPERATOR_PATTERN.split(consistentEntityIdString);
+        if (idParts.length != 3) {
+            throw new IllegalArgumentException("consistentEntityIdString does not have 3 parts and is invalid: " + consistentEntityIdString);
+        }
+        
+        //Verify the portlet definition id
+        final String portletDefinitionIdString = idParts[0];
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionIdString);
+        if (portletDefinition == null) {
+            throw new IllegalArgumentException("No parent IPortletDefinition found for " + portletDefinitionIdString + " from entity id string: " + consistentEntityIdString);
+        }
+        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+        
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        
+        //Verify the layout node id exists and is for a portlet
+        final String layoutNodeId = idParts[1];
+        final IUserLayoutNodeDescription node = userLayoutManager.getNode(layoutNodeId);
+        if (node == null || node.getType() != IUserLayoutNodeDescription.CHANNEL) {
+            throw new IllegalArgumentException("No portlet layout node found for " + layoutNodeId + " from entity id string: " + consistentEntityIdString);
+        }
+        
+        //Verify the portlet definition matches
+        final IUserLayoutChannelDescription portletNode = (IUserLayoutChannelDescription)node;
+        final String channelPublishId = portletNode.getChannelPublishId();
+        if (!portletDefinitionId.getStringId().equals(channelPublishId)) {
+            throw new IllegalArgumentException("The portlet layout node found for " + layoutNodeId + " does not match the IPortletDefinitionId " + portletDefinitionId + " specified in entity id string: " + consistentEntityIdString);
+        }
+
+        //TODO when there is a JPA backed user dao actually verify this mapping
+        //User just conver to an int
+        final int userId;
+        try {
+            userId = Integer.parseInt(idParts[2]);
+        }
+        catch (NumberFormatException e) {
+            throw new IllegalArgumentException("The user id " + idParts[2] + " is not a valid integer from entity id string: " + consistentEntityIdString, e);
+        }
+        
+        final IPortletEntityId portletEntityId = createConsistentPortletEntityId(portletDefinitionId, layoutNodeId, userId);
+        
+        //Cache the resolution
+        this.entityIdParseCache.put(new Element(consistentEntityIdString, portletEntityId));
+        
+        return portletEntityId;
+    }
+
+    protected Lock createPortletEntityLock() {
+        return new ReentrantLock(true);
+    }
+    
+    protected ConcurrentMap<IPortletEntityId, Lock> getPortletEntityLockMap(HttpServletRequest request) {
+        request = portalRequestUtils.getOriginalPortalRequest(request);
+        final HttpSession session = request.getSession();
+        return PortalWebUtils.getMapSessionAttribute(session, PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE);
+    }
+    
+    protected PortletEntityCache<IPortletEntity> getPortletEntityMap(HttpServletRequest request) {
+        request = portalRequestUtils.getOriginalPortalRequest(request);
+        final Object mutex = PortalWebUtils.getRequestAttributeMutex(request);
+        synchronized (mutex) {
+            @SuppressWarnings("unchecked")
+            PortletEntityCache<IPortletEntity> cache = (PortletEntityCache<IPortletEntity>)request.getAttribute(PORTLET_ENTITY_ATTRIBUTE);
+            if (cache == null) {
+                cache = new PortletEntityCache<IPortletEntity>();
+                request.setAttribute(PORTLET_ENTITY_ATTRIBUTE, cache);
+            }
+            return cache;
+        }
+    }
+    
+    protected PortletEntityCache<PortletEntityData> getPortletEntityDataMap(HttpServletRequest request) {
+        request = portalRequestUtils.getOriginalPortalRequest(request);
+        final HttpSession session = request.getSession();
+        final Object mutex = WebUtils.getSessionMutex(session);
+        synchronized (mutex) {
+            @SuppressWarnings("unchecked")
+            PortletEntityCache<PortletEntityData> cache = (PortletEntityCache<PortletEntityData>)session.getAttribute(PORTLET_ENTITY_DATA_ATTRIBUTE);
+            if (cache == null) {
+                cache = new PortletEntityCache<PortletEntityData>();
+                session.setAttribute(PORTLET_ENTITY_DATA_ATTRIBUTE, cache);
+            }
+            return cache;
+        }
+    }
+    
+    protected IPortletEntity wrapPortletEntityData(final PortletEntityData portletEntityData) {
+        final IPortletDefinitionId portletDefinitionId = portletEntityData.getPortletDefinitionId();
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+        return new SessionPortletEntityImpl(portletDefinition, portletEntityData);
+    }
     
     protected boolean shouldBePersisted(IPortletEntity portletEntity) {
         final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
         final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
         return CollectionUtils.isNotEmpty(preferences) || WindowState.MINIMIZED.equals(portletEntity.getWindowState());
-    }
-    
-    /**
-     * Create a persistent portlet entity
-     */
-    protected IPortletEntity createPersistentEntity(IPortletEntity portletEntity,
-            final IPortletEntityId wrapperPortletEntityId, final List<IPortletPreference> preferences) {
-        
-        final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
-        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
-        final int userId = portletEntity.getUserId();
-        
-        IPortletEntity persistentEntity = this.portletEntityDao.getPortletEntity(channelSubscribeId, userId);
-        if (persistentEntity != null) {
-            this.logger.warn("A persistent portlet entity already exists: " + persistentEntity + ". The preferences from the passed in entity will be copied to the persistent entity: " + portletEntity);
-        }
-        else {
-            persistentEntity = this.portletEntityDao.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
-        }
-        
-        //Copy over preferences to avoid modifying any part of the interim entity by reference
-        final IPortletPreferences persistentPortletPreferences = persistentEntity.getPortletPreferences();
-        final List<IPortletPreference> persistentPreferences = persistentPortletPreferences.getPortletPreferences();
-        //Only do the copy if the List objects are not the same instance
-        if (persistentPreferences != preferences) {
-            persistentPreferences.clear();
-            for (final IPortletPreference preference : preferences) {
-                persistentPreferences.add(new PortletPreferenceImpl(preference));
-            }
-        }
-        
-        this.portletEntityDao.updatePortletEntity(persistentEntity);
-        
-        //Remove the in-memory interim entity
-        this.removeInterimPortletEntity(wrapperPortletEntityId);
-        
-        //Setup the persistent ID mapping
-        this.setPersistentIdMapping(wrapperPortletEntityId, persistentEntity.getPortletEntityId());
-        return persistentEntity;
-    }
-    
-    /**
-     * Delete a persistent portlet entity.
-     */
-    protected void deletePersistentEntity(IPortletEntity portletEntity, final IPortletEntityId wrapperId) {
-        try {
-            this.portletEntityDao.deletePortletEntity(portletEntity);
-        }
-        catch (HibernateOptimisticLockingFailureException e) {
-            this.logger.warn("Failed to delete persistent portlet entity, it likely was already deleted, taking no further actions. " + portletEntity, e);
-            return;
-        }
-        
-        //remove the persistent ID mapping after the delete
-        this.removePersistentId(wrapperId);
-        
-        //Setup an interim entity in its place
-        final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
-        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
-        final int userId = portletEntity.getUserId();
-        final IPortletEntity interimPortletEntity = this.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
-        
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace("Persistent portlet entity " + wrapperId + " no longer has preferences. Deleted it and created InterimPortletEntity " + interimPortletEntity.getPortletEntityId());
-        }
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#deletePortletEntity(org.jasig.portal.portlet.om.IPortletEntity)
-     */
-    @Override
-    public void deletePortletEntity(IPortletEntity portletEntity) {
-        Validate.notNull(portletEntity, "portletEntity can not be null");
-        
-        if (portletEntity instanceof PersistentPortletEntityWrapper) {
-            //Unwrap the persistent entity
-            portletEntity = ((PersistentPortletEntityWrapper)portletEntity).getPersistentEntity();
-            
-            this.portletEntityDao.deletePortletEntity(portletEntity);
-            
-            //remove the persistent ID mapping after the delete
-            this.removePersistentId(portletEntity.getPortletEntityId());
-        }
-        else {
-            this.removeInterimPortletEntity(portletEntity.getPortletEntityId());
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getParentPortletDefinition(org.jasig.portal.portlet.om.IPortletEntityId)
-     */
-    @Override
-    public IPortletDefinition getParentPortletDefinition(IPortletEntityId portletEntityId) {
-        Validate.notNull(portletEntityId, "portletEntityId can not be null");
-        
-        final IPortletEntity portletEntity = this.getPortletEntity(portletEntityId);
-        final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
-
-        return this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
-    }
-    
-    @Override
-    public Lock getPortletEntityLock(IPortletEntityId portletEntityId) {
-        final HttpSession session = this.getSession();
-        if (session == null) {
-            return NoopLock.INSTANCE;
-        }
-        
-        ConcurrentMap<IPortletEntityId, Lock> lockMap;
-        //Sync on the session to ensure other threads aren't creating the Map at the same time
-        synchronized (WebUtils.getSessionMutex(session)) {
-            lockMap = (ConcurrentMap<IPortletEntityId, Lock>)session.getAttribute(PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE);
-            if (lockMap == null) {
-                lockMap = new ConcurrentHashMap<IPortletEntityId, Lock>();
-                session.setAttribute(PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE, lockMap);
-            }
-        }
-        
-        Lock lock = lockMap.get(portletEntityId);
-                
-        if (lock == null) {
-            lock = new ReentrantLock(true);
-            final Lock existingLock = lockMap.putIfAbsent(portletEntityId, lock);
-            
-            if (existingLock != null) {
-                lock = existingLock;
-            }
-        }
-        
-        return lock;
-    }
-    
-    
-    protected void setPersistentIdMapping(IPortletEntityId wrapperId, IPortletEntityId persistentId) {
-        final HttpSession session = this.getSession();
-        if (session == null) {
-            return;
-        }
-        
-        Map<IPortletEntityId, IPortletEntityId> idMapping;
-        //Sync on the session to ensure other threads aren't creating the Map at the same time
-        synchronized (WebUtils.getSessionMutex(session)) {
-            idMapping = (Map<IPortletEntityId, IPortletEntityId>)session.getAttribute(PORTLET_ENTITY_ID_MAP_ATTRIBUTE);
-            if (idMapping == null) {
-                idMapping = new ConcurrentHashMap<IPortletEntityId, IPortletEntityId>();
-                session.setAttribute(PORTLET_ENTITY_ID_MAP_ATTRIBUTE, idMapping);
-            }
-        }
-        
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace("Mapping wraper ID " + wrapperId + " to persistent ID " + persistentId);
-        }
-        
-        idMapping.put(wrapperId, persistentId);
-    }
-    
-    protected IPortletEntityId getPersistentId(IPortletEntityId wrapperId) {
-        final Map<IPortletEntityId, IPortletEntityId> idMapping = this.getPersistentIdMap();
-        if (idMapping == null) {
-            return null;
-        }
-        
-        return idMapping.get(wrapperId);
-    }
-    
-    protected void removePersistentId(IPortletEntityId wrapperId) {
-        final Map<IPortletEntityId, IPortletEntityId> idMapping = this.getPersistentIdMap();
-        if (idMapping == null) {
-            return;
-        }
-        
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace("Removed persistent ID for wraper ID " + wrapperId);
-        }
-        
-        idMapping.remove(wrapperId);
-    }
-
-    protected Map<IPortletEntityId, IPortletEntityId> getPersistentIdMap() {
-        final HttpSession session = this.getSession();
-        if (session == null) {
-            return null;
-        }
-        
-        //Sync on the session to ensure other threads aren't creating the Map at the same time
-        synchronized (WebUtils.getSessionMutex(session)) {
-            return (Map<IPortletEntityId, IPortletEntityId>)session.getAttribute(PORTLET_ENTITY_ID_MAP_ATTRIBUTE);
-        }
-    }
-    
-    protected void removeInterimPortletEntity(IPortletEntityId portletEntityId) {
-        final InterimPortletEntityCache entityCache = getInterimPortletEntityCache();
-        if (entityCache == null) {
-            return;
-        }
-        
-        entityCache.removeEntity(portletEntityId);
-    }
-    
-    protected InterimPortletEntityImpl getInterimPortletEntity(IPortletEntityId portletEntityId) {
-        final InterimPortletEntityCache entityCache = getInterimPortletEntityCache();
-        if (entityCache == null) {
-            return null;
-        }
-        
-        return entityCache.getEntity(portletEntityId);
-    }
-    
-    protected InterimPortletEntityImpl getInterimPortletEntity(String channelSubscribeId, int userId) {
-        final InterimPortletEntityCache entityCache = getInterimPortletEntityCache();
-        if (entityCache == null) {
-            return null;
-        }
-        
-        return entityCache.getEntity(channelSubscribeId, userId);
-    }
-    
-    protected Set<InterimPortletEntityImpl> getInterimPortletEntities(int userId) {
-        final InterimPortletEntityCache entityCache = getInterimPortletEntityCache();
-        if (entityCache == null) {
-            return null;
-        }
-        
-        return entityCache.getEntities(userId);
-    }
-    
-    protected void storeInterimPortletEntity(InterimPortletEntityImpl interimPortletEntity) {
-        final HttpSession session = this.getSession();
-        if (session == null) {
-            return;
-        }
-        
-        InterimPortletEntityCache entityCache;
-        //Sync on the session to ensure other threads aren't creating the Map at the same time
-        synchronized (WebUtils.getSessionMutex(session)) {
-            entityCache = (InterimPortletEntityCache)session.getAttribute(INTERIM_PORTLET_ENTITY_MAP_ATTRIBUTE);
-            if (entityCache == null) {
-                entityCache = new InterimPortletEntityCache();
-                session.setAttribute(INTERIM_PORTLET_ENTITY_MAP_ATTRIBUTE, entityCache);
-            }
-        }
-        
-        entityCache.storeEntity(interimPortletEntity);
-    }
-    
-    protected InterimPortletEntityCache getInterimPortletEntityCache() {
-        final HttpSession session = this.getSession();
-        if (session == null) {
-            return null;
-        }
-        
-        //Sync on the session to ensure other threads aren't creating the Map at the same time
-        synchronized (WebUtils.getSessionMutex(session)) {
-            return (InterimPortletEntityCache)session.getAttribute(INTERIM_PORTLET_ENTITY_MAP_ATTRIBUTE);
-        }
-    }
-
-    /**
-     * @return The session for the current request, will return null if not in request
-     */
-    protected HttpSession getSession() {
-        final HttpServletRequest request;
-        try {
-            request = this.portalRequestUtils.getCurrentPortalRequest();
-        }
-        catch (IllegalStateException e) {
-            //No current request, just return null
-            return null;
-        }
-        
-        final HttpSession session = request.getSession(false);
-        if (session == null) {
-            throw new IllegalStateException("A HttpSession must already exist for the PortletEntityRegistryImpl to function");
-        }
-        return session;
-    }
-    
-    private static final class InterimPortletEntityCache {
-        private final ReadWriteLock cacheLock = new ReentrantReadWriteLock(true);
-        
-        private final Map<SubscribeKey, InterimPortletEntityImpl> entitiesBySubscribeKey = new HashMap<SubscribeKey, InterimPortletEntityImpl>();
-        private final Map<IPortletEntityId, InterimPortletEntityImpl> entitiesById = new HashMap<IPortletEntityId, InterimPortletEntityImpl>();
-        
-        public void storeEntity(InterimPortletEntityImpl interimPortletEntity) {
-            this.cacheLock.writeLock().lock();
-            try {
-                final SubscribeKey subscribeKey = new SubscribeKey(interimPortletEntity.getUserId(), interimPortletEntity.getChannelSubscribeId());
-                this.entitiesBySubscribeKey.put(subscribeKey, interimPortletEntity);
-                this.entitiesById.put(interimPortletEntity.getPortletEntityId(), interimPortletEntity);
-            }
-            finally {
-                this.cacheLock.writeLock().unlock();
-            }
-        }
-        
-        public InterimPortletEntityImpl getEntity(String channelSubscribeId, int userId) {
-            this.cacheLock.readLock().lock();
-            try {
-                final SubscribeKey subscribeKey = new SubscribeKey(userId, channelSubscribeId);
-                return this.entitiesBySubscribeKey.get(subscribeKey);
-            }
-            finally {
-                this.cacheLock.readLock().unlock();
-            }
-        }
-        
-        public Set<InterimPortletEntityImpl> getEntities(int userId) {
-            final Set<InterimPortletEntityImpl> entities = new LinkedHashSet<InterimPortletEntityImpl>();
-            
-            this.cacheLock.readLock().lock();
-            try {
-                for (final InterimPortletEntityImpl interimPortletEntity : this.entitiesById.values()) {
-                    if (userId == interimPortletEntity.getUserId()) {
-                        entities.add(interimPortletEntity);
-                    }
-                }
-            }
-            finally {
-                this.cacheLock.readLock().unlock();
-            }
-            
-            return entities;
-        }
-        
-        public InterimPortletEntityImpl getEntity(IPortletEntityId portletEntityId) {
-            this.cacheLock.readLock().lock();
-            try {
-                return this.entitiesById.get(portletEntityId);
-            }
-            finally {
-                this.cacheLock.readLock().unlock();
-            }
-        }
-        
-        public void removeEntity(IPortletEntityId portletEntityId) {
-            this.cacheLock.writeLock().lock();
-            try {
-                final InterimPortletEntityImpl interimPortletEntity = this.entitiesById.remove(portletEntityId);
-                if (interimPortletEntity != null) {
-                    final SubscribeKey subscribeKey = new SubscribeKey(interimPortletEntity.getUserId(), interimPortletEntity.getChannelSubscribeId());
-                    this.entitiesBySubscribeKey.remove(subscribeKey);
-                }
-            }
-            finally {
-                this.cacheLock.writeLock().unlock();
-            }
-        }
-        
-        private static final class SubscribeKey {
-            private final int userId;
-            private final String channelSubscribeId;
-            
-            public SubscribeKey(int userId, String channelSubscribeId) {
-                this.userId = userId;
-                this.channelSubscribeId = channelSubscribeId;
-            }
-            
-            @Override
-            public String toString() {
-                return "[userId=" + userId + ", channelSubscribeId=" + channelSubscribeId + "]";
-            }
-
-            @Override
-            public int hashCode() {
-                final int prime = 31;
-                int result = 1;
-                result = prime * result + ((channelSubscribeId == null) ? 0 : channelSubscribeId.hashCode());
-                result = prime * result + userId;
-                return result;
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (this == obj)
-                    return true;
-                if (obj == null)
-                    return false;
-                if (getClass() != obj.getClass())
-                    return false;
-                SubscribeKey other = (SubscribeKey) obj;
-                if (channelSubscribeId == null) {
-                    if (other.channelSubscribeId != null)
-                        return false;
-                }
-                else if (!channelSubscribeId.equals(other.channelSubscribeId))
-                    return false;
-                if (userId != other.userId)
-                    return false;
-                return true;
-            }
-        }
     }
 }

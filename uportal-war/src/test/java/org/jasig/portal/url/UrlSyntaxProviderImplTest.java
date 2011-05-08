@@ -22,10 +22,11 @@
  */
 package org.jasig.portal.url;
 
+import static org.mockito.Mockito.when;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,7 +36,6 @@ import java.util.Set;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
-import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -115,7 +115,6 @@ public class UrlSyntaxProviderImplTest {
         request.setContextPath("/uPortal");
         
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("pw1");
-        final MockPortletEntityId portletEntityId = new MockPortletEntityId("pe1");
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
@@ -123,9 +122,8 @@ public class UrlSyntaxProviderImplTest {
         when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
         
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
-        when(portletEntityRegistry.getPortletEntity(portletEntityId)).thenReturn(portletEntity);
-        when(portletEntity.getChannelSubscribeId()).thenReturn(subscribeId);
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getLayoutNodeId()).thenReturn(subscribeId);
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId, UrlType.RENDER);
         
@@ -144,7 +142,6 @@ public class UrlSyntaxProviderImplTest {
         request.setContextPath("/uPortal");
         
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("pw1");
-        final MockPortletEntityId portletEntityId = new MockPortletEntityId("pe1");
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
@@ -152,9 +149,8 @@ public class UrlSyntaxProviderImplTest {
         when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
         
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
-        when(portletEntityRegistry.getPortletEntity(portletEntityId)).thenReturn(portletEntity);
-        when(portletEntity.getChannelSubscribeId()).thenReturn(subscribeId);
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getLayoutNodeId()).thenReturn(subscribeId);
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId, UrlType.ACTION);
         final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
@@ -175,7 +171,6 @@ public class UrlSyntaxProviderImplTest {
         request.setContextPath("/uPortal");
         
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("pw1");
-        final MockPortletEntityId portletEntityId = new MockPortletEntityId("pe1");
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
@@ -183,9 +178,8 @@ public class UrlSyntaxProviderImplTest {
         when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
         
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
-        when(portletEntityRegistry.getPortletEntity(portletEntityId)).thenReturn(portletEntity);
-        when(portletEntity.getChannelSubscribeId()).thenReturn(subscribeId);
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getLayoutNodeId()).thenReturn(subscribeId);
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId, UrlType.RENDER);
         final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
@@ -208,7 +202,6 @@ public class UrlSyntaxProviderImplTest {
         
         final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("pw1");
         final MockPortletWindowId portletWindowId2 = new MockPortletWindowId("pw2");
-        final MockPortletEntityId portletEntityId = new MockPortletEntityId("pe1");
 
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
@@ -217,9 +210,8 @@ public class UrlSyntaxProviderImplTest {
         
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId1)).thenReturn(portletWindow);
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId2)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
-        when(portletEntityRegistry.getPortletEntity(portletEntityId)).thenReturn(portletEntity);
-        when(portletEntity.getChannelSubscribeId()).thenReturn(subscribeId);
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getLayoutNodeId()).thenReturn(subscribeId);
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId1, UrlType.RENDER);
         final IPortletUrlBuilder portletUrlBuilder1 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId1);
@@ -257,7 +249,7 @@ public class UrlSyntaxProviderImplTest {
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
         when(this.urlNodeSyntaxHelper.getLayoutNodeForFolderNames(request, Arrays.asList("n2"))).thenReturn("n2");
         when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "fname.s3")).thenReturn(portletWindowId);
-        when(this.portletWindowRegistry.getPortletWindowId("pw2")).thenReturn(portletWindowId2);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "pw2")).thenReturn(portletWindowId2);
         
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         
@@ -288,24 +280,26 @@ public class UrlSyntaxProviderImplTest {
 
     @Test
     public void testParsePortletWindowIdSuffix() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        
         final Set<String> ids = ImmutableSet.of("pw2");
         final MockPortletWindowId expectedPortletWindowId = new MockPortletWindowId("pw2");
         
-        when(this.portletWindowRegistry.getPortletWindowId("pw2")).thenReturn(expectedPortletWindowId);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "pw2")).thenReturn(expectedPortletWindowId);
         
-        IPortletWindowId portletWindowId = this.urlSyntaxProvider.parsePortletWindowIdSuffix(
+        IPortletWindowId portletWindowId = this.urlSyntaxProvider.parsePortletWindowIdSuffix(request, 
                 UrlSyntaxProviderImpl.PARAM_WINDOW_STATE, ids, 
                 UrlSyntaxProviderImpl.PARAM_WINDOW_STATE + UrlSyntaxProviderImpl.SEPARATOR + "pw2");
         
         assertEquals(expectedPortletWindowId, portletWindowId);
         
-        portletWindowId = this.urlSyntaxProvider.parsePortletWindowIdSuffix(
+        portletWindowId = this.urlSyntaxProvider.parsePortletWindowIdSuffix(request, 
                 UrlSyntaxProviderImpl.PARAM_WINDOW_STATE, ids, 
                 UrlSyntaxProviderImpl.PARAM_WINDOW_STATE + UrlSyntaxProviderImpl.SEPARATOR + UrlSyntaxProviderImpl.SEPARATOR + "pw2");
         
         assertNull(portletWindowId);
         
-        portletWindowId = this.urlSyntaxProvider.parsePortletWindowIdSuffix(
+        portletWindowId = this.urlSyntaxProvider.parsePortletWindowIdSuffix(request, 
                 UrlSyntaxProviderImpl.PARAM_WINDOW_STATE, ids, 
                 UrlSyntaxProviderImpl.PARAM_WINDOW_STATE);
         
@@ -314,12 +308,14 @@ public class UrlSyntaxProviderImplTest {
     
     @Test
     public void testParsePortletParameterName() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        
         final Set<String> ids = ImmutableSet.of("pw2");
         final MockPortletWindowId expectedPortletWindowId = new MockPortletWindowId("pw2");
         
-        when(this.portletWindowRegistry.getPortletWindowId("pw2")).thenReturn(expectedPortletWindowId);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "pw2")).thenReturn(expectedPortletWindowId);
         
-        Tuple<String, IPortletWindowId> portletParameterInfo = this.urlSyntaxProvider.parsePortletParameterName(UrlSyntaxProviderImpl.PORTLET_PARAM_PREFIX + "pw2" + UrlSyntaxProviderImpl.SEPARATOR + "foo" , ids);
+        Tuple<String, IPortletWindowId> portletParameterInfo = this.urlSyntaxProvider.parsePortletParameterName(request, UrlSyntaxProviderImpl.PORTLET_PARAM_PREFIX + "pw2" + UrlSyntaxProviderImpl.SEPARATOR + "foo" , ids);
         
         assertNotNull(portletParameterInfo);
         assertEquals("foo", portletParameterInfo.first);
@@ -327,7 +323,7 @@ public class UrlSyntaxProviderImplTest {
         
 
         
-        portletParameterInfo = this.urlSyntaxProvider.parsePortletParameterName(UrlSyntaxProviderImpl.PORTLET_PARAM_PREFIX + UrlSyntaxProviderImpl.SEPARATOR + "foo" , ids);
+        portletParameterInfo = this.urlSyntaxProvider.parsePortletParameterName(request, UrlSyntaxProviderImpl.PORTLET_PARAM_PREFIX + UrlSyntaxProviderImpl.SEPARATOR + "foo" , ids);
         
         assertNotNull(portletParameterInfo);
         assertEquals("_foo", portletParameterInfo.first);
@@ -335,7 +331,7 @@ public class UrlSyntaxProviderImplTest {
         
 
         
-        portletParameterInfo = this.urlSyntaxProvider.parsePortletParameterName(UrlSyntaxProviderImpl.PORTLET_PARAM_PREFIX + "pw1" + UrlSyntaxProviderImpl.SEPARATOR + "foo" , ids);
+        portletParameterInfo = this.urlSyntaxProvider.parsePortletParameterName(request, UrlSyntaxProviderImpl.PORTLET_PARAM_PREFIX + "pw1" + UrlSyntaxProviderImpl.SEPARATOR + "foo" , ids);
         
         assertNotNull(portletParameterInfo);
         assertEquals("pw1_foo", portletParameterInfo.first);

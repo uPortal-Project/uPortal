@@ -20,9 +20,7 @@
 package org.jasig.portal.portlet.registry;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.pluto.container.PortletWindowID;
+import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
@@ -31,52 +29,68 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  */
 class PortletWindowIdImpl implements IPortletWindowId {
     private static final long serialVersionUID = 1L;
-    
-    private final String portletWindowId;
-    
-    public PortletWindowIdImpl(String portletWindowId) {
-        Validate.notNull(portletWindowId, "portletWindowId can not be null");
 
-        this.portletWindowId = portletWindowId;
+    private final IPortletEntityId portletEntityId;
+    private final String windowInstanceId;
+    private final String compositeIdString;
+    
+    public PortletWindowIdImpl(IPortletEntityId portletEntityId, String windowInstanceId, String compositeIdString) {
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+
+        this.portletEntityId = portletEntityId;
+        this.windowInstanceId = windowInstanceId;
+        this.compositeIdString = compositeIdString;
+    }
+    
+    public IPortletEntityId getPortletEntityId() {
+        return this.portletEntityId;
+    }
+
+    public String getWindowInstanceId() {
+        return this.windowInstanceId;
     }
 
     /* (non-Javadoc)
      * @see org.apache.pluto.PortletWindowID#getStringId()
      */
-    public String getStringId() {
-        return this.portletWindowId;
-    }
-
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
     @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof PortletWindowID)) {
-            return false;
-        }
-        PortletWindowID rhs = (PortletWindowID) object;
-        return new EqualsBuilder()
-            .append(this.portletWindowId, rhs.getStringId())
-            .isEquals();
+    public String getStringId() {
+        return this.compositeIdString;
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(-917388291, 674832463)
-            .append(this.portletWindowId)
-            .toHashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.portletEntityId == null) ? 0 : this.portletEntityId.hashCode());
+        result = prime * result + ((this.windowInstanceId == null) ? 0 : this.windowInstanceId.hashCode());
+        return result;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PortletWindowIdImpl other = (PortletWindowIdImpl) obj;
+        if (this.portletEntityId == null) {
+            if (other.portletEntityId != null)
+                return false;
+        }
+        else if (!this.portletEntityId.equals(other.portletEntityId))
+            return false;
+        if (this.windowInstanceId == null) {
+            if (other.windowInstanceId != null)
+                return false;
+        }
+        else if (!this.windowInstanceId.equals(other.windowInstanceId))
+            return false;
+        return true;
+    }
+
     @Override
     public String toString() {
         return this.getStringId();

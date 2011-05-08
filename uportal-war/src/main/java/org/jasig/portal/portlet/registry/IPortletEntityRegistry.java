@@ -19,10 +19,10 @@
 
 package org.jasig.portal.portlet.registry;
 
-import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import javax.servlet.http.HttpServletRequest;
+
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -39,7 +39,7 @@ public interface IPortletEntityRegistry {
      * @param portletEntityId The ID of the portlet entity to get a lock for
      * @return The Lock for the Portlet Entity
      */
-    public Lock getPortletEntityLock(IPortletEntityId portletEntityId);
+    public Lock getPortletEntityLock(HttpServletRequest request, IPortletEntityId portletEntityId);
     
     /**
      * Get an existing portlet entity for the entity id. If no entity exists for the id null will be returned.
@@ -48,7 +48,7 @@ public interface IPortletEntityRegistry {
      * @return The portlet entity for the id, null if no entity exists for the id.
      * @throws IllegalArgumentException If portletEntityId is null.
      */
-    public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId);
+    public IPortletEntity getPortletEntity(HttpServletRequest request, IPortletEntityId portletEntityId);
     
     /**
      * Get an existing portlet entity for the String version of the entity id. If an exception occurs while parsing
@@ -59,35 +59,40 @@ public interface IPortletEntityRegistry {
      * @return The portlet entity for the id, null if no entity exists for the id.
      * @throws IllegalArgumentException If portletEntityIdString is null or cannot be parsed into a {@link IPortletEntityId}.
      */
-    public IPortletEntity getPortletEntity(String portletEntityIdString);
+    public IPortletEntity getPortletEntity(HttpServletRequest request, String portletEntityIdString);
+    
+//    /**
+//     * Get an existing portlet entity for the channel subscribe id and person. If no entity exists for the parameters
+//     * null will be returned.
+//     * 
+//     * @param layoutNodeId The layout subscription id for the underlying channel.
+//     * @param userId The if of the person the entity is for.
+//     * @return The portlet entity for the subscribe id and person, null if no entity exists for the parameters.
+//     * @throws IllegalArgumentException If layoutNodeId is null.
+//     */
+//    public IPortletEntity getPortletEntity(String layoutNodeId, int userId);
+    
+//    /**
+//     * Creates a new, persisted, portlet entity for the published and subscribed to channel. If an existing
+//     * {@link IPortletDefinition} can't be found for the portletDefinitionId or an entity already exists for the channel
+//     * subscribe id and person an exception will be thrown.
+//     * 
+//     * @param portletDefinitionId The definition id of the underlying {@link IPortletDefinition}
+//     * @param layoutNodeId The layout subscription id for the underlying channel.
+//     * @param userId The id of the person the entity is for.
+//     * @return A new entity for the parameters
+//     * @throws IllegalArgumentException If portletDefinitionId or layoutNodeId are null
+//     * @throws org.springframework.dao.DataIntegrityViolationException If an entity already exists for the channel
+//     *         subscribe id and userId pair
+//     * @throws org.springframework.dao.DataRetrievalFailureException If no {@link org.jasig.portal.portlet.om.IPortletDefinition}
+//     *         exists for the specified {@link IPortletDefinitionId} 
+//     */
+//    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId);
     
     /**
-     * Get an existing portlet entity for the channel subscribe id and person. If no entity exists for the parameters
-     * null will be returned.
      * 
-     * @param channelSubscribeId The layout subscription id for the underlying channel.
-     * @param userId The if of the person the entity is for.
-     * @return The portlet entity for the subscribe id and person, null if no entity exists for the parameters.
-     * @throws IllegalArgumentException If channelSubscribeId is null.
      */
-    public IPortletEntity getPortletEntity(String channelSubscribeId, int userId);
-    
-    /**
-     * Creates a new, persisted, portlet entity for the published and subscribed to channel. If an existing
-     * {@link IPortletDefinition} can't be found for the portletDefinitionId or an entity already exists for the channel
-     * subscribe id and person an exception will be thrown.
-     * 
-     * @param portletDefinitionId The definition id of the underlying {@link IPortletDefinition}
-     * @param channelSubscribeId The layout subscription id for the underlying channel.
-     * @param userId The id of the person the entity is for.
-     * @return A new entity for the parameters
-     * @throws IllegalArgumentException If portletDefinitionId or channelSubscribeId are null
-     * @throws org.springframework.dao.DataIntegrityViolationException If an entity already exists for the channel
-     *         subscribe id and userId pair
-     * @throws org.springframework.dao.DataRetrievalFailureException If no {@link org.jasig.portal.portlet.om.IPortletDefinition}
-     *         exists for the specified {@link IPortletDefinitionId} 
-     */
-    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId);
+    public IPortletEntity getOrCreateDefaultPortletEntity(HttpServletRequest request, IPortletDefinitionId portletDefinitionId);
     
     /**
      * Convenience for {@link #getPortletEntity(String, int)} and {@link #createPortletEntity(IPortletDefinitionId, String, int)}.
@@ -96,23 +101,23 @@ public interface IPortletEntityRegistry {
      * @see #getPortletEntity(String, int)
      * @see #createPortletEntity(IPortletDefinitionId, String, int)
      */
-    public IPortletEntity getOrCreatePortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId);
+    public IPortletEntity getOrCreatePortletEntity(HttpServletRequest request, IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId);
     
     /**
      * Convenience that looks up the portlet definition by subscribe ID then gets or creates the portlet entity for the subscription
      */
-    public IPortletEntity getOrCreatePortletEntity(IUserInstance userInstance, String channelSubscribeId);
+    public IPortletEntity getOrCreatePortletEntity(HttpServletRequest request, IUserInstance userInstance, String layoutNodeId);
     
     /**
      * Gets or creates a portlet entity for a specific fname.
      */
-    public IPortletEntity getOrCreatePortletEntityByFname(IUserInstance userInstance, String fname);
+    public IPortletEntity getOrCreatePortletEntityByFname(HttpServletRequest request, IUserInstance userInstance, String fname);
     /**
      * Same as {@link #getOrCreatePortletEntityByFname(IUserInstance, String)} but also provides a preferred channel subscribe id.
      * If the specified subscribe ID can be found in the user's layout it is used, if not the functionality provided by
      * {@link #getOrCreatePortletEntityByFname(IUserInstance, String)} is used.
      */
-    public IPortletEntity getOrCreatePortletEntityByFname(IUserInstance userInstance, String fname, String preferredChannelSubscribeId);
+    public IPortletEntity getOrCreatePortletEntityByFname(HttpServletRequest request, IUserInstance userInstance, String fname, String preferredChannelSubscribeId);
     
     /**
      * Stores changes made to an existing portlet entity
@@ -120,30 +125,21 @@ public interface IPortletEntityRegistry {
      * @param portletEntity The entity to update the persistent store for
      * @throws IllegalArgumentException if portletEntity is null
      */
-    public void storePortletEntity(IPortletEntity portletEntity);
+    public void storePortletEntity(HttpServletRequest request, IPortletEntity portletEntity);
     
-    /**
-     * Get all {@link IPortletEntity}s that exist for the specified user id. (From {@link org.jasig.portal.security.IPerson#getID()}.
-     * 
-     * @param userId The id of the user to get the entities for.
-     * @return A set of all entities base on the specified user id, will be empty if no entities exist for the id, will never be null.
-     */
-    public Set<IPortletEntity> getPortletEntitiesForUser(int userId);
+//    /**
+//     * Get all {@link IPortletEntity}s that exist for the specified user id. (From {@link org.jasig.portal.security.IPerson#getID()}.
+//     * 
+//     * @param userId The id of the user to get the entities for.
+//     * @return A set of all entities base on the specified user id, will be empty if no entities exist for the id, will never be null.
+//     */
+//    public Set<IPortletEntity> getPortletEntitiesForUser(int userId);
     
-    /**
-     * Removes a portlet entity and all related data from the persistent store.
-     * 
-     * @param portletEntity The the entity to delete.
-     * @throws IllegalArgumentException if portletEntity is null
-     */
-    public void deletePortletEntity(IPortletEntity portletEntity);
-    
-    /**
-     * Gets the parent portlet definition for the entity specified by the entity id.
-     * 
-     * @param portletEntityId The entity ID to get the parent definition for.
-     * @return The parent portlet definition for the entity, null if no entity exists for the id. 
-     * @throws IllegalArgumentException if portletEntityId is null
-     */
-    public IPortletDefinition getParentPortletDefinition(IPortletEntityId portletEntityId);
+//    /**
+//     * Removes a portlet entity and all related data from the persistent store.
+//     * 
+//     * @param portletEntity The the entity to delete.
+//     * @throws IllegalArgumentException if portletEntity is null
+//     */
+//    public void deletePortletEntity(IPortletEntity portletEntity);
 }

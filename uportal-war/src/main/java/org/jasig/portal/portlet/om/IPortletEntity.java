@@ -30,25 +30,28 @@ import javax.portlet.WindowState;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletEntity {
+public interface IPortletEntity extends IPortletEntityDescriptor {
     /**
      * @return The unique identifier for this portlet entity.
      */
+    @Override
     public IPortletEntityId getPortletEntityId();
     
     /**
-     * @return The ID of the parent portlet defintion
+     * @return The parent portlet defintion
      */
-    public IPortletDefinitionId getPortletDefinitionId();
+    public IPortletDefinition getPortletDefinition();
     
     /**
-     * @return The subscribe ID for the channel underlying this entity.
+     * @return The ID of the layout node this entity represents.
      */
-    public String getChannelSubscribeId();
+    @Override
+    public String getLayoutNodeId();
     
     /**
      * @return The ID of the user this entity is for. 
      */
+    @Override
     public int getUserId();
     
     /**

@@ -133,8 +133,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         
-        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
-        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final String channelSubscribeId = portletEntity.getLayoutNodeId();
         final IUserLayoutNodeDescription node = userLayoutManager.getNode(channelSubscribeId);
         if (node == null) {
             throw new IllegalArgumentException("No layout node exists for id " + channelSubscribeId + " of window " + portletWindowId);

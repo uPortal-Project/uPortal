@@ -173,6 +173,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
      * (non-Javadoc)
      * @see org.apache.pluto.container.UserInfoService#getUserInfo(javax.portlet.PortletRequest, org.apache.pluto.container.PortletWindow)
      */
+	@Override
 	public Map<String, String> getUserInfo(PortletRequest request, PortletWindow portletWindow)
 			throws PortletContainerException {
 		
@@ -214,8 +215,8 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
     	// get the list of requested user attributes
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(request);
         final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(httpServletRequest, plutoPortletWindow);
-        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(httpServletRequest, portletWindow.getPortletWindowId());
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntity.getPortletEntityId());
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         final PortletApplicationDefinition portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
         
         // check to see if the proxy ticket key is one of the requested user attributes
@@ -239,7 +240,6 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
      * @param baseContext The security context to start looking for a password from.
      * @return the users password
      */
-    @SuppressWarnings("unchecked")
 	private String getPassword(ISecurityContext baseContext) {
         String password = null;
         IOpaqueCredentials oc = baseContext.getOpaqueCredentials();

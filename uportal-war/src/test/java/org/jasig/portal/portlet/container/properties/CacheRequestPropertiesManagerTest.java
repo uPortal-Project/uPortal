@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.easymock.EasyMock;
 import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
+import org.jasig.portal.mock.portlet.om.MockPortletEntity;
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindow;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -66,15 +67,16 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         
         final MockPortletWindow portletWindow = new MockPortletWindow();
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("1");
-        portletWindow.setPortletEntityId(portletEntityId);
+        final MockPortletEntity portletEntity = new MockPortletEntity();
+        portletEntity.setPortletEntityId(portletEntityId);
+        portletWindow.setPortletEntity(portletEntity);
         
         final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("2");
         
         final IPortletDefinition portletDefinition = EasyMock.createMock(IPortletDefinition.class);
         EasyMock.expect(portletDefinition.getPortletDefinitionId()).andReturn(portletDefinitionId);
         
-        final IPortletEntityRegistry portletEntityRegistry = EasyMock.createMock(IPortletEntityRegistry.class);
-        EasyMock.expect(portletEntityRegistry.getParentPortletDefinition(portletEntityId)).andReturn(portletDefinition);
+        portletEntity.setPortletDefinition(portletDefinition);
         
         final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
         EasyMock.expect(portletDD.getExpirationCache()).andReturn(Integer.MIN_VALUE);
@@ -84,14 +86,13 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDD);
         
         
-        EasyMock.replay(portletDefinition, portletEntityRegistry, portletDefinitionRegistry);
+        EasyMock.replay(portletDefinition, portletDefinitionRegistry);
             
-        this.cacheRequestPropertiesManager.setPortletEntityRegistry(portletEntityRegistry);
         this.cacheRequestPropertiesManager.setPortletDefinitionRegistry(portletDefinitionRegistry);
         
         final Map<String, String[]> requestProperties = this.cacheRequestPropertiesManager.getRequestProperties(httpServletRequest, portletWindow);
         
-        EasyMock.verify(portletDefinition, portletEntityRegistry, portletDefinitionRegistry);
+        EasyMock.verify(portletDefinition, portletDefinitionRegistry);
         
         assertEquals(0, requestProperties.size());
     }
@@ -104,15 +105,16 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         
         final MockPortletWindow portletWindow = new MockPortletWindow();
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("1");
-        portletWindow.setPortletEntityId(portletEntityId);
+        final MockPortletEntity portletEntity = new MockPortletEntity();
+        portletEntity.setPortletEntityId(portletEntityId);
+        portletWindow.setPortletEntity(portletEntity);
         
         final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("2");
         
         final IPortletDefinition portletDefinition = EasyMock.createMock(IPortletDefinition.class);
         EasyMock.expect(portletDefinition.getPortletDefinitionId()).andReturn(portletDefinitionId);
         
-        final IPortletEntityRegistry portletEntityRegistry = EasyMock.createMock(IPortletEntityRegistry.class);
-        EasyMock.expect(portletEntityRegistry.getParentPortletDefinition(portletEntityId)).andReturn(portletDefinition);
+        portletEntity.setPortletDefinition(portletDefinition);
         
         final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
         EasyMock.expect(portletDD.getExpirationCache()).andReturn(1);
@@ -122,14 +124,13 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDD);
         
         
-        EasyMock.replay(portletDefinition, portletEntityRegistry, portletDefinitionRegistry);
+        EasyMock.replay(portletDefinition, portletDefinitionRegistry);
             
-        this.cacheRequestPropertiesManager.setPortletEntityRegistry(portletEntityRegistry);
         this.cacheRequestPropertiesManager.setPortletDefinitionRegistry(portletDefinitionRegistry);
         
         final Map<String, String[]> requestProperties = this.cacheRequestPropertiesManager.getRequestProperties(httpServletRequest, portletWindow);
         
-        EasyMock.verify(portletDefinition, portletEntityRegistry, portletDefinitionRegistry);
+        EasyMock.verify(portletDefinition, portletDefinitionRegistry);
         
         assertEquals(1, requestProperties.size());
         final String[] cacheProperty = requestProperties.get(RenderResponse.EXPIRATION_CACHE);
@@ -176,15 +177,16 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         
         final MockPortletWindow portletWindow = new MockPortletWindow();
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("1");
-        portletWindow.setPortletEntityId(portletEntityId);
+        final MockPortletEntity portletEntity = new MockPortletEntity();
+        portletEntity.setPortletEntityId(portletEntityId);
+        portletWindow.setPortletEntity(portletEntity);
         
         final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("2");
         
         final IPortletDefinition portletDefinition = EasyMock.createMock(IPortletDefinition.class);
         EasyMock.expect(portletDefinition.getPortletDefinitionId()).andReturn(portletDefinitionId);
         
-        final IPortletEntityRegistry portletEntityRegistry = EasyMock.createMock(IPortletEntityRegistry.class);
-        EasyMock.expect(portletEntityRegistry.getParentPortletDefinition(portletEntityId)).andReturn(portletDefinition);
+        portletEntity.setPortletDefinition(portletDefinition);
         
         final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
         EasyMock.expect(portletDD.getExpirationCache()).andReturn(1);
@@ -194,14 +196,13 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         EasyMock.expect(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).andReturn(portletDD);
         
         
-        EasyMock.replay(portletDefinition, portletEntityRegistry, portletDefinitionRegistry);
+        EasyMock.replay(portletDefinition, portletDefinitionRegistry);
             
-        this.cacheRequestPropertiesManager.setPortletEntityRegistry(portletEntityRegistry);
         this.cacheRequestPropertiesManager.setPortletDefinitionRegistry(portletDefinitionRegistry);
         
         this.cacheRequestPropertiesManager.setResponseProperty(httpServletRequest, portletWindow, RenderResponse.EXPIRATION_CACHE, "30");
         
-        EasyMock.verify(portletDefinition, portletEntityRegistry, portletDefinitionRegistry);
+        EasyMock.verify(portletDefinition, portletDefinitionRegistry);
         
         final Integer expirationCache = portletWindow.getExpirationCache();
         assertEquals(Integer.valueOf(30), expirationCache);
@@ -215,15 +216,16 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         
         final MockPortletWindow portletWindow = new MockPortletWindow();
         final MockPortletEntityId portletEntityId = new MockPortletEntityId("1");
-        portletWindow.setPortletEntityId(portletEntityId);
+        final MockPortletEntity portletEntity = new MockPortletEntity();
+        portletEntity.setPortletEntityId(portletEntityId);
+        portletWindow.setPortletEntity(portletEntity);
         
         final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("2");
         
         final IPortletDefinition portletDefinition = EasyMock.createMock(IPortletDefinition.class);
         EasyMock.expect(portletDefinition.getPortletDefinitionId()).andReturn(portletDefinitionId);
         
-        final IPortletEntityRegistry portletEntityRegistry = EasyMock.createMock(IPortletEntityRegistry.class);
-        EasyMock.expect(portletEntityRegistry.getParentPortletDefinition(portletEntityId)).andReturn(portletDefinition);
+        portletEntity.setPortletDefinition(portletDefinition);
         
         final PortletDefinition portletDD = EasyMock.createMock(PortletDefinition.class);
         EasyMock.expect(portletDD.getExpirationCache()).andReturn(Integer.MIN_VALUE);
@@ -234,14 +236,13 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         
         
         
-        EasyMock.replay(portletDefinition, portletEntityRegistry, portletDefinitionRegistry);
+        EasyMock.replay(portletDefinition, portletDefinitionRegistry);
             
-        this.cacheRequestPropertiesManager.setPortletEntityRegistry(portletEntityRegistry);
         this.cacheRequestPropertiesManager.setPortletDefinitionRegistry(portletDefinitionRegistry);
         
         this.cacheRequestPropertiesManager.setResponseProperty(httpServletRequest, portletWindow, RenderResponse.EXPIRATION_CACHE, "30");
         
-        EasyMock.verify(portletDefinition, portletEntityRegistry, portletDefinitionRegistry);
+        EasyMock.verify(portletDefinition, portletDefinitionRegistry);
         
         final Integer expirationCache = portletWindow.getExpirationCache();
         assertNull(expirationCache);

@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.pluto.container.PortletWindow;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
@@ -78,9 +79,10 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
 		// TODO pluto 1.1 PortletEnvironmentService#createPortletSession passed in the request; now use IPortalRequestUtils#getCurrentPortalRequest()?
 		final HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
 		final IPortletWindow internalPortletWindow = this.portletWindowRegistry.convertPortletWindow(request, portletWindow);
-        final IPortletEntityId portletEntityId = internalPortletWindow.getPortletEntityId();
+		final IPortletEntity portletEntity = internalPortletWindow.getPortletEntity();
+        final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
         
-		return new ScopingPortletSessionImpl(portletEntityId, portletContext, internalPortletWindow, session);
+		return new ScopingPortletSessionImpl(portletEntityId, portletContext, portletWindow, session);
 	}
     
     

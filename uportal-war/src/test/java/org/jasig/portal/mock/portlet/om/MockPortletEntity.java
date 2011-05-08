@@ -21,6 +21,7 @@ package org.jasig.portal.mock.portlet.om;
 
 import javax.portlet.WindowState;
 
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -37,14 +38,14 @@ public class MockPortletEntity implements IPortletEntity {
     private String channelSubscribeId;
     private int userId;
     private WindowState windowState;
-    private IPortletDefinitionId portletDefinitionId;
+    private IPortletDefinition portletDefinition;
     private IPortletPreferences portletPreferences;
     
     public MockPortletEntity() {
         this.portletEntityId = null;
         this.channelSubscribeId = null;
         this.userId = -1;
-        this.portletDefinitionId = null;
+        this.portletDefinition = null;
         this.portletPreferences = null;
     }
 
@@ -54,6 +55,11 @@ public class MockPortletEntity implements IPortletEntity {
     @Override
     public IPortletEntityId getPortletEntityId() {
         return this.portletEntityId;
+    }
+
+    @Override
+    public IPortletDefinition getPortletDefinition() {
+        return portletDefinition;
     }
 
     /**
@@ -67,7 +73,7 @@ public class MockPortletEntity implements IPortletEntity {
      * @return the channelSubscribeId
      */
     @Override
-    public String getChannelSubscribeId() {
+    public String getLayoutNodeId() {
         return this.channelSubscribeId;
     }
 
@@ -98,14 +104,14 @@ public class MockPortletEntity implements IPortletEntity {
      */
     @Override
     public IPortletDefinitionId getPortletDefinitionId() {
-        return this.portletDefinitionId;
+        return this.portletDefinition != null ? portletDefinition.getPortletDefinitionId() : null;
     }
 
     /**
      * @param portletDefinitionId the portletDefinitionId to set
      */
-    public void setPortletDefinitionId(IPortletDefinitionId portletDefinitionId) {
-        this.portletDefinitionId = portletDefinitionId;
+    public void setPortletDefinition(IPortletDefinition portletDefinition) {
+        this.portletDefinition = portletDefinition;
     }
 
     @Override

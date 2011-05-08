@@ -40,8 +40,6 @@ import javax.persistence.UniqueConstraint;
 import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -60,7 +58,7 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
 @Entity
 @Table(
         name = "UP_PORTLET_ENT", 
-        uniqueConstraints = @UniqueConstraint(name = "IDX_PORT_END__USR_CHAN_SUB",  columnNames = { "CHANNEL_SUB_ID", "USER_ID" })
+        uniqueConstraints = @UniqueConstraint(name = "IDX_PORT_END__USR_LAY_NODE",  columnNames = { "LAYOUT_NODE_ID", "USER_ID" })
     )
 @SequenceGenerator(
         name="UP_PORTLET_ENT_GEN",
@@ -80,9 +78,9 @@ class PortletEntityImpl implements IPortletEntity {
     @GeneratedValue(generator = "UP_PORTLET_ENT_GEN")
     @Column(name = "PORTLET_ENT_ID")
     private final long internalPortletEntityId;
-
-    @Column(name = "CHANNEL_SUB_ID", nullable = false, updatable = false)
-    private final String channelSubscribeId;
+    
+    @Column(name = "LAYOUT_NODE_ID", nullable = false, updatable = false)
+    private final String layoutNodeId;
 
     @Column(name = "USER_ID", nullable = false, updatable = false)
     private final int userId;
@@ -100,11 +98,9 @@ class PortletEntityImpl implements IPortletEntity {
     @JoinColumn(name = "PORTLET_PREFS_ID", nullable = false)
     @Fetch(FetchMode.JOIN)
     private IPortletPreferences portletPreferences = null;
-    
 
     @Transient
     private IPortletEntityId portletEntityId = null;
-    
     
     /**
      * Used to initialize fields after persistence actions.
@@ -125,22 +121,26 @@ class PortletEntityImpl implements IPortletEntity {
     private PortletEntityImpl() {
         this.internalPortletEntityId = -1;
         this.portletDefinition = null;
-        this.channelSubscribeId = null;
+        this.layoutNodeId = null;
         this.userId = -1;
         this.portletPreferences = null;
     }
     
     public PortletEntityImpl(IPortletDefinition portletDefinition, String channelSubscribeId, int userId) {
         Validate.notNull(portletDefinition, "portletDefinition can not be null");
-        Validate.notNull(channelSubscribeId, "channelSubscribeId can not be null");
+        Validate.notNull(channelSubscribeId, "layoutNodeId can not be null");
         
         this.internalPortletEntityId = -1;
         this.portletDefinition = portletDefinition;
-        this.channelSubscribeId = channelSubscribeId;
+        this.layoutNodeId = channelSubscribeId;
         this.userId = userId;
         this.portletPreferences = new PortletPreferencesImpl();
     }
 
+    @Override
+    public IPortletDefinitionId getPortletDefinitionId() {
+        return this.portletDefinition.getPortletDefinitionId();
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletEntity#getPortletEntityId()
@@ -150,23 +150,17 @@ class PortletEntityImpl implements IPortletEntity {
         return this.portletEntityId;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletEntity#getPortletDefinitionId()
-     */
     @Override
-    public IPortletDefinitionId getPortletDefinitionId() {
-    	if (this.portletDefinition != null) {
-            return this.portletDefinition.getPortletDefinitionId();
-    	} 
-		return null;
+    public IPortletDefinition getPortletDefinition() {
+        return this.portletDefinition;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletEntity#getChannelSubscribeId()
      */
     @Override
-    public String getChannelSubscribeId() {
-        return this.channelSubscribeId;
+    public String getLayoutNodeId() {
+        return this.layoutNodeId;
     }
 
     /* (non-Javadoc)
@@ -204,40 +198,45 @@ class PortletEntityImpl implements IPortletEntity {
         this.portletPreferences = portletPreferences;
     }
 
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof IPortletEntity)) {
-            return false;
-        }
-        IPortletEntity rhs = (IPortletEntity) object;
-        return new EqualsBuilder()
-            .append(this.channelSubscribeId, rhs.getChannelSubscribeId())
-            .append(this.userId, rhs.getUserId())
-            .append(this.getPortletDefinitionId(), rhs.getPortletDefinitionId())
-            .isEquals();
-    }
-
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(464270933, -1074792143)
-            .append(this.channelSubscribeId)
-            .append(this.userId)
-            .append(this.getPortletDefinitionId())
-            .toHashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.layoutNodeId == null) ? 0 : this.layoutNodeId.hashCode());
+        result = prime * result + ((this.portletDefinition == null) ? 0 : this.portletDefinition.hashCode());
+        result = prime * result + this.userId;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PortletEntityImpl other = (PortletEntityImpl) obj;
+        if (this.layoutNodeId == null) {
+            if (other.layoutNodeId != null)
+                return false;
+        }
+        else if (!this.layoutNodeId.equals(other.layoutNodeId))
+            return false;
+        if (this.portletDefinition == null) {
+            if (other.portletDefinition != null)
+                return false;
+        }
+        else if (!this.portletDefinition.equals(other.portletDefinition))
+            return false;
+        if (this.userId != other.userId)
+            return false;
+        return true;
     }
 
     @Override
     public String toString() {
-        return "PortletEntityImpl [portletEntityId=" + this.portletEntityId + ", channelSubscribeId="
-                + this.channelSubscribeId + ", userId=" + this.userId + ", windowState=" + this.windowState + "]";
+        return "PortletEntityImpl [portletEntityId=" + this.portletEntityId + ", layoutNodeId="
+                + this.layoutNodeId + ", userId=" + this.userId + ", windowState=" + this.windowState + "]";
     }
 }

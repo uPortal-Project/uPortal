@@ -264,6 +264,15 @@
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
     
     <!-- 
+     | Caches parsing entity id strings into entity ids
+     | - 1 x subscribed portlet x user
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.idParseCache"
+        eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <!-- 
      | Caches PortletEntityImpl objects
      | - 1 x subscribed portlet x user
      | - replicated by invalidation

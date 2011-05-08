@@ -56,7 +56,7 @@ public class EventProviderImpl implements EventProvider {
     public EventProviderImpl(IPortletWindow portletWindow, PortletContextService portletContextService) {
         this.portletWindow = portletWindow;
         
-        final PortletDefinition portletDefinition = portletWindow.getPortletDefinition();
+        final PortletDefinition portletDefinition = portletWindow.getPlutoPortletWindow().getPortletDefinition();
         final PortletApplicationDefinition application = portletDefinition.getApplication();
         final String portletApplicationName = application.getName();
         try {
@@ -111,7 +111,7 @@ public class EventProviderImpl implements EventProvider {
     }
 
     private boolean isDeclaredAsPublishingEvent(QName qname) {
-        final PortletDefinition portletDescriptor = this.portletWindow.getPortletDefinition();
+        final PortletDefinition portletDescriptor = this.portletWindow.getPlutoPortletWindow().getPortletDefinition();
         final List<? extends EventDefinitionReference> events = portletDescriptor.getSupportedPublishingEvents();
         
         if (events == null) {
@@ -133,7 +133,7 @@ public class EventProviderImpl implements EventProvider {
     }
 
     private boolean isValueInstanceOfDefinedClass(QName qname, Serializable value) {
-        final PortletDefinition portletDefinition = this.portletWindow.getPortletDefinition();
+        final PortletDefinition portletDefinition = this.portletWindow.getPlutoPortletWindow().getPortletDefinition();
         final PortletApplicationDefinition app = portletDefinition.getApplication();
         final List<? extends EventDefinition> events = app.getEventDefinitions();
         if (events == null) {

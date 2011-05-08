@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,16 +41,10 @@ public class ThreadNamingPortletExecutionInterceptorAdaptor extends PortletExecu
     private static final String THREAD_NAME = ThreadNamingPortletExecutionInterceptorAdaptor.class.getName() + ".THREAD_NAME";
     
     private IPortletWindowRegistry portletWindowRegistry;
-    private IPortletEntityRegistry portletEntityRegistry;
     
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
-    }
-
-    @Autowired
-    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
-        this.portletEntityRegistry = portletEntityRegistry;
     }
     
     @Override
@@ -73,8 +67,9 @@ public class ThreadNamingPortletExecutionInterceptorAdaptor extends PortletExecu
     }
 
     protected String getFname(HttpServletRequest request, IPortletWindowId portletWindowId) {
-        final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
-        final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
-        return parentPortletDefinition.getFName();
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        return portletDefinition.getFName();
       }
 }

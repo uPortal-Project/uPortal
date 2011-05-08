@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.mock.portlet.om;
+package org.jasig.portal.portlet.registry;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -29,13 +29,12 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -48,74 +47,74 @@ import org.jasig.portal.url.ParameterMap;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class MockPortletWindow implements IPortletWindow, PortletWindow {
+class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     private static final long serialVersionUID = 1L;
 
-    private IPortletEntity portletEntity;
-    private IPortletWindowId portletWindowId;
-    private String contextPath;
-    private String portletName;
-    private IPortletWindowId delegationParent;
-    private PortletDefinition portletDefinition;
+    private final PortletDefinition portletDefinition;
+    private final IPortletEntity portletEntity;
+    private final IPortletWindowId portletWindowId;
+    private final IPortletWindowId delegationParent;
     
-    private Map<String, String[]> previousPrivateRenderParameters = new ParameterMap();
-    private Map<String, String[]> previousPublicRenderParameters = new ParameterMap();
+    private Map<String, String[]> renderParameters = new ParameterMap();
+    private Map<String, String[]> publicRenderParameters = new ParameterMap();
     private transient PortletMode portletMode = PortletMode.VIEW;
     private transient WindowState windowState = WindowState.NORMAL;
     private Integer expirationCache = null;
     
-    public MockPortletWindow() {
-        this.portletWindowId = null;
-        this.portletEntity = null;
-        this.contextPath = null;
-        this.portletName = null;
-        this.delegationParent = null;
-    }
-    
     /**
      * Creates a new PortletWindow with the default settings
+     * 
+     * @param portletWindowId The unique identifier for this PortletWindow
+     * @param portletEntityId The unique identifier of the parent IPortletEntity
+     * @param portletDefinition The pluto portlet descriptor level object (pluto calls it a definition)
+     * @param delegationParent The ID of the PortletWindow delegating rendering to this portlet
+     * @throws IllegalArgumentException if portletWindowId, or portletDefinition are null
      */
-    public MockPortletWindow(IPortletWindowId portletWindowId, IPortletEntity portletEntity, String contextPath, String portletName, IPortletWindowId delegateParent, PortletDefinition portletDefinition) {
+    public StatelessPortletWindowImpl(IPortletWindowId portletWindowId, IPortletEntity portletEntity, PortletDefinition portletDefinition, IPortletWindowId delegationParent) {
+        Validate.notNull(portletWindowId, "portletWindowId can not be null");
+        Validate.notNull(portletEntity, "portletEntity can not be null");
+        Validate.notNull(portletDefinition, "portletDefinition can not be null");
+        
         this.portletWindowId = portletWindowId;
         this.portletEntity = portletEntity;
-        this.contextPath = contextPath;
-        this.portletName = portletName;
-        this.delegationParent = delegateParent;
+        this.delegationParent = delegationParent;
         this.portletDefinition = portletDefinition;
     }
-    /**
-     * Creates a new PortletWindow with the default settings
-     */
-    public MockPortletWindow(IPortletWindowId portletWindowId, IPortletEntity portletEntity, String contextPath, String portletName, IPortletWindowId delegateParent) {
-        this.portletWindowId = portletWindowId;
-        this.portletEntity = portletEntity;
-        this.contextPath = contextPath;
-        this.portletName = portletName;
-        this.delegationParent = delegateParent;
-    }
     
     /**
      * Creates a new PortletWindow with the default settings
+     * 
+     * @param portletWindowId The unique identifier for this PortletWindow
+     * @param portletEntityId The unique identifier of the parent IPortletEntity
+     * @param portletDefinition The pluto portlet descriptor level object (pluto calls it a definition)
+     * @throws IllegalArgumentException if portletWindowId, or portletDefinition are null
      */
-    public MockPortletWindow(IPortletWindowId portletWindowId, IPortletEntity portletEntity, String contextPath, String portletName) {
-        this(portletWindowId, portletEntity, contextPath, portletName, null);
+    public StatelessPortletWindowImpl(IPortletWindowId portletWindowId, IPortletEntity portletEntity, PortletDefinition portletDefinition) {
+        this(portletWindowId, portletEntity, portletDefinition, null);
     }
     
     /**
      * Creates a new PortletWindow cloned from the passed IPortletWindow
+     * 
+     * @param portletWindowId The unique identifier for this PortletWindow
+     * @param portletWindow The PortletWindow to clone settings from
+     * @throws IllegalArgumentException if portletWindowId, or portletWindow are null
      */
-    public MockPortletWindow(IPortletWindowId portletWindowId, IPortletWindow portletWindow) {
+    public StatelessPortletWindowImpl(IPortletWindowId portletWindowId, IPortletWindow portletWindow) {
+        Validate.notNull(portletWindowId, "portletWindowId can not be null");
+        Validate.notNull(portletWindow, "portletWindow can not be null");
+        
         this.portletWindowId = portletWindowId;
         this.portletEntity = portletWindow.getPortletEntity();
-        //this.contextPath = portletWindow.getContextPath();
-        //this.portletName = portletWindow.getPortletName();
         this.portletMode = portletWindow.getPortletMode();
         this.windowState = portletWindow.getWindowState();
-    }
-
-    @Override
-    public IPortletEntity getPortletEntity() {
-        return this.portletEntity;
+        this.portletDefinition = portletWindow.getPlutoPortletWindow().getPortletDefinition();;
+        this.delegationParent = portletWindow.getDelegationParent();
+        
+        Validate.notNull(this.portletEntity, "portletWindow.portletEntity can not be null");
+        Validate.notNull(this.portletMode, "portletWindow.portletMode can not be null");
+        Validate.notNull(this.windowState, "portletWindow.windowState can not be null");
+        Validate.notNull(this.portletDefinition, "portletWindow.portletDefinition can not be null");
     }
 
     /* (non-Javadoc)
@@ -134,18 +133,9 @@ public class MockPortletWindow implements IPortletWindow, PortletWindow {
         return this.portletWindowId;
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.pluto.PortletWindow#getContextPath()
-     */
-    public String getContextPath() {
-        return this.contextPath;
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.PortletWindow#getPortletName()
-     */
-    public String getPortletName() {
-        return this.portletName;
+    @Override
+    public IPortletEntity getPortletEntity() {
+        return this.portletEntity;
     }
 
     /* (non-Javadoc)
@@ -169,6 +159,7 @@ public class MockPortletWindow implements IPortletWindow, PortletWindow {
      */
     @Override
     public void setPortletMode(PortletMode mode){
+        Validate.notNull(mode, "mode can not be null");
         this.portletMode = mode;
     }
     
@@ -184,37 +175,29 @@ public class MockPortletWindow implements IPortletWindow, PortletWindow {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#getRequestParameers()
      */
-    public Map<String, String[]> getRequestParameers() {
-        return this.previousPrivateRenderParameters;
+    @Override
+    public Map<String, String[]> getRenderParameters() {
+        return this.renderParameters;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
      */
     @Override
-    public void setRenderParameters(Map<String, String[]> requestParameters) {
-        if (requestParameters == null) {
-            this.previousPrivateRenderParameters = null;
-        }
-        else {
-            this.previousPrivateRenderParameters = new ParameterMap(requestParameters);
-        }
+    public void setRenderParameters(Map<String, String[]> renderParameters) {
+        Validate.notNull(renderParameters, "renderParameters can not be null");
+        this.renderParameters = renderParameters;
     }
-    
     
     @Override
     public Map<String, String[]> getPublicRenderParameters() {
-        return this.previousPublicRenderParameters;
+        return this.publicRenderParameters;
     }
 
     @Override
-    public void setPublicRenderParameters(Map<String, String[]> requestParameters) {
-        if (requestParameters == null) {
-            this.previousPublicRenderParameters = null;
-        }
-        else {
-            this.previousPublicRenderParameters = new ParameterMap(requestParameters);
-        }
+    public void setPublicRenderParameters(Map<String, String[]> publicRenderParameters) {
+        Validate.notNull(publicRenderParameters, "publicRenderParameters can not be null");
+        this.publicRenderParameters = publicRenderParameters;
     }
 
     /* (non-Javadoc)
@@ -232,62 +215,20 @@ public class MockPortletWindow implements IPortletWindow, PortletWindow {
     public void setExpirationCache(Integer expirationCache) {
         this.expirationCache = expirationCache;
     }
-
-    /**
-     * @return the requestParameters
-     */
-    @Override
-    public Map<String, String[]> getRenderParameters() {
-        return previousPrivateRenderParameters;
-    }
-
-    /**
-     * @param portletEntity the portletEntity to set
-     */
-    public void setPortletEntity(IPortletEntity portletEntity) {
-        this.portletEntity = portletEntity;
-    }
-
-    /**
-     * @param portletWindowId the portletWindowId to set
-     */
-    public void setPortletWindowId(IPortletWindowId portletWindowId) {
-        this.portletWindowId = portletWindowId;
-    }
-
-    /**
-     * @param contextPath the contextPath to set
-     */
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
-
-    /**
-     * @param portletName the portletName to set
-     */
-    public void setPortletName(String portletName) {
-        this.portletName = portletName;
-    }
     
-    public void setDelegationParent(IPortletWindowId delegationParent) {
-        this.delegationParent = delegationParent;
-    }
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindow#getDelegationParent()
      */
     @Override
     public IPortletWindowId getDelegationParent() {
         return this.delegationParent;
     }
-    
-    
+
     @Override
     public PortletWindow getPlutoPortletWindow() {
         return this;
     }
-    
-    
     
     //********** Serializable Methods **********//
 
@@ -304,71 +245,59 @@ public class MockPortletWindow implements IPortletWindow, PortletWindow {
         if (this.portletWindowId == null) {
             throw new InvalidObjectException("portletWindowId can not be null");
         }
-        if (this.contextPath == null) {
-            throw new InvalidObjectException("contextPath can not be null");
-        }
-        if (this.portletName == null) {
-            throw new InvalidObjectException("portletName can not be null");
-        }
-        if (this.previousPrivateRenderParameters == null) {
-            throw new InvalidObjectException("requestParameters can not be null");
-        }
         
         //Read & validate transient fields
         final String portletModeStr = (String)ois.readObject();
         if (portletModeStr == null) {
             throw new InvalidObjectException("portletMode can not be null");
         }
-        this.portletMode = new PortletMode(portletModeStr);
+        this.portletMode = PortletUtils.getPortletMode(portletModeStr);
         
         final String windowStateStr = (String)ois.readObject();
         if (windowStateStr == null) {
             throw new InvalidObjectException("windowState can not be null");
         }
-        this.windowState = new WindowState(windowStateStr);
+        this.windowState = PortletUtils.getWindowState(windowStateStr);
     }
 
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof IPortletWindow)) {
-            return false;
-        }
-        MockPortletWindow rhs = (MockPortletWindow) object;
-        return new EqualsBuilder()
-            .append(this.portletWindowId, rhs.getId())
-            .append(this.contextPath, rhs.getContextPath())
-            .append(this.portletName, rhs.getPortletName())
-            .append(this.windowState, rhs.getWindowState())
-            .append(this.portletMode, rhs.getPortletMode())
-            .append(this.expirationCache, rhs.getExpirationCache())
-            .append(this.previousPrivateRenderParameters, rhs.getRenderParameters())
-            .append(this.previousPublicRenderParameters, rhs.getPublicRenderParameters())
-            .append(this.delegationParent, rhs.getDelegationParent())
-            .isEquals();
-    }
-
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(1445247369, -1009176817)
-            .append(this.portletWindowId)
-            .append(this.contextPath)
-            .append(this.portletName)
-            .append(this.windowState)
-            .append(this.portletMode)
-            .append(this.expirationCache)
-            .append(this.previousPrivateRenderParameters)
-            .append(this.previousPublicRenderParameters)
-            .append(this.delegationParent)
-            .toHashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.delegationParent == null) ? 0 : this.delegationParent.hashCode());
+        result = prime * result + ((this.portletEntity == null) ? 0 : this.portletEntity.hashCode());
+        result = prime * result + ((this.portletWindowId == null) ? 0 : this.portletWindowId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        StatelessPortletWindowImpl other = (StatelessPortletWindowImpl) obj;
+        if (this.delegationParent == null) {
+            if (other.delegationParent != null)
+                return false;
+        }
+        else if (!this.delegationParent.equals(other.delegationParent))
+            return false;
+        if (this.portletEntity == null) {
+            if (other.portletEntity != null)
+                return false;
+        }
+        else if (!this.portletEntity.equals(other.portletEntity))
+            return false;
+        if (this.portletWindowId == null) {
+            if (other.portletWindowId != null)
+                return false;
+        }
+        else if (!this.portletWindowId.equals(other.portletWindowId))
+            return false;
+        return true;
     }
 
     /**
@@ -378,13 +307,11 @@ public class MockPortletWindow implements IPortletWindow, PortletWindow {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             .append("portletWindowId", this.portletWindowId)
-            .append("contextPath", this.contextPath)
-            .append("portletName", this.portletName)
             .append("windowState", this.windowState)
             .append("portletMode", this.portletMode)
             .append("expirationCache", this.expirationCache)
-            .append("previousPrivateRenderParameters", this.previousPrivateRenderParameters)
-            .append("previousPublicRenderParameters", this.previousPublicRenderParameters)
+            .append("renderParameters", this.renderParameters)
+            .append("publicRenderParameters", this.publicRenderParameters)
             .append("delegationParent", this.delegationParent)
             .toString();
     }

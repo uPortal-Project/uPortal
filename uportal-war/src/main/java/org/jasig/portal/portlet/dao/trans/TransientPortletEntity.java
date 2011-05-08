@@ -25,6 +25,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -36,31 +37,33 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
  */
 class TransientPortletEntity implements IPortletEntity {
     private final IPortletEntity delegatePortletEntity;
-    private final String transientSubscribeId;
+    private final String transientLayoutNodeId;
     
-    public TransientPortletEntity(IPortletEntity portletEntity, String transientSubscribeId) {
+    public TransientPortletEntity(IPortletEntity portletEntity, String transientLayoutNodeId) {
         this.delegatePortletEntity = portletEntity;
-        this.transientSubscribeId = transientSubscribeId;
+        this.transientLayoutNodeId = transientLayoutNodeId;
     }
     
     protected IPortletEntity getDelegatePortletEntity() {
         return this.delegatePortletEntity;
+    }
+    
+    @Override
+    public IPortletDefinitionId getPortletDefinitionId() {
+        return this.delegatePortletEntity.getPortletDefinitionId();
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletEntity#getChannelSubscribeId()
      */
     @Override
-    public String getChannelSubscribeId() {
-        return this.transientSubscribeId;
+    public String getLayoutNodeId() {
+        return this.transientLayoutNodeId;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletDefinitionId()
-     */
     @Override
-    public IPortletDefinitionId getPortletDefinitionId() {
-        return this.delegatePortletEntity.getPortletDefinitionId();
+    public IPortletDefinition getPortletDefinition() {
+        return this.delegatePortletEntity.getPortletDefinition();
     }
 
     /* (non-Javadoc)
@@ -118,7 +121,7 @@ class TransientPortletEntity implements IPortletEntity {
         }
         TransientPortletEntity rhs = (TransientPortletEntity) object;
         return new EqualsBuilder()
-            .append(this.transientSubscribeId, rhs.transientSubscribeId)
+            .append(this.transientLayoutNodeId, rhs.transientLayoutNodeId)
             .append(this.delegatePortletEntity, rhs.delegatePortletEntity)
             .isEquals();
     }
@@ -129,7 +132,7 @@ class TransientPortletEntity implements IPortletEntity {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(1802746633, 68234451)
-            .append(this.transientSubscribeId)
+            .append(this.transientLayoutNodeId)
             .append(this.delegatePortletEntity)
             .toHashCode();
     }
@@ -141,7 +144,7 @@ class TransientPortletEntity implements IPortletEntity {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
             .appendSuper(this.delegatePortletEntity.toString())
-            .append("transientSubscribeId", this.transientSubscribeId)
+            .append("transientLayoutNodeId", this.transientLayoutNodeId)
             .toString();
     }
 }

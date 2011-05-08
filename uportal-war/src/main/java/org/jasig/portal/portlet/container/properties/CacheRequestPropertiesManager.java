@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
@@ -147,7 +148,8 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
      * @throws PortalException if the PortletDD fails to load.
      */
     protected PortletDefinition getPortletDeployment(HttpServletRequest httpServletRequest, IPortletWindow portletWindow) {
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletWindow.getPortletEntityId());
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         
         try {
             return this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());

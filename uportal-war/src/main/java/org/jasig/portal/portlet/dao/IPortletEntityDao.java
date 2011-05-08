@@ -34,19 +34,19 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 public interface IPortletEntityDao {
     /**
      * Creates, initializes and persists a new {@link IPortletEntity} based on the specified {@link IPortletDefinitionId},
-     * channel subscribe id and user id. 
+     * layout node id and user id. 
      * 
      * @param portletDefinitionId The id of the {@link org.jasig.portal.portlet.om.IPortletDefinition} that is the parent of the new entity
-     * @param channelSubscribeId The subscription id for the channel the entity is based on in the user's layout.
+     * @param layoutNodeId The layout node id in the user's layout.
      * @param userId The id of the user the entity is for.
      * @return A newly created, initialized and persisted entity.
-     * @throws IllegalArgumentException if portletDefinitionId or channelSubscribeId are null.
-     * @throws org.springframework.dao.DataIntegrityViolationException If an entity already exists for the channel
-     *         subscribe id and userId pair
+     * @throws IllegalArgumentException if portletDefinitionId or layoutNodeId are null.
+     * @throws org.springframework.dao.DataIntegrityViolationException If an entity already exists for the layout
+     *         node id and userId pair
      * @throws org.springframework.dao.DataRetrievalFailureException If no {@link org.jasig.portal.portlet.om.IPortletDefinition}
      *         exists for the specified {@link IPortletDefinitionId} 
      */
-    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId);
+    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId);
     
     /**
      * Persists changes to a {@link IPortletEntity}.
@@ -73,14 +73,14 @@ public interface IPortletEntityDao {
     public boolean portletEntityExists(IPortletEntityId portletEntityId);
     
     /**
-     * Get a {@link IPortletEntity} for the specified channel subscribe id and user id.
+     * Get a {@link IPortletEntity} for the specified layout node id and user id.
      * 
-     * @param channelSubscribeId The channel subscription id from the user's layout to get the entity for
+     * @param layoutNodeId The node id from the user's layout to get the entity for
      * @param userId The user id to get the entity for
      * @return The portlet entity for the id, null if no entity exists for the ids.
-     * @throws IllegalArgumentException if channelSubscribeId is null.
+     * @throws IllegalArgumentException if layoutNodeId is null.
      */
-    public IPortletEntity getPortletEntity(String channelSubscribeId, int userId);
+    public IPortletEntity getPortletEntity(String layoutNodeId, int userId);
     
     /**
      * Get all {@link IPortletEntity}s based on the specified {@link IPortletDefinitionId}.

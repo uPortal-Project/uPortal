@@ -112,15 +112,14 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
         final IPerson person = this.personManager.getPerson(request);
         
         final String transientChannelSubscribeId = "CONFIG_" + portletDefinitionId;
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinitionId, transientChannelSubscribeId, person.getID());
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, portletDefinitionId, transientChannelSubscribeId, person.getID());
         
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
         
         
-        IPortletWindowId portletWindowId = this.portletWindowRegistry.getDefaultPortletWindowId(portletEntityId);
-        IPortletWindow internalPortletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        IPortletWindowId portletWindowId = this.portletWindowRegistry.getDefaultPortletWindowId(request, portletEntityId);
+        IPortletWindow parentPortletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
 
-        final IPortletWindow parentPortletWindow = this.portletWindowRegistry.convertPortletWindow(request, internalPortletWindow);
         final IPortletWindowId parentPortletWindowId = parentPortletWindow.getPortletWindowId();
         final IPortletWindow portletWindow = this.portletWindowRegistry.createDelegatePortletWindow(request, portletEntityId, parentPortletWindowId);
 

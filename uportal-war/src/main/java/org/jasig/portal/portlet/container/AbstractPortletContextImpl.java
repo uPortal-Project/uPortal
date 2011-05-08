@@ -96,7 +96,7 @@ public abstract class AbstractPortletContextImpl {
      * @see org.apache.pluto.container.PortletResponseContext#getPortletWindow()
      */
     public PortletWindow getPortletWindow() {
-        return this.portletWindow;
+        return this.portletWindow.getPlutoPortletWindow();
     }
     
     /**

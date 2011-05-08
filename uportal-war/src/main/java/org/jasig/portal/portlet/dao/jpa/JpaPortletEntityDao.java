@@ -59,7 +59,7 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     private CriteriaQuery<PortletEntityImpl> findEntityBySubIdAndUserIdQuery;
     private CriteriaQuery<PortletEntityImpl> findEntitiesForDefinitionQuery;
     private CriteriaQuery<PortletEntityImpl> findEntitiesForUserIdQuery;
-    private ParameterExpression<String> channelSubIdParameter;
+    private ParameterExpression<String> layoutNodeIdParameter;
     private ParameterExpression<Integer> userIdParameter;
     private ParameterExpression<PortletDefinitionImpl> portletDefinitionParameter;
 
@@ -73,7 +73,7 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.channelSubIdParameter = cb.parameter(String.class, "channelSubscribeId");
+        this.layoutNodeIdParameter = cb.parameter(String.class, "layoutNodeId");
         this.userIdParameter = cb.parameter(Integer.class, "userId");
         this.portletDefinitionParameter = cb.parameter(PortletDefinitionImpl.class, "portletDefinition");
         
@@ -88,7 +88,7 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
         criteriaQuery.select(entityRoot);
         criteriaQuery.where(
             cb.and(
-                cb.equal(entityRoot.get(PortletEntityImpl_.channelSubscribeId), this.channelSubIdParameter),
+                cb.equal(entityRoot.get(PortletEntityImpl_.layoutNodeId), this.layoutNodeIdParameter),
                 cb.equal(entityRoot.get(PortletEntityImpl_.userId), this.userIdParameter)
             )
         );
@@ -123,16 +123,16 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
      */
     @Override
     @Transactional
-    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId) {
+    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
-        Validate.notNull(channelSubscribeId, "channelSubscribeId can not be null");
+        Validate.notNull(layoutNodeId, "layoutNodeId can not be null");
         
         final IPortletDefinition portletDefinition = this.portletDefinitionDao.getPortletDefinition(portletDefinitionId);
         if (portletDefinition == null) {
             throw new DataRetrievalFailureException("No IPortletDefinition exists for IPortletDefinitionId='" + portletDefinitionId + "'");
         }
         
-        IPortletEntity portletEntity = new PortletEntityImpl(portletDefinition, channelSubscribeId, userId);
+        IPortletEntity portletEntity = new PortletEntityImpl(portletDefinition, layoutNodeId, userId);
         
         this.entityManager.persist(portletEntity);
 
@@ -183,11 +183,11 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
      * @see org.jasig.portal.dao.portlet.IPortletEntityDao#getPortletEntity(java.lang.String, int)
      */
     @Override
-    public IPortletEntity getPortletEntity(String channelSubscribeId, int userId) {
-        Validate.notNull(channelSubscribeId, "portletEntity can not be null");
+    public IPortletEntity getPortletEntity(String layoutNodeId, int userId) {
+        Validate.notNull(layoutNodeId, "portletEntity can not be null");
         
         final TypedQuery<PortletEntityImpl> query = this.createQuery(findEntityBySubIdAndUserIdQuery, FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER_CACHE_REGION);
-        query.setParameter(this.channelSubIdParameter, channelSubscribeId);
+        query.setParameter(this.layoutNodeIdParameter, layoutNodeId);
         query.setParameter(this.userIdParameter, userId);
         query.setMaxResults(1);
         

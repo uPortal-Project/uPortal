@@ -19,51 +19,60 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.io.Serializable;
+
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.portlet.om.IPortletEntityDescriptor;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 
 /**
- * Standard IPortletEntityId
+ * Session persistent data stored for portlet entities
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-class PortletEntityIdImpl implements IPortletEntityId {
+class PortletEntityData implements Serializable, IPortletEntityDescriptor {
     private static final long serialVersionUID = 1L;
-
+    
+    private final IPortletEntityId portletEntityId;
     private final IPortletDefinitionId portletDefinitionId;
     private final String layoutNodeId;
     private final int userId;
     
-    private final String compositeIdString;
-    
-    public PortletEntityIdImpl(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId, String compositeIdString) {
+    public PortletEntityData(IPortletEntityId portletEntityId, IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
+        this.portletEntityId = portletEntityId;
         this.portletDefinitionId = portletDefinitionId;
         this.layoutNodeId = layoutNodeId;
         this.userId = userId;
-        this.compositeIdString = compositeIdString;
     }
     
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityDescriptor#getPortletEntityId()
+     */
+    @Override
+    public IPortletEntityId getPortletEntityId() {
+        return this.portletEntityId;
+    }
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityDescriptor#getPortletDefinitionId()
+     */
+    @Override
     public IPortletDefinitionId getPortletDefinitionId() {
         return this.portletDefinitionId;
     }
-
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityDescriptor#getLayoutNodeId()
+     */
+    @Override
     public String getLayoutNodeId() {
         return this.layoutNodeId;
     }
-
-    public int getUserId() {
-        return this.userId;
-    }
-
-
-
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IObjectId#getStringId()
+     * @see org.jasig.portal.portlet.registry.IPortletEntityDescriptor#getUserId()
      */
     @Override
-    public String getStringId() {
-        return this.compositeIdString;
+    public int getUserId() {
+        return this.userId;
     }
 
     @Override
@@ -72,6 +81,7 @@ class PortletEntityIdImpl implements IPortletEntityId {
         int result = 1;
         result = prime * result + ((this.layoutNodeId == null) ? 0 : this.layoutNodeId.hashCode());
         result = prime * result + ((this.portletDefinitionId == null) ? 0 : this.portletDefinitionId.hashCode());
+        result = prime * result + ((this.portletEntityId == null) ? 0 : this.portletEntityId.hashCode());
         result = prime * result + this.userId;
         return result;
     }
@@ -84,7 +94,7 @@ class PortletEntityIdImpl implements IPortletEntityId {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        PortletEntityIdImpl other = (PortletEntityIdImpl) obj;
+        PortletEntityData other = (PortletEntityData) obj;
         if (this.layoutNodeId == null) {
             if (other.layoutNodeId != null)
                 return false;
@@ -97,6 +107,12 @@ class PortletEntityIdImpl implements IPortletEntityId {
         }
         else if (!this.portletDefinitionId.equals(other.portletDefinitionId))
             return false;
+        if (this.portletEntityId == null) {
+            if (other.portletEntityId != null)
+                return false;
+        }
+        else if (!this.portletEntityId.equals(other.portletEntityId))
+            return false;
         if (this.userId != other.userId)
             return false;
         return true;
@@ -104,6 +120,7 @@ class PortletEntityIdImpl implements IPortletEntityId {
 
     @Override
     public String toString() {
-        return this.compositeIdString.toString();
+        return "PortletEntityData [portletEntityId=" + this.portletEntityId + ", portletDefinitionId="
+                + this.portletDefinitionId + ", layoutNodeId=" + this.layoutNodeId + ", userId=" + this.userId + "]";
     }
 }

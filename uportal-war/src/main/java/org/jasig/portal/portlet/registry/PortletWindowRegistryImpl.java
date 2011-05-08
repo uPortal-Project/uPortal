@@ -19,12 +19,10 @@
 
 package org.jasig.portal.portlet.registry;
 
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Pattern;
 
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
@@ -47,16 +45,15 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.WebUtils;
 
 /**
  * Provides the default implementation of the window registry, the backing for the storage
@@ -67,14 +64,18 @@ import org.springframework.web.util.WebUtils;
  */
 @Service
 public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
-    public static final String TRANSIENT_WINDOW_ID_PREFIX = "tp.";
-    public static final String TRANSIENT_PORTLET_WINDOW_MAP_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".TRANSIENT_PORTLET_WINDOW_MAP";
-    public static final String PORTLET_WINDOW_MAP_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW_MAP";
+    static final char ID_PART_SEPERATOR = '.';
+    static final Pattern ID_PART_SEPERATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPERATOR)));
+    
+    static final String STATELESS_PORTLET_WINDOW_ID = "tw";
+    static final String PORTLET_WINDOW_DATA_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW_DATA";
+    static final String PORTLET_WINDOW_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW";
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
+
     private IUserInstanceManager userInstanceManager;
     private IPortalRequestUtils portalRequestUtils;
     private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
@@ -110,6 +111,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         
         //Try a direct cast to IPortletWindow
         if (plutoPortletWindow instanceof IPortletWindow) {
+            logger.trace("Casting Pluto PortletWindow to uPortal IPortletWindow {}", plutoPortletWindow.getId());
             return (IPortletWindow)plutoPortletWindow;
         }
         
@@ -120,8 +122,10 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             portletWindowId = (IPortletWindowId)plutoPortletWindowId;
         }
         else {
-            portletWindowId = this.getPortletWindowId(plutoPortletWindowId.getStringId());
+            portletWindowId = this.getPortletWindowId(request, plutoPortletWindowId.getStringId());
         }
+        
+        logger.trace("Pluto PortletWindow does not implmenet uPortal IPortletWindow, looking it up by id {}", portletWindowId);
         
         //Use the converted ID to see if a IPortletWindow exists for it
         final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
@@ -136,97 +140,88 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     
     @Override
     public IPortletWindow getOrCreateDefaultPortletWindowByFname(HttpServletRequest request, String fname) {
+        Validate.notNull(request, "HttpServletRequest cannot be null");
+        Validate.notNull(fname, "fname cannot be null");
+        
         final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
         if (portletDefinition == null) {
-            throw new IllegalArgumentException("No portlet defintion found for fname '" + fname + "'.");
+            logger.debug("No IPortletDefinition found for fname {}, no IPortletWindow will be returned.", fname);
+            return null;
         }
         
-        return this.getOrCreateDefaultPortletWindow(request, portletDefinition);
+        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+        final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletDefinitionId);
+        logger.trace("Found portlet window {} for portlet definition fname {}", portletWindow, fname);
+        
+        return portletWindow;
     }
     
     @Override
     public IPortletWindow getOrCreateDefaultPortletWindowBySubscribeId(HttpServletRequest request, String subscribeId) {
+        Validate.notNull(request, "HttpServletRequest cannot be null");
+        Validate.notNull(subscribeId, "subscribeId cannot be null");
+        
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         final IUserLayoutNodeDescription node = userLayoutManager.getNode(subscribeId);
         if (node == null) {
-            logger.debug("No layout node found for id {}", subscribeId);
+            logger.debug("No layout node found for id {}, no IPortletWindow will be returned.", subscribeId);
             return null;
         }
         if (node.getType() != IUserLayoutChannelDescription.CHANNEL) {
-            logger.debug("Layout node for id {} is not a portlet, it is a: {} ", subscribeId, node.getType());
+            logger.debug("Layout node for id {} is not a portlet, it is a {}, no IPortletWindow will be returned.", subscribeId, node.getType());
             return null;
         }
-        
         logger.trace("Found layout node {} for id {}", node, subscribeId);
+        
         final IUserLayoutChannelDescription portletNode = (IUserLayoutChannelDescription)node;
         final String channelPublishId = portletNode.getChannelPublishId();
         final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
-        final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletDefinition);
+        if (portletDefinition == null) {
+            logger.debug("No IPortletDefinition found for id {}, no IPortletWindow will be returned.", channelPublishId);
+            return null;
+        }
+        
+        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+        final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletDefinitionId);
         logger.trace("Found portlet window {} for layout node {}", portletWindow, portletNode);
         
         return portletWindow;
     }
     
     @Override
-    public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletDefinition portletDefinition) {
-        //Determine the appropriate portlet window ID for the definition
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-        
-        //Determine the subscribe ID
-        final String portletFName = portletDefinition.getFName();
-        final String portletNodeId = userLayoutManager.getSubscribeId(portletFName);
-        if (portletNodeId == null) {
-            throw new IllegalArgumentException("No channel subscribe ID found for fname '" + portletFName + "'.");
-        }
-        
-        final IPerson person = userInstance.getPerson();
-        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
-        final int personId = person.getID();
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinitionId, portletNodeId, personId);
+    public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletDefinitionId portletDefinitionId) {
+        Validate.notNull(request, "HttpServletRequest cannot be null");
+        Validate.notNull(portletDefinitionId, "portletDefinition cannot be null");
+     
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreateDefaultPortletEntity(request, portletDefinitionId);
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+        
         return this.getOrCreateDefaultPortletWindow(request, portletEntityId);
     }
-    
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#createPortletWindow(javax.servlet.http.HttpServletRequest, java.lang.String, org.jasig.portal.portlet.om.IPortletEntityId)
-     */
-    @Override
-    public IPortletWindow createPortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId) {
-        Validate.notNull(request, "request can not be null");
-        Validate.notNull(windowInstanceId, "windowInstanceId can not be null");
-        Validate.notNull(portletEntityId, "portletEntityId can not be null");
 
-        //Create the window
-        final IPortletWindowId portletWindowId = this.createPortletWindowId(windowInstanceId, portletEntityId);
-        final IPortletWindow portletWindow = this.createPortletWindow(request, portletWindowId, portletEntityId);
-        
-        //Store it in the request
-        this.storePortletWindow(request, portletWindow);
-        
-        return this.wrapPortletWindowForRequest(request, portletWindow);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getOrCreatePortletWindow(javax.servlet.http.HttpServletRequest, java.lang.String, org.jasig.portal.portlet.om.IPortletEntityId)
-     */
     @Override
-    public IPortletWindow getOrCreatePortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId) {
+    public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId) {
         Validate.notNull(request, "request can not be null");
-        Validate.notNull(windowInstanceId, "windowInstanceId can not be null");
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
         
-        //Try the get
-        IPortletWindow portletWindow = this.getPortletWindow(request, windowInstanceId, portletEntityId);
+        final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(request, portletEntityId);
+
+        final ConcurrentMap<IPortletWindowId, IPortletWindow> portletWindowMap = getPortletWindowMap(request);
         
-        //If nothing returned by the get create a new one.
-        if (portletWindow == null) {
-            portletWindow = this.createPortletWindow(request, windowInstanceId, portletEntityId);
+        //Check if there is portlet window cached in the request
+        IPortletWindow portletWindow = portletWindowMap.get(portletWindowId);
+        if (portletWindow != null) {
+            logger.trace("Found IPortletWindow {} in request cache", portletWindow.getPortletWindowId());
+            return portletWindow;
         }
+        
+        final PortletWindowData portletWindowData = this.getOrCreateDefaultPortletWindowData(request, portletEntityId, portletWindowId);
+        portletWindow = wrapPortletWindowData(request, portletWindowData);
+        
+        //Cache the wrapped window in the request
+        portletWindow = ConcurrentMapUtils.putIfAbsent(portletWindowMap, portletWindowId, portletWindow);
         
         return portletWindow;
     }
@@ -239,257 +234,254 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(request, "request can not be null");
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
         
-        if (this.isTransient(request, portletWindowId)) {
-            final String portletWindowIdString = portletWindowId.getStringId();
-            final String portletEntityIdString = portletWindowIdString.substring(TRANSIENT_WINDOW_ID_PREFIX.length());
-            
-            final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(portletEntityIdString);
-            
-            return this.getTransientPortletWindow(request, portletWindowIdString, portletEntity.getPortletEntityId());
+        final ConcurrentMap<IPortletWindowId, IPortletWindow> portletWindowMap = getPortletWindowMap(request);
+        
+        IPortletWindow portletWindow = portletWindowMap.get(portletWindowId);
+        if (portletWindow != null) {
+            logger.trace("Found IPortletWindow {} in request cache", portletWindow.getPortletWindowId());
+            return portletWindow;
         }
         
-        final Map<IPortletWindowId, IPortletWindow> portletWindowRequestMap = this.getPortletWindowRequestMap(request);
-        if (portletWindowRequestMap != null) {
-            final IPortletWindow requestWindow = portletWindowRequestMap.get(portletWindowId);
-            if (requestWindow != null) {
-                return requestWindow;
-            }
-        }
-        
-        final Map<IPortletWindowId, IPortletWindow> portletWindowSessionMap = this.getPortletWindowSessionMap(request);
-        if (portletWindowSessionMap == null) {
+        final PortletWindowData portletWindowData = this.getPortletWindowData(request, portletWindowId);
+        if (portletWindowData == null) {
+            logger.trace("No IPortletWindow {} exists, returning null");
             return null;
         }
         
-        final IPortletWindow sessionWindow = portletWindowSessionMap.get(portletWindowId);
+        portletWindow = this.wrapPortletWindowData(request, portletWindowData);
         
-        return this.wrapPortletWindowForRequest(request, sessionWindow);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getPortletWindow(javax.servlet.http.HttpServletRequest, java.lang.String, org.jasig.portal.portlet.om.IPortletEntityId)
-     */
-    @Override
-    public IPortletWindow getPortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId) {
-        Validate.notNull(request, "request can not be null");
-        Validate.notNull(windowInstanceId, "windowInstanceId can not be null");
-        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+        //Cache the wrapped window in the request
+        portletWindow = ConcurrentMapUtils.putIfAbsent(portletWindowMap, portletWindowId, portletWindow);
         
-        if (windowInstanceId.startsWith(TRANSIENT_WINDOW_ID_PREFIX)) {
-            return this.getTransientPortletWindow(request, windowInstanceId, portletEntityId);
-        }
-        
-        final IPortletWindowId portletWindowId = this.createPortletWindowId(windowInstanceId, portletEntityId);
-        return this.getPortletWindow(request, portletWindowId);
+        return portletWindow;
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getPortletWindowId(java.lang.String)
      */
     @Override
-    public IPortletWindowId getPortletWindowId(String portletWindowId) {
+    public PortletWindowIdImpl getPortletWindowId(HttpServletRequest request, String portletWindowId) {
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
         
-        return new PortletWindowIdImpl(portletWindowId);
+        final String[] portletWindowIdParts = ID_PART_SEPERATOR_PATTERN.split(portletWindowId);
+        
+        final String entityIdStr;
+        final String instanceId;
+        if (portletWindowIdParts.length == 0) {
+            entityIdStr = portletWindowIdParts[0];
+            instanceId = null;
+        }
+        else if (portletWindowIdParts.length == 1) {
+            entityIdStr = portletWindowIdParts[0];
+            instanceId = portletWindowIdParts[1];
+        }
+        else  {
+            throw new IllegalArgumentException("Provided portlet window ID '" + portletWindowId + "' is not valid");
+        }
+        
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, entityIdStr);
+        if (portletEntity == null) {
+            throw new IllegalArgumentException("No parent IPortletEntity found for id '" + entityIdStr + "' from portlet window id: " + portletWindowId);
+        }
+
+        return createPortletWindowId(instanceId, portletEntity.getPortletEntityId());
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getDefaultPortletWindowId(org.jasig.portal.portlet.om.IPortletEntityId)
      */
     @Override
-    public IPortletWindowId getDefaultPortletWindowId(IPortletEntityId portletEntityId) {
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(portletEntityId);
-        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
-        return this.createPortletWindowId(channelSubscribeId, portletEntityId);
+    public IPortletWindowId getDefaultPortletWindowId(HttpServletRequest request, IPortletEntityId portletEntityId) {
+        final IPortletWindowId portletWindowId = this.createPortletWindowId(null, portletEntityId);
+        logger.trace("Determined default portlet window id {} for portlet entity {}", portletWindowId, portletEntityId);
+        return portletWindowId;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getParentPortletEntity(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
-     */
-    @Override
-    public IPortletEntity getParentPortletEntity(HttpServletRequest request, IPortletWindowId portletWindowId) {
-        Validate.notNull(request, "request can not be null");
-        Validate.notNull(portletWindowId, "portletWindowId can not be null");
-        
-        final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
-        if (portletWindow == null) {
-            return null;
-        }
-        
-        final IPortletEntityId parentPortletEntityId = portletWindow.getPortletEntityId();
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(parentPortletEntityId);
-        return portletEntity;
-    }
-
-    @Override
-    public IPortletWindow createDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId) {
-        Validate.notNull(request, "request can not be null");
-        Validate.notNull(portletEntityId, "portletEntityId can not be null");
-
-        //Create the window
-        final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(portletEntityId);
-        final IPortletWindow portletWindow = this.createPortletWindow(request, portletWindowId, portletEntityId);
-        
-        //Store it in the request
-        this.storePortletWindow(request, portletWindow);
-        
-        return this.wrapPortletWindowForRequest(request, portletWindow);
-    }
-
-    @Override
-    public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId) {
-        Validate.notNull(request, "request can not be null");
-        Validate.notNull(portletEntityId, "portletEntityId can not be null");
-        
-        final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(portletEntityId);
-        
-        //Try the get
-        IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
-        
-        //If nothing returned by the get create a new one.
-        if (portletWindow == null) {
-            portletWindow = this.createDefaultPortletWindow(request, portletEntityId);
-        }
-        
-        return portletWindow;
-    }
-
     @Override
     public IPortletWindow createDelegatePortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId, IPortletWindowId delegationParentId) {
-        Validate.notNull(request, "request can not be null");
-        Validate.notNull(portletEntityId, "portletEntityId can not be null");
-        Validate.notNull(delegationParentId, "delegationParentId can not be null");
-
-        //Create the window
-        final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(portletEntityId);
-        final IPortletWindow portletWindow = this.createPortletWindow(request, portletWindowId, portletEntityId, delegationParentId);
-        
-        //Store it in the request
-        this.storePortletWindow(request, portletWindow);
-        
-        return this.wrapPortletWindowForRequest(request, portletWindow);
-    }
-    
-    @Override
-    public IPortletWindow getOrCreateDelegatePortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, IPortletWindowId delegationParentId) {
-        Validate.notNull(request, "request can not be null");
-        Validate.notNull(portletEntityId, "portletEntityId can not be null");
-        Validate.notNull(delegationParentId, "delegationParentId can not be null");
-
-        //Try the get
-        IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
-        
-        if (portletWindow != null && (portletWindow.getDelegationParent() == null || !portletWindow.getDelegationParent().equals(delegationParentId))) {
-            throw new IllegalArgumentException("Delegation parent '" + delegationParentId + "' is not set as the parent for the existing portle window '" + portletWindow + "'");
-        }
-        
-        //If nothing returned by the get create a new one.
-        if (portletWindow == null) {
-            portletWindow = this.createDelegatePortletWindow(request, portletEntityId, delegationParentId);
-        }
-        
-        return portletWindow;
-    }
-    
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry#createTransientPortletWindowId(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
-     */
-    @Override
-    public IPortletWindowId createTransientPortletWindowId(HttpServletRequest request, IPortletWindowId sourcePortletWindowId) {
-        final IPortletWindow sourcePortletWindow = this.getPortletWindow(request, sourcePortletWindowId);
-        if (sourcePortletWindow == null) {
-            throw new IllegalArgumentException("No IPortletWindow exists for id: " + sourcePortletWindowId);
-        }
-        
-        final IPortletEntityId portletEntityId = sourcePortletWindow.getPortletEntityId();
-        
-        //Build the transient ID from the prefix and the entity ID
-        return new PortletWindowIdImpl(TRANSIENT_WINDOW_ID_PREFIX + portletEntityId.getStringId());
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.ITransientPortletWindowRegistry#isTransient(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
-     */
-    @Override
-    public boolean isTransient(HttpServletRequest request, IPortletWindowId portletWindowId) {
-        final String windowInstanceId = portletWindowId.getStringId();
-        return windowInstanceId.startsWith(TRANSIENT_WINDOW_ID_PREFIX);
+//        Validate.notNull(request, "request can not be null");
+//        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+//        Validate.notNull(delegationParentId, "delegationParentId can not be null");
+//
+//        //Create the window
+//        final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(portletEntityId);
+//        final IPortletWindow portletWindow = this.createPortletWindow(request, portletWindowId, portletEntityId, delegationParentId);
+//        
+//        //Store it in the request
+//        this.storePortletWindow(request, portletWindow);
+//        
+//        return this.wrapPortletWindowForRequest(request, portletWindow);
+        throw new UnsupportedOperationException();
     }
     
     @Override
     public Set<IPortletWindow> getAllPortletWindows(HttpServletRequest request, IPortletEntityId portletEntityId) {
+        Validate.notNull(request, "request can not be null");
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+
         final Set<IPortletWindow> portletWindows = new LinkedHashSet<IPortletWindow>();
         
-        final ConcurrentMap<IPortletWindowId, IPortletWindow> portletWindowMap = this.getPortletWindowSessionMap(request);
-        for (IPortletWindow portletWindow : portletWindowMap.values()) {
-            if (portletEntityId.equals(portletWindow.getPortletEntityId())) {
-                //Do a getPortletWindow call to make sure we get the request scoped wrapper setup correctly
-                portletWindow = this.getPortletWindow(request, portletWindow.getPortletWindowId());
+        final ConcurrentMap<IPortletWindowId, IPortletWindow> portletWindowMap = getPortletWindowMap(request);
+        //Add all of the request cached windows for the entity to the set
+        for (final IPortletWindow portletWindow : portletWindowMap.values()) {
+            final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+            if (portletEntityId.equals(portletEntity.getPortletEntityId())) {
                 portletWindows.add(portletWindow);
             }
         }
+
+        //Check for session cached windows that haven't been accessed in this request
+        final ConcurrentMap<IPortletWindowId, PortletWindowData> portletWindowDataMap = getPortletWindowDataMap(request);
+        for (final PortletWindowData portletWindowData : portletWindowDataMap.values()) {
+            final IPortletWindowId portletWindowId = portletWindowData.getPortletWindowId();
+            
+            //Skip data windows that aren't for this entity and for windows that are already in the request cache
+            if (!portletEntityId.equals(portletWindowData.getPortletEntityId()) || portletWindowMap.containsKey(portletWindowId)) {
+                continue;
+            }
+
+            //Wrap the data in a window and stick it in the request cache
+            IPortletWindow portletWindow = this.wrapPortletWindowData(request, portletWindowData);
+            portletWindow = ConcurrentMapUtils.putIfAbsent(portletWindowMap, portletWindowId, portletWindow);
+            
+            portletWindows.add(portletWindow);
+        }
         
         //If there were no windows in the set create the default one for the entity
-        if (portletWindows.size() == 0) {
-            final IPortletWindow portletWindow = this.createDefaultPortletWindow(request, portletEntityId);
+        if (portletWindows.isEmpty()) {
+            final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletEntityId);
             portletWindows.add(portletWindow);
         }
             
         return portletWindows;
     }
     
-    /**
-     * @see #createPortletWindow(IPortletWindowId, IPortletEntityId, IPortletWindowId)
-     */
-    protected IPortletWindow createPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId, IPortletEntityId portletEntityId) {
-        return this.createPortletWindow(request, portletWindowId, portletEntityId, null);
+    @Override
+    public IPortletWindowId getStatelessPortletWindowId(HttpServletRequest request, IPortletWindowId basePortletWindowId) {
+        //Need the basePortletWindowId to be an instance of PortletWindowIdImpl so that we can extract the entity ID
+        if (!(basePortletWindowId instanceof PortletWindowIdImpl)) {
+            final String basePortletWindowIdStr = basePortletWindowId.getStringId();
+            basePortletWindowId = this.getPortletWindowId(request, basePortletWindowIdStr);
+            
+        }
+        
+        //Get the entity ID for the portlet window
+        final IPortletEntityId portletEntityId = ((PortletWindowIdImpl)basePortletWindowId).getPortletEntityId();
+        
+        //Create the stateless ID
+        final PortletWindowIdImpl statelessPortletWindowId = this.createPortletWindowId(STATELESS_PORTLET_WINDOW_ID, portletEntityId);
+        
+        //See if there is already a request cached stateless window
+        IPortletWindow statelessPortletWindow = this.getPortletWindow(request, statelessPortletWindowId);
+        if (statelessPortletWindow != null) {
+            return statelessPortletWindow.getPortletWindowId();
+        }
+        
+        //Lookup the base portlet window to clone the stateless from
+        final IPortletWindow basePortletWindow = this.getPortletWindow(request, basePortletWindowId);
+        
+        //If no base to clone from lookup the entity and pluto definition data
+        if (basePortletWindow == null) {
+            final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, portletEntityId);
+            if (portletEntity == null) {
+                throw new IllegalArgumentException("No IPortletEntity could be found for " + portletEntity + " while creating stateless portlet window for " + basePortletWindowId);
+            }
+            
+            final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+            final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+            final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
+            
+            statelessPortletWindow = new StatelessPortletWindowImpl(statelessPortletWindowId, portletEntity, portletDescriptor);
+        }
+        //Clone the existing base window
+        else {
+            statelessPortletWindow = new StatelessPortletWindowImpl(statelessPortletWindowId, basePortletWindow);
+        }
+        
+        //Cache the stateless window in the request
+        final ConcurrentMap<IPortletWindowId, IPortletWindow> portletWindowMap = this.getPortletWindowMap(request);
+        statelessPortletWindow = ConcurrentMapUtils.putIfAbsent(portletWindowMap, statelessPortletWindow.getPortletWindowId(), statelessPortletWindow);
+        
+        return statelessPortletWindow.getPortletWindowId();
     }
     
-    /**
-     * Creates a new {@link IPortletWindow} for the specified window ID and entity ID.
-     * 
-     * @param windowInstanceId The window instance id.
-     * @param portletEntityId The parent entity id.
-     * @param delegateParent The id of the parent window delegating to this window, optional.
-     * @return A new portlet window
-     */
-    protected IPortletWindow createPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId, IPortletEntityId portletEntityId, IPortletWindowId delegateParent) {
-        //Get the parent definition to determine the descriptor data
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
+    protected IPortletWindow wrapPortletWindowData(HttpServletRequest request, PortletWindowData portletWindowData) {
+        final IPortletEntityId portletEntityId = portletWindowData.getPortletEntityId();
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, portletEntityId);
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
-
+        final IPortletWindow portletWindow = new PortletWindowImpl(portletDescriptor, portletEntity, portletWindowData);
         
-        final PortletWindowImpl portletWindow;
-        if (delegateParent == null) {
-            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletDescriptor);
-        }
-        else {
-            portletWindow = new PortletWindowImpl(portletWindowId, portletEntityId, portletDescriptor, delegateParent);
-        }
-        
-        if (this.logger.isTraceEnabled()) {
-            this.logger.trace("Created PortletWindow " + portletWindow.getId() + " for PortletEntity " + portletEntityId);
-        }
-        
-        this.initializePortletWindow(request, portletEntityId, portletWindow);
+        logger.trace("Wrapping PortletWindowData {} as IPortletWindow", portletWindow.getPortletWindowId());
         
         return portletWindow;
+    }
+
+    protected PortletWindowData getPortletWindowData(HttpServletRequest request, IPortletWindowId portletWindowId) {
+        final ConcurrentMap<IPortletWindowId, PortletWindowData> portletWindowDataMap = getPortletWindowDataMap(request, false);
+        if (portletWindowDataMap == null) {
+            return null;
+        }
+        
+        final PortletWindowData portletWindowData = portletWindowDataMap.get(portletWindowId);
+        if (portletWindowData == null) {
+            logger.trace("No PortletWindowData {} in session cache", portletWindowId);
+            return null;
+        }
+        
+        logger.trace("Found PortletWindowData {} in session cache", portletWindowData.getPortletWindowId());
+        return portletWindowData;
+    }
+
+    protected ConcurrentMap<IPortletWindowId, IPortletWindow> getPortletWindowMap(HttpServletRequest request) {
+        request = portalRequestUtils.getOriginalPortalRequest(request);
+        return PortalWebUtils.getMapRequestAttribute(request, PORTLET_WINDOW_ATTRIBUTE);
+    }
+
+    protected ConcurrentMap<IPortletWindowId, PortletWindowData> getPortletWindowDataMap(HttpServletRequest request) {
+        return this.getPortletWindowDataMap(request, true);
+    }
+    
+    protected ConcurrentMap<IPortletWindowId, PortletWindowData> getPortletWindowDataMap(HttpServletRequest request, boolean create) {
+        request = portalRequestUtils.getOriginalPortalRequest(request);
+        final HttpSession session = request.getSession(create);
+        if (!create && session == null) {
+            return null;
+        }
+        return PortalWebUtils.getMapSessionAttribute(session, PORTLET_WINDOW_DATA_ATTRIBUTE, create);
+    }
+
+    protected PortletWindowData getOrCreateDefaultPortletWindowData(HttpServletRequest request, IPortletEntityId portletEntityId, final IPortletWindowId portletWindowId) {
+        //Sync on session map to make sure duplicate PortletWindowData is never created
+        final ConcurrentMap<IPortletWindowId, PortletWindowData> portletWindowDataMap = getPortletWindowDataMap(request);
+        //Check if there portlet window data cached in the session
+        PortletWindowData portletWindowData = portletWindowDataMap.get(portletWindowId);
+        if (portletWindowData != null) {
+            logger.trace("Found PortletWindowData {} in session cache", portletWindowData.getPortletWindowId());
+            return portletWindowData;
+        }
+        
+        //Create new window data for and initialize
+        portletWindowData = new PortletWindowData(portletWindowId, portletEntityId);                
+        this.initializePortletWindowData(request, portletWindowData);
+        
+        //Store in the session cache
+        portletWindowData = ConcurrentMapUtils.putIfAbsent(portletWindowDataMap, portletWindowId, portletWindowData);
+        logger.trace("Created PortletWindowData {} and stored session cache, wrapping as IPortletWindow and returning", portletWindowData.getPortletWindowId());
+        
+        return portletWindowData;
     }
 
     /**
      * Initializes a newly created {@link PortletWindow}, the default implementation sets up the appropriate
      * {@link WindowState} and {@link javax.portlet.PortletMode}
      */
-    protected void initializePortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId, PortletWindowImpl portletWindow) {
-        if (this.isTransient(request, portletWindow.getPortletWindowId())) {
-            return;
-        }
-        
+    protected void initializePortletWindowData(HttpServletRequest request, PortletWindowData portletWindowData) {
         final IStylesheetUserPreferences themeStylesheetUserPreferences = stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
         
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(portletEntityId);
-        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+        final IPortletEntityId portletEntityId = portletWindowData.getPortletEntityId();
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, portletEntityId);
+        final String channelSubscribeId = portletEntity.getLayoutNodeId();
         final String minimized = themeStylesheetUserPreferences.getLayoutAttribute(channelSubscribeId, "minimized");
 
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
@@ -497,10 +489,9 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         final IUserProfile userProfile = preferencesManager.getUserProfile();
         final String profileName = userProfile.getProfileFname();
 
-        
         // TODO: Make minimized portlet window profile names configurable
         if (Boolean.parseBoolean(minimized) || "mobileDefault".equals(profileName) || "android".equals(profileName)) {
-            portletWindow.setWindowState(WindowState.MINIMIZED);
+            portletWindowData.setWindowState(WindowState.MINIMIZED);
         }
     }
     
@@ -511,133 +502,13 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
      * @param portletEntityId The parent entity id.
      * @return A portlet window id for the parameters.
      */
-    protected IPortletWindowId createPortletWindowId(String windowInstanceId, IPortletEntityId portletEntityId) {
-        return new PortletWindowIdImpl(portletEntityId.getStringId() + "." + windowInstanceId);
-    }
-
-    /**
-     * Get the Map of IPortletWindows for the request.
-     * 
-     * @param request the current request
-     * @return The Map of IPortletWindows managed by this class for the request, null if that Map does not yet exist.
-     */
-    @SuppressWarnings("unchecked")
-    protected ConcurrentMap<IPortletWindowId, IPortletWindow> getPortletWindowRequestMap(HttpServletRequest request) {
-        request = this.portalRequestUtils.getOriginalPortalRequest(request);
+    protected PortletWindowIdImpl createPortletWindowId(String windowInstanceId, IPortletEntityId portletEntityId) {
+        final StringBuilder compositeIdString = new StringBuilder(portletEntityId.getStringId());
         
-        //Sync on the request to ensure the Map isn't in the process of being created
-        synchronized (PortalWebUtils.getRequestAttributeMutex(request)) {
-            return (ConcurrentMap<IPortletWindowId, IPortletWindow>)request.getAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE);
-        }
-    }
-    
-    /**
-     * Wraps an IPortletWindow scoping its data to the current request
-     */
-    @SuppressWarnings("unchecked")
-    protected IPortletWindow wrapPortletWindowForRequest(HttpServletRequest request, IPortletWindow portletWindow) {
-        if (portletWindow == null) {
-            return null;
+        if (windowInstanceId != null) {
+            compositeIdString.append(ID_PART_SEPERATOR).append(windowInstanceId);
         }
         
-        request = this.portalRequestUtils.getOriginalPortalRequest(request);
-        
-        Map<IPortletWindowId, IPortletWindow> portletWindows;
-        //Sync on the session to ensure other threads aren't creating the Map at the same time
-        synchronized (PortalWebUtils.getRequestAttributeMutex(request)) {
-            portletWindows = (ConcurrentMap<IPortletWindowId, IPortletWindow>)request.getAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE);
-            if (portletWindows == null) {
-                portletWindows = new ConcurrentHashMap<IPortletWindowId, IPortletWindow>();
-                request.setAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE, portletWindows);
-            }
-        }
-        
-        portletWindow = new ScopedPortletWindowWrapper(portletWindow);
-        
-        portletWindows.put(portletWindow.getPortletWindowId(), portletWindow);
-        
-        return portletWindow;
-    }
-
-    /**
-     * Get the Map of IPortletWindows for the session.
-     * 
-     * @param request the current request
-     * @return The Map of IPortletWindows managed by this class for the session, null if that Map does not yet exist.
-     */
-    @SuppressWarnings("unchecked")
-    protected ConcurrentMap<IPortletWindowId, IPortletWindow> getPortletWindowSessionMap(HttpServletRequest request) {
-        final HttpSession session = this.getSession(request);
-        
-        //Sync on the session to ensure the Map isn't in the process of being created
-        synchronized (WebUtils.getSessionMutex(session)) {
-            return (ConcurrentMap<IPortletWindowId, IPortletWindow>)session.getAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE);
-        }
-    }
-    
-    @SuppressWarnings("unchecked")
-    protected void storePortletWindow(HttpServletRequest request, IPortletWindow portletWindow) {
-        final HttpSession session = this.getSession(request);
-        
-        Map<IPortletWindowId, IPortletWindow> portletWindows;
-        //Sync on the session to ensure other threads aren't creating the Map at the same time
-        synchronized (WebUtils.getSessionMutex(session)) {
-            portletWindows = (Map<IPortletWindowId, IPortletWindow>)session.getAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE);
-            if (portletWindows == null) {
-                portletWindows = new ConcurrentHashMap<IPortletWindowId, IPortletWindow>();
-                session.setAttribute(PORTLET_WINDOW_MAP_ATTRIBUTE, portletWindows);
-            }
-        }
-        
-        portletWindows.put(portletWindow.getPortletWindowId(), portletWindow);
-    }
-
-    /**
-     * Gets the session for the request.
-     * 
-     * @param request The current request
-     * @return The session for the current request, will not return null.
-     */
-    protected HttpSession getSession(HttpServletRequest request) {
-        request = this.portalRequestUtils.getOriginalPortalRequest(request);
-        return request.getSession();
-    }
-    
-    @SuppressWarnings("unchecked")
-    protected IPortletWindow getTransientPortletWindow(HttpServletRequest request, String windowInstanceId, IPortletEntityId portletEntityId) {
-        request = this.portalRequestUtils.getOriginalPortalRequest(request);
-        
-        //Get/create the map from the request attributes with all of the transient portlet windows in it (can there ever be more than one per request?)
-        Map<IPortletEntityId, IPortletWindow> transientPortletWindowMap;
-        synchronized (PortalWebUtils.getRequestAttributeMutex(request)) {
-            transientPortletWindowMap = (Map<IPortletEntityId, IPortletWindow>)request.getAttribute(TRANSIENT_PORTLET_WINDOW_MAP_ATTRIBUTE);
-            if (transientPortletWindowMap == null) {
-                transientPortletWindowMap = new HashMap<IPortletEntityId, IPortletWindow>();
-                request.setAttribute(TRANSIENT_PORTLET_WINDOW_MAP_ATTRIBUTE, transientPortletWindowMap);
-            }
-        }
-        
-        //Get/create the transient portlet window
-        IPortletWindow transientPortletWindow;
-        synchronized (transientPortletWindowMap) {
-            transientPortletWindow = transientPortletWindowMap.get(portletEntityId);
-            if (transientPortletWindow == null) {
-                final PortletWindowIdImpl portletWindowId = new PortletWindowIdImpl(windowInstanceId);
-                transientPortletWindow = this.createPortletWindow(request, portletWindowId, portletEntityId);
-                transientPortletWindow.setWindowState(WindowState.NORMAL);
-                transientPortletWindowMap.put(portletEntityId, transientPortletWindow);
-                
-                if (this.logger.isDebugEnabled()) {
-                    this.logger.debug("Created new transient portlet window and cached it as a request attribute: " + transientPortletWindow);
-                }
-            }
-            else {
-                if (this.logger.isDebugEnabled()) {
-                    this.logger.debug("Using cached transient portlet window: " + transientPortletWindow);
-                }
-            }
-        }
-        
-        return transientPortletWindow;
+        return new PortletWindowIdImpl(portletEntityId, windowInstanceId, compositeIdString.toString());
     }
 }

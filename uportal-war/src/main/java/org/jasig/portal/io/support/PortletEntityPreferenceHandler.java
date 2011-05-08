@@ -26,16 +26,14 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
+import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
+import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -50,52 +48,20 @@ import org.springframework.stereotype.Service;
  */
 @Service("portletEntityPreferenceHandler")
 public class PortletEntityPreferenceHandler {
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
-    private IPortletEntityRegistry portletEntityRegistry;
-    private DataSource dataSource;
+    private IPortletDefinitionDao portletDefinitionDao;
+    private IPortletEntityDao portletEntityDao;
     
-    /**
-     * @return the portletDefinitionRegistry
-     */
-    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
-        return portletDefinitionRegistry;
-    }
-    /**
-     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
-     */
     @Autowired
-    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
+        this.portletDefinitionDao = portletDefinitionDao;
     }
-    /**
-     * @return the portletEntityRegistry
-     */
-    public IPortletEntityRegistry getPortletEntityRegistry() {
-        return portletEntityRegistry;
-    }
-    /**
-     * @param portletEntityRegistry the portletEntityRegistry to set
-     */
     @Autowired
-    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
-        this.portletEntityRegistry = portletEntityRegistry;
-    }
-    /**
-     * @return the dataSource
-     */
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-    /**
-     * @param dataSource the dataSource to set
-     */
-    @Autowired
-    public void setDataSource(@Qualifier("PortalDb") DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setPortletEntityDao(@Qualifier("transient") IPortletEntityDao portletEntityDao) {
+        this.portletEntityDao = portletEntityDao;
     }
     
     public Set<IPortletEntity> getEntityPreferences(Integer userId) {
-        final Set<IPortletEntity> portletEntities = this.portletEntityRegistry.getPortletEntitiesForUser(userId);
+        final Set<IPortletEntity> portletEntities = this.portletEntityDao.getPortletEntitiesForUser(userId);
         
         for (final Iterator<IPortletEntity> entityItr = portletEntities.iterator(); entityItr.hasNext(); ) {
             final IPortletEntity portletEntity = entityItr.next();
@@ -127,14 +93,14 @@ public class PortletEntityPreferenceHandler {
         //Persist the changes.
         final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
         portletPreferences.setPortletPreferences(portletPreferencesList);
-        this.portletEntityRegistry.storePortletEntity(portletEntity);
+        this.portletEntityDao.updatePortletEntity(portletEntity);
     }
     
-    protected IPortletEntity getPortletEntity(String fName, String channelSubscribeId, int userId) {
+    protected IPortletEntity getPortletEntity(String fName, String layoutNodeId, int userId) {
         //Load the channel definition
         final IPortletDefinition portletDefinition;
         try {
-            portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fName);
+            portletDefinition = this.portletDefinitionDao.getPortletDefinitionByFname(fName);
         }
         catch (Exception e) {
             throw new DataRetrievalFailureException("Failed to retrieve ChannelDefinition for fName='" + fName + "'", e);
@@ -146,7 +112,11 @@ public class PortletEntityPreferenceHandler {
         }
         
         //get/create the portlet entity
+        final IPortletEntity portletEntity = this.portletEntityDao.getPortletEntity(layoutNodeId, userId);
+        if (portletEntity != null) {
+            return portletEntity;
+        }
         final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
-        return this.portletEntityRegistry.getOrCreatePortletEntity(portletDefinitionId, channelSubscribeId, userId);
+        return this.portletEntityDao.createPortletEntity(portletDefinitionId, layoutNodeId, userId);
     }
 }

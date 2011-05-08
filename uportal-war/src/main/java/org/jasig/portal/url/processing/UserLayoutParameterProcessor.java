@@ -33,6 +33,7 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalRequestInfo;
@@ -99,9 +100,10 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                 
                 if (portletRequestInfo != null) {
                     final IPortletWindowId targetWindowId = portletRequestInfo.getPortletWindowId();
-                    final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, targetWindowId);
+                    final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, targetWindowId);
+                    final IPortletEntity portletEntity = portletWindow.getPortletEntity();
                     
-                    final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+                    final String channelSubscribeId = portletEntity.getLayoutNodeId();
                     
                     final IStylesheetUserPreferences structureStylesheetUserPreferences = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
                     structureStylesheetUserPreferences.setStylesheetParameter("userLayoutRoot", channelSubscribeId);

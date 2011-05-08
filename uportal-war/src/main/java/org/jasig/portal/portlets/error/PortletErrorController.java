@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -61,7 +61,6 @@ public class PortletErrorController extends AbstractController {
 	private IUserInstanceManager userInstanceManager;
 	private IPortalRequestUtils portalRequestUtils;
 	private IPortletWindowRegistry portletWindowRegistry;
-	private IPortletEntityRegistry portletEntityRegistry;
 	
 	/**
 	 * @param userInstanceManager the userInstanceManager to set
@@ -85,14 +84,6 @@ public class PortletErrorController extends AbstractController {
 			IPortletWindowRegistry portletWindowRegistry) {
 		this.portletWindowRegistry = portletWindowRegistry;
 	}
-	/**
-	 * @param portletEntityRegistry the portletEntityRegistry to set
-	 */
-	@Autowired
-	public void setPortletEntityRegistry(
-			IPortletEntityRegistry portletEntityRegistry) {
-		this.portletEntityRegistry = portletEntityRegistry;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.springframework.web.portlet.mvc.AbstractController#handleRenderRequestInternal(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
@@ -107,8 +98,9 @@ public class PortletErrorController extends AbstractController {
 			IPortletWindowId currentFailedPortletWindowId = (IPortletWindowId) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID);
 			model.put("portletWindowId", currentFailedPortletWindowId);
 			
-			final IPortletEntity parentPortletEntity = portletWindowRegistry.getParentPortletEntity(httpRequest, currentFailedPortletWindowId);
-            final IPortletDefinition parentPortletDefinition = portletEntityRegistry.getParentPortletDefinition(parentPortletEntity.getPortletEntityId());
+			final IPortletWindow portletWindow = portletWindowRegistry.getPortletWindow(httpRequest, currentFailedPortletWindowId);
+            final IPortletEntity parentPortletEntity = portletWindow.getPortletEntity();
+            final IPortletDefinition parentPortletDefinition = parentPortletEntity.getPortletDefinition();
             model.put("channelDefinition", parentPortletDefinition);
             
 			Exception cause = (Exception) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE);
@@ -119,9 +111,8 @@ public class PortletErrorController extends AbstractController {
 			model.put("stackTrace", stackTraceWriter.toString());
 			
 			return new ModelAndView("/jsp/PortletError/detailed", model);
-		} else {
-			return new ModelAndView("/jsp/PortletError/generic", model);
-		}
+		} 
+		return new ModelAndView("/jsp/PortletError/generic", model);
 	}
 
 	/**

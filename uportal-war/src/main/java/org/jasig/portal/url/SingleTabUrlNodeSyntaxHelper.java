@@ -212,12 +212,12 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
      */
     @Override
     public String getFolderNameForPortlet(HttpServletRequest request, IPortletWindowId portletWindowId) {
-        final IPortletEntity portletEntity = this.portletWindowRegistry.getParentPortletEntity(request, portletWindowId);
-        final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-        final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletEntityId);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         
         final String fname = portletDefinition.getFName();
-        final String channelSubscribeId = portletEntity.getChannelSubscribeId();
+        final String channelSubscribeId = portletEntity.getLayoutNodeId();
         
         //Build the targeted portlet string (fname + subscribeId)
         return fname + PORTLET_PATH_ELEMENT_SEPERATOR + channelSubscribeId;
@@ -236,13 +236,13 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         final int seperatorIndex = folderName.indexOf(PORTLET_PATH_ELEMENT_SEPERATOR);
         if (seperatorIndex <= 0 || seperatorIndex + 1 == folderName.length()) {
             fname = folderName;
-            portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, fname);
+            portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, fname);
         }
         else {
             fname = folderName.substring(0, seperatorIndex);
             final String subscribeId = folderName.substring(seperatorIndex + 1);
             
-            portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(userInstance, fname, subscribeId);
+            portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, fname, subscribeId);
         }
         
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();

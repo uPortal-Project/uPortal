@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlet.om;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -34,7 +33,7 @@ import org.apache.pluto.container.PortletWindow;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletWindow extends PortletWindow, Serializable {
+public interface IPortletWindow {
     /**
      * Retrieve this windows unique id which will be
      *  used to communicate back to the referencing portal.
@@ -43,15 +42,25 @@ public interface IPortletWindow extends PortletWindow, Serializable {
     public IPortletWindowId getPortletWindowId();
     
     /**
-     * @return The ID of the parent portlet entity.
+     * @return The parent portlet entity.
      */
-    public IPortletEntityId getPortletEntityId();
+    public IPortletEntity getPortletEntity();
+    
+    /**
+     * @return The current WindowState of the portlet
+     */
+    public WindowState getWindowState();
     
     /**
      * @param state The current {@link WindowState} of this PortletWindow
      * @throws IllegalArgumentException If state is null
      */
     public void setWindowState(WindowState state);
+    
+    /**
+     * @return The current PortletMode of the portlet.
+     */
+    public PortletMode getPortletMode();
     
     /**
      * @param mode The current {@link PortletMode} of this PortletWindow
@@ -95,6 +104,11 @@ public interface IPortletWindow extends PortletWindow, Serializable {
      * @return The expiration timeout for the portlet, if null the value from portlet.xml should be used.
      */
     public Integer getExpirationCache();
+    
+    /**
+     * @return The Pluto SPI implementation of a portlet window
+     */
+    public PortletWindow getPlutoPortletWindow();
     
     /**
      * @return The ID of the parent portlet window that is delegating rendering to this portlet, null if

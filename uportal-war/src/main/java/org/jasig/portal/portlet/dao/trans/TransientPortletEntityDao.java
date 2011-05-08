@@ -53,7 +53,7 @@ import org.springframework.stereotype.Repository;
  * @version $Revision$
  */
 @Repository
-@Qualifier("main")
+@Qualifier("transient")
 public class TransientPortletEntityDao implements IPortletEntityDao {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -63,20 +63,14 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     private IPortalRequestUtils portalRequestUtils;
 
     
-    public IPortletEntityDao getDelegatePortletEntityDao() {
-        return delegatePortletEntityDao;
-    }
     /**
-     * The IPortletEntityDao to delegate calls to for actualy persistence
+     * The IPortletEntityDao to delegate calls to for actual persistence
      */
     @Autowired
     public void setDelegatePortletEntityDao(@Qualifier("persistence") IPortletEntityDao delegatePortletEntityDao) {
         this.delegatePortletEntityDao = delegatePortletEntityDao;
     }
     
-    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
-        return portletDefinitionRegistry;
-    }
     /**
      * Registry for looking up data related to portlet definitions
      */
@@ -85,9 +79,6 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
-    public IUserInstanceManager getUserInstanceManager() {
-        return userInstanceManager;
-    }
     /**
      * Used to get access to the user's layout manager
      */
@@ -96,9 +87,6 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
         this.userInstanceManager = userInstanceManager;
     }
 
-    public IPortalRequestUtils getPortalRequestUtils() {
-        return portalRequestUtils;
-    }
     /**
      * Used to get access to the current portal request
      */
@@ -110,21 +98,23 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.dao.IPortletEntityDao#createPortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
      */
-    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String channelSubscribeId, int userId) {
-        if (channelSubscribeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
-            final String transientChannelSubscribeId = channelSubscribeId;
-            channelSubscribeId = this.getDatabaseChannelSubscribeId(portletDefinitionId);
+    @Override
+    public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
+        if (layoutNodeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
+            final String transientLayoutNodeId = layoutNodeId;
+            layoutNodeId = this.getPersistentLayoutNodeId(portletDefinitionId);
             
-            final IPortletEntity portletEntity = this.delegatePortletEntityDao.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
-            return new TransientPortletEntity(portletEntity, transientChannelSubscribeId);
+            final IPortletEntity portletEntity = this.delegatePortletEntityDao.createPortletEntity(portletDefinitionId, layoutNodeId, userId);
+            return new TransientPortletEntity(portletEntity, transientLayoutNodeId);
         }
         
-        return this.delegatePortletEntityDao.createPortletEntity(portletDefinitionId, channelSubscribeId, userId);
+        return this.delegatePortletEntityDao.createPortletEntity(portletDefinitionId, layoutNodeId, userId);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.dao.IPortletEntityDao#deletePortletEntity(org.jasig.portal.portlet.om.IPortletEntity)
      */
+    @Override
     public void deletePortletEntity(IPortletEntity portletEntity) {
         portletEntity = this.unwrapEntity(portletEntity);
         this.delegatePortletEntityDao.deletePortletEntity(portletEntity);
@@ -133,6 +123,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.dao.IPortletEntityDao#getPortletEntities(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
+    @Override
     public Set<IPortletEntity> getPortletEntities(IPortletDefinitionId portletDefinitionId) {
         final Set<IPortletEntity> portletEntities = this.delegatePortletEntityDao.getPortletEntities(portletDefinitionId);
         return this.wrapEntities(portletEntities);
@@ -141,6 +132,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.dao.IPortletEntityDao#getPortletEntitiesForUser(int)
      */
+    @Override
     public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
         final Set<IPortletEntity> portletEntities = this.delegatePortletEntityDao.getPortletEntitiesForUser(userId);
         return this.wrapEntities(portletEntities);
@@ -149,6 +141,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.dao.IPortletEntityDao#getPortletEntity(org.jasig.portal.portlet.om.IPortletEntityId)
      */
+    @Override
     public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId) {
         final IPortletEntity portletEntity = this.delegatePortletEntityDao.getPortletEntity(portletEntityId);
         return this.wrapEntity(portletEntity);
@@ -162,20 +155,22 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.dao.IPortletEntityDao#getPortletEntity(java.lang.String, int)
      */
-    public IPortletEntity getPortletEntity(String channelSubscribeId, int userId) {
-        if (channelSubscribeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
-            final String databaseChannelSubscribeId = this.determineDatabaseChannelSubscribeId(channelSubscribeId);
+    @Override
+    public IPortletEntity getPortletEntity(String layoutNodeId, int userId) {
+        if (layoutNodeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
+            final String databaseChannelSubscribeId = this.determineDatabaseChannelSubscribeId(layoutNodeId);
             
             final IPortletEntity portletEntity = this.delegatePortletEntityDao.getPortletEntity(databaseChannelSubscribeId, userId);
             return this.wrapEntity(portletEntity);
         }
         
-        return this.delegatePortletEntityDao.getPortletEntity(channelSubscribeId, userId);
+        return this.delegatePortletEntityDao.getPortletEntity(layoutNodeId, userId);
     }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.dao.IPortletEntityDao#updatePortletEntity(org.jasig.portal.portlet.om.IPortletEntity)
      */
+    @Override
     public void updatePortletEntity(IPortletEntity portletEntity) {
         portletEntity = this.unwrapEntity(portletEntity);
         this.delegatePortletEntityDao.updatePortletEntity(portletEntity);
@@ -205,20 +200,18 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
             return null;
         }
 
-        final String databaseChannelSubscribeId = portletEntity.getChannelSubscribeId();
-        if (databaseChannelSubscribeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
-            final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
-            final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
-            final String fname = portletDefinition.getFName();
-            
+        final String persistentLayoutNodeId = portletEntity.getLayoutNodeId();
+        if (persistentLayoutNodeId.startsWith(TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX)) {
             final IUserLayoutManager userLayoutManager = this.getUserLayoutManager();
             if (userLayoutManager == null) {
                 this.logger.warn("Could not find IUserLayoutManager when trying to wrap transient portlet entity: " + portletEntity);
                 return portletEntity;
             }
 
-            final String subscribeId = userLayoutManager.getSubscribeId(fname);
-            return new TransientPortletEntity(portletEntity, subscribeId);
+            final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+            final String fname = portletDefinition.getFName();
+            final String layoutNodeId = userLayoutManager.getSubscribeId(fname);
+            return new TransientPortletEntity(portletEntity, layoutNodeId);
         }
         
         return portletEntity;
@@ -242,33 +235,25 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
         return wrappedPortletEntities;
     }
     
-    protected String determineDatabaseChannelSubscribeId(String channelSubscribeId) {
+    protected String determineDatabaseChannelSubscribeId(String layoutNodeId) {
         //Find the referenced Node in the user's layout
         final IUserLayoutManager userLayoutManager = this.getUserLayoutManager();
-        final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
+        final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(layoutNodeId);
         
         //Lookup the IportletDefinition for the node
         final String portletPublishId = channelNode.getChannelPublishId();
-        final String portletDefinitionId = portletPublishId.startsWith("chan") ? portletPublishId.substring(4) : portletPublishId;
-        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletPublishId);
 
         //Generate the subscribe ID used for the database
-        return this.getDatabaseChannelSubscribeId(portletDefinition.getPortletDefinitionId());
+        return this.getPersistentLayoutNodeId(portletDefinition.getPortletDefinitionId());
     }
     
-    protected String getDatabaseChannelSubscribeId(IPortletDefinitionId portletDefinitionId) {
+    protected String getPersistentLayoutNodeId(IPortletDefinitionId portletDefinitionId) {
         return TransientUserLayoutManagerWrapper.SUBSCRIBE_PREFIX + "." + portletDefinitionId.getStringId();
     }
 
     protected IUserLayoutManager getUserLayoutManager() {
-        final HttpServletRequest portalRequest;
-        try {
-            portalRequest = this.portalRequestUtils.getCurrentPortalRequest();
-        }
-        catch (IllegalStateException ise) {
-            //Assuming that we are running from the command line for something like data export
-            return null;
-        }
+        final HttpServletRequest portalRequest = this.portalRequestUtils.getCurrentPortalRequest();
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(portalRequest);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         return preferencesManager.getUserLayoutManager();

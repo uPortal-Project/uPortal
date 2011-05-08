@@ -50,7 +50,6 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -73,7 +72,6 @@ public class PortletRendererImpl implements IPortletRenderer {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private IPersonManager personManager;
-    private IPortletEntityRegistry portletEntityRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
     private PortletContainer portletContainer;
     private PortletDelegationLocator portletDelegationLocator;
@@ -81,10 +79,6 @@ public class PortletRendererImpl implements IPortletRenderer {
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
-    }
-    @Autowired
-    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
-        this.portletEntityRegistry = portletEntityRegistry;
     }
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
@@ -124,7 +118,7 @@ public class PortletRendererImpl implements IPortletRenderer {
                 this.logger.debug("Loading portlet window '" + portletWindow + "'");
             }
             
-            this.portletContainer.doLoad(portletWindow, httpServletRequest, portletHttpServletResponseWrapper);
+            this.portletContainer.doLoad(portletWindow.getPlutoPortletWindow(), httpServletRequest, portletHttpServletResponseWrapper);
         }
         catch (PortletException pe) {
             throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while being loaded.", portletWindow, pe);
@@ -160,7 +154,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         final long start = System.currentTimeMillis();
         try {
-            this.portletContainer.doAction(portletWindow, httpServletRequest, httpServletResponse);
+            this.portletContainer.doAction(portletWindow.getPlutoPortletWindow(), httpServletRequest, httpServletResponse);
         }
         catch (PortletException pe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action.", portletWindow, pe);
@@ -190,7 +184,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         final long start = System.currentTimeMillis();
         try {
-            this.portletContainer.doEvent(portletWindow, httpServletRequest, httpServletResponse, event);
+            this.portletContainer.doEvent(portletWindow.getPlutoPortletWindow(), httpServletRequest, httpServletResponse, event);
         }
         catch (PortletException pe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing event.", portletWindow, pe);
@@ -222,7 +216,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         final long start = System.currentTimeMillis();
         try {
         	httpServletRequest.setAttribute(PortletRequest.RENDER_PART, PortletRequest.RENDER_MARKUP);
-            this.portletContainer.doRender(portletWindow, httpServletRequest, httpServletResponse);
+            this.portletContainer.doRender(portletWindow.getPlutoPortletWindow(), httpServletRequest, httpServletResponse);
         }
         catch (PortletException pe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing renderMarkup.", portletWindow, pe);
@@ -276,7 +270,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         final long start = System.currentTimeMillis();
         try {
         	httpServletRequest.setAttribute(PortletRequest.RENDER_PART, PortletRequest.RENDER_HEADERS);
-            this.portletContainer.doRender(portletWindow, httpServletRequest, httpServletResponse);
+            this.portletContainer.doRender(portletWindow.getPlutoPortletWindow(), httpServletRequest, httpServletResponse);
         }
         catch (PortletException pe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing renderHeader.", portletWindow, pe);
@@ -319,7 +313,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         
 	    final long start = System.currentTimeMillis();
 		try {
-			this.portletContainer.doServeResource(portletWindow, httpServletRequest, httpServletResponse);
+			this.portletContainer.doServeResource(portletWindow.getPlutoPortletWindow(), httpServletRequest, httpServletResponse);
 		}
 		catch (PortletException pe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, pe);
@@ -351,7 +345,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         httpServletRequest.setAttribute(PortletSessionAdministrativeRequestListener.SCOPE, PortletSession.PORTLET_SCOPE);
         
         try {
-            this.portletContainer.doAdmin(portletWindow, httpServletRequest, httpServletResponse);
+            this.portletContainer.doAdmin(portletWindow.getPlutoPortletWindow(), httpServletRequest, httpServletResponse);
         }
         catch (PortletException pe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session.", portletWindow, pe);
@@ -378,7 +372,6 @@ public class PortletRendererImpl implements IPortletRenderer {
     }
 
     protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, IPortletUrlBuilder portletUrl) {
-        //TODO review this to see if IPortletUrlBuilder is actually what is needed
         final PortletMode portletMode = portletUrl.getPortletMode();
         if (portletMode != null) {
             if (IPortletRenderer.CONFIG.equals(portletMode)) {
@@ -388,7 +381,8 @@ public class PortletRendererImpl implements IPortletRenderer {
                 final AuthorizationService authorizationService = AuthorizationService.instance();
                 final IAuthorizationPrincipal ap = authorizationService.newPrincipal(ei.getKey(), ei.getType());
                 
-                final IPortletDefinition portletDefinition = this.portletEntityRegistry.getParentPortletDefinition(portletWindow.getPortletEntityId());
+                final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+                final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
                 
                 if (!ap.canConfigure(portletDefinition.getPortletDefinitionId().getStringId())) {
                     throw new AuthorizationException(person.getUserName() + " does not have permission to render '" + portletDefinition.getFName() + "' in " + portletMode + " PortletMode");

@@ -148,7 +148,7 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         final String errorPortletSubscribeId = userLayoutManager.getSubscribeId(fname);
-        final IPortletEntity errorPortletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(userInstance, errorPortletSubscribeId);
+        final IPortletEntity errorPortletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, errorPortletSubscribeId);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, errorPortletEntity.getPortletEntityId());
         return portletWindow.getPortletWindowId();
     }
