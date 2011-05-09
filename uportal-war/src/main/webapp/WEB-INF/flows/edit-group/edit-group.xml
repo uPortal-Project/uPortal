@@ -45,7 +45,7 @@
     <on-start>
         <set name="flowScope.completed" value="group.key != null"/>
         <set name="flashScope.servletRequest" 
-            value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+            value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
         <set name="flowScope.person" 
             value="personManager.getPerson(servletRequest)"/>
     </on-start>

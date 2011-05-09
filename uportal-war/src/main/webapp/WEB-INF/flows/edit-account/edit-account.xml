@@ -34,7 +34,7 @@
     <action-state id="saveAccount">
         <on-entry>
             <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.user"
                 value="personManager.getPerson(servletRequest)"/>
         </on-entry>

@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.jasig.portal.portlet.om.IPortletEntityDescriptor;
 import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.jasig.portal.utils.threading.NoopLock;
 
 import com.google.common.base.Function;
 
@@ -39,12 +40,30 @@ import com.google.common.base.Function;
  * @param <T>
  */
 class PortletEntityCache<T extends IPortletEntityDescriptor> {
-    private final ReadWriteLock cacheLock = new ReentrantReadWriteLock(true);
-    private final Lock writeLock = this.cacheLock.writeLock();
-    private final Lock readLock = this.cacheLock.readLock();
+    private final Lock writeLock;
+    private final Lock readLock;
     
     private final Map<SubscribeKey, T> entitiesBySubscribeKey = new HashMap<SubscribeKey, T>();
     private final Map<IPortletEntityId, T> entitiesById = new HashMap<IPortletEntityId, T>();
+    
+    public PortletEntityCache() {
+        this(true);
+    }
+    
+    /**
+     * @param threadSafe If set to false no locking is done around read or write operations and this class is NOT thread safe
+     */
+    public PortletEntityCache(boolean threadSafe) {
+        if (threadSafe) {
+            final ReadWriteLock cacheLock = new ReentrantReadWriteLock(true);
+            writeLock = cacheLock.writeLock();
+            readLock = cacheLock.readLock();
+        }
+        else {
+            writeLock = NoopLock.INSTANCE;
+            readLock = NoopLock.INSTANCE;
+        }
+    }
     
     public T storeIfAbsentEntity(IPortletEntityId portletEntityId, Function<?, T> entityCreator) {
         //Check if the entity already exists (uses a read lock)

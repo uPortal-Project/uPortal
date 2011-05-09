@@ -308,6 +308,12 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 }
             }
 
+            //If a targeted portlet window ID is found but no targeted portlet request info has been retrieved yet, set it up
+            if (targetedPortletWindowId != null && targetedPortletRequestInfo == null) {
+                targetedPortletRequestInfo = portalRequestInfo.getPortletRequestInfo(targetedPortletWindowId);
+                portalRequestInfo.setTargetedPortletWindowId(targetedPortletWindowId);
+            }
+            
             //Get the set of portlet window ids that also have parameters on the url
             final String[] additionalPortletIdArray = parameterMap.remove(PARAM_ADDITIONAL_PORTLET);
             final Set<String> additionalPortletIds = Sets.newHashSet(additionalPortletIdArray != null ? additionalPortletIdArray : new String[0]);

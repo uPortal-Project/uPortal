@@ -19,7 +19,9 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
@@ -69,7 +71,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     
     static final String STATELESS_PORTLET_WINDOW_ID = "tw";
     static final String PORTLET_WINDOW_DATA_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW_DATA";
-    static final String PORTLET_WINDOW_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW";
+    static final String PORTLET_WINDOW_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW.thread-";
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
@@ -193,7 +195,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         
         final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(request, portletEntityId);
 
-        final ConcurrentMap<IPortletWindowId, IPortletWindow> portletWindowMap = getPortletWindowMap(request);
+        final Map<IPortletWindowId, IPortletWindow> portletWindowMap = getPortletWindowMap(request);
         
         //Check if there is portlet window cached in the request
         IPortletWindow portletWindow = portletWindowMap.get(portletWindowId);
@@ -206,7 +208,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         portletWindow = wrapPortletWindowData(request, portletWindowData);
         
         //Cache the wrapped window in the request
-        portletWindow = ConcurrentMapUtils.putIfAbsent(portletWindowMap, portletWindowId, portletWindow);
+        portletWindowMap.put(portletWindowId, portletWindow);
         
         return portletWindow;
     }
@@ -219,7 +221,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(request, "request can not be null");
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
         
-        final ConcurrentMap<IPortletWindowId, IPortletWindow> portletWindowMap = getPortletWindowMap(request);
+        final Map<IPortletWindowId, IPortletWindow> portletWindowMap = getPortletWindowMap(request);
         
         IPortletWindow portletWindow = portletWindowMap.get(portletWindowId);
         if (portletWindow != null) {
@@ -236,7 +238,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         portletWindow = this.wrapPortletWindowData(request, portletWindowData);
         
         //Cache the wrapped window in the request
-        portletWindow = ConcurrentMapUtils.putIfAbsent(portletWindowMap, portletWindowId, portletWindow);
+        portletWindowMap.put(portletWindowId, portletWindow);
         
         return portletWindow;
     }
@@ -306,7 +308,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         final Set<IPortletWindow> portletWindows = new LinkedHashSet<IPortletWindow>();
         
-        final ConcurrentMap<IPortletWindowId, IPortletWindow> portletWindowMap = getPortletWindowMap(request);
+        final Map<IPortletWindowId, IPortletWindow> portletWindowMap = getPortletWindowMap(request);
         //Add all of the request cached windows for the entity to the set
         for (final IPortletWindow portletWindow : portletWindowMap.values()) {
             final IPortletEntity portletEntity = portletWindow.getPortletEntity();
@@ -327,7 +329,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
             //Wrap the data in a window and stick it in the request cache
             IPortletWindow portletWindow = this.wrapPortletWindowData(request, portletWindowData);
-            portletWindow = ConcurrentMapUtils.putIfAbsent(portletWindowMap, portletWindowId, portletWindow);
+            portletWindowMap.put(portletWindowId, portletWindow);
             
             portletWindows.add(portletWindow);
         }
@@ -384,8 +386,8 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         }
         
         //Cache the stateless window in the request
-        final ConcurrentMap<IPortletWindowId, IPortletWindow> portletWindowMap = this.getPortletWindowMap(request);
-        statelessPortletWindow = ConcurrentMapUtils.putIfAbsent(portletWindowMap, statelessPortletWindow.getPortletWindowId(), statelessPortletWindow);
+        final Map<IPortletWindowId, IPortletWindow> portletWindowMap = this.getPortletWindowMap(request);
+        portletWindowMap.put(statelessPortletWindow.getPortletWindowId(), statelessPortletWindow);
         
         return statelessPortletWindow.getPortletWindowId();
     }
@@ -418,9 +420,20 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         return portletWindowData;
     }
 
-    protected ConcurrentMap<IPortletWindowId, IPortletWindow> getPortletWindowMap(HttpServletRequest request) {
+    protected Map<IPortletWindowId, IPortletWindow> getPortletWindowMap(HttpServletRequest request) {
         request = portalRequestUtils.getOriginalPortletOrPortalRequest(request);
-        return PortalWebUtils.getMapRequestAttribute(request, PORTLET_WINDOW_ATTRIBUTE + Thread.currentThread().getId());
+        
+        final String mapAttributeName = PORTLET_WINDOW_ATTRIBUTE + Thread.currentThread().getId();
+        
+        //No need to do this in a request attribute mutex since the map is scoped to a specific thread
+        @SuppressWarnings("unchecked")
+        Map<IPortletWindowId, IPortletWindow> windowMap = (Map<IPortletWindowId, IPortletWindow>)request.getAttribute(mapAttributeName);
+        if (windowMap == null) {
+            windowMap = new HashMap<IPortletWindowId, IPortletWindow>();
+            request.setAttribute(mapAttributeName, windowMap);
+        }
+        
+        return windowMap;
     }
 
     protected ConcurrentMap<IPortletWindowId, PortletWindowData> getPortletWindowDataMap(HttpServletRequest request) {

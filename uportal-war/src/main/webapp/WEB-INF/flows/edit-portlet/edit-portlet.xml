@@ -179,7 +179,7 @@
         </binder>
         <on-entry>
             <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person" 
                 value="personManager.getPerson(servletRequest)"/>
             <set name="viewScope.lifecycleStates" value="portletAdministrationHelper.getAllowedLifecycleStates(person, portlet.categories)"/>
@@ -216,7 +216,7 @@
         <!-- save the portlet -->
         <transition on="save" to="finishPortletEdit">
             <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person" 
                 value="personManager.getPerson(servletRequest)"/>
             <evaluate expression="portletAdministrationHelper.savePortletRegistration(portlet, person)"></evaluate>
@@ -225,7 +225,7 @@
         <!-- save the portlet -->
         <transition on="saveAndConfig" to="configMode">
             <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person" 
                 value="personManager.getPerson(servletRequest)"/>
             <set name="flowScope.portlet" value="portletAdministrationHelper.savePortletRegistration(portlet, person)" />

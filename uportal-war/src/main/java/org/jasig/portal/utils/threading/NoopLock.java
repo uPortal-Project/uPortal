@@ -69,7 +69,6 @@ public class NoopLock implements Lock {
      */
     @Override
     public void unlock() {
-
     }
 
     /* (non-Javadoc)
@@ -83,12 +82,10 @@ public class NoopLock implements Lock {
     private static final class NoopCondition implements Condition {
         @Override
         public void await() throws InterruptedException {
-            
         }
 
         @Override
         public void awaitUninterruptibly() {
-            
         }
 
         @Override
@@ -108,12 +105,10 @@ public class NoopLock implements Lock {
 
         @Override
         public void signal() {
-            
         }
 
         @Override
         public void signalAll() {
-            
         }
     }
 }

@@ -84,7 +84,7 @@
         <transition on="remove" to="listChannels">
             <!-- Remove the portlet -->
             <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.person"
                 value="personManager.getPerson(servletRequest)"/>
             <evaluate expression="portletAdministrationHelper.removePortletRegistration(flowScope.portletId,flashScope.person)"/>

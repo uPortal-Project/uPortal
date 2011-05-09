@@ -38,7 +38,7 @@
     <view-state id="snooper">
         <on-render>
             <!-- Supply the JSP page with the HttpServletRequest object -->
-            <set name="flashScope.request" value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+            <set name="flashScope.request" value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
         </on-render>
     </view-state>
     

@@ -27,7 +27,7 @@
     <!-- If the user has already attempted to log in, get the attempted username -->
     <on-start>
         <set name="flashScope.servletRequest" 
-            value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+            value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
         <set name="flowScope.attemptedUsername" 
             value="servletRequest.getSession().getAttribute('up_attemptedUserName')"/>
     </on-start>

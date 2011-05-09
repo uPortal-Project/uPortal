@@ -27,7 +27,7 @@
     <!--  get local account -->
     <on-start>
         <set name="flashScope.servletRequest" 
-            value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+            value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
         <set name="flowScope.person" value="personManager.getPerson(servletRequest)"/>
         <set name="flowScope.canEditAccount" value="userAccountHelper.canEditUser(person, person.name)"/>
         <set name="flowScope.attributeNames" value="directoryDisplayAttributes"/>

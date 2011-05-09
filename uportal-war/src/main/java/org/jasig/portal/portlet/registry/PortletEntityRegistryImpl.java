@@ -78,8 +78,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     static final Pattern ID_PART_SEPERATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPERATOR)));
     
     static final String PORTLET_ENTITY_DATA_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_DATA";
-    static final String PORTLET_ENTITY_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY";
-    static final String PORTLET_ENTITY_ID_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_ID_MAP";
+    static final String PORTLET_ENTITY_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY.thread-";
     static final String PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE";
     
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -589,17 +588,19 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     
     protected PortletEntityCache<IPortletEntity> getPortletEntityMap(HttpServletRequest request) {
         request = portalRequestUtils.getOriginalPortletOrPortalRequest(request);
-        final Object mutex = PortalWebUtils.getRequestAttributeMutex(request);
+        
+        //create the thread specific cache name
         final String entityMapAttribute = PORTLET_ENTITY_ATTRIBUTE + Thread.currentThread().getId();
-        synchronized (mutex) {
-            @SuppressWarnings("unchecked")
-            PortletEntityCache<IPortletEntity> cache = (PortletEntityCache<IPortletEntity>)request.getAttribute(entityMapAttribute);
-            if (cache == null) {
-                cache = new PortletEntityCache<IPortletEntity>();
-                request.setAttribute(PORTLET_ENTITY_ATTRIBUTE, cache);
-            }
-            return cache;
+
+        //No need to do this in a request attribute mutex since the map is scoped to a specific thread
+        @SuppressWarnings("unchecked")
+        PortletEntityCache<IPortletEntity> cache = (PortletEntityCache<IPortletEntity>)request.getAttribute(entityMapAttribute);
+        if (cache == null) {
+            cache = new PortletEntityCache<IPortletEntity>(false);
+            request.setAttribute(PORTLET_ENTITY_ATTRIBUTE, cache);
         }
+        
+        return cache;
     }
     
     protected PortletEntityCache<PortletEntityData> getPortletEntityDataMap(HttpServletRequest request) {

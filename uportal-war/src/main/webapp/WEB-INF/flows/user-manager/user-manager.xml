@@ -47,7 +47,7 @@
     <view-state id="viewUserDetails">
         <on-entry>
             <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.user" 
                 value="personManager.getPerson(servletRequest)"/>
             <set name="viewScope.canEdit" value="userAccountHelper.canEditUser(user, person.name)"/>
@@ -106,7 +106,7 @@
         <transition on="remove" to="finish">
             <!-- Remove the portlet -->
             <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getOriginalPortalRequest(externalContext.getNativeRequest())"/>
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.user"
                 value="personManager.getPerson(servletRequest)"/>
             <evaluate expression="userAccountHelper.deleteAccount(flashScope.user, person.name)"/>
