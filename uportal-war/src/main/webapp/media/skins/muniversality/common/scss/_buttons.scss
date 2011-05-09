@@ -8,6 +8,7 @@
 $btn-up-selector	: ".ui-btn-up-a, .ui-btn-up-b, .ui-btn-up-c, .ui-btn-up-d, .ui-btn-up-e";
 $btn-hover-selector	: ".ui-btn-hover-a, .ui-btn-hover-b, .ui-btn-hover-c, .ui-btn-hover-d, .ui-btn-hover-e";
 $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-down-d, .ui-btn-down-e";
+$btn-active-selector: ".ui-btn-active";
 
 /* Apply baseline button styling once to every kind of button. */
 .up {
@@ -141,6 +142,18 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 	}
 }
 
+/* Specific styling for button Active (global "on") state. */
+@mixin button-active() {
+	border-color	: $c1darker;
+	background		: $c1;
+	color			: $white;
+	@include text-shadow(dark);
+	@include gradient($c1, $c1darker);
+	a.ui-link-inherit {
+		color		: $white;
+	}
+}
+
 /* Button mixin. Calls in the Up, Hover, and Down states.
  * Passes the context type to those mixins.
  * If no type is specified, default will be used, which will take the @else styles. */
@@ -153,5 +166,8 @@ $btn-down-selector	: ".ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-do
 	}
 	#{$btn-down-selector} {
 		@include button-down($type);
+	}
+	#{$btn-active-selector} {
+		@include button-active();
 	}
 }

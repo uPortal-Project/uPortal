@@ -17,6 +17,7 @@
  * This is a revised theme file for uMobile.
  * uMobile decided not to use jQM's A,B,C,D,E color scheme setup.
  * Those theme classes are still in the markup, but the styles are commented out here.
+ * Also commented out is the ".ui-btn-active" class.
  * uMobile theme styles can be found in portal.css and portlet.css.
  */
 
@@ -616,7 +617,7 @@ a.ui-link-inherit {
 
 
 /* Active class used as the "on" state across all themes
------------------------------------------------------------------------------------------------------------*/
+-----------------------------------------------------------------------------------------------------------
 
 .ui-btn-active {
 	border: 1px solid 		#155678;
@@ -638,7 +639,7 @@ a.ui-link-inherit {
 .ui-btn-active a.ui-link-inherit {
 	color: 					#fff;
 }
-
+*/
 
 /* button inner top highlight
 -----------------------------------------------------------------------------------------------------------*/

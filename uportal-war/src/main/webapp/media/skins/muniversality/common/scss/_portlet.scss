@@ -43,6 +43,10 @@
 	.feed {
 		.ui-btn-inner {
 			padding: 0.7em 15px;
+			
+			.ui-link-inherit {
+				padding: 0;
+			}
 		}
 		.ui-li-has-thumb .ui-btn-inner {
 			padding: 0.7em 100px 0.7em 15px;
@@ -58,7 +62,7 @@
 			margin-left: 10px;
 			border: 1px solid $graydarker;
 		}
-		.title {
+		.title, .news-reader-story-title {
 			margin: 0 0 0.7em 0;
 			font-size: 13px;
 			max-height: 35px;
@@ -80,11 +84,26 @@
 	.ui-datepicker {
 		/* jQuery UI widget override to get the calendar widget as wide as possible. */
 		width: 19em;
-	}
-	.ui-datepicker td span, .ui-datepicker td a {
+		
+		td span, td a {
 		/* jQuery UI widget override to increase the hit area of the days. */
 		padding: 0.5em;
+		}
+		
+		.ui-datepicker-prev .ui-icon {
+		/* jQuery UI widget override to fix the Previous Month button. */
+		    background-image: url("/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/images/ui-icons_222222_256x240.png");
+		    background-color: transparent;
+		    background-position: -80px -192px;
+		}
+		.ui-datepicker-next .ui-icon {
+		/* jQuery UI widget override to fix the Next Month button. */
+		    background-image: url("/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/images/ui-icons_222222_256x240.png");
+		    background-color: transparent;
+		    background-position: -48px -192px;
+		}
 	}
+	
 	.ptl-calendar {
 		.upcal-hide-on-calendar {
 			display:none;

@@ -466,6 +466,7 @@ mathematical calculations. */
 /* Specific styling for button Up state. Styling is contextual, by the type passed in. */
 /* Specific styling for button Hover state. Styling is contextual, by the type passed in. */
 /* Specific styling for button Down state. Styling is contextual, by the type passed in. */
+/* Specific styling for button Active (global "on") state. */
 /* Button mixin. Calls in the Up, Hover, and Down states.
  * Passes the context type to those mixins.
  * If no type is specified, default will be used, which will take the @else styles. */
@@ -596,6 +597,18 @@ mathematical calculations. */
 .up .portlet-wrapper-titlebar .ui-btn-down-a a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-down-b a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-down-c a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-down-d a.ui-link-inherit, .up .portlet-wrapper-titlebar .ui-btn-down-e a.ui-link-inherit {
   color: white;
 }
+.up .portlet-wrapper-titlebar .ui-btn-active {
+  border-color: #294d6b;
+  background: #4682b4;
+  color: white;
+  text-shadow: 0 -1px 1px black;
+  background-image: -moz-linear-gradient(top, #4682b4, #294d6b);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #294d6b));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#294d6b')";
+}
+.up .portlet-wrapper-titlebar .ui-btn-active a.ui-link-inherit {
+  color: white;
+}
 .up .portlet-titlebar {
   border-color: #294d6b;
   background: #38678f;
@@ -636,6 +649,18 @@ mathematical calculations. */
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#294d6b', EndColorStr='#4682b4')";
 }
 .up .portlet-titlebar .ui-btn-down-a a.ui-link-inherit, .up .portlet-titlebar .ui-btn-down-b a.ui-link-inherit, .up .portlet-titlebar .ui-btn-down-c a.ui-link-inherit, .up .portlet-titlebar .ui-btn-down-d a.ui-link-inherit, .up .portlet-titlebar .ui-btn-down-e a.ui-link-inherit {
+  color: white;
+}
+.up .portlet-titlebar .ui-btn-active {
+  border-color: #294d6b;
+  background: #4682b4;
+  color: white;
+  text-shadow: 0 -1px 1px black;
+  background-image: -moz-linear-gradient(top, #4682b4, #294d6b);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #294d6b));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#294d6b')";
+}
+.up .portlet-titlebar .ui-btn-active a.ui-link-inherit {
   color: white;
 }
 .up .portlet-content .titlebar .title, .up .portlet-content .titlebar .subtitle {
@@ -680,6 +705,18 @@ mathematical calculations. */
 .up .portlet-content .ui-btn-down-a a.ui-link-inherit, .up .portlet-content .ui-btn-down-b a.ui-link-inherit, .up .portlet-content .ui-btn-down-c a.ui-link-inherit, .up .portlet-content .ui-btn-down-d a.ui-link-inherit, .up .portlet-content .ui-btn-down-e a.ui-link-inherit {
   color: #5c5c5c;
 }
+.up .portlet-content .ui-btn-active {
+  border-color: #294d6b;
+  background: #4682b4;
+  color: white;
+  text-shadow: 0 -1px 1px black;
+  background-image: -moz-linear-gradient(top, #4682b4, #294d6b);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #294d6b));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#294d6b')";
+}
+.up .portlet-content .ui-btn-active a.ui-link-inherit {
+  color: white;
+}
 .up .portlet-content .ui-li-divider {
   border-color: #38678f;
   background: #4682b4;
@@ -722,6 +759,18 @@ mathematical calculations. */
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#143f27', EndColorStr='#2e8b57')";
 }
 .up .portlet-content .utilities .ui-btn-down-a a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-down-b a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-down-c a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-down-d a.ui-link-inherit, .up .portlet-content .utilities .ui-btn-down-e a.ui-link-inherit {
+  color: white;
+}
+.up .portlet-content .utilities .ui-btn-active {
+  border-color: #294d6b;
+  background: #4682b4;
+  color: white;
+  text-shadow: 0 -1px 1px black;
+  background-image: -moz-linear-gradient(top, #4682b4, #294d6b);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #294d6b));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#294d6b')";
+}
+.up .portlet-content .utilities .ui-btn-active a.ui-link-inherit {
   color: white;
 }
 .up .portal-nav .portlet .icon {
@@ -768,6 +817,9 @@ mathematical calculations. */
 .up .feed .ui-btn-inner {
   padding: 0.7em 15px;
 }
+.up .feed .ui-btn-inner .ui-link-inherit {
+  padding: 0;
+}
 .up .feed .ui-li-has-thumb .ui-btn-inner {
   padding: 0.7em 100px 0.7em 15px;
 }
@@ -782,7 +834,7 @@ mathematical calculations. */
   margin-left: 10px;
   border: 1px solid #767676;
 }
-.up .feed .title {
+.up .feed .title, .up .feed .news-reader-story-title {
   margin: 0 0 0.7em 0;
   font-size: 13px;
   max-height: 35px;
@@ -805,6 +857,18 @@ mathematical calculations. */
 .up .ui-datepicker td span, .up .ui-datepicker td a {
   /* jQuery UI widget override to increase the hit area of the days. */
   padding: 0.5em;
+}
+.up .ui-datepicker .ui-datepicker-prev .ui-icon {
+  /* jQuery UI widget override to fix the Previous Month button. */
+  background-image: url("/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/images/ui-icons_222222_256x240.png");
+  background-color: transparent;
+  background-position: -80px -192px;
+}
+.up .ui-datepicker .ui-datepicker-next .ui-icon {
+  /* jQuery UI widget override to fix the Next Month button. */
+  background-image: url("/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/images/ui-icons_222222_256x240.png");
+  background-color: transparent;
+  background-position: -48px -192px;
 }
 .up .ptl-calendar .upcal-hide-on-calendar {
   display: none;
