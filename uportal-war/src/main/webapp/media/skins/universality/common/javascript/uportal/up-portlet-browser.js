@@ -217,6 +217,13 @@ var up = up || {};
         searchView: {
             type: "up.DefaultPortletSearchView"
         },
+        events: {
+            onLoad: null,
+            onCategorySelect: null,
+            onPortletSearch: null,
+            onPortletSelect: null,
+            onPortletDrag: null
+        },
         listeners: {
             onLoad: null,
             onCategorySelect: function (that, category) {

@@ -267,6 +267,9 @@ var up = up || {};
     // defaults
     fluid.defaults("up.PortletRegistry", {
         portletListUrl: null,
+        events: {
+            onLoad: null
+        },
         listeners: {
             onLoad: null
         }

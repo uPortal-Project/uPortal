@@ -210,6 +210,7 @@
         up.jQuery = jQuery.noConflict(true);
         up.fluid = fluid;
         fluid = null;
+        fluid_1_4 = null;
     </script>    
 </xsl:template>
 <!-- ========================================================================= -->

@@ -134,6 +134,9 @@ var up = up || {};
             layoutDescription: ".layout-description",
             layoutThumb: ".layout-thumb"
         },
+        events: {
+            onLayoutSelect: null
+        },
         listeners: {
             onLayoutSelect: null
         }

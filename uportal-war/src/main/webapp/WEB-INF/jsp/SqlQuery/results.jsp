@@ -91,6 +91,7 @@
     $(document).ready(function() {
         var options = {
           dataModel: results,
+          annotateColumnRange: 'column0',
           columnDefs: [
               <c:forEach items="${ results[0] }" var="row" varStatus="status">
               { key: "column${ status.index }", valuebinding: "*.column${ status.index }", sortable: true}${ status.last ? "" : "," }

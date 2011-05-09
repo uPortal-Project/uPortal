@@ -57,6 +57,10 @@ var up = up || {};
         selectors: {
             errorMessage: ".layout-persistence-error-message"
         },
+        events: {
+            onSuccess: null,
+            onError: null
+        },
         listeners: {
             onSuccess: null,
             onError: function(that, request, text, error) {

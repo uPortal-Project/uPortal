@@ -114,7 +114,7 @@
             up.jQuery = jQuery.noConflict(true);
             up.fluid = fluid;
             fluid = null;
-            fluid_1_3 = null;
+            fluid_1_4 = null;
         </script>
         <xsl:for-each select="/layout/header/channel-header">
         	 <xsl:copy-of select="."/>

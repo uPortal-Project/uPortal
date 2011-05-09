@@ -223,6 +223,7 @@ var up = up || {};
                 // set the other pager options
                 var pagerOptions = {
                     dataModel: portlets,
+                    annotateColumnRange: 'portletTitle',
                     columnDefs: columnDefs,
                     bodyRenderer: {
                         type: "fluid.pager.selfRender",
@@ -384,6 +385,10 @@ var up = up || {};
             fragmentListLink: ".package-list-link",
             fragmentList: ".package-results"
         },
+        events: {
+            onInitialize: null,
+            onShow: null
+        },
         listeners: {
             onInitialize: null,
             onShow: null
@@ -439,6 +444,10 @@ var up = up || {};
         selectors: {
             pane: null,
             paneLink: null
+        },
+        events: {
+            onInitialize: null,
+            onShow: null
         },
         listeners: {
             onInitialize: null,

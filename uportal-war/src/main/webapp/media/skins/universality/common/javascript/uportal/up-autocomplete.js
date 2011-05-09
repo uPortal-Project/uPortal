@@ -111,6 +111,10 @@ var up = up || {};
             matchText: ".up-autocomplete-match-text",
             loadingMessage: ".up-autocomplete-loading"
         },
+        events: {
+            onSearch: null,
+            onClose: null
+        },
         listeners: {
             onSearch: null,
             onClose: null

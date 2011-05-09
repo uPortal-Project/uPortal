@@ -145,6 +145,7 @@ var up = up || {};
                 // set the other pager options
                 var pagerOptions = {
                     dataModel: that.state.fragments,
+                    annotateColumnRange: 'fragmentTitle',
                     columnDefs: columnDefs,
                     bodyRenderer: {
                         type: "fluid.pager.selfRender",
@@ -192,6 +193,10 @@ var up = up || {};
             fragmentDescription: ".package-description",
             selectFragmentLink: ".package-link",
             pagerRoot: ".package-list"
+        },
+        events: {
+            onFragmentSelect: null,
+            onLoad: null
         },
         listeners: {
             onFragmentSelect: null,

@@ -171,6 +171,7 @@ up.jQuery(function() {
     // Initialize the pager
     var options = {
         dataModel: getPermissions(),
+        annotateColumnRange: 'permissionPrincipal',
         columnDefs: [
             { key: "permissionPrincipal", valuebinding: "*.principalName", sortable: true },
             { key: "permissionTarget", valuebinding: "*.targetName", sortable: true },

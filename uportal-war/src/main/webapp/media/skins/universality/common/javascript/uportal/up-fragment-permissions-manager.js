@@ -196,6 +196,9 @@ var up = up || {};
         selectors: {
             formTitle: null
         },
+        events: {
+            onUpdatePermissions: null
+        },
         listeners: {
             onUpdatePermissions: null
         }
@@ -254,6 +257,9 @@ var up = up || {};
             titleExtractor: function(element){ return element.find(".up-portlet-wrapper-inner h2 a").text(); },
             selectors: {
                 formTitle: "h2"
+            },
+            events: {
+                onUpdatePermissions: null
             },
             listeners: {
                 onUpdatePermissions: function(element, newPermissions) {

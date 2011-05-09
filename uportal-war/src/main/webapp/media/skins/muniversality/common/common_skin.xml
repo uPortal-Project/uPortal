@@ -24,15 +24,6 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/sandbox/resource-aggregator/tags/resource-aggregator-parent-1.0.0/resource-aggregator-api/src/main/resources/skin-configuration.xsd">
   
-  <!--css included="plain">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.2/fss/css/fss-framework-1.2.min.css</css-->
-  
-  <!--<css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3-default.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/default/jquery.mobile-1.0a3-default.min.css</css-->
-  
-  <!--css included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/valencia/jquery.mobile.theme.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a3/themes/valencia/jquery.mobile.theme.min.css</css-->
-  
   <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css>
   
@@ -51,8 +42,8 @@
   <js included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
   
-  <js included="plain">/ResourceServingWebapp/rs/fluid/1.3/js/fluid-all-1.3.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.3/js/fluid-all-1.3.js</js>
+  <js included="plain">/ResourceServingWebapp/rs/fluid/1.4-bea0041/js/fluid-all-1.4-bea0041.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.4-bea0041/js/fluid-all-1.4-bea0041.js</js>
   
   <js>../common/javascript/up-mobile-config.js</js>
 

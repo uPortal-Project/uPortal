@@ -156,7 +156,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 </div> <!-- end: portlet -->
     	
-	<script type="text/javascript">
+	<script type="text/javascript"><rs:compressJs>
 	 up.jQuery(function() {
         var $ = up.jQuery;
         var fluid = up.fluid;
@@ -263,6 +263,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
             var options = {
                 dataModel: portlets,
+                annotateColumnRange: "name",
                 columnDefs: [
                     { key: "name", valuebinding: "*.name", sortable: true },
                     { key: "type", valuebinding: "*.type", sortable: true,
@@ -346,4 +347,4 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         });
 
    	  });
-    </script>
+    </rs:compressJs></script>

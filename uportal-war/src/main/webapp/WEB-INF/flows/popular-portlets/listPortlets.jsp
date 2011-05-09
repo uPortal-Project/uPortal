@@ -192,6 +192,7 @@ up.jQuery(function() {
 
     var options = {
         dataModel: fetchStats(),
+        annotateColumnRange: 'title',
         columnDefs: [
             { key: "title", valuebinding: "*.portletTitle", sortable: true,
                 components: function(row, index) {

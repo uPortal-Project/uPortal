@@ -184,6 +184,7 @@ up.jQuery(function() {
     
     // Initialize the pager
     var options = {
+        annotateColumnRange: 'permissionOwner',
         columnDefs: [
              { key: "permissionOwner", valuebinding: "*.ownerName", sortable: true },
              { 
