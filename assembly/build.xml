@@ -328,6 +328,7 @@
         <!-- update catalina.properties tp emable shared/lib classloader -->
         <replace file="${dl.tomcat.dir}/conf/catalina.properties" token="${tomcat.shared-lib.token}" value="${tomcat.shared-lib.replacement}" summary="true" />
         
+        <!-- remove all pre-packaged webapps -->
         <delete includeemptydirs="true">  
             <fileset dir="${dl.tomcat.dir}/webapps/" includes="**/*"/>  
         </delete>  

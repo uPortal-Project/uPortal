@@ -585,7 +585,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         
         //Add the portal's context path
         final String contextPath = this.getCleanedContextPath(request);
-        url.setPath(contextPath);
+        if (contextPath.length() > 0) {
+            url.setPath(contextPath);
+        }
         
         final Map<IPortletWindowId, IPortletUrlBuilder> portletUrlBuilders = portalUrlBuilder.getPortletUrlBuilders();
         
@@ -783,6 +785,10 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
     protected String getCleanedContextPath(HttpServletRequest request) {
         String contextPath = request.getContextPath();
+        
+        if (contextPath.length() == 0) {
+            return "";
+        }
         
         //Make sure the context path doesn't start with a /
         if (contextPath.charAt(0) == '/') {

@@ -70,6 +70,19 @@ public class UrlSyntaxProviderImplTest {
     @Mock private IPortletEntity portletEntity;
     @Mock private IPortletWindow portletWindow;
 
+    @Test
+    public void getCleanedContextPath() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        
+        String path = urlSyntaxProvider.getCleanedContextPath(request);
+        assertEquals("uPortal", path);
+        
+        request.setContextPath("");
+        
+        path = urlSyntaxProvider.getCleanedContextPath(request);
+        assertEquals("", path);
+    }
     
     @Test
     public void testNonTargetedGeneration() throws Exception {
