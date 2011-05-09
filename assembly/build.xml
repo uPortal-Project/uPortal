@@ -222,6 +222,8 @@
         </copy>
         <replace file="${uportal.dir}/build.properties" token="#maven.home=" value="maven.home=$${basedir}/../${dl.maven.finalName}" summary="true" />
         
+        <replace file="${uportal.dir}/pom.xml" token="${uportal.docbase.token}" value="${uportal.docbase.replacement}" summary="true" />
+        
         <!-- Update the uPortal release notes --> 
         <copy file="${uportal.source.dir}/releaseNotes.html" tofile="${uportal.dir}/releaseNotes.html" overwrite="true">
             <filterset begintoken="$${" endtoken="}">
