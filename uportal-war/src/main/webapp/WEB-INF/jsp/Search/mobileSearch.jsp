@@ -295,7 +295,7 @@
                                     ID: "portlet:",
                                     children: [
                                        { 
-                                           ID: "portletLink", target: "/uPortal/p/" + portlet.fname
+                                           ID: "portletLink", target: ${request.contextPath} + "/p/" + portlet.fname
                                        },
                                        { 
                                            ID: "portletTitle", value: portlet.title
