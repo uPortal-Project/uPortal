@@ -28,13 +28,15 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet portlet-content" role="section">
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead" data-role="header">
-    <h2 class="title" role="heading"><spring:message code="reset.my.password"/></h2>
-  </div>
+<div class="fl-widget portlet" role="section">
 
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main" data-role="content">
+    <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead" data-role="header">
+        <h2 class="title" role="heading"><spring:message code="reset.my.password"/></h2>
+    </div>
+
+  <!-- Portlet -->
+  <div class="fl-widget-content content portlet-content" role="main" data-role="content">
   
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">

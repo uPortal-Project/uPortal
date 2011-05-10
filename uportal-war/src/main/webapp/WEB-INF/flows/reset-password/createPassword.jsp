@@ -26,15 +26,15 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet user-mgr view-reviewuser" role="section">
+<div class="fl-widget portlet" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead" data-role="header">
         <h2 class="title" role="heading"><spring:message code="set.new.account.password"/></h2>
     </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Body -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content" role="main" data-role="content">
 
         <form:form modelAttribute="accountForm" action="${formUrl}" method="POST">
 
@@ -73,7 +73,7 @@
             <div class="portlet-section" role="region">
                 <div class="content">
             
-                    <div class="buttons">
+                    <div class="buttons utilities">
                         <input class="button primary" type="submit" value="<spring:message code="update.password"/>" name="_eventId_updatePassword"/>
                     </div>
                 </div>

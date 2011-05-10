@@ -61,7 +61,7 @@
             <input id="${n}userName" name="userName" value="${ attemptedUsername }"/>
             
             <label for="${n}password"><spring:message code="password"/></label>
-            <input id="${n}password" name="password"/>
+            <input type="password" id="${n}password" name="password"/>
         
             <div class="buttons utilities">
                 <input type="submit" value="<spring:message code="login"/>" class="primary button"/>
