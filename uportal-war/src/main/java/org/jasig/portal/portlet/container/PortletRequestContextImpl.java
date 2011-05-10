@@ -42,11 +42,11 @@ import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
-import org.jasig.portal.url.AbstractHttpServletRequestWrapper;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.url.UrlType;
+import org.jasig.portal.utils.web.AbstractHttpServletRequestWrapper;
 import org.springframework.util.Assert;
 
 /**

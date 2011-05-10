@@ -27,7 +27,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.url.AbstractHttpServletRequestWrapper;
 
 /**
  * Scopes set request attributes to just this request.

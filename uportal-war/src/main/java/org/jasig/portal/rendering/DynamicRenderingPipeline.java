@@ -64,10 +64,11 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
         res.setDateHeader("Expires", 0);
 
         final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader = this.pipeline.getEventReader(req, res);
-        final String mediaType = getMediaType(pipelineEventReader);
+        final String mediaType = getMediaType(req, res, pipelineEventReader);
 
         // set the response mime type
-        res.setContentType(mediaType + "; charset=" + CHARACTER_SET);
+        final String contentType = mediaType + "; charset=" + CHARACTER_SET;
+        res.setContentType(contentType);
         
         final PrintWriter writer = res.getWriter();
         
@@ -84,8 +85,9 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
     }
 
     /**
+     * Determine the media type to use for the response
      */
-    protected String getMediaType(final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader) {
+    protected String getMediaType(HttpServletRequest req, HttpServletResponse res, PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader) {
         final String mediaType = pipelineEventReader.getOutputProperty(OutputKeys.MEDIA_TYPE);
         if (mediaType != null) {
             return mediaType;

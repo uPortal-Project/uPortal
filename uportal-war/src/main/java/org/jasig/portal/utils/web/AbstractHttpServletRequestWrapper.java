@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.url;
+package org.jasig.portal.utils.web;
 
 import java.io.BufferedReader;
 import java.io.IOException;

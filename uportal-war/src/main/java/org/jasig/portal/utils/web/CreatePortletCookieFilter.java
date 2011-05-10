@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.web;
+package org.jasig.portal.utils.web;
 
 import java.io.IOException;
 

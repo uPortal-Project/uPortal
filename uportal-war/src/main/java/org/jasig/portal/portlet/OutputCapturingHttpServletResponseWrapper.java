@@ -30,11 +30,11 @@ import java.io.Writer;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.jasig.portal.utils.web.PortletHttpServletResponseWrapper;
 
 /**
  * A wrapper implementation that records output content to a buffer without actually
@@ -42,7 +42,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * 
  * @version $Revision: 11911 $
  */
-public class PortletHttpServletResponseWrapper extends HttpServletResponseWrapper {
+public class OutputCapturingHttpServletResponseWrapper extends PortletHttpServletResponseWrapper {
     private final Writer wrappedWriter;
     
     private PrintWriter writer;
@@ -51,7 +51,7 @@ public class PortletHttpServletResponseWrapper extends HttpServletResponseWrappe
     /**
      * @param servlet response
      */
-    public PortletHttpServletResponseWrapper(HttpServletResponse res, Writer writer) {
+    public OutputCapturingHttpServletResponseWrapper(HttpServletResponse res, Writer writer) {
         super(res);
         
         Validate.notNull(writer, "writer cannot be null");
@@ -131,14 +131,14 @@ public class PortletHttpServletResponseWrapper extends HttpServletResponseWrappe
      */
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof PortletHttpServletResponseWrapper)) {
+        if (!(obj instanceof OutputCapturingHttpServletResponseWrapper)) {
             return false;
         }
         
-        final PortletHttpServletResponseWrapper rhs = (PortletHttpServletResponseWrapper)obj;
+        final OutputCapturingHttpServletResponseWrapper rhs = (OutputCapturingHttpServletResponseWrapper)obj;
         
         return new EqualsBuilder()
-            .append(this.getResponse(), rhs.getResponse())
+            .append(this.getWrappedResponse(), rhs.getWrappedResponse())
             .append(this.committed, rhs.committed)
             .append(this.wrappedWriter, rhs.wrappedWriter)
             .isEquals();
@@ -150,7 +150,7 @@ public class PortletHttpServletResponseWrapper extends HttpServletResponseWrappe
     @Override
     public int hashCode() {
         return new HashCodeBuilder(977252351, 179084321)
-            .append(this.getResponse())
+            .append(this.getWrappedResponse())
             .append(this.committed)
             .append(this.wrappedWriter)
             .toHashCode();
@@ -171,7 +171,7 @@ public class PortletHttpServletResponseWrapper extends HttpServletResponseWrappe
         @Override
         public void flush() {
             super.flush();
-            PortletHttpServletResponseWrapper.this.setCommitted(true);
+            OutputCapturingHttpServletResponseWrapper.this.setCommitted(true);
         }
     }
 }
