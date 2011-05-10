@@ -56,6 +56,18 @@
       <name>iconUrl</name>
       <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/internet-news-reader.png</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/feed.png</value>
+    </parameter>
+    <parameter>
+        <name>editable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>hasHelp</name>
+        <value>true</value>
+    </parameter>
   
   
     <portlet-preference> 

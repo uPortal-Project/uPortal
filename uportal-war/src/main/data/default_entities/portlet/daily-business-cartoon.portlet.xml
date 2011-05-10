@@ -56,6 +56,14 @@
       <name>iconUrl</name>
       <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/emotes/face-smile.png</value>
     </parameter>
+    <parameter>
+        <name>editable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>hasHelp</name>
+        <value>true</value>
+    </parameter>
   
   
     <portlet-preference> 

@@ -60,7 +60,10 @@
         <name>mobileIconUrl</name>
         <value>/uPortal/media/skins/icons/mobile/weather.png</value>
     </parameter>
-  
+    <parameter>
+        <name>editable</name>
+        <value>true</value>
+    </parameter>  
   
     <portlet-preference>
       <name>locationCodes</name>
