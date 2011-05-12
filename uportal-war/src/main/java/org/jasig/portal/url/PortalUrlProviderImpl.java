@@ -88,7 +88,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
     public IPortalUrlBuilder getPortalUrlBuilderByLayoutNode(HttpServletRequest request, String layoutNodeId, UrlType urlType) {
         final IPortletWindowId portletWindowId;
         if (layoutNodeId != null) {
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, layoutNodeId);
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutNodeId);
             if (portletWindow == null) {
                 //No window so make sure the node is even in the layout
                 this.verifyLayoutNodeId(request, layoutNodeId);

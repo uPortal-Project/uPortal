@@ -19,12 +19,15 @@
 
 package org.jasig.portal.portlet.dao.trans;
 
+import java.util.Map;
+
 import javax.portlet.WindowState;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -73,15 +76,20 @@ class TransientPortletEntity implements IPortletEntity {
     public IPortletEntityId getPortletEntityId() {
         return this.delegatePortletEntity.getPortletEntityId();
     }
-
+    
     @Override
-    public WindowState getWindowState() {
-        return this.delegatePortletEntity.getWindowState();
+    public Map<Long, WindowState> getWindowStates() {
+        return this.delegatePortletEntity.getWindowStates();
     }
 
     @Override
-    public void setWindowState(WindowState state) {
-        this.delegatePortletEntity.setWindowState(state);
+    public WindowState getWindowState(IStylesheetDescriptor stylesheetDescriptor) {
+        return this.delegatePortletEntity.getWindowState(stylesheetDescriptor);
+    }
+
+    @Override
+    public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state) {
+        this.delegatePortletEntity.setWindowState(stylesheetDescriptor, state);
     }
 
     /* (non-Javadoc)

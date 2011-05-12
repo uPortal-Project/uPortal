@@ -20,6 +20,7 @@
 package org.jasig.portal.portlet.registry;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -37,8 +38,10 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -87,8 +90,13 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     private IPortletEntityDao portletEntityDao;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
+    private IStylesheetDescriptorDao stylesheetDescriptorDao;
     private Ehcache entityIdParseCache;
 
+    @Autowired
+    public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
+        this.stylesheetDescriptorDao = stylesheetDescriptorDao;
+    }
     @Autowired
     public void setEntityIdParseCache(@Qualifier("org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.idParseCache") Ehcache entityIdParseCache) {
         this.entityIdParseCache = entityIdParseCache;
@@ -240,6 +248,13 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public void storePortletEntity(HttpServletRequest request, final IPortletEntity portletEntity) {
         Validate.notNull(portletEntity, "portletEntity can not be null");
         
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IPerson person = userInstance.getPerson();
+        if (person.isGuest()) {
+            //Never persist things for the guest user, just rely on in-memory storage
+            return;
+        }
+
         final IPortletEntityId wrapperPortletEntityId = portletEntity.getPortletEntityId();
         final Lock portletEntityLock = this.getPortletEntityLock(request, wrapperPortletEntityId);
         portletEntityLock.lock();
@@ -369,8 +384,14 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             }
         }
         
-        //Copy over WindowState
-        persistentEntity.setWindowState(portletEntity.getWindowState());
+        //Copy over WindowStates
+        final Map<Long, WindowState> windowStates = portletEntity.getWindowStates();
+        for (Map.Entry<Long, WindowState> windowStateEntry : windowStates.entrySet()) {
+            final Long stylesheetDescriptorId = windowStateEntry.getKey();
+            final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
+            final WindowState windowState = windowStateEntry.getValue();
+            persistentEntity.setWindowState(stylesheetDescriptor, windowState);
+        }
         
         this.portletEntityDao.updatePortletEntity(persistentEntity);
         
@@ -627,6 +648,6 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     protected boolean shouldBePersisted(IPortletEntity portletEntity) {
         final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
         final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
-        return CollectionUtils.isNotEmpty(preferences) || WindowState.MINIMIZED.equals(portletEntity.getWindowState());
+        return CollectionUtils.isNotEmpty(preferences) || !portletEntity.getWindowStates().isEmpty();
     }
 }

@@ -438,10 +438,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         ulnd.setChannelTypeId("" + chanDef.getType().getId());
         ulnd.setFunctionalName(chanDef.getFName());
         ulnd.setTimeout(chanDef.getTimeout());
-//        ulnd.setEditable(chanDef.isEditable());
-//        ulnd.setHasHelp(chanDef.hasHelp());
-//        ulnd.setHasAbout(chanDef.hasAbout());
-
+        
         Set<IPortletDefinitionParameter> parms = chanDef.getParameters();
         for ( IPortletDefinitionParameter parm : parms )
         {

@@ -172,7 +172,7 @@ public class XsltPortalUrlProviderTest {
         when(portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, "foo", UrlType.RENDER)).thenReturn(portalUrlBuilder);
         when(portalUrlBuilder.getPortletUrlBuilder(portletWindowId)).thenReturn(portletUrlBuilder);
         when(portalUrlBuilder.getUrlString()).thenReturn("/uPortal/home/normal/render.uP?layoutUrl");
-        when(portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, "foo")).thenReturn(portletWindow);
+        when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, "foo")).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         
         final Transformer transformer = xslTemplate.newTransformer();
@@ -214,7 +214,7 @@ public class XsltPortalUrlProviderTest {
         when(portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, "foo", UrlType.RENDER)).thenReturn(portalUrlBuilder);
         when(portalUrlBuilder.getPortletUrlBuilder(portletWindowId)).thenReturn(portletUrlBuilder);
         when(portalUrlBuilder.getUrlString()).thenReturn("/uPortal/home/normal/render.uP?layoutUrl");
-        when(portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, "foo")).thenReturn(portletWindow);
+        when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, "foo")).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         
         when(portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, "my-portlet")).thenReturn(portletWindow2);

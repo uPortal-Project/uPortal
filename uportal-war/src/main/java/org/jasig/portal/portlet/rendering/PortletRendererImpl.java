@@ -29,7 +29,6 @@ import javax.portlet.PortletException;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
-import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -401,13 +400,6 @@ public class PortletRendererImpl implements IPortletRenderer {
                     throw new AuthorizationException(person.getUserName() + " does not have permission to render '" + portletDefinition.getFName() + "' in " + portletMode + " PortletMode");
                 }
             }
-            
-            portletWindow.setPortletMode(portletMode);
-        }
-   
-        final WindowState windowState = portletUrl.getWindowState();
-        if (windowState != null) {
-            portletWindow.setWindowState(windowState);
         }
     }
 }

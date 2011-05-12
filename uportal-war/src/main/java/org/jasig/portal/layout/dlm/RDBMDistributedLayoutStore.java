@@ -1947,9 +1947,6 @@ public class RDBMDistributedLayoutStore
         // chanClassArg is so named to highlight that we are using the argument
         // to the method rather than the instance variable chanClass
         channel.setAttribute("typeID", String.valueOf(def.getType().getId()));
-//        channel.setAttribute("editable", Boolean.toString(def.isEditable()));
-//        channel.setAttribute("hasHelp", Boolean.toString(def.hasHelp()));
-//        channel.setAttribute("hasAbout", Boolean.toString(def.hasAbout()));
 
         for (IPortletDefinitionParameter param : def.getParameters()) {
             Element parameter = doc.createElement("parameter");

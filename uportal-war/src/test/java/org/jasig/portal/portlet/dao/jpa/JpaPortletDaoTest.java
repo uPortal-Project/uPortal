@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.portlet.WindowState;
+
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
@@ -228,6 +230,7 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
                 
                 final IPortletEntity portEnt1 = jpaPortletEntityDao.getPortletEntity(portletEntityId);
                 portEnt1.getPortletPreferences().getPortletPreferences().add(new PortletPreferenceImpl("entpref1", false, "epv1", "epv2"));
+//                portEnt1.setWindowState(WindowState.MINIMIZED);
                 jpaPortletEntityDao.updatePortletEntity(portEnt1);
                 
                 return null;

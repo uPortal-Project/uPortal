@@ -168,7 +168,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
         if (events.isEmpty()) {
             return;
         }
-        
+
         //Get all the portlets the user is subscribed to
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
@@ -200,7 +200,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
             for (final Event event : events) {
                 if (this.supportsEvent(event, portletDefinitionId)) {
                     final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-                    final Set<IPortletWindow> portletWindows = this.portletWindowRegistry.getAllPortletWindows(request, portletEntityId);
+                    final Set<IPortletWindow> portletWindows = this.portletWindowRegistry.getAllPortletWindowsForEntity(request, portletEntityId);
                     
                     for (final IPortletWindow portletWindow : portletWindows) {
                         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();

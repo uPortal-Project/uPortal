@@ -14,11 +14,4 @@
       <scope>PERSISTENT</scope>
       <description>Skin name</description>
     </stylesheet-parameter>
-    <layout-attribute>
-      <name>minimized</name>  
-      <default-value>false</default-value>  
-      <scope>PERSISTENT</scope>
-      <description>Flag determining if the channel is minimized or not</description>  
-      <targetElement>channel</targetElement>  
-    </layout-attribute>
 </stylesheet-descriptor>

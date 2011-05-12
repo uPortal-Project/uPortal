@@ -19,9 +19,14 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -39,7 +44,7 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
 class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescriptor {
     private final IPortletDefinition portletDefinition;
     private final PortletEntityData portletEntityData;
-    private WindowState windowState;
+    private final Map<Long, WindowState> windowStates = new ConcurrentHashMap<Long, WindowState>();
     private IPortletPreferences portletPreferences = new PortletPreferencesImpl();
 
     public SessionPortletEntityImpl(IPortletDefinition portletDefinition, PortletEntityData portletEntityData) {
@@ -80,13 +85,23 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
     }
 
     @Override
-    public WindowState getWindowState() {
-        return this.windowState;
+    public Map<Long, WindowState> getWindowStates() {
+        return Collections.unmodifiableMap(this.windowStates);
     }
 
     @Override
-    public void setWindowState(WindowState state) {
-        this.windowState = state;
+    public WindowState getWindowState(IStylesheetDescriptor stylesheetDescriptor) {
+        return windowStates.get(stylesheetDescriptor.getId());
+    }
+
+    @Override
+    public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state) {
+        if (state == null) {
+            windowStates.remove(stylesheetDescriptor.getId());
+        }
+        else {
+            windowStates.put(stylesheetDescriptor.getId(), state);
+        }
     }
 
     @Override
@@ -135,7 +150,7 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
     @Override
     public String toString() {
         return "SessionPortletEntityImpl [portletDefinition=" + this.portletDefinition + ", portletEntityData="
-                + this.portletEntityData + ", windowState=" + this.windowState + ", portletPreferences="
+                + this.portletEntityData + ", windowStates=" + this.windowStates + ", portletPreferences="
                 + this.portletPreferences + "]";
     }
 }

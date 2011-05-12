@@ -19,7 +19,11 @@
 
 package org.jasig.portal.portlet.om;
 
+import java.util.Map;
+
 import javax.portlet.WindowState;
+
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
 
 
 
@@ -55,14 +59,19 @@ public interface IPortletEntity extends IPortletEntityDescriptor {
     public int getUserId();
     
     /**
-     * @return The persisted window state for this portlet
+     * @return A read-only Map of the WindowStates that have been set. The key is the {@link IStylesheetDescriptor#getId()} value.
      */
-    public WindowState getWindowState();
+    public Map<Long, WindowState> getWindowStates();
     
     /**
-     * @param state The persisted window state for this portlet
+     * @return The persisted window state for the this portlet and stylesheet
      */
-    public void setWindowState(WindowState state);
+    public WindowState getWindowState(IStylesheetDescriptor stylesheetDescriptor);
+
+    /**
+     * @param state The persisted window state for this portlet and stylesheet
+     */
+    public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state);
     
     /**
      * @return The preferences for this portlet entity, will not be null.

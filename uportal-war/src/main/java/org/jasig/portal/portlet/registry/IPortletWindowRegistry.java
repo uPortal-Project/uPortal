@@ -98,7 +98,7 @@ public interface IPortletWindowRegistry {
      * 
      * If the specified layout node does not exist or is not a portlet null is returned.
      */
-    public IPortletWindow getOrCreateDefaultPortletWindowBySubscribeId(HttpServletRequest request, String subscribeId);
+    public IPortletWindow getOrCreateDefaultPortletWindowByLayoutNodeId(HttpServletRequest request, String layoutNodeId);
     
     /**
      * Combines {@link IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, String, int)}, and
@@ -140,5 +140,23 @@ public interface IPortletWindowRegistry {
      * @param portletEntityId The portlet entity that is a parent of all the windows to be returned
      * @return The set of windows that have been created from the specified entity
      */
-    public Set<IPortletWindow> getAllPortletWindows(HttpServletRequest request, IPortletEntityId portletEntityId);
+    public Set<IPortletWindow> getAllPortletWindowsForEntity(HttpServletRequest request, IPortletEntityId portletEntityId);
+    
+    /**
+     * Store changes made to the portlet window
+     * 
+     * @param request The current request
+     * @param portletWindow The modified portlet window to store
+     */
+    public void storePortletWindow(HttpServletRequest request, IPortletWindow portletWindow);
+    
+    /**
+     * Get all of the portlet windows for all of the portlets in the users layout.
+     */
+    public Set<IPortletWindow> getAllLayoutPortletWindows(HttpServletRequest request);
+    
+    /**
+     * Get all of the portlet windows for all of the portlets in the users layout and any stateless portlets
+     */
+    public Set<IPortletWindow> getAllPortletWindows(HttpServletRequest request);
 }

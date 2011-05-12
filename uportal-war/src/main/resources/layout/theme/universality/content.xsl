@@ -251,8 +251,7 @@
       	  <span><xsl:value-of select="upMsg:getMessage('print', $USER_LANG)"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="not(//focused) and @minimized='false'"> <!-- Focus. -->
-        <!-- UNCOMMENT FOR MINIMIZE CONTROL
+      <xsl:if test="not(//focused) and @windowState!='minimized'"> <!-- Focus. -->
         <xsl:variable name="portletMinUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
@@ -266,7 +265,6 @@
         <a href="{$portletMinUrl}" title="{upMsg:getMessage('enter.minimized.mode.for.this.portlet', $USER_LANG)}" class="up-portlet-control minimize">
           <span><xsl:value-of select="upMsg:getMessage('minimize', $USER_LANG)"/></span>
         </a>
-        -->
         <xsl:variable name="portletMaxUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
@@ -281,8 +279,7 @@
       	  <span><xsl:value-of select="upMsg:getMessage('maximize', $USER_LANG)"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="@minimized='true'"> <!-- Return from Minimized. -->
-        <!-- UNCOMMENT FOR UNMINIMIZE CONTROL
+      <xsl:if test="@windowState='minimized'"> <!-- Return from Minimized. -->
         <xsl:variable name="portletReturnUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
@@ -293,10 +290,9 @@
             </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <a href="{$portletMinUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return">
+        <a href="{$portletReturnUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return">
           <span><xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/></span>
         </a>
-        -->
       </xsl:if>
       <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
         <xsl:variable name="removePortletUrl">

@@ -166,8 +166,9 @@
         <easymock.version>3.0</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
         <ehcache.version>2.3.0</ehcache.version>
-        <ehcache-spring-annotations.version>1.1.2</ehcache-spring-annotations.version>
+        <ehcache-spring-annotations.version>1.2.0-M1</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.3</ehcache-web.version>
+        <guava.version>r09</guava.version>
         <grouperClient.version>1.6.1</grouperClient.version>
         <hibernate.version>3.6.1.Final</hibernate.version>
         <hibernate-jpamodelgen.version>1.1.1.Final</hibernate-jpamodelgen.version>
@@ -232,7 +233,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>r08</version>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.cernunnos</groupId>

@@ -31,7 +31,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -46,36 +46,17 @@ import org.springframework.stereotype.Service;
 @Service("cacheRequestPropertiesManager")
 public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager {
 
-    private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
-    
-    
-    /**
-     * @return the portletEntityRegistry
-     */
-    public IPortletEntityRegistry getPortletEntityRegistry() {
-        return this.portletEntityRegistry;
-    }
-    /**
-     * @param portletEntityRegistry the portletEntityRegistry to set
-     */
-    @Autowired
-    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
-        this.portletEntityRegistry = portletEntityRegistry;
-    }
+    private IPortletWindowRegistry portletWindowRegistry;
 
-    /**
-     * @return the portletDefinitionRegistry
-     */
-    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
-        return this.portletDefinitionRegistry;
-    }
-    /**
-     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
-     */
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
+
+    @Autowired
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        this.portletWindowRegistry = portletWindowRegistry;
     }
 
     /* (non-Javadoc)
@@ -126,6 +107,8 @@ public class CacheRequestPropertiesManager extends BaseRequestPropertiesManager 
                 }
             
                 portletWindow.setExpirationCache(cacheExpiration);
+                
+                this.portletWindowRegistry.storePortletWindow(portletRequest, portletWindow);
             }
         }
     }

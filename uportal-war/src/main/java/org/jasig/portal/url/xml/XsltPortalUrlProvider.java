@@ -120,7 +120,7 @@ public class XsltPortalUrlProvider {
             portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
         }
         else if (StringUtils.isNotEmpty(layoutId)) {
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, layoutId);
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutId);
             final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
             portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
         }

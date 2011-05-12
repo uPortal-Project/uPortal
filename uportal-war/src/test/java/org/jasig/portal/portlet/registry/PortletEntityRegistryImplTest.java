@@ -45,6 +45,7 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -79,6 +80,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     @Mock private IUserPreferencesManager preferencesManager;
     @Mock private IUserLayoutManager userLayoutManager;
     @Mock private IUserLayoutChannelDescription node;
+    @Mock private IPerson person;
     
     @Autowired
     public void setJpaPortletEntityDao(IPortletEntityDao jpaPortletEntityDao) {
@@ -147,6 +149,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
+        when(userInstance.getPerson()).thenReturn(person);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
@@ -278,6 +281,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
+        when(userInstance.getPerson()).thenReturn(person);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
@@ -400,6 +404,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
+        when(userInstance.getPerson()).thenReturn(person);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
@@ -491,6 +496,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
+        when(userInstance.getPerson()).thenReturn(person);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
@@ -590,6 +596,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
+        when(userInstance.getPerson()).thenReturn(person);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
@@ -676,6 +683,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
+        when(userInstance.getPerson()).thenReturn(person);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
@@ -762,6 +770,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
+        when(userInstance.getPerson()).thenReturn(person);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
@@ -820,6 +829,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
+        when(userInstance.getPerson()).thenReturn(person);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);

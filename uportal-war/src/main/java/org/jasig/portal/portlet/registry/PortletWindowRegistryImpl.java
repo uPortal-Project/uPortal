@@ -36,17 +36,19 @@ import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -56,6 +58,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Sets;
 
 /**
  * Provides the default implementation of the window registry, the backing for the storage
@@ -75,16 +79,25 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
+    private Set<WindowState> persistentWindowStates = Sets.newHashSet(WindowState.MINIMIZED);
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
-
+    private IStylesheetDescriptorDao stylesheetDescriptorDao;
     private IUserInstanceManager userInstanceManager;
     private IPortalRequestUtils portalRequestUtils;
-    private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
     
+    
+    /**
+     * The set of WindowStates that should be copied to the {@link IPortletEntity} when {@link #storePortletWindow(HttpServletRequest, IPortletWindow)}
+     * is called
+     */
+    public void setPersistentWindowStates(Set<WindowState> persistentWindowStates) {
+        this.persistentWindowStates = persistentWindowStates;
+    }
+
     @Autowired
-    public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
-        this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
+    public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
+        this.stylesheetDescriptorDao = stylesheetDescriptorDao;
     }
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
@@ -144,7 +157,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
     
     @Override
-    public IPortletWindow getOrCreateDefaultPortletWindowBySubscribeId(HttpServletRequest request, String subscribeId) {
+    public IPortletWindow getOrCreateDefaultPortletWindowByLayoutNodeId(HttpServletRequest request, String subscribeId) {
         Validate.notNull(request, "HttpServletRequest cannot be null");
         Validate.notNull(subscribeId, "subscribeId cannot be null");
         
@@ -302,9 +315,11 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
     
     @Override
-    public Set<IPortletWindow> getAllPortletWindows(HttpServletRequest request, IPortletEntityId portletEntityId) {
+    public Set<IPortletWindow> getAllPortletWindowsForEntity(HttpServletRequest request, IPortletEntityId portletEntityId) {
         Validate.notNull(request, "request can not be null");
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
+        
+        //TODO this is really expensive, maybe we need a domain specific object that is better than a Map and allows us to key this data off of windowId & entityId like the entity registry has
 
         final Set<IPortletWindow> portletWindows = new LinkedHashSet<IPortletWindow>();
         
@@ -392,6 +407,79 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         return statelessPortletWindow.getPortletWindowId();
     }
     
+    @Override
+    public void storePortletWindow(HttpServletRequest request, IPortletWindow portletWindow) {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IPerson person = userInstance.getPerson();
+        if (person.isGuest()) {
+            //Never persist things for the guest user, just rely on in-memory storage
+            return;
+        }
+        
+        final IStylesheetDescriptor stylesheetDescriptor = this.getStylesheetDescriptor(request);
+        
+        final WindowState windowState = portletWindow.getWindowState();
+        
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final WindowState entityWindowState = portletEntity.getWindowState(stylesheetDescriptor);
+        
+        //If the window and entity states are different
+        if (windowState != entityWindowState && !windowState.equals(entityWindowState)) {
+            final boolean minimizeByDefault = this.getMinimizeByDefault(stylesheetDescriptor);
+            //If a window state is set and is one of the persistent states set it on the entity
+            if (persistentWindowStates.contains(windowState) && (!WindowState.MINIMIZED.equals(windowState) || (WindowState.MINIMIZED.equals(windowState) && !minimizeByDefault))) {
+                portletEntity.setWindowState(stylesheetDescriptor, windowState);
+            }
+            //If not remove the state from the entity
+            else if (entityWindowState != null) {
+                portletEntity.setWindowState(stylesheetDescriptor, null);
+            }
+            
+            //Persist the modified entity
+            this.portletEntityRegistry.storePortletEntity(request, portletEntity);
+        }
+    }
+    
+    @Override
+    public Set<IPortletWindow> getAllLayoutPortletWindows(HttpServletRequest request) {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        final Set<String> allSubscribedChannels = userLayoutManager.getAllSubscribedChannels();
+        
+        final Set<IPortletWindow> allLayoutWindows = new LinkedHashSet<IPortletWindow>(allSubscribedChannels.size());
+
+        for (final String channelSubscribeId : allSubscribedChannels) {
+            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, channelSubscribeId);
+            
+            final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+            final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletEntityId);
+            allLayoutWindows.add(portletWindow);
+        }
+        
+        return allLayoutWindows;
+    }
+    
+    @Override
+    public Set<IPortletWindow> getAllPortletWindows(HttpServletRequest request) {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        final Set<String> allSubscribedChannels = userLayoutManager.getAllSubscribedChannels();
+        
+        final Set<IPortletWindow> allLayoutWindows = new LinkedHashSet<IPortletWindow>(allSubscribedChannels.size());
+
+        for (final String channelSubscribeId : allSubscribedChannels) {
+            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, channelSubscribeId);
+            
+            final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+            final Set<IPortletWindow> portletWindows = this.getAllPortletWindowsForEntity(request, portletEntityId);
+            allLayoutWindows.addAll(portletWindows);
+        }
+        
+        return allLayoutWindows;
+    }
+
     protected IPortletWindow wrapPortletWindowData(HttpServletRequest request, PortletWindowData portletWindowData) {
         final IPortletEntityId portletEntityId = portletWindowData.getPortletEntityId();
         final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, portletEntityId);
@@ -475,22 +563,57 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
      * {@link WindowState} and {@link javax.portlet.PortletMode}
      */
     protected void initializePortletWindowData(HttpServletRequest request, PortletWindowData portletWindowData) {
-        final IStylesheetUserPreferences themeStylesheetUserPreferences = stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
+        final IStylesheetDescriptor stylesheetDescriptor = getStylesheetDescriptor(request);
+        final boolean minimizePortletDefault = getMinimizeByDefault(stylesheetDescriptor);
         
-        final IPortletEntityId portletEntityId = portletWindowData.getPortletEntityId();
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, portletEntityId);
-        final String channelSubscribeId = portletEntity.getLayoutNodeId();
-        final String minimized = themeStylesheetUserPreferences.getLayoutAttribute(channelSubscribeId, "minimized");
 
+        // TODO: figure out how to make this work without accidentally persisting the default minimized state
+        if (minimizePortletDefault) {
+            portletWindowData.setWindowState(WindowState.MINIMIZED);
+        }
+        else {
+            final IPortletEntityId portletEntityId = portletWindowData.getPortletEntityId();
+            final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, portletEntityId);
+            final WindowState entityWindowState = portletEntity.getWindowState(stylesheetDescriptor);
+            if (persistentWindowStates.contains(entityWindowState)) {
+                portletWindowData.setWindowState(entityWindowState);
+            }
+            else {
+                //Set of persistent window states must have changed, nuke the old value
+                this.logger.warn("PortletEntity.windowState=" + entityWindowState + " but that state is not in the set of persistent WindowStates. PortletEntity.windowState will be set to null");
+                portletEntity.setWindowState(stylesheetDescriptor, null);
+                this.portletEntityRegistry.storePortletEntity(request, portletEntity);
+            }
+        }
+    }
+
+    /**
+     * @param stylesheetDescriptor
+     * @return
+     */
+    protected boolean getMinimizeByDefault(final IStylesheetDescriptor stylesheetDescriptor) {
+        final IStylesheetParameterDescriptor minimizePortletsDefaultParam = stylesheetDescriptor.getStylesheetParameterDescriptor("minimizePortletsDefault");
+        
+        if (minimizePortletsDefaultParam != null) {
+            final String defaultValue = minimizePortletsDefaultParam.getDefaultValue();
+            return Boolean.parseBoolean(defaultValue);
+        }
+        
+        return false;
+    }
+
+    /**
+     * @param request
+     * @return
+     */
+    protected IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserProfile userProfile = preferencesManager.getUserProfile();
-        final String profileName = userProfile.getProfileFname();
-
-        // TODO: Make minimized portlet window profile names configurable
-        if (Boolean.parseBoolean(minimized) || "mobileDefault".equals(profileName) || "android".equals(profileName)) {
-            portletWindowData.setWindowState(WindowState.MINIMIZED);
-        }
+        final int themeStylesheetId = userProfile.getThemeStylesheetId();
+        
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptor(themeStylesheetId);
+        return stylesheetDescriptor;
     }
     
     /**

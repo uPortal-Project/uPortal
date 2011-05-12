@@ -121,6 +121,8 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
                     }
                 }
             }
+            
+            this.portletWindowRegistry.storePortletWindow(request, portletWindow);
         }
         
         return true;

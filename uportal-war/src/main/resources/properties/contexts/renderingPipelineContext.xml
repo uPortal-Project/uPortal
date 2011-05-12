@@ -107,8 +107,16 @@
         </property>
     </bean>
     
-    <bean id="preThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+    <!-- portlet window attribute incorporation -->
+    <bean id="portletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="themeAttributeIncorporationComponent" />
+        <property name="attributeSource">
+            <bean class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
+        </property>
+    </bean>
+
+    <bean id="preThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
+        <property name="wrappedComponent" ref="portletWindowAttributeIncorporationComponent" />
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_THEME" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />

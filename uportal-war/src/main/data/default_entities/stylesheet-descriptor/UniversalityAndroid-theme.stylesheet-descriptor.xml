@@ -9,16 +9,15 @@
     <description>Renders DLMTabsColumns as xhtml for a mobile device</description>
     <uri>classpath:/layout/theme/muniversality/muniversality.xsl</uri>
     <stylesheet-parameter>
+        <name>minimizePortletsDefault</name>
+        <default-value>true</default-value>
+        <scope>REQUEST</scope>
+        <description>Overloading the use of the stylesheet parameters to denote that portlets should render minimized by default for this stylesheet</description>
+    </stylesheet-parameter>
+    <stylesheet-parameter>
       <name>skin</name>
       <default-value>android</default-value>
       <scope>PERSISTENT</scope>
       <description>Skin name</description>
     </stylesheet-parameter>
-    <layout-attribute>
-      <name>minimized</name>  
-      <default-value>false</default-value>  
-      <scope>PERSISTENT</scope>
-      <description>Flag determining if the channel is minimized or not</description>  
-      <targetElement>channel</targetElement>  
-    </layout-attribute>
 </stylesheet-descriptor>

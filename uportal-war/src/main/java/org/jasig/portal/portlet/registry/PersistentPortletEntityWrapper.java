@@ -19,8 +19,11 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.util.Map;
+
 import javax.portlet.WindowState;
 
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -73,12 +76,16 @@ class PersistentPortletEntityWrapper implements IPortletEntity {
         return this.persistentEntity.getUserId();
     }
     @Override
-    public WindowState getWindowState() {
-        return this.persistentEntity.getWindowState();
+    public Map<Long, WindowState> getWindowStates() {
+        return this.persistentEntity.getWindowStates();
     }
     @Override
-    public void setWindowState(WindowState state) {
-        this.persistentEntity.setWindowState(state);
+    public WindowState getWindowState(IStylesheetDescriptor stylesheetDescriptor) {
+        return this.persistentEntity.getWindowState(stylesheetDescriptor);
+    }
+    @Override
+    public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state) {
+        this.persistentEntity.setWindowState(stylesheetDescriptor, state);
     }
     @Override
     public IPortletPreferences getPortletPreferences() {

@@ -32,6 +32,7 @@ import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
 import org.hibernate.type.descriptor.java.CharacterStreamImpl;
 import org.hibernate.type.descriptor.java.DataHelper;
+import org.jasig.portal.portlet.PortletUtils;
 
 /**
  * @author Eric Dalquist
@@ -42,7 +43,7 @@ public class WindowStateTypeDescriptor extends AbstractTypeDescriptor<WindowStat
     public static final WindowStateTypeDescriptor INSTANCE = new WindowStateTypeDescriptor();
 
     private WindowStateTypeDescriptor() {
-        super(WindowState.class);
+        super(WindowState.class, WindowStateMutabilityPlan.INSTANCE);
     }
 
     @Override
@@ -52,39 +53,28 @@ public class WindowStateTypeDescriptor extends AbstractTypeDescriptor<WindowStat
 
     @Override
     public WindowState fromString(String string) {
-        if (WindowState.MAXIMIZED.toString().equalsIgnoreCase(string)) {
-            return WindowState.MAXIMIZED;
-        }
-        else if (WindowState.NORMAL.toString().equalsIgnoreCase(string)) {
-            return WindowState.NORMAL;
-        }
-        else if (WindowState.MINIMIZED.toString().equalsIgnoreCase(string)) {
-            return WindowState.MINIMIZED;
-        }
-        
-        return new WindowState(string);
+        return PortletUtils.getWindowState(string);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <X> X unwrap(WindowState value, Class<X> type, WrapperOptions options) {
         if ( value == null ) {
             return null;
         }
         if ( String.class.isAssignableFrom( type ) ) {
-            return (X) value;
+            return type.cast(value.toString());
         }
         if ( Reader.class.isAssignableFrom( type ) ) {
-            return (X) new StringReader( value.toString() );
+            return type.cast(new StringReader( value.toString() ));
         }
         if ( CharacterStream.class.isAssignableFrom( type ) ) {
-            return (X) new CharacterStreamImpl( value.toString() );
+            return type.cast(new CharacterStreamImpl( value.toString() ));
         }
         if ( Clob.class.isAssignableFrom( type ) ) {
-            return (X) options.getLobCreator().createClob( value.toString() );
+            return type.cast(options.getLobCreator().createClob( value.toString() ));
         }
         if ( DataHelper.isNClob( type ) ) {
-            return (X) options.getLobCreator().createNClob( value.toString() );
+            return type.cast(options.getLobCreator().createNClob( value.toString() ));
         }
 
         throw unknownUnwrap( type );

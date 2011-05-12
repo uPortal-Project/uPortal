@@ -19,8 +19,12 @@
 
 package org.jasig.portal.mock.portlet.om;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.portlet.WindowState;
 
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -37,7 +41,7 @@ public class MockPortletEntity implements IPortletEntity {
     private IPortletEntityId portletEntityId;
     private String channelSubscribeId;
     private int userId;
-    private WindowState windowState;
+    private final Map<Long, WindowState> windowStates = new ConcurrentHashMap<Long, WindowState>();
     private IPortletDefinition portletDefinition;
     private IPortletPreferences portletPreferences;
     
@@ -115,13 +119,18 @@ public class MockPortletEntity implements IPortletEntity {
     }
 
     @Override
-    public WindowState getWindowState() {
-        return this.windowState;
+    public Map<Long, WindowState> getWindowStates() {
+        return this.windowStates;
     }
 
     @Override
-    public void setWindowState(WindowState state) {
-        this.windowState = state;
+    public WindowState getWindowState(IStylesheetDescriptor stylesheetDescriptor) {
+        return windowStates.get(stylesheetDescriptor.getId());
+    }
+
+    @Override
+    public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state) {
+        windowStates.put(stylesheetDescriptor.getId(), state);
     }
 
     /**

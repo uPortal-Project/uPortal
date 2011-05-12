@@ -19,38 +19,45 @@
 
 package org.jasig.portal.dao.usertype;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.Serializable;
 
 import javax.portlet.WindowState;
 
-import org.hibernate.HibernateException;
-import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
+import org.hibernate.type.descriptor.java.MutabilityPlan;
+import org.jasig.portal.portlet.PortletUtils;
 
 /**
- * Uses a regular expression to validate strings coming to/from the database.
+ * Mutability plan for WindowState
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class WindowStateType extends BaseUserType<WindowState> {
+public class WindowStateMutabilityPlan implements MutabilityPlan<WindowState> {
+    private static final long serialVersionUID = 1L;
+    
+    public static final WindowStateMutabilityPlan INSTANCE = new WindowStateMutabilityPlan();
 
-    public WindowStateType() {
-        super(VarcharTypeDescriptor.INSTANCE, WindowStateTypeDescriptor.INSTANCE);
+    @Override
+    public boolean isMutable() {
+        return false;
     }
 
     @Override
-    public WindowState nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
-        // TODO Auto-generated method stub
-        return super.nullSafeGet(rs, names, owner);
+    public WindowState deepCopy(WindowState value) {
+        return value;
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
-        // TODO Auto-generated method stub
-        super.nullSafeSet(st, value, index);
+    public Serializable disassemble(WindowState value) {
+        if (value == null) {
+            return null;
+        }
+        
+        return value.toString();
     }
-    
-    
+
+    @Override
+    public WindowState assemble(Serializable cached) {
+        return PortletUtils.getWindowState((String)cached);
+    }
 }

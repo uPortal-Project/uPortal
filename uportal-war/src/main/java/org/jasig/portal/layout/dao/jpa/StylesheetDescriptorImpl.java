@@ -76,7 +76,7 @@ import org.jasig.portal.layout.om.IStylesheetUserPreferences;
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-class StylesheetDescriptorImpl implements IStylesheetDescriptor {
+public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @Id
     @GeneratedValue(generator = "UP_SS_DESC_GEN")
     @Column(name = "SS_DESC_ID")
@@ -134,7 +134,7 @@ class StylesheetDescriptorImpl implements IStylesheetDescriptor {
         this.entityVersion = -1;
     }
     
-    public StylesheetDescriptorImpl(String name, String stylesheetResource) {
+    StylesheetDescriptorImpl(String name, String stylesheetResource) {
         this.id = -1;
         this.entityVersion = -1;
         this.setName(name);

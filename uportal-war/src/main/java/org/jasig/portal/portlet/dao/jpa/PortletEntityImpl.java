@@ -19,14 +19,23 @@
 
 package org.jasig.portal.portlet.dao.jpa;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
@@ -46,6 +55,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
+import org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -95,14 +106,17 @@ class PortletEntityImpl implements IPortletEntity {
     @JoinColumn(name = "PORTLET_DEF_ID", nullable = false)
     private final IPortletDefinition portletDefinition;
     
+    @ElementCollection(fetch=FetchType.EAGER)
+    @CollectionTable(name="UP_PORTLET_ENT__STATES", joinColumns=@JoinColumn(name="PORTLET_ENT_ID"))
+    @MapKeyJoinColumn(name="STYLESHEET_DESCRIPTOR_ID")
     @Column(name = "WINDOW_STATE")
     @Type(type = "windowState")
-    private WindowState windowState;
+    private final Map<StylesheetDescriptorImpl, WindowState> windowStates = new HashMap<StylesheetDescriptorImpl, WindowState>(0);
 
-    @OneToOne(targetEntity = PortletPreferencesImpl.class, cascade = { CascadeType.ALL }, orphanRemoval=true)
+    @OneToOne(cascade = { CascadeType.ALL }, orphanRemoval=true)
     @JoinColumn(name = "PORTLET_PREFS_ID", nullable = false)
     @Fetch(FetchMode.JOIN)
-    private IPortletPreferences portletPreferences = null;
+    private PortletPreferencesImpl portletPreferences = null;
 
     @Transient
     private IPortletEntityId portletEntityId = null;
@@ -178,14 +192,38 @@ class PortletEntityImpl implements IPortletEntity {
         return this.userId;
     }
     
+    
     @Override
-    public WindowState getWindowState() {
-        return this.windowState;
+    public Map<Long, WindowState> getWindowStates() {
+        final Map<Long, WindowState> simpleWindowStates = new LinkedHashMap<Long, WindowState>();
+        synchronized (this.windowStates) {
+            for (Map.Entry<StylesheetDescriptorImpl, WindowState> windowStateEntry : windowStates.entrySet()) {
+                final StylesheetDescriptorImpl stylesheetDescriptor = windowStateEntry.getKey();
+                final long stylesheetDescriptorId = stylesheetDescriptor.getId();
+                final WindowState windowState = windowStateEntry.getValue();
+                simpleWindowStates.put(stylesheetDescriptorId, windowState);
+            }
+        }
+        return Collections.unmodifiableMap(simpleWindowStates);
     }
 
     @Override
-    public void setWindowState(WindowState state) {
-        this.windowState = state;
+    public WindowState getWindowState(IStylesheetDescriptor stylesheetDescriptor) {
+        synchronized (this.windowStates) {
+            return this.windowStates.get(stylesheetDescriptor);
+        }
+    }
+
+    @Override
+    public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state) {
+        synchronized (this.windowStates) {
+            if (state == null) {
+                this.windowStates.remove(stylesheetDescriptor);
+            }
+            else {
+                this.windowStates.put((StylesheetDescriptorImpl)stylesheetDescriptor, state);
+            }
+        }
     }
 
     /* (non-Javadoc)
@@ -202,7 +240,7 @@ class PortletEntityImpl implements IPortletEntity {
     @Override
     public void setPortletPreferences(IPortletPreferences portletPreferences) {
         Validate.notNull(portletPreferences, "portletPreferences can not be null");
-        this.portletPreferences = portletPreferences;
+        this.portletPreferences = (PortletPreferencesImpl)portletPreferences;
     }
 
     @Override
@@ -245,7 +283,7 @@ class PortletEntityImpl implements IPortletEntity {
     public String toString() {
         return "PortletEntityImpl [internalPortletEntityId=" + this.internalPortletEntityId + ", entityVersion="
                 + this.entityVersion + ", layoutNodeId=" + this.layoutNodeId + ", userId=" + this.userId
-                + ", portletDefinition=" + this.portletDefinition + ", windowState=" + this.windowState
+                + ", portletDefinition=" + this.portletDefinition
                 + ", portletEntityId=" + this.portletEntityId + "]";
     }
 }

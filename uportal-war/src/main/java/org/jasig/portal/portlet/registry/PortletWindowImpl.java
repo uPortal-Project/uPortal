@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
+import org.apache.commons.lang.Validate;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
@@ -92,6 +93,7 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
 
     @Override
     public void setWindowState(WindowState state) {
+        Validate.notNull(state, "state can not be null");
         this.windowState = state;
         this.portletWindowData.setWindowState(state);
     }
@@ -106,6 +108,7 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
 
     @Override
     public void setPortletMode(PortletMode mode) {
+        Validate.notNull(mode, "mode can not be null");
         this.portletMode = mode;
         this.portletWindowData.setPortletMode(mode);
     }

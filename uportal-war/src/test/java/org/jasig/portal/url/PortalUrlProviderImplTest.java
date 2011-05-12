@@ -173,7 +173,7 @@ public class PortalUrlProviderImplTest {
     public void testGetPortalUrlBuilderByPortletLayoutNode() {
         //Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
-        when(portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, folderNodeId)).thenReturn(portletWindow);
+        when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, folderNodeId)).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         
         //Run the test
@@ -196,7 +196,7 @@ public class PortalUrlProviderImplTest {
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         when(userLayoutManager.getNode(folderNodeId)).thenReturn(node);
-        when(portletWindowRegistry.getOrCreateDefaultPortletWindowBySubscribeId(request, folderNodeId)).thenReturn(portletWindow);
+        when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, folderNodeId)).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
         when(node.getId()).thenReturn(folderNodeId);
