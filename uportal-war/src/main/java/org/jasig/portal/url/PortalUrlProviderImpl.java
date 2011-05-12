@@ -43,6 +43,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PortalUrlProviderImpl implements IPortalUrlProvider {
+    private static final String PORTAL_ACTION_URL_BUILDER = PortalUrlProviderImpl.class.getName() + ".PORTAL_ACTION_URL_BUILDER";
+    
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private IUrlSyntaxProvider urlSyntaxProvider;
@@ -69,7 +71,18 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-    
+
+
+    @Override
+    public IPortalActionUrlBuilder getPortalActionUrlBuilder(HttpServletRequest request) {
+        return (IPortalActionUrlBuilder)request.getAttribute(PORTAL_ACTION_URL_BUILDER);
+    }
+
+    @Override
+    public IPortalActionUrlBuilder convertToPortalActionUrlBuilder(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder) {
+        request.setAttribute(PORTAL_ACTION_URL_BUILDER, portalUrlBuilder);
+        return (IPortalActionUrlBuilder)portalUrlBuilder;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getDefaultUrl(javax.servlet.http.HttpServletRequest)

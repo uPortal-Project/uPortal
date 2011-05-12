@@ -28,6 +28,7 @@ import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.Validate;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletMimeResponseContext;
 import org.apache.pluto.container.PortletURLProvider;
@@ -51,6 +52,7 @@ import org.jasig.portal.url.UrlType;
 public class PortletMimeResponseContextImpl extends PortletResponseContextImpl implements PortletMimeResponseContext {
     private CacheControl cacheControl;
     
+    private final IPortalUrlProvider portalUrlProvider;
     private final PrintWriter portletWriter;
     private OutputStream writerOutputStream;
     
@@ -60,9 +62,12 @@ public class PortletMimeResponseContextImpl extends PortletResponseContextImpl i
             IPortletCookieService portletCookieService) {
 
         super(portletContainer, portletWindow, containerRequest, containerResponse, 
-                requestPropertiesManager, portalUrlProvider, portletCookieService);
+                requestPropertiesManager, portletCookieService);
+        
+        Validate.notNull(portalUrlProvider, "portalUrlProvider can not be null1");
         
         this.portletWriter = (PrintWriter)containerRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_PRINT_WRITER);
+        this.portalUrlProvider = portalUrlProvider;
     }
 
     /* (non-Javadoc)

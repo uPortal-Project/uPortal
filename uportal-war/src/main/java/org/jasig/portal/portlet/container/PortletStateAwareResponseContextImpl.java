@@ -37,11 +37,7 @@ import org.apache.pluto.container.driver.PortletContextService;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.url.IPortalUrlBuilder;
-import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
-import org.jasig.portal.url.UrlType;
 
 /**
  * @author Eric Dalquist
@@ -49,21 +45,18 @@ import org.jasig.portal.url.UrlType;
  */
 public class PortletStateAwareResponseContextImpl extends PortletResponseContextImpl implements PortletStateAwareResponseContext {
     private final List<Event> events = new LinkedList<Event>();
-    protected final IPortalUrlBuilder portalUrlBuilder;
     protected final IPortletUrlBuilder portletUrlBuilder;
     protected final PortletContextService portletContextService;
 
     public PortletStateAwareResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
+            IRequestPropertiesManager requestPropertiesManager, IPortletUrlBuilder portletUrlBuilder,
             PortletContextService portletContextService, IPortletCookieService portletCookieService) {
 
         super(portletContainer, portletWindow, containerRequest, containerResponse,
-                requestPropertiesManager, portalUrlProvider, portletCookieService);
+                requestPropertiesManager, portletCookieService);
         
-        final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
-        this.portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(containerRequest, portletWindowId, UrlType.RENDER);
-        this.portletUrlBuilder = this.portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
+        this.portletUrlBuilder = portletUrlBuilder;
         this.portletContextService = portletContextService;
     }
 

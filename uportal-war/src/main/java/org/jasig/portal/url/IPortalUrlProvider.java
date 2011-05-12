@@ -31,6 +31,21 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  */
 public interface IPortalUrlProvider {
     /**
+     * @param request the current request
+     * @return The current portal action url builder, null if there is no portal action url builder for this requet
+     */
+    public IPortalActionUrlBuilder getPortalActionUrlBuilder(HttpServletRequest request);
+    
+    /**
+     * Converts a standard {@link IPortalUrlBuilder} to a {@link IPortalActionUrlBuilder}
+     * 
+     * @param request The current request
+     * @param portalUrlBuilder The url builder to convert
+     * @return A portal action url builder
+     */
+    public IPortalActionUrlBuilder convertToPortalActionUrlBuilder(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder);
+        
+    /**
      * Gets the default portal URL, this is equivalent to the first URL rendered by the portal when a user logs in. Always
      * a {@link UrlType#RENDER} 
      * 

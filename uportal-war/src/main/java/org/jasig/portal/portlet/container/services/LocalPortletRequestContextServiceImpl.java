@@ -44,8 +44,10 @@ import org.jasig.portal.portlet.container.PortletResourceResponseContextImpl;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.url.IPortalActionUrlBuilder;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -113,9 +115,13 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
 	public PortletActionResponseContext getPortletActionResponseContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-//	    
+	    
 	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
-        return new PortletActionResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, this.portalUrlProvider, this.portletContextService, this.portletCookieService);
+	    
+	    final IPortalActionUrlBuilder portalActionUrlBuilder = this.portalUrlProvider.getPortalActionUrlBuilder(containerRequest);
+	    final IPortletUrlBuilder portletUrlBuilder = portalActionUrlBuilder.getPortletUrlBuilder(portletWindow.getPortletWindowId());
+	    
+        return new PortletActionResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalActionUrlBuilder, portletUrlBuilder, this.portletContextService, this.portletCookieService);
 	}
 
 	/* (non-Javadoc)
@@ -138,9 +144,13 @@ public class LocalPortletRequestContextServiceImpl implements PortletRequestCont
 	public PortletEventResponseContext getPortletEventResponseContext(
 			PortletContainer container, HttpServletRequest containerRequest,
 			HttpServletResponse containerResponse, PortletWindow window) {
-		
+	    
 	    final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(containerRequest, window);
-        return new PortletEventResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, this.portalUrlProvider, this.portletContextService, this.portletCookieService);
+        
+	    final IPortalActionUrlBuilder portalActionUrlBuilder = this.portalUrlProvider.getPortalActionUrlBuilder(containerRequest);
+        final IPortletUrlBuilder portletUrlBuilder = portalActionUrlBuilder.getPortletUrlBuilder(portletWindow.getPortletWindowId());
+        
+	    return new PortletEventResponseContextImpl(container, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portletUrlBuilder, this.portletContextService, this.portletCookieService);
 	}
 
 	/* (non-Javadoc)

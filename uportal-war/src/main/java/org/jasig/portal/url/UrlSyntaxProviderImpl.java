@@ -19,6 +19,8 @@
 
 package org.jasig.portal.url;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
@@ -569,6 +571,53 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         return portalUrlBuilder.getUrlString();
     }
     
+    @Override
+    public String generateUrl(HttpServletRequest request, IPortalActionUrlBuilder portalActionUrlBuilder) {
+        final String redirectLocation = portalActionUrlBuilder.getRedirectLocation();
+        //If no redirect location just generate the portal url
+        if (redirectLocation == null) {
+            return this.generateUrl(request, (IPortalUrlBuilder)portalActionUrlBuilder);
+        }
+        
+        final String renderUrlParamName = portalActionUrlBuilder.getRenderUrlParamName();
+        //If no render param name just return the redirect url
+        if (renderUrlParamName == null) {
+            return redirectLocation;
+        }
+        
+        //Need to stick the generated portal url onto the redirect url
+        
+        final StringBuilder redirectLocationBuilder = new StringBuilder(redirectLocation);
+        
+        
+        final int queryParamStartIndex = redirectLocationBuilder.indexOf("?");
+        //Already has parameters, add the new one correctly
+        if (queryParamStartIndex > -1) {
+            redirectLocationBuilder.append('&');
+        }
+        //No parameters, add parm seperator
+        else {
+            redirectLocationBuilder.append('?');
+        }
+        
+        //Generate the portal url
+        final String portalRenderUrl = this.generateUrl(request, (IPortalUrlBuilder)portalActionUrlBuilder);
+
+        //Encode the render param name and the render url
+        final String encoding = this.getEncoding(request);
+        final String encodedRenderUrlParamName;
+        final String encodedPortalRenderUrl;
+        try {
+            encodedRenderUrlParamName = URLEncoder.encode(renderUrlParamName, encoding);
+            encodedPortalRenderUrl = URLEncoder.encode(portalRenderUrl, encoding);
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("Encoding '" + encoding + "' is not supported.", e);
+        }
+        
+        return redirectLocationBuilder.append(encodedRenderUrlParamName).append("=").append(encodedPortalRenderUrl).toString();
+    }
+
     @Override
     public String generateUrl(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder) {
         Validate.notNull(request, "HttpServletRequest was null");

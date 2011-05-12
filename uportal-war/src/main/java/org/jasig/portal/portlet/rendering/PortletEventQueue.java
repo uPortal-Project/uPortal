@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.portlet.Event;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.utils.ConcurrentMapUtils;
 
 /**
  * Used to track events generated for a specific portlet window in a thread safe manner. The event
@@ -49,11 +50,7 @@ public class PortletEventQueue implements Iterable<IPortletWindowId> {
     public void offerEvent(IPortletWindowId portletWindowId, Event event) {
         Queue<Event> events = portletEvents.get(portletWindowId);
         if (events == null) {
-            events = new ConcurrentLinkedQueue<Event>();
-            final Queue<Event> existingEvents = portletEvents.putIfAbsent(portletWindowId, events);
-            if (existingEvents != null) {
-                events = existingEvents;
-            }
+            events = ConcurrentMapUtils.putIfAbsent(portletEvents, portletWindowId, new ConcurrentLinkedQueue<Event>());
         }
         
         events.offer(event);

@@ -80,33 +80,43 @@ public class RenderingController {
     public void actionRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
+        
+        
+        final IPortalUrlBuilder actionRedirectUrl;
         if (portletRequestInfo != null) {
             final IPortletWindowId targetWindowId = portletRequestInfo.getPortletWindowId();
+            actionRedirectUrl = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(request, targetWindowId, UrlType.RENDER);
+        }
+        else {
+            final String targetedLayoutNodeId = portalRequestInfo.getTargetedLayoutNodeId();
+            
+            if (targetedLayoutNodeId != null) {
+                actionRedirectUrl = this.portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, targetedLayoutNodeId, UrlType.RENDER);
+            }
+            else {
+                actionRedirectUrl = this.portalUrlProvider.getDefaultUrl(request);
+            }
+        }
+        
+        //Stuff the action-redirect URL builder into the request so other code can use it during request processing
+        this.portalUrlProvider.convertToPortalActionUrlBuilder(request, actionRedirectUrl);
+
+        if (portletRequestInfo != null) {
+            final IPortletWindowId targetWindowId = portletRequestInfo.getPortletWindowId();
+            
+            
             try {
                 this.portletExecutionManager.doPortletAction(targetWindowId, request, response);
             }
             catch (RuntimeException e) {
                 this.logger.error("Exception thrown while executing portlet action for: " + portletRequestInfo, e);
                 
-                final IPortalUrlBuilder portalUrl = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(request, targetWindowId, UrlType.RENDER);
-                portalUrl.setParameter("portletActionError", targetWindowId.toString());
-                
-                sendRedirect(portalUrl, response);
+                //TODO this should be a constant right?
+                actionRedirectUrl.setParameter("portletActionError", targetWindowId.toString());
             }
         }
-        else {
-            final String targetedLayoutNodeId = portalRequestInfo.getTargetedLayoutNodeId();
-            
-            final IPortalUrlBuilder portalUrl;
-            if (targetedLayoutNodeId != null) {
-                portalUrl = this.portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, targetedLayoutNodeId, UrlType.RENDER);
-            }
-            else {
-                portalUrl = this.portalUrlProvider.getDefaultUrl(request);
-            }
-            
-            sendRedirect(portalUrl, response);
-        }
+        
+        sendRedirect(actionRedirectUrl, response);
     }
     
     /**

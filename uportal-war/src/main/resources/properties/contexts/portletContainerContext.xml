@@ -46,7 +46,7 @@
         <ref bean="ThreadNamingPortletExecutionInterceptorAdaptor"/>
     </util:list>
     
-    <bean id="portletContainer" class="org.apache.pluto.container.impl.PortletContainerImpl" destroy-method="destroy" init-method="init">
+    <bean id="portletContainer" class="org.jasig.portal.portlet.container.UportalPortletContainerImpl" destroy-method="destroy" init-method="init">
         <constructor-arg value="#{servletContext.contextPath + '-PlutoPortletContainer'}" />
         <constructor-arg>
             <!-- TODO this setup will never let the portal webapp restart without leaking memory -->

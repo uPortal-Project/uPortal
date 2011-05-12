@@ -34,7 +34,6 @@ import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.ResourceUrlProviderImpl;
 import org.springframework.util.Assert;
 import org.w3c.dom.DOMException;
@@ -50,19 +49,15 @@ public class PortletResponseContextImpl extends AbstractPortletContextImpl imple
     private boolean released = false;
     
     protected final IRequestPropertiesManager requestPropertiesManager;
-    protected final IPortalUrlProvider portalUrlProvider;
     
     public PortletResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
-            IPortletCookieService portletCookieService) {
+            IRequestPropertiesManager requestPropertiesManager, IPortletCookieService portletCookieService) {
         super(portletContainer, portletWindow, containerRequest, containerResponse, portletCookieService);
         
         Assert.notNull(requestPropertiesManager, "requestPropertiesManager can not be null");
-        Assert.notNull(portalUrlProvider, "portletUrlCreator can not be null");
         
         this.requestPropertiesManager = requestPropertiesManager;
-        this.portalUrlProvider = portalUrlProvider;
     }
 
     /* (non-Javadoc)

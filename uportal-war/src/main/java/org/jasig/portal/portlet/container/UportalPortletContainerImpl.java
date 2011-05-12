@@ -17,31 +17,34 @@
  * under the License.
  */
 
-package org.jasig.portal.portlet.rendering;
+package org.jasig.portal.portlet.container;
 
-import java.util.Queue;
+import java.io.IOException;
 
-import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.pluto.container.EventCoordinationService;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apache.pluto.container.ContainerServices;
+import org.apache.pluto.container.PortletContainer;
+import org.apache.pluto.container.impl.PortletContainerImpl;
 
 /**
- * Service that manages handling and queueing portlet events
+ * uPortal specific extension to the Pluto {@link PortletContainer}
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletEventCoordinationService extends EventCoordinationService {
+public class UportalPortletContainerImpl extends PortletContainerImpl {
+
     /**
-     * Get all of the queued events for the current request
+     * @see PortletContainerImpl#PortletContainerImpl(String, ContainerServices)
      */
-    public Queue<Event> getQueuedEvents(HttpServletRequest request);
-    
-    /**
-     * Remove events from the Queue determing which {@link IPortletWindowId}s it targets and then add it to the
-     * {@link PortletEventQueue}
-     */
-    public void resolveQueueEvents(PortletEventQueue resolvedEvents, Queue<Event> events, HttpServletRequest request);
+    public UportalPortletContainerImpl(String name, ContainerServices requiredServices) {
+        super(name, requiredServices);
+    }
+
+    @Override
+    protected void redirect(HttpServletRequest request, HttpServletResponse response, String location) throws IOException {
+        //uPortal handles redirects itself, no need for pluto to do it
+    }
 }

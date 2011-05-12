@@ -58,6 +58,11 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
             PortletDefinition portletDefinition, 
             IPortletEntity portletEntity, 
             PortletWindowData portletWindowData) {
+        
+        Validate.notNull(portletDefinition);
+        Validate.notNull(portletEntity);
+        Validate.notNull(portletWindowData);
+        
         this.portletDefinition = portletDefinition;
         this.portletEntity = portletEntity;
         this.portletWindowData = portletWindowData;

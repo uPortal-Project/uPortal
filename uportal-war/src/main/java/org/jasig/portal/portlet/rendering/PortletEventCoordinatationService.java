@@ -79,6 +79,13 @@ import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 /**
+ * uPortal's approach to event coordination is to simply queue the events and rely on the {@link PortletExecutionManager}
+ * to handle event execution. What this class does is for each {@link #processEvents(PortletContainer, PortletWindow, HttpServletRequest, HttpServletResponse, List)}
+ * request from the portlet container is to add them to a Queue scoped to the portal's request.
+ * 
+ * It also provides {@link #resolveQueueEvents(PortletEventQueue, List, HttpServletRequest)} which is used to determine
+ * which events to send to which portlet windows. 
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -163,7 +170,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     }
     
     @Override
-    public void resolveQueueEvents(PortletEventQueue resolvedEvents, List<Event> events, HttpServletRequest request) {
+    public void resolveQueueEvents(PortletEventQueue resolvedEvents, Queue<Event> events, HttpServletRequest request) {
         //Skip all processing if there are no new events.
         if (events.isEmpty()) {
             return;
@@ -197,7 +204,12 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
             }
             
             //Check each published event against the events the portlet supports
-            for (final Event event : events) {
+            while (!events.isEmpty()) {
+                final Event event = events.poll();
+                if (event == null) {
+                    break;
+                }
+
                 if (this.supportsEvent(event, portletDefinitionId)) {
                     final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
                     final Set<IPortletWindow> portletWindows = this.portletWindowRegistry.getAllPortletWindowsForEntity(request, portletEntityId);

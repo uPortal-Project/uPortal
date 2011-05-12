@@ -28,7 +28,7 @@ import org.apache.pluto.container.driver.PortletContextService;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletUrlBuilder;
 
 /**
  * @author Eric Dalquist
@@ -38,10 +38,11 @@ public class PortletEventResponseContextImpl extends PortletStateAwareResponseCo
 
     public PortletEventResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
-            IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
+            IRequestPropertiesManager requestPropertiesManager, IPortletUrlBuilder portletUrlBuider,
             PortletContextService portletContextService, IPortletCookieService portletCookieService) {
-
-        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletContextService, portletCookieService);
+        
+        super(portletContainer, portletWindow, containerRequest, containerResponse, 
+                requestPropertiesManager, portletUrlBuider, portletContextService, portletCookieService);
         
     }
 }

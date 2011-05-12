@@ -20,11 +20,8 @@
 package org.jasig.portal.portlet.rendering;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
@@ -88,12 +85,20 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     
     private ApplicationEventPublisher applicationEventPublisher;
     
+    private int maxEventIterations = 100;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IUserInstanceManager userInstanceManager;
     private IPortletEventCoordinationService eventCoordinationService;
     private IPortletWorkerFactory portletWorkerFactory;
     
+    /**
+     * @param maxEventIterations The maximum number of iterations to spend dispatching events. Defaults to 100
+     */
+    public void setMaxEventIterations(int maxEventIterations) {
+        this.maxEventIterations = maxEventIterations;
+    }
+
     @Autowired
     public void setPortletWorkerFactory(IPortletWorkerFactory portletWorkerFactory) {
         this.portletWorkerFactory = portletWorkerFactory;
@@ -154,37 +159,25 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 		}
 		
 		final Queue<Event> queuedEvents = this.eventCoordinationService.getQueuedEvents(request);
-		final List<Event> events = new LinkedList<Event>();
-		this.drainTo(queuedEvents, events);
-        this.doPortletEvents(events, request, response);
+        this.doPortletEvents(queuedEvents, request, response);
     }
     
-    public <E> void drainTo(Queue<E> queue, Collection<E> dest) {
-        while (!queue.isEmpty()) {
-            final E e = queue.poll();
-            if (e == null) {
-                break;
-            }
-            dest.add(e);
-        }
-    }
-    
-    public void doPortletEvents(List<Event> events, HttpServletRequest request, HttpServletResponse response) {
+    public void doPortletEvents(Queue<Event> events, HttpServletRequest request, HttpServletResponse response) {
+        //Used to track the events queued for each portlet window
         final PortletEventQueue eventQueue = new PortletEventQueue();
         
         final Map<IPortletWindowId, IPortletExecutionWorker<Long>> eventWorkers = new LinkedHashMap<IPortletWindowId, IPortletExecutionWorker<Long>>();
         this.eventCoordinationService.resolveQueueEvents(eventQueue, events, request);
 
-        /*
-         * TODO limit the number of iterations we'll take to do event processing
-         */
-        while (true) {
+        //TODO what to do if we hit the max iterations?
+        int iteration = 0;
+        for (; iteration < this.maxEventIterations; iteration++) {
             //Create and submit an event worker for each window with a queued event
             for (final IPortletWindowId eventWindowId : eventQueue) {
                 if (eventWorkers.containsKey(eventWindowId)) {
                     /* 
                      * PLT.15.2.5 says that event processing per window must be serialized, if there
-                     * is already a working in the map for the window ID skip it for now.
+                     * is already a working in the map for the window ID skip it for now. we'll get back to it eventually
                      */
                     continue;
                 }
@@ -235,6 +228,10 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
                 waitForEventWorker(request, eventQueue, eventWorker, portletWindowId);
             }
         }
+        
+        if (iteration == this.maxEventIterations) {
+            this.logger.error("The Event dispatching iteration maximum of " + this.maxEventIterations + " was hit, consider either raising this limit or reviewing the portlets that use events to reduce the number of events spawned");
+        }
     }
 
     protected void waitForEventWorker(
@@ -256,9 +253,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         
         //Get any additional events that the event that just completed may have generated and add them to the queuedEvents structure
         final Queue<Event> queuedEvents = this.eventCoordinationService.getQueuedEvents(request);
-        final List<Event> events = new LinkedList<Event>();
-        this.drainTo(queuedEvents, events);
-        this.eventCoordinationService.resolveQueueEvents(eventQueue, events, request);
+        this.eventCoordinationService.resolveQueueEvents(eventQueue, queuedEvents, request);
     }
     
     

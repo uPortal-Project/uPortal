@@ -219,6 +219,9 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         
         final PortletWindowData portletWindowData = this.getOrCreateDefaultPortletWindowData(request, portletEntityId, portletWindowId);
         portletWindow = wrapPortletWindowData(request, portletWindowData);
+        if (portletWindow == null) {
+            return null;
+        }
         
         //Cache the wrapped window in the request
         portletWindowMap.put(portletWindowId, portletWindow);
@@ -483,8 +486,16 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     protected IPortletWindow wrapPortletWindowData(HttpServletRequest request, PortletWindowData portletWindowData) {
         final IPortletEntityId portletEntityId = portletWindowData.getPortletEntityId();
         final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, portletEntityId);
+        if (portletEntity == null) {
+            return null;
+        }
+        
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinition.getPortletDefinitionId());
+        if (portletDescriptor == null) {
+            return null;
+        }
+        
         final IPortletWindow portletWindow = new PortletWindowImpl(portletDescriptor, portletEntity, portletWindowData);
         
         logger.trace("Wrapping PortletWindowData {} as IPortletWindow", portletWindow.getPortletWindowId());

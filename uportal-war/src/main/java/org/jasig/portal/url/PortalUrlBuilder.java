@@ -35,16 +35,19 @@ import com.google.common.base.Preconditions;
  * @author Eric Dalquist
  * @version $Revision$
  */
-class PortalUrlBuilder extends AbstractUrlBuilder implements IPortalUrlBuilder {
-    private final IUrlSyntaxProvider urlGenerator;
-    private final HttpServletRequest httpServletRequest;
+class PortalUrlBuilder extends AbstractUrlBuilder implements IPortalActionUrlBuilder {
+    final IUrlSyntaxProvider urlGenerator;
+    final HttpServletRequest httpServletRequest;
     
     private final String targetFolderId;
     private final IPortletWindowId targetPortletWindowId;
     private final UrlType urlType;
     
     private final Map<IPortletWindowId, IPortletUrlBuilder> portletUrlBuilders = new ConcurrentHashMap<IPortletWindowId, IPortletUrlBuilder>(); 
-
+    private String location;
+    private String renderUrlParamName;
+    
+    
     public PortalUrlBuilder(
             IUrlSyntaxProvider urlSyntaxProvider, HttpServletRequest httpServletRequest,
             String targetFolderId, IPortletWindowId targetPortletWindowId, UrlType urlType) {
@@ -82,6 +85,39 @@ class PortalUrlBuilder extends AbstractUrlBuilder implements IPortalUrlBuilder {
     @Override
     public UrlType getUrlType() {
         return this.urlType;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortalActionUrlBuilder#setRedirectLocation(java.lang.String)
+     */
+    @Override
+    public void setRedirectLocation(String location) {
+        this.setRedirectLocation(location, null);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortalActionUrlBuilder#setRedirectLocation(java.lang.String, java.lang.String)
+     */
+    @Override
+    public void setRedirectLocation(String location, String renderUrlParamName) {
+        this.location = location;
+        this.renderUrlParamName = renderUrlParamName;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortalActionUrlBuilder#getRedirectLocation()
+     */
+    @Override
+    public String getRedirectLocation() {
+        return this.location;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortalActionUrlBuilder#getRenderUrlParamName()
+     */
+    @Override
+    public String getRenderUrlParamName() {
+        return this.renderUrlParamName;
     }
 
     /* (non-Javadoc)
