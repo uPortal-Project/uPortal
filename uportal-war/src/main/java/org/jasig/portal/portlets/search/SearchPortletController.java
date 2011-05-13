@@ -30,6 +30,7 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
 import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.portlets.search.gsa.GsaResults;
 import org.jasig.portal.portlets.search.gsa.GsaSearchService;
@@ -187,13 +188,8 @@ public class SearchPortletController {
     }
  
     public boolean isMobile(PortletRequest request) {
-        // TODO: use theme to select view
-        String userAgent = request.getProperty("user-agent");
-        if (userAgent.contains("iPhone") || userAgent.contains("Android")) {
-            return true;
-        } else {
-            return false;
-        }
+        String themeName = request.getProperty(ThemeNameRequestPropertiesManager.THEME_NAME_PROPERTY);
+        return "UniversalityMobile".equals(themeName);
     }
     
 }
