@@ -457,7 +457,11 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             
             final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
             final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletEntityId);
-            allLayoutWindows.add(portletWindow);
+            if(portletWindow != null) {
+            	allLayoutWindows.add(portletWindow);
+            } else {
+            	this.logger.debug("skipping null result for getOrCreateDefaultPortletWindow on " + portletEntityId);
+            }
         }
         
         return allLayoutWindows;

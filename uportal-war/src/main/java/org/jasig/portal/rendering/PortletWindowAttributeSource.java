@@ -119,11 +119,15 @@ public class PortletWindowAttributeSource implements AttributeSource, BeanNameAw
         final LinkedHashSet<List<Serializable>> cacheKey = new LinkedHashSet<List<Serializable>>(portletWindows.size());
         
         for (final IPortletWindow portletWindow : portletWindows) {
-            final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-            final WindowState windowState = portletWindow.getWindowState();
-            final PortletMode portletMode = portletWindow.getPortletMode();
-            final List<Serializable> portletWindowKey = Arrays.asList(portletWindowId, windowState.toString(), portletMode.toString());
-            cacheKey.add(portletWindowKey);
+        	if(portletWindow != null) {
+        		final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+        		final WindowState windowState = portletWindow.getWindowState();
+        		final PortletMode portletMode = portletWindow.getPortletMode();
+        		final List<Serializable> portletWindowKey = Arrays.asList(portletWindowId, windowState.toString(), portletMode.toString());
+        		cacheKey.add(portletWindowKey);
+        	} else {
+        		this.logger.warn("portletWindowRegistry#getAllLayoutPortletWindows() returned a null portletWindow"); 
+        	}
         }
         
         return new CacheKey(this.name, cacheKey);
