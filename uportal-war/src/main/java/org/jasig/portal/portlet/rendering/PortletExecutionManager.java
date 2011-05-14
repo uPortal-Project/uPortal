@@ -274,8 +274,12 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
             this.logger.warn("Failed to start portlet head rendering: " + subscribeId, e);
             return;
         }
+        if(portletWindow != null) {
+        	this.startPortletHeadRender(portletWindow.getPortletWindowId(), request, response);
+        } else {
+        	this.logger.debug("ignoring startPortletHeadRender since getDefaultPortletWindow returned null for subscribeId " + subscribeId);
+        }
         
-        this.startPortletHeadRender(portletWindow.getPortletWindowId(), request, response);
 	}
     /**
      * Only actually starts rendering the head if the portlet has the 'javax.portlet.renderHeaders' container-runtime-option
@@ -325,8 +329,11 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
             this.logger.warn("Failed to start portlet rendering: " + subscribeId, e);
             return;
         }
-        
-        this.startPortletRenderInternal(portletWindow.getPortletWindowId(), request, response);
+        if(null != portletWindow) {
+        	this.startPortletRenderInternal(portletWindow.getPortletWindowId(), request, response);
+        } else {
+        	this.logger.debug("skipping startPortletRender due to null result from getDefaultPortletWindow for subscribeId " + subscribeId);
+        }
     }
     
     /* (non-Javadoc)
@@ -398,6 +405,10 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 			return false;
 		}
 
+		if(portletWindow == null) {
+			this.logger.debug("returning false since getDefaultPortletWindow returned null for subscribeId " + subscribeId); 
+			return false;
+		}
 		return this.isPortletRenderHeaderRequested(portletWindow.getPortletWindowId(), request, response);
 	}
 
@@ -414,8 +425,13 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
             this.logger.warn("Failed to test if portlet should render body: " + subscribeId, e);
             return false;
         }
+        if(portletWindow != null) {
+        	return this.isPortletRenderRequested(portletWindow.getPortletWindowId(), request, response);
+        } else {
+        	this.logger.warn("returning false for isPortletRenderRequested due to null result for getDefaultPortletWindow on subscribeId " + subscribeId);
+        	return false;
+        }
         
-        return this.isPortletRenderRequested(portletWindow.getPortletWindowId(), request, response);
     }
     
     /* (non-Javadoc)
