@@ -25,7 +25,7 @@
 
         <parameter>
             <name>isFrameworkPortlet</name>
-            <label>Framework Portlet</label>
+            <label>framework.portlet</label>
             <description>
               Portlet is deployed in the same web-application as uPortal. If checked "Portlet Web Application Path"
               is ignored.
@@ -39,7 +39,7 @@
 
         <parameter>
             <name>portletName</name>
-            <label>Portlet Name</label>
+            <label>portlet.name</label>
             <example>Image</example>
             <single-text-parameter-input display="hidden">
                 <default>Image</default>
@@ -48,7 +48,7 @@
 
         <parameter>
             <name>disableDynamicTitle</name>
-            <label>Disable Dynamic Title</label>
+            <label>disable.dynamic.title</label>
             <single-choice-parameter-input display="hidden">
                 <default>true</default>
                 <option value="false" label="false" />
@@ -58,21 +58,21 @@
 
         <preference>
             <name>img-uri</name>
-            <label>Image URI</label>
+            <label>image.uri</label>
             <example>http://www.mysite.com/image.jpg</example>
             <single-text-preference-input display="text" />
         </preference>
 
         <preference>
             <name>alt-text</name>
-            <label>Image alt-text</label>
+            <label>image.alt.text</label>
             <example>Photo of two roads diverging in a yellow wood</example>
             <single-text-preference-input display="text" />
         </preference>
 
         <preference>
             <name>img-width</name>
-            <label>Image width (pixels)</label>
+            <label>image.width</label>
             <single-text-preference-input display="text">
                 <default>400</default>
             </single-text-preference-input>
@@ -80,7 +80,7 @@
 
         <preference>
             <name>img-height</name>
-            <label>Image height (pixels)</label>
+            <label>image.height</label>
             <single-text-preference-input display="text">
                 <default>400</default>
             </single-text-preference-input>
@@ -88,7 +88,7 @@
 
         <preference>
             <name>img-border</name>
-            <label>Image border (pixels)</label>
+            <label>image.border</label>
             <single-text-preference-input display="text">
                 <default>0</default>
             </single-text-preference-input>
@@ -96,7 +96,7 @@
 
         <preference>
             <name>img-link</name>
-            <label>Image link</label>
+            <label>image.link</label>
             <example>http://www.mysite.com</example>
             <single-text-preference-input display="text" />
         </preference>
@@ -111,14 +111,14 @@
 
         <preference>
             <name>caption</name>
-            <label>Caption</label>
+            <label>caption</label>
             <example>My Image</example>
             <single-text-preference-input display="text" />
         </preference>
 
         <preference>
             <name>subcaption</name>
-            <label>Sub-caption</label>
+            <label>subcaption</label>
             <example>Refreshes every hour</example>
             <single-text-preference-input display="text" />
         </preference>

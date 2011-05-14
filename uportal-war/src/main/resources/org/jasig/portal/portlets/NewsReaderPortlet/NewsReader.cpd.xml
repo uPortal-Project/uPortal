@@ -52,7 +52,7 @@
 
         <parameter>
             <name>portletName</name>
-            <label>Portlet Name</label>
+            <label>portlet.name</label>
             <description>
                 This is the name of the portlet as defined in the portlet.xml descriptor.
             </description>
@@ -63,7 +63,7 @@
 
         <parameter>
             <name>disableDynamicTitle</name>
-            <label>Disable Dynamic Title</label>
+            <label>disable.dynamic.title</label>
             <description></description>
             <single-choice-parameter-input display="hidden">
                 <default>true</default>
@@ -100,7 +100,7 @@
 
         <preference>
             <name>maxStories</name>
-            <label>Max Feed Entries</label>
+            <label>max.feed.entries</label>
             <description>Maximum number of feed entries to display</description>
             <single-text-preference-input display="text">
                 <default>5</default>

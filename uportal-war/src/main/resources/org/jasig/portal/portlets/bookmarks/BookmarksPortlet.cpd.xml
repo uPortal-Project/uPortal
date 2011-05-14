@@ -22,11 +22,11 @@
             Bookmarks sets are defined per-user per-key.  Bookmarks portlet instances for a given user sharing keys will display and manage the same bookmarks.
             Bookmarks portlet instances for a given user with different keys will display and manage entirely distinct bookmarks sets.  Bookmarks portlet instances
             for two different users will display and manage distinct sets of bookmarks regardless of keys.
-          </description>
-
+        </description>
+          
         <parameter>
             <name>portletApplicationId</name>
-            <label>Portlet Web Application Path</label>
+            <label>portlet.web.application.path</label>
             <single-text-parameter-input display="hidden">
                 <default>/BookmarksPortlet</default>
             </single-text-parameter-input>
@@ -34,7 +34,7 @@
 
         <parameter>
             <name>portletName</name>
-            <label>Portlet Name</label>
+            <label>portlet.name</label>
             <single-text-parameter-input display="hidden">
                 <default>BookmarksPortlet</default>
             </single-text-parameter-input>
@@ -42,7 +42,7 @@
 
         <preference>
             <name>bookmarkSetName</name>
-            <label>Bookmark set name</label>
+            <label>bookmarks.portlet.bookmarkSetName</label>
             <description>String identifying the bookmarks set.  Each bookmarks instance subscribed by a user manages the per-user bookmarks set of the specified name, which might be shared with other bookmarks portlet instances subscribed by that same user, and which will be created on demand the first time a given identifier is used by a given user.</description>
             <example>personalBookmarks</example>
             <single-text-preference-input display="text" />

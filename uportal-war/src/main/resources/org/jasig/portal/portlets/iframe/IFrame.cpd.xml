@@ -27,7 +27,7 @@
 
         <parameter>
             <name>isFrameworkPortlet</name>
-            <label>Framework Portlet</label>
+            <label>framework.ortlet</label>
             <single-choice-parameter-input display="hidden">
                 <default>true</default>
                 <option value="false" label="false" />
@@ -37,7 +37,7 @@
 
         <parameter>
             <name>portletName</name>
-            <label>Portlet Name</label>
+            <label>portlet.name</label>
             <single-text-parameter-input display="hidden">
                 <default>IFrame</default>
             </single-text-parameter-input>
@@ -45,7 +45,7 @@
 
         <parameter>
             <name>disableDynamicTitle</name>
-            <label>Disable Dynamic Title</label>
+            <label>disable.dynamic.title</label>
             <single-choice-parameter-input display="hidden">
                 <default>true</default>
                 <option value="false" label="false" />
@@ -55,14 +55,14 @@
 
         <preference>
             <name>url</name>
-            <label>URL</label>
+            <label>url</label>
             <example>http://www.udel.edu/uPortal</example>
             <single-text-preference-input display="text" />
         </preference>
 
         <preference>
             <name>height</name>
-            <label>Frame Height (pixels)</label>
+            <label>frame.height</label>
             <single-text-preference-input display="text">
                 <default>600</default>
             </single-text-preference-input>

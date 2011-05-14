@@ -178,7 +178,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <c:forEach items="${ step.parameters }" var="parameter">
                 <c:if test="${ parameter.parameterInput.value.display != 'HIDDEN' && (portlet.parameters[parameter.name].value != null && portlet.parameters[parameter.name].value != '') }">
                   <tr>
-                    <td class="fl-text-align-right"><c:out value="${ fn:escapeXml(parameter.label )}"/>:</td>
+                    <td class="fl-text-align-right"><spring:message code="${ parameter.label }" text="${ parameter.label }"/>:</td>
                     <td>
                         <a href="${ setParametersUrl }" class="pa-edit">
 	                        ${ fn:escapeXml(portlet.parameters[parameter.name].value )}

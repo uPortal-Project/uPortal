@@ -24,7 +24,7 @@
 
         <parameter>
             <name>isFrameworkPortlet</name>
-            <label>Framework Portlet</label>
+            <label>framework.portlet</label>
             <description>
               Portlet is deployed in the same web-application as uPortal. If checked "Portlet Web Application Path"
               is ignored.
@@ -38,7 +38,7 @@
 
         <parameter>
             <name>portletApplicationId</name>
-            <label>Portlet Web Application Path</label>
+            <label>portlet.web.application.path</label>
             <description>
               This is the name of the web application the portlet resides in including a preceding /.
             </description>
@@ -50,11 +50,11 @@
 
         <parameter>
             <name>portletName</name>
-            <label>Portlet Name</label>
+            <label>oortlet.name</label>
             <description>
               This is the name of the portlet as defined in the portlet.xml descriptor.
             </description>
-            <example>test-port-et-1</example>
+            <example>test-portlet-1</example>
             <single-text-parameter-input>
                 <default>cms</default>
             </single-text-parameter-input>
@@ -62,7 +62,7 @@
 
         <parameter>
             <name>disableDynamicTitle</name>
-            <label>Disable Dynamic Title</label>
+            <label>disable.dynamic.title</label>
             <description>
               Disable dynamic title
             </description>
@@ -76,7 +76,7 @@
 
         <preference>
             <name>cleanContent</name>
-            <label>Clean Content</label>
+            <label>clean.content</label>
             <description>
               Clean content
             </description>
