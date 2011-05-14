@@ -195,15 +195,16 @@ public class PortletDefinitionForm implements Serializable {
 				for (Parameter param : step.getParameters()) {
 					// if this parameter doesn't currently have a value, check
 					// for a default in the CPD
-					if (!this.parameters.containsKey(param.getName())
-							|| this.parameters.get(param.getName()).getValue().trim().equals("")) {
+					Attribute attribute = this.parameters.get(param.getName());
+					if (attribute == null
+							|| attribute.getValue() == null
+							|| attribute.getValue().trim().equals("")) {
 						
 						// use the default value if one exists
 					    ParameterInputType input = param.getParameterInput().getValue();
 						if (input != null) {
 							this.parameters.put(param.getName(), new Attribute(input.getDefault()));
 						}
-						
 					}
 				}
 			}

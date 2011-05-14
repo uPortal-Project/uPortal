@@ -35,7 +35,6 @@ import java.util.TreeSet;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.servlet.ServletContext;
@@ -74,6 +73,7 @@ import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.portletpublishing.xml.Parameter;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.jasig.portal.portletpublishing.xml.Preference;
 import org.jasig.portal.portletpublishing.xml.Step;
@@ -746,13 +746,17 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	public boolean offerPortletSelection(PortletDefinitionForm form) {
-		Map<String, Attribute> parameters = form.getParameters();
-		if (parameters.get("portletName") != null
-				&& !StringUtils.isBlank(parameters.get("portletName").getValue())){
+		IPortletType portletType = this.portletTypeRegistry.getPortletType(form.getTypeId());
+		if("Portlet".equals(portletType.getName())) {
+			return true;
+		} else {
+			// customer has chosen one of the framework portlets
+			// properly set ApplicationId and PortletName
+			form.setApplicationId(null);
+			form.setPortletName(portletType.getName());
+			form.setFramework(true);
 			return false;
-		}
-		
-		return true;
+		} 
 	}
 	
 	protected Tuple<String, String> getPortletDescriptorKeys(PortletDefinitionForm form) {
