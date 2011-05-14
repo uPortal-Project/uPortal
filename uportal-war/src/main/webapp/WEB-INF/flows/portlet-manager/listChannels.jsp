@@ -28,7 +28,7 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 
-<portlet:actionURL var="newPortletUrl">
+<portlet:actionURL var="newPortletUrl" >
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="createPortlet"/>
 </portlet:actionURL>
@@ -36,12 +36,12 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="popularPortlets"/>
 </portlet:actionURL>
-<portlet:actionURL var="editPortletUrl">
+<portlet:actionURL var="editPortletUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPortlet"/>
   <portlet:param name="portletId" value="PORTLETID"/>
 </portlet:actionURL>
-<portlet:actionURL var="removePortletUrl">
+<portlet:actionURL var="removePortletUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="removePortlet"/>
   <portlet:param name="portletId" value="PORTLETID"/>
@@ -110,8 +110,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <li>
                 <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
                   <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
-                  <li class="flc-pager-pageLink-disabled">2</li>
-                  <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
+                  <%-- <li class="flc-pager-pageLink-disabled">2</li>
+                  <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>--%>
                 </ul>
               </li>
               <li class="flc-pager-next"><a href="javascript:;"><spring:message code="next"/> &gt;</a></li>
