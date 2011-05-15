@@ -27,7 +27,7 @@
         
         <!-- ===== Compile Dependencies ======================================= -->
         <dependency>
-            <groupId>antlr</groupId>
+            <groupId>org.antlr</groupId>
             <artifactId>stringtemplate</artifactId>
         </dependency>
         <dependency>
