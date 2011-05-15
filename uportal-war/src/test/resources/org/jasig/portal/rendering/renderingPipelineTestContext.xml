@@ -209,7 +209,7 @@
     </bean>
     
     <bean id="resourcesElementsProvider" class="org.jasig.portal.spring.EasyMockFactoryBean">
-        <constructor-arg value="org.jasig.resource.aggr.util.ResourcesElementsProvider" />
+        <constructor-arg value="org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider" />
     </bean>
     
     <bean id="xalanMessageHelperBean" class="org.jasig.portal.spring.EasyMockFactoryBean">

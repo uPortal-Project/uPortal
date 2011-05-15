@@ -30,8 +30,8 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 import org.jasig.portal.utils.cache.ThreadLocalCacheEntryFactory;
-import org.jasig.resource.aggr.om.Included;
-import org.jasig.resource.aggr.util.ResourcesElementsProvider;
+import org.jasig.resourceserver.aggr.om.Included;
+import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.resource.aggr.om.Included;
-import org.jasig.resource.aggr.util.ResourcesElementsProvider;
+import org.jasig.resourceserver.aggr.om.Included;
+import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

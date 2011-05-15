@@ -190,11 +190,6 @@
             <artifactId>clearpass-integration-uportal</artifactId>
             <scope>runtime</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.jasig.resource-aggregator</groupId>
-            <artifactId>resource-aggregator-util</artifactId>
-        </dependency>
         
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
@@ -600,9 +595,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.jasig.resource-aggregator</groupId>
-                <artifactId>resource-aggregator-plugin</artifactId>
-                <version>${resource-aggregator.version}</version>
+                <groupId>org.jasig.resourceserver</groupId>
+                <artifactId>resource-server-plugin</artifactId>
+                <version>${resource-server.version}</version>
                 <configuration>
                 </configuration>
                 <executions>

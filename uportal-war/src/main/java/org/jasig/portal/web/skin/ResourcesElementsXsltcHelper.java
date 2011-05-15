@@ -32,8 +32,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.rendering.xslt.TransformerConfigurationSourceAdapter;
 import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.resource.aggr.om.Resources;
-import org.jasig.resource.aggr.util.ResourcesElementsProvider;
+import org.jasig.resourceserver.aggr.om.Resources;
+import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.NodeList;
 

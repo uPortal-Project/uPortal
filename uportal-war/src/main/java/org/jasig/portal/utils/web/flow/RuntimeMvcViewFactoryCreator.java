@@ -29,6 +29,7 @@ import org.springframework.binding.expression.beanwrapper.BeanWrapperExpressionP
 import org.springframework.util.StringUtils;
 import org.springframework.validation.DefaultMessageCodesResolver;
 import org.springframework.validation.MessageCodesResolver;
+import org.springframework.validation.Validator;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
@@ -136,8 +137,10 @@ public class RuntimeMvcViewFactoryCreator implements ViewFactoryCreator {
         this.messageCodesResolver = messageCodesResolver;
     }
 
+    @Override
     public ViewFactory createViewFactory(Expression viewId, ExpressionParser expressionParser,
-            ConversionService conversionService, BinderConfiguration binderConfiguration) {
+            ConversionService conversionService, BinderConfiguration binderConfiguration, Validator validator) {
+
         if (useSpringBeanBinding) {
             expressionParser = new BeanWrapperExpressionParser(conversionService);
         }
@@ -156,7 +159,10 @@ public class RuntimeMvcViewFactoryCreator implements ViewFactoryCreator {
             ConversionService conversionService, BinderConfiguration binderConfiguration) {
         return new RuntimeMvcViewFactory(viewId, flowViewResolver, expressionParser, conversionService, binderConfiguration, messageCodesResolver);
     }
+    
+    
 
+    @Override
     public String getViewIdByConvention(String viewStateId) {
         return flowViewResolver.getViewIdByConvention(viewStateId);
     }

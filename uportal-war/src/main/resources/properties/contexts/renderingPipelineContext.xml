@@ -233,9 +233,9 @@
     
     
                            
-    <bean id="resourcesElementsProvider" class="org.jasig.resource.aggr.util.ResourcesElementsProviderImpl">
+    <bean id="resourcesElementsProvider" class="org.jasig.resourceserver.utils.aggr.ResourcesElementsProviderImpl">
         <property name="resourcesDao" ref="resourcesDao" />
     </bean>
-    <bean id="resourcesDao" class="org.jasig.resource.aggr.ResourcesDaoImpl" />
+    <bean id="resourcesDao" class="org.jasig.resourceserver.aggr.ResourcesDaoImpl" />
     
 </beans>
