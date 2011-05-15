@@ -125,11 +125,13 @@ public class XsltPortalUrlProvider {
             portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
         }
         else {
-            portletUrlBuilder = portalUrlBuilder.getTargetedPortletUrlBuilder();
-            if (portletUrlBuilder == null) {
+            final IPortletWindowId targetPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
+            if (targetPortletWindowId == null) {
                 this.logger.warn("Can only target the default portlet if the root portal-url targets a portlet.", new Throwable());
                 return new FailSafePortletUrlBuilder(null, portalUrlBuilder);
             }
+
+            portletUrlBuilder = portalUrlBuilder.getTargetedPortletUrlBuilder();
         }
         
         if (StringUtils.isNotEmpty(state)) {

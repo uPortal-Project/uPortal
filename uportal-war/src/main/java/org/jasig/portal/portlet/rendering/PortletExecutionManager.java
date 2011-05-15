@@ -462,10 +462,10 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     			logger.error("failed to render header output for " + portletWindowId, e);
     			return "";
     		}
-    	} else {
-    		logger.debug(portletWindowId + " does not produce output for header");
-    		return "";
-    	}
+    	} 
+    	
+		logger.debug(portletWindowId + " does not produce output for header");
+		return "";
     }
 
 	/* (non-Javadoc)
@@ -481,6 +481,11 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 		catch (DataRetrievalFailureException e) {
 			this.logger.warn("Failed to output portlet: " + subscribeId, e);
 			return "";
+		}
+		
+		if (portletWindow == null) {
+		    this.logger.warn("Could not find portlet window for layout node id, empty header content will be returned: " + subscribeId);
+            return "";
 		}
 
 		final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
