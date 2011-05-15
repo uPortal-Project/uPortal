@@ -31,8 +31,8 @@
         <property name="corePoolSize" value="${org.jasig.portal.ChannelManager.threadPool_initialThreads}" />
         <property name="maxPoolSize" value="${org.jasig.portal.ChannelManager.threadPool_maxThreads}" />
         <property name="queueCapacity" value="${org.jasig.portal.ChannelManager.threadPool_maxThreads}" />
-        <property name="threadGroupName" value="uPortal-PortletRenderingThreadGroup" />
-        <property name="threadNamePrefix" value="uPortal-PortletRenderer-" />
+        <property name="threadGroupName" value="uPortal-PortletExecutionThreadGroup" />
+        <property name="threadNamePrefix" value="uPortal-PortletExecutor-" />
         <property name="threadPriority" value="${org.jasig.portal.ChannelManager.threadPool_threadPriority}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />

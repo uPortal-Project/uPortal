@@ -37,6 +37,11 @@ class PortletResourceExecutionWorker extends PortletExecutionWorker<Long> implem
         super(executorService, interceptors, portletRenderer, request, response, portletWindowId);
     }
 
+    @Override
+    public ExecutionType getExecutionType() {
+        return ExecutionType.RESOURCE;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.PortletExecutionManager.PortletExecutionWorker#callInternal()
      */

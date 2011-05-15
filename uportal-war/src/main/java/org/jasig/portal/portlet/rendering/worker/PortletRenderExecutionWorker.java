@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.rendering.PortletRenderResult;
+import org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext.ExecutionType;
 
 /**
  * {@link PortletExecutionWorker} capable of rendering the body markup
@@ -46,6 +47,11 @@ class PortletRenderExecutionWorker extends PortletExecutionWorker<PortletRenderR
             HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
         
         super(executorService, interceptors, portletRenderer, request, response, portletWindowId);
+    }
+
+    @Override
+    public ExecutionType getExecutionType() {
+        return ExecutionType.RENDER;
     }
 
     @Override

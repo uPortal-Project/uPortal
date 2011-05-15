@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext.ExecutionType;
 
 class PortletEventExecutionWorker extends PortletExecutionWorker<Long> implements IPortletEventExecutionWorker {
     private final Event event;
@@ -38,6 +39,11 @@ class PortletEventExecutionWorker extends PortletExecutionWorker<Long> implement
         
         super(executorService, interceptors, portletRenderer, request, response, portletWindowId);
         this.event = event;
+    }
+
+    @Override
+    public ExecutionType getExecutionType() {
+        return ExecutionType.EVENT;
     }
 
     @Override

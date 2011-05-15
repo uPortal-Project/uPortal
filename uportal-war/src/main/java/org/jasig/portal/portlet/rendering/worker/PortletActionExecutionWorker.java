@@ -35,6 +35,11 @@ class PortletActionExecutionWorker extends PortletExecutionWorker<Long> implemen
         
         super(executorService, interceptors, portletRenderer, request, response, portletWindowId);
     }
+    
+    @Override
+    public ExecutionType getExecutionType() {
+        return ExecutionType.ACTION;
+    }
 
     @Override
     protected Long callInternal() throws Exception {

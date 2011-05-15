@@ -79,6 +79,11 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     }
 
     @Override
+    public ExecutionType getExecutionType() {
+        return ExecutionType.FAILURE;
+    }
+
+    @Override
     public void submit() {
         if (this.submitted > 0) {
             throw new IllegalStateException(this.getClass().getSimpleName() + " for " + this.getPortletWindowId() + " has already been submitted.");

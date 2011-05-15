@@ -30,6 +30,20 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @version $Revision$
  */
 public interface IPortletExecutionContext {
+    public enum ExecutionType {
+        ACTION,
+        EVENT,
+        RENDER_HEADER,
+        RENDER, 
+        RESOURCE,
+        FAILURE;
+    }
+    
+    /**
+     * @return The type of portlet request the execution is happening for.
+     */
+    public ExecutionType getExecutionType();
+    
     /**
      * Set an attribute about the execution.
      * @see Map#put(Object, Object)

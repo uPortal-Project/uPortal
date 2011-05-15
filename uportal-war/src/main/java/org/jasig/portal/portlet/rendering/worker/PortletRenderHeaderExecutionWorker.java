@@ -49,7 +49,12 @@ public class PortletRenderHeaderExecutionWorker extends
         super(executorService, interceptors, portletRenderer, request, response, portletWindowId);
     }
 
-	/* (non-Javadoc)
+    @Override
+    public ExecutionType getExecutionType() {
+        return ExecutionType.RENDER_HEADER;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.rendering.worker.IPortletRenderExecutionWorker#getOutput(long)
 	 */
 	@Override

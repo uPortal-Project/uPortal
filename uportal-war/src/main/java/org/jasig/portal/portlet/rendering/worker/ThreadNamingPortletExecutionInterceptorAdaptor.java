@@ -27,6 +27,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext.ExecutionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +57,8 @@ public class ThreadNamingPortletExecutionInterceptorAdaptor extends PortletExecu
         final String threadName = currentThread.getName();
         context.setExecutionAttribute(THREAD_NAME, threadName);
         
-        currentThread.setName(threadName + "-[" + fname + "]");
+        final ExecutionType executionType = context.getExecutionType();
+        currentThread.setName(threadName + "-" + executionType + "-[" + fname + "]");
     }
     
     @Override
