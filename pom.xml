@@ -61,7 +61,7 @@
         <repository>
             <id>jboss-public-repository-group</id>
             <name>JBoss Public Repository Group</name>
-            <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+            <url>https://oss.sonatype.org/content/repositories/JBoss</url>
             <layout>default</layout>
             <releases>
                 <enabled>true</enabled>
