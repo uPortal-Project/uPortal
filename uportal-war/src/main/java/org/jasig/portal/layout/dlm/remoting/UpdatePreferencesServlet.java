@@ -702,6 +702,8 @@ public class UpdatePreferencesServlet {
 
         }
 
+        this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, ssup);
+
         try {
             // save the user's layout
             ulm.saveUserLayout();
