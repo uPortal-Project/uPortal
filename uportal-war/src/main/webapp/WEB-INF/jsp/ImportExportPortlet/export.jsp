@@ -55,7 +55,7 @@
                         <select id="${n}entityType" name="entityType">
                             <option>[<spring:message code="select.type"/>]</option>
                             <c:forEach items="${supportedTypes}" var="type">
-                                <option value="${fn:escapeXml(type)}">${fn:escapeXml(type)}</option>
+                                <option value="${fn:escapeXml(type.typeId)}">${fn:escapeXml(type.title)}</option>
                             </c:forEach>
                         </select>
                     </td>

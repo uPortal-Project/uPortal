@@ -672,6 +672,7 @@
         <entry key="fragment-definition" value="NAME"/>
     </util:map>
     
+    <!--
     <util:list id="importExportTypes">
         <value>user</value>
         <value>layout</value>
@@ -684,5 +685,6 @@
         <value>entity-type</value>
         <value>fragment-definition</value>
     </util:list>
+    -->
     
 </beans>

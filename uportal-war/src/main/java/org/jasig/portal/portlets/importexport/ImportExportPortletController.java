@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.portlet.PortletRequest;
@@ -13,6 +14,8 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.io.xml.IDataImportExportService;
+import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -40,14 +43,6 @@ public class ImportExportPortletController {
 	private static final String DELETE_PERMISSION = "DELETE_ENTITY";
 
     protected final Log log = LogFactory.getLog(getClass());
-    
-    private List<String> importExportTypes;
-    
-    @Required
-    @Resource(name="importExportTypes")
-    public void setImportExportTypes(List<String> importExportTypes) {
-    	this.importExportTypes = importExportTypes;
-    }
 
     private IPersonManager personManager;
     
@@ -64,7 +59,13 @@ public class ImportExportPortletController {
         this.portalRequestUtils = portalRequestUtils;
     }
 
-    /**
+    private IDataImportExportService importExportService;
+    @Autowired
+    public void setImportExportService(IDataImportExportService importExportService) {
+		this.importExportService = importExportService;
+	}
+
+	/**
      * Display the entity import form view.
      * 
      * @param request
@@ -86,7 +87,7 @@ public class ImportExportPortletController {
     	Map<String,Object> model = new HashMap<String,Object>();
     
     	// add a list of all permitted export types
-    	final List<String> types = getAllowedTypes(request, EXPORT_PERMISSION);
+    	final List<IPortalDataType> types = getAllowedTypes(request, EXPORT_PERMISSION);
     	model.put("supportedTypes", types);
     	
         return new ModelAndView("/jsp/ImportExportPortlet/export", model);
@@ -103,7 +104,7 @@ public class ImportExportPortletController {
     	Map<String,Object> model = new HashMap<String,Object>();
     	
     	// add a list of all permitted deletion types
-    	final List<String> types = getAllowedTypes(request, DELETE_PERMISSION);
+    	final List<IPortalDataType> types = getAllowedTypes(request, DELETE_PERMISSION);
     	model.put("supportedTypes", types);
     	
         return new ModelAndView("/jsp/ImportExportPortlet/delete", model);
@@ -117,7 +118,7 @@ public class ImportExportPortletController {
      * @param activityName
      * @return
      */
-    protected List<String> getAllowedTypes(PortletRequest request, String activityName) {
+    protected List<IPortalDataType> getAllowedTypes(PortletRequest request, String activityName) {
 
     	// get the authorization principal representing the current user
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
@@ -125,15 +126,18 @@ public class ImportExportPortletController {
 		final EntityIdentifier ei = person.getEntityIdentifier();
 	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
+	    Set<IPortalDataType> dataTypes = this.importExportService.getPortalDataTypes();
+	    
 	    // filter the list of configured import/export types by user permission
-    	final List<String> types = new ArrayList<String>();
-    	for (String type : importExportTypes) {
-    	    if (ap.hasPermission(OWNER, activityName, type)) {
-    	    	types.add(type);
+    	final List<IPortalDataType> results = new ArrayList<IPortalDataType>();
+    	for (IPortalDataType type : dataTypes) {
+    		final String typeId = type.getTypeId();
+    	    if (ap.hasPermission(OWNER, activityName, typeId)) {
+    	    	results.add(type);
     	    }    		
     	}
     	
-    	return types;
+    	return results;
     }
 
 }
