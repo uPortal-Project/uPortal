@@ -34,7 +34,7 @@
                     <with-attribute key="exportedLayoutDoc" value="${crn(${groovy(PORTAL_CONTEXT.getBean('export-layout'))})}">
                         <if test="${jexl(exportedLayoutDoc ne null)}">
 			                <choose>
-			                    <when test="${crn(is-fragment-owner.crn)}">
+			                    <when test="${groovy(PORTAL_CONTEXT.getBean('userLayoutStore').isFragmentOwner(USER_NAME))}">
 			                        <!-- This is a DLM fragment owner layout... -->
 			                        <write-document node="${exportedLayoutDoc}" file="${EXPORT_DIR}/fragment-layout/${SAFE_USER_NAME}.fragment-layout"/>
 			                    </when>
