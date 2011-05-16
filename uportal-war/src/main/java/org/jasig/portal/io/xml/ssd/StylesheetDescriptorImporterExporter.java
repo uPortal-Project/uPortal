@@ -153,10 +153,45 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
     public ExternalStylesheetDescriptor exportData(String name) {
         final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptorByName(name);
         if (stylesheetDescriptor == null) {
-            
+            return null;
         }
         
-        final ExternalStylesheetDescriptor externalStylesheetDescriptor = new ExternalStylesheetDescriptor();
+        return convert(stylesheetDescriptor);
+    }
+    
+    /**
+     * Treats the {@link String} id argument as the stylesheet name.
+     * 
+     * (non-Javadoc)
+     * @see org.jasig.portal.io.xml.IDataImporterExporter#deleteData(java.lang.String)
+     */
+    @Override
+	public ExternalStylesheetDescriptor deleteData(String name) {
+    	final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptorByName(name);
+        if (stylesheetDescriptor == null) {
+            return null;
+        } else {
+        	ExternalStylesheetDescriptor result = convert(stylesheetDescriptor);
+        	this.stylesheetDescriptorDao.deleteStylesheetDescriptor(stylesheetDescriptor);
+        	return result;
+        }
+	}
+
+	protected void copyProperties(IStylesheetData source, ExternalStylesheetData dest) {
+        dest.setName(source.getName());
+        dest.setDefaultValue(source.getDefaultValue());
+        dest.setDescription(source.getDescription());
+        dest.setScope(ExternalStylesheetDataScope.valueOf(source.getScope().name()));
+    }
+
+	/**
+	 * Convert the {@link IStylesheetDescriptor} to an {@link ExternalStylesheetDescriptor}.
+	 * 
+	 * @param stylesheetDescriptor 
+	 * @return converted object, never null
+	 */
+	protected ExternalStylesheetDescriptor convert(IStylesheetDescriptor stylesheetDescriptor) {
+		final ExternalStylesheetDescriptor externalStylesheetDescriptor = new ExternalStylesheetDescriptor();
         externalStylesheetDescriptor.setVersion("4.0");
         
         externalStylesheetDescriptor.setName(stylesheetDescriptor.getName());
@@ -190,13 +225,5 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
         }
         
         return externalStylesheetDescriptor;
-    }
-    
-    protected void copyProperties(IStylesheetData source, ExternalStylesheetData dest) {
-        dest.setName(source.getName());
-        dest.setDefaultValue(source.getDefaultValue());
-        dest.setDescription(source.getDescription());
-        dest.setScope(ExternalStylesheetDataScope.valueOf(source.getScope().name()));
-    }
-
+	}
 }

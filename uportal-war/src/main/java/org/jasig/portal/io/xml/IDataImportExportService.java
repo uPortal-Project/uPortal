@@ -72,5 +72,13 @@ public interface IDataImportExportService {
      */
     public void exportData(String typeId, String dataId, Result result);
     
+    /**
+     * Delete the portal data for the specified type and id.
+     * 
+     * @param typeId
+     * @param dataId
+     */
+    public void deleteData(String typeId, String dataId);
+    
 //    public void exportData(String typeId, String dataId, String resultResource);
 }

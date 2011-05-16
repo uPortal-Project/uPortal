@@ -54,4 +54,13 @@ public class PortletDefinitionPortalDataType implements IPortalDataType {
     public String getDescription() {
         return "Portlets published in the portal";
     }
+
+	@Override
+	public String toString() {
+		return "PortletDefinitionPortalDataType [getTitle()=" + getTitle()
+				+ ", getTypeId()=" + getTypeId() + ", getDescription()="
+				+ getDescription() + "]";
+	}
+    
+    
 }

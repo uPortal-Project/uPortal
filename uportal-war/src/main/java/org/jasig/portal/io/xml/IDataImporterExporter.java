@@ -58,6 +58,14 @@ public interface IDataImporterExporter<T> {
     public T exportData(String id);
     
     /**
+     * Delete the portal data with the specified id.
+     * 
+     * @param id
+     * @return the removed data, or null if no data exists for the id
+     */
+    public T deleteData(String id);
+    
+    /**
      * @return The Unmarshaller to use to convert the data from XML to the required type T
      */
     public Unmarshaller getUnmarshaller();

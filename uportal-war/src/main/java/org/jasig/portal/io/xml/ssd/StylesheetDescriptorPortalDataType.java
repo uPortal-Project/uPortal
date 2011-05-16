@@ -56,4 +56,13 @@ class StylesheetDescriptorPortalDataType implements IPortalDataType {
     public String getDescription() {
         return "Stylesheet Descriptors published in the portal";
     }
+
+	@Override
+	public String toString() {
+		return "StylesheetDescriptorPortalDataType [getTitle()=" + getTitle()
+				+ ", getTypeId()=" + getTypeId() + ", getDescription()="
+				+ getDescription() + "]";
+	}
+    
+    
 }

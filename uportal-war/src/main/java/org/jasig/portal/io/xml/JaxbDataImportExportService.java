@@ -292,4 +292,15 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         }
         return dataImporterExporter;
     }
+
+	@Override
+	public void deleteData(String typeId, String dataId) {
+		final IDataImporterExporter<Object> portalDataExporter = this.getPortalDataExporter(typeId);
+		final Object data = portalDataExporter.deleteData(dataId);
+		if(data == null) {
+			logger.info("portalDataExporter#deleteData returned null for typeId " + typeId + " and dataId " + dataId );
+		}
+	}
+    
+    
 }
