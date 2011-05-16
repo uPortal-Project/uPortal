@@ -27,17 +27,88 @@
     <title>Courses</title>
     <name>Courses</name>
     <fname>courses</fname>
-    <desc>Course links and announcements</desc>
-    <type>Portlet</type>
+    <desc>Mock course info portlet.</desc>
+    <type>CMS</type>
     <timeout>60000</timeout>
     <portlet-descriptor>
-        <webAppName>/CoursesPortlet</webAppName>
-        <portletName>courses</portletName>
+        <webAppName>/SimpleContentPortlet</webAppName>
+        <portletName>cms</portletName>
     </portlet-descriptor>
     <category>Academics</category>
     <group>Everyone</group>
     <parameter>
         <name>iconUrl</name>
-        <value>/CoursesPortlet/notepad.png</value>
+        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/x-office-document.png</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/courses.png</value>
+    </parameter>
+    <portlet-preference>
+        <name>content</name>
+        <value>
+            <![CDATA[
+                <div class="portlet ptl-courses view-courses">
+                    <div class="portlet-content" data-role="content">
+                        <ul data-role="listview" class="course-list">
+                            <li>
+                                <a href="#">
+                                    <h3 class="title">Design Awareness</h3>
+                                    <p>
+                                        <span class="catalog">DSC 101</span><span class="separator">, </span>
+                                        <span class="instructor">Cross</span>
+                                    </p>
+                                    <span class="ui-li-count badge">1</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <h3 class="title">Drawing for Industry</h3>
+                                    <p>
+                                        <span class="catalog">IND 120</span><span class="separator">, </span>
+                                        <span class="instructor">Cross</span>
+                                    </p>
+                                </a>
+                            </li>
+                            <li>
+        
+                                <a href="#">
+                                    <h3 class="title">First-Year Composition</h3>
+                                    <p>
+                                        <span class="catalog">ENG 101</span><span class="separator">, </span>
+                                        <span class="instructor">Cross</span>
+                                    </p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <h3 class="title">Precalculus</h3>
+                                    <p>
+                                        <span class="catalog">MAT 170</span><span class="separator">, </span>
+                                        <span class="instructor">Cross</span>
+        
+                                    </p>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <h3 class="title">Graphic Design History</h3>
+                                    <p>
+                                        <span class="catalog">GRA 111</span><span class="separator">, </span>
+                                        <span class="instructor">Cross</span>
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="ui-grid-a utilities" style="margin-top: 20px">
+                            <div class="ui-block-a"><a data-role="button" class="schedule" title="schedule" href="/uPortal/p/calendar-portlet/max/render.uP">Schedule</a></div>
+                            <div class="ui-block-b"><a data-role="button" class="grades" title="grades" href="course_grades.html">Grades</a></div>
+                        </div>
+                    </div>
+                    <p>Mock of the Jasig Courses Portlet. This is a sample 
+                    screen for demonstration purposes only.</p>                
+                </div>
+            ]]>
+        </value>
+    </portlet-preference>
 </portlet-definition>
