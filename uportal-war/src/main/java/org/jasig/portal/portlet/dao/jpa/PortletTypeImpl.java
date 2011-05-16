@@ -207,5 +207,23 @@ public class PortletTypeImpl implements Serializable, IPortletType {
         return "PortletTypeImpl [internalId=" + this.internalId + ", entityVersion=" + this.entityVersion + ", name="
                 + this.name + ", descr=" + this.descr + ", cpdUri=" + this.cpdUri + "]";
     }
+
+
+	@Override
+	public String getDataId() {
+		return Integer.toString(getId());
+	}
+
+
+	@Override
+	public String getDataTitle() {
+		return name;
+	}
+
+
+	@Override
+	public String getDataDescription() {
+		return descr;
+	}
 	
 }

@@ -19,6 +19,8 @@
 
 package org.jasig.portal.portlet.om;
 
+import org.jasig.portal.io.xml.IPortalData;
+
 /**
  * A channel type references a particular java class that implements the
  * IChannel interface. It also references a channel publishing document that
@@ -28,7 +30,7 @@ package org.jasig.portal.portlet.om;
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
-public interface IPortletType {
+public interface IPortletType extends IPortalData {
 
 	// Getter methods
 	

@@ -1,0 +1,29 @@
+<xs:schema
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-type"
+    targetNamespace="https://source.jasig.org/schemas/uportal/io/portlet-type"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:up="https://source.jasig.org/schemas/uportal"
+    xmlns:io="https://source.jasig.org/schemas/uportal/io"
+    elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+
+    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="../../common-types.xsd"/>
+    <xs:import namespace="https://source.jasig.org/schemas/uportal/io" schemaLocation="../common-io-types.xsd"/>
+    
+    <xs:element name="portlet-type">
+        <xs:complexType>
+        	<xs:complexContent>
+                <xs:extension base="io:basePortalDataType">
+                    <xs:sequence>
+        				<xs:element name="id" type="xs:int"/>
+        				<xs:element name="name" type="xs:string"/>
+        				<xs:element name="description" type="xs:string"/>
+        				<xs:element name="cpdUri" type="xs:string"/>
+        			</xs:sequence>
+        			
+        			<xs:attribute name="version" type="io:version40Type" use="required"/>
+        		</xs:extension>
+        	</xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

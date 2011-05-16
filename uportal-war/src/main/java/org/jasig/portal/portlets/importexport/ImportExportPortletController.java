@@ -44,6 +44,14 @@ public class ImportExportPortletController {
 
     protected final Log log = LogFactory.getLog(getClass());
 
+    private List<String> importExportTypes;
+    
+    @Required
+    @Resource(name="importExportTypes")
+    public void setImportExportTypes(List<String> importExportTypes) {
+    	this.importExportTypes = importExportTypes;
+    }
+    
     private IPersonManager personManager;
     
     @Autowired(required = true)
@@ -137,6 +145,11 @@ public class ImportExportPortletController {
     	    }    		
     	}
     	
+    	for(String legacyType: importExportTypes) {
+    		if (ap.hasPermission(OWNER, activityName, legacyType)) {
+    			results.add(new CernnunosOnlyPortalDataType(legacyType));
+    		}
+    	}
     	return results;
     }
 

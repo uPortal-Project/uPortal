@@ -2162,6 +2162,24 @@ public class RDBMDistributedLayoutStore
 			
 		}
 
+		@Override
+		public String getDataId() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getDataTitle() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getDataDescription() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
     	
     }
 

@@ -35,6 +35,11 @@
         <property name="schema" value="classpath:/xsd/io/portlet-definition/portlet-definition-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" />
     </bean>
+    <bean class="org.jasig.portal.io.xml.portlettype.PortletTypeImporterExporter">
+        <property name="contextPath" value="org.jasig.portal.io.xml.portlettype" />
+        <property name="schema" value="classpath:/xsd/io/portlet-type/portlet-type-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-type https://source.jasig.org/schemas/uportal/io/portlet-type/portlet-type-4.0.xsd" />
+    </bean>
     <bean class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.ssd" />
         <property name="schema" value="classpath:/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" />
@@ -663,28 +668,20 @@
         <entry key="user" value="USER_NAME"/>
         <entry key="layout" value="USER_NAME"/>
         <entry key="profile" value="USER_NAME"/>
-        <entry key="portlet" value="FNAME"/>
-        <entry key="portlet-type" value="NAME"/>
         <entry key="group_membership" value="GROUP_NAME"/>
         <entry key="theme" value="NAME"/>
-        <entry key="structure" value="NAME"/>
         <entry key="entity-type" value="NAME"/>
         <entry key="fragment-definition" value="NAME"/>
     </util:map>
     
-    <!--
     <util:list id="importExportTypes">
         <value>user</value>
         <value>layout</value>
         <value>profile</value>
-        <value>portlet</value>
-        <value>portlet-type</value>
         <value>group_membership</value>
         <value>theme</value>
-        <value>structure</value>
         <value>entity-type</value>
         <value>fragment-definition</value>
     </util:list>
-    -->
-    
+      
 </beans>
