@@ -551,31 +551,35 @@ public class RDBMDistributedLayoutStore
         
         final IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(structureStylesheetDescriptor, person, profile);
         
-        final Map<String, Map<String, String>> allLayoutAttributes = ssup.getAllLayoutAttributes();
-        for (final Entry<String, Map<String, String>> nodeEntry : allLayoutAttributes.entrySet()) {
-            final String nodeId = nodeEntry.getKey();
-            final Map<String, String> attributes = nodeEntry.getValue();
-            
-            final org.dom4j.Element element = layoutDoc.elementByID(nodeId);
-            if (element == null) {
-                this.log.warn("No layout node with id '" + nodeId + "' found attributes will be ignored: " + attributes);
-                continue;
-            }
-            
-            for (final Entry<String, String> attributeEntry : attributes.entrySet()) {
-                final String name = attributeEntry.getKey();
-                final String value = attributeEntry.getValue();
-                
-                if (log.isDebugEnabled()) {
-                    log.debug("Adding structure folder attribute:  name=" + name + ", value=" + value);
-                }
-                org.dom4j.Element structAttrElement = fac.createElement(attributeType + "-attribute");
-                org.dom4j.Element nameAttribute = structAttrElement.addElement("name");
-                nameAttribute.setText(name);
-                org.dom4j.Element valueAttribute = structAttrElement.addElement("value");
-                valueAttribute.setText(value);
-                element.elements().add(0, structAttrElement);
-            }
+        if(ssup != null) {
+        	final Map<String, Map<String, String>> allLayoutAttributes = ssup.getAllLayoutAttributes();
+        	for (final Entry<String, Map<String, String>> nodeEntry : allLayoutAttributes.entrySet()) {
+        		final String nodeId = nodeEntry.getKey();
+        		final Map<String, String> attributes = nodeEntry.getValue();
+
+        		final org.dom4j.Element element = layoutDoc.elementByID(nodeId);
+        		if (element == null) {
+        			this.log.warn("No layout node with id '" + nodeId + "' found attributes will be ignored: " + attributes);
+        			continue;
+        		}
+
+        		for (final Entry<String, String> attributeEntry : attributes.entrySet()) {
+        			final String name = attributeEntry.getKey();
+        			final String value = attributeEntry.getValue();
+
+        			if (log.isDebugEnabled()) {
+        				log.debug("Adding structure folder attribute:  name=" + name + ", value=" + value);
+        			}
+        			org.dom4j.Element structAttrElement = fac.createElement(attributeType + "-attribute");
+        			org.dom4j.Element nameAttribute = structAttrElement.addElement("name");
+        			nameAttribute.setText(name);
+        			org.dom4j.Element valueAttribute = structAttrElement.addElement("value");
+        			valueAttribute.setText(value);
+        			element.elements().add(0, structAttrElement);
+        		}
+        	}
+        } else {
+        	LOG.debug("no StylesheetUserPreferences found for " + person + ", " + profile);
         }
     }
         
