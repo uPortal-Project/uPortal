@@ -508,6 +508,11 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
             this.logger.warn("Failed to output portlet: " + subscribeId, e);
             return "";
         }
+        
+        if (portletWindow == null) {
+            this.logger.warn("Could not find portlet window for layout node id, empty missing content text will be returned: " + subscribeId);
+            return "This portlet does not exist or is not deployed correctly.";
+        }
 
         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
         return this.getPortletOutput(portletWindowId, request, response);
@@ -555,6 +560,11 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         }
         catch (DataRetrievalFailureException e) {
             this.logger.warn("Failed to get portlet title: " + subscribeId, e);
+            return "";
+        }
+        
+        if (portletWindow == null) {
+            this.logger.warn("Could not find portlet window for layout node id, empty title content will be returned: " + subscribeId);
             return "";
         }
 
