@@ -43,7 +43,7 @@
   <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
   
   <js included="plain">/ResourceServingWebapp/rs/fluid/1.4-bea0041/js/fluid-all-1.4-bea0041.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.4-bea0041/js/fluid-all-1.4-bea0041.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.4-bea0041/js/fluid-all-1.4-bea0041.min.js</js>
   
   <js>../common/javascript/up-mobile-config.js</js>
 
