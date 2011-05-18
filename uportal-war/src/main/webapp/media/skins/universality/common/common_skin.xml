@@ -33,9 +33,9 @@
   <!-- Support for the JSR-168 portlet specficiation. Common to all skins using the universality theme. -->
   <css>css/jsr168.css</css>
   
-  <!-- uPortal portlet CSS contributed to the Fluid Project. Now importing from Fluid Infusion. Local overrides can be made in portlet.css. -->
+  <!-- uPortal portlet CSS contributed to the Fluid Project. Now importing from Fluid Infusion. Local overrides can be made in portlet.css.
   <css>/ResourceServingWebapp/rs/fluid/1.4-bea0041/fss/css/fss-layout-portlet.css</css>
-  <css>/ResourceServingWebapp/rs/fluid/1.4-bea0041/fss/css/fss-theme-portlet.css</css>
+  <css>/ResourceServingWebapp/rs/fluid/1.4-bea0041/fss/css/fss-theme-portlet.css</css> -->
     
   <!-- For layout of portlet content. Common to all skins using the universality theme. -->
   <css>css/layout-portlet.css</css>
