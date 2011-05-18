@@ -24,15 +24,15 @@
 <portlet:actionURL var="actionUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
-<div id="portalFragAdminExit" class="block">
-  <div class="block-inner">
-    <h2 class="block-title"><spring:message code="fragment.administration"/></h2>
-    <div class="block-content">
-      <form name="fragmentAdminExitForm" action="${actionUrl}" method="POST">
-        <c:set var="userHtml"><strong>${fn:escapeXml(remoteUser)}</strong></c:set>
-      	<label for="exitFragment"><spring:message code="you.are.currently.logged.in.as.for.dlm.fragment.administration" arguments="${userHtml}" htmlEscape="false"/></label>
-      	<input id="exitFragment" type="Submit" value="<spring:message code="exit"/>" name="_eventId_logout"/>
-      </form>
-    </div>
-  </div>
+<div id="portalFragAdminExit" class="fl-widget">
+	<div class="fl-widget-titlebar">
+		<h2><spring:message code="fragment.administration"/></h2>
+	</div>
+	<div class="fl-widget-content">
+	  <form name="fragmentAdminExitForm" action="${actionUrl}" method="POST">
+	    <c:set var="userHtml"><strong>${fn:escapeXml(remoteUser)}</strong></c:set>
+	  	<label for="exitFragment"><spring:message code="you.are.currently.logged.in.as.for.dlm.fragment.administration" arguments="${userHtml}" htmlEscape="false"/></label>
+	  	<input class="button" id="exitFragment" type="Submit" value="<spring:message code="exit"/>" name="_eventId_logout"/>
+	  </form>
+	</div>
 </div>
