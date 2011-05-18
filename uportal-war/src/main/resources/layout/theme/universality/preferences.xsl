@@ -68,7 +68,7 @@
                        <div class="portlet-search-view">
                             <form class="portlet-search-form">
                                 <label for="portletSearch"><xsl:value-of select="upMsg:getMessage('search.stuff.add', $USER_LANG)"/></label>
-                                <input id="portletSearch" name="portletSearch" class="portlet-search-input" value="Search" />
+                                <input id="portletSearch" name="portletSearch" class="portlet-search-input" type="text" value="Search" />
                                 <input type="submit" value="Search" class="portlet-search-submit"/>
                             </form>
                         </div>
@@ -132,7 +132,7 @@
                         <div class="portlet-search-view">
                             <form class="portlet-search-form">
                                 <div class="search">
-                                    <input class="portlet-search-input"/>
+                                    <input class="portlet-search-input" type="text"/>
                                 </div>
                             </form>
                         </div>
@@ -184,11 +184,18 @@
                 </div>
             </div>
             <div class="results-column fl-col-main ui-helper-clearfix">
-                <ul id="{$CONTEXT}PortletList" class="portlet-list">
-                    <li class="portlet">
-                        <div class="portlet-wrapper">
-                            <a class="portlet-thumb-gripper" href="javascript:;" title="Drag to add content"><span>Drag Handle</span></a>
-                            <a href="javascript:;" class="portlet-thumb-link">
+                <ul id="{$CONTEXT}PortletList" class="results-list portlet-list">
+                    <li class="result-item portlet">
+                        <div class="ri-wrapper portlet-wrapper">
+                        	<xsl:choose>
+                                <xsl:when test="$CONTEXT='addContent'">
+                                    <a class="ri-utility portlet-thumb-gripper" href="javascript:;" title="Drag to add content"><span>Drag Handle</span></a>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <div class="ri-utility"></div>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <a href="javascript:;" class="ri-link portlet-thumb-link">
                                 <span>
                                     <xsl:choose>
                                         <xsl:when test="$CONTEXT='addContent'">
@@ -200,12 +207,10 @@
                                     </xsl:choose>
                                 </span>
                             </a>
-                            <div class="portlet-thumb-titlebar"></div>
-                            <div class="portlet-thumb-content ui-helper-clearfix">
-                                <div class="fl-force-left">
-                                    <div class="portlet-thumb-icon"><span>Thumbnail</span></div>
-                                </div>
-                                <div class="portlet-thumb-description">Description</div>
+                            <div class="ri-titlebar portlet-thumb-titlebar"></div>
+                            <div class="ri-content portlet-thumb-content ui-helper-clearfix">
+                            	<div class="ri-icon portlet-thumb-icon"><span>Thumbnail</span></div>
+                                <div class="ri-description portlet-thumb-description">Description</div>
                             </div>
                         </div>
                     </li>
@@ -228,16 +233,15 @@
                 </div>
             </div>
             <div class="results-column fl-col-main">
-                <ul class="package-list ui-helper-clearfix">
-                    <li class="package">
-                       <div class="package-wrapper">
-                           <a href="javascript:;" class="package-link"><span><xsl:value-of select="upMsg:getMessage('subscribe', $USER_LANG)"/></span></a>
-                           <div class="package-titlebar">Titlebar</div>
-                           <div class="package-content ui-helper-clearfix">
-                               <div class="fl-force-left">
-                                    <div class="package-icon"><span>Thumbnail</span></div>
-                                </div>
-                                <div class="package-description">Description</div>
+                <ul class="results-list package-list ui-helper-clearfix">
+                    <li class="results-item package">
+                       <div class="ri-wrapper package-wrapper">
+                           <div class="ri-utility"></div>
+                           <a href="javascript:;" class="ri-link package-link"><span><xsl:value-of select="upMsg:getMessage('subscribe', $USER_LANG)"/></span></a>
+                           <div class="ri-titlebar package-titlebar">Titlebar</div>
+                           <div class="ri-content package-content ui-helper-clearfix">
+                                <div class="ri-icon package-icon"><span>Thumbnail</span></div>
+                                <div class="ri-description package-description">Description</div>
                            </div>
                        </div>
                     </li>
@@ -246,7 +250,7 @@
         </div>
     </xsl:template>
 
-<!-- ============= TEMPLATE: Gallery Pagef =========== -->
+<!-- ============= TEMPLATE: Gallery Pager =========== -->
 <!-- ================================================= -->
 <!-- 
 | This template renders the gallery pager.
@@ -294,13 +298,15 @@
             <div class="content-results-wrapper">
                 <div class="column-inner">
                     <div class="results-wrapper">
-                        <ul class="skins-list">
-                            <li class="skin">
-                                <div class="skins-wrapper">
-                                    <a class="skin-link" href="javascript:;">
-                                        <div class="skin-titlebar"></div>
-                                        <div class="skin-thumb">
-                                            <span>Thumbnail</span>
+                        <ul class="results-list skins-list">
+                            <li class="results-item skin">
+                                <div class="ri-wrapper skins-wrapper">
+                                    <a class="ri-link skin-link" href="javascript:;">
+                                        <div class="ri-titlebar skin-titlebar"></div>
+                                        <div class="ri-content">
+	                                        <div class="ri-icon skin-thumb">
+	                                            <span>Thumbnail</span>
+	                                        </div>
                                         </div>
                                     </a>
                                 </div>
@@ -323,15 +329,17 @@
             <div class="content-results-wrapper">
                 <div class="column-inner">
                     <div class="results-wrapper">
-                        <ul class="layouts-list">
-                            <li class="layout">
-                                <div class="layout-wrapper">
-                                    <a class="layout-link" href="javascript:;">
-                                        <div class="layout-titlebar"></div>
-                                        <div class="layout-thumb">
-                                            <span>Thumbnail</span>
+                        <ul class="results-list layouts-list">
+                            <li class="results-item layout">
+                                <div class="ri-wrapper layout-wrapper">
+                                    <a class="ri-link layout-link" href="javascript:;">
+                                        <div class="ri-titlebar layout-titlebar"></div>
+                                        <div class="ri-content">
+	                                        <div class="ri-icon layout-thumb">
+	                                            <span>Thumbnail</span>
+	                                        </div>
+	                                        <div class="ri-description layout-description"></div>
                                         </div>
-                                        <div class="layout-description"></div>
                                     </a>
                                 </div>
                             </li>
@@ -374,7 +382,7 @@
                         </li>
                     </ul>
                     <div class="close-button">
-                        <a><span><xsl:value-of select="upMsg:getMessage('im.done', $USER_LANG)"/></span></a>
+                        <a class="button"><span><xsl:value-of select="upMsg:getMessage('im.done', $USER_LANG)"/></span></a>
                     </div>
                 </div>
                 <div class="fl-col-main content-wrapper" role="tabpanel">

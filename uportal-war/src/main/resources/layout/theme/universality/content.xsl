@@ -167,10 +167,12 @@
    | These two templates render the focused portlet content.
   -->
   <xsl:template match="focused">
-  	<div class="portal-page-column single">
-    	<div class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
-        <xsl:apply-templates select="channel"/>
-      </div>
+  	<div id="portalPageBodyColumns" class="columns-1">
+	  	<div class="portal-page-column column-1">
+	    	<div class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
+	        <xsl:apply-templates select="channel"/>
+	      </div>
+	    </div>
     </div>
   </xsl:template>
   <!-- ============================================== -->

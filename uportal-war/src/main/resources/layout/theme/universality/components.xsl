@@ -51,6 +51,22 @@
             https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="url upAuth upGroup upMsg" 
     version="1.0">
+    
+    <!-- ========== TEMPLATE: PORTAL PIPE ========== -->
+    <!-- =========================================== -->
+    <!--
+     | This template renders skip-to navigation.
+    -->
+    <xsl:template name="skip.nav">
+		<div id="portalSkipNav">
+	      <a href="#mainNavigation" title="{upMsg:getMessage('skip.to.page.navigation', $USER_LANG)}" id="skipToNav" accesskey="N">
+	        <xsl:value-of select="upMsg:getMessage('skip.to.page.navigation', $USER_LANG)"/>
+	      </a>
+	      <a href="#pageContent" title="{upMsg:getMessage('skip.to.page.content', $USER_LANG)}" id="skipToContent" accesskey="C">
+	        <xsl:value-of select="upMsg:getMessage('skip.to.page.content', $USER_LANG)"/>
+	      </a>
+	    </div>
+    </xsl:template>
 
   <!-- ========== TEMPLATE: PORTAL PIPE ========== -->
   <!-- =========================================== -->
@@ -83,20 +99,20 @@
         </xsl:otherwise>
       </xsl:choose>
       <div id="portalPageBarLinks">
-      	<xsl:choose>
-          <xsl:when test="//focused">
-            <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
-            <xsl:call-template name="portal.page.bar.links.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-            <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
-          </xsl:when>
-          <xsl:otherwise>
-            <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
-            <xsl:call-template name="portal.page.bar.links.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-            <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
-          </xsl:otherwise>
-        </xsl:choose>
-        <!-- ????? THIS CHANNEL IS OBSOLETE WITH THE HEADER BLOCK IMPLEMENTATION ?????
-        <xsl:copy-of select="channel[@name='Header']"/> -->
+      	<ul class="utilities">
+	      	<xsl:choose>
+	          <xsl:when test="//focused">
+	            <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
+	            <xsl:call-template name="portal.page.bar.links.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+	            <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
+	          </xsl:when>
+	          <xsl:otherwise>
+	            <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
+	            <xsl:call-template name="portal.page.bar.links.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+	            <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
+	          </xsl:otherwise>
+	        </xsl:choose>
+        </ul>
       </div>
     </div>
   </xsl:template>
@@ -131,30 +147,29 @@
    | This template renders the home link into the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.link.home">
-  	<span id="portalPageBarHome">
-      <xsl:variable name="homeUrl">
-        <xsl:call-template name="portalUrl"/>
-      </xsl:variable>
-      <a href="{$homeUrl}">
-        <xsl:attribute name="title">
-          <xsl:choose>
-            <!-- Use the Back to Home label for focused view -->
-            <xsl:when test="//focused"><xsl:value-of select="upMsg:getMessage('back.to.home.long', $USER_LANG)"/></xsl:when>
-            <!-- Otherwise, just Home label -->
-            <xsl:otherwise><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></xsl:otherwise>
-          </xsl:choose>
-        </xsl:attribute>
-        <span>
-          <xsl:choose>
-            <!-- Use the Back to Home label for focused view -->
-            <xsl:when test="//focused"><xsl:value-of select="upMsg:getMessage('back.to.home.long', $USER_LANG)"/></xsl:when>
-            <!-- Otherwise, just Home label -->
-            <xsl:otherwise><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></xsl:otherwise>
-          </xsl:choose>
-        </span>
-      </a>
-      <xsl:call-template name="portal.pipe" />
-    </span>
+      <li class="link-home">
+          <xsl:variable name="homeUrl">
+            <xsl:call-template name="portalUrl"/>
+          </xsl:variable>
+	      <a href="{$homeUrl}">
+	        <xsl:attribute name="title">
+	          <xsl:choose>
+	            <!-- Use the Back to Home label for focused view -->
+	            <xsl:when test="//focused"><xsl:value-of select="upMsg:getMessage('back.to.home.long', $USER_LANG)"/></xsl:when>
+	            <!-- Otherwise, just Home label -->
+	            <xsl:otherwise><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></xsl:otherwise>
+	          </xsl:choose>
+	        </xsl:attribute>
+	        <span>
+	          <xsl:choose>
+	            <!-- Use the Back to Home label for focused view -->
+	            <xsl:when test="//focused"><xsl:value-of select="upMsg:getMessage('back.to.home.long', $USER_LANG)"/></xsl:when>
+	            <!-- Otherwise, just Home label -->
+	            <xsl:otherwise><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></xsl:otherwise>
+	          </xsl:choose>
+	        </span>
+	      </a>
+      </li>
   </xsl:template>
   <!-- ========================================================== -->
   
@@ -166,7 +181,7 @@
   -->
   <xsl:template name="portal.page.bar.link.admin">
   	<xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin')">
-    	<span id="portalPageBarAdmin">
+    	<li class="link-admin">
     	  <xsl:variable name="portletAdminUrl">
             <xsl:call-template name="portalUrl">
                 <xsl:with-param name="url">
@@ -180,8 +195,7 @@
     	  <a href="{$portletAdminUrl}" title="{upMsg:getMessage('go.to.portlet.manager', $USER_LANG)}">
           <span><xsl:value-of select="upMsg:getMessage('portlet.manager', $USER_LANG)"/></span>
         </a>
-        <xsl:call-template name="portal.pipe" />
-      </span>
+      </li>
     </xsl:if>
   </xsl:template>
   <!-- ========================================================== -->
@@ -194,7 +208,7 @@
   -->
   <xsl:template name="portal.page.bar.link.sitemap">
     <xsl:if test="$AUTHENTICATED='true'">
-    	<span id="portalPageBarSitemap">
+    	<li class="link-sitemap">
     	  <xsl:variable name="layoutSitemapUrl">
             <xsl:call-template name="portalUrl">
                 <xsl:with-param name="url">
@@ -205,11 +219,10 @@
                 </xsl:with-param>
             </xsl:call-template>
     	  </xsl:variable>
-    	  <a href="{$layoutSitemapUrl}" title="{upMsg:getMessage('site.map', $USER_LANG)}">
-          <span><xsl:value-of select="upMsg:getMessage('go.to.site.map', $USER_LANG)"/></span>
+    	  <a href="{$layoutSitemapUrl}" title="{upMsg:getMessage('go.to.site.map', $USER_LANG)}">
+          <span><xsl:value-of select="upMsg:getMessage('site.map', $USER_LANG)"/></span>
         </a>
-        <xsl:call-template name="portal.pipe" />
-      </span>
+      </li>
     </xsl:if>
   </xsl:template>
   <!-- ============================================================ -->
@@ -221,12 +234,11 @@
    | This template renders the help link into the portal page bar.
   -->
   <xsl:template name="portal.page.bar.link.help">
-  	<span id="portalPageBarHelp">
+  	<li class="link-help">
       <a href="{$HELP_URL}" title="{upMsg:getMessage('view.help.for.portal', $USER_LANG)}" target="_blank">
         <span><xsl:value-of select="upMsg:getMessage('help', $USER_LANG)"/></span>
       </a>
-      <xsl:call-template name="portal.pipe" />
-    </span>
+    </li>
   </xsl:template>
   <!-- ========================================================= -->
   
@@ -238,12 +250,11 @@
   -->
   <xsl:template name="portal.page.bar.link.logout">
     <xsl:if test="$AUTHENTICATED='true'">
-    	<span id="portalPageBarLogout">
+    	<li class="link-logout">
         <a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}">
           <span><xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/></span>
         </a>
-        <xsl:call-template name="portal.pipe" />
-      </span>
+      </li>
     </xsl:if>
   </xsl:template>
   <!-- ========================================================= -->
@@ -326,8 +337,8 @@
   -->
   <xsl:template name="external.login">  
     <div id="portalCASLogin" class="fl-widget-content">
-      <a id="portalCASLoginLink" href="{$EXTERNAL_LOGIN_URL}" title="{upMsg:getMessage('sign.in.via.cas', $USER_LANG)}">
-        <span><xsl:value-of select="upMsg:getMessage('sign.in', $USER_LANG)"/>&#160;<span class="via-cas"><xsl:value-of select="upMsg:getMessage('with.cas', $USER_LANG)"/></span></span>
+      <a id="portalCASLoginLink" class="button" href="{$EXTERNAL_LOGIN_URL}" title="{upMsg:getMessage('sign.in.via.cas', $USER_LANG)}">
+        <span><xsl:value-of select="upMsg:getMessage('sign.in', $USER_LANG)"/><!--&#160;<span class="via-cas"><xsl:value-of select="upMsg:getMessage('with.cas', $USER_LANG)"/></span>--></span>
       </a>
       <p><xsl:value-of select="upMsg:getMessage('new.user.question', $USER_LANG)"/>&#160; 
         <a id="portalCASLoginNewLink" href="{$CAS_NEW_USER_URL}" title="{upMsg:getMessage('create.new.portal.account', $USER_LANG)}">
@@ -575,8 +586,8 @@
    | render when no portlets have been added to a users layout.
   -->
   <xsl:template name="page.customize.message">
-      <h1><span class="fl-font-blue">Customize</span> this page.</h1>
-      <span>You can <span class="fl-font-blue">Add Stuff</span>, change the page <span class="fl-font-blue">Layout</span>, and pick your <span class="fl-font-blue">Colors.</span></span>
+      <h1>Customize this page.</h1>
+      <p>You can <strong>Add Stuff</strong>, change the page <strong>Layout</strong>, and pick your <strong>Colors.</strong> Click the <em>CUSTOMIZE</em> handle to get started.</p>
   </xsl:template>
   <!-- ========================================== -->
   

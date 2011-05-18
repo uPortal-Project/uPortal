@@ -144,9 +144,11 @@
                     <xsl:call-template name="gallery"/>
                 </xsl:if>
                 <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                    <div id="portalEditPagePermissions" class="ui-helper-clearfix"><a id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
-                        <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
-                    </a></div>
+                    <div id="portalEditPagePermissions" class="ui-helper-clearfix">
+                    	<a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+                            <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
+                        </a>
+                    </div>
                 </xsl:if>
                 <xsl:apply-templates select="content"/>
                 <xsl:apply-templates select="footer"/>
@@ -163,7 +165,7 @@
               </xsl:otherwise>
             </xsl:choose>
           </div> 
-        </div>   
+        </div>
       </body>
     </html>
   </xsl:template>
@@ -179,18 +181,27 @@
     <div id="portalPageHeader" class="fl-container-flex">  <!-- Div for presentation/formatting options. -->
     	<div id="portalPageHeaderInner">  <!-- Inner div for additional presentation/formatting options. -->
     
-        <xsl:choose>
-          <xsl:when test="//focused">
-            <!-- ****** HEADER FOCUSED BLOCK ****** -->
-          <xsl:call-template name="header.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-          <!-- ****** HEADER FOCUSED BLOCK ****** -->
-          </xsl:when>
-          <xsl:otherwise>
-            <!-- ****** HEADER BLOCK ****** -->
-          <xsl:call-template name="header.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-          <!-- ****** HEADER BLOCK ****** -->
-          </xsl:otherwise>
-        </xsl:choose>
+	        <xsl:choose>
+	          <xsl:when test="$AUTHENTICATED != 'true'">
+	            <!-- ****** HEADER GUEST BLOCK ****** -->
+	            <xsl:call-template name="header.guest.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+	            <!-- ****** HEADER GUEST BLOCK ****** -->
+	          </xsl:when>
+	          <xsl:otherwise>
+	          	<xsl:choose>
+		          <xsl:when test="//focused">
+		            <!-- ****** HEADER FOCUSED BLOCK ****** -->
+		            <xsl:call-template name="header.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+		            <!-- ****** HEADER FOCUSED BLOCK ****** -->
+		          </xsl:when>   
+		          <xsl:otherwise>
+		            <!-- ****** HEADER BLOCK ****** -->
+		            <xsl:call-template name="header.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+		            <!-- ****** HEADER BLOCK ****** -->
+		          </xsl:otherwise>
+		        </xsl:choose>
+	          </xsl:otherwise>
+	        </xsl:choose>
 
     	</div>
     </div>
@@ -237,13 +248,13 @@
                   <xsl:when test="$PORTAL_VIEW='focused'"> <!-- Focused View -->
                     <xsl:choose>
                       <xsl:when test="$USE_SIDEBAR_FOCUSED='true'">fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH_FOCUSED" /></xsl:when>
-                      <xsl:otherwise>fl-col-flex</xsl:otherwise>
+                      <xsl:otherwise>fl-container-flex</xsl:otherwise>
                     </xsl:choose>
                   </xsl:when>
                   <xsl:otherwise> <!-- Dashboard View -->
                     <xsl:choose>
                       <xsl:when test="$USE_SIDEBAR='true'">fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH" /></xsl:when>
-                      <xsl:otherwise>fl-col-flex<xsl:value-of select="$COLUMNS" /></xsl:otherwise>
+                      <xsl:otherwise>fl-container-flex</xsl:otherwise>
                     </xsl:choose>
                   </xsl:otherwise>
                 </xsl:choose>
@@ -253,7 +264,7 @@
               
                 <xsl:choose>
                   <xsl:when test="$USE_SIDEBAR_GUEST='true'">fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH_GUEST" /></xsl:when>
-                  <xsl:otherwise>fl-col-flex<xsl:value-of select="$COLUMNS" /></xsl:otherwise>
+                  <xsl:otherwise>fl-container-flex</xsl:otherwise>
                 </xsl:choose>
                 
               </xsl:otherwise>
@@ -273,7 +284,7 @@
               <xsl:choose>
                 <xsl:when test="$USE_SIDEBAR_FOCUSED='true'"> <!-- Sidebar. -->
                   <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
-                  <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                  <div class="fl-container-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
                   	<!-- ****** CONTENT TOP BLOCK ****** -->
                     <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                     <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -307,7 +318,7 @@
                   <xsl:choose>
                     <xsl:when test="$USE_SIDEBAR='true'"> <!-- Sidebar. -->
                       <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
-                      <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                      <div class="fl-container-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
                       	<!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -343,7 +354,7 @@
                   <xsl:choose>
                     <xsl:when test="$USE_SIDEBAR_GUEST='true'"> <!-- Sidebar. -->
                       <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
-                      <div class="fl-col-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                      <div class="fl-container-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
                       	<!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT TOP BLOCK ****** -->

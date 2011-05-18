@@ -290,8 +290,8 @@
   
   <xsl:param name="USE_SIDEBAR_GUEST">
     <xsl:choose>
-      <xsl:when test="$INSTITUTION='ivy'">true</xsl:when>
-      <xsl:otherwise>true</xsl:otherwise>
+      <xsl:when test="$INSTITUTION='ivy'">false</xsl:when>
+      <xsl:otherwise>false</xsl:otherwise>
     </xsl:choose>
   </xsl:param>
   
@@ -337,11 +337,18 @@
     </xsl:choose>
   </xsl:param>
   
+  <!-- PAGE TITLE -->
+  <xsl:param name="USE_PAGE_TITLE">false</xsl:param> <!-- Sets the use of a page title.  Values are 'true' or 'false'. -->
+  
+  <!-- BREADCRUMB -->
+  <xsl:param name="USE_BREADCRUMB">false</xsl:param> <!-- Sets the use of breadcrumb links.  Values are 'true' or 'false'. -->
+  
   <!-- ============================================ -->
   
   <!-- Debug Template
   <xsl:template match="/">
   	<h1>Debugging</h1>
+  	<div><textarea style="width:100em; height:75em;"><xsl:copy-of select="*"/></textarea></div>
   </xsl:template> -->
   
   <!-- =============================== -->
@@ -373,6 +380,28 @@
   <!-- ============================================ -->
   
   
+  <!-- ========== TEMPLATE: HEADER GUEST BLOCK ========== -->
+  <!-- ================================================== -->
+  <!-- 
+   | GREEN
+   | This template renders content into the page header.
+   | Reordering the template calls and/or xhtml contents will change the order in the page markup.
+   | Commenting out a template call will prevent that component's markup fom being written into the page markup.
+   | Template contents can be any valid XSL or XHTML.
+  -->
+  <xsl:template name="header.guest.block">
+  	<!-- Skip Navigation -->
+    <xsl:call-template name="skip.nav"/>
+    
+  	<!-- Logo -->
+    <xsl:call-template name="logo"/>
+    
+    <!-- Login -->
+  	<xsl:call-template name="login"/>
+  </xsl:template>
+  <!-- ================================================== -->
+  
+  
   <!-- ========== TEMPLATE: HEADER BLOCK ========== -->
   <!-- ============================================ -->
   <!-- 
@@ -389,30 +418,18 @@
   <xsl:template name="header.block">
   	<!-- Portal Page Bar -->
     <xsl:call-template name="portal.page.bar"/>
-    <!-- Portal Page Bar -->
     
     <!-- Skip Navigation -->
-    <div id="portalSkipNav">
-      <a href="#mainNavigation" title="{upMsg:getMessage('skip.to.page.navigation', $USER_LANG)}" id="skipToNav" accesskey="N">
-        <xsl:value-of select="upMsg:getMessage('skip.to.page.navigation', $USER_LANG)"/>
-      </a>
-      <a href="#pageContent" title="{upMsg:getMessage('skip.to.page.content', $USER_LANG)}" id="skipToContent" accesskey="C">
-        <xsl:value-of select="upMsg:getMessage('skip.to.page.content', $USER_LANG)"/>
-      </a>
-    </div>
-    <!-- Skip Navigation -->
+    <xsl:call-template name="skip.nav"/>
     
     <!-- Logo -->
     <xsl:call-template name="logo"/>
-    <!-- Logo -->
     
     <!-- Web Search -->
     <xsl:call-template name="web.search"/>
-    <!-- Web Search -->
     
     <!-- Quicklinks
     <xsl:call-template name="quicklinks"/> -->
-    <!-- Quicklinks -->
     
     <!-- SAMPLE:
     <div id="portalHeaderBlock">
@@ -659,9 +676,13 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="content.title.block">
+  	
   	<!-- PAGE TITLE -->
-    <xsl:call-template name="page.title"/>
+  	<xsl:if test="$USE_PAGE_TITLE = 'true'">
+    	<xsl:call-template name="page.title"/>
+    </xsl:if>
     <!-- PAGE TITLE -->
+
   </xsl:template>
   <!-- =================================================== -->
   
@@ -675,11 +696,15 @@
   -->
   <xsl:template name="content.title.focused.block">
   	<!-- BREADCRUMB -->
-    <xsl:call-template name="breadcrumb"/>
+  	<xsl:if test="$USE_BREADCRUMB = 'true'">
+    	<xsl:call-template name="breadcrumb"/>
+    </xsl:if>
     <!-- BREADCRUMB -->
     
-    <!-- PAGE TITLE
-    <xsl:call-template name="page.title"/> -->
+    <!-- PAGE TITLE -->
+    <xsl:if test="$USE_PAGE_TITLE = 'true'">
+    	<xsl:call-template name="page.title"/>
+    </xsl:if>
     <!-- PAGE TITLE -->
   </xsl:template>
   <!-- =========================================================== -->
@@ -705,18 +730,6 @@
     <xsl:call-template name="web.search"/> -->
     <!-- Web Search -->
     
-    <!-- Administration Links -->
-    <xsl:call-template name="administration.links"/>
-    <!-- Administration Links -->
-    
-    <!-- Fragment Administration -->
-    <xsl:copy-of select="//channel[@fname = 'fragment-admin']"/>
-    <!--<xsl:copy-of select="//channel[@fname = 'fragment-admin-exit']"/>-->
-
-    <!-- Quicklinks -->
-    <xsl:call-template name="quicklinks"/>
-    <!-- Quicklinks -->
-    
     <!-- Main Navigation-->
     <xsl:if test="$TAB_CONTEXT = 'sidebar'">
         <xsl:apply-templates select="//navigation">
@@ -724,6 +737,18 @@
         </xsl:apply-templates>
     </xsl:if> 
     <!-- Main Navigation -->
+    
+    <!-- Quicklinks -->
+    <xsl:call-template name="quicklinks"/>
+    <!-- Quicklinks -->
+    
+    <!-- Administration Links -->
+    <xsl:call-template name="administration.links"/>
+    <!-- Administration Links -->
+    
+    <!-- Fragment Administration -->
+    <xsl:copy-of select="//channel[@fname = 'fragment-admin']"/>
+    <!--<xsl:copy-of select="//channel[@fname = 'fragment-admin-exit']"/>-->
     
     <!-- SAMPLE:
     <div id="portalContentSidebarsBlock">
@@ -866,7 +891,7 @@
       
       <!-- uPortal Product Version -->
       <div id="portalProductAndVersion">
-        <p><a href="http://www.jasig.org/uportal" title="Powered by ${UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a></p>
+        <p><a href="http://www.jasig.org/uportal" title="Powered by ${UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a>, an open-source project by <a href="http://www.jasig.org" title="Jasig.org - Open for Higher Education">Jasig</a></p>
         <!-- It's a good idea to leave this in the markup, that way anyone who may be supporting your portal can get to this information quickly by simply using a browser.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
       </div>
       

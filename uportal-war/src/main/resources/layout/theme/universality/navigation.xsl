@@ -121,7 +121,7 @@
             </ul>
             
             <xsl:if test="$USE_SUBNAVIGATION_ROW='true'">
-              <div id="portalNavigationSubrow" class="fl-tab-content">
+              <div id="portalNavigationSubrow">
                 <xsl:call-template name="subnavigation">
                   <xsl:with-param name="CONTEXT" select="'subnav'"/>
                   <xsl:with-param name="TAB_POSITION" select="count(tab[@activeTab='true']/preceding-sibling::tab) + 1"/>

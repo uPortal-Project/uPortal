@@ -68,7 +68,7 @@
         <!-- CAS LOGIN -->
         <token name="CAS_LOGIN_LABEL">Login</token>
         <token name="CAS_LOGIN_LONG_LABEL">Login via Central Authentication Service</token>
-        <token name="CAS_NEW_USER_LABEL">New User</token>
+        <token name="CAS_NEW_USER_LABEL">Start Here</token>
         <token name="CAS_NEW_USER_LONG_LABEL">Create a new Central Authentication Service account for portal access</token>
         <!-- Confirmation Message -->
         <token name="PREF_EXIT_CONFIRMATION">Have you saved your changes?\nAre you sure you want to exit preferences?</token>

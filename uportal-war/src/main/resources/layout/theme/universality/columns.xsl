@@ -60,23 +60,14 @@
     <xsl:param name="COLUMNS" />
   	<div id="portalPageBodyColumns">
     	<xsl:attribute name="class"> <!-- Write appropriate FSS class based on number of columns to produce column layout. -->
-        <xsl:choose>
-          <xsl:when test="$COLUMNS=1">fl-col-flex</xsl:when>
-          <xsl:otherwise>fl-col-flex<xsl:value-of select="$COLUMNS" /></xsl:otherwise>
-        </xsl:choose>
+    		columns-<xsl:value-of select="$COLUMNS" />
       </xsl:attribute>
       <xsl:for-each select="column">
       	<xsl:variable name="NUMBER">
         	<xsl:value-of select="position()" />
         </xsl:variable>
         <xsl:variable name="POSITION"> <!-- Determine column place in the layout and add appropriate class. -->
-          <xsl:choose>
-            <xsl:when test="position()=1 and position()=last()">single</xsl:when>
-            <xsl:when test="position()=1">left</xsl:when>
-            <xsl:when test="position()=last()">right</xsl:when>
-            <xsl:when test="$COLUMNS=3 and position()=2">middle</xsl:when>
-            <xsl:otherwise>column<xsl:value-of select="$COLUMNS" /></xsl:otherwise>
-          </xsl:choose>
+        	column-<xsl:value-of select="$NUMBER" />
         </xsl:variable>
         <xsl:variable name="COLUMN_WIDTH">
         	<xsl:choose>
@@ -108,10 +99,11 @@
             <xsl:otherwise></xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
-        <div id="column_{@ID}" class="portal-page-column {$POSITION} fl-col-flex{$COLUMN_WIDTH} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}"> <!-- Unique column_ID needed for drag and drop. -->
+        
+        <div id="column_{@ID}" class="portal-page-column {$POSITION} fl-container-flex{$COLUMN_WIDTH} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}"> <!-- Unique column_ID needed for drag and drop. -->
           <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-            	<div class="column-permissions"><a class="portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span>Column <xsl:value-of select="$NUMBER"/> Permissions</a></div>
+            	<div class="column-permissions"><a class="button portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span>Column <xsl:value-of select="$NUMBER"/> Permissions</a></div>
             </xsl:if>
             <xsl:apply-templates select="channel"/> <!-- Render the column's portlets.  -->
           </div>
