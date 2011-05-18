@@ -34,9 +34,9 @@
   <desc>uPortal Home Page channel</desc>
   <type>Inline Frame</type>
   <timeout>20000</timeout>
-  <portlet-descriptor>
-    <isFramework>true</isFramework>
-    <portletName>IFrame</portletName>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:isFramework>true</up:isFramework>
+    <up:portletName>IFrame</up:portletName>
   </portlet-descriptor>
   
   

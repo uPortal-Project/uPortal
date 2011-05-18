@@ -19,4 +19,14 @@
         </xs:restriction>
     </xs:simpleType>
     
+    <xs:complexType name="portlet-descriptor">
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="isFramework" type="xs:boolean" fixed="true" />
+                <xs:element name="webAppName" type="xs:string"/>
+            </xs:choice>
+            <xs:element name="portletName" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
 </xs:schema>

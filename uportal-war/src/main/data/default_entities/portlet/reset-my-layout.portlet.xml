@@ -34,9 +34,9 @@
   <desc>Provides a means reset your own layout</desc>
   <type>Portlet</type>
   <timeout>50000</timeout>
-  <portlet-descriptor>
-    <isFramework>true</isFramework>
-    <portletName>ResetMyLayout</portletName>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:isFramework>true</up:isFramework>
+    <up:portletName>ResetMyLayout</up:portletName>
   </portlet-descriptor>
   
   

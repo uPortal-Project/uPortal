@@ -164,7 +164,7 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
         
         IPortletDefinition def = portletDefinitionRegistry
                 .getPortletDefinitionByFname(portletRep.getFname());
-        final PortletDescriptor portletDescriptor = portletRep.getPortletDescriptor();
+        final org.jasig.portal.xml.PortletDescriptor portletDescriptor = portletRep.getPortletDescriptor();
         final Boolean isFramework = portletDescriptor.isIsFramework();
         if (def == null) {
             def = portletDefinitionRegistry.createPortletDefinition(
@@ -365,7 +365,7 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
          rep.setType(def.getType().getName());
          
          
-         final PortletDescriptor portletDescriptor = new PortletDescriptor();
+         final org.jasig.portal.xml.PortletDescriptor portletDescriptor = new org.jasig.portal.xml.PortletDescriptor();
          final IPortletDescriptorKey portletDescriptorKey = def.getPortletDescriptorKey();
          if (portletDescriptorKey.isFrameworkPortlet()) {
              portletDescriptor.setIsFramework(true);

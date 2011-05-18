@@ -34,9 +34,9 @@
   <desc>The Weather Module allows you to access the latest weather conditions and 5-day forecasts for the cities you select.</desc>  
   <type>Portlet</type>
   <timeout>15000</timeout>
-  <portlet-descriptor>
-    <webAppName>/WeatherPortlet</webAppName>
-    <portletName>Weather</portletName>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:webAppName>/WeatherPortlet</up:webAppName>
+    <up:portletName>Weather</up:portletName>
   </portlet-descriptor>
   
   

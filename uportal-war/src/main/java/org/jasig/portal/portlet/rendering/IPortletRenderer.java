@@ -72,17 +72,6 @@ public interface IPortletRenderer {
 	public static final String ATTRIBUTE__PORTLET_PRINT_WRITER = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_PRINT_WRITER";
 	
 	/**
-     * Initializes the portlet within the portlet container
-     * 
-     * @param portletEntity The portlet entity to base the window on
-     * @param portletWindowId Window ID of the portlet to inititalize, may be null
-     * @param httpServletRequest The portal's request
-     * @param httpServletResponse The portal's response (nothing will be written to the response)
-     * @return The correct portlet window ID, this ID should be used to track the portlet that was initialized
-     */
-    public IPortletWindowId doInit(final IPortletEntity portletEntity, final IPortletWindowId portletWindowId, final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse);
-    
-    /**
      * Executes an action in a portlet, handles all the request and response setup and teardown
      * 
      * @param portletWindowId Portlet to target with the action

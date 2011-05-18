@@ -31,9 +31,9 @@
   <desc>Shows which apps (portlets) have been added by users and how often</desc>
   <type>Portlet</type>
   <timeout>50000</timeout>
-  <portlet-descriptor>
-    <isFramework>true</isFramework>
-    <portletName>PopularPortlets</portletName>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:isFramework>true</up:isFramework>
+    <up:portletName>PopularPortlets</up:portletName>
   </portlet-descriptor>
   <category>uPortal</category>
   <group>Everyone</group>

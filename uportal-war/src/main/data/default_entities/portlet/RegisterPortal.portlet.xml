@@ -34,9 +34,9 @@
   <desc></desc>
   <type>Portlet</type>
   <timeout>600000</timeout>
-  <portlet-descriptor>
-    <isFramework>true</isFramework>
-    <portletName>RegisterPortalPortlet</portletName>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:isFramework>true</up:isFramework>
+    <up:portletName>RegisterPortalPortlet</up:portletName>
   </portlet-descriptor>
   
   

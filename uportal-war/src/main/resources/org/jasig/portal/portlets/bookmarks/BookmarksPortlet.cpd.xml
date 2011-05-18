@@ -14,7 +14,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/portlet-publishing ../../../../../xsd/portlet-publishing/portlet-publishing-definition.xsd">
 
-    <step>
+      <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+        <up:webAppName>/BookmarksPortlet</up:webAppName>
+        <up:portletName>BookmarksPortlet</up:portletName>
+      </portlet-descriptor>
+
+      <step>
 
         <name>Bookmarks Set</name>
 
@@ -23,22 +28,6 @@
             Bookmarks portlet instances for a given user with different keys will display and manage entirely distinct bookmarks sets.  Bookmarks portlet instances
             for two different users will display and manage distinct sets of bookmarks regardless of keys.
         </description>
-          
-        <parameter>
-            <name>portletApplicationId</name>
-            <label>portlet.web.application.path</label>
-            <single-text-parameter-input display="hidden">
-                <default>/BookmarksPortlet</default>
-            </single-text-parameter-input>
-        </parameter>
-
-        <parameter>
-            <name>portletName</name>
-            <label>portlet.name</label>
-            <single-text-parameter-input display="hidden">
-                <default>BookmarksPortlet</default>
-            </single-text-parameter-input>
-        </parameter>
 
         <preference>
             <name>bookmarkSetName</name>

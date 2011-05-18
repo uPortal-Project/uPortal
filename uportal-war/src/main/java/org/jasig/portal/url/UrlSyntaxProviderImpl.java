@@ -108,7 +108,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     private IPortalRequestUtils portalRequestUtils;
     private IUrlNodeSyntaxHelperRegistry urlNodeSyntaxHelperRegistry;
     private IPortalUrlProvider portalUrlProvider;
-    
+
     @Autowired
     public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
         this.portalUrlProvider = portalUrlProvider;

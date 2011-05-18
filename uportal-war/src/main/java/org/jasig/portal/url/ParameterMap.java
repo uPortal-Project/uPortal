@@ -63,7 +63,8 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
                 this.put(name, null);
             }
             else {
-                this.put(name, values.clone());
+                final String[] newValues = Arrays.copyOf(values, values.length);
+                this.put(name, newValues);
             }
         }
     }

@@ -47,6 +47,12 @@ public interface IPortletWindow {
     public IPortletEntity getPortletEntity();
     
     /**
+     * @return The ID of the parent portlet window that is delegating rendering to this portlet, null if
+     *      this portlet is not being delegated to.
+     */
+    public IPortletWindowId getDelegationParentId();
+    
+    /**
      * @return The current WindowState of the portlet
      */
     public WindowState getWindowState();
@@ -109,10 +115,4 @@ public interface IPortletWindow {
      * @return The Pluto SPI implementation of a portlet window
      */
     public PortletWindow getPlutoPortletWindow();
-    
-    /**
-     * @return The ID of the parent portlet window that is delegating rendering to this portlet, null if
-     *      this portlet is not being delegated to.
-     */
-    public IPortletWindowId getDelegationParent();
 }

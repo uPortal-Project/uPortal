@@ -34,9 +34,9 @@
   <desc>Provides a means to inspect the state of and flush EhCache instances configured for uPortal.</desc>
   <type>Portlet</type>
   <timeout>30000</timeout>
-  <portlet-descriptor>
-    <isFramework>true</isFramework>
-    <portletName>CacheManager</portletName>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:isFramework>true</up:isFramework>
+    <up:portletName>CacheManager</up:portletName>
   </portlet-descriptor>
   
   

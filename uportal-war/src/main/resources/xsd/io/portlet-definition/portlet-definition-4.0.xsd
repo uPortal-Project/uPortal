@@ -23,7 +23,7 @@
                         <xs:element name="type" type="xs:string"/>
                         <xs:element name="timeout" type="xs:positiveInteger"/>
                         
-                        <xs:element name="portlet-descriptor" type="portlet-descriptor"/>
+                        <xs:element name="portlet-descriptor" type="up:portlet-descriptor"/>
                         
                         <xs:element name="category" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="group" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
@@ -59,16 +59,6 @@
             <xs:field xpath="name"/>
         </xs:unique>
     </xs:element>
-
-    <xs:complexType name="portlet-descriptor">
-        <xs:sequence>
-            <xs:choice>
-                <xs:element name="isFramework" type="xs:boolean" fixed="true" />
-                <xs:element name="webAppName" type="xs:string"/>
-            </xs:choice>
-            <xs:element name="portletName" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
 
     <xs:complexType name="externalPortletParameter">
         <xs:sequence>

@@ -14,6 +14,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/portlet-publishing ../../../../../xsd/portlet-publishing/portlet-publishing-definition.xsd">
 
+      <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+        <up:webAppName>/SimpleContentPortlet</up:webAppName>
+        <up:portletName>cms</up:portletName>
+      </portlet-descriptor>
+
     <step>
 
       <name>Portlet Descriptor</name>
@@ -21,44 +26,6 @@
       <description>
         Enter the Portlet web-application path and portlet name.
       </description>
-
-      <parameter>
-        <name>isFrameworkPortlet</name>
-        <label>framework.portlet</label>
-        <description>
-          Portlet is deployed in the same web-application as uPortal. If checked "Portlet Web Application Path"
-          is ignored.
-        </description>
-        <single-choice-parameter-input display="hidden">
-            <default>false</default>
-            <option value="true" label="true"/>
-            <option value="false" label="true"/>
-        </single-choice-parameter-input>
-      </parameter>
-
-      <parameter>
-        <name>portletApplicationId</name>
-        <label>portlet.web.application.path</label>
-        <description>
-          This is the name of the web application the portlet resides in including a preceding /.
-        </description>
-        <example>/pluto-testsuite</example>
-        <single-text-parameter-input display="hidden">
-          <default>/SimpleContentPortlet</default>
-        </single-text-parameter-input>
-      </parameter>
-      
-      <parameter>
-        <name>portletName</name>
-        <label>portlet.name</label>
-        <description>
-          This is the name of the portlet as defined in the portlet.xml descriptor.
-        </description>
-        <example>test-portlet-1</example>
-        <single-text-parameter-input display="hidden">
-          <default>cms</default>
-        </single-text-parameter-input>
-      </parameter>
 
       <parameter>
         <name>disableDynamicTitle</name>

@@ -34,9 +34,9 @@
   <desc>Small monthly calendar.</desc>
   <type>Portlet</type>
   <timeout>60000</timeout>
-  <portlet-descriptor>
-    <webAppName>/jasig-widget-portlets</webAppName>
-    <portletName>calendar</portletName>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:webAppName>/jasig-widget-portlets</up:webAppName>
+    <up:portletName>calendar</up:portletName>
   </portlet-descriptor>
   
   

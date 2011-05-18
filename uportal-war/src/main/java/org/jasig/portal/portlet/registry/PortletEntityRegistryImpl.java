@@ -50,6 +50,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
@@ -79,6 +80,7 @@ import com.google.common.base.Function;
 public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     static final char ID_PART_SEPERATOR = '_';
     static final Pattern ID_PART_SEPERATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPERATOR)));
+    static final String DELEGATE_LAYOUT_NODE_ID_PREFIX = "dlg";
     
     static final String PORTLET_ENTITY_DATA_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_DATA";
     static final String PORTLET_ENTITY_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY.thread-";
@@ -239,6 +241,20 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         catch (PortalException pe) {
             return this.getOrCreatePortletEntityByFname(request, userInstance, fname);
         }
+    }
+    
+    @Override
+    public IPortletEntity getOrCreateDelegatePortletEntity(HttpServletRequest request, IPortletWindowId parentPortletWindowId, IPortletDefinitionId delegatePortletDefinitionId) {
+        //Create a special synthetic layout node ID for the delegate entity
+        final String layoutNodeId = DELEGATE_LAYOUT_NODE_ID_PREFIX + "-" + delegatePortletDefinitionId + "-" + parentPortletWindowId;
+        
+        //Grab the current user
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IPerson person = userInstance.getPerson();
+        final int userId = person.getID();
+        
+        //Use the general API, the only thing special is the layout node id
+        return getOrCreatePortletEntity(request, delegatePortletDefinitionId, layoutNodeId, userId);
     }
     
     /* (non-Javadoc)
@@ -646,6 +662,13 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     protected boolean shouldBePersisted(IPortletEntity portletEntity) {
+        //Delegate entities should NEVER be persisted
+        final String layoutNodeId = portletEntity.getLayoutNodeId();
+        if (layoutNodeId.startsWith(DELEGATE_LAYOUT_NODE_ID_PREFIX)) {
+            return false;
+        }
+        
+        //Only non delegate entities with preferences or a non-null window state should be persisted
         final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
         final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
         return CollectionUtils.isNotEmpty(preferences) || !portletEntity.getWindowStates().isEmpty();

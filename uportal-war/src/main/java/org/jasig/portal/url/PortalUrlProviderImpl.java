@@ -19,11 +19,18 @@
 
 package org.jasig.portal.url;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.api.portlet.DelegationRequest;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.portlet.delegation.IPortletDelegationManager;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -51,6 +58,12 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
     private IUserInstanceManager userInstanceManager;
     private IUrlNodeSyntaxHelperRegistry urlNodeSyntaxHelperRegistry;
     private IPortletWindowRegistry portletWindowRegistry;
+    private IPortletDelegationManager portletDelegationManager;
+    
+    @Autowired
+    public void setPortletDelegationManager(IPortletDelegationManager portletDelegationManager) {
+        this.portletDelegationManager = portletDelegationManager;
+    }
     
     @Autowired
     public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
@@ -123,8 +136,8 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
      */
     @Override
     public IPortalUrlBuilder getPortalUrlBuilderByPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId, UrlType urlType) {
-        final String layoutNodeId = this.verifyPortletWindowId(request, portletWindowId);
-        return new PortalUrlBuilder(this.urlSyntaxProvider, request, layoutNodeId, portletWindowId, urlType);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        return getPortalUrlBuilderByPortletWindow(request, portletWindow, urlType);
     }
 
     /* (non-Javadoc)
@@ -133,8 +146,44 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
     @Override
     public IPortalUrlBuilder getPortalUrlBuilderByPortletFName(HttpServletRequest request, String portletFName, UrlType urlType) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, portletFName);
+        return this.getPortalUrlBuilderByPortletWindow(request, portletWindow, urlType);
+    }
 
-        return this.getPortalUrlBuilderByPortletWindow(request, portletWindow.getPortletWindowId(), urlType);
+    protected IPortalUrlBuilder getPortalUrlBuilderByPortletWindow(HttpServletRequest request, IPortletWindow portletWindow, UrlType urlType) {
+        //See if the targeted portlet is actually a delegate
+        final IPortletWindowId parentPortletWindowId = portletWindow.getDelegationParentId();
+        if (parentPortletWindowId != null) {
+            //Get the portal url builder that targets the parent
+            final IPortalUrlBuilder portalUrlBuilder = this.getPortalUrlBuilderByPortletWindow(request, parentPortletWindowId, urlType);
+
+            //See if there is additional delegation request data that needs to be added to the URL
+            final DelegationRequest delegationRequest = this.portletDelegationManager.getDelegationRequest(request, parentPortletWindowId);
+            if (delegationRequest != null) {
+                final IPortletUrlBuilder parentPortletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(parentPortletWindowId);
+                
+                final Map<String, List<String>> parentParameters = delegationRequest.getParentParameters();
+                if (parentParameters != null) {
+                    parentPortletUrlBuilder.setParameters(parentParameters);
+                }
+                
+                final PortletMode parentPortletMode = delegationRequest.getParentPortletMode();
+                if (parentPortletMode != null) {
+                    parentPortletUrlBuilder.setPortletMode(parentPortletMode);
+                }
+                
+                final WindowState parentWindowState = delegationRequest.getParentWindowState();
+                if (parentWindowState != null) {
+                    parentPortletUrlBuilder.setWindowState(parentWindowState);
+                }
+            }
+            
+            return portalUrlBuilder;
+        }
+        
+        //create the portlet url builder
+        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+        final String layoutNodeId = this.verifyPortletWindowId(request, portletWindowId);
+        return new PortalUrlBuilder(this.urlSyntaxProvider, request, layoutNodeId, portletWindowId, urlType);
     }
     
     /**
@@ -147,6 +196,11 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        final IPortletWindowId delegationParentWindowId = portletWindow.getDelegationParentId();
+        if (delegationParentWindowId != null) {
+            return verifyPortletWindowId(request, delegationParentWindowId);
+        }
+        
         final IPortletEntity portletEntity = portletWindow.getPortletEntity();
         final String channelSubscribeId = portletEntity.getLayoutNodeId();
         final IUserLayoutNodeDescription node = userLayoutManager.getNode(channelSubscribeId);

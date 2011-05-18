@@ -21,7 +21,6 @@ package org.jasig.portal.portlet.delegation;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
@@ -38,7 +37,6 @@ import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
-import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,11 +46,7 @@ import org.springframework.stereotype.Service;
  * @version $Revision$
  */
 @Service
-public class PortletDelegationLocatorImpl implements PortletDelegationLocator, IPortletDelegationManager {
-    private static final String DELEGATE_PARENT_PORTLET_URL_PREFIX = "DELEGATE_PARENT_PORTLET_URL_";
-    private static final String DELEGATE_PORTLET_ACTION_REDIRECT_URL = "DELEGATE_PORTLET_ACTION_REDIRECT_URL";
-
-    
+public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
     private IPersonManager personManager;
@@ -60,7 +54,12 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletRenderer portletRenderer;
     private IPortalUrlProvider portalUrlProvider;
-    
+    private IPortletDelegationManager portletDelegationManager;
+
+    @Autowired
+    public void setPortletDelegationManager(IPortletDelegationManager portletDelegationManager) {
+        this.portletDelegationManager = portletDelegationManager;
+    }
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
@@ -106,36 +105,21 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
      * @see org.jasig.portal.api.portlet.PortletDelegationLocator#createRequestDispatcher(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */
     @Override
-    public PortletDelegationDispatcher createRequestDispatcher(PortletRequest portletRequest, IPortletDefinitionId portletDefinitionId) {
+    public PortletDelegationDispatcher createRequestDispatcher(PortletRequest portletRequest, IPortletDefinitionId delegatePortletDefinitionId) {
         final HttpServletRequest request = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
-        final HttpServletResponse response = this.portalRequestUtils.getOriginalPortalResponse(portletRequest);
+        
+        final String windowID = portletRequest.getWindowID();
+        final IPortletWindowId parentPortletWindowId = this.portletWindowRegistry.getPortletWindowId(request, windowID);
+        
+        final IPortletEntity delegatePortletEntity = this.portletEntityRegistry.getOrCreateDelegatePortletEntity(request, parentPortletWindowId, delegatePortletDefinitionId);
+        final IPortletEntityId delegatePortletEntityId = delegatePortletEntity.getPortletEntityId();
+        
+        final IPortletWindow delegatePortletWindow = this.portletWindowRegistry.createDelegatePortletWindow(request, delegatePortletEntityId, parentPortletWindowId);
+        
         final IPerson person = this.personManager.getPerson(request);
+        final int userId = person.getID();
         
-        final String transientChannelSubscribeId = "CONFIG_" + portletDefinitionId;
-        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, portletDefinitionId, transientChannelSubscribeId, person.getID());
-        
-        final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-        
-        
-        IPortletWindowId portletWindowId = this.portletWindowRegistry.getDefaultPortletWindowId(request, portletEntityId);
-        IPortletWindow parentPortletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-
-        final IPortletWindowId parentPortletWindowId = parentPortletWindow.getPortletWindowId();
-        final IPortletWindow portletWindow = this.portletWindowRegistry.createDelegatePortletWindow(request, portletEntityId, parentPortletWindowId);
-
-        //Initialize the window since we just created it
-        /*final ContainerInvocation invocation = ContainerInvocation.getInvocation();
-        try {*/
-            //this.portletRenderer.doInit(portletEntity, portletWindow.getPortletWindowId(), request, response);
-        this.portletRenderer.doInit(portletEntity, portletWindowId, request, response);
-        /*}
-        finally {
-            if (invocation != null) {
-                ContainerInvocation.setInvocation(invocation.getPortletContainer(), invocation.getPortletWindow());
-            }
-        }*/
-        
-        return new PortletDelegationDispatcherImpl(portletWindow, parentPortletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer, this.portalUrlProvider, this);
+        return new PortletDelegationDispatcherImpl(delegatePortletWindow, userId, portalRequestUtils, personManager, portletRenderer, portalUrlProvider, portletDelegationManager);
     }
 
     /* (non-Javadoc)
@@ -148,45 +132,11 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator, I
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
         
-        final IPortletWindowId delegationParentId = portletWindow.getDelegationParent();
+        final IPortletWindowId delegationParentId = portletWindow.getDelegationParentId();
         if (delegationParentId == null) {
             throw new IllegalArgumentException("Portlet window '" + portletWindow + "' is not a delegate window and cannot be delgated to.");
         }
         
-        final IPortletWindow parentPortletWindow = this.portletWindowRegistry.getPortletWindow(request, delegationParentId);
-        
-        return new PortletDelegationDispatcherImpl(portletWindow, parentPortletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer, this.portalUrlProvider, this);
-    }
-
-    @Override
-    public void setParentPortletUrl(HttpServletRequest request, IPortalUrlBuilder parentPortletUrl) {
-        //TODO this doesn't work so well if a parent wants to delegate to multiple portlets in a single request
-        final IPortletWindowId parentPortletWindowId = parentPortletUrl.getTargetPortletWindowId();
-        request.setAttribute(DELEGATE_PARENT_PORTLET_URL_PREFIX + parentPortletWindowId.getStringId(), parentPortletUrl);
-    }
-
-    @Override
-    public IPortalUrlBuilder getParentPortletUrl(HttpServletRequest request, IPortletWindowId parentPortletWindowId) {
-        return (IPortalUrlBuilder)request.getAttribute(DELEGATE_PARENT_PORTLET_URL_PREFIX + parentPortletWindowId.getStringId());
-    }
-
-    @Override
-    public void setDelegatePortletActionRedirectUrl(HttpServletRequest request, IPortalUrlBuilder portletUrl) {
-//        final HttpServletRequest portletAdaptorParentRequest = this.portalRequestUtils.getPortletAdaptorParentRequest(request);
-//        portletAdaptorParentRequest.setAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL, portletUrl);
-    }
-
-    @Override
-    public IPortalUrlBuilder getDelegatePortletActionRedirectUrl(HttpServletRequest request) {
-//        request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(request);
-//        return (IPortalUrlBuilder)request.getAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL);
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public IPortalUrlBuilder getDelegatePortletActionRedirectUrl(PortletRequest portletRequest) {
-//        final HttpServletRequest request = this.portalRequestUtils.getOriginalPortletAdaptorRequest(portletRequest);
-//        return (IPortalUrlBuilder)request.getAttribute(DELEGATE_PORTLET_ACTION_REDIRECT_URL);
-        throw new UnsupportedOperationException();
+        return new PortletDelegationDispatcherImpl(portletWindow, person.getID(), this.portalRequestUtils, this.personManager, this.portletRenderer, this.portalUrlProvider, this.portletDelegationManager);
     }
 }

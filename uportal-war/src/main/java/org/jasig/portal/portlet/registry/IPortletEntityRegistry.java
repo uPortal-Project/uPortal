@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.user.IUserInstance;
 
 /**
@@ -92,13 +93,22 @@ public interface IPortletEntityRegistry {
     public IPortletEntity getOrCreatePortletEntityByFname(HttpServletRequest request, IUserInstance userInstance, String fname, String preferredChannelSubscribeId);
     
     /**
+     * Gets or Creates a delegate portlet entity based on the portlet definition and for delegation to by the portlet window.
+     * 
+     * @param request The current request
+     * @param parentPortletWindowId The portlet window that is initiating the delegation
+     * @param delegatePortletDefinitionId The portlet definition that will be delegated to
+     * @return A delegate portlet entity
+     */
+    public IPortletEntity getOrCreateDelegatePortletEntity(HttpServletRequest request, IPortletWindowId parentPortletWindowId, IPortletDefinitionId delegatePortletDefinitionId);
+    
+    /**
      * Stores changes made to an existing portlet entity
      * 
      * @param portletEntity The entity to update the persistent store for
      * @throws IllegalArgumentException if portletEntity is null
      */
     public void storePortletEntity(HttpServletRequest request, IPortletEntity portletEntity);
-    
 //    /**
 //     * Get all {@link IPortletEntity}s that exist for the specified user id. (From {@link org.jasig.portal.security.IPerson#getID()}.
 //     * 

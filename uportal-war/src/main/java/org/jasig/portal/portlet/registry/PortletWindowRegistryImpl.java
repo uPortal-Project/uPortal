@@ -302,19 +302,32 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     
     @Override
     public IPortletWindow createDelegatePortletWindow(HttpServletRequest request, IPortletEntityId portletEntityId, IPortletWindowId delegationParentId) {
-//        Validate.notNull(request, "request can not be null");
-//        Validate.notNull(portletEntityId, "portletEntityId can not be null");
-//        Validate.notNull(delegationParentId, "delegationParentId can not be null");
-//
-//        //Create the window
-//        final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(portletEntityId);
-//        final IPortletWindow portletWindow = this.createPortletWindow(request, portletWindowId, portletEntityId, delegationParentId);
-//        
-//        //Store it in the request
-//        this.storePortletWindow(request, portletWindow);
-//        
-//        return this.wrapPortletWindowForRequest(request, portletWindow);
-        throw new UnsupportedOperationException();
+        Validate.notNull(request, "request can not be null");
+        Validate.notNull(portletEntityId, "portletEntityId can not be null");
+        
+        //TODO does a delegate portlet entity need some sort of special treatment or do we just assume that the calling code is using one?
+        
+        final IPortletWindowId portletWindowId = this.getDefaultPortletWindowId(request, portletEntityId);
+
+        final Map<IPortletWindowId, IPortletWindow> portletWindowMap = getPortletWindowMap(request);
+        
+        //Check if there is portlet window cached in the request
+        IPortletWindow portletWindow = portletWindowMap.get(portletWindowId);
+        if (portletWindow != null) {
+            logger.trace("Found IPortletWindow {} in request cache", portletWindow.getPortletWindowId());
+            return portletWindow;
+        }
+        
+        final PortletWindowData portletWindowData = this.getOrCreateDefaultPortletWindowData(request, portletEntityId, portletWindowId, delegationParentId);
+        portletWindow = wrapPortletWindowData(request, portletWindowData);
+        if (portletWindow == null) {
+            return null;
+        }
+        
+        //Cache the wrapped window in the request
+        portletWindowMap.put(portletWindowId, portletWindow);
+        
+        return portletWindow;
     }
     
     @Override
@@ -551,8 +564,12 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         }
         return PortalWebUtils.getMapSessionAttribute(session, PORTLET_WINDOW_DATA_ATTRIBUTE, create);
     }
+    
+    protected PortletWindowData getOrCreateDefaultPortletWindowData(HttpServletRequest request, IPortletEntityId portletEntityId, IPortletWindowId portletWindowId) {
+        return getOrCreateDefaultPortletWindowData(request, portletEntityId, portletWindowId, null);
+    }
 
-    protected PortletWindowData getOrCreateDefaultPortletWindowData(HttpServletRequest request, IPortletEntityId portletEntityId, final IPortletWindowId portletWindowId) {
+    protected PortletWindowData getOrCreateDefaultPortletWindowData(HttpServletRequest request, IPortletEntityId portletEntityId, IPortletWindowId portletWindowId, IPortletWindowId delegationParentId) {
         //Sync on session map to make sure duplicate PortletWindowData is never created
         final ConcurrentMap<IPortletWindowId, PortletWindowData> portletWindowDataMap = getPortletWindowDataMap(request);
         //Check if there portlet window data cached in the session
@@ -563,7 +580,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         }
         
         //Create new window data for and initialize
-        portletWindowData = new PortletWindowData(portletWindowId, portletEntityId);                
+        portletWindowData = new PortletWindowData(portletWindowId, portletEntityId, delegationParentId);
         this.initializePortletWindowData(request, portletWindowData);
         
         //Store in the session cache

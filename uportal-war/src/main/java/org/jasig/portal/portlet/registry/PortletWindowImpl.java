@@ -169,8 +169,8 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
     }
 
     @Override
-    public IPortletWindowId getDelegationParent() {
-        return null;
+    public IPortletWindowId getDelegationParentId() {
+        return this.portletWindowData.getDelegationParentId();
     }
 
     @Override

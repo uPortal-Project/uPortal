@@ -19,90 +19,141 @@
 
 package org.jasig.portal.api.portlet;
 
-import javax.portlet.ActionResponse;
+import java.util.Collections;
+import java.util.Map;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.jasig.portal.url.IPortalUrlBuilder;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
+
+import org.jasig.portal.url.ParameterMap;
 
 /**
- * The resulting state of the delegation action request
+ * The resulting state of the delegated action request
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class DelegationActionResponse extends DelegationResponse {
-    private final String redirectUrl;
-    private final IPortalUrlBuilder renderUrl;
+    private final String redirectLocation;
+    private final String renderUrlParamName;
+    private final PortletMode portletMode;
+    private final WindowState windowState;
+    private final Map<String, String[]> renderParameters;
 
-    public DelegationActionResponse(DelegateState delegateState, String redirectUrl) {
+    
+    public DelegationActionResponse(DelegateState delegateState, PortletMode portletMode, WindowState windowState,
+            Map<String, String[]> renderParameters) {
         super(delegateState);
-        this.redirectUrl = redirectUrl;
-        this.renderUrl = null;
+        
+        this.portletMode = portletMode;
+        this.windowState = windowState;
+        if (renderParameters != null) {
+            this.renderParameters = new ParameterMap(renderParameters);
+        }
+        else {
+            this.renderParameters =  Collections.emptyMap();
+        }
+        
+        this.redirectLocation = null;
+        this.renderUrlParamName = null;
+    }
+    
+    public DelegationActionResponse(DelegateState delegateState, String redirectLocation, String renderUrlParamName) {
+        super(delegateState);
+        this.redirectLocation = redirectLocation;
+        this.renderUrlParamName = renderUrlParamName;
+
+        this.portletMode = null;
+        this.windowState = null;
+        this.renderParameters = Collections.emptyMap();
     }
 
-    public DelegationActionResponse(DelegateState delegateState, IPortalUrlBuilder renderUrl) {
-        super(delegateState);
-        this.redirectUrl = null;
-        this.renderUrl = renderUrl;
+    /**
+     * @return The render url parameter name specified in {@link ActionResponse#sendRedirect(String, String)}, null if no redirect was sent
+     */
+    public String getRenderUrlParamName() {
+        return renderUrlParamName;
     }
 
     /**
      * @return The url specified in {@link ActionResponse#sendRedirect(String)}, null if no redirect was sent
      */
-    public String getRedirectUrl() {
-        return this.redirectUrl;
+    public String getRedirectLocation() {
+        return this.redirectLocation;
+    }
+    
+    public PortletMode getPortletMode() {
+        return portletMode;
     }
 
-    /**
-     * @return The render PortletUrl resulting from the delegate action completing, null if a redirect was sent
-     */
-    public IPortalUrlBuilder getRenderUrl() {
-        return this.renderUrl;
+    public WindowState getWindowState() {
+        return windowState;
     }
 
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof DelegationActionResponse)) {
-            return false;
-        }
-        DelegationActionResponse rhs = (DelegationActionResponse) object;
-        return new EqualsBuilder()
-            .appendSuper(super.equals(object))
-            .append(this.redirectUrl, rhs.redirectUrl)
-            .append(this.renderUrl, rhs.renderUrl)
-            .isEquals();
+    public Map<String, String[]> getRenderParameters() {
+        //Have to clone to make sure the value arrays don't get modified
+        return new ParameterMap(this.renderParameters);
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(1445247369, -1009176817)
-            .appendSuper(super.hashCode())
-            .append(this.redirectUrl)
-            .append(this.renderUrl)
-            .toHashCode();
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((portletMode == null) ? 0 : portletMode.hashCode());
+        result = prime * result + ((redirectLocation == null) ? 0 : redirectLocation.hashCode());
+        result = prime * result + ((renderParameters == null) ? 0 : renderParameters.hashCode());
+        result = prime * result + ((renderUrlParamName == null) ? 0 : renderUrlParamName.hashCode());
+        result = prime * result + ((windowState == null) ? 0 : windowState.hashCode());
+        return result;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DelegationActionResponse other = (DelegationActionResponse) obj;
+        if (portletMode == null) {
+            if (other.portletMode != null)
+                return false;
+        }
+        else if (!portletMode.equals(other.portletMode))
+            return false;
+        if (redirectLocation == null) {
+            if (other.redirectLocation != null)
+                return false;
+        }
+        else if (!redirectLocation.equals(other.redirectLocation))
+            return false;
+        if (renderParameters == null) {
+            if (other.renderParameters != null)
+                return false;
+        }
+        else if (!renderParameters.equals(other.renderParameters))
+            return false;
+        if (renderUrlParamName == null) {
+            if (other.renderUrlParamName != null)
+                return false;
+        }
+        else if (!renderUrlParamName.equals(other.renderUrlParamName))
+            return false;
+        if (windowState == null) {
+            if (other.windowState != null)
+                return false;
+        }
+        else if (!windowState.equals(other.windowState))
+            return false;
+        return true;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .appendSuper(super.toString())
-            .append("redirectUrl", this.redirectUrl)
-            .append("renderUrl", this.renderUrl)
-            .toString();
+        return "DelegationActionResponse [redirectLocation=" + redirectLocation + ", renderUrlParamName="
+                + renderUrlParamName + ", portletMode=" + portletMode + ", windowState=" + windowState
+                + ", renderParameters=" + renderParameters + ", getDelegateState()=" + getDelegateState() + "]";
     }
 }

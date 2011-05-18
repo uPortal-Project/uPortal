@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -50,6 +49,7 @@ import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Supports;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.api.portlet.DelegateState;
 import org.jasig.portal.api.portlet.DelegationActionResponse;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
@@ -73,11 +73,9 @@ import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
-import org.jasig.portal.portletpublishing.xml.Parameter;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.jasig.portal.portletpublishing.xml.Preference;
 import org.jasig.portal.portletpublishing.xml.Step;
-import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
@@ -89,6 +87,7 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.jasig.portal.utils.Tuple;
+import org.jasig.portal.xml.PortletDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
@@ -732,31 +731,41 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    final PortletDelegationDispatcher requestDispatcher = this.portletDelegationLocator.getRequestDispatcher(actionRequest, portletWindowId);
 	    
 	    final DelegationActionResponse delegationResponse = requestDispatcher.doAction(actionRequest, actionResponse);
-//	    final PortletUrl renderUrl = delegationResponse.getRenderUrl();
-//	    final DelegateState delegateState = delegationResponse.getDelegateState();
-//        if (renderUrl == null || 
-//	            (renderUrl.getPortletMode() != null && !IPortletRenderer.CONFIG.equals(renderUrl.getPortletMode())) ||
-//	            !IPortletRenderer.CONFIG.equals(delegateState.getPortletMode())) {
-//	        
-//	        //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
-//	        return true;
-//	    }
+	    
+	    final String redirectLocation = delegationResponse.getRedirectLocation();
+	    final DelegateState delegateState = delegationResponse.getDelegateState();
+        if (redirectLocation == null || 
+	            (delegationResponse.getPortletMode() != null && !IPortletRenderer.CONFIG.equals(delegationResponse.getPortletMode())) ||
+	            !IPortletRenderer.CONFIG.equals(delegateState.getPortletMode())) {
+	        
+	        //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
+	        return true;
+	    }
 	    
 	    return false;
 	}
 	
 	public boolean offerPortletSelection(PortletDefinitionForm form) {
-		IPortletType portletType = this.portletTypeRegistry.getPortletType(form.getTypeId());
-		if("Portlet".equals(portletType.getName())) {
-			return true;
-		} else {
-			// customer has chosen one of the framework portlets
-			// properly set ApplicationId and PortletName
-			form.setApplicationId(null);
-			form.setPortletName(portletType.getName());
-			form.setFramework(true);
-			return false;
-		} 
+		final IPortletType portletType = this.portletTypeRegistry.getPortletType(form.getTypeId());
+		final PortletPublishingDefinition portletPublishingDefinition = this.portletPublishingDefinitionDao.getChannelPublishingDefinition(portletType.getId());
+		final PortletDescriptor portletDescriptor = portletPublishingDefinition.getPortletDescriptor();
+		if (portletDescriptor == null) {
+		    return true;
+		}
+		
+		final Boolean isFramework = portletDescriptor.isIsFramework();
+		if (isFramework != null && isFramework) {
+		    form.setFramework(isFramework);
+		}
+		else {
+		    final String webAppName = portletDescriptor.getWebAppName();
+            form.setApplicationId(webAppName);
+		}
+		
+		final String portletName = portletDescriptor.getPortletName();
+        form.setPortletName(portletName);
+		
+		return false;
 	}
 	
 	protected Tuple<String, String> getPortletDescriptorKeys(PortletDefinitionForm form) {

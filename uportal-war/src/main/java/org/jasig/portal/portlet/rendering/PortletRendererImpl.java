@@ -42,11 +42,9 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.portlet.OutputCapturingHttpServletResponseWrapper;
 import org.jasig.portal.portlet.PortletDispatchException;
-import org.jasig.portal.portlet.PortletLoadFailureException;
 import org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
@@ -91,52 +89,6 @@ public class PortletRendererImpl implements IPortletRenderer {
     @Autowired
     public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
         this.portletDelegationLocator = portletDelegationLocator;
-    }
-
-    @Override
-    public IPortletWindowId doInit(IPortletEntity portletEntity, IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-        final IPortletWindow portletWindow;
-        if (portletWindowId != null) {
-            portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
-            if (portletWindow == null) {
-                throw new IllegalArgumentException("Portlet window is null but a portlet window ID has been configured for it: " + portletWindowId);
-            }
-        }
-        else {
-            portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(httpServletRequest, portletEntityId);
-        }
-        
-        //init the portlet window
-        final StringWriter initResultsOutput = new StringWriter();
-        final OutputCapturingHttpServletResponseWrapper portletHttpServletResponseWrapper = new OutputCapturingHttpServletResponseWrapper(httpServletResponse, new PrintWriter(initResultsOutput));
-        
-        httpServletRequest = this.setupPortletRequest(httpServletRequest);
-        httpServletResponse = this.setupPortletResponse(httpServletResponse);
-        
-        try {
-            if (this.logger.isDebugEnabled()) {
-                this.logger.debug("Loading portlet window '" + portletWindow + "'");
-            }
-            
-            this.portletContainer.doLoad(portletWindow.getPlutoPortletWindow(), httpServletRequest, portletHttpServletResponseWrapper);
-        }
-        catch (PortletException pe) {
-            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while being loaded.", portletWindow, pe);
-        }
-        catch (PortletContainerException pce) {
-            throw new PortletLoadFailureException("The portlet container threw an exception while loading portlet window '" + portletWindow + "'.", portletWindow, pce);
-        }
-        catch (IOException ioe) {
-            throw new PortletLoadFailureException("The portlet window '" + portletWindow + "' threw an exception while being loaded.", portletWindow, ioe);
-        }
-        
-        final StringBuffer initResults = initResultsOutput.getBuffer();
-        if (initResults.length() > 0) {
-            throw new PortletLoadFailureException("Content was written to response during loading of portlet window '" + portletWindow + "' . Response Content: " + initResults, portletWindow);
-        }
-        
-        return portletWindow.getPortletWindowId();
     }
 
     /* (non-Javadoc)

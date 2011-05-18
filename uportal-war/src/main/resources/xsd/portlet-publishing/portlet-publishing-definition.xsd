@@ -2,54 +2,50 @@
 <xs:schema xmlns="https://source.jasig.org/schemas/uportal/portlet-publishing"
     targetNamespace="https://source.jasig.org/schemas/uportal/portlet-publishing"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:up="https://source.jasig.org/schemas/uportal"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+    
+    <xs:import namespace="https://source.jasig.org/schemas/uportal" schemaLocation="../common-types.xsd"/>
 
     <xs:element name="portlet-publishing-definition">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="step" maxOccurs="unbounded" />
+                <xs:element name="portlet-descriptor" type="up:portlet-descriptor" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="step" type="step" maxOccurs="unbounded" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="step">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="name" type="xs:string" />
-                <xs:element name="description" type="xs:string" />
-                <xs:element ref="parameter" minOccurs="0" maxOccurs="unbounded" />
-                <xs:element ref="preference" minOccurs="0" maxOccurs="unbounded" />
-                <xs:element name="arbitrary-preferences" minOccurs="0"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="parameter">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="name" type="xs:string" />
-                <xs:element name="label" type="xs:string" />
-                <xs:element name="description" type="xs:string"
-                    minOccurs="0" />
-                <xs:element name="example" type="xs:string"
-                    minOccurs="0" />
-                <xs:element ref="parameter-input"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="preference">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="name" type="xs:string" />
-                <xs:element name="readOnly" type="xs:boolean"
-                    default="false" minOccurs="0" />
-                <xs:element name="label" type="xs:string" />
-                <xs:element name="description" type="xs:string"
-                    minOccurs="0" />
-                <xs:element name="example" type="xs:string"
-                    minOccurs="0" />
-                <xs:element ref="preference-input"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
+    
+    <xs:complexType name="step">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="description" type="xs:string" />
+            <xs:element name="parameter" type="parameter" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="preference" type="preference" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="arbitrary-preferences" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+        
+    <xs:complexType name="parameter">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="label" type="xs:string" />
+            <xs:element name="description" type="xs:string" minOccurs="0" />
+            <xs:element name="example" type="xs:string" minOccurs="0" />
+            <xs:element ref="parameter-input"/>
+        </xs:sequence>
+    </xs:complexType>
+        
+    <xs:complexType name="preference">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="readOnly" type="xs:boolean" default="false" minOccurs="0" />
+            <xs:element name="label" type="xs:string" />
+            <xs:element name="description" type="xs:string" minOccurs="0" />
+            <xs:element name="example" type="xs:string" minOccurs="0" />
+            <xs:element ref="preference-input"/>
+        </xs:sequence>
+    </xs:complexType>
 
     <xs:complexType name="input-type" abstract="true"/>
 
@@ -108,7 +104,7 @@
             <xs:complexContent>
                 <xs:extension base="single-valued-preference-input-type">
                     <xs:sequence>
-                        <xs:element ref="option" maxOccurs="unbounded" />
+                        <xs:element name="option" type="option" maxOccurs="unbounded" />
                     </xs:sequence>
                     <xs:attribute name="display" type="singleChoiceDisplay"/>
                 </xs:extension>
@@ -121,7 +117,7 @@
             <xs:complexContent>
                 <xs:extension base="multi-valued-preference-input-type">
                     <xs:sequence>
-                        <xs:element ref="option" maxOccurs="unbounded" />
+                        <xs:element name="option" type="option" maxOccurs="unbounded" />
                     </xs:sequence>
                     <xs:attribute name="display" type="multiChoiceDisplay"/>
                 </xs:extension>
@@ -133,14 +129,14 @@
         <xs:complexContent>
             <xs:extension base="input-type">
                 <xs:sequence>
-                    <xs:element name="default" type="xs:string"
-                        minOccurs="0" />
+                    <xs:element name="default" type="xs:string" minOccurs="0" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
     <xs:element name="parameter-input" abstract="true" type="parameter-input-type"/>
+    
     <xs:element name="single-text-parameter-input" substitutionGroup="parameter-input">
         <xs:complexType>
             <xs:complexContent>
@@ -156,7 +152,7 @@
             <xs:complexContent>
                 <xs:extension base="parameter-input-type">
                     <xs:sequence>
-                        <xs:element ref="option" maxOccurs="unbounded" />
+                        <xs:element name="option" type="option" maxOccurs="unbounded" />
                     </xs:sequence>
                     <xs:attribute name="display" type="singleChoiceDisplay"/>
                 </xs:extension>
@@ -164,12 +160,10 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="option">
-        <xs:complexType>
-            <xs:attribute name="value" type="xs:string"/>
-            <xs:attribute name="label" type="xs:string"/>
-        </xs:complexType>
-    </xs:element>
+    <xs:complexType name="option">
+        <xs:attribute name="value" type="xs:string"/>
+        <xs:attribute name="label" type="xs:string"/>
+    </xs:complexType>
 
     <xs:simpleType name="textDisplay">
         <xs:restriction base="xs:string">

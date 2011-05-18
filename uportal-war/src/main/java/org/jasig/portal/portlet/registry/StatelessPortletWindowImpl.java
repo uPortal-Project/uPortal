@@ -109,7 +109,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
         this.portletMode = portletWindow.getPortletMode();
         this.windowState = portletWindow.getWindowState();
         this.portletDefinition = portletWindow.getPlutoPortletWindow().getPortletDefinition();;
-        this.delegationParent = portletWindow.getDelegationParent();
+        this.delegationParent = portletWindow.getDelegationParentId();
         
         Validate.notNull(this.portletEntity, "portletWindow.portletEntity can not be null");
         Validate.notNull(this.portletMode, "portletWindow.portletMode can not be null");
@@ -221,7 +221,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      * @see org.jasig.portal.portlet.om.IPortletWindow#getDelegationParent()
      */
     @Override
-    public IPortletWindowId getDelegationParent() {
+    public IPortletWindowId getDelegationParentId() {
         return this.delegationParent;
     }
 

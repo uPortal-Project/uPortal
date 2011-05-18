@@ -13,9 +13,9 @@
   <desc>Mockup image rotator thingy.</desc>
   <type>Advanced CMS</type>
   <timeout>10000</timeout>
-  <portlet-descriptor>
-    <webAppName>/SimpleContentPortlet</webAppName>
-    <portletName>cms</portletName>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:webAppName>/SimpleContentPortlet</up:webAppName>
+    <up:portletName>cms</up:portletName>
   </portlet-descriptor>
   
   

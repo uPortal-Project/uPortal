@@ -14,6 +14,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/portlet-publishing ../../../../../xsd/portlet-publishing/portlet-publishing-definition.xsd">
 
+      <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+        <up:isFramework>true</up:isFramework>
+        <up:portletName>IFrame</up:portletName>
+      </portlet-descriptor>
+
     <step>
 
         <name>Inline frame parameters</name>
@@ -24,25 +29,7 @@
         browsers, in which case this channel will render a link to open the
         page in a new window.
       </description>
-
-        <parameter>
-            <name>isFrameworkPortlet</name>
-            <label>framework.ortlet</label>
-            <single-choice-parameter-input display="hidden">
-                <default>true</default>
-                <option value="false" label="false" />
-                <option value="true" label="true" />
-            </single-choice-parameter-input>
-        </parameter>
-
-        <parameter>
-            <name>portletName</name>
-            <label>portlet.name</label>
-            <single-text-parameter-input display="hidden">
-                <default>IFrame</default>
-            </single-text-parameter-input>
-        </parameter>
-
+      
         <parameter>
             <name>disableDynamicTitle</name>
             <label>disable.dynamic.title</label>

@@ -10,38 +10,18 @@
     governing permissions and limitations under the License. -->
 
 <portlet-publishing-definition
-    xmlns="https://source.jasig.org/schemas/uportal/portlet-publishing"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/portlet-publishing ../../../../../xsd/portlet-publishing/portlet-publishing-definition.xsd">
+  xmlns="https://source.jasig.org/schemas/uportal/portlet-publishing"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://source.jasig.org/schemas/uportal/portlet-publishing ../../../../../xsd/portlet-publishing/portlet-publishing-definition.xsd">
 
-    <step>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:webAppName>/WebProxyPortlet</up:webAppName>
+    <up:portletName>WebProxyPortlet</up:portletName>
+  </portlet-descriptor>
 
-        <name>General Configuration</name>
-        <description>Use the configuration options after reviewing the portlet publishing information to configure the portlet.</description>
-
-        <parameter>
-            <name>portletApplicationId</name>
-            <label>portlet.web.application.path</label>
-            <description>
-              This is the name of the web application the portlet resides in including a preceding /.
-            </description>
-            <single-text-parameter-input display="hidden">
-                <default>/WebProxyPortlet</default>
-            </single-text-parameter-input>
-        </parameter>
-
-        <parameter>
-            <name>portletName</name>
-            <label>portlet.name</label>
-            <description>
-              This is the name of the portlet as defined in the portlet.xml descriptor.
-            </description>
-            <example>test-portlet-1</example>
-            <single-text-parameter-input display="hidden">
-                <default>WebProxyPortlet</default>
-            </single-text-parameter-input>
-        </parameter>
-
-    </step>
+  <step>
+    <name>General Configuration</name>
+    <description>Use the configuration options after reviewing the portlet publishing information to configure the portlet.</description>
+  </step>
 
 </portlet-publishing-definition>

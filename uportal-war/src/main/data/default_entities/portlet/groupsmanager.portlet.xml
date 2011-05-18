@@ -34,9 +34,9 @@
   <desc>Groups adminsitration</desc>
   <type>Portlet</type>
   <timeout>50000</timeout>
-  <portlet-descriptor>
-    <isFramework>true</isFramework>
-    <portletName>GroupsAdministration</portletName>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:isFramework>true</up:isFramework>
+    <up:portletName>GroupsAdministration</up:portletName>
   </portlet-descriptor>
   
   

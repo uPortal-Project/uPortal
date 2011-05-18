@@ -277,7 +277,7 @@ public class MockPortletWindow implements IPortletWindow, PortletWindow {
      * @see org.jasig.portal.portlet.om.IPortletWindow#getDelegationParent()
      */
     @Override
-    public IPortletWindowId getDelegationParent() {
+    public IPortletWindowId getDelegationParentId() {
         return this.delegationParent;
     }
     
@@ -349,7 +349,7 @@ public class MockPortletWindow implements IPortletWindow, PortletWindow {
             .append(this.expirationCache, rhs.getExpirationCache())
             .append(this.previousPrivateRenderParameters, rhs.getRenderParameters())
             .append(this.previousPublicRenderParameters, rhs.getPublicRenderParameters())
-            .append(this.delegationParent, rhs.getDelegationParent())
+            .append(this.delegationParent, rhs.getDelegationParentId())
             .isEquals();
     }
 
