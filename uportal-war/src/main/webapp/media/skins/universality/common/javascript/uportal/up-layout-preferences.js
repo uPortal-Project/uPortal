@@ -55,10 +55,10 @@ var uportal = uportal || {};
         var columns = [];
         
         // iterate through the CSS classnames for each column and parse
-        // the fl-col-flex classnames to determine the width percentage for
+        // the fl-container-flex classnames to determine the width percentage for
         // each column
         $('#portalPageBodyColumns > [id^=column_]').each(function(){
-            var flClass = $(this).get(0).className.match("fl-col-flex[0-9]+");
+            var flClass = $(this).get(0).className.match("fl-container-flex[0-9]+");
             if (flClass != null) {
                 columns.push(Number(flClass[0].match("[0-9]+")[0]));
             }
@@ -189,10 +189,10 @@ var uportal = uportal || {};
                     
                     var column = $(this).removeClass("single left right");
                     $(this.className.split(" ")).each(function(idx, className){
-                        if (className.match("fl-col-flex")) $(column).removeClass(className);
+                        if (className.match("fl-container-flex")) $(column).removeClass(className);
                     });
                     
-                    var newclasses = "fl-col-flex" + newcolumns[i];
+                    var newclasses = "fl-container-flex" + newcolumns[i];
                     if (newcolumns.length == 1) newclasses += " single";
                     else if (i == 0) newclasses += " left";
                     else if (i == newcolumns.length - 1) newclasses += " right";
